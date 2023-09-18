@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class DVDDisaster(CPackageRecipe):
+    name = 'dvdisaster'
+    version = '0.72.4'
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel',
+                     'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel',
+                     'gtk:devel', 'libpng:devel', 'pango:devel',
+                     'pkgconfig:devel', 'gdk-pixbuf:runtime', 'which:runtime' ]
+    def setup(r):
+        r.addArchive('http://dvdisaster.net/downloads/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall('BUILDROOT=%(destdir)s')
+        r.Remove('/usr/bin/dvdisaster-uninstall.sh')

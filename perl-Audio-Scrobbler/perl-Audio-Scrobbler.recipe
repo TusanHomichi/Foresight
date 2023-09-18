@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlURI(CPANPackageRecipe):
+    name = 'perl-Audio-Scrobbler'
+    version = '0.01'
+    buildRequires = [ 'perl-HTTP-Cookies:perl', 'perl-URI:perl', 'perl:devel',
+                      'perl-Config-IniFiles:perl',]

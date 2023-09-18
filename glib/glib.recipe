@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('gnomepackage')
+class Glib(GnomePackageRecipe):
+    name = 'glib'
+    version = '2.35.9'
+
+    buildRequires = [ 'gettext:runtime', 'indent:runtime', 'perl:runtime',
+                      'pkgconfig:devel', 'pcre:devel', 'gamin:devel',
+                      'autoconf:runtime','automake:runtime', 'libffi:devel',
+                      'libtool:runtime', 'intltool:runtime', 'python:devel',
+                      'gtk-doc:runtime', 'gtk-doc:devel', 'perl:devel',
+                      'chrpath:runtime', 'dbus:runtime', 'libelf:devel',]
+                      
+
+    extraConfig = (' --enable-shared '
+                   ' --disable-gtk-doc '
+        '--disable-selinux'
+        ' --with-runtime-libdir=../../%(lib)s')
+
+    potFileName='%(name)s20'
+
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+
+        for profile in ('glib2.sh', 'glib2.csh'):
+            r.addSource(profile, dest='%(sysconfdir)s/profile.d/', mode=0755)
+    
+        r.addSource('update-gio-modules')
+
+    def build(r):
+        r.Run('rm -rf configure; NOCONFIGURE=1 ./autogen.sh;')
+        r.Configure(r.extraConfig,
+                    configureName = r.configureName,
+                    preConfigure = r.preConfigure)
+
+        # Get rid of undesirable hardcoded runpaths
+        #        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+        #                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'libtool')
+
+        r.Make(r.makeArgs, preMake=r.preMake)
+
+    def policy(r):
+        r.SetModes('%(bindir)s/gtester-report', 0755)
+        
+        r.NonBinariesInBindirs(exceptions = '%(bindir)s/gtester-report')
+
+        r.addSource('glib-compile-schemas.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/glib-compile-schemas')
+        r.addSource('glib-compile-schemas.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/glib-compile-schemas', mode=0755)
+
+        r.Requires('glib:runtime', '%(name)s:data')
+    
+        r.Install('update-gio-modules', '%(bindir)s/', mode = 0755)
+
+        # needed for TroveScripts to behave under multilib
+        if Arch.x86:
+            r.macros.isaBits = '32'
+        else:
+            r.macros.isaBits = '64'
+        
+        r.Move('%(bindir)s/gio-querymodules', '%(bindir)s/gio-querymodules-%(isaBits)s')
+        r.ComponentSpec('lib', '%(bindir)s/gio-querymodules-%(isaBits)s')
+
+        r.ScriptPreErase('glib:lib', contents="#!/bin/bash\n %(bindir)s/gio-querymodules-%(isaBits)s %(libdir)s/gio/modules" % r.macros)
+        r.ScriptPostInstall('glib:lib', contents="#!/bin/bash\n %(bindir)s/gio-querymodules-%(isaBits)s %(libdir)s/gio/modules" % r.macros)
+        r.ScriptPostUpdate('glib:lib', contents="#!/bin/bash\n %(bindir)s/gio-querymodules-%(isaBits)s %(libdir)s/gio/modules" % r.macros)
+
+        # XXX the libtool rpath trick commented above no longer works. bellow replaces it.
+        # XXX this should be done thru a plugabble policy
+        r.Run('chrpath --delete %(destdir)s%(libdir)s/*.so')
+
+        # bash-completion scripts need not be executable
+        r.SetModes('%(datadir)s/bash-completion/completions/*', 0644)
+
+        r.Create('%(libdir)s/gio/modules/giomodule.cache')
+        r.InitialContents('%(libdir)s/gio/modules/giomodule.cache')
+
+        # basically consumed by gtk and gdk-pixbuf so that the tag handlers they provide
+        # can require this, to reorder updates, to enable noiseless updates
+        r.ComponentProvides('%(major_version)s')

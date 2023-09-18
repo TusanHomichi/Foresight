@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Nemiver(GnomePackageRecipe):
+    name = 'nemiver'
+    version = '0.8.1'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'cairomm:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdb:runtime', 'glib:devel', 'glibmm:devel', 'gtkmm:devel', 'gtksourceview:devel', 'libglade:devel', 'libglademm:devel', 'gtksourceviewmm:devel', 'libgtop:devel', 'libpng:devel', 'libsigc++:devel', 'libstdc++:devel', 'libxml2:devel', 'pango:devel', 'pangomm:devel', 'perl:runtime', 'pixman:devel', 'rarian:runtime', 'sqlite:devel', 'vte:devel', 'boost:devel', 'rarian:devel']

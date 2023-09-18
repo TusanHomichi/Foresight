@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class YAWN(PackageRecipe):
+    name = 'yawn'
+    majver = '1.0'
+    minver = '18.5'
+    version = majver + '_' + minver
+
+    buildRequires = [
+        'mod_python:python', 'python:devel', 'pywbem:python',
+    ]
+
+    url = 'http://download.opensuse.org/repositories/systemsmanagement:/wbem/openSUSE_Factory/src/%(name)s-%(majver)s-%(minver)s.src.rpm'
+
+    def setup(r):
+        r.macros.majver = r.majver
+        r.macros.minver = r.minver
+        yawnLocation = "%(servicedir)s/www/html/%(name)s/index.py"
+        r.addSource("yawn.py", rpm = r.url, dest = yawnLocation)
+        r.Create("%(sysconfdir)s/httpd/conf.d/yawn.conf", contents = """
+<Directory %(servicedir)s/www/html/%(name)s>
+    SetHandler mod_python
+    PythonHandler mod_python.publisher
+    #PythonDebug On
+</Directory>
+""")
+        r.Requires('pywbem:python', yawnLocation)

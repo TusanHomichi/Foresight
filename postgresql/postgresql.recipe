@@ -1,0 +1,113 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Postgresql(CPackageRecipe):
+    name = 'postgresql'
+    version = '8.4.17'
+
+    buildRequires = [ 'perl:devel', 'glibc:devel',
+                      'bison:runtime', 'bison:devellib',
+                      'docbook-dsssl:runtime', 'flex:runtime',
+                      'flex:devel',
+                      'openssl:devel', 'readline:devel',
+                      'python:devel', 'perl:devel', 'libtermcap:devel',
+                      'openjade:runtime', 'opensp:runtime', 'python:devel', 
+                      'zlib:devel', 'perl:devel', 'perl:runtime', 'perl-SGMLS:runtime', ]
+
+    def setup(r):
+        r.macros.major = ".".join(r.version.split(".")[:2])
+        r.macros.pgdata = "%(servicedir)s/pgsql/%(major)s"
+        r.macros.pglog = "%(localstatedir)s/log/pgsql"
+        r.addArchive('http://ftp.postgresql.org/pub/source/v%(version)s/')
+        r.addSource('postgresql.init', dest='%(initdir)s/%(name)s',
+                    macros=True, mode=0755)
+        r.addSource('postgresql.sysconfig', macros=True,
+                    dest='%(sysconfdir)s/sysconfig/pgsql/%(name)s')
+
+        r.ManualConfigure('--prefix=/usr --libdir=%(libdir)s --with-perl --with-python'
+                          ' --with-includes=%(krbprefix)s/include'
+                          ' --with-openssl'
+                          ' --with-docdir=%(thisdocdir)s'
+                          ' --sysconfdir=%(sysconfdir)s'
+                          ' --mandir=%(mandir)s')
+
+        r.Make()
+        r.MakeInstall()
+
+        r.Doc('HISTORY', 'doc/*')
+
+        r.Make(dir='contrib')
+        r.MakeInstall(dir='contrib', package='postgresql-contrib')
+
+        r.LinkCount(exceptions='.*')
+        r.Create('%(localstatedir)s/log/pgsql', mode=0640)
+        r.Ownership('postgres', 'postgres', '%(localstatedir)s/log/pgsql')
+        r.MakeDirs('%(pgdata)s')
+        # this is the old location for the data files - we keep owning it
+        r.MakeDirs('%(servicedir)s/lib/pgsql')
+
+        # use the system's zoneinfo to avoid duplication
+        r.Remove("%(datadir)s/%(name)s/timezone", recursive=True)
+        r.Symlink("../zoneinfo", "%(datadir)s/%(name)s/timezone")
+        r.DanglingSymlinks(exceptions="%(datadir)s/%(name)s/timezone")
+
+        r.ComponentSpec('devel',
+                        '%(bindir)s/pg_config',
+                        '%(bindir)s/ecpg',
+                        "%(libdir)s/%(name)s/pgxs/",
+                        )
+
+        r.PackageSpec('postgresql-contrib', '%(thisdocdir)s/contrib')
+
+        r.PackageSpec('postgresql-server',
+                      '%(bindir)s/initdb',
+                      '%(bindir)s/initlocation',
+                      '%(bindir)s/ipcclean',
+                      '%(bindir)s/pg_controldata',
+                      '%(bindir)s/pg_ctl',
+                      '%(bindir)s/pg_resetxlog',
+                      '%(bindir)s/postgres',
+                      '%(bindir)s/postmaster',
+                      '%(mandir)s/man1/initdb.*',
+                      '%(mandir)s/man1/initlocation.*',
+                      '%(mandir)s/man1/ipcclean.*',
+                      '%(mandir)s/man1/pg_controldata.*',
+                      '%(mandir)s/man1/pg_ctl.*',
+                      '%(mandir)s/man1/pg_resetxlog.*',
+                      '%(mandir)s/man1/postgres.*',
+                      '%(mandir)s/man1/postmaster.*',
+                      '%(datadir)s/%(name)s/postgres.bki',
+                      '%(datadir)s/%(name)s/postgres.description',
+                      '%(datadir)s/%(name)s/.*.sample',
+                      '%(libdir)s/%(name)s/pgsql/plpgsql.so',
+                      '%(libdir)s/%(name)s/pgsql/.*_and_.*.so',
+                      '%(datadir)s/%(name)s/conversion_create.sql',
+                      '%(datadir)s/%(name)s/information_schema.sql',
+                      '%(datadir)s/%(name)s/sql_features.txt',
+                      '%(datadir)s/%(name)s/system_views.sql',
+                      '%(initdir)s/postgresql',
+                      '%(sysconfdir)s/sysconfig/pgsql/postgresql',
+                      '%(pglog)s',
+                      '%(servicedir)s/pgsql',
+                      '%(pgdata)s', '%(pgdata)s/',
+                      '%(servicedir)s/lib/pgsql',
+                      '%(datadir)s/%(name)s/timezone',
+                      )
+
+        r.ComponentSpec("runtime",
+                        "%(pgdata)s", "%(pgdata)s/",
+                        '%(servicedir)s/lib/pgsql',
+                        "%(datadir)s/%(name)s/timezone")
+        r.Requires("%(name)s:runtime", "%(bindir)s/postgres")
+        r.Requires("tzdata:data", "%(bindir)s/postgres")
+
+        for dir in ['%(servicedir)s/pgsql', '%(pgdata)s',
+                    '%(servicedir)s/lib/pgsql' ] :
+            r.ExcludeDirectories(exceptions=dir)
+            r.Ownership('postgres', 'postgres', dir)
+            r.SetModes(dir, 0700)
+
+        r.TagSpec('initscript', '%(initdir)s/')

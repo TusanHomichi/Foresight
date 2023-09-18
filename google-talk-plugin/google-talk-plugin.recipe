@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+
+import datetime
+loadSuperClass('binarypackage=conary.rpath.com@rpl:devel')
+class GTalkPlugin(BinaryPackageRecipe):
+    name = 'google-talk-plugin'
+    version = datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = ['binutils:runtime', 'xz:runtime']
+
+    def unpack(r):
+        r.addArchive('http://dl.google.com/linux/direct/google-talkplugin_current_i386.rpm',
+                     dir='%(destdir)s', use=Arch.x86 )
+        r.addArchive('http://dl.google.com/linux/direct/google-talkplugin_current_x86_64.rpm',
+                     dir='%(destdir)s', use=Arch.x86_64 )
+
+    def policy(r):
+        r.Remove('%(libdir)s/', recursive = True)
+        r.MakeDirs('%(libdir)s/mozilla/plugins/')
+
+        r.Remove('/opt/google/talkplugin/cron/google-talkplugin')
+        r.Remove('%(sysconfdir)s/cron.daily/google-talkplugin')
+
+        for f in [ 'libnpgoogletalk.so',
+                   'libnpgtpo3dautoplugin.so',
+                   'libnpo1d.so', ]:
+            r.Symlink('/opt/google/talkplugin/%s' % f,
+                      '%%(libdir)s/mozilla/plugins/%s' %f,
+                      package = ':lib')
+
+        r.ComponentSpec('lib', '/opt/google/talkplugin/.*')
+        r.Doc('/opt/google/talkplugin/attributions.txt')
+

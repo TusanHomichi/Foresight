@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2010-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PureFTPd(AutoPackageRecipe):
+    name = 'pure-ftpd'
+    version = '1.0.32'
+
+    buildRequires = [
+        'libcap:devel', 'openssl:devel', 'pam:devel', 'perl:runtime',
+        'mysql:devel', 'postgresql:devel', 'openldap:devel',
+        'openssl:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://download.pureftpd.org/pub/pure-ftpd/releases/')
+
+    def configure(r):
+        r.Configure('--with-mysql --with-pgsql --with-ldap --with-tls'
+                    ' --with-everything')

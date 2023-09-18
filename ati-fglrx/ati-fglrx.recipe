@@ -1,0 +1,214 @@
+
+class AtiFglrx(AutoPackageRecipe):
+
+    name = 'ati-fglrx'
+    # ATI Catalyst(TM) Proprietary Driver-8.97.100.7
+    version = '13.1'
+
+    buildRequires = [
+        'glibc:devel',
+        'gtk:runtime',
+        'libX11:devel', 
+        'libXext:devel',
+        'libXrandr:devel',
+        'libXrender:devel',
+        'libgcc:devellib',
+        'libstdc++:devel',
+        'chkconfig:runtime',
+        'elfutils:runtime',
+        'binutils:runtime',
+        'fontconfig:devel',
+        'freetype:devel',
+        'libICE:devel',
+        'libSM:devel',
+        'libXcursor:devel',
+        'libXi:devel',
+        'desktop-file-utils:runtime',
+        'unzip:runtime',
+        # to catch handler for /etc/bootloader.d/
+        'bootman:runtime'
+    ]
+
+    def unpack(r):
+        #r.macros.version = r.version.replace('.', '-')
+        r.macros.filename='amd-driver-installer-catalyst-%(version)s-legacy-linux-x86.x86_64'
+        if Arch.x86_64:
+            r.macros.lib32 = '/usr/lib'
+            r.FixupMultilibPaths(exceptions='.*')
+        r.addArchive('http://www2.ati.com/drivers/legacy/'
+                    '%(filename)s.zip')
+        r.addAction('sh ../%(filename)s.run '
+                    '--extract archive_files')
+        r.addSource('switchlibGL')
+
+    def configure(r):
+        for sl in ['archive_files/arch/x86/usr/lib/fglrx/switchlib*',
+                   'archive_files/arch/x86_64/usr/lib64/fglrx/switchlib*',
+        ]:
+            r.Remove(sl)
+        r.Copy('archive_files/common/*', 'src/')
+
+        if Arch.x86_64:
+            r.Copy('archive_files/arch/x86_64/*', 'src/')
+            r.Copy('archive_files/xpic_64a/*', 'src/')
+        else:
+            r.Copy('archive_files/arch/x86/*', 'src/')
+            r.Copy('archive_files/xpic/*', 'src/')
+
+    def make(r):
+        pass
+
+    def makeinstall(r):
+        r.Install('switchlibGL', '%(libdir)s/fglrx/switchlibGL', mode=0744)
+        r.Install('switchlibGL', '%(libdir)s/fglrx/switchlibglx', mode=0744)
+        r.Install('src/usr/X11R6/%(lib)s/fglrx/*',
+                  '%(libdir)s/xorg.fglrx.3d/', mode = 0644)
+        r.Install('src/usr/X11R6/%(lib)s/fglrx/fglrx-libGL.so.1.2',
+                  '%(libdir)s/xorg.fglrx.3d/libGL.so.1.2', mode = 0644)
+        r.Remove('src/usr/X11R6/%(lib)s/fglrx/*')
+        r.Install('src/usr/sbin/*','%(sbindir)s/', mode = 0755)
+        r.Remove('src/usr/sbin/*')
+        r.Install('src/usr/X11R6/bin/*','%(bindir)s/', mode = 0755)
+        r.Remove('src/usr/X11R6/bin/*')
+        #r.Install('src/usr/X11R6/%(lib)s/modules/dri/*','%(libdir)s/dri/updates/', mode = 0644)
+        r.Install('src/usr/X11R6/%(lib)s/modules/dri/*','%(libdir)s/dri/', mode = 0644)
+        r.Remove('src/usr/X11R6/%(lib)s/modules/dri/*')
+        r.Install('src/usr/X11R6/%(lib)s/modules/drivers/*','%(libdir)s/xorg/modules/updates/drivers/', mode = 0644)
+        r.Remove('src/usr/X11R6/%(lib)s/modules/drivers/*')
+        r.Install('src/usr/X11R6/%(lib)s/modules/extensions/fglrx/*',
+                  '%(libdir)s/xorg/modules/updates/extensions/', mode = 0644)
+        r.Symlink('%(libdir)s/xorg/modules/updates/extensions/fglrx-libglx.so',
+                  '%(libdir)s/xorg/modules/updates/extensions/libglx.so')
+        r.Remove('src/usr/X11R6/%(lib)s/modules/extensions/fglrx/*')
+        r.Install('src/usr/X11R6/%(lib)s/modules/linux/*','%(libdir)s/xorg/modules/updates/linux/', mode = 0644)
+        r.Remove('src/usr/X11R6/%(lib)s/modules/linux/*')
+        r.Install('src/usr/X11R6/%(lib)s/modules/*','%(libdir)s/xorg/modules/updates/', mode = 0644)
+        r.Remove('src/usr/X11R6/%(lib)s/modules/*')
+        r.Install('src/usr/%(lib)s/*','%(libdir)s/', mode = 0644)
+        r.Remove('src/usr/%(lib)s/*')
+
+        r.Install('src/usr/include/GL/*','%(includedir)s/%(name)s/GL/', mode = 0644)
+        r.Remove('src/usr/include/GL/*')
+
+        r.Install('src/usr/include/ATI/GL/*', '%(includedir)s/X11/%(name)s/ATI/GL/', mode = 0644)
+        r.Remove('src/usr/include/ATI/*')
+        r.Install('src/usr/X11R6/%(lib)s/*', '%(libdir)s/xorg.fglrx.3d/', mode = 0644)
+        r.Remove('src/usr/X11R6/%(lib)s/*')
+
+        r.Install('src/etc/ati/*','%(sysconfdir)s/ati/', mode = 0644)
+        r.Remove('src/etc/ati/*')
+
+        #additional OpenCL stuff not picked up above
+        r.Install('src/usr/bin/*', '%(bindir)s/')
+        r.Remove('src/usr/bin/*')
+        r.Install('src/etc/OpenCL/vendors/*', '%(sysconfdir)s/OpenCL/vendors/')
+        r.Remove('src/etc/OpenCL/vendors/*')
+        # to not conflict with system's openCL when available
+        r.Move('%(libdir)s/libOpenCL.*', '%(libdir)s/xorg.fglrx.3d/')
+
+        if Arch.x86_64:
+            # r.Install('archive_files/arch/x86/usr/X11R6/lib/modules/dri/*','%(lib32)s/dri/updates/', mode = 0644)
+            r.Install('archive_files/arch/x86/usr/X11R6/lib/modules/dri/*','%(lib32)s/dri/', mode = 0644)
+            r.Install('archive_files/arch/x86/usr/X11R6/lib/lib*', '%(lib32)s/xorg.fglrx.3d/', mode = 0644)
+            r.Install('archive_files/arch/x86/usr/lib/lib*', '%(lib32)s/', mode = 0644)
+            # to not conflict with system's openCL when available
+            r.Move('%(lib32)s/libOpenCL.*', '%(lib32)s/xorg.fglrx.3d/')
+
+        r.Install('src/usr/share/icons/ccc_*.xpm','%(datadir)s/icons/', mode = 0644)
+
+        r.Config(exceptions='%(sysconfdir)s/ati/control')
+
+        # Set the correct path for gdm's Xauth file
+        r.Replace('GDM_AUTH_FILE=/var/lib/gdm/\$1.Xauth',
+                  'GDM_AUTH_FILE=/var/gdm/$1.Xauth',
+                  '%(sysconfdir)s/ati/authatieventsd.sh')
+
+
+        r.addSource('atieventsd.init')
+        r.addSource('ati-powermode.sh')
+        r.addSource('amdcccle.desktop')
+        r.Desktopfile('amdcccle.desktop')
+
+        r.Install('atieventsd.init', '%(initdir)s/atieventsd', mode = 0755)
+        r.Install('ati-powermode.sh', '%(sysconfdir)s/acpi/actions/ati-powermode.sh', mode = 0755)
+
+        r.Create('%(sysconfdir)s/acpi/events/a-ac-aticonfig.conf', mode = 0644, contents = """
+# /etc/acpi/actions/ati-powermode.sh
+# Called when the user connects ac power to us
+event=ac_adapter
+action=/etc/acpi/actions/ati-powermode.sh
+""")
+        r.Create('%(sysconfdir)s/acpi/events/a-lid-aticonfig.conf', mode = 0644, contents = """
+# /etc/acpi/actions/ati-powermode.sh
+# Called when the user opens/closes the laptop lid
+event=button[ /]lid
+action=/etc/acpi/actions/ati-powermode.sh
+""")
+        r.Create('%(sysconfdir)s/profile.d/fglrx.csh', mode = 0644, contents = """
+set arch = `uname -m`
+if ($arch == x86_64) then
+    setenv LIBGL_DRIVERS_PATH /usr/lib64/dri/:/usr/lib/dri/
+else if ($arch =~ i[3-6]86) then
+    setenv LIBGL_DRIVERS_PATH /usr/lib/dri/
+endif
+""")
+        r.Create('%(sysconfdir)s/profile.d/fglrx.sh', mode = 0644, contents = """
+ARCH="$(uname -m)"
+
+case "$ARCH" in
+        x86_64) export LIBGL_DRIVERS_PATH="/usr/lib64/dri/:/usr/lib/dri/";;
+    i[3-6\d]86) export LIBGL_DRIVERS_PATH="/usr/lib/dri/";;
+esac
+""")
+        r.NonBinariesInBindirs(exceptions = '%(sysconfdir)s/profile.d/')
+
+        r.SharedLibrary(subtrees='%(libdir)s/xorg/modules/updates/')
+        r.SharedLibrary(subtrees='%(libdir)s/xorg/modules/updates/linux/')
+        r.SharedLibrary(subtrees='%(libdir)s/xorg/modules/updates/drivers/')
+
+        r.SharedLibrary(subtrees='%(libdir)s/xorg.fglrx.3d')
+        if Arch.x86_64:
+            r.SharedLibrary(subtrees='%(lib32)s/xorg.fglrx.3d')
+
+        #  r.InitialContents('%(sysconfdir)s/ati/.*')
+
+
+        # The kernel side is in %(name)s-kernel, and we need the kernel
+        # modules that match this version exactly
+        r.Requires('ati-fglrx-kernel:runtime(%(version)s)', 
+                   '%(libdir)s/dri/updates/fglrx_dri.so')
+        r.Requires('%(bindir)s/gksudo', 
+                   '%(datadir)s/applications/.*')
+        # Make sure the kernel module is loaded at boot
+        r.Create('/etc/sysconfig/%(name)s.modules',
+               contents='modprobe fglrx\n', mode=0755)
+        # take radeon drm kmod out of way ...
+        r.Create('%(sysconfdir)s/modprobe.d/blacklist-radeon.conf',
+                 mode = 0644,
+                 contents = 'blacklist radeon')
+        # 
+        r.Create('%(sysconfdir)s/bootloader.d/%(name)s.conf',
+                 contents = 'add_options radeon.modeset=0 ',
+                 mode = 0644)
+
+
+        # we want Mesa's libGL to be used for dep resolution, as that one is installed on all user's boxes, 
+        # and should be the one that goes into _all_ rMake chroots. 
+        r.Provides(exceptions='.*')
+        r.EnforceSonameBuildRequirements(exceptions='.*')
+#        r.NormalizeLibrarySymlinks(exceptions='.*/xorg.fglrx.3d/libGL.*')
+
+        if Arch.x86_64:
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libatiuki\.so\.1\(SysV\ x86\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF64\/libatiuki\.so\.1\(SysV\ x86\_64\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF64\/libGL\.so\.1\(SysV\ x86\_64\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF64\/libfglrx\_gamma\.so\.1\(SysV\ x86\_64\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF64\/libOpenCL\.so\.1\(OPENCL\_1\.0\ SysV\ x86\_64\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libOpenCL\.so\.1\(OPENCL\_1\.0\ SysV\ x86\)')
+        else:
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libatiuki\.so\.1\(SysV\ x86\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libGL\.so\.1\(SysV\ x86\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libfglrx\_gamma\.so\.1\(SysV\ x86\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libOpenCL\.so\.1\(OPENCL\_1\.0\ SysV\ x86\)')
+        # so that the kernel module could require it... 
+        r.ComponentProvides('%(version)s')

@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+
+loadSuperClass('rpmpackage')
+class libXkbfile(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libxkbfile'
+    version = '7.6'
+    rpmRelease = '16.1'
+    rpmName = 'xorg-x11-%(name)s'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = [ 'kbproto:devel', 'pkgconfig:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel']
+    rpmPatches = [ ]
+    tarballName = '%(name)s-1.0.7.tar.bz2'
+
+    def configure(r):
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure('--disable-static --with-pic')
+
+
+

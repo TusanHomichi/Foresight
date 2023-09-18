@@ -1,0 +1,12 @@
+diff -ur eigen2.orig/Eigen/StdVector eigen2/Eigen/StdVector
+--- eigen2.orig/Eigen/StdVector	2009-06-21 19:41:55.000000000 +0400
++++ eigen2/Eigen/StdVector	2009-07-29 21:28:31.000000000 +0400
+@@ -119,7 +119,7 @@
+   void resize(size_type __new_size, const value_type& __x)
+   {                                              
+     if (__new_size < vector_base::size())               
+-      vector_base::_M_erase_at_end(this->_M_impl._M_start + __new_size);
++      vector_base::erase(vector_base::begin() + __new_size, vector_base::end());
+     else                       
+       vector_base::insert(vector_base::end(), __new_size - vector_base::size(), __x); 
+   }                                                              

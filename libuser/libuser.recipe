@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+loadSuperClass('rpmpackage')
+class LibUser(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'libuser'
+    version = '0.56.18'
+    distroVersion = '14'
+    rpmRelease = '2.fc14'
+
+    Flags.openldap = False              # Temporary reminder to fix.
+
+    buildRequires = [ 'pam:devel', 'popt:devel', 'python:devel', 'glib:devel',
+                      'pkgconfig:devel', 'cyrus-sasl:devel',
+                      'gettext:runtime', 'intltool:runtime',
+                      'xz:runtime', ]
+
+    extraConfig = ''
+    if False and Use.builddocs: # we no longer build with gtk-doc
+        buildRequires.extend(['gtk-doc:runtime', 'linuxdoc-tools:runtime'])
+        extraConfig += '--enable-gtk-doc ' + \
+                       '--with-html-dir=%(datadir)s/gtk-doc/html'
+    else:
+        extraConfig += '--disable-gtk-doc'
+    # ldap support requires tls support in openldap, which is not currently on
+    #
+    # FIXME: This is no longer true; test/verify it works. --jau, 24 FEB 2007
+    if Flags.openldap:
+        buildRequires.append('openldap:devel')
+        extraConfig += ' --with-ldap'
+    else:
+        extraConfig += ' --without-ldap'
+
+    def setup(r):
+        r.unpack()
+        r.macros.cflags += ' -fPIC'
+        r.macros.python_version = Python.majversion
+
+        r.Configure(r.extraConfig +
+            ' --with-python-version=%(python_version)s'
+            ' --with-python-path=%(includedir)s/python%(python_version)s'
+            ' --with-pic --with-sasl')
+        # if not Use.builddocs: (turn off make docs)
+        r.Run('sed -i "s/po docs/po/g" Makefile')
+        r.Make()
+
+        r.MakeInstall()
+        r.Doc('docs/*.txt', 'python/modules.txt')
+
+        r.InitialContents('%(sysconfdir)s/%(name)s.conf')
+        r.ComponentSpec('config', '%(sysconfdir)s/%(name)s.conf')
+
+        # test
+        #r.Run('cd %(destdir)s/%(libdir)s;
+        #' LD_LIBRARY_PATH=%(destdir)/%(libdir)s:${LD_LIBRARY_PATH}'
+        #' python%(python_version)s -c "import libuser"')

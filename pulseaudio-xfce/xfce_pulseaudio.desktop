@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=PulseAudio Server
+Comment=Start Pulseaudio server for Xfce
+Exec=xfce_startpulse.sh
+Terminal=false
+Type=Application
+Categories=
+GenericName=
+OnlyShowIn=XFCE;
+

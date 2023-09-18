@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#
+loadSuperClass('pypipackage')
+class PythonPackage(PyPiPackage, CPackageRecipe):
+    name = 'python-ssh'
+    version = '1.7.11'
+    pyname = 'ssh'
+
+    buildRequires = []

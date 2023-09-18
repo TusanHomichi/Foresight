@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Tilt(RubygemPackageRecipe):
+
+    name = 'rubygem-tilt'
+    version = '1.3.3'
+

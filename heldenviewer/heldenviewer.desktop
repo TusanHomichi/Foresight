@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=HeldenViewer
+GenericName=Youtube Downloader
+Exec=heldenviewer
+Icon=%(datadir)s/pixmaps/heldenviewer.png
+Categories=AudioVideo

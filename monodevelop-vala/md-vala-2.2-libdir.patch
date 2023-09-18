@@ -1,0 +1,22 @@
+--- monodevelop-vala-2.2/Makefile.am	2009-11-05 18:11:48.000000000 +0000
++++ monodevelop-vala-2.2/Makefile-new.am	2010-02-13 12:40:17.000000000 +0000
+@@ -88,7 +88,7 @@
+ 	$(LOCAL_PKGCONFIG) $(CSC) $(CSC_FLAGS) -debug -out:$@ -target:library $(REFS) \
+ 		$(build_resources:%=/resource:%) $(build_sources)
+ 
+-valabindinglibdir = $(prefix)/lib/monodevelop/AddIns/BackendBindings
++valabindinglibdir = $(libdir)/monodevelop/AddIns/BackendBindings
+ valabindinglib_DATA = $(ASSEMBLY)
+ 
+ CLEANFILES = $(ASSEMBLY) $(ASSEMBLY).mdb
+--- monodevelop-vala-2.2/Makefile.in	2009-12-11 20:51:41.000000000 +0000
++++ monodevelop-vala-2.2/Makefile-new.in	2010-02-13 12:41:00.000000000 +0000
+@@ -253,7 +253,7 @@
+ 	ValaBinding.addin.xml
+ 
+ LOCAL_PKGCONFIG = PKG_CONFIG_PATH=../../local-config:$$PKG_CONFIG_PATH
+-valabindinglibdir = $(prefix)/lib/monodevelop/AddIns/BackendBindings
++valabindinglibdir = $(libdir)/monodevelop/AddIns/BackendBindings
+ valabindinglib_DATA = $(ASSEMBLY)
+ CLEANFILES = $(ASSEMBLY) $(ASSEMBLY).mdb
+ EXTRA_DIST = $(FILES) $(RES)

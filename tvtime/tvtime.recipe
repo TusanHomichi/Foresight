@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tvtime(AutoPackageRecipe):
+    name = 'tvtime'
+    version = '1.0.2'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'freetype:devel', 
+        'gcc-c++:runtime', 'gettext:runtime', 'gtk:runtime', 
+        'intltool:runtime', 'inputproto:devel', 'libICE:devel', 'libXt:devel',
+        'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXinerama:devel', 
+        'libXtst:devel', 'libXv:devel', 'libXxf86vm:devel', 'libpng:devel', 
+        'libstdc++:devel', 'libxml2:devel', 'xextproto:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/tvtime/%(name)s-%(version)s.tar.gz')
+        r.addPatch('tvtime-1.0.2-header.patch')
+        r.addPatch('tvtime-1.0.2-gcc4.1.patch')

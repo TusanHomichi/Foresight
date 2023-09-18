@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+# loadSuperClass('binarypackage=conary.rpath.com@rpl:2')
+class Fmodapi(PackageRecipe):
+    name = 'fmodapi'
+    version = '4.28.04'
+ 
+    buildRequires = ['libgcc:devellib', 'libstdc++:devel', 'make:runtime']
+ 
+    def setup(r):
+	r.addArchive('http://www.fmod.org/index.php/release/version/fmodapi42804linux64.tar.gz', use = Arch.x86_64)
+	r.addArchive('http://www.fmod.org/index.php/release/version/fmodapi42804linux.tar.gz', use = Arch.x86)
+
+
+	r.Make('fmod_examples')
+
+	# r.MakeInstall('DESTLIBDIR=%(destdir)s%(libdir)s/ DESTHDRDIR=%(destdir)s%(includedir)s/fmodex/')
+	# cp: cannot create regular file `/home/tforsman/conary/builds/fmodapi/_ROOT_/usr/lib64/': Is a directory
+
+	# r.MakeInstall('DESTLIBDIR=%(destdir)s%(libdir)s DESTHDRDIR=%(destdir)s%(includedir)s/fmodex')
+	# error: NormalizeLibrarySymlinks: The subtrees= argument takes directories only; /usr/lib64 is not a directory
+
+	r.Copy('api/lib/libfmodex*.so', '%(libdir)s/')
+	r.Copy('api/inc/*.h*', '%(includedir)s/fmodex/')
+
+
+# need fix for symlink
+
+#        r.Symlink('%(libdir)s/libfmodex64-%(version)s.so',
+#                  '%(libdir)s/libfmodex.so.0')
+#        r.Symlink('%(libdir)s/libfmodex64.so',
+#                  '%(libdir)s/libfmodex.so')
+
+#        r.Symlink('%(libdir)s/libfmodexp64-%(version)s.so',
+#                  '%(libdir)s/libfmodex.so.0')
+#        r.Symlink('%(libdir)s/libfmodexp64.so',
+#                  '%(libdir)s/libfmodex.so')
+
+	if Arch.x86_64:
+
+		r.Requires(exceptDeps=r'soname\:\ ELF64\/libfmodex64\.so\(SysV\ x86_64\)')
+	else:
+		r.Requires(exceptDeps=r'soname\:\ ELF32\/libfmodex\.so\(SysV\ x86\)')

@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:1')
+class Picasa(BinaryPackageRecipe):
+    name = 'picasa'
+    version = '3.0'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'binutils:runtime', 'wine:runtime']
+ 
+    def unpack(r):
+        r.macros.site = 'http://dl.google.com/linux/deb/pool/non-free/p/picasa'
+
+        dist = [
+            ('picasa_3.0-current_i386.deb', Arch.x86),
+            ('picasa_3.0-current_amd64.deb', Arch.x86_64),
+        ]
+        for (deb, arch) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/', use=(arch==True))
+        r.addSource('google-picasa.desktop')
+        r.Desktopfile('google-picasa.desktop')
+
+        # Probably better to s/lib/lib64/
+        r.FixupMultilibPaths(exceptions='.*')

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Clint(PackageRecipe):
+
+    name = 'clint'
+    version = '0.3.1'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/c/clint/clint-%(version)s.tar.gz')
+        r.PythonSetup()

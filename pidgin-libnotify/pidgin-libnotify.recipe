@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2009  2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginLibnotify(AutoPackageRecipe):
+    name = 'pidgin-libnotify'
+    version = '0.14'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libXrender:devel', 'libnotify:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'python:bin', 'xcb-util:devel', 'zlib:devel', 'libdbusmenu-glib:devel', 'libpurple:devel', 'pidgin:devel', 'automake:runtime', 'autoconf:runtime', 'intltool:devel', 'libtool:runtime']
+ 
+    def unpack(r):
+        # r.addArchive('http://downloads.sourceforge.net/sourceforge/gaim-libnotify/')
+        r.addArchive('https://launchpad.net/ubuntu/oneiric/+source/pidgin-libnotify/0.14-4ubuntu4/+files/pidgin-libnotify_0.14.orig.tar.gz')
+
+        r.addPatch('language_fixes.patch')
+        r.addPatch('pidgin-libnotify-0.14-libnotify-0.7.patch')
+        r.addPatch('pidgin-libnotify-showbutton.patch')
+
+	r.Run('autoreconf -fi')
+
+    def configure(r):
+        r.Configure(' --disable-deprecated '
+                    ' --enable-static=no')

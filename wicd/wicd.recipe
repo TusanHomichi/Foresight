@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Wicd(PackageRecipe):
+    name = 'wicd'
+    version = '1.4.2'
+ 
+    buildRequires =  ['dbus-python:python', 
+    'gnome-python-extras:python', 
+    'pygobject:python', 
+    'pygtk:python', 
+    'python:devel',
+    'chkconfig:runtime'
+    ]
+ 
+    def setup(r):
+        r.addSource('wicd.initscript')
+        r.addArchive('mirror://sourceforge/sourceforge/%(name)s/%(name)s_%(version)s-src.tar.bz2', dir='/')
+        r.Install('wicd.initscript','/etc/init.d/wicd')
+        r.SetModes('/etc/init.d/wicd',00755)
+
+

@@ -1,0 +1,110 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/hdapsd
+#
+# Starts the hdapsd daemon
+#
+# chkconfig: 345 95 5
+# description: Monitors harddrive accleration and momentarily parks
+# disk head to protect against a possible crash from excessive
+# jerks.
+# processname: hdapsd
+
+# Source function library.
+. /etc/init.d/functions
+
+test -x /usr/sbin/hdapsd || exit 0
+
+RETVAL=0
+
+#
+# See how we were called.
+#
+
+prog="hdapsd"
+dev="sda"
+thresh="15"
+
+start() {
+/usr/sbin/hdapsd -f -d sda -s 15 -a -y -b
+/usr/sbin/hdapsd -f -d sdb -s 15 -a -y -b
+
+# modprobe hdaps
+# # Check if hdapsd is already running
+# if [ ! -f /var/lock/subsys/hdapsd ]; then
+# echo -n $"Starting $prog: "
+# for thisdev in $dev; do
+# if [ -w "/sys/block/$thisdev/queue/protect" ]; then
+# /usr/sbin/hdapsd -f -d $thisdev -s $thresh -a -y -b
+# echo -n "$thisdev "
+# fi
+# done
+# RETVAL=$?
+# [ $RETVAL -eq 0 ] && touch /var/lock/subsys/hdapsd
+# [ $RETVAL -eq 0 ] && success $"hdapsd startup" || failure $"hdapsd startup"
+# echo
+# fi
+# return $RETVAL
+}
+
+stop() {
+echo -n $"Stopping $prog: "
+killproc /usr/sbin/hdapsd
+RETVAL=$?
+[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/hdapsd
+echo
+return $RETVAL
+}
+
+pause() {
+echo -n $"Temporarily pausing $prog: "
+killproc /usr/sbin/hdapsd -SIGUSR1
+RETVAL=$?
+echo
+return $RETVAL
+}
+
+restart() {
+stop
+start
+}
+
+reload() {
+restart
+}
+
+status_hdaps() {
+status /usr/sbin/hdapsd
+}
+
+case "$1" in
+start)
+start
+;;
+stop)
+stop
+;;
+reload|restart)
+restart
+;;
+condrestart)
+if [ -f /var/lock/subsys/hdapsd ]; then
+restart
+fi
+;;
+condpause)
+if [ -f /var/lock/subsys/hdapsd ]; then
+pause
+fi
+;;
+status)
+status_hdaps
+;;
+*)
+echo $"Usage: $0 {start|stop|restart|condrestart|status|condpause}"
+exit 1
+esac
+
+exit $?
+exit $RETVAL
+

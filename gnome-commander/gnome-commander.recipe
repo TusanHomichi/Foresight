@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 - 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeCommander(GnomePackageRecipe):
+
+    name = 'gnome-commander'
+    version = '1.2.8.10'
+
+    buildRequires =  ['GConf:devel', 'ORBit2:devel', 'desktop-file-utils:runtime', 'esound:devel', 'expat:devel', 'flex:runtime',  'gettext:runtime', 'gnome-doc-utils:devellib', 'libgnome-keyring:devel', 'gnome-python:python', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libgsf:devel', 'libstdc++:devel', 'libxml2:devel', 'libxslt:runtime', 'popt:devel', 'python:devel', 'rarian:runtime', 'taglib:devel']
+
+    extraConfig = '--disable-scrollkeeper'

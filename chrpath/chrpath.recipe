@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class CHrpath(AutoPackageRecipe):
+    name = 'chrpath'
+    version = '0.13'
+    buildRequires = [ ]
+
+    def unpack(r):
+        # plain upstream dead 
+        #r.addArchive('ftp://ftp.hungry.com/pub/hungry/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.addArchive('http://www.tux.org/pub/x/ftp.hungry.com/chrpath/')
+        r.addPatch('chrpath-0.13-NULL-entry.patch')

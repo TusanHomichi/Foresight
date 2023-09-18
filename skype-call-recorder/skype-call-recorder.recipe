@@ -1,0 +1,14 @@
+#
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('cmakepackage')
+class SKypeCallRecorder(CMakePackageRecipe):
+    name = 'skype-call-recorder'
+    version = '0.8'
+    buildRequires = ['dbus:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gcc-c++:runtime', 'glib:devel', 'id3lib:devel', 'lame:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXinerama:devel', 'libXrandr:devel', 'libXrender:devel', 'libogg:devel', 'libpng:devel', 'libstdc++:devel', 'libvorbis:devel', 'openssl:devel', 'phonon:devel', 'qt4-core:lib', 'qt4-gui:lib', 'qt4:devel', 'zlib:devel']
+    def unpack(r):
+        r.addArchive('http://atdot.ch/scr/files/0.8/')
+

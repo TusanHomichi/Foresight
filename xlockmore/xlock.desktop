@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Xlock
+Comment=Screen Saver
+Encoding=UTF-8
+Icon=gnome-lockscreen
+Exec=xlock
+Terminal=false
+Type=Application

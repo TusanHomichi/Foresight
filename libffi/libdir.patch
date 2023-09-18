@@ -1,0 +1,10 @@
+diff -r 4fb586ba03eb libffi.pc.in
+--- a/libffi.pc.in	Tue Feb 17 20:00:54 2009 -0500
++++ b/libffi.pc.in	Tue Feb 17 20:02:42 2009 -0500
+@@ -6,5 +6,5 @@
+ Name: @PACKAGE_NAME@
+ Description: Library supporting Foreign Function Interfaces
+ Version: @PACKAGE_VERSION@
+-Libs: -L${libdir} -lffi
++Libs: -L${libdir}/@PACKAGE_NAME@-@PACKAGE_VERSION@/lib -lffi
+ Cflags: -I${includedir}

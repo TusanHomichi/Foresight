@@ -1,0 +1,81 @@
+#
+# Copyright (c) 2009 - 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Aqualung(AutoPackageRecipe):
+    name = 'aqualung'
+    version = '0.9beta11'
+ 
+    packageSummary = 'Aqualung is an advanced music player'
+    packageDescription = 'Aqualung is an advanced music player. It plays audio CDs, internet radio streams and podcasts as well as soundfiles in just about any audio format and has the feature of inserting no gaps between adjacent tracks.'
+    
+    buildRequires = [ 'alsa-lib:devel',
+                      'atk:devel',
+                      'bzip2:devel',
+                      'cairo:devel',
+                      'desktop-file-utils:runtime',
+                      'expat:devel',
+                      'ffmpeg:devel',
+                      'flac:devel',
+                      'fontconfig:devel',
+                      'freetype:devel',
+                      'glib:devel',
+                      'gtk:devel',
+                      'jack:devel',
+                      'lame:devel',
+                      'libX11:devel',
+                      'libXrender:devel',
+                      'libcddb:devel',
+                      'libcdio:devel',
+                      'liblrdf:devel',
+                      'libmad:devel',
+                      'libmodplug:devel',
+                      'libogg:devel',
+                      'libpng:devel',
+                      'libsamplerate:devel',
+                      'libsndfile:devel',
+                      'libstdc++:devel',
+                      'libusb:devel',
+                      'libvorbis:devel',
+                      'libxcb:devel',
+                      'libxml2:devel',
+                      'lua:devel',
+                      'pango:devel',
+                      'pixman:devel',
+                      'pkgconfig:devel',
+                      'pulseaudio:devel',
+                      'raptor:devel',
+                      'wavpack:devel',
+                      'xcb-util:devel',
+                      'zlib:devel',
+                      'libtool:runtime',  
+                      'automake:runtime', 
+                      'autoconf:runtime',
+                      'gettext:runtime', 
+                      'intltool:runtime',
+    ]
+ 
+    def unpack(r):
+        #r.addSvnSnapshot('http://aqualung.svn.sourceforge.net/svnroot/aqualung/trunk', revision = r.revision)
+        r.addArchive('http://downloads.sourceforge.net/aqualung/aqualung-0.9beta11.tar.gz')
+	r.addSource('%(name)s.desktop')
+        for patch in [ 'aqualung-0.9_beta11-ffmpeg.patch',
+                       'aqualung-0.9_beta11-libavformat54.patch',
+                       'aqualung-0.9_beta11-use_lrdf_cflags.patch',]:
+            r.addPatch(patch)
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+	r.Configure(' --with-alsa=yes --with-cdda=yes --with-cddb=yes --with-flac=yes '
+                    ' --with-id3=yes --with-jack=yes --with-ladspa=yes --with-loop=yes '
+                    ' --with-metadata=yes --with-metaedit=yes --with-mpc=no --with-mod=yes'
+                    ' --with-ogg=yes --with-oss=yes --with-sndfile=yes --with-src=yes'
+                    ' --with-systray=yes --with-vorbisenc=yes --with-wavpack=yes'
+                    ' --with-lame=yes --with-lavc=no --with-mpeg=yes --with-mpegstatrec=no'
+                    ' --with-ifp=no --with-mac=no')
+
+    def policy(r):
+	r.Install('src/img/icon_48.png', '%(datadir)s/pixmaps/%(name)s.png')
+	r.Desktopfile('%(name)s.desktop')

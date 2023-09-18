@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Polipo(AutoPackageRecipe):
+    name = 'polipo'
+    version = '1.0.4.1'
+
+    packageSummary = 'Polipo is a lightweight caching web proxy'
+    packageDescription = 'Polipo is a lightweight caching web proxy that was designed as a personal cache. It is able to cache incomplete objects and will complete them using range requests. It will use HTTP/1.1 pipelining if supported by the remote server.'
+ 
+    buildRequires = ['chkconfig:runtime', 'install-info:runtime', 'texinfo:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://freehaven.net/~chrisd/polipo/')
+	r.addSource('polipo.init')
+	r.addSource('polipo.config')
+	r.addSource('polipo.forbidden')
+	r.addSource('polipo.logrotate')
+	r.addSource('polipo.nm')
+
+    def make(r):
+	r.Make('PREFIX=%(prefix)s BINDIR=%(bindir)s')
+
+    def makeinstall(r):
+	r.MakeInstall('PREFIX=%(prefix)s BINDIR=%(bindir)s MANDIR=%(mandir)s INFODIR=%(infodir)s TARGET=%(destdir)s')
+	r.Install('polipo.init', '%(initdir)s/polipo', mode=0755)
+	r.Install('polipo.config', '%(sysconfdir)s/polipo/config', mode=0644)
+	r.Install('polipo.forbidden', '%(sysconfdir)s/polipo/forbidden', mode=0644)
+	r.Install('polipo.logrotate', '%(sysconfdir)s/logrotate.d/polipo', mode=0644)
+	r.Install('polipo.nm', '%(sysconfdir)s/NetworkManager/dispatcher.d/25-polipo', mode=0755)
+
+    def policy(r):
+	r.UtilizeUser('polipo', '%(initdir)s/%(name)s')
+        r.UtilizeGroup('polipo', '%(initdir)s/%(name)s')
+	r.Ownership('polipo', 'polipo', '%(sysconfdir)s/%(name)s/')
+
+    def setup(r):
+	r.unpack()
+	r.make()
+	r.makeinstall()
+	r.policy()

@@ -1,0 +1,68 @@
+#
+# Copyright 2005-2008 rPath Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html.
+#
+
+loadRecipe('tcl')
+loadSuperClass('rpmpackage')
+class graphviz(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'graphviz'
+    version = '2.20.3'
+    rpmRelease = '5.fc12.1'
+    rpmPatches = [ 'graphviz-2.20.3-configure-php.patch',
+                   'graphviz-2.20.3-gv.i.patch',
+                   ]
+
+    buildRequires = [
+        'atk:devel', 'cairo:devel', 'expat:devel', 'flex:runtime', 'bison:runtime',
+        'fontconfig:devel', 'freetype:devel', 'GConf:devel', 'gd:devel',
+        'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel',
+        'guile:devel', 'guile:runtime', 'libart_lgpl:devel', 'libbonobo:devel',
+        'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+        'libgnomeui:devel', 'libICE:devel', 'libjpeg:devel', 'libpng:devel',
+        'libSM:devel', 'libstdc++:devel', 'libtool:devel', 'libX11:devel',
+        'libXaw:devel', 'libXext:devel', 'libxml2:devel', 'libXmu:devel',
+        'libXpm:devel', 'libXrender:devel', 'libXt:devel', 'mono:cil',
+        'mono:devel', 'mono:runtime', 'ORBit2:devel', 'pango:devel', 'perl:lib',
+        'pkgconfig:devel', 'popt:devel', 'python:devel', 'ruby:devellib',
+        'ruby:runtime', 'swig:runtime', 'tcl:runtime', 'tk:devel', 'tk:runtime',
+        'zlib:devel', 'gettext:runtime', 'icedtea-jdk:runtime', 'perl:devel',
+        'librsvg:devel', 'lua:devel',
+    ]
+    # FIXME: re-look at buildReqs. add java support at least
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+
+    def configure(r):
+        r.Configure(' --disable-static --enable-shared --without-mylibgd '
+                    ' --with-x --disable-static --disable-dependency-tracking'
+                    ' --with-pangocairo --with-gdk-pixbuf')
+
+    def policy(r):
+        # Run dot .c to configure graphviz, and mark it as a config file
+        r.Run('LD_LIBRARY_PATH=%(destdir)s/%(libdir)s %(destdir)s/%(bindir)s/dot -c')
+        r.Config("%(libdir)s/%(name)s/config")
+
+        r.Move('%(datadir)s/%(name)s/{demo,doc/*}', '%(thisdocdir)s/')
+        r.Remove('%(libdir)s/graphviz/{python23,python24,python25,r}/', recursive = True)
+        r.Requires(exceptDeps=r'.*libperl\.so.*')
+        r.PackageSpec('%(name)s-ruby', '%(libdir)s/graphviz/ruby/')
+        r.PackageSpec('%(name)s-java', '%(libdir)s/graphviz/java/')
+        r.PackageSpec('%(name)s-guile', '%(libdir)s/graphviz/guile/')
+        r.PackageSpec('%(name)s-perl', '%(libdir)s/graphviz/perl/')
+        r.PackageSpec('%(name)s-mono', '%(libdir)s/graphviz/sharp/')
+        r.PackageSpec('%(name)s-lua', '%(libdir)s/graphviz/lua/')
+        r.PackageSpec('%(name)s-gnome', '%(libdir)s/graphviz/libgvplugin_gtk.*')
+
+        r.macros.protver = '.'.join(Tcl.version.split('.')[0:2])
+        r.PackageSpec('%(name)s-tcl',
+                      '%(libdir)s/graphviz/tcl/',
+                      '%(libdir)s/tcl%(protver)s/graphviz')
+        # XXX Find why bellow breaks...
+        # r.Requires('tcl:runtime(%(protver)s)',
+        r.Requires('tcl:runtime(8.5)',
+                    'graphviz-tcl:lib')
+
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channel name="xfce4-notifyd" version="1.0">
+  <property name="theme" type="string" value="Xfce-green"/>
+  <property name="notify-location" type="uint" value="2"/>
+  <property name="initial-opacity" type="double" value="0.550000"/>
+  <property name="fade-transparency" type="bool" value="true"/>
+  <property name="expire-timeout" type="int" value="5"/>
+</channel>

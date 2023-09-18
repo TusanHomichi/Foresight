@@ -1,0 +1,102 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+
+class SIPCommunicator(AutoPackageRecipe):
+
+    buildRequires = [ 'ant:runtime',
+                      'unzip:runtime', 
+                      'alsa-lib:devel',
+                      'dbus:devel',
+                      'desktop-file-utils:runtime',
+                      'libX11:devel',
+                      'libXt:devel',
+                      'libXv:devel',
+                      'libgnome:devel',
+                      'libstdc++:devel',
+                      'zlib:devel',
+                      'icedtea-jdk:runtime']
+
+    name = 'sip-communicator'
+    version = '1.0_alpha3_nightly.build.2791'
+
+
+    def setup(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://www.sip-communicator.org/download/nightly-builds/src/sip-communicator-src-%(version)s.zip')
+        r.Run('ant rebuild')
+
+        r.Install('resources/install/debian/%(name)s.sh.tmpl', '%(bindir)s/%(name)s', mode = 0755)
+        r.Replace(('SCDIR=/usr/lib/sip-communicator', 'SCDIR=%(libdir)s/sip-communicator'),
+                  ('LD_PRELOAD=/usr/lib/libaoss.so', 'LD_PRELOAD=%(libdir)s/libaoss.so'),
+                  '%(bindir)s/%(name)s')
+
+        r.MakeDirs('%(libdir)s/%(name)s/lib/bundle')
+        r.Install('lib/bundle/*.*', '%(libdir)s/%(name)s/lib/bundle/')
+        r.Install('lib/*.*', '%(libdir)s/%(name)s/lib/')
+        r.MakeDirs('%(libdir)s/%(name)s/lib/native')
+
+        # FIXME prebuilt binaries are evil ...
+        if Arch.x86_64:
+            r.Install('lib/native/linux-64/*.*', '%(libdir)s/%(name)s/lib/native/')
+        else:
+            # remove cruft ...
+            # introduce spurious deps
+            # we also want exact parity between x86 band x64 ...
+            for i in ['libmozembed-linux-gtk1.2.so',
+                      'libmozembed-linux-gtk2.so',
+                      'mozembed-linux-gtk1.2',
+                      'libjmcvid.so',
+                      'libjmdaud.so',
+                      'libjmf_alsa.so',
+                      'libjmfjawt.so',
+                      'libjmg723.so',
+                      'libjmgsm.so',
+                      'libjmh261.so',
+                      'libjmh263enc.so',
+                      'libjmjpeg.so',
+                      'libjmmpa.so',
+                      'libjmmpegv.so',
+                      'libjmmpx.so',
+                      'libjmutil.so',
+                      'libjmv4l.so',
+                      'libjmxlib.so',
+                      ]:
+
+                r.Remove('lib/native/linux/' + i)
+
+            r.Install('lib/native/linux/*.*',
+                      '%(libdir)s/%(name)s/lib/native/')
+    
+        r.MakeDirs('%(libdir)s/%(name)s/sc-bundles')
+        r.Install('sc-bundles/*.*', '%(libdir)s/%(name)s/sc-bundles/')
+        r.Install('lib/os-specific/linux/jdic_stub.jar', '%(libdir)s/%(name)s/lib/')
+        r.Install('sc-bundles/os-specific/linux/*.*', '%(libdir)s/%(name)s/sc-bundles/')
+
+
+        r.Install('resources/install/debian/%(name)s.svg',
+                  '%(datadir)s/pixmaps/%(name)s.svg')
+        
+        r.Install('resources/install/debian/%(name)s-16.xpm',
+                  '%(datadir)s/pixmaps/%(name)s-16.xpm')
+
+        r.Install('resources/install/debian/%(name)s-32.xpm',
+                  '%(datadir)s/pixmaps/%(name)s-32.svg')
+
+        r.Install('resources/install/debian/%(name)s.desktop',
+                  '%(datadir)s/applications/')
+
+        if Arch.x86_64:
+            r.Requires(exceptDeps=r'soname\:\ ELF64\/libjawt\.so\(SysV\ x86\_64\)')
+        else:
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libjawt\.so\(SysV\ x86\)')
+
+        # this stops groups pollution as pkg ships some stuff builtin for which it
+        # shouldn't ever be the default provider (via dep resolution)
+        r.Provides(exceptDeps=r'.*')
+        r.Requires(exceptDeps='java:.*')
+        r.Provides(exceptDeps='java:.*')

@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2006 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NotifyPython(AutoPackageRecipe):
+    name = 'notify-python'
+    version = '0.1.1'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'dbus-glib:devel',
+        'dbus:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel',
+        'libnotify:devel', 'libpng:devel', 'pango:devel', 'pkgconfig:devel',
+        'pygtk:devel', 'python:devel', 'zlib:devel', 'pygtk:python' ]
+
+    def unpack(r):
+        r.addArchive('http://www.galago-project.org/files/releases/source/%(name)s/')
+        # https://bugzilla.redhat.com/show_bug.cgi?id=626852
+        r.addPatch('notify-python-0.1.1-fix-GTK-symbols.patch')
+        r.addPatch('libnotify07.patch')
+
+    def make(r):
+        r.Run('touch src/pynotify.override')
+        r.Make()
+        

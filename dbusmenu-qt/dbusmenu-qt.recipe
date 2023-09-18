@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class DbusmenuQt(CMakePackageRecipe):
+
+    name = 'dbusmenu-qt'
+    version = '0.6.4'
+
+    buildRequires = [
+        'dbus:devel', 'libstdc++:devel', 'phonon:devel', 'qt4:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'libdbusmenu-qt'
+        r.addArchive('http://launchpad.net/libdbusmenu-qt/trunk/%(version)s/+download/')
+

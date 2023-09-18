@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class InfoPolKit(UserInfoRecipe):
+    name = 'info-polkituser'
+    version = '1'
+
+    def setup(r):
+        # https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=244950
+        r.User('polkituser', 87, comment='polkituser', homedir='/')

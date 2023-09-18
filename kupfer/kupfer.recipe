@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Kupfer(CPackageRecipe):
+    name = 'kupfer'
+    version = 'v207'
+ 
+    buildRequires = [
+            'python-setuptools:python', 
+            'dbus-python:python', 
+            'desktop-file-utils:runtime', 
+            'gettext:runtime', 
+            'gnome-python-desktop:python', 
+            'intltool:runtime', 
+            'python:devel', 
+            'pyxdg:python', 
+            'pygtk:runtime', 
+            'python-keybinder:python', 
+            'gnome-python:python', 
+            'pygtk:python', 
+            'glibc:devel', 
+            'gdata-python:python', 
+            'shared-mime-info:runtime', 
+            'gnome-doc-utils:runtime', 
+            'pygtk:devel', 
+            'pygtk:devellib', 
+            'python-keyring:python', 
+            'docutils:python', 
+            'xz:runtime'
+                    ]
+ 
+    def setup(r):
+	r.macros.altver = r.macros.version.replace('_', '-')
+        r.addArchive('http://kaizer.se/publicfiles/kupfer/kupfer-%(altver)s.tar.xz')
+        r.Configure(' --prefix=%(prefix)s --destdir=%(destdir)s --no-runtime-deps', configureName='waf configure')
+        r.Make(makeName='./waf build')
+        r.Run('./waf --destdir=%(destdir)s install')
+        r.Requires('python-keybinder:python', '%(bindir)s/kupfer')
+
+

@@ -1,0 +1,22 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class SharedDesktopOntologies(CMakePackageRecipe):
+
+    name = 'shared-desktop-ontologies'
+    version = '0.9.0'
+
+    buildRequires = [
+        'gcc-c++:runtime',
+        'pkgconfig:devel'
+    ]
+
+    def unpack(r):
+
+        r.cmakeArgs += ' -DPKGCONFIG_INSTALL_PREFIX=%(libdir)s/pkgconfig/ '
+
+        r.addArchive('http://downloads.sourceforge.net/project/oscaf/shared-desktop-ontologies/%(major_version)s/')
+

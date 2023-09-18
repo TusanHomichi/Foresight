@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeThemesStandard(GnomePackageRecipe):
+
+    name = 'gnome-themes-standard'
+    version = '3.0.2'
+
+    buildRequires = ['gtk3:devel']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.addSource('settings.ini', dir='%(sysconfdir)s/gtk-3.0/')
+        r.addSource('gtkrc', dir='%(sysconfdir)s/gtk-2.0/')
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        # Remove some files that are also in 'old' gnome-themes package
+        # We need them back when moving entirely to gnome3
+        for f in ['%(datadir)s/icons/HighContrast/index.theme',
+                  '%(datadir)s/icons/HighContrastInverse/index.theme',
+                  '%(datadir)s/icons/LowContrast/index.theme',
+                  '%(datadir)s/themes/HighContrast/gtk-2.0/gtkrc',
+                  '%(datadir)s/themes/HighContrast/index.theme',
+                  '%(datadir)s/themes/HighContrastInverse/gtk-2.0/gtkrc',
+                  '%(datadir)s/themes/HighContrastInverse/index.theme',
+                  '%(datadir)s/themes/LowContrast/gtk-2.0/gtkrc',
+                  '%(datadir)s/themes/LowContrast/index.theme'
+        ]:
+            r.Remove(f)

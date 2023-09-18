@@ -1,0 +1,31 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LittleCMS(AutoPackageRecipe):
+
+    name = "lcms"
+    version = "1.19"
+
+    buildRequires = [
+        'libjpeg:devel', 'libstdc++:devel', 'libtiff:devel', 'libtool:runtime',
+        'python:devel', 'swig:runtime', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://www.littlecms.com/')
+
+        # Convert docs to utf-8
+        r.addPatch('lcms-1.19-doc-unicode.patch')
+
+        # Regenerate sources
+        r.Run('./swig_lcms', dir='python')
+
+    def configure(r):
+
+        r.Configure('--with-python --disable-static' )
+    def policy(r):
+        r.Symlink("%(libdir)s/liblcms.so.1","%(libdir)s/liblcms.so")
+

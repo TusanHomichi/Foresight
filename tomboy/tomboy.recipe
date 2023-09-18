@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2004-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadRecipe('gnomepackage')
+class Tomboy(GnomePackageRecipe):
+    name = 'tomboy'
+    version = '1.14.0'
+    packageSummary = 'Tomboy is a desktop note-taking application for Linux and Unix'
+    packageDescription = """
+Tomboy is a desktop note-taking application for Linux and Unix.
+Simple and easy to use, but with potential to help you organize the ideas and information you
+deal with every day. The key to Tomboy's usefulness lies in the ability to
+relate notes and ideas together. Using a WikiWiki-like linking system,
+organizing ideas is as simple as typing a name.  Branching an idea off is easy
+as pressing the Link button. And links between your ideas won't break, even when
+renaming and reorganizing them.
+"""
+
+    buildRequires = [ 
+                'GConf:runtime', 
+                'GConf:devel',
+                'atk:devel', 
+                'cairo:devel', 
+                'desktop-file-utils:runtime', 
+                'fontconfig:devel', 
+                'freetype:devel', 
+                'glib:devel', 
+                'gmime:devellib', 
+                'gmime:lib', 
+                'gmime:cil', 
+                'gnome-sharp:devellib', 
+                'gnome-sharp:cil', 
+                'rarian:devel', 
+                'gtk-sharp:devellib', 
+                'gtk-sharp:cil', 
+                'gtkspell:devellib', 
+                'libart_lgpl:devel', 
+                'libgnomecanvas:devel', 
+                'libgnomeprint:devel', 
+                'libgnomeprintui:devel', 
+                'libpng:devellib', 
+                'libxml2:devel', 
+                'mono:devel', 
+                'mono:lib', 
+                'mono:runtime', 
+                'mono:cil', 
+                'pango:devel', 
+                'rarian:runtime', 
+                'gnome-doc-utils:devel', 
+                'gnome-doc-utils:runtime', 
+                'ndesk-dbus:cil', 
+                'ndesk-dbus:devellib', 
+                'mono-addins:cil', 
+                'ndesk-dbus-glib:cil', 
+                'ndesk-dbus-glib:devellib', 
+                'gnome-desktop-sharp:cil', 
+                'gnome-desktop-sharp:devellib', 
+                'mono-addins:devellib',
+                'shared-mime-info:runtime',
+                'automake:runtime',
+                'autoconf:runtime',
+                'libtool:runtime',
+                'dbus-sharp:devellib',
+                'dbus-sharp:cil',
+                'dbus-sharp-glib:devellib',
+                'dbus-sharp-glib:cil',
+                'xz:runtime',
+                    ]
+
+    externalArchive = 'http://download.gnome.org/sources/tomboy/1.14/'
+
+    extraConfig = (' --disable-schemas-install --disable-update-mimedb '
+                   ' --disable-scrollkeeper --enable-sketching=yes '
+                   ' --enable-panel-applet=no')
+    patches = [
+                '10_disable_unit_tests',
+                '20_remove_pcfile_requires',
+                ]
+
+    def build(r):
+        r.Run('autoreconf -fi')
+        r.disableParallelMake()
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        GnomePackageRecipe.build(r)
+        r.Remove('%(datadir)s/mime/mime.cache')

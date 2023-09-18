@@ -1,0 +1,82 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class Libxml2(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libxml2'
+    version = '2.7.8'
+    rpmRelease = '9.fc17'
+    rpmPatches = [ 'libxml2-Multilib-fix.patch',
+                   'libxml2-Reactivate-the-shared-library-versionning-script.patch',
+                   # 
+                   'libxml2-Fix-a-potential-freeing-error-in-XPath.patch',
+                   'libxml2-Small-fix-for-previous-commit.patch',
+                   'libxml2-Fix-some-potential-problems-on-reallocation-failures.patch',
+                   'libxml2-Hardening-of-XPath-evaluation.patch',
+                   'libxml2-Fix-an-off-by-one-error-in-encoding.patch',
+                   'libxml2-Fix-missing-error-status-in-XPath-evaluation.patch',
+                   'libxml2-Make-sure-the-parser-returns-when-getting-a-Stop-order.patch',
+                   'libxml2-Fix-an-allocation-error-when-copying-entities.patch',
+                   'libxml2-Add-hash-randomization-to-hash-and-dict-structures.patch',
+                   'libxml2-force-randomization-of-dict-and-hash.patch',
+                   'libxml2-Fix-a-failure-to-report-xmlreader-parsing-failures.patch',
+                   'libxml2-Fix-parser-local-buffers-size-problems.patch',
+                   'libxml2-Fix-entities-local-buffers-size-problems.patch',
+                   'libxml2-Fix-an-error-in-previous-commit.patch',
+                   'libxml2-Do-not-fetch-external-parsed-entities.patch',
+                   # 
+                   'libxml2-Impose-a-reasonable-limit-on-attribute-size.patch',
+                   'libxml2-Impose-a-reasonable-limit-on-comment-size.patch',
+                   'libxml2-Impose-a-reasonable-limit-on-PI-size.patch',
+                   'libxml2-Cleanups-and-new-limit-APIs-for-dictionaries.patch',
+                   'libxml2-Introduce-some-default-parser-limits.patch',
+                   'libxml2-Implement-some-default-limits-in-the-XPath-module.patch',
+                   'libxml2-Fixup-limits-parser.patch',
+                   # 
+                   'libxml2-Enforce-XML_PARSER_EOF-state-handling-through-the-parser.patch',
+                   'libxml2-Avoid-quadratic-behaviour-in-some-push-parsing-cases.patch',
+                   'libxml2-More-avoid-quadratic-behaviour.patch',
+                   'libxml2-Strengthen-behaviour-of-the-push-parser-in-problematic-situations.patch',
+                   'libxml2-More-fixups-on-the-push-parser-behaviour.patch',
+                   'libxml2-Fix-a-segfault-on-XSD-validation-on-pattern-error.patch',
+                   'libxml2-Fix-an-unimplemented-part-in-RNG-value-validation.patch',
+                   'libxml2-Fix-an-off-by-one-pointer-access.patch',
+                   'libxml2-Change-the-XPath-code-to-percolate-allocation-errors.patch',
+                   ]
+    
+    buildRequires = [ 'python:runtime', 'python:devel', 'zlib:devel',
+                      'perl:runtime', 'wget:runtime',
+                      'autoconf:runtime', 'automake:runtime', ]
+    # Never put 'libxslt:python', 'libxslt:runtime' as buildReqs. breaks rMooking (dep loops)
+
+
+    def policy(r):
+        # some docs are already installed by make install;
+        # tell which component owns them
+        r.ComponentSpec('devel', '%(thisdocdir)s/html/')
+        r.Move('%(docdir)s/%(name)s-python-%(version)s/examples/*',
+               '%(thisdocdir)s/examples/')
+
+        r.Move('%(docdir)s/%(name)s-python-%(version)s/TODO',
+               '%(thisdocdir)s/TODO.python')
+        r.Remove('%(docdir)s/%(name)s-python-%(version)s', recursive=True)
+        # other docs are not installed by make install:
+        r.Doc('doc/*.html', 'doc/*.gif', 'doc/*.png',
+              'doc/tutorial', 'doc/libxml2-api.xml',
+              component='devel')
+        r.Doc('python/libxml2class.txt', 'python/tests/*.py',
+              'doc/*.py', 'doc/python.html')
+
+        for test in ('check-relaxng-test-suite.py',
+                     'check-relaxng-test-suite2.py',
+                     'check-xinclude-test-suite.py',
+                     'check-xml-test-suite.py',
+                     'check-xsddata-test-suite.py',
+                     'testapi'
+                     'testThreads',
+                     'testapi'):
+                if test.endswith('.py'):
+                    r.Run('sed -i -e "s/quiet = 1/quiet = 0/g" %s' % test)
+                    r.TestSuite('.', "./%s" % test)

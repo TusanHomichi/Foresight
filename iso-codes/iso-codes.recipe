@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Changes 2010 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class isocodes(AutoPackageRecipe):
+    buildRequires=[ 'glibc:devel','gettext:devel','python:runtime',
+        'PyXML:python', 'gawk:runtime', 'gettext:runtime' ]
+
+    name = "iso-codes"
+    version = "3.17"
+
+    def unpack(r):
+        r.addArchive("ftp://pkg-isocodes.alioth.debian.org/pub/pkg-isocodes/iso-codes-%(version)s.tar.bz2")

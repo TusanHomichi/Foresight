@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007-2008 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NdeskDbusGlib(AutoPackageRecipe):
+    name = 'ndesk-dbus-glib'
+    version = '0.4.1'
+    buildRequires = [ 'ndesk-dbus:devellib', 'ndesk-dbus:cil', 'mono:devel', 'mono:cil', 'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.addArchive('http://www.ndesk.org/archive/dbus-sharp/')
+
+    def policy(r):
+        r.Replace('\${exec_prefix}/lib', '%(libdir)s', '%(libdir)s/pkgconfig/*.pc')

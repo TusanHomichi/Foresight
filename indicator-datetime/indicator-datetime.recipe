@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IndicatorDatetime(AutoPackageRecipe):
+    name = 'indicator-datetime'
+    version = '0.2.3'
+ 
+    buildRequires = [ 'GConf:devel', 'atk:devel', 'cairo:devel', 'dbus-glib:devel',
+                      'dbus:devel', 'desktop-file-utils:runtime', 'evolution-data-server:devel',
+                      'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'geoclue:devel',
+                      'gettext:runtime', 'glib:devel', 'gtk:devel', 'ido:devel', 'intltool:runtime',
+                      'json-glib:devel', 'libdbusmenu-glib:devel', 'libdbusmenu-gtk:devel', 'libical:devel',
+                      'libindicator:devel', 'libpng:devel', 'libsoup:devel', 'libxml2:devel', 'pango:devel',
+                      'polkit-gnome:devel', 'polkit:devel', 'sqlite:devel', 'unique:devel', 'pkgconfig:devel',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/0.2/%(version)s/+download/')
+        
+    def configure(r):
+        # bla bla bla ...
+        r.Replace('>= EDS_REQUIRED_VERSION', '>= $EDS_REQUIRED_VERSION', 'configure')
+        r.Replace('>= CAIRO_REQUIRED_VERSION', '>= $CAIRO_REQUIRED_VERSION', 'configure')
+        r.Replace('>= GDK_REQUIRED_VERSION', '>= $GDK_REQUIRED_VERSION', 'configure')
+        r.Replace('>= GCONF_REQUIRED_VERSION', '>= $GCONF_REQUIRED_VERSION', 'configure')
+
+        r.Configure(' --disable-static ')
+

@@ -1,0 +1,9 @@
+--- Makefile	2009-07-27 10:30:38.027256216 +0200
++++ Makefile.new	2009-07-27 10:30:32.326238966 +0200
+@@ -1,6 +1,6 @@
+ .PHONY: clean install tests build
+ 
+-prefix ?= /usr/local
++prefix ?= /usr
+ bindir ?= $(prefix)/bin
+ datadir ?= $(prefix)/share

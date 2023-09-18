@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LxappearanceObconf(AutoPackageRecipe):
+    name = 'lxappearance-obconf'
+    version = '0.2.0'
+ 
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'imlib2:devel', 
+        'intltool:runtime', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXft:devel', 
+        'libpng:devel', 
+        'libxml2:devel', 
+        'lxappearance:devel',
+        'openbox:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://l10n.bsnet.se/~brother/lxde_releases/')

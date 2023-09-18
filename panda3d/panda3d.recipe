@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Panda3d(AutoPackageRecipe):
+    name = 'panda3d'
+    version = '1.8.0' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = [ 'Mesa:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime',
+                      'fmodex:devel', 'fontconfig:devel', 'freetype:devel',
+                      'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel', 'libX11:devel',
+                      'libXrandr:devel', 'libXxf86dga:devel', 'libgcc:devellib', 'libjpeg:devel',
+                      'libpng:devel', 'libstdc++:devel', 'libtiff:devel', 
+                      # XXX highly debatable that we want to have cg as a dep as it will stop
+                      # running in boxes with non NVidia cards (and not using closed nvidia drivers)
+                      # unless this does a runtime check ...
+                      # 'nvidia-cg-toolkit:devel',
+                      'openal:devel', 'openssl:devel', 'pango:devel', 'python:devel', 'python:tk',
+                      'tinyxml:devel', 'zlib:devel', 'libsquish:devel', 'ode:devel', 'bison:devel',
+                      'bison:runtime', 'flex:devel', 'flex:runtime', 'make:runtime', 'gcc-c++:runtime',
+                      'gcc:runtime', 'gcc:devel', 'glibc:devel', 'pkgconfig:devel',
+                      'MySQL-python:python', 'libXcursor:devel', 'wxPython:python', 'cvs:runtime',
+                     ]
+ 
+    def setup(r):
+        r.addCvsSnapshot(':pserver:anonymous@panda3d.cvs.sourceforge.net:/cvsroot/panda3d', 'panda3d')
+        r.macros.cflags += ' -fno-strict-aliasing  -L%(libdir)s/xorg.mesa.3d '
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.ManualConfigure("--everything --no-opencv --no-ode --no-maya2012 --no-ffmpeg --no-fmodex --no-bullet",
+                          configureName = 'makepanda/makepanda.py ')
+        r.SetModes('./makepanda/installpanda.py', 0755)
+        r.ManualConfigure("--destdir=%(destdir)s --prefix=%(prefix)s",
+                          configureName = 'makepanda/installpanda.py ')
+        r.Remove('%(datadir)s/%(name)s/*/*/*.{cxx,cpp,h}')
+        # so that :data/:lib/:runtime doesn 't depend in :devellib which drags :devel
+        r.ComponentSpec('lib', '%(libdir)s/%(name)s/')

@@ -1,0 +1,13 @@
+--- soprano-2.2.2/CMakeLists.txt.orig	2009-03-02 01:24:08.000000000 +0300
++++ soprano-2.2.2/CMakeLists.txt	2009-03-02 01:24:31.000000000 +0300
+@@ -113,8 +113,8 @@
+ # These two options below make it set the RPATH of the installed targets to all
+ # RPATH directories outside the current CMAKE_BINARY_DIR and also the library 
+ # install directory. Alex
+-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH  TRUE)
+-set(CMAKE_INSTALL_RPATH                ${LIB_DESTINATION} )
++#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH  TRUE)
++#set(CMAKE_INSTALL_RPATH                ${LIB_DESTINATION} )
+ 
+ if(APPLE)
+    set(CMAKE_INSTALL_NAME_DIR ${LIB_DESTINATION})

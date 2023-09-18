@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenSSLEnginePKCS11(AutoPackageRecipe):
+
+    name = 'openssl-engine-pkcs11'
+    version = '0.1.4'
+
+    buildRequires = [
+        'libp11:devel', 'openssl:devel', 'pkgconfig:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'engine_pkcs11'
+        r.addArchive('http://www.opensc-project.org/files/engine_pkcs11/')
+
+    def configure(r):
+
+        r.Configure('--disable-static')
+

@@ -1,0 +1,11 @@
+--- monikers/GNOME_VFS_Moniker_std.server.in.in.orig	2006-01-09 22:49:38.000000000 +0100
++++ monikers/GNOME_VFS_Moniker_std.server.in.in	2006-01-09 22:51:51.000000000 +0100
+@@ -1,7 +1,7 @@
+ <oaf_info>
+ 
+ <oaf_server iid="OAFIID:GNOME_VFS_Moniker_std_Factory"
+-	type="shlib" location="@MONIKER_LIBDIR@/libmoniker_gnome_vfs_std">
++	type="shlib" location="/usr/lib/gnome-vfs-2.0/libmoniker_gnome_vfs_std">
+ 	<oaf_attribute name="repo_ids" type="stringv">
+ 		<item value="IDL:Bonobo/GenericFactory:1.0"/>
+ 	</oaf_attribute>

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ctags(AutoPackageRecipe):
+    name = 'ctags'
+    version = '5.8'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/ctags/ctags/%(version)s/%(name)s-%(version)s.tar.gz')
+    def makeinstall(r):
+        r.MakePathsInstall()
+        r.AutoDoc('EXTENDING.html')
+

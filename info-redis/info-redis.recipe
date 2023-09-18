@@ -1,0 +1,8 @@
+class infoRedis(UserInfoRecipe):
+    name = 'info-redis'
+    version = '1'
+
+    def setup(r):
+        r.User('redis', 292, groupid=292,
+               comment='Redis Server',
+               shell='/sbin/nologin')

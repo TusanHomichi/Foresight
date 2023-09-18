@@ -1,0 +1,19 @@
+diff -r 821b4b2e5fc0 -r 2c8410e73e45 party.py
+--- a/party.py	Mon Aug 31 12:34:53 2009 +0200
++++ b/party.py	Sat Jul 03 16:53:18 2010 -0500
+@@ -1,13 +1,12 @@
+ #This file is part of Tryton. The COPYRIGHT file at the top level of
+ #this repository contains the full copyright notices and license terms.
+ from trytond.model import ModelView, ModelSQL, fields
+-
++from trytond.pyson import Eval, Bool,Not
+ 
+ STATES = {
+-    'readonly': "active == False",
++    'readonly': Not(Bool(Eval("active"))),
+ }
+ 
+-
+ class Party(ModelSQL, ModelView):
+     """Class: Party(OSV)
+     This class inherits party.party model and add the field 'comment'.

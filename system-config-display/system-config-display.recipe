@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class SystemConfigDisplay(RPMPackageRecipe,CPackageRecipe):
+    name = 'system-config-display'
+    version = '1.0.51'
+    rpmRelease = '5.fc9'
+
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'gtk:runtime', 'pygobject:python', 'pygtk:python', 'python:devel', 'pyxf86config:python', 'rhpl:python', 'rhpxl:python', 'gettext:runtime']
+ 
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('no_consolehelper.patch')
+
+        r.Replace('python2', 'python',
+                  'src/system-config-display', 'src/xconf.py', 'src/monitorDialog.py',
+                  'src/xConfigDialog.py', 'src/videocardDialog.py', 'src/screenSizePreview.py')
+
+        r.Replace('Exec=','Exec=gksudo ','system-config-display.desktop','system-config-display.desktop.in')
+        r.Replace('^Categories=System;Application;SystemSetup;GTK;',
+                  'Categories=System;Settings;GTK;',
+                  'system-config-display.desktop',
+                  'system-config-display.desktop.in')
+        r.Make()
+        r.MakeInstall(rootVar='INSTROOT')

@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TuxPaint(CPackageRecipe):
+    name = 'tuxpaint'
+    version = '0.9.21'
+
+    buildRequires = [ 'fontconfig:devel', 'freetype:devel', 'pkgconfig:devel', 
+        'gtk:runtime', 'libpaper:devel', 'libpng:devel', 'gettext:runtime',
+        'SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'SDL_ttf:devel',
+        'zlib:devel', 'librsvg:devel', 'cairo:devel', 'SDL_Pango:devel', 'desktop-file-utils:runtime', 'fribidi:devel', 'intltool:runtime' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/tuxpaint/%(name)s-%(version)s.tar.gz')
+	r.addSource('tuxpaint.desktop')
+
+        r.Replace(
+            ('linux_PREFIX:=.*', 'PREFIX:=$(DESTDIR)/usr/'),
+            ('DOC_PREFIX:=.*', 'DOC_PREFIX:=$(DESTDIR)/%(thisdocdir)s/'),
+            ('GNOME_PREFIX:=.*', 'GNOME_PREFIX:=$(PREFIX)/'),
+            ('KDE_PREFIX:=.*', 'KDE_PREFIX:=$(PREFIX)/share/applnk'),
+            ('KDE_ICON_PREFIX=.*', 'KDE_ICON_PREFIX=$(PREFIX)/share/icons/'),
+            'Makefile')
+
+        r.Run('find . -type d -name CVS | xargs rm -rf')
+        r.Make('MAGIC_PREFIX=%(libdir)s/tuxpaint/plugins')
+        r.MakeInstall('CONFDIR=%(destdir)s%(sysconfdir)s X11_ICON_PREFIX=%(destdir)s%(datadir)s/pixmaps GNOME_PREFIX=%(prefix)s KDE_PREFIX="" KDE_ICON_PREFIX=%(datadir)s/icons MAGIC_PREFIX=%(destdir)s%(libdir)s/tuxpaint/plugins')
+	r.Desktopfile('tuxpaint.desktop')
+
+        r.Requires('netpbm:runtime', '%(bindir)s/tuxpaint')
+
+        # This is in a chinese font directory, and definitely
+        # does not need to run for normal installations.
+        r.Requires(exceptions='maketuxfont.py')

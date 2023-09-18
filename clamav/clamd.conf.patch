@@ -1,0 +1,94 @@
+commit a24488b3c9e8bc7c68106b8553f88b4b5f42bfcc
+Author: Mark Trompell <mark@foresightlinux.org>
+Date:   Fri Jan 24 08:40:56 2014 +0100
+
+    create a hopefully sane default
+
+diff --git a/etc/clamd.conf.sample b/etc/clamd.conf.sample
+index 1469390..a7cf2bb 100644
+--- a/etc/clamd.conf.sample
++++ b/etc/clamd.conf.sample
+@@ -5,13 +5,13 @@
+ 
+ 
+ # Comment or remove the line below.
+-Example
++#Example
+ 
+ # Uncomment this option to enable logging.
+ # LogFile must be writable for the user running daemon.
+ # A full path is required.
+ # Default: disabled
+-#LogFile /tmp/clamd.log
++LogFile /var/log/clamd.log
+ 
+ # By default the log file is locked for writing - the lock protects against
+ # running clamd multiple times (if want to run another clamd, please
+@@ -28,11 +28,11 @@ Example
+ # in bytes just don't use modifiers. If LogFileMaxSize is enabled, log
+ # rotation (the LogRotate option) will always be enabled.
+ # Default: 1M
+-#LogFileMaxSize 2M
++LogFileMaxSize 20M
+ 
+ # Log time with each message.
+ # Default: no
+-#LogTime yes
++LogTime yes
+ 
+ # Also log clean files. Useful in debugging but drastically increases the
+ # log size.
+@@ -41,7 +41,7 @@ Example
+ 
+ # Use system logger (can work together with LogFile).
+ # Default: no
+-#LogSyslog yes
++LogSyslog yes
+ 
+ # Specify the type of syslog messages - please refer to 'man syslog'
+ # for facility names.
+@@ -63,7 +63,7 @@ Example
+ # This option allows you to save a process identifier of the listening
+ # daemon (main thread).
+ # Default: disabled
+-#PidFile /var/run/clamd.pid
++PidFile /var/run/clamd.pid
+ 
+ # Optional path to the global temporary directory.
+ # Default: system specific (usually /tmp or /var/tmp).
+@@ -71,7 +71,7 @@ Example
+ 
+ # Path to the database directory.
+ # Default: hardcoded (depends on installation options)
+-#DatabaseDirectory /var/lib/clamav
++DatabaseDirectory /usr/share/clamav
+ 
+ # Only load the official signatures published by the ClamAV project.
+ # Default: no
+@@ -191,7 +191,7 @@ Example
+ 
+ # Run as another user (clamd must be started by root for this option to work)
+ # Default: don't drop privileges
+-#User clamav
++User clamav
+ 
+ # Initialize supplementary group access (clamd must be started by root).
+ # Default: no
+@@ -219,7 +219,7 @@ Example
+ 
+ # Detect Possibly Unwanted Applications.
+ # Default: no
+-#DetectPUA yes
++DetectPUA yes
+ 
+ # Exclude a specific PUA category. This directive can be used multiple times.
+ # See https://github.com/vrtadmin/clamav-faq/blob/master/faq/faq-pua.md for 
+@@ -239,7 +239,7 @@ Example
+ # ClamAV uses special algorithms to provide accurate detection. This option
+ # controls the algorithmic detection.
+ # Default: yes
+-#AlgorithmicDetection yes
++AlgorithmicDetection yes
+ 
+ # This option causes memory or nested map scans to dump the content to disk.
+ # If you turn on this option, more data is written to disk and is available

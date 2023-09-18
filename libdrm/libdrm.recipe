@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibDRM(AutoPackageRecipe):
+    name = 'libdrm'
+    version = '2.4.42'
+    buildRequires = [ 'autoconf:runtime','automake:runtime','pkgconfig:devel',
+                      'libxml2:runtime',  'libpciaccess:devel', 'libxslt:runtime',
+                      'libtool:devel', 'libtool:runtime', 'util-macros:devel', 
+                      'libpthread-stubs:devellib', 'cairo:devel', 'udev:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://dri.freedesktop.org/%(name)s/')
+
+    def configure(r):
+        r.macros.optflags += ' -fno-strict-aliasing '
+        # hardcode the 666 instead of 660 for device nodes
+        r.addPatch('libdrm-make-dri-perms-okay.patch')
+        # remove backwards compat not needed
+        # r.addPatch('libdrm-2.4.0-no-bc.patch')
+        # make rule to print the list of test programs
+        r.addPatch('libdrm-2.4.25-check-programs.patch')
+
+        r.addSource('91-drm-modeset.rules')
+
+        r.addPatch('libdrm-2.4.0-no-bc.patch')
+
+        r.Run('autoreconf -fi')
+        r.Configure(' --with-pic'
+                    ' --enable-udev'
+                    ' --enable-libkms'
+                    ' --enable-vmwgfx'
+                    ' --enable-manpages')
+
+    def makeinstall(r):
+        r.MakeInstall()
+
+        r.Make('$(make check-programs)',
+               dir = 'tests')
+        r.MakeDirs('%(bindir)s')
+        r.Run(""" for foo in $(make check-programs) ;do cp .libs/$foo %(destdir)s%(bindir)s/ ; done ;""",
+              dir = 'tests')
+
+        r.Install('91-drm-modeset.rules',
+                  '%(sysconfdir)s/udev/rules.d/',
+                  mode = 0644)
+
+        r.Remove('%(includedir)s/libdrm/{r300,via_3d}_reg.h')

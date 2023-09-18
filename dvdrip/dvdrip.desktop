@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Icon[en_US]=/usr/share/pixmaps/dvdrip.png
+Name[en_US]=DVD::RIP
+Exec=dvdrip
+Name=DVD::RIP
+Icon=/usr/share/pixmaps/dvdrip.png

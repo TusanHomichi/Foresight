@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Exempi(AutoPackageRecipe):
+
+    buildRequires = [ 'expat:devel', 'libstdc++:devel',   'boost:devel', 'zlib:devel' ]
+    name = 'exempi'
+    version = '2.1.1'
+
+    def unpack(r):
+        r.addArchive('http://libopenraw.freedesktop.org/download/')
+        r.macros.ldflags += ' -L%(libdir)s'
+        r.macros.cppflags += ' -I%(includedir)s'
+
+    def configure(r):
+        r.Configure()
+        r.Run(""" sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool""")

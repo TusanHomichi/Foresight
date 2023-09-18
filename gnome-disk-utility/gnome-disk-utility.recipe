@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class GDU(GnomePackageRecipe):
+    buildRequires = [ 'polkit-gnome:devel', 'polkit:devel', 'desktop-file-utils:runtime',
+                      'libgnome-keyring:devel', 'libnotify:devel',
+                      'libsexy:devel', 'nautilus:devel', 'rarian:devel',
+                      'rarian:runtime', 'unique:devel', 'xcb-util:devel',
+                      'DeviceKit-disks:data', 'dbus-glib:runtime',
+                      'DeviceKit-disks:devellib', 'libatasmart:devel',
+                      'avahi-glib:devel', 'avahi:devel',
+                      ]
+    name = 'gnome-disk-utility'
+    version = '2.32.1'
+
+    def policy(r):
+        r.Requires('DeviceKit-disks:lib', 'gnome-disk-utility:lib')

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Glipper(PackageRecipe):
+    name = 'glipper'
+    version = '2.3'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel', 'libpng:devel',
+                      'pango:devel', 'perl:runtime', 'perl-XML-Parser:perl', 'gnome-python:python',
+                      'pygobject:python', 'pygtk:python', 'python:devel','GConf:runtime',
+                      'pygtk:devel', 'gnome-python:devellib', 'gnome-python-desktop:python',
+                      'pygobject:runtime', 'gettext:runtime', 'intltool:runtime', 'python-keybinder:python', 'pyxdg:python', 'python-setuptools:python', 'python-distutils-extra:python', 'gobject-introspection:devel' ]
+
+    def setup(r):
+        r.addArchive("http://launchpad.net/%(name)s/trunk/%(version)s/+download/")
+        r.PythonSetup(data='--install-data=%(prefix)s')

@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libbeagle(AutoPackageRecipe):
+    name = 'libbeagle'
+    version = '0.3.9'
+
+    buildRequires = [ 'glib:devel', 'libxml2:devel', 'pkgconfig:devel',
+                      'pygtk:devel', 'zlib:devel']
+
+    def unpack(r):
+        r.addArchive('mirror://gnome/%(name)s/%(major_version)s/')
+
+        r.Environment('MONO_PATH', '%(destdir)s/%(libdir)s/%(name)s')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+
+    def configure(r):
+        r.Configure('--disable-docs')

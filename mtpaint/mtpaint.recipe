@@ -1,0 +1,14 @@
+class MtPaint(AutoPackageRecipe):
+ 
+    name = 'mtpaint'
+    version = '3.30'
+ 
+    buildRequires = ['gtk:devel', 'pkgconfig', 'expat:devel', 
+                     'freetype:devel', 'libjpeg:devel', 'libtiff:devel', 'giflib:devel', 'desktop-file-utils:runtime', 'which:runtime']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.addSource('mtpaint.desktop')
+        r.addSource('Mtpaint-logo.png')
+	r.Move('Mtpaint-logo.png', '/usr/share/mtpaint/')
+        r.Desktopfile('mtpaint.desktop')

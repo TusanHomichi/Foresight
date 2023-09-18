@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=FooBillard
+Exec=foobillard
+Icon=FooBillard
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;Game;
+StartupNotify=true

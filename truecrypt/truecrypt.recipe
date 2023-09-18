@@ -1,0 +1,45 @@
+class TrueCryptRecipe(CPackageRecipe):
+
+    name = 'truecrypt'
+    version = '7.1a'
+
+    buildRequires = [
+                'fuse:devel',
+                'gcc:runtime',
+                'gcc-c++:runtime',
+                'glibc:devel',
+                'libgcc:devellib',
+                'libstdc++:devel',
+                'make:runtime',
+                'pkgconfig:devel',
+                'userspace-kernel-headers:devel',
+                'wxWidgets:devel',
+                'nasm:runtime',
+                'desktop-file-utils:runtime',
+    ]
+
+    def setup(r):
+        # TrueCrypt's homepage is annoying, get around it
+        r.addArchive('TrueCrypt 7.1a Source.tar.gz')
+        r.addPatch('truecrypt-arch-detection.patch')
+        r.addSource('truecrypt.desktop')
+
+        # Need a few things from RSA to build TrueCrypt
+        for pkcsh_fn in ('pkcs11', 'pkcs11f', 'pkcs11t'):
+            r.addSource('ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/%s.h' % pkcsh_fn)
+
+        # Build and point TrueCrypt to the right place for PKCS
+        r.Make('PKCS11=%(builddir)s')
+
+        # Install the binary
+        r.Install('Main/truecrypt',
+                  '%(bindir)s/',
+                  mode = 0755)
+
+        r.Install('Resources/Icons/TrueCrypt-48x48.xpm',
+                  '%(datadir)s/pixmaps/truecrypt.xpm',
+                  mode = 0644)
+        r.Desktopfile('truecrypt.desktop')
+
+        # Don't forget the License file
+        r.Doc('License.txt')

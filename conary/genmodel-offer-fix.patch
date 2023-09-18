@@ -1,0 +1,81 @@
+diff -r de2dffe118c0 scripts/genmodel
+--- a/scripts/genmodel	Fri Jan 04 20:23:40 2013 +0000
++++ b/scripts/genmodel	Fri Jan 11 20:57:23 2013 +0000
+@@ -631,43 +631,43 @@
+             print 'model written to %s' % outfn
+ 
+ 
+-    # offer to send debugging data to rPath
+-    answer = getAnswer(
+-        'Send your system manifest, model, and unmodeled operation report\n'
+-        "to rPath for rPath's debugging use? [y/N]:")
+-    if answer and answer[0].lower() == 'y':
+-        mailhost = getAnswer('What is your mail host? (localhost):')
+-        if not mailhost:
+-            mailhost='localhost'
+-        sender = ''
+-        while not sender:
+-            sender = getAnswer('Send from what email address?')
++    # # offer to send debugging data to rPath
++    # answer = getAnswer(
++    #     'Send your system manifest, model, and unmodeled operation report\n'
++    #     "to rPath for rPath's debugging use? [y/N]:")
++    # if answer and answer[0].lower() == 'y':
++    #     mailhost = getAnswer('What is your mail host? (localhost):')
++    #     if not mailhost:
++    #         mailhost='localhost'
++    #     sender = ''
++    #     while not sender:
++    #         sender = getAnswer('Send from what email address?')
+ 
+-        recipient = 'sysmodel-report@rpath.com'
++    #     recipient = 'sysmodel-report@rpath.com'
+ 
+-        s = smtplib.SMTP(mailhost)
+-        msg = MIMEMultipart()
+-        msg['Subject'] = 'Conary sysmodel data report'
+-        msg['From'] = sender
+-        msg['To'] = recipient
+-        msg.preamble = 'System model genmodel report'
++    #     s = smtplib.SMTP(mailhost)
++    #     msg = MIMEMultipart()
++    #     msg['Subject'] = 'Conary sysmodel data report'
++    #     msg['From'] = sender
++    #     msg['To'] = recipient
++    #     msg.preamble = 'System model genmodel report'
+ 
+-        manifest = '\n'.join(sorted('%s=%s[%s]' %x for x in db.iterAllTroves()))
+-        manifestText = MIMEText(manifest, 'plain')
+-        manifestText.add_header('Content-Disposition', 'attachment',
+-            filename='manifest')
+-        msg.attach(manifestText)
++    #     manifest = '\n'.join(sorted('%s=%s[%s]' %x for x in db.iterAllTroves()))
++    #     manifestText = MIMEText(manifest, 'plain')
++    #     manifestText.add_header('Content-Disposition', 'attachment',
++    #         filename='manifest')
++    #     msg.attach(manifestText)
+ 
+-        modelText = MIMEText(finalModel.format(), 'plain')
+-        modelText.add_header('Content-Disposition', 'attachment',
+-            filename='model')
+-        msg.attach(modelText)
++    #     modelText = MIMEText(finalModel.format(), 'plain')
++    #     modelText.add_header('Content-Disposition', 'attachment',
++    #         filename='model')
++    #     msg.attach(modelText)
+ 
+-        if finalJob:
+-            jobText = MIMEText(jobData, 'plain')
+-            jobText.add_header('Content-Disposition', 'attachment',
+-                filename='finalJob')
+-            msg.attach(jobText)
++    #     if finalJob:
++    #         jobText = MIMEText(jobData, 'plain')
++    #         jobText.add_header('Content-Disposition', 'attachment',
++    #             filename='finalJob')
++    #         msg.attach(jobText)
+ 
+-        s.sendmail(sender, recipient, msg.as_string())
+-        s.quit()
++    #     s.sendmail(sender, recipient, msg.as_string())
++    #     s.quit()

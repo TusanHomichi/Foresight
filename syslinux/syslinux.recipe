@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Syslinux(CPackageRecipe):
+    name = 'syslinux'
+    version = '4.06'
+
+    buildRequires = [ 'nasm:runtime', 'perl:runtime', 
+                      'perl-Digest-SHA1:perl',
+                      'perl-Crypt-PasswdMD5:perl',
+                      'perl:devel',
+                      'util-linux:devel',
+                    ]
+
+    def setup(r):
+        r.macros.myver = r.version.replace('_', '-')
+        r.addArchive('ftp://ftp.kernel.org/pub/linux/utils/boot/syslinux/',
+                     keyid='517D0F0E')
+        r.addSource('extlinux.tagdescription', package='extlinux',
+                    macros=True, dest='%(tagdescriptiondir)s/extlinux')
+        r.addSource('extlinux.taghandler', package='extlinux',
+                    macros=True, dest='%(taghandlerdir)s/extlinux',
+                    mode=0755)
+
+        r.Make('installer')
+        r.MakeInstall('LIBDIR=%(datadir)s', rootVar='INSTALLROOT')
+        r.Doc('doc/')
+
+        # Install EXT Linux
+        r.macros.extlinuxdir = '/boot/extlinux'
+        r.MakeDirs('%(extlinuxdir)s')
+        r.Copy('%(datadir)s/syslinux/*.c32', '%(extlinuxdir)s/')
+        r.Copy('%(datadir)s/syslinux/*mbr*.bin', '%(extlinuxdir)s/')
+        r.Copy('%(datadir)s/syslinux/memdisk', '%(extlinuxdir)s/')
+        r.Symlink('%(extlinuxdir)s/extlinux.conf', '%(sysconfdir)s/')
+        r.Create('%(extlinuxdir)s/extlinux.conf')
+        r.InitialContents('%(extlinuxdir)s/extlinux.conf')
+
+        r.PackageSpec('extlinux', '%(extlinuxdir)s/.*',
+                                  '%(essentialsbindir)s/extlinux',
+                                  '%(sysconfdir)s/extlinux.conf')
+
+        # Install PXE Linux
+        r.macros.pxelinuxdir = '/tftpboot'
+        r.MakeDirs('%(pxelinuxdir)s/pxelinux.cfg')
+        r.ExcludeDirectories(exceptions='%(pxelinuxdir)s/pxelinux.cfg')
+
+        r.Copy('%(datadir)s/syslinux/*.c32', '%(pxelinuxdir)s/')
+        r.Copy('%(datadir)s/syslinux/pxelinux.0', '%(pxelinuxdir)s/')
+        r.Copy('%(datadir)s/syslinux/memdisk', '%(pxelinuxdir)s/')
+
+        r.PackageSpec('pxelinux', '%(pxelinuxdir)s/.*')
+
+        # These are included in case the user is on a non-linux system,
+        # but we never will be
+        r.RemoveNonPackageFiles('.*(com|exe)')
+
+        # Component spec cross-compiler libs and headers
+        r.ComponentSpec('devel', '%(datadir)s/syslinux/com32/include/.*')
+        r.ComponentSpec('devellib', '%(datadir)s/syslinux/com32/lib.*')
+
+        # Add exceptions for cross-compiler libs
+        r.ImproperlyShared(exceptions='%(datadir)s/syslinux/com32/lib.*')
+
+        r.TagSpec('extlinux', '/boot/extlinux')
+        r.ComponentProvides('swap')
+
+        # runtime Requires [FL-2427]
+        r.Requires('mtools:runtime', '%(bindir)s/%(name)s')
+        # for taghandler
+        r.Requires('grep:runtime', '%(taghandlerdir)s/extlinux')

@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class GioSharp(CPackageRecipe):
+    name = 'gio-sharp'
+    svnVersion = '8ed92740aa1e85d5d4c1'
+    version = '0.3+r' + svnVersion + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = [
+            'gtk-sharp:cil', 
+            'gtk-sharp:devellib', 
+            'mono:cil', 
+            'mono:devel', 
+            'mono:runtime', 
+            'pkgconfig:devel',
+            'automake:runtime', 
+            'autoconf:runtime', 
+            'libtool:runtime',
+            'gtk-sharp:runtime',
+            
+                    ]
+ 
+    def setup(r):
+        r.addGitSnapshot('http://github.com/mono/gio-sharp.git', tag='8ed92740aa1e85d5d4c1')
+        r.Configure(configureName='autogen-2.22.sh')
+        r.Make('-j1')
+        r.MakeInstall()

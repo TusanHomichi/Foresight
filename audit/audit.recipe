@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Audit(RPMPackageRecipe,CPackageRecipe):
+    name = 'audit'
+    version = '2.0.6'
+    rpmRelease = '2.fc15'
+    rpmPatches = [ ]
+    buildRequires = [ 'autoconf:runtime', 'userspace-kernel-headers:devel',
+                      'swig:runtime', 'automake:runtime', 'libtool:runtime',
+                      'python:devel', 'desktop-file-utils:runtime',
+                      'openldap:devel', 'tcp_wrappers:devel', 
+                      'gettext:runtime', 'intltool:runtime',
+                      'pygtk:python', 'python:bin']
+
+    loadInstalled('python')
+
+    def setup(r):
+        r.unpack()
+        r.macros.pyver = Python.majversion
+
+        r.Configure('--sbindir=%(essentialsbindir)s --libdir=/%(lib)s '
+                    # get libprelude packaged
+                    # ' --with-prelude '
+                    # get libcap-ng packaged
+                    # ' --with-libcap-ng=yes '
+                    ' --with-libwrap --enable-gssapi-krb5=no ')
+
+        r.Make()
+        r.MakeInstall()
+
+        # r.Replace('2345', '-', '%(sysconfdir)s/rc.d/init.d/auditd')
+        r.MakeDirs('%(localstatedir)s/log/audit')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/log/audit')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/audisp/plugins.d')
+        r.ComponentSpec('devel', '%(datadir)s/applications/system-config-audit.desktop')
+        r.TagSpec('initscript', '%(initdir)s/')
+
+        # FL-2465
+        r.SetModes('%(essentialsbindir)s/audispd', 0750)
+
+        # FIXME move/symlink stuff from/to /%(lib)s <-> %(libdir)s per RH  

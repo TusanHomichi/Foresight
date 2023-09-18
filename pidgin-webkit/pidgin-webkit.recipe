@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginWebkit(CPackageRecipe):
+    name = 'pidgin-webkit'
+    version = 'r69'
+
+    buildRequires = ['WebKit:devel', 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'xcb-util:devel', 'zlib:devel', 'pidgin:devel', 'pkgconfig:devel']
+ 
+    def setup(r):
+		r.addBzrSnapshot('lp:~spoidar/pidgin-webkit/karmic-fixes')
+		r.Make()
+		r.Copy('webkit.so','%(libdir)s/purple-2/')
+

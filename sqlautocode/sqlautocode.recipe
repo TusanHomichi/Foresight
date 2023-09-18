@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SQLAutoCode(PackageRecipe):
+    name = 'sqlautocode'
+    version = '0.6b1'
+
+    buildRequires = [
+        'python:devel',
+        'SQLAlchemy:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://sqlautocode.googlecode.com/files/')
+        r.PythonSetup()

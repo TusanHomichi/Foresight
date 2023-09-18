@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Liblauncher(AutoPackageRecipe):
+    name = 'liblauncher'
+    version = '0.1.8'
+ 
+    buildRequires = [
+        'GConf:devel',
+        'atk:devel',
+        'cairo:devel',
+        'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'gnome-menus:devel', 'gtk:devel',
+        'libX11:devel', 'libwnck:devel',
+        'pango:devel', 'pkgconfig:devel', 'python:bin',
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/%(major_version)s/%(version)s/+download/')
+
+    def configure(r):
+        r.Configure(' --enable-maintainer-flags=no')

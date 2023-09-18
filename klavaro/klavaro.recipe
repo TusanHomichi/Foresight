@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 - 2014 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('gnomepackage')
+class Klavaro(GnomePackageRecipe):
+
+    name = 'klavaro'
+    version = '2.01'
+
+    buildRequires = ['curl:devel', 'glitz:devel', 'gtkdatabox:devel',
+                     'libsexy:devel', 'openssl:devel', 'xcb-util:devel',
+                     'desktop-file-utils:runtime']
+
+    externalArchive = "mirror://sourceforge/%(name)s/"

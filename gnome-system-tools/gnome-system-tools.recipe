@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# Changes 2007 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('gnomepackage')
+class GnomeSystemTools(GnomePackageRecipe):
+    name = 'gnome-system-tools'
+    version = '2.32.0'
+
+    buildRequires = [
+        'GConf:devel',
+        'GConf:runtime',
+        'desktop-file-utils:runtime',
+        'gettext:runtime',
+        'gnome-doc-utils:runtime',
+        'liboobs:devel',
+        'libxslt:runtime',
+        'nautilus:devel',
+        'perl:runtime',
+        'polkit-gnome:devel',
+        'polkit:devel',
+        'rarian:runtime',
+        'system-tools-backends:devellib',
+        'which:runtime',
+        'wireless-tools:devel',
+        ]
+
+    extraConfig = (
+        ' --disable-schemas-install'
+        ' --disable-scrollkeeper'
+        ' --enable-services'
+        ' --enable-shares'
+        ' --enable-time'
+        ' --enable-users'
+        )
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Replace('\"samba\"', '\"smb\"', 'src/common/gst-service-role.c')

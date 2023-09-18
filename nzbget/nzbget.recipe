@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Nzbget(AutoPackageRecipe):
+    name = 'nzbget'
+    version = '12.0'
+ 
+    buildRequires = [
+        'gnutls:devel', 
+        'libpar2:devel', 
+        'libsigc++:devel', 
+        'libstdc++:devel', 
+        'libxml2:devel', 
+        'ncurses:devel', 
+        'pkgconfig:devel', 
+        'python:devel', 
+        'zlib:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/%(name)s/files/')

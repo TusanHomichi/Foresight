@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rope(PackageRecipe):
+    name = 'rope'
+    version = '0.9.4'
+
+    buildRequires = ['python-setuptools:python', 'mercurial:python', 'python:devel',
+                     'pysvn:python', ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/r/%(name)s/')
+        r.PythonSetup()
+        r.Doc('docs/*')

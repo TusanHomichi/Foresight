@@ -1,0 +1,26 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenMotif(AutoPackageRecipe):
+
+    name = 'openmotif'
+    version = '2.3.0'
+
+    buildRequires = [
+        'byacc:runtime', 'expat:devel', 'flex:runtime', 'fontconfig:devel',
+        'freetype:devel', 'libICE:devel', 'libjpeg:devel', 'libpng:devel',
+        'libSM:devel', 'libX11:devel', 'libXau:devel', 'libxcb:devel',
+        'libXdmcp:devel', 'libXext:devel', 'libXft:devel', 'libXmu:devel',
+        'libXp:devel', 'libXrender:devel', 'libXt:devel', 'xbitmaps:devel',
+        'zlib:devel', 'pkgconfig:devel'
+ ]
+
+    def unpack(r):
+
+        r.addArchive('ftp://ftp.ics.com/openmotif/%(major_version)s/%(version)s/')
+
+        # Don't build demos
+        r.addPatch('openmotif-2.3.0-nodemos.diff')
+

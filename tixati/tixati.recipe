@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class Tixati(BinaryPackageRecipe):
+    name = 'tixati'
+    version = '1.61'
+ 
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def unpack(r):
+
+        r.macros.site = 'http://www.tixati.com/download'
+
+        dist = [
+            ('tixati-%(version)s-1.i686.rpm', Arch.x86),
+            ('tixati-%(version)s-1.x86_64.rpm', Arch.x86_64),
+        ]
+        for (rpm, arch) in dist:
+            r.addArchive('%(site)s/'+rpm, dir='/', use=(arch==True))
+
+        r.SetModes('%(datadir)s/icons/hicolor/48x48/apps/tixati.png', 0664)
+

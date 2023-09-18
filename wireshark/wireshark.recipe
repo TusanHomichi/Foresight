@@ -1,0 +1,158 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+loadSuperClass('rpmpackage')
+class Wireshark(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'wireshark'
+    version = '1.6.10'
+
+    externalArchive = 'http://www.wireshark.org/download/src/'
+    rpmRelease = '1.fc17'
+    rpmPatches = [
+                   'wireshark-1.2.4-enable_lua.patch',
+                   'wireshark-libtool-pie.patch',
+                   'wireshark-import-crash.patch',
+                   'wireshark-1.6.2-nfsv41-addstatus.patch',
+                   'wireshark-1.6.0-soname.patch',
+                   'wireshark-1.6.1-group-msg.patch',
+                   'wireshark-netlogon-aes.patch', ]
+
+    rpmSources = [ 'wireshark.console',
+                   'wireshark.desktop',
+                   'wireshark-autoconf.m4',
+                   'wireshark-mime-package.xml',
+                   'wiresharkdoc-16x16.png',
+                   'wiresharkdoc-32x32.png',
+                   'wiresharkdoc-48x48.png',
+                   'wiresharkdoc-256x256.png'
+                  ]
+
+    buildRequires = [
+        'atk:devel', 
+        'autoconf:runtime', 
+        'automake:runtime',
+        'bison:runtime', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime',
+        'doxygen:runtime', 
+        'e2fsprogs:devel', 
+        'elfutils:devel',
+        'expat:devel', 
+        'flex:runtime', 
+        'fontconfig:devel',
+        'freetype:devel', 
+        'glib:devel', 
+        'gnutls:devel', 
+        'gtk:devel',
+        'krb5:devel', 
+        'libelf:devel', 
+        'libelf:devel', 
+        'libgcrypt:devel',
+        'libgpg-error:devel', 
+        'libpcap:devel', 
+        'libpcap:lib',
+        'libpng:devel', 
+        'libxml2:runtime', 
+        'libxslt:runtime',
+        'net-snmp:devel', 
+        'openssl:devel', 
+        'pango:devel', 
+        'perl:runtime',
+        'pkgconfig:devel', 
+        'portaudio:devel', 
+        'procps:runtime',
+        'tcp_wrappers:devel', 
+        'zlib:devel', 
+        'libcap:devel', 
+        'xdg-utils:runtime',
+        'python:devel', 
+        'gcc-c++:runtime', 
+        'lua:devel',
+        'elinks:runtime', 
+        'libcap:runtime', 
+        'lynx:runtime',
+        'rpm:runtime', 
+        'usermode:runtime',
+    ]
+
+
+
+    def configure(r):
+
+        r.macros.python_version = Python.majversion
+        # --with-pcre= does not work for our pcre installation
+
+        r.macros.ldflags += ' -lm -lcrypto -pie '
+        r.Environment('PIEFLAGS', '-fpie')
+        r.macros.cflags += ' -D_LARGEFILE64_SOURCE -fpie '
+        r.macros.cxxflags += ' -D_LARGEFILE64_SOURCE -fpie '
+
+        # unlike fedora, we don't put the version in the plugindir; this is
+        # in order to preserve local changes.
+        r.Configure(' --bindir=%(sbindir)s'
+                    ' --enable-ipv6'
+                    ' --with-libsmi'
+                    ' --with-gnu-ld'
+                    ' --disable-static'
+                    ' --disable-usr-local'
+                    ' --with-ssl'
+                    ' --with-pic'
+                    ' --with-lua'
+                    ' --disable-warnings-as-errors'
+                    ' --with-python'
+                    ' --with-plugins=%(libdir)s/%(name)s/plugins/%(version)s/'
+                    # no adns support so...
+                    ' --with-adns=no',
+                    )
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+
+    def policy(r):
+        # The evil plugins hack
+        r.Run("""perl -pi -e 's|-L../../epan|-L../../epan/.libs|' plugins/*/*.la""")
+        # empty?!
+        # rm -f $RPM_BUILD_ROOT%{_sbindir}/idl2wrs
+        r.Install('wireshark.console', '%(sysconfdir)s/security/console.apps/wireshark', mode = 0644)
+
+        r.ConsoleHelper('%(bindir)s/wireshark', '%(sbindir)s/wireshark',
+                        session=True, fallback=True, timestamp=True)
+
+        r.Install('tools/wireshark_be.py', 'tools/wireshark_gen.py',
+                  '%(libdir)s/python%(python_version)s/site-packages/',
+                  mode=0644)
+
+        r.Desktopfile('wireshark.desktop')
+        r.Install('image/wsicon48.png',
+                  '%(datadir)s/pixmaps/wireshark.png', mode=0644)
+
+        r.Doc('doc/*', dir='doc')
+
+        r.PackageSpec('wireshark', '(%(sbindir)s|%(bindir)s)/wireshark')
+        r.PackageSpec('tshark', '/')
+        r.Requires('tshark:runtime', '%(sbindir)s/wireshark')
+
+        r.Install('image/wsicon16.png', '%(datadir)s/icons/hicolor/16x16/apps/wireshark.png', mode = 0644)
+        r.Install('image/wsicon32.png', '%(datadir)s/icons/hicolor/32x32/apps/wireshark.png', mode = 0644)
+        r.Install('image/wsicon48.png', '%(datadir)s/icons/hicolor/48x48/apps/wireshark.png', mode = 0644)
+        r.Install('image/wsicon64.png', '%(datadir)s/icons/hicolor/64x64/apps/wireshark.png', mode = 0644)
+        r.Install('image/wsicon256.png', '%(datadir)s/icons/hicolor/256x256/apps/wireshark.png', mode = 0644)
+
+        r.Install('wireshark-mime-package.xml', '%(datadir)s/mime/packages/wireshark.xml', mode = 0644)
+        r.Install('wiresharkdoc-16x16.png', '%(datadir)s/icons/gnome/16x16/mimetypes/application-x-pcap.png', mode = 0644)
+        r.Install('wiresharkdoc-32x32.png', '%(datadir)s/icons/gnome/32x32/mimetypes/application-x-pcap.png', mode = 0644)
+        r.Install('wiresharkdoc-48x48.png', '%(datadir)s/icons/gnome/48x48/mimetypes/application-x-pcap.png', mode = 0644)
+        r.Install('wiresharkdoc-256x256.png', '%(datadir)s/icons/gnome/256x256/mimetypes/application-x-pcap.png', mode = 0644)
+        # do we want the devel stuff ?
+        # atm nothing depends on this
+
+        r.UtilizeGroup('wireshark', '%(bindir)s/.*')

@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class GnomeVfs(RPMPackageRecipe,GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:config', 'GConf:devel', 'GConf:runtime',
+                      'ORBit2:devel', 'acl:devel', 'attr:devel',
+                      'avahi-glib:devel', 'avahi:devel', 'bzip2:devel',
+                      'e2fsprogs:devel', 'gamin:devel', 'krb5:devel',
+                      'openssh-client:runtime', 'openssl:devel', 'samba:devel',
+                      'libxml2:devel', 'gnome-mime-data:config', 'gnome-mime-data:devellib',
+                      'zlib:devel', 'popt:devel', 'bzip2:devel',
+                      'gettext:runtime', 'perl:runtime', 'dbus-glib:devel',
+                      'gtk-doc:runtime', 'samba-client:lib',
+                      'automake:runtime', 'autoconf:runtime']
+
+    extraConfig = GnomePackageRecipe.extraConfig
+
+    name = 'gnome-vfs'
+    version = '2.24.4'
+    rpmRelease = '1.fc14'
+    rpmName = 'gnome-vfs2'
+    rpmPatches = [ 'gnome-vfs-2.9.90-modules-conf.patch',
+                   # remove gnome-mime-data dependency
+                   'gnome-vfs-2.24.1-disable-gnome-mime-data.patch',
+                   # CVE-2009-2473 neon, gnome-vfs2 embedded neon: billion laughs DoS attack
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=518215
+                   'gnome-vfs-2.24.3-CVE-2009-2473.patch',
+                   # send to upstream
+                   'gnome-vfs-2.8.2-schema_about_for_upstream.patch',
+                   # Default
+                   'gnome-vfs-2.8.2-browser_default.patch',
+                   # RH bug #197868
+                   'gnome-vfs-2.15.91-mailto-command.patch',
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=333041
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=335241
+                   'gnome-vfs-2.20.0-ignore-certain-mountpoints.patch',
+                   # backported from upstream
+                   # gnome-vfs-daemon exits on dbus, and constantly restarted causing dbus/hal to hog CPU
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=486286
+                   'gnome-vfs-2.24.xx-utf8-mounts.patch',
+                   # https://bugzilla.gnome.org/show_bug.cgi?id=435653
+                   '0001-Add-default-media-application-schema.patch', ]
+
+    extraConfig += ' --enable-hal --disable-gtk-doc '
+    buildRequires.extend(['hal:devel', ])
+    makeInstallArgs = 'LIBTOOL=%(bindir)s/libtool'
+    docs = ['AUTHORS', 'COPYING', 'ChangeLog', 'NEWS', 'README']
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.Run('autoheader; autoconf')
+        r.Environment('tagname', 'CC')

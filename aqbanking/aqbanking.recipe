@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright of Changes 2007 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Aqbanking(AutoPackageRecipe):
+    name = 'aqbanking'
+    version = '5.0.23'
+    buildRequires = [ 
+        'atk:devel',
+        'cairo:devel',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+	'gmp:devel',
+	'graphviz:runtime',
+        'gtk:devel',
+        'gwenhywfar:devel',
+        'gwenhywfar:runtime',
+        'ktoblzcheck:devel',
+        'libchipcard:devel',
+        'libglade:devel',
+	'libICE:devel',
+	'libjpeg:devel',
+        'libofx:devel',
+        'libpng:devel',
+	'libSM:devel',
+        'libstdc++:devel',
+        'libX11:devel',
+        'libXau:devel',
+	'libXcursor:devel',
+        'libXdmcp:devel',
+	'libXext:devel',
+	'libXi:devel',
+	'libXinerama:devel',
+        'libxml2:devel',
+        'libXrender:devel',
+	'libXrandr:devel',
+	'openssl:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        'procps:runtime', # I have no idea why it's needed. xmlmerge locks without it
+	'qt4-core:devellib',
+	'qt4-gui:devellib',
+	'qt4-qt3support:devellib',
+	'qt4-sql:devellib',
+	'qt4:devel',
+	'qt:devel',
+        'zlib:devel'
+    ]
+
+    def unpack(r):
+        r.addArchive('http://www.aquamaniac.de/sites/download/download.php?package=03&release=93&file=01&dummy=aqbanking-5.0.23.tar.gz')
+	r.addPatch('aqbanking-2.1.0-conflict.patch')
+
+    def configure(r):
+        r.Configure('--bindir=%(bindir)s --libdir=%(libdir)s --prefix=%(prefix)s --includedir=%(includedir)s --disable-static --with-frontends="qbanking g2banking cbanking" '
+		  	' qt3_libs="-lQtCore -lQtGui -lQt3Support"'
+                  	' qt3_includes="-I%(includedir)s/qt4 -I%(includedir)s/qt4/Qt -I%(includedir)s/qt4/QtGui -I/usr/include/qt4/QtCore -I/usr/include/qt4/Qt3Support"'
+                    ' qt3_moc=%(bindir)s/moc-qt4 qt3_uic=%(bindir)s/uic-qt4')
+		# --enable-release --with-frontends="cbanking g2banking qbanking"' )
+
+    def make(r):
+	r.disableParallelMake()
+	r.Make()
+	r.Make()

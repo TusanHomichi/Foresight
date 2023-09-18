@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2007-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class MonoAddins(AutoPackageRecipe):
+    name = 'mono-addins'
+    version = '0.6.2'
+
+    buildRequires = ['gnome-sharp:cil', 'gnome-sharp:devellib', 'gtk-sharp:cil',
+                     'gtk-sharp:devellib', 'mono:cil', 'mono:devel',
+                     'mono:runtime', 'pkgconfig:devel', 'automake:runtime',
+                     'autoconf:runtime', 'libtool:runtime',
+                     ]
+ 
+    def unpack(r):
+        r.addArchive('http://download.mono-project.com/sources/mono-addins/mono-addins-%(version)s.tar.bz2')
+        r.addPatch('mono-addins-pkgcfg-libdir.patch', use=Arch.x86_64)
+        r.Run("""sed -i -e 's!$(prefix)/lib/!%(libdir)s/!' mautil/Makefile.am ; sed -i -e 's!$(prefix)/lib!%(libdir)s!' configure.ac ; autoreconf -f -i -s """)
+
+    def configure(r):
+        r.Configure('--prefix=%(prefix)s --libdir=%(libdir)s --enable-gui')
+
+    def policy(r):
+        # synapse pkg was severely badly pkged and provided too 
+        # mono deps. this rectifies that, as it fetches a fake 
+        # synapse:mono that pulls right CIL provider ...
+        # 
+        #   conary rq --what-provides='CIL: Mono.Addins.Gui(0.4.0.0)'
+        #     mono-addins:cil=foresight.rpath.org@fl:2-devel/0.4-0.1-1
+        #     synapse:mono=foresight.rpath.org@fl:2-devel/0.1+r372-1-1
+         
+        r.Create('%(datadir)s/%(name)s/migration/hack', mode = 0644)
+        r.ComponentSpec('synapse:mono', '%(datadir)s/%(name)s/migration/hack')
+        r.Requires('%(name)s:cil', '%(datadir)s/%(name)s/migration/hack')

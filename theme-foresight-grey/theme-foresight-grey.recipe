@@ -1,0 +1,16 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class ThemeForesightGrey(PackageRecipe):
+    name = 'theme-foresight-grey'
+    version = datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addGitSnapshot('git://github.com/ermo/Foresight-grey.git')
+        r.Install('*', '%(datadir)s/themes/Foresight-grey/')

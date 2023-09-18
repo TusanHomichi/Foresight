@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CompizPluginsUnsupp(AutoPackageRecipe):
+    name = 'compiz-fusion-plugins-unsupported'
+    version = '0.8.4'
+
+    buildRequires = [
+        'Mesa:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel',
+        'libXau:devel', 'libXcomposite:devel', 'libXdamage:devel',
+        'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXinerama:devellib',
+        'libXrandr:devel', 'libXrender:devel', 'libjpeg:devel', 'libpng:devel',
+        'libxml2:devel', 'pango:devel', 'startup-notification:devel',
+        'zlib:devel', 'autoconf:runtime', 'automake:runtime', 'compiz:devel',
+        'GConf:devel', 'libtool:devel', 'intltool:runtime', 'autoconf:data',
+        'libtool:runtime', 'pkgconfig:devel', 'bcop:devellib', 'bcop:runtime',
+        'util-linux:runtime', 'libxslt:runtime', 'expat:devel', 'expat:devellib',
+        'intltool:devel', 'GConf:runtime', 'gettext:runtime', 'gettext:devel', 
+        'compiz-fusion-plugins-main:devel',
+        ]
+
+    def unpack(r):
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/compiz-plugins-unsupported-%(version)s.tar.bz2')
+
+    def configure(r):
+        r.Configure('--enable-schemas')
+

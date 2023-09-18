@@ -1,0 +1,52 @@
+diff -crB osd-lyrics--.old/lib/chardetect/Makefile osd-lyrics--/lib/chardetect/Makefile
+*** osd-lyrics--.old/lib/chardetect/Makefile	2010-03-31 07:24:59.000000000 +0200
+--- osd-lyrics--/lib/chardetect/Makefile	2010-06-03 15:49:55.236481878 +0200
+***************
+*** 17,23 ****
+  	    $(MAKE) -C $$mdir ; \
+  	  fi; \
+  	done
+! 	libtool --mode=compile $(CXX) $(CXXFLAGS) src/entry/impl.cpp
+  	libtool --tag=CC --mode=link gcc -O2 -o $(TARGET) \
+  		impl.lo src/*.lo \
+  	        -avoid-version -module \
+--- 17,23 ----
+  	    $(MAKE) -C $$mdir ; \
+  	  fi; \
+  	done
+! 	libtool --tag=CC --mode=compile $(CXX) $(CXXFLAGS) src/entry/impl.cpp
+  	libtool --tag=CC --mode=link gcc -O2 -o $(TARGET) \
+  		impl.lo src/*.lo \
+  	        -avoid-version -module \
+***************
+*** 42,45 ****
+  check: all
+  
+  install: 
+! distclean:
+\ Kein Zeilenumbruch am Dateiende.
+--- 42,45 ----
+  check: all
+  
+  install: 
+! distclean:
+diff -crB osd-lyrics--.old/lib/chardetect/src/Makefile osd-lyrics--/lib/chardetect/src/Makefile
+*** osd-lyrics--.old/lib/chardetect/src/Makefile	2010-03-25 03:47:25.000000000 +0100
+--- osd-lyrics--/lib/chardetect/src/Makefile	2010-06-03 15:50:34.420583887 +0200
+***************
+*** 40,46 ****
+  all: $(OBJS)
+  
+  $(OBJS): %.o: %.cpp
+! 	libtool --mode=compile $(CXX) $(CXXFLAGS) $<
+  
+  clean:
+  	rm -f *.o
+--- 40,46 ----
+  all: $(OBJS)
+  
+  $(OBJS): %.o: %.cpp
+! 	libtool --tag=CC --mode=compile $(CXX) $(CXXFLAGS) $<
+  
+  clean:
+  	rm -f *.o

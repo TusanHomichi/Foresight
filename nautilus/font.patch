@@ -1,0 +1,17 @@
+diff -Naur nautilus-2.14.1.orig/libnautilus-private/apps_nautilus_preferences.schemas.in nautilus-2.14.1/libnautilus-private/apps_nautilus_preferences.schemas.in
+--- nautilus-2.14.1.orig/libnautilus-private/apps_nautilus_preferences.schemas.in	2006-01-11 17:40:26.000000000 -0500
++++ nautilus-2.14.1/libnautilus-private/apps_nautilus_preferences.schemas.in	2006-06-14 22:22:42.000000000 -0400
+@@ -308,11 +308,11 @@
+       <applyto>/apps/nautilus/preferences/desktop_font</applyto>
+       <owner>nautilus</owner>
+       <type>string</type>
+-      <default>Sans 10</default>
++      <default>Liberation Sans Bold 10</default>
+       <locale name="C">
+          <default><!-- Translators: please note this can choose the size. e.g.
+ "Sans 15". Please do not change "Sans", only change the size if you need to. In
+-most cases, this should be left alone. -->Sans 10</default>
++most cases, this should be left alone. -->Liberation Sans Bold 10</default>
+          <short>Desktop font</short>
+ 	 <long>
+ 	  The font description used for the icons on the desktop.

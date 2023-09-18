@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gcstar(AutoPackageRecipe):
+    name = 'gcstar'
+    version = '1.7.0'
+ 
+    buildRequires = [ 'perl-Archive-Zip:perl', 'perl-Glib:perl', 'perl-Gtk2:perl', 'perl-HTML-Parser:perl', 'perl-URI:perl', 'perl-XML-Parser:perl', 'perl-XML-Simple:perl', 'perl-HTTP-Cookies:perl', 'perl:devel', 'perl:perl', 'perl:runtime', 'perl-Archive-Tar:perl', 'perl-Gtk2-Spell:perl', 'desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://download.gna.org/gcstar/%(name)s-%(version)s.tar.gz')
+	r.Run('./install --prefix=%(destdir)s%(prefix)s/')

@@ -1,0 +1,98 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class kde3PackageRecipe(AutoPackageRecipe):
+
+    name = 'kde3package'
+    version = '20080411'
+
+    buildRequires = [ ]
+
+    enableFinal = True
+
+    abstractBaseClass = True
+
+    extraConf = ' --disable-debug --with-qt-libraries=%(libdir)s '
+
+    def __init__(r, *args, **kwargs):
+        #todo; make this smarter
+        AutoPackageRecipe.__init__(r, *args, **kwargs)
+
+        r.macros.kdehtmldir = '%(datadir)s/kde3-doc'
+        r.macros.kdedatadir = '%(datadir)s/kde3/apps'
+        r.macros.origname = r.name.replace('3','')
+
+    def setup(r):
+
+        r.Environment('QTDOCDIR', '%(datadir)s/qt3/doc')
+        r.Environment('kde_htmldir', '%(kdehtmldir)s')
+        r.Environment('kde_datadir', '%(kdedatadir)s')
+
+        if r.macros.lib == 'lib64':
+            r.extraConf += ' --enable-libsuffix=64 '
+
+        r.extraConf += ' --enable-new-ldflags '
+        if r.enableFinal:
+            r.extraConf += ' --enable-final '
+
+        r.Environment('kde_confdir', '%(sysconfdir)s/kde3')
+
+        r.unpack()
+
+        # Build fix for old sources (there is no admin/doxygen.sh)
+        r.addAction('touch admin/doxygen.sh')
+
+        r.Replace(
+            'if test -n "\$PREFIX" && test ! -d "\$PREFIX" ; then',
+            'if test -n "$PREFIX" && test ! -d "%(destdir)s/$PREFIX" ; then',
+            'admin/doxygen.sh', allowNoChange=True
+        )
+        r.MakeDirs('%(kdehtmldir)s/en')
+
+        if hasattr(r, 'postUnpack'):
+            r.postUnpack()
+
+        r.build()
+
+        if hasattr(r, 'postInstall'):
+            r.postInstall()
+
+        if hasattr(r, 'policy'):
+            r.policy()
+
+        r.postPolicy()
+
+    def unpack(r):
+
+        pass
+
+    def configure(r):
+        r.Configure(r.extraConf)
+
+    def build(r):
+
+        r.configure()
+        r.make()
+        r.makeinstall()
+
+    def make(r):
+
+        r.Make()
+
+    def makeinstall(r):
+
+        r.MakeInstall()
+
+    def postPolicy(r):
+
+        r.TagSpec('gtk-update-icon-cache', '%(datadir)s/icons/')
+        r.TagSpec('desktop-file', '%(datadir)s/applications/kde/')
+
+        r.CheckSonames(exceptions='%(libdir)s/libkdeinit_.*')
+        r.RemoveNonPackageFiles(exceptions='.*\.la')
+        r.DanglingSymlinks(exceptions='%(kdehtmldir)s/.*/.*/common')
+
+

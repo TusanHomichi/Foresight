@@ -1,0 +1,17 @@
+
+loadSuperClass('gnomepackage.recipe')
+class GstPluginsUgly(GnomePackageRecipe):
+
+    buildRequires = [ 'glib:devel', 'gst-plugins-base:devel',
+        'gstreamer:devel', 'lame:devel', 'libid3tag:devel',
+        'libmad:devel', 'libxml2:devel', 'gcc-c++:runtime',
+        'gstreamer:runtime', 'libdvdread:devel', 'liboil:devel',
+        'libmpeg2:devel', 'orc:devel', 'valgrind:runtime',
+        'a52dec:devel', 'libcdio:devel', 
+        'twolame:devel', 'x264:devel', 'orc:runtime' ]
+
+    name = 'gst-plugins-ugly'
+    version = '0.10.19'
+
+    extraConfig = ' --with-package-name="GStreamer Ugly Plugins (Foresight)" --with-package-origin=http://www.foresightlinux.org/ '
+    externalArchive='http://gstreamer.freedesktop.org/src/%(name)s/'

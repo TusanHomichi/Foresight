@@ -1,0 +1,21 @@
+--- doxygen-1.4.6/tmake/lib/linux-g++/tmake.conf.jau	2005-04-20 14:23:26.000000000 -0400
++++ doxygen-1.4.6/tmake/lib/linux-g++/tmake.conf	2006-12-01 16:55:35.000000000 -0500
+@@ -27,12 +27,12 @@
+ 
+ TMAKE_INCDIR		=
+ TMAKE_LIBDIR		=
+-TMAKE_INCDIR_X11	= /usr/X11R6/include
+-TMAKE_LIBDIR_X11	= /usr/X11R6/lib
+-TMAKE_INCDIR_QT		= $(QTDIR)/include
+-TMAKE_LIBDIR_QT		= $(QTDIR)/lib
+-TMAKE_INCDIR_OPENGL	= /usr/X11R6/include
+-TMAKE_LIBDIR_OPENGL	= /usr/X11R6/lib
++TMAKE_INCDIR_X11	= %(includedir)s
++TMAKE_LIBDIR_X11	= %(libdir)s
++TMAKE_INCDIR_QT		= %(includedir)s/qt3
++TMAKE_LIBDIR_QT		= %(libdir)s
++TMAKE_INCDIR_OPENGL	= %(includedir)s
++TMAKE_LIBDIR_OPENGL	= %(libdir)s
+ 
+ TMAKE_LINK		= g++
+ TMAKE_LINK_SHLIB	= g++

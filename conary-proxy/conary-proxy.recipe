@@ -1,0 +1,67 @@
+#
+# Copyright (c) 2008      rPath, Inc.
+#               2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ConaryProxy(PackageRecipe):
+    name = 'conary-proxy'
+    version = '0.9'
+
+    def setup(r):
+        r.macros.proxydir = '%(servicedir)s/%(name)s'
+
+        for _file, _dest, _perms in [ ('cron',
+                                       '%(sysconfdir)s/cron.daily/%(name)s',
+                                       0755),
+                                      ('apache', 
+                                       '%(sysconfdir)s/httpd/conf.d/%(name)s.conf',
+                                       0644),
+                                      # ('wsgi',  '%(proxydir)s/config/%(name)s.wsgi', 0644),
+                                      ('config',
+                                       '%(proxydir)s/config/%(name)s.cnr',
+                                       0644),
+                                      ('conary',
+                                       '%(sysconfdir)s/conary/config.d/%(name)s',
+                                       0644),
+                                      ('sysconfig',
+                                       '%(sysconfdir)s/sysconfig/%(name)s',
+                                       0644),
+        ]:
+            r.addSource('%%(name)s.%s' % _file,
+                        dest = _dest,
+                        mode = _perms,
+                        macros = True)
+
+        # it makes sense to have /srv/conary-proxy/config/conary-proxy.cnr as Config
+        # as advanced users may want to edit the memcachetimout value to something 
+        # different from the default (1 week)
+        r.Config('%(proxydir)s/config/%(name)s.cnr')
+
+        for dir in ('cscache', 'contents', 'tmp'):
+            r.MakeDirs('%%(proxydir)s/%s' % dir)
+            r.ExcludeDirectories(exceptions='%%(proxydir)s/%s' % dir)
+            r.Ownership('apache', 'apache', '%%(proxydir)s/%s' % dir)
+
+        r.Requires('memcached:runtime', '%(proxydir)s/')
+        r.Requires('python-memcached:python', '%(proxydir)s/')
+        r.Requires('mod_ssl:runtime', '%(proxydir)s/')
+        # r.Requires('mod_wsgi:lib', '%(proxydir)s/')
+
+        # * memcached can speed up repository access, but will not
+        #   be run by default (running it is left to the user)
+        # 
+        # * gracefully restart httpd if it is already running
+        #   (if httpd is not running, the proxyMap falls back to DIRECT)
+        #   - The rationale is that we can't just restart httpd
+        #     unconditionally if, say, the user relies on httpd
+        #     not being started (for whatever reason).
+        #
+        # NOTE: If using memcached, it should be started prior
+        #       to restarting httpd gracefully (order matters)
+        #
+        postScript = ('#!/bin/sh\n'
+                      '/sbin/service httpd condgraceful\n')
+        r.ScriptPostInstall(contents=postScript)
+        r.ScriptPostUpdate(contents=postScript)

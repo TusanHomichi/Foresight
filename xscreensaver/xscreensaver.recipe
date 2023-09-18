@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Copyright (c) 2009 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Xscreensaver(CPackageRecipe):
+    name = 'xscreensaver'
+    version = '5.32'
+
+    buildRequires = [ 'gtk:devel', 'libxml2:devel', 'pam:devel',
+                      'libjpeg:devel', 'libglade:devel', 'krb5:devel',
+                      'bc:runtime', 'atk:devel', 'gettext:runtime',
+                      'glib:devel', 'pango:devel', 'zlib:devel', 
+                      'expat:devel', 'perl:devel', 'intltool:runtime',
+                      'libgnome:runtime', 'perl:runtime', 'pkgconfig:devel',
+                      'perl:lib', 'cairo:devel', 'desktop-file-utils:runtime',
+                      'fontconfig:devel', 'freetype:devel', 'libpng:devel',
+                      'Mesa:devel', 'libICE:devel', 'libSM:devel',
+                      'libX11:devel', 'libXext:devel', 'libXinerama:devellib',
+                      'libXmu:devel', 'libXpm:devel', 'libXrandr:devel',
+                      'libXrender:devel', 'libXt:devel', 'libXxf86misc:devel',
+                      'libXxf86vm:devel', 'libXau:devel', 'libXdmcp:devel', 'gdm:runtime',]
+
+    def setup(r):
+        r.addArchive('http://www.jwz.org/%(name)s/')
+        r.addSource('xscreensaver-fortune-standin')
+        for p in [
+            'xscreensaver-5.17-blurb-hndl-test-passwd.patch',
+        ]:
+            r.addPatch(p)
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d '
+        r.Configure('--with-fortune=%(bindir)s/xscreensaver-fortune-standin '
+                    ' --with-gtk --with-pam --with-kerberos'
+                    ' --with-gl --with-gle')
+
+        # trick program into using a non-existent fortune program
+        r.Run('''sed -i 's|#define FORTUNE_PROGRAM.*|#define FORTUNE_PROGRAM \"%(bindir)s/xscreensaver-fortune-standin\"|' config.h''')
+        r.Make()
+        r.MakeInstall('install_prefix=%(destdir)s '
+                      'GNOME_BINDIR=%(bindir)s '
+                      'GNOME_DATADIR=%(datadir)s '
+                      'KDEDIR=%(prefix)s')
+        r.Install('driver/xscreensaver.pam', '%(sysconfdir)s/pam.d/xscreensaver')
+        r.Install('xscreensaver-fortune-standin', '%(bindir)s/', mode=0755)

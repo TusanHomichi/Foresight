@@ -1,0 +1,99 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+# GNOME currently does not automatically prefer entries that include
+# GNOME in their category list.  Instead, it uses a "defaults.list"
+# file that needs to be modified whenever desktop files are added or
+# removed.
+DEFAULTS_LIST=%(datadir)s/applications/defaults.list
+
+# KNOWN BUG:  If a MimeType entry is *removed* for an application's
+# desktop file, this script will not remove it.  This was an intentional
+# tradeoff to make the script run faster, because we doubt that many
+# applications will loose functionality, and it would make an already
+# slow process slower.
+
+update_database ()
+{
+    %(bindir)s/update-desktop-database %(datadir)s/applications > /dev/null
+}
+
+add_to_defaults_list ()
+{
+    # Check for an empty or nonexisting defaults.list, and create it
+    # with the header if required.
+    if ! [ -s $DEFAULTS_LIST ] ; then 
+        echo "[Default Applications]" > $DEFAULTS_LIST
+    fi
+
+    # add appropriate references to gnome apps to the defaults.list file
+    for GNOME_DESKTOP_FILE in $(grep -l 'Categories.*GNOME' "$@") ; do
+        MIME_TYPES=$(grep '^MimeType=' $GNOME_DESKTOP_FILE |
+                       sed 's/MimeType=//;s/;/ /g')
+        if [ -n "$MIME_TYPES" ] ; then
+            # the defaults.list file is not supposed to have complete paths
+            BASE_GNOME_DESKTOP_FILE=$(basename $GNOME_DESKTOP_FILE)
+        fi
+        for MIME_TYPE in $MIME_TYPES ; do
+            if ! grep -qs $MIME_TYPE $DEFAULTS_LIST ; then
+                echo "$MIME_TYPE=$BASE_GNOME_DESKTOP_FILE" >> $DEFAULTS_LIST
+            fi
+        done
+    done
+}
+
+remove_from_defaults_list ()
+{
+    # the first sed subexpression is the equivalent of basename on
+    # each filename, and the second subexpression just adds the \|
+    # between filenames
+    FILES="$(echo $@| sed 's,\(^\| \)[^ ]*/, ,g;s, ,\\|,g')"
+    # this sed removes any reference to any removed file from the list
+    sed -i -e "/=\\(${FILES}\\)$/d" $DEFAULTS_LIST
+}
+
+case $type in 
+    files)
+	case $action in
+	    update)
+                add_to_defaults_list "$@"
+                update_database
+		;;
+            remove)
+                remove_from_defaults_list "$@"
+                update_database
+		;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    handler)
+	case $action in
+	    update)
+                # things might have changed, start over
+                add_to_defaults_list "$@"
+		;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

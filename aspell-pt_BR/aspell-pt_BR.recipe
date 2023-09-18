@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AspellBR( PackageRecipe ):
+  name = 'aspell-pt_BR'
+
+  # this package has an interesting versioning scheme:
+  # aspell6-pt_BR-20070206 is the latest, and apparently matches
+  # aspell 0.60. we'll just take: 6.20070206
+
+  version = '6.20080221.1' # version cannot have '-' in it
+
+  buildRequires = [ 'aspell:runtime', 'which:runtime' ]
+
+  def setup(r):
+    # insert upstream -
+    verlist = r.version.split( '.' )
+
+    r.macros.majver = verlist[0]
+
+    if len(verlist) > 2:
+      r.macros.upver = '-'.join( verlist[1:] )
+    else:
+      r.macros.upver = verlist[1]
+
+    r.mainDir( 'aspell%(majver)s-pt_BR-%(upver)s' )
+    r.addArchive( 'http://ftp.gnu.org/gnu/aspell/dict/pt_BR/aspell%(majver)s-pt_BR-%(upver)s.tar.bz2' )
+
+    # this isn't an autoconf configure script
+    # don't use %(libdir)s for dictdir because we're not looking
+    # at shared libs
+    r.ManualConfigure( '--vars datadir=%(datadir)s/aspell dictdir=%(prefix)s/lib/aspell' )
+    r.Make()
+    r.MakeInstall()

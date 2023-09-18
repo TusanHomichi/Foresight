@@ -1,0 +1,17 @@
+loadSuperClass('kde3package')
+class KPowersave(kde3PackageRecipe):
+
+    name = 'kpowersave'
+    version = '0.7.3'
+
+    buildRequires = [
+        'hal:devel'
+    ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/powersave/')
+
+
+    def configure(r):
+        r.Make('-f admin/Makefile.common')
+        kde3PackageRecipe.configure(r)

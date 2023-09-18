@@ -1,0 +1,7 @@
+class RemindPackageRecipe(AutoPackageRecipe):
+
+    name = 'remind'
+    version = '03.01.10'
+
+    def unpack(r):
+        r.addArchive('http://www.roaringpenguin.com/files/download/')

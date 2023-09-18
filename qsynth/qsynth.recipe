@@ -1,0 +1,46 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Qsynth(AutoPackageRecipe):
+    name = 'qsynth'
+    version = '0.3.6'
+
+    packageSummary = 'Qsynth is a fluidsynth GUI front-end application'
+    packageDescription = 'Qsynth is a fluidsynth GUI front-end application written in C++ around the Qt4 toolkit using Qt Designer. Eventually it may evolve into a softsynth management application allowing the user to control and manage a variety of command line softsynth but for the moment it wraps the excellent FluidSynth.'
+ 
+    buildRequires = [
+                    'cmake:runtime',
+                    'dbus:devel',
+                    'desktop-file-utils:runtime',
+                    'fluidsynth:devel',
+                    'fluidsynth:runtime',
+                    'gcc-c++:runtime',
+                    'gettext:runtime',
+                    'intltool:runtime',
+                    'libstdc++:devel',
+                    'qt4:devel',
+                    'qt4-sql:mysql',
+                    'qt4-sql:odbc',
+                    'qt4-sql:psql',
+                    'qt4-sql:sqlite',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/qsynth/')
+        r.addPatch('qsynth-fix-locale-path.patch')
+        r.addPatch('qsynth-fedora-defaults.patch')
+        r.addPatch('qsynth-linking.patch')
+
+    def configure(r):
+        r.CMake('.')
+
+    def make(r):
+        r.Make()
+
+    def makeinstall(r):
+        r.MakeInstall('DESTDIR=%(destdir)s')
+

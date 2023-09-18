@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Mpg123(RedirectRecipe):
+    name = 'mpg123'
+    version = '0'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addRemoveRedirect()

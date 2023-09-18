@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Faac(CPackageRecipe):
+    name = 'faac'
+    version = '1.28'
+ 
+    buildRequires = [ 'autoconf:runtime','automake:runtime', 'libtool:runtime', 'libstdc++:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/faac/')
+        # patch sillyness in bootstrap script
+        r.addPatch('bootstrap.patch')
+        r.Run('./bootstrap')
+        r.Configure(' --with-mp4v2=no')
+        r.Make()
+        r.MakeInstall()
+
+

@@ -1,0 +1,33 @@
+diff -up bamf-0.2.64/configure.in.orig bamf-0.2.64/configure.in
+--- bamf-0.2.64/configure.in.orig	2010-12-08 22:06:30.866289436 -0800
++++ bamf-0.2.64/configure.in	2010-12-08 22:06:32.877061748 -0800
+@@ -106,6 +106,12 @@ CFLAGS="$CFLAGS -Wall -Werror -lm"
+ AC_SUBST(BAMFDAEMON_CFLAGS)
+ AC_SUBST(BAMFDAEMON_LIBS)
+ 
++AC_ARG_ENABLE([gio-module],
++             AC_HELP_STRING([--disable-gio-module],
++                            [Disables GIO module generation (disable this unless your glib is patched, see GNOME bug #606960)]),,
++		[enable_gio_module="yes"])
++AM_CONDITIONAL(BUILD_GIO_MODULE, [test "$enable_gio_module" = "yes"])
++
+ origgiomodulesdir=`pkg-config --variable=giomoduledir gio-2.0`
+ # Make giomodulesdir honour 'prefix', so that distcheck works. 
+ giomodulesdir=`echo "$origgiomodulesdir" | sed 's|/usr|${prefix}|'`
+diff -up bamf-0.2.64/Makefile.am.orig bamf-0.2.64/Makefile.am
+--- bamf-0.2.64/Makefile.am.orig	2010-12-08 22:07:48.767770644 -0800
++++ bamf-0.2.64/Makefile.am	2010-12-08 22:08:12.687214995 -0800
+@@ -7,9 +7,12 @@ SUBDIRS = \
+   tests/bamfdaemon \
+   tests/libbamf \
+   data \
+-  module \
+   doc
+ 
++if BUILD_GIO_MODULE
++  SUBDIRS += module
++endif
++
+ EXTRA_DIST = COPYING.LGPL autogen.sh build.rules.mk m4/i18n.m4 m4/programs.m4 m4/util.m4
+ DISTCHECK_CONFIGURE_FLAGS = --enable-introspection=no --enable-gtk-doc
+ 

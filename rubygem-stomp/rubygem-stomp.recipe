@@ -1,0 +1,7 @@
+loadSuperClass('rubygempackage')
+class RubyGemStomp(RubygemPackageRecipe):
+
+    name = 'rubygem-stomp'
+    version = '1.2.2'
+
+    buildRequires = ['ruby:devellib']

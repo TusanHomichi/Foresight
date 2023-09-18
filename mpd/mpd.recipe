@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mpd(CPackageRecipe):
+    name = 'mpd'
+    version = '0.17.2'
+
+    buildRequires = [
+                'alsa-lib:devel',
+                'audiofile:devel',
+                'avahi-glib:devel',
+                'avahi:devel',
+                'chkconfig:runtime',
+                'curl:devel',
+                'faad2:devel',
+                'ffmpeg:devel',
+                'flac:devel',
+                'fluidsynth:devel',
+                'gcc-c++:runtime',
+                'glib:devel',
+                'gpac:devellib',
+                'jack:devel',
+                'lame:devel',
+                'libao:devel',
+                'libcdio:devel',
+                'libcue:devel',
+                'libid3tag:devel',
+                'libmad:devel',
+                'libmikmod:devel',
+                'libmms:devel',
+                'libmodplug:devel',
+                'libmpcdec:devel',
+                'libogg:devel',
+                'libsamplerate:devel',
+                'libshout:devel',
+                'libsoup:devel',
+                'libstdc++:devel',
+                'libtheora:devel',
+                'libvorbis:devel',
+                'mkisofs:runtime',
+                'openssl:devel',
+                'pkgconfig:devel',
+                'pulseaudio:devel',
+                'speex:devel',
+                'sqlite:devel',
+                'tcp_wrappers:devel',
+                'valgrind:devel',
+                'wavpack:devel',
+                'wildmidi:devel',
+                'zlib:devel',
+                'zziplib:devel',
+                ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/musicpd/mpd/%(version)s/mpd-%(version)s.tar.gz')
+        r.Configure('--enable-mikmod --enable-bzip2 --enable-zip --enable-shout --enable-wildmidi --enable-fluidsynth --enable-iso9660 --enable-lastfm --enable-pulse')
+        r.Make()
+        r.MakeInstall()
+        r.addSource('mpd.init')
+        r.Move('mpd.init', '%(initdir)s/mpd', mode = 0755)
+        r.addSource('mpd.conf', macros=True, dest='%(sysconfdir)s/mpd.conf')
+        r.Replace(('@var@', '%(localstatedir)s'), ('@bindir@', '%(bindir)s'), '%(initdir)s/mpd')
+
+        r.Create('%(localstatedir)s/lib/mpd/mpd.log')
+        r.Create('%(localstatedir)s/lib/mpd/mpd.error')
+        r.Create('%(localstatedir)s/lib/mpd/mpd.db')
+        r.Create('%(localstatedir)s/lib/mpd/mpdstate')
+        r.MakeDirs('%(localstatedir)s/lib/mpd/playlists')
+        r.MakeDirs('%(localstatedir)s/lib/mpd/music')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/mpd/playlists')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/mpd/music')
+        r.UtilizeUser('mpd', '%(initdir)s/mpd')
+
+            #r.InitialContents('%(sysconfdir)s/mpd.conf')

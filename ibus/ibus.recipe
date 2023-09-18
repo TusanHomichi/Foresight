@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2009-1010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Ibus(GnomePackageRecipe):
+    name = 'ibus'
+    version = '1.3.9'
+
+    buildRequires = [
+        'GConf:devel',
+        'GConf:runtime',
+        'dbus-python:devellib',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'iso-codes:devellib',
+        'notify-python:python',
+        'pygobject:python',
+        'pygtk:python',
+        'python:devel',
+        'pyxdg:python',
+        ]
+
+    externalArchive = 'http://ibus.googlecode.com/files/'
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        r.Install('xinput-ibus', '%(sysconfdir)s/X11/xinit/xinput.d/ibus.conf')
+        # Use ibus.conf as xinputrc; this probably should be done with alternatives
+        r.Symlink('%(sysconfdir)s/X11/xinit/xinput.d/ibus.conf',
+            '%(sysconfdir)s/X11/xinit/xinputrc')
+
+        r.Run('echo "NoDisplay=true" >> %(destdir)s%(datadir)s/applications/ibus.desktop')
+        r.Run('echo "NoDisplay=true" >> %(destdir)s%(datadir)s/applications/ibus-setup.desktop')
+        r.Remove('%(sysconfdir)s/xdg/autostart/ibus.desktop')
+
+    def policy(r):
+        r.Requires('im-chooser:runtime', '%(bindir)s/ibus-daemon')

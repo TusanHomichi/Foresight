@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2009-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Pragha(AutoPackageRecipe):
+    name = 'pragha'
+    version = '1.2.rc'
+ 
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'atk:devel',
+                    'autoconf:runtime',
+                    'automake:runtime',
+                    'cairo:devel',
+                    'curl:devel',
+                    'desktop-file-utils:runtime',
+                    'flac:devel',
+                    'fontconfig:devel',
+                    'freetype:devel',
+                    'gettext:runtime',
+                    'glib:devel',
+                    'glyr:devel',
+                    'gst-plugins-base:devel',
+                    'gstreamer:devel',
+                    'gtk:devel',
+                    'intltool:runtime',
+                    'libao:devel',
+                    'libcddb:devel',
+                    'libcdio:devel',
+                    'libexo:devel',
+                    'libmad:devel',
+                    'libmodplug:devel',
+                    'libnotify:devel',
+                    'libogg:devel',
+                    'libsndfile:devel',
+                    'libtool:runtime',
+                    'libvorbis:devel',
+                    'libxfce4ui:devel',
+                    'libxfce4util:devel',
+                    'libxml2:devel',
+                    'openssl:devel',
+                    'pango:devel',
+                    'pkgconfig:devel', 
+                    'python-keybinder:devel',
+                    'sqlite:devel',
+                    'taglib:devel',
+                    'xfce4-dev-tools:runtime',
+                    'zlib:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('https://github.com/matiasdelellis/pragha/archive/Pragha-%(version)s.tar.gz')
+        r.Run('./autogen.sh')
+
+    def configure(r):
+	r.Configure('--with-gstreamer=0.10')

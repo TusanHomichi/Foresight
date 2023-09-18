@@ -1,0 +1,18 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Libqzeitgeist(CMakePackageRecipe):
+    name = 'libqzeitgeist'
+    version = '0.8.0'
+ 
+    buildRequires = ['automoc:runtime', 'gcc-c++:runtime', 'libstdc++:devel', 'pkgconfig:devel', 'python:devel', 'qt4-core:devellib', 'qt4-gui:devellib', 'qt4-qt3support:devellib', 'qt4-sql:devellib', 'qt4-sql:mysql', 'qt4-sql:odbc', 'qt4-sql:psql', 'qt4-sql:sqlite', 'qt4:devel', 'qt4:devellib', 'zeitgeist:devellib',]
+ 
+    def unpack(r):
+        r.addArchive('mirror://kde/stable/%(name)s/%(version)s/src/')
+        r.addPatch('%(name)s-%(version)s-declarative.patch') 
+        r.addPatch('%(name)s-%(version)s-reduced_linking.patch')

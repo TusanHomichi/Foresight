@@ -1,0 +1,135 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Udev(RPMPackageRecipe,CPackageRecipe):
+    name = 'udev'
+    version = '167'
+    rpmRelease = '6.fc15'
+
+
+    buildRequires = [ 'sysfsutils:devel', 'pkgconfig:devel', 'glib:runtime',
+                      'bison:runtime', 'pam:devel', 'chkconfig:runtime', 'libxslt:runtime',
+                      'gperf:runtime', 'usbutils:runtime', 'usbutils:devellib',
+                      'hwdata:data', 'gtk-doc:runtime',
+                      'gobject-introspection:devel',
+                      'gobject-introspection:python',
+                      'acl:devel', 'glib:devel', 'libusb:devel', 'autoconf:runtime', 
+                      'automake:runtime', 'libtool:runtime', 'libtool:devel' ]
+    # until we rely on rRPL's glibc (2.5) 
+    buildRequires += ['kernel:build-tree', ]
+
+    rpmPatches = [ 
+                    '0002-Run-ata_id-on-non-removable-USB-devices.patch',
+                    '0003-systemd-let-settle-depend-on-trigger-do-not-block-ba.patch',
+                    '0004-Add-rule-for-Acer-Aspire-One-ZG8-to-use-acer-aspire_.patch',
+                    '0005-udevd-add-N-to-optstring-in-getopt_long.patch',
+                    '0006-Revert-Do-not-build-extras-with-disable-extras.patch',
+                    '0007-Avoid-spinning-up-CD-on-pressing-eject-button.patch',
+                    '0008-keymap-Support-Dell-Latitude-XT2-tablet-mode-navigat.patch',
+                    '0009-selinux-do-not-label-files-in-runtime-dir.patch',
+                    '0010-selinux-firmware-do-not-label-files-in-runtime-dir.patch',
+                    'udev-olpc-keymap-update.patch'
+    ]
+
+    rpmSources = [ 
+                   'start_udev',
+                   ]
+
+
+    def setup(r):
+        r.macros.debug = 'false'
+
+        r.unpack()
+
+        r.addSource('udev-post.init')
+
+        # addons and extra features
+        r.macros.udev_scriptdir='/lib/udev'
+        r.Run('autoreconf -i; automake; libtoolize -f -c')
+
+        r.Configure(' --prefix=%(prefix)s '
+                    ' --exec-prefix="" '
+                    ' --sysconfdir=%(sysconfdir)s '
+                    ' --sbindir="%(essentialsbindir)s"'
+                    ' --with-rootlibdir=/%(lib)s'
+                    ' --libexecdir=%(udev_scriptdir)s'
+                    ' --enable-debug '
+                    ' --enable-static '
+                    ' --enable-introspection'
+                    )
+
+        r.Make()
+        r.MakeInstall()
+
+
+        # Deprecated, but keep the ownership
+        r.MakeDirs('%(sysconfdir)s/udev/{rules.d,scripts,devices,makedev.d}')
+        r.MakeDirs('%(sysconfdir)s/dev.d/')
+        r.Create('%(sysconfdir)s/scsi_id.config')
+        r.InitialContents('%(sysconfdir)s/scsi_id.config')
+
+        r.InitialContents('%(sysconfdir)s/udev/udev.conf')
+
+        # force relative symlinks
+        r.Symlink('/lib/udev/scsi_id', '/sbin/scsi_id')
+
+
+        r.MakeDirs('%(sysconfdir)s/udev/devices')
+
+        r.MakeDirs('%(udev_scriptdir)s/{,devices,devices/net,devices/pts,devices/shm,devices/hugepages}')
+        r.MakeDirs('%(datadir)s/udev')
+        r.MakeDirs('/lib/firmware', mode = 0755)
+
+        r.Install('start_udev', '%(essentialsbindir)s/')
+
+        r.MakeDirs('%(initdir)s')
+        r.MakeDirs('/var/lib/udev/makedev.d')
+
+        # as we 're still in SysV initscripts machinery ... 
+        r.Install('udev-post.init',
+                  '%(initdir)s/udev-post',
+                  mode = 0755)
+
+        for x in range(0, 8):
+            r.MakeDevices('%(udev_scriptdir)s/devices/loop' + str(x),
+                          'b', 7, x, 'root', 'disk',
+                          mode = 0640,
+                          package = 'udev:data')
+
+        for g in ['cdrom', 'tape', 'dialout', 'video', 'audio', 'disk', ]:
+            r.UtilizeGroup(g, '/sbin/udevd')
+
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/udev/rules.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/udev/scripts')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/udev/devices')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/udev/makedev.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/dev.d')
+        r.ExcludeDirectories(exceptions='/lib/firmware')
+        r.ExcludeDirectories(exceptions='/lib/udev/.*')
+        r.ExcludeDirectories(exceptions='/usr/share/udev')
+        r.ExcludeDirectories(exceptions='/var/lib/udev/makedev.d')
+
+        # FIXME: find a better way, if any
+        r.addSource('udev.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/udev')
+        r.addSource('udev.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/udev', mode=0755)
+
+        r.Requires('file: /sbin/pidof', '%(taghandlerdir)s/udev')
+
+        r.TagSpec('udev', '/sbin/udevd')
+
+        r.ComponentSpec('data', '/lib/udev/rules.d/.*')
+        r.ComponentSpec('runtime', '/lib/udev/.*')
+        # to avoid clashes in :lib under multilib setups
+        r.ComponentSpec('runtime', '/usr/lib/ConsoleKit/.*')
+        r.PackageSpec('gudev', '.*(GU|gu)dev.*')
+        r.Requires('udev:devel', 'gudev:devel')
+        r.NonBinariesInBindirs(exceptions='%(udev_scriptdir)s/.*')
+
+    
+        

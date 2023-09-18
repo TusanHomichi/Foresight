@@ -1,0 +1,85 @@
+From bd44ab460a2f0d531df0b6b34176efaf6a0641ac Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Thu, 4 Mar 2010 14:47:17 +0000
+Subject: [PATCH] Make the temporary mount point configurable
+
+Distributions that use SELinux cannot have libgpod's callouts
+mount devices as they wish in random location on the disk.
+
+Instead, we'd use a specific directory, so that the SELinux
+rules could be amended for that case.
+
+This patch does not change the default location of the temporary
+directory.
+---
+ configure.ac            |   15 +++++++++++++++
+ tools/Makefile.am       |    9 +++++++++
+ tools/generic-callout.c |    2 +-
+ 3 files changed, 25 insertions(+), 1 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 14d7135..1d03dcb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -203,6 +203,20 @@ AC_ARG_ENABLE(udev,
+ AM_CONDITIONAL(USE_UDEV, test x"$enable_udev" = xyes)
+ AC_SUBST([udevdir], [/lib/udev])
+ 
++dnl ***********************************************************************
++dnl * for the udev and hal callouts, we need a temporary directory to
++dnl * mount the iPod to write out its extended info file.
++dnl ***********************************************************************
++
++temp_mount_dir="/tmp/"
++AC_ARG_WITH(temp_mount_dir, AC_HELP_STRING([--with-mount-dir=DIR],
++	[Directory where HAL/udev will create a sub-directory to mount iPods]),,
++	with_temp_mount_dir="$temp_mount_dir")
++TMPMOUNTDIR="$with_temp_mount_dir"
++AC_SUBST(TMPMOUNTDIR)
++AH_TEMPLATE([TMPMOUNTDIR], [Directory where HAL/udev will create a sub-directory to mount iPods])
++AC_DEFINE_UNQUOTED(TMPMOUNTDIR, "$with_temp_mount_dir", [Directory where HAL/udev will create a sub-directory to mount iPods])
++
+ dnl **************************************************
+ dnl * TagLib is only used by test-rebuild-db 
+ dnl **************************************************
+@@ -393,6 +407,7 @@ Configuration for $PACKAGE $VERSION :
+  Python bindings ..........: $with_python
+  PyGObject support ........: $have_pygobject
+  iPhone/iPod Touch support.: $enable_libimobiledevice
++ Temporary mount directory.: $with_temp_mount_dir
+ 
+  Now type 'make' to build $PACKAGE $VERSION,
+  and then 'make install' for installation.
+diff --git a/tools/Makefile.am b/tools/Makefile.am
+index e6334cd..2f8553e 100644
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -90,3 +90,12 @@ ipod_time_sync_CFLAGS=$(SGUTILS_CFLAGS) $(LIBGPOD_CFLAGS)
+ ipod_time_sync_LDADD=$(SGUTILS_LIBS) $(LIBGPOD_LIBS) 
+ endif
+ 
++if USE_UDEV
++install-data-hook:
++	$(MKDIR_P) "$(DESTDIR)$(MOUNTDIR)"
++endif
++if HAVE_HAL
++install-data-hook:
++	$(MKDIR_P) "$(DESTDIR)$(MOUNTDIR)"
++endif
++
+diff --git a/tools/generic-callout.c b/tools/generic-callout.c
+index b45f6da..b8b617e 100644
+--- a/tools/generic-callout.c
++++ b/tools/generic-callout.c
+@@ -560,7 +560,7 @@ static char *mount_ipod (const char *dev_path, const char *fstype)
+         char *tmpname;
+         int result;
+ 
+-        filename = g_build_filename (g_get_tmp_dir (), "ipodXXXXXX", NULL);
++        filename = g_build_filename (TMPMOUNTDIR, "ipodXXXXXX", NULL);
+         if (filename == NULL) {
+                 return NULL;
+         }
+-- 
+1.6.6.1
+

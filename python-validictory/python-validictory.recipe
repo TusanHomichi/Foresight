@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#
+loadSuperClass('pypipackage')
+class PyValidictory(PyPiPackage, PackageRecipe):
+    name = 'python-validictory'
+    version = '0.8.3'
+    pyname = 'validictory'
+
+    buildRequires = [ 'unzip:runtime',
+                      ]
+
+    def policy(r):
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*.egg-info',
+                 recursive = True)

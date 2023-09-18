@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Libnl(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'libnl'
+    version = '1.1'
+
+    buildRequires = []
+
+    rpmRelease = '16.fc18'
+
+    rpmPatches = [ 'libnl-1.0-pre5-static.patch',
+                   'libnl-1.0-pre5-debuginfo.patch',
+                   'libnl-1.0-pre8-use-vasprintf-retval.patch',
+                   'libnl-1.0-pre8-more-build-output.patch',
+                   'libnl-1.1-include-limits-h.patch',
+                   'libnl-1.1-doc-inlinesrc.patch',
+                   'libnl-1.1-no-extern-inline.patch',
+                   'libnl-1.1-align.patch',
+                   'libnl-1.1-disable-static-by-default.patch',
+                   'libnl-1.1-fix-portmap-position.patch',
+                   'libnl-1.1-threadsafe-port-allocation.patch',]
+
+    packageSummary = 'Convenience library for kernel netlink sockets'
+    packageDescription = """
+This package contains a convenience library to simplify
+using the Linux kernel's netlink sockets interface for
+network manipulation
+"""
+    

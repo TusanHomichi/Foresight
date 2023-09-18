@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('binarypackage')
+class Gufw(BinaryPackageRecipe):
+    name = 'gufw'
+    version = '11.04.2'
+ 
+    buildRequires = ['python-setuptools', 'binutils:runtime', 'dbus-python:python', 'desktop-file-utils:runtime', 'pygobject:python', 'pygtk:python', 'python:devel']
+ 
+    def unpack(r):
+
+        r.macros.site = 'http://launchpad.net/gui-ufw/gufw-11.04/11.04/+download/'
+
+        dist = [
+            ('gufw_11.04.2-all.deb'),
+        ]
+        for (rpm) in dist:
+            r.addArchive('%(site)s/'+rpm, dir='/')
+
+        r.Requires('ufw:runtime', '%(bindir)s/gufw')
+        r.Requires('ufw:config', '%(bindir)s/gufw')

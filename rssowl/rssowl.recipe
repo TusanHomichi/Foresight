@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rssowl(PackageRecipe):
+    name = 'rssowl'
+    version = '2.0'
+
+    buildRequires = ['fontconfig:devel', 'freetype:devel', 'gcc-java:java', 'icedtea-jre:runtime', 'libX11:devel', 'libXext:devel', 'libXrender:devel', 'python:bin', 'unzip:runtime', 'desktop-file-utils:runtime']
+
+    def setup(r):
+	r.addArchive('http://downloads.sourceforge.net/rssowl/rssowl-2.0.linux.x86_64.zip', use=Arch.x86_64, dir='/opt/%(name)s/')
+	r.addArchive('http://downloads.sourceforge.net/rssowl/rssowl-2.0.linux.zip', use=Arch.x86, dir='/opt/%(name)s/')
+        r.Requires(exceptDeps=r'java.*')
+        r.SetModes('/opt/rssowl/rssowl/RSSOwl', 0755)
+        r.addSource('rssowl.desktop')
+        r.Desktopfile('rssowl.desktop')

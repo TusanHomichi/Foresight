@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('jvmpackage')
+loadSuperClass('binarypackage')
+class SunJava(JVMPackageRecipe, BinaryPackageRecipe):
+
+    name = 'sun-jdk'
+    version = '6u26'
+
+    vendor = 'sun'
+    release = '1.6.0'
+
+    def unpack(r):
+
+        r.JVMInit()
+        r.JVMProfile()
+
+        site = 'http://download.java.net/dlj/binaries'
+        for (jarch, arch) in (('i586', Arch.x86), ('amd64', Arch.x86_64)):
+            r.addSource(site+'/jdk-%(version)s-dlj-linux-'+jarch+'.bin', use=arch)
+
+        r.Run('sh *.bin --accept-license --unpack')
+
+        r.Install('jdk*/*', '%(jdkhome)s/')
+
+        desktop = '%(jdkhome)s/jre/plugin/desktop/sun_java'
+        desktopFile = '%s.desktop' % desktop
+        desktopIcon = '%s.png' % desktop
+        r.Replace(
+            ('X-Sun-Supported;', ''),
+            ('X-Red-Hat-Base;', ''),
+            ('X-Ximian-Settings;', ''),
+            ('Application;', ''),
+            desktopFile
+        )
+
+        r.Install(desktopFile, '%(datadir)s/applications/')
+        r.Install(desktopIcon, '%(datadir)s/pixmaps/sun-jcontrol.png')
+
+        # Create symlink for firefox plugin
+        r.pluginFile = '%(jrelibdir)s/libnpjp2.so'
+        r.pluginLink = '%(libdir)s/mozilla/plugins/libjavaplugin_oji.so'
+        r.Symlink(r.pluginFile, r.pluginLink)
+        r.Provides('file', r.pluginFile)
+        r.Requires('file: '+r.pluginFile, r.pluginLink)
+
+    def policy(r):
+
+        r.ComponentSpec('%(jvmvendor)s-java-webplugin:runtime', '%(libdir)s/mozilla/')
+
+        r.JVMPolicy()
+
+        # RPL-1534
+        #r.Requires(exceptDeps='java.*')
+        r.Requires(exceptDeps=r'java: org.apache.derby.*')
+        r.Requires(exceptDeps=r'java: jnlp.sample.servlet.*')
+
+        # 
+        r.Requires(exceptDeps=r'java: org.netbeans.core.nativeaccess.transparency.*') 
+
+        # RPL-1558
+        r.Requires('%(jrename)s:runtime', '%(jdkhome)s/.*')
+
+

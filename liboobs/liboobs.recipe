@@ -1,0 +1,12 @@
+ #
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class LibOobs(GnomePackageRecipe):
+    buildRequires = [ 'hal:devel', 'dbus-glib:devellib', 'dbus:devel', 'glib:devel', 'system-tools-backends:devellib' ]
+
+    name = 'liboobs'
+    version = '2.32.0'

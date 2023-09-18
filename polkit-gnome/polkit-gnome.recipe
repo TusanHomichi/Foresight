@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class PolKitGnome(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'polkit-gnome'
+    version = '0.97'
+    # FIXME follow upstream naming properly
+    rpmRelease = '4.fc14'
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'polkit:devel',
+                      'polkit:runtime', 'atk:devel', 'cairo:devel',
+                      'dbus-glib:devel', 'dbus:devel', 'esound:devel',
+                      'expat:devel', 'fontconfig:devel', 'freetype:devel',
+                       'gettext:runtime', 'glib:devel',
+                      'gnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel',
+                      'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+                      'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel',
+                      'libpng:devel', 'libxcb:devel', 'libxml2:devel', 'pango:devel',
+                      'perl:runtime', 'pkgconfig:devel', 'popt:devel', 'zlib:devel',
+                      'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+                      'perl-XML-Parser:perl', 'which:runtime', 'gnome-common:runtime',
+                      'gnome-common:devel', 'dbus-glib:runtime', 'automake:runtime',
+                      'linuxdoc-tools:runtime', 'autoconf:runtime', 'libtool:devel',
+                      'libtool:runtime', 'util-macros:devel', 'libsexy:devel',
+                      'desktop-file-utils:runtime', 'gcc-c++:runtime', 'GConf:runtime',
+                      'gobject-introspection:devel', 
+                      
+                      ]
+
+
+
+    def configure(r):
+        r.addPatch('autostart_in_xfce_fix.patch')
+        r.Configure('--disable-docbook-docs --disable-gtk-doc --disable-introspection')

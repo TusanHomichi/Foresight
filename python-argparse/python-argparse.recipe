@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#
+loadSuperClass('pypipackage')
+class PyArgparse(PyPiPackage, PackageRecipe):
+    name = 'python-argparse'
+    version = '1.2.1'
+    pyname = 'argparse'
+
+    buildRequires = [ 'unzip:runtime',]
+
+    # XXX NOT TO BE COMMITED. included in py27
+    # also - exists a argparse-python pkg that will go away.
+
+    def policy(r):
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*.egg-info',
+                 recursive = True)

@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('python')
+loadSuperClass('rpmpackage')
+class PyXF86Config(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'pyxf86config'
+    version = '0.3.37'
+    rpmRelease = '2.fc11'
+
+    buildRequires = [ 'python:devel', 'glib:devel', 'xorg-server:devel',
+        'pkgconfig:devel', 'file:runtime', 'libICE:devel', ]
+
+    def configure(r):
+        r.macros.pyver = Python.majversion
+        r.macros.cflags += ' -fPIC'
+        # we don't seem to have an xorg-x11.pc file
+        r.Configure('--with-python-version=%(pyver)s'
+                    ' --x-includes=%(includedir)s/xorg'
+                    ' --x-libraries=%(libdir)s',
+            preConfigure='XORG_SERVER_CFLAGS="%(cflags)s" '
+                ' XORG_SERVER_LIBS="%(cflags)s"')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.CompilePython('%(libdir)s/*/*')

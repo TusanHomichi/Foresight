@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Vinagre(GnomePackageRecipe):
+
+    name = 'vinagre'
+    version = '2.31.5'
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'desktop-file-utils:runtime',
+                      'gnutls:devel', 'gtk-vnc:devel', 'libglade:devel',
+                      'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+                      'shared-mime-info:devellib','shared-mime-info:runtime',
+                      'libgnome-keyring:devel', 'rarian:devel', 'rarian:runtime',
+                      'libxml2:runtime', 'avahi:devel', 'GConf:runtime', 
+                      'gnome-panel:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel',
+                      'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                      'libgnomeui:devel', 'popt:devel', 'openssh-client:runtime',
+                      'telepathy-glib:devel', 'vte:devel']
+
+    extraConfig = ' --enable-avahi --enable-ssh'

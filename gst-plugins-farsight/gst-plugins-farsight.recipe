@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GstPluginsFarsight(AutoPackageRecipe):
+
+    name = 'gst-plugins-farsight'
+    version = '0.12.11'
+
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'gcc-c++:runtime', 'glib:devel', 'gst-plugins-base:devel', 'gstreamer:devel', 'libstdc++:devel', 'libxml2:devel', 'pkgconfig:devel', 'zlib:devel', 'GConf:runtime', 'gstreamer:runtime']
+
+    def unpack(r):
+        r.addArchive('http://farsight.freedesktop.org/releases/%(name)s/')

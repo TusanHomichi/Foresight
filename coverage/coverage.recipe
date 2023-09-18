@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Coverage(PackageRecipe):
+
+    name = 'coverage'
+    version = '3.3.1'
+
+    buildRequires = [
+        'gcc:devel',
+        'gcc:runtime',
+        'glibc:devel',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/c/%(name)s/')
+        r.PythonSetup()
+        r.SetModes(r.glob('%(libdir)s/python%(pyver)s/site-packages/%(name)s-%(version)s-py%(pyver)s.egg-info/*'), 0644)

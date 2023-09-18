@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class themeforesightmodern(PackageRecipe):
+    name = 'theme-foresight-modern'
+    version = '0.1'
+
+    buildRequires = [ 'gtk:devel', ]
+
+    def setup(r):
+        r.addArchive('Foresight-modern.tar.bz2', dir='%(datadir)s/themes/')

@@ -1,0 +1,16 @@
+#
+# Copyright 2008, Foresight Linux
+#
+loadSuperClass('xfce-goodies-package.recipe')
+class ristretto(xfceGoodiesPackage):
+
+    name = 'squeeze'
+    version = '0.2.3'
+    
+    buildRequires =  [
+        'perl-XML-Parser:perl', 'libxfce4util:devel', 'Thunar:devel', 
+        'libxfcegui4:devel', 'dbus-glib:devel',
+    ] 
+   
+    def unpack(r):
+        r.addArchive('http://squeeze.xfce.org/downloads/')

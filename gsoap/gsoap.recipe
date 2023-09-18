@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gsoap(AutoPackageRecipe):
+    name = 'gsoap'
+    version = '2.7.13'
+ 
+    buildRequires = [ 'bison:runtime',
+                      'flex:runtime',
+                      'gcc-c++:runtime',
+                      'libstdc++:devel',
+                      'libtool:devel',
+                      'openssl:devel',
+                      'zlib:devel',
+                      'libtool:runtime',
+                      'automake:runtime',
+                      'autoconf:runtime',]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/gsoap2/%(name)s_%(version)s.tar.gz')
+        for p in [ 'gsoap-2.7-openssl.patch',
+                   'unused_args.patch',
+                   'use_libtool-2.7.12.patch']:
+            r.addPatch(p)
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure('--disable-static', preConfigure = 'autoreconf -fi ; ')

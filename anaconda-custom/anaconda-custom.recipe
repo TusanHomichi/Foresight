@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class AnacondaCustom(RedirectRecipe):
+    name = 'anaconda-custom'
+    version = '0'
+    buildRequires = [ ]
+
+    def setup(r):
+        r.addRemoveRedirect()

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+#loadSuperClass('binarypackage=conary.rpath.com@rpl:1')
+class CompizCheck(PackageRecipe):
+    name = 'compiz-check'
+    version = '0.4'
+ 
+    def setup(r):
+        r.addSource('http://blogage.de/files/3847/download?compiz-check',
+                    dest = '%(bindir)s/compiz-check')
+        r.SetModes('%(bindir)s/compiz-check', 755)

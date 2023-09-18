@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2008 - 2013 The Foresight Linux Project
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Gajim(AutoPackageRecipe):
+    name = 'gajim'
+    version = '0.15.4'
+    buildRequires = [
+        'aspell:devel',
+        'atk:devel',
+        'avahi:python',
+        'cairo:devel',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'docutils:python',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gnome-python-desktop:python',
+        'gnome-python-extras:python',
+        'gnome-python:python',
+        'gst-python:python',
+        'gtk:devel',
+        'gtkspell:devel',
+        'intltool:runtime',
+        'libpng:devel',
+        'libX11:devel',
+        'libXext:devel',
+        'libXrender:devel',
+        'libXScrnSaver:devel',
+        'notify-python:python',
+        'pango:devel',
+        'perl:runtime',
+        'pkgconfig:devel',
+        'pycurl:python',
+        'pygobject:python',
+        'pygobject:runtime',
+        'pygoocanvas:python',
+        'pygtk:devel',
+        'pygtk:python',
+        'pyOpenSSL:python',
+        'python-sqlite:python',
+        'python:devel',
+        'pyxdg:python',
+        'sexy-python:python',
+        'xmpppy:python',
+        'zlib:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://gajim.org/downloads/%(major_version)s/')

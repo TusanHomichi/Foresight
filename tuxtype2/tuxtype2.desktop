@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Tux Typing
+Comment=educational typing tutorial game
+Exec=tuxtype
+Icon=/usr/share/tuxtype/images/tux0.png
+Terminal=false
+MultipleArgs=false
+Type=Application
+Categories=Game
+

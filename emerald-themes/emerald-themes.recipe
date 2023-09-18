@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EmeraldThemes(AutoPackageRecipe):
+    name = 'emerald-themes'
+    version = '0.5.2'
+
+    def unpack(r):
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/')

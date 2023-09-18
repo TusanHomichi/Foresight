@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GstFluendoMp3(CPackageRecipe):
+    name = 'gst-fluendo-mp3'
+    version = '20090701'
+ 
+    buildRequires = ['autoconf:runtime', 'glib:devel', 'gstreamer:devel', 'gstreamer:runtime', 'libxml2:devel', 'pkgconfig:devel', 'zlib:devel', 'libtool:runtime', 'automake:runtime']
+ 
+    def setup(r):
+	r.addArchive('gst-fluendo-mp3.tar.gz')
+	r.Run('chmod +x ./autogen.sh') 
+	r.Configure(configureName='autogen.sh')
+ 	r.MakeInstall()

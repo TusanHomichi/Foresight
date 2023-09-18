@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GrampsRecipe(AutoPackageRecipe):
+    name = "gramps"
+    version = "3.4.1"
+    buildRequires = [
+        'PyXML:python',
+        'desktop-file-utils:runtime',
+        'gettext:runtime',
+        'gnome-python-extras:python',
+        'gnome-python:python',
+        'gtk:runtime',
+        'intltool:runtime',
+        'perl:runtime',
+        'pycairo:python',
+        'pygobject:python',
+        'pygtk:python',
+        'python:devel',
+        'shared-mime-info:runtime',
+        'pywebkitgtk:python',
+        'PIL:python',
+    ]
+
+    def setup(r):
+
+        r.addArchive('http://sourceforge.net/projects/gramps/files/Stable/%(version)s/gramps-%(version)s.tar.gz')
+        r.Configure('--disable-mime-install')
+        r.Make()
+        r.MakeInstall()

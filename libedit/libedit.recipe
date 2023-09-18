@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+#             
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibEdit(AutoPackageRecipe):
+    name = 'libedit'
+    version = '20120601_3.0'
+    buildRequires = [ 'groff:runtime', 'libtermcap:devel', 'ncurses:devel', ]
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://www.thrysoee.dk/editline/')
+        r.addPatch('libedit-20120601-3.0-insertstr-mb.patch')
+
+    def configure(r):
+        r.Configure('--disable-static --enable-widec')
+        # Fix unused direct shared library dependencies.
+        # r.Replace('lcurses', 'ltinfo', 'src/Makefile')

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Perlmagick(CPackageRecipe):
+    name = 'perlmagick'
+    version = '6.6.7_2'
+    buildRequires = ['ImageMagick:devel', 'perl:devel']
+
+    def setup(r):
+		r.macros.upstreamVersion = r.macros.version.replace('_','-')
+		r.addArchive('ftp://ftp.imagemagick.org/pub/ImageMagick/ImageMagick-%(upstreamVersion)s.tar.gz')
+		r.macros.pmdir = 'PerlMagick'
+		r.Run('perl Makefile.PL', dir='%(pmdir)s')
+		r.Make(dir='%(pmdir)s')	
+		r.MakeInstall(dir='%(pmdir)s')
+

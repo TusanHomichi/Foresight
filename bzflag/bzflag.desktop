@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Name[en_US]=BZFlag
+Exec=bzflag
+Icon[en_US]=/usr/share/pixmaps/bzflag.png
+Name=BZFlag
+Icon=/usr/share/pixmaps/bzflag.png
+Categories=GNOME;Game;

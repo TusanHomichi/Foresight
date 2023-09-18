@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cuyo(AutoPackageRecipe):
+    name = 'cuyo'
+    version = '2.1.1'
+ 
+    buildRequires = ['SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'desktop-file-utils:runtime', 'flex:runtime', 'gtk:runtime', 'libstdc++:devel', 'zlib:devel', 'flex:devel']
+ 
+    def unpack(r):
+		r.addArchive('http://download.savannah.gnu.org/releases/%(name)s/%(name)s-2.~-1.1.tar.gz')
+		r.addPatch('configure.patch')

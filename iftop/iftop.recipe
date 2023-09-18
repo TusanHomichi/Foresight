@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ifTop(AutoPackageRecipe):
+    name = "iftop"
+    version ="0.17"
+
+    buildRequires = ['libpcap:devel', 'ncurses:devel']
+
+    def unpack(r):
+        r.addArchive("http://www.ex-parrot.com/~pdw/iftop/download/")

@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Rtkit(RPMPackageRecipe,AutoPackageRecipe):
+
+    name = 'rtkit'
+    version = '0.4'
+    rpmRelease = '1.fc12'
+
+    buildRequires = [ 'dbus:devel', 'polkit:runtime', 'libcap:devel', 'pkgconfig:devel']
+
+    def policy(r):
+        r.addSource('rtkit.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/rtkit')
+        r.addSource('rtkit.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/rtkit', mode=0755)
+
+        r.Requires('dbus:runtime', '%(taghandlerdir)s/rtkit')
+
+        r.TagSpec('rtkit', 'rtkit:runtime')
+
+        r.Run('./rtkit-daemon --introspect > org.freedesktop.RealtimeKit1.xml')
+        r.Install('org.freedesktop.RealtimeKit1.xml', '%(datadir)s/dbus-1/interfaces/org.freedesktop.RealtimeKit1.xml')
+
+        #FIXME
+        r.UtilizeUser('rtkit', '%(sbindir)s/rtkitctl')

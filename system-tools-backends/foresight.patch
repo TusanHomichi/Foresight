@@ -1,0 +1,65 @@
+diff -r a9e09275fbd6 Utils/Platform.pm
+--- a/Utils/Platform.pm	Fri May 16 22:26:40 2008 -0400
++++ b/Utils/Platform.pm	Fri May 16 22:31:00 2008 -0400
+@@ -94,6 +94,7 @@
+   "fedora-3"        => [ "Fedora Core", "3", "Heidelberg" ],
+   "fedora-4"        => [ "Fedora Core", "4", "Stentz" ],
+   "rpath"           => [ "rPath Linux" ],
++  "foresight"       => [ "Foresight Linux" ],
+   "ark"             => [ "Ark Linux" ],
+   "solaris-2.11"    => [ "Solaris / OpenSolaris", "2.11", "Nevada" ],
+   "nexenta-1.0"     => [ "Nexenta GNU/Solaris", "1.0", "Ellate" ],
+@@ -139,6 +140,7 @@
+      "pld-2.99"         => "pld-1.0",
+      "redhat-9"         => "redhat-8.0",
+      "rpath"            => "redhat-7.2",
++     "foresight"            => "redhat-8.0",
+      "yellowdog-4.1"    => "redhat-7.2",
+      "slackware-10.0.0" => "slackware-9.1.0",
+      "slackware-10.1.0" => "slackware-9.1.0",
+@@ -221,16 +223,32 @@
+       close RPATH;
+       return "rpath";
+     }
+-    elsif ($ver =~ /Foresight/)
+-    {
+-      close RPATH;
+-      return "rpath";
+-    }
+   }
+ 
+   close RPATH;
+   return -1;
+ }
++
++sub check_foresight
++{
++  open FORESIGHT, "$gst_prefix/etc/sysconfig/base-distro" or return -1;
++
++  while (<FORESIGHT>)
++  {
++    $ver = $_;
++    chomp ($ver);
++
++    if ($ver =~ /^Foresight Linux/)
++    {
++      close FORESIGHT;
++      return "foresight";
++    }
++  }
++
++  close FORESIGHT;
++  return -1;
++}
++
+ 
+ sub check_ark
+ {
+@@ -385,6 +403,7 @@
+                   [ \&check_file_exists, "/usr/portage", "gentoo" ],
+                   [ \&check_distro_file, "/etc/pld-release", "pld", "^(\\S+) PLD Linux" ],
+                   [ \&check_rpath ],
++                  [ \&check_foresight ],
+                   [ \&check_file_exists, "/etc/arch-release", "archlinux" ],
+                   [ \&check_ark ],
+                   [ \&check_yoper ],

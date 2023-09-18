@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+loadSuperClass('cpanpackage')
+class PerlDateTimeFormatMail(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-DateTime-Format-Mail'
+    version = '0.3001'
+    buildRequires = ['perl-DateTime:perl', 'perl-Params-Validate:perl']
+

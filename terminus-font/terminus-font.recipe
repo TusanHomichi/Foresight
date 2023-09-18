@@ -1,0 +1,7 @@
+class TerminusFont(RedirectRecipe):
+
+    name = 'terminus-font'
+    version = '0'
+
+    def setup(r):
+        r.addRedirect('font-fixed-terminus', r.macros.buildlabel)

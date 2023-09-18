@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Apr(CPackageRecipe):
+    name = 'apr'
+    version = '1.4.6'
+
+    buildRequires = [ 'autoconf:runtime', 'libtool:runtime', 'e2fsprogs:devel' ]
+
+    def setup(r):
+        r.macros.aprver = r.macros.version.split('.')[0]
+
+        r.addArchive('http://archive.apache.org/dist/apr/')
+
+        for patch in [ 'apr-1.2.2-locktimeout.patch',
+                       'apr-1.2.2-libdir.patch',
+                       'apr-1.2.7-pkgconf.patch',
+                       'apr-1.4.6-r1309386.patch']:
+            r.addPatch(patch)
+
+        r.Run('./buildconf')
+        r.Environment('ac_cv_search_shm_open', 'no')
+        r.Configure(' --includedir=%(includedir)s/apr-%(aprver)s '
+                    ' --with-installbuilddir=%(libdir)s/apr-%(aprver)s/build '
+                    ' --with-devrandom=/dev/urandom ')
+
+        r.Make()
+        r.MakeInstall()
+
+        r.Install('build/find_apr.m4',
+                  '%(datadir)s/aclocal/',
+                  mode = 0644)
+
+        if Arch.x86_64:
+            excludes = 'testlock'
+
+        # These are referenced by apr_rules.mk
+        for f in ('make_exports.awk', 'make_var_export.awk'):
+            r.Install('build/' + f, '%(libdir)s/apr/build/' + f)
+
+        r.Install('build/mkdir.sh', '%(libdir)s/apr/build/mkdir.sh', mode=0755)
+
+        # Sanitize apr_rules.mk
+        r.Replace(('^apr_build',''),
+                  ('\$\(apr_builders\)', '%(libdir)s/apr/build'),
+                  ('\$\(apr_builddir\)', '%(libdir)s/apr/build'),
+                  'build/apr_rules.mk')
+
+        # apr-config assumes that we are keeping the build source in the
+        # same place
+        r.Replace(('^APR_BUILD_DIR=.*','APR_BUILD_DIR=%(libdir)s/apr/build'),
+                  ('^APR_SOURCE_DIR=.*','APR_SOURCE_DIR=%(libdir)s/apr'),
+                  '%(bindir)s/apr-*config')
+
+        r.Install('build/apr_rules.mk',
+                  '%(libdir)s/apr/build/apr_rules.mk')
+
+        # RPL-3004
+        r.ComponentSpec('devellib', '%(libdir)s/apr/build/')
+
+        # Unpackaged files:
+        r.Remove('%(libdir)s/apr.exp')
+        r.Doc('docs/APRDesign.html', 'docs/canonical_filenames.html',
+              'docs/incomplete_types', 'docs/non_apr_programs')
+
+        # include libtool .la files, they are used by programs that
+        # link with `apr-config --link-libtool`
+        r.RemoveNonPackageFiles(exceptions=r'\.la$')
+
+        r.TestSuiteFiles(r'.*/\.lib/.*\.so.*')
+        r.TestSuite('/test/', 'make testall; ./testall -v',
+                    autoBuildMakeDependencies=False)

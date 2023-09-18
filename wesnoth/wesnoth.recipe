@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WesnothRecipe(PackageRecipe):
+	name='wesnoth'
+	version='1.10.1'
+	packageSummary = 'fantasy turn-based strategy game'
+	packageDescription = """
+Battle for control of villages, using variety of units which have advantages \
+and disadvantages in different types of terrains and against different types \
+of attacks. Units gain experience and advance levels, and are carried over \
+from one scenario to the next in a campaign.
+"""
+
+	buildRequires = [
+		'asciidoc:runtime',
+		'boost:devel',
+		'dbus:devel',
+		'desktop-file-utils:runtime',
+		'diffutils:runtime',
+		'dos2unix:runtime',
+		'freetype:devel',
+		'fribidi:devel',
+		'gawk:runtime',
+		'gcc:devel',
+		'gcc:runtime',
+		'gettext:runtime',
+		'gtk:runtime',
+		'intltool:runtime',
+		'libICE:devel',
+		'libpng:devel',
+		'libpng:devel',
+		'libstdc++:devel',
+		'libtool:runtime',
+		'libtool:runtime',
+		'libvorbis:devel',
+		'libX11:devel',
+		'libxslt:runtime',
+		'lua:devel',
+		'make:runtime',
+		'mkfontdir:runtime',
+		'pango:devel',
+		'perl:devel',
+		'perl:lib',
+		'perl:runtime',
+		'pkgconfig:devel',
+		'pygobject:python',
+		'pygtk:python',
+		'python:devel',
+		'ruby:runtime',
+		'SDL:devel',
+		'SDL_image:devel',
+		'SDL_mixer:devel',
+		'SDL_net:devel',
+		'SDL_ttf:devel',
+		'scons:runtime',
+		'sound-theme-freedesktop:runtime',
+		'zlib:devel',
+		'zlib:devel',
+		'PIL:python',
+		'python-simplejson:python', 
+		'wxPython:python'
+	]
+
+	def setup(r):
+		r.addArchive('http://sourceforge.net/projects/wesnoth/files/wesnoth-1.10/wesnoth-%(version)s/wesnoth-%(version)s.tar.bz2')
+		r.Run('scons prefix=%(prefix)s bindir=%(bindir)s datadir=%(datadir)s destdir=%(destdir)s localedirname=%(datadir)s/locale/ build=release wesnoth wesnothd campaignd cutter exploder')
+		r.Run('scons prefix=%(prefix)s bindir=%(bindir)s datadir=%(datadir)s destdir=%(destdir)s localedirname=%(datadir)s/locale/ build=release install')

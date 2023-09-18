@@ -1,0 +1,31 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonPopplerQt4(PackageRecipe):
+
+    name = 'python-poppler-qt4'
+    version = '0.16.2'
+
+    buildRequires = [
+                    'gcc:runtime',
+                    'libgcc:devellib',
+                    'libstdc++:devel',
+                    'pkgconfig:devel',
+                    'poppler:devel',
+                    'poppler-qt4:devel',
+                    'PyQt4:python',
+                    'python:devel',
+                    'python-setuptools:python',
+                    'qt4:devel',
+                    'sip:devel',
+                    'sip:python',
+                    'sip:runtime',
+                    ]
+
+    def setup(r):
+        r.addArchive('http://python-poppler-qt4.googlecode.com/files/python-poppler-qt4-%(version)s.tar.gz')
+        r.PythonSetup()

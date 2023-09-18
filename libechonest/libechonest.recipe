@@ -1,0 +1,35 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libechonest(AutoPackageRecipe):
+    name = 'libechonest'
+    version = '1.2.1'
+ 
+    buildRequires = [
+                    'cmake:runtime',
+                    'doxygen:runtime',
+                    'gcc-c++:runtime',
+                    'graphviz:runtime',
+                    'libstdc++:devel',
+                    'pkgconfig:devel',
+                    'phonon:devel',
+                    'qjson:devel',
+                    'qt4-core:devellib',
+                    'qt4-gui:devellib',
+                    'qt4-qt3support:devellib',
+                    'qt4-sql:mysql',
+                    'qt4-sql:odbc',
+                    'qt4-sql:psql',
+                    'qt4-sql:sqlite',
+                    'qt4:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://pwsp.cleinias.com/')
+
+    def configure(r):
+        r.CMake('-DCMAKE_INSTALL_PREFIX=%(prefix)s -DCMAKE_BUILD_TYPE=Release')

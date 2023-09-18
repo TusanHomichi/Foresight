@@ -1,0 +1,34 @@
+diff -uNr calibre.old/src/calibre/gui2/ui.py calibre/src/calibre/gui2/ui.py
+--- calibre.old/src/calibre/gui2/ui.py	2011-01-11 22:08:00.684511166 +0100
++++ calibre/src/calibre/gui2/ui.py	2011-01-11 22:11:34.522099663 +0100
+@@ -590,7 +590,7 @@
+         if write_settings:
+             self.write_settings()
+         self.check_messages_timer.stop()
+-        self.update_checker.terminate()
++        # self.update_checker.terminate()
+         self.listener.close()
+         self.job_manager.server.close()
+         while self.spare_servers:
+diff -uNr calibre.old/src/calibre/gui2/update.py calibre/src/calibre/gui2/update.py
+--- calibre.old/src/calibre/gui2/update.py	2011-01-11 22:08:00.684511166 +0100
++++ calibre/src/calibre/gui2/update.py	2011-01-11 22:11:16.678301138 +0100
+@@ -87,12 +87,12 @@
+ 
+ class UpdateMixin(object):
+ 
+-    def __init__(self, opts):
+-        if not opts.no_update_check:
+-            self.update_checker = CheckForUpdates(self)
+-            self.update_checker.update_found.connect(self.update_found,
+-                    type=Qt.QueuedConnection)
+-            self.update_checker.start()
++    #def __init__(self, opts):
++        #if not opts.no_update_check:
++        #    self.update_checker = CheckForUpdates(self)
++        #    self.update_checker.update_found.connect(self.update_found,
++        #            type=Qt.QueuedConnection)
++        #    self.update_checker.start()
+ 
+     def update_found(self, version):
+         os = 'windows' if iswindows else 'osx' if isosx else 'linux'

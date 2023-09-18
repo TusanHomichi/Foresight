@@ -1,0 +1,80 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ImageMagick(CPackageRecipe):
+    name = 'ImageMagick'
+    mainver = '6.7.3'
+    patchlevel = '10'
+    version = mainver + '.' + patchlevel
+
+    buildRequires = [
+        'OpenEXR:devel', 'bzip2:devel', 'cups:runtime', 'curl:runtime',
+        'enscript:runtime', 'ffmpeg:runtime', 'fontconfig:devel',
+        'freetype:devel', 'gcc-c++:runtime', 'gcc:devel',
+        'ghostscript:runtime', 'gimp:runtime', 'graphviz:devel',
+        'graphviz:runtime', 'groff:runtime', 'ilmbase:devel', 'jasper:devel',
+        'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel',
+        'libXt:devel', 'libjpeg:devel', 'libpng:devel', 'libtiff:devel',
+        'libtool:devel', 'libtool:runtime', 'libxml2:devel',
+        'mplayer:runtime', 'netpbm:runtime', 'p7zip:runtime',
+        'pkgconfig:devel', 'sane-backends:runtime', 'tetex-dvips:runtime',
+        'xdg-utils:runtime', 'xterm:runtime', 'zip:runtime', 'zlib:devel',
+        'giflib:devel', 'glib:devel', 'gtk:devel', 'perl:devel',
+        'ghostscript:devel', 'lcms:devel', 'librsvg:devel', 'djvulibre:devel',
+        ]
+
+    def setup(r):
+        r.macros.mainver = r.mainver
+        r.macros.patchlevel = r.patchlevel
+        r.macros.archive_version = '%(mainver)s-%(patchlevel)s'
+        # parallel making causes PerlMagick to be silently misbuild
+        r.disableParallelMake()
+
+        r.addArchive('ftp://ftp.imagemagick.org/pub/ImageMagick/')
+
+        r.Replace('libltdl.la', 'libltdl.so', 'configure')
+        r.Environment('LD_RUN_PATH', '%(libdir)s')
+
+        r.Configure(' --enable-shared '
+                    ' --disable-static'
+                    ' --with-threads'
+                    ' --with-modules=no'
+                    ' --with-x '
+                    ' --with-threads '
+                    ' --with-magick_plus_plus '
+                    ' --with-gslib '
+                    ' --with-wmf '
+                    ' --with-lcms '
+                    ' --with-rsvg '
+                    ' --with-xml '
+                    ' --with-djvu '
+                    ' --without-dps '
+                    # FIXME get perl to build in a sane way
+                    ' --without-perl '
+                    ' --without-included-ltdl --with-ltdl-include=%(includedir)s '
+                    ' --with-ltdl-lib=%(libdir)s '
+                    )
+
+        # Disable rpath
+        r.Run(''' sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool ''')
+
+        # Do *NOT* use %%{?_smp_mflags}, this causes PerlMagick to be silently misbuild
+        r.disableParallelMake()
+
+        r.Make()
+        r.MakeInstall(preMake='DESTDIR=%(destdir)s')
+
+        r.Run('find %(destdir)s -name "*.bs" |xargs rm -f')
+
+        r.Move('%(libdir)s/%(name)s-%(mainver)s/config/*',
+               '%(datadir)s/%(name)s-%(mainver)s/config/')
+
+        r.Doc('*.txt', 'www', 'images', 'index.html')
+
+        r.RemoveNonPackageFiles(exceptions='.*\.la')
+        r.ComponentSpec('lib', '.*\.la')
+        r.Config(exceptions="%(sysconfdir)s/%(name)s/sRGB.icc")

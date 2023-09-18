@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+class LibGnomeUImm(GnomePackageRecipe):
+    name = 'libgnomeuimm'
+    version = '2.28.0'
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel', 
+    		  'cairo:devel', 'cairomm:devel', 'fontconfig:devel', 
+		  'freetype:devel', 'gconfmm:devel', 'glib:devel', 
+		  'glibmm:devel', 'gnome-keyring:devel', 'gnome-vfs:devel',	
+		  'gnome-vfsmm:devel', 'gtkmm:devel', 'libart_lgpl:devel', 
+		  'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 
+		  'libglademm:devel', 'libgnome:devel', 'libgnomecanvas:devel', 
+		  'libgnomecanvasmm:devel', 'libgnomemm:devel', 'libgnomeui:devel', 
+		  'libpng:devel', 'libsigc++:devel', 'libstdc++:devel', 
+		  'libxml2:devel', 'm4:runtime', 'pango:devel', 'popt:devel', 'perl:runtime']

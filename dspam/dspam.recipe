@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Dspam(AutoPackageRecipe):
+    name = 'dspam'
+    version = '3.10.2'
+ 
+    buildRequires = ['perl:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/%(name)s-%(version)s.tar.gz')

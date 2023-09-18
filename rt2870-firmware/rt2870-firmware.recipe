@@ -1,0 +1,28 @@
+class RT2870FW(PackageRecipe):
+
+    name = 'rt2870-firmware'
+    version = '2.1.2.0'
+
+    buildRequires = [ 'unzip:runtime' ]
+
+    def setup(r):
+        # upsteam got now crazy URLs
+        # workarounding it
+        srpm = 'ftp://fr2.rpmfind.net/linux/rpmfusion/free/fedora/development/source/SRPMS/rt2870-kmod-2.1.2.0-6.fc13.src.rpm'
+        r.addArchive('2009_0521_RT2870_Linux_STA_V%(version)s.tgz', rpm = srpm)
+        
+         # Needed for WPA2 support (RFBZ #664)
+        r.Replace('HT_DisallowTKIP=1', 'HT_DisallowTKIP=0', 'RT2870STA.dat') 
+
+        r.Create('%(sysconfdir)s/modprobe.d/blacklist-rt2800usb.conf', contents="""
+# This file comes with RPMFusion's rt2870 or rt3070 package.
+# As of kernel 2.6.31, the module that comes with the kernel gets
+# loaded for this device and it stops the device from working. So...
+blacklist rt2800usb 
+""", mode = 0644)
+
+
+        r.Move('RT2870STA.dat', '%(sysconfdir)s/Wireless/RT2870STA/', mode = 0644)
+        r.Flavor(exceptions='%(sysconfdir)s/.*')
+        r.Config(exceptions='%(sysconfdir)s/.*')
+        r.ComponentSpec('lib', '.*')

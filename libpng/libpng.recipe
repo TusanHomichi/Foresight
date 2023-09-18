@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libpng(AutoPackageRecipe):
+    name = 'libpng'
+    version = '1.2.49'
+
+    buildRequires = [ 'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.simplesystems.org/pub/png/src/history/libpng12/')
+        r.addPatch('libpng-multilib.patch')
+        r.addPatch('libpng-pngconf.patch')
+
+    def policy(r):
+        r.Symlink('libpng12/png.h', 'libpng12/pngconf.h',
+                             '%(includedir)s/')
+        r.AutoDoc('libpng.txt', 'example.c')
+        r.Remove('%(libdir)s/libpng.so')
+        r.Symlink('%(libdir)s/libpng.so.3', '%(libdir)s/libpng.so')

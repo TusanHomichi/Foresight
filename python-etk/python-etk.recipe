@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('svnpackage')
+class PythonEtk(CPackageRecipe):
+    url = 'http://svn.enlightenment.org/svn/e/trunk/BINDINGS/python/python-etk'
+    name = 'python-etk'
+    version = SvnPackageRecipe.getRevision(url)
+
+    buildRequires = ['curl:devel', 'ecore:devel', 'edje:devel', 'eet:devel', 'eina:devel', 'embryo:devel', 'etk:devel', 'evas:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gnutls:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXext:devel', 'libXfixes:devel', 'libXinerama:devel', 'libXp:devel', 'libXrandr:devel', 'libXrender:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libjpeg:devel', 'openssl:devel', 'python-ecore:python', 'python-evas:python', 'python:devel', 'zlib:devel', 'python-edje:python', 'subversion:runtime', 'cython:runtime', 'Pyrex:runtime', 'python-setuptools:python', 'pkgconfig:devel', 'python-evas:python', 'python-evas:devel']
+
+    def setup(r):
+        r.addSvnSnapshot(r.url)
+        r.PythonSetup()

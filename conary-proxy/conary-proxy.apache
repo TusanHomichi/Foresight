@@ -1,0 +1,26 @@
+Listen 8008
+
+<VirtualHost *:8008>
+
+<Directory %(proxydir)s/config>
+	   AddHandler python-program .cnr
+           PythonHandler conary.server.apachehooks
+</Directory>
+
+Alias /conary/ "%(proxydir)s/config/%(name)s.cnr/"
+
+# We don't really want to clog the filesystem with log messages,
+# and conary has its own log anyway.
+CustomLog "%(localstatedir)s/log/httpd/conary-proxy_access.log" common
+
+# 
+# WSGIPassAuthorization on
+# WSGIScriptAlias / %(proxydir)s/config/%(name)s.wsgi
+# <Location />
+#     Order deny,allow
+#     Allow from all
+# </Location>
+# SetEnv conary.netrepos.config_file %(proxydir)s/config/%(name)s.cnr
+# 
+
+</VirtualHost>

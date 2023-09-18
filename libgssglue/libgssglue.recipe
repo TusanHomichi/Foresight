@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 - The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('rpmpackage')
+class LibGSSglue(RPMPackageRecipe,AutoPackageRecipe):
+
+    name = 'libgssglue'
+    version = '0.1'
+    rpmRelease = '5.fc9' 
+
+    buildRequires = [  ]
+
+    rpmPatches = [ 'libgssglue-0.1-gssglue.patch' ]
+
+    def policy(r):
+        r.Install('doc/gssapi_mech.conf', '%(sysconfdir)s/gssapi_mech.conf', mode = 0644)

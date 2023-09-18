@@ -1,0 +1,7 @@
+--- archive_files/common/etc/ati/signature	2009-03-21 15:34:27.000000000 +0100
++++ archive_files/common/etc/ati/signature.new	2009-03-21 15:36:10.000000000 +0100
+@@ -1 +1 @@
+-UNSIGNED
+\ Kein Zeilenumbruch am Dateiende.
++2a79e0d8ba8e9a012720e9a3d71771b9:1257d6e894bab7311e10da92e3765c891d4ed7ed82cdb7407369c997e124478e19:1b4bd5efdeb8ff391e148bc2b52042881b1cd1e8deefa3334213de95e27449801b1dd4bddeb9ff651f128ac7b52045891d4ad6e1d9b7a3364211db97e32049dc1b40
+\ Kein Zeilenumbruch am Dateiende.

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonClientForm(PackageRecipe):
+    name = 'python-ClientForm'
+    version = '0.2.10'
+
+    buildRequires = [ 'python:devel', 'python-setuptools:python',
+        'BeautifulSoup:python' ]
+
+    def setup(r):
+        r.addArchive('http://wwwsearch.sourceforge.net/ClientForm/src/ClientForm-%(version)s.tar.gz')
+        r.PythonSetup()

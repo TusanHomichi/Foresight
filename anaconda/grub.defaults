@@ -1,0 +1,12 @@
+[main]
+# The default boot target to try to boot.
+# default=0
+#
+# User wait timeout for selecting targets or providing input such as passwords
+# timeout=10
+#
+# Kernel options to append to the kernel line
+kernelOptions=splash vga=0x317 quiet
+#
+# Grub password
+# password=""

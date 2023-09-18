@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class OxygenIconTheme(CMakePackageRecipe):
+
+    name = 'oxygen-icon-theme'
+    version = '4.8.3'
+
+    buildRequires = [
+        'gcc-c++:runtime', 'pkgconfig:devel', 'xz:runtime'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'oxygen-icons'
+        r.addArchive('mirror://kde/stable/%(version)s/src/')
+

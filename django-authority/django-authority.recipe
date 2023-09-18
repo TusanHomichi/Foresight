@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoAuthority(PackageRecipe):
+
+    name = 'django-authority'
+    version = '0.4'
+
+    buildRequires = [
+        'django:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://bitbucket.org/jezdez/%(name)s/downloads/')
+        r.PythonSetup()
+

@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class RDoc(RubygemPackageRecipe):
+
+    name = 'rubygem-rdoc'
+    version = '3.11'
+

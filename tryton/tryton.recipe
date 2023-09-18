@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Tryton(TrytonPackage):
+    name = 'tryton'
+    version = "2.2.X"
+    prebuild = [
+        'gnome-python-extras:python', 
+        'pycairo:python', 
+        'pygobject:python', 
+        'pygtk:python', 
+        'python-dateutil:python', 
+        'python:devel', 
+        'python-simplejson:python',
+        'desktop-file-utils:runtime',
+        'pytz:python'
+        ]
+
+    def setup(r):
+        TrytonPackage.setup(r)
+        r.Desktopfile("tryton.desktop")
+        r.Symlink("%(datadir)s/pixmaps/tryton/tryton-icon.png","%(datadir)s/pixmaps/tryton-icon.png")
+

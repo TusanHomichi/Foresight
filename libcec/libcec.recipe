@@ -1,0 +1,32 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Libcec(AutoPackageRecipe):
+    name = 'libcec'
+    version = '2.1.3'
+ 
+    buildRequires = [
+        'autoconf:data',
+        'autoconf:runtime',
+        'automake:runtime',
+        'git:runtime',
+        'libstdc++:devel',
+        'libtool:devel',
+        'libtool:runtime',
+        'lockdev:devel',
+        'net-tools:runtime',
+        'pkgconfig:devel',
+        'udev:devel',
+        ]
+ 
+    def unpack(r):
+        # r.addGitSnapshot('git://github.com/Pulse-Eight/libcec.git')
+        r.addArchive('https://github.com/Pulse-Eight/libcec/archive/libcec-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Run('autoreconf -vif')
+        r.Configure('--prefix=%(prefix)s')

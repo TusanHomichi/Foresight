@@ -1,0 +1,8 @@
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class version(CPANPackageRecipe, CPackageRecipe):
+    name='perl-version'
+    version='0.78'
+
+    buildRequires = ['perl:devel']
+

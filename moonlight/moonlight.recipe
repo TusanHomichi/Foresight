@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Moonlight(AutoPackageRecipe):
+    name = 'moonlight'
+    version = '1.0.1'
+ 
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'gtk-doc:runtime', 'gtk:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'libXrender:devel',
+                      'libpng:devel', 'libstdc++:devel', 'libxcb:devel', 'pango:devel', 'perl:runtime',
+                      'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'xulrunner:devel', 'zlib:devel',
+                      'unzip:runtime', 'desktop-file-utils:runtime', 'autoconf:runtime','automake:runtime', 'libxml2:runtime',
+                     'libtool:devel', 'libtool:runtime', 'util-macros:devel', 'ImageMagick:devel', 'bzip2:devel',
+                      'dbus-glib:devel', 'dbus:devel', 'libICE:devel', 'libSM:devel', 'libXext:devel', 'zip:runtime',
+                      'libXt:devel', 'libXtst:devel', 'libjpeg:devel', 'libtiff:devel', 'mono:cil', 'mono:devel' ]
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.novell.com/pub/mono/sources/moon/moon-1.0.1.tar.bz2')
+
+    def configure(r): 
+        r.Environment('MONO_CAIRO_LIBS',"-r:%(libdir)s/mono/1.0/Mono.Cairo.dll")
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Run('autoreconf -fi')
+
+        r.Configure(' --with-ffmpeg=no --with-managed=yes  --with-cairo=system --enable-user-plugin ')
+
+
+    def policy(r):
+        r.Remove('%(libdir)s/pkgconfig/', recursive = True)
+
+        # r.SharedLibrary(subtrees='%(libdir)s/moon/plugin/')
+        r.Symlink('%(libdir)s/libmoon.so', '%(libdir)s/moon/plugin/')
+        r.Symlink('%(libdir)s/moon/plugin/libmoonloader.so', '%(libdir)s/mozilla/plugins/')
+
+        # oh the joy of hardcoded paths...
+        r.Symlink('%(libdir)s/moon/plugin/', '%(libdir)s/moon/plugin/moonlight')

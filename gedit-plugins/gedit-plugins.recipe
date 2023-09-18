@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GEditPlugins(GnomePackageRecipe):
+
+    name = 'gedit-plugins'
+    version = '2.32.0'
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'libgnome-keyring:devel', 'gnome-python:python', 'gnome-vfs:devel', 'gtksourceview:devel', 'gucharmap:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel', 'libgnomeui:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'perl:runtime', 'popt:devel', 'pygtk:python', 'vte:python', 'gedit:devel', 'python:devel', 'pygtk:devellib', 'gnome-python-desktop:devellib', 'pycairo:python', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+        'pygtksourceview:devellib',
+        'pygobject:devellib',
+        'vte:devellib',
+        ]
+
+
+    extraConfig = '--with-plugins=all'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        if Arch.x86_64:
+            r.Replace('PY_EXEC_PREFIX/lib/python',
+                'PY_EXEC_PREFIX/lib64/python', 'configure.ac')
+            r.Run('autoreconf -fi')

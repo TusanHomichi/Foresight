@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jthread(CPackageRecipe):
+    name = 'jthread'
+    version = '1.2.1'
+ 
+    buildRequires = ['cmake:runtime', 'gcc-c++:runtime', 'libstdc++:devel', 'pkgconfig:devel']
+ 
+    def setup(r):
+        r.addArchive('http://research.edm.uhasselt.be/jori/jthread/')
+        r.Configure('--disable-static')
+        r.Make()
+        r.MakeInstall()
+

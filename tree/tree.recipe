@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tree(CPackageRecipe):
+    name = 'tree'
+    version = '1.5.3'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('ftp://mama.indstate.edu/linux/%(name)s/')
+        r.Make()
+        r.MakeInstall('prefix=%(destdir)s/%(prefix)s')

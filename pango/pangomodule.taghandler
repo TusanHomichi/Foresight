@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in 
+    files)
+	case $action in update|remove|preremove)
+            # rather than try to determine which databases might need
+            # updating, just update them all
+            for qm in %(bindir)s/pango-querymodules-* ; do
+                # It doesn't read /etc/pango/pango.modules, rather one like
+                # /etc/pango/i686-unknown-linux-gnu/pango.modules
+                $qm > %(sysconfdir)s/pango/${qm/*pango-querymodules-/}/pango.modules
+            done
+            ;;
+    esac
+esac
+
+exit 0

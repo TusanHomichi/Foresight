@@ -1,0 +1,9 @@
+class PDFCube(AutoPackageRecipe):
+	name = 'pdfcube'
+	version = '0.0.2'
+
+	buildRequires = ['Mesa:devel', 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freeglut:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'gtkglext:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXmu:devel', 'libXrender:devel', 'libXt:devel', 'libpng:devel', 'libstdc++:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'poppler-glib:devel', 'poppler:devel', 'xcb-util:devel', 'zlib:devel']
+
+	def unpack(r):
+		r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d'
+		r.addArchive('http://code.100allora.it/pdfcube/attachment/wiki/WikiStart/%(name)s-%(version)s.tar.gz?format=raw')

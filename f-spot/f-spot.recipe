@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2007-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class FSpot(GnomePackageRecipe):
+    name = 'f-spot'
+    version = '0.8.2'
+    patches = [ # Fix schemas file: http://gitorious.org/f-spot/mainline/merge_requests/2161
+                    # '0001-remove-empty-default-tags-from-schemas-file.patch', 
+                   # unmount cameras before importing
+                   '0002-enhance-the-f-spot-import-script.patch',
+                   # Use system gnome-keyring
+                   # '0003-use-system-Gnome.Keyring-if-available.patch',
+                        ]
+
+    buildRequires = [ 'GConf:runtime', 'desktop-file-utils:runtime', 'gnome-sharp:devellib',
+                      'gnome-sharp:cil', 'gtk-sharp:devellib', 'gtk-sharp:cil',
+                      'gtk:devellib', 'lcms:devel', 'libexif:devel',
+                      'libgnome:devellib', 'libgnomeui:devel', 'libjpeg:devel',
+                      'libusb:devellib', 'mono:devel', 'mono:cil',
+                      'mono:runtime', 'rarian:runtime', 'rarian:devel',
+                      'libxslt:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+                      'libgphoto2:devel', 'libgphoto2:devellib',  'gnome-desktop-sharp:cil', 
+                      'ndesk-dbus:cil', 'ndesk-dbus:devellib', 'gnome-desktop-sharp:devellib',
+                      'ndesk-dbus-glib:cil', 'ndesk-dbus-glib:devellib','beagle:devel',
+                      'mono-addins:cil', 'mono-addins:devellib', 'gtk-sharp:runtime',
+                      'autoconf:runtime', 'automake:runtime', 'unique:devel',
+                        'flickrnet:cil', 'flickrnet:devellib', 'gnome-keyring-sharp:cil', 'gnome-keyring-sharp:devellib' ]
+
+    extraConfig = ' --disable-scrollkeeper'
+    
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.disableParallelMake()
+
+    def policy(r):
+        r.Requires('libgphoto2:lib', '%(bindir)s/%(name)s')
+        r.Remove('%(libdir)s/pkgconfig/f-spot.pc')

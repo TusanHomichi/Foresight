@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:1')
+class Tremulous(BinaryPackageRecipe):
+    name = 'tremulous'
+    version = '1.1.0'
+ 
+    buildRequires = ['unzip:runtime', 'desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/tremulous/tremulous-1.1.0.zip', dir='/opt/games')
+        r.addSource('tremulous.desktop')
+        r.Desktopfile('tremulous.desktop')
+

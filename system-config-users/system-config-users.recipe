@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class SystemConfigUsers(RPMPackageRecipe, CPackageRecipe):
+    name = "system-config-users"
+    version = "1.2.76"
+    buildRequires = [ 'intltool:runtime', 'gettext:runtime', 'libuser:python', 'newt:python', 'pygtk:python', 'pyxf86config:python', 'rhpl:python', 'python:devel', 'rhpxl:python', 'cracklib:python', 'desktop-file-utils:runtime', 'rarian:runtime', 'rarian:devel', 'pkgconfig:devel', 'libxslt:runtime', 'gettext:runtime', 'intltool:runtime', 'gnome-doc-utils:devel' ]
+    rpmRelease = '1.fc9'
+
+
+    def setup(r):
+        r.unpack()
+        r.addPatch('no_rpm.patch')
+        r.Replace('python2','python','src/system-config-users')
+        r.Replace('Exec=', 'Exec=gksudo ', 'system-config-users.desktop.in')
+        r.Make()
+        r.MakeInstall()

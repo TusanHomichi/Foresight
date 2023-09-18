@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class fossil(AutoPackageRecipe):
+    name = 'fossil'
+    # the only mapping between version and srcversion is by reading
+    # the download page at http://www.fossil-scm.org/download.html
+    # as far as I can tell
+    version = '1.24'
+    srcversion = '20121022124804'
+
+    buildRequires = [
+        'openssl:devel',
+        'gcc-c++:runtime',
+        'tcl:runtime',
+        'zlib:devel',
+    ]
+
+    def unpack(r):
+        r.macros.srcversion = r.srcversion
+        r.addArchive('http://www.fossil-scm.org/download/'
+                     'fossil-src-%(srcversion)s.tar.gz')
+        # Make sure that the real version was correctly set...
+        r.Run('test $(cat VERSION) = %(version)s')
+    def policy(r):
+        r.AutoDoc(r'.*\.txt')

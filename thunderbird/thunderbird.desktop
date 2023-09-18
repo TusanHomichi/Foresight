@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Thunderbird Email
+Comment=Lightweight Mozilla-based mail client
+Exec=thunderbird
+Icon=thunderbird
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Email;Network;GNOME;
+Encoding=UTF-8

@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# glcheck		This scripts makes sure opengl is correctly working
+#
+# chkconfig: 345 02 96
+# description: 	making sure opengl is correctly working
+
+/usr/bin/fixgl

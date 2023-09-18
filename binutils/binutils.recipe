@@ -1,0 +1,258 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Binutils(RPMPackageRecipe, CPackageRecipe):
+    name = 'binutils'
+    version = '2.20.51.0.2'
+    rpmRelease = '5.36.el6'
+    distroVersion = '6Server'
+    isRHEL = True
+
+    buildRequires = [ 'flex:runtime', 'byacc:runtime', 'gettext:runtime',
+                      'install-info:runtime', 'perl:runtime',
+                      'texinfo:runtime', 'automake:runtime', 'autoconf:runtime',
+                      # 
+                      'zlib:devel']
+    # perl:runtime is required for pod2man, used to generate man pages.
+    # texinfo needed to build info pages
+    if Use.cross:
+        # When building the cross-compiler toolchain, we don't need
+        # anything installed in the sysroot.
+        buildRequires += [ 'gcc[!cross]', 'binutils[!cross]']
+        clearBuildReqs(
+        'binutils:runtime',
+        'binutils:lib',
+        'binutils:devellib',
+        'gcc:runtime',
+        'gcc:lib',
+        'gcc:devel',
+        'gcc:devellib',
+        'libgcc:lib',
+        'libgcc:devellib')
+        keepBuildReqs = True
+    elif Use.bootstrap:
+        keepBuildReqs = ['glibc:devel']
+        buildRequires += [ 'gcc[!cross]', 'binutils[!cross]',
+                           'binutils[cross]' ]
+        crossRequires = [ 'glibc:devel' ]
+
+    # True if should create <target>-ar -> ar link in usr/bin
+    if Use.cross:
+        createLinks = False
+    else:
+        createLinks = True
+
+    rpmSources = ['binutils-2.19.50.0.1-output-format.sed',]
+    rpmPatches = [ 
+                   'binutils-2.20.51.0.2-libtool-lib64.patch',
+                   'binutils-2.20.51.0.2-ppc64-pie.patch',
+
+                   'binutils-2.20.51.0.2-envvar-revert.patch',
+                   'binutils-2.20.51.0.2-version.patch',
+                   'binutils-2.20.51.0.2-set-long-long.patch',
+                   'binutils-2.20.51.0.2-build-id.patch',
+                   'binutils-2.20.51.0.2-add-needed.patch',
+                   'binutils-2.20.51.0.2-ifunc-ld-s.patch',
+                   'binutils-2.20.51.0.2-lwp.patch',
+                   'binutils-2.20.51.0.2-gas-expr.patch',
+                   'binutils-2.20.51.0.2-pie-perm.patch',
+                   'binutils-2.20.51.0.2-ppc64-ifunc-nocombreloc.patch',
+                   'binutils-2.20.51.0.2-ppc64-tls-transitions.patch',
+                   'binutils-2.20.51.0.2-readelf-dynamic.patch',
+                   'binutils-2.20.51.0.2-xop.patch',
+                   'binutils-2.20.51.0.2-xop2.patch',
+                   'binutils-2.20.51.0.2-xop3.patch',
+                   'binutils-2.20.51.0.2-rh545384.patch',
+                   'testsuite.patch',
+                   'binutils-rh576129.patch',
+                   'binutils-amd-bni.patch',
+                   'binutils-lwp-16bit.patch',
+                   'binutils-2.20.51.0.2-ld-r.patch',
+                   'binutils-rh578576.patch',
+                   'binutils-rh587788.patch',
+                   'binutils-rh588825.patch', 
+                   'binutils-rh578661.patch',
+                   'binutils-rh633448.patch',
+                   'binutils-rh464723.patch',
+                   'binutils-rh631540.patch',
+                   'binutils-rh614443.patch',
+                   'binutils-rh663587.patch',
+                   'binutils-rh679435.patch',
+                   'binutils-rh680143.patch',
+                   'binutils-rh697703.patch',
+                   'binutils-rh698005.patch',
+                   'binutils-rh689829.patch',
+                   'binutils-rh664640.patch',
+                   'binutils-rh701586.patch',
+                   'binutils-rh707387.patch',
+                   'binutils-rh696494.patch',
+                   'binutils-rh714824.patch',
+                   'binutils-rh721079.patch',
+                   'binutils-rh696368.patch',
+                   'binutils-rh733122.patch',
+                   'binutils-rh676194.patch',
+                   'binutils-rh739144.patch',
+                   'binutils-rh809616.patch',
+                   'binutils-rh739144-2.patch',
+                   'binutils-rh825736.patch',
+                   # 'binutils-rh773526.patch'
+                   ]
+
+    def setup(r):
+        r.unpack()
+        # rh's original patch has junk [literally] on it...
+        # diff -Nrup a/binutils/readelf.c.readelf-dynamic~ b/binutils/readelf.c.readelf-dynamic~
+        # --- a/binutils/readelf.c.readelf-dynamic~2009-10-09 18:26:23.000000000 -0400
+        # +++ b/binutils/readelf.c.readelf-dynamic~2012-09-19 13:36:24.863146206 -0400
+        r.addPatch('fixed-binutils-rh773526.patch')
+
+        r.Replace('i\[3-7\]86', 'i[34567]86', '*/conf*', allowNoChange = True)
+        #
+        # XXX taken from kernelpackage superclass
+        # should be stock in our baseclasses probably
+        if hasattr(r, 'serial') and isinstance(r.serial, basestring):
+            r.macros.serial = r.serial
+        else:
+            if 'sourceVersion' in r.__dict__ and hasattr(r.sourceVersion,
+                                                         'trailingRevision'):
+                    r.macros.serial = str(
+                        r.sourceVersion.trailingRevision().getSourceCount())
+            else:
+                # If r.sourceVersion does not exist (rmake build from a
+                # recipe, for instance) or r.sourceVersion is a NewVersion
+                # object without a trailingRevision object, we'll set it
+                # to something unlikely to conflict
+                r.macros.serial = '0.NEW'
+
+        # tweak binutils-2.20.51.0.2-version.patch
+        r.Replace('%%{release}', '%(serial)s', 'bfd/Makefile{.am,.in}')
+        #
+        r.Run(""" sed -i -e '/^libopcodes_la_\(DEPENDENCIES\|LIBADD\)/s,$, ../bfd/libbfd.la,' opcodes/Makefile.{am,in} """)
+
+        r.configure()
+        r.install()
+
+    def configure(r):
+        if Use.cross:
+            r.ManualConfigure('--target=%(target)s '
+                              '--build=%(build)s '
+                              '--host=%(host)s '
+                              '--prefix=%(crossprefix)s '
+                              '--with-sysroot=%(sysroot)s '
+                              '--program-prefix=%(target)s- '
+                              '--disable-werror ')
+        else:
+            conf = ' --disable-werror'
+            if not Use.bootstrap:
+                conf += ' --enable-shared '
+                # dubious if block bellow needed. 
+                # we survived without this for a while. libelf should be used anyway
+                if Arch.x86:
+                    conf += ' --enable-64-bit-bfd '
+                # r.Run(""" sed -i -e '/^libopcodes_la_\(DEPENDENCIES\|LIBADD\)/s,$, ../bfd/libbfd.la,' opcodes/Makefile.{am,in}  """)    
+
+            r.Run('touch */configure')
+            # r.macros.cflags += ' -D_FILE_OFFSET_BITS=64 '
+            # r.macros.cc = '\" %(cc)s -L%(builddir)s/bfd/.libs/ \" '
+            r.Configure(conf)
+
+    def install(r):
+        r.Make('all')
+        r.Make('info')
+        r.MakeInstall()
+        r.Make(' prefix=%(destdir)s%(prefix)s infodir=%(destdir)ss%(infodir)s install-info')
+
+        if Arch.x86 and r.createLinks:
+            r.Symlink('%(bindir)s/i386-unknown-linux-ar', '%(bindir)s/i686-unknown-linux-ar')
+
+        # Rebuild libiberty.a with -fPIC
+        r.Make( '-C libiberty clean')
+        r.Make( 'CFLAGS="-g -fPIC $CFLAGS" -C libiberty')
+        r.Install('libiberty/libiberty.a', '%(libdir)s/', mode=0644)
+        r.Install('include/libiberty.h', '%(includedir)s/', mode=0644)
+
+        # Rebuild libbfd.a with -fPIC.
+        # Without the hidden visibility the 3rd party shared libraries would export
+        # the bfd non-stable ABI.
+        r.Make('-C bfd clean')
+        r.Make('CFLAGS="-g -fPIC $CFLAGS -D_FILE_OFFSET_BITS=64 -fvisibility=hidden" -C bfd')
+        
+        for f in ['bfd/libbfd.a', 'libiberty/libiberty.a',]:
+            r.Install(f, '%(libdir)s/', mode=0644)
+        r.Install('include/libiberty.h', '%(includedir)s/', mode=0644)
+
+        for l in ['libbfd.so', 'libopcodes.so']:
+            r.ComponentSpec('devellib',
+                            '%(prefix)s/%(lib)s/' + l)
+
+        # Remove Windows/Novell only man pages
+        r.Remove('%(mandir)s/man1/{dlltool,nlmconv,windres}*')
+
+        # Prevent programs to link against libbfd and libopcodes dynamically,
+        # they are changing far too often
+        r.Remove('%(libdir)s/lib{bfd,opcodes}.so')
+
+        r.Run("""
+sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
+    -e 's/^#define BFD_DEFAULT_TARGET_SIZE \(32\|64\) *$/#define BFD_DEFAULT_TARGET_SIZE __WORDSIZE/' \
+    -e 's/^#define BFD_HOST_64BIT_LONG [01] *$/#define BFD_HOST_64BIT_LONG (__WORDSIZE == 64)/' \
+    -e 's/^#define BFD_HOST_64_BIT \(long \)\?long *$/#if __WORDSIZE == 32\
+#define BFD_HOST_64_BIT long long\
+#else\
+#define BFD_HOST_64_BIT long\
+#endif/' \
+    -e 's/^#define BFD_HOST_U_64_BIT unsigned \(long \)\?long *$/#define BFD_HOST_U_64_BIT unsigned BFD_HOST_64_BIT/' \
+    %(destdir)s%(prefix)s/include/bfd.h
+
+touch -r bfd/bfd-in2.h %(destdir)s%(prefix)s/include/bfd.h
+""")
+        r.Run("""
+OUTPUT_FORMAT="\
+/* Ensure this .so library will not be used by a link for a different format
+   on a multi-architecture system.  */
+$(gcc $CFLAGS $LDFLAGS -shared -x c /dev/null -o /dev/null -Wl,--verbose -v 2>&1 | sed -n -f "%(builddir)s/binutils-2.19.50.0.1-output-format.sed")"
+
+tee %(destdir)s%(prefix)s/%(lib)s/libbfd.so <<EOH
+/* GNU ld script */
+
+$OUTPUT_FORMAT
+
+/* The libz dependency is unexpected by legacy build scripts.  */
+INPUT ( %(libdir)s/libbfd.a -liberty -lz )
+EOH
+
+tee %(destdir)s%(prefix)s/%(lib)s/libopcodes.so <<EOH
+/* GNU ld script */
+
+$OUTPUT_FORMAT
+
+INPUT ( %(libdir)s/libopcodes.a -lbfd )
+EOH
+
+
+
+
+""")
+
+
+        if r.createLinks:
+            for prog in ('addr2line ar as c++filt gprof ld nm objcopy objdump'
+                         ' ranlib readelf size strings strip').split():
+                r.Link(('%(target)s-' + prog) % r.macros,
+                       ('%(bindir)s/' + prog) % r.macros)
+
+#        r.TestSuite('binutils/', 'make check-DEJAGNU')
+#        r.TestSuite('gas/', 'make check-DEJAGNU')
+#        r.TestSuite('ld/', 'make check-DEJAGNU')
+#        r.TestSuite('libiberty/testsuite', 'make check-cplus-dem')
+
+        # this package likes its hardlinks...
+        if Use.cross:
+            r.LinkCount(exceptions='%(crossprefix)s/')
+        else:
+            r.LinkCount(exceptions='%(prefix)s/')
+

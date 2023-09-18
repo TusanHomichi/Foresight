@@ -1,0 +1,121 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+# Notes:
+#  o This installs both sgml and xml docbook dtds.  It might be
+#    advisable to divide this package so that both are handled
+#    independently.
+#  o The collection of DTDs installed by this package isn't as
+#    complete as that of some other distributions.  Namely some
+#    older DTDs are not included.  If this becomes a problem
+#    we can later gather the missing DTDs.
+#  o Version number should match latest upstream docbook
+#    version supported.
+#  o This is based heavily off of Debian's docbook setup.
+
+class DocbookDtds(BuildPackageRecipe):
+    name = 'docbook-dtds'
+    version = '4.5'
+
+    buildRequires = [ 'unzip:runtime', 'sgml-common:runtime', 'libxml2:runtime',
+                      'dos2unix:runtime', 'bash:runtime', 'coreutils:runtime',
+                      'sgml-common:config', ]
+
+    def setup(r):
+        r.macros.dbserver = 'http://www.oasis-open.org/docbook'
+        r.macros.xml_catalog = '%(sysconfdir)s/xml/docbook-xml.xml'
+        r.macros.docbook_dtds_latest_entities = '4.5'
+        r.macros.xml_dtd = '%(datadir)s/xml/docbook/schema/dtd/'
+        r.macros.sgml_dtd = '%(datadir)s/sgml/docbook/dtd/'
+
+        # Download and extract sgml docbook DTDs
+        r.addArchive('%(dbserver)s/sgml/3.0/docbk30.zip',
+                     dir='%(maindir)s/sgml/3.0')
+        r.addArchive('%(dbserver)s/sgml/3.1/docbk31.zip',
+                     dir='%(maindir)s/sgml/3.1')
+        r.addArchive('%(dbserver)s/sgml/4.0/docbk40.zip',
+                     dir='%(maindir)s/sgml/4.0')
+        r.addArchive('%(dbserver)s/sgml/4.1/docbk41.zip',
+                     dir='%(maindir)s/sgml/4.1')
+        r.addArchive('%(dbserver)s/sgml/4.2/docbook-4.2.zip',
+                     dir='%(maindir)s/sgml/4.2')
+        r.addArchive('%(dbserver)s/sgml/4.3/docbook-4.3.zip',
+                     dir='%(maindir)s/sgml/4.3')
+        r.addArchive('%(dbserver)s/sgml/4.4/docbook-4.4.zip',
+                     dir='%(maindir)s/sgml/4.4')
+        r.addArchive('%(dbserver)s/sgml/4.5/docbook-4.5.zip',                                                                                                  dir='%(maindir)s/sgml/4.5')
+
+
+        # Download and extract xml docbook DTDs
+        r.addArchive('%(dbserver)s/xml/4.1.2/docbkx412.zip',
+                     dir='%(maindir)s/xml/4.1.2')
+        r.addArchive('%(dbserver)s/xml/4.2/docbook-xml-4.2.zip',
+                     dir='%(maindir)s/xml/4.2')
+        r.addArchive('%(dbserver)s/xml/4.3/docbook-xml-4.3.zip',
+                     dir='%(maindir)s/xml/4.3')
+        r.addArchive('%(dbserver)s/xml/4.4/docbook-xml-4.4.zip',
+                     dir='%(maindir)s/xml/4.4')
+	r.addArchive('%(dbserver)s/xml/4.5/docbook-xml-4.5.zip',                                                                                               dir='%(maindir)s/xml/4.5')
+
+        # Convert everything to Unix style EOL's, in order that
+        # we can easily compare to other distributions that did
+        # this...
+        r.addAction('find . -name "*" -type f | xargs dos2unix')
+
+        # Run the patches for SGML catalog cleanup
+        r.addPatch('docbk30-sgml-update.diff', dir='sgml/3.0')
+        r.addPatch('docbk31-sgml-update.diff', dir='sgml/3.1')
+        r.addPatch('docbk40-sgml-update.diff', dir='sgml/4.0')
+        r.addPatch('docbk41-sgml-update.diff', dir='sgml/4.1')
+        r.addPatch('docbk42-sgml-update.diff', dir='sgml/4.2')
+        r.addPatch('docbk43-sgml-update.diff', dir='sgml/4.3')
+        r.addPatch('docbk44-sgml-update.diff', dir='sgml/4.4')
+
+        # Run the patches for XML catalog cleanup
+        r.addPatch('docbk412-xml-update.diff', dir='xml/4.1.2')
+        r.addPatch('docbk42-xml-update.diff', dir='xml/4.2')
+        r.addPatch('docbk43-xml-update.diff', dir='xml/4.3')
+        r.addPatch('docbk44-xml-update.diff', dir='xml/4.4')
+
+        r.addSource('install_dtds', mode=0755, macros=True)
+        r.addSource('build-docbook-catalog', mode=0755, macros=True)
+
+        # install some helper catalogs
+        r.addSource('sgml-shared-catalog', mode=0644, dest='%(sgml_dtd)s/catalog')
+        r.addSource('docbook-xml.xml', mode=0644, dest='%(tagdatadir)s/xml-catalog/desc.d/docbook-xml.xml')
+
+        # Shell script installs and sets up the DTDs, this could
+        # be done in the recipe, but shell script is a bit more
+        # readable.
+        r.Run('sh ./install_dtds')
+
+        # txt files should be included in documentation.
+        r.AutoDoc('.*\.txt')
+
+	# Setup initialContents catalog for docbook so that we 
+	# can update the package later
+	r.InitialContents('%(sysconfdir)s/sgml/')
+
+        # Finally, create the catalog entries
+        # Create the actual catalog for docbook... Usually this is
+        # done using build actions, but for this special case it is
+        # done using a script as the catalog file is rather
+        # complicated.
+        r.Run('./build-docbook-catalog')
+
+        r.Config(exceptions='%(sysconfdir)s/')
+        r.ComponentSpec('data', '%(sysconfdir)s/.*', '%(libexecdir)s/.*')
+
+        # Setup dependencies.
+        r.Requires('sgml-common:config', '%(sysconfdir)s/xml/docbook-xml.xml')
+
+        # we don't want symlinks to a non-existant directory!
+        r.ExcludeDirectories(exceptions='%(datadir)s/xml/entities/xml-iso-entities-8879.1986')
+
+        # Setup initialContents catalog for docbook so that we 
+        # can update the package later (RPL-2590)
+        r.InitialContents('%(sysconfdir)s/sgml/')
+

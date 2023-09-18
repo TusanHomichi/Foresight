@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2007 Paul Cutler <pcutler>
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class linuxdcpp(CPackageRecipe):
+    name = 'linuxdcpp'
+    version = 'rev347'
+    buildRequires = [ 'bzip2:devel', 'cairo:devel',
+        'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel',
+        'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel',
+        'libXrender:devel', 'libglade:devel', 'libstdc++:devel', 'libxcb:devel',
+	'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'scons:runtime',
+        'zlib:devel', 'boost:devel' ]
+
+    def setup(r):
+	r.addBzrSnapshot('lp:linuxdcpp')
+#        r.addArchive('http://launchpad.net/linuxdcpp/1.0/%(version)s/+download/')
+        r.addSource('linuxdcpp.desktop')
+        r.Desktopfile('linuxdcpp.desktop')
+        r.Make('PREFIX=%(prefix)s', makeName='scons')
+        r.Make('FAKE_ROOT=%(destdir)s PREFIX=%(prefix)s install', makeName='scons')
+        r.addSource('linuxdcpp.png')
+	r.Move('linuxdcpp.png', '%(datadir)s/pixmaps/')

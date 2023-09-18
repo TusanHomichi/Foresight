@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT license
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libexif(AutoPackageRecipe):
+    name = 'libexif'
+    version = '0.6.16'
+
+    buildRequires = [ 'doxygen:runtime', ]
+
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.Replace('^Cflags: -I\$\{includedir\}',
+                  'Cflags: -I${includedir}/libexif -I${includedir}',
+                  'libexif.pc.in')

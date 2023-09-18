@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+# superceded by banshee-community-extensions
+
+class bansheecoverwallpaper(RedirectRecipe):
+    name = 'banshee-coverwallpaper'
+    version = '0'
+
+    def setup(r):
+        r.addRemoveRedirect()

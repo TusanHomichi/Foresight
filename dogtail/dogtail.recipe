@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Dogtail(PackageRecipe):
+
+    name = 'dogtail'
+    version = '0.7.0'
+
+    buildRequires = ['python-setuptools:python', 'PIL:python', 'gnome-python-desktop:python', 'gnome-python:python', 'pyatspi:python', 'pygobject:python', 'pygtk:python', 'pyorbit:python', 'python:devel', 'rpm:python', 'desktop-file-utils:runtime']
+
+    def setup(r):
+        r.addArchive('https://fedorahosted.org/released/dogtail/')
+        r.PythonSetup(data='--install-data=%(prefix)s')

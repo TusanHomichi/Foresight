@@ -1,0 +1,27 @@
+
+class Photo(CPackageRecipe):
+    name = 'photo'
+    version = '0.8.1.2'
+
+    buildRequires = [
+        'cmake:runtime',
+        'desktop-file-utils:runtime',
+        'exiv2:devel',
+        'gcc-c++:runtime',
+        'libstdc++:devel',
+        'qt4-core:devellib',
+        'qt4-gui:devellib',
+        'qt4-qt3support:devellib',
+        'qt4-sql:devellib',
+        'qt4-sql:mysql',
+        'qt4-sql:odbc',
+        'qt4-sql:psql',
+        'qt4-sql:sqlite',
+        'qt4:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('http://photoqt.co.cc/pkgs/')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

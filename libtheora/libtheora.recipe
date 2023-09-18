@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibTheora(CPackageRecipe):
+    name = 'libtheora'
+    version = '1.1.1'
+    buildRequires = [ 'libogg:devel', 'SDL:devel', 'doxygen:runtime',
+        'pkgconfig:devel', 'tetex:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://downloads.xiph.org/releases/theora/')
+
+        # this r.Replace only avoids compiling programs that are not installed
+        # anyway, and avoids dependencies on SDL and vorbis
+        r.Replace('examples', '', 'Makefile.am', 'Makefile.in')
+
+        r.Configure('--with-ogg-libraries=%(libdir)s --enable-shared'
+            ' --disable-dependency-tracking'
+            ' --disable-oggtest --disable-sdltest')
+
+        r.Make()
+        #r.MakeInstall('docdir=%(destdir)s/%(docdir)s/%(name)s-%(version)s/')
+        r.MakeInstall('docdir=%(docdir)s/%(name)s-%(version)s/')

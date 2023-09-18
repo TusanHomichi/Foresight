@@ -1,0 +1,26 @@
+# (C) 2008-2012 The Foresight Linux Project 
+# 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IW(CPackageRecipe):
+
+    name = 'iw'
+    version = '3.4'
+    buildRequires = ['libnl:devel', 'userspace-kernel-headers:devel', 'pkgconfig:devel']
+
+    packageSummary = 'A nl80211 based wireless configuration tool'
+    packageDescription = """
+iw is a new nl80211 based CLI configuration utility for wireless devices.
+Currently you can only use this utility to configure devices which
+use a mac80211 driver as these are the new drivers being written - 
+only because most new wireless devices being sold are now SoftMAC.
+"""
+
+    def setup(r):
+        r.addArchive('http://wireless.kernel.org/download/%(name)s/')
+        #r.Copy('defconfig', '.config')
+        r.Make('CFLAGS=\"%(cflags)s\"')
+        r.Install('%(name)s', '%(bindir)s/', mode = 0755)
+        r.Install('iw.8', '%(mandir)s/man8/')

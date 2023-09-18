@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4WeatherPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-weather-plugin'
+    version = '0.7.4'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'libxfce4util:devel', 'libxfcegui4:devel', 'libxml2:devel',
+        'xfce4-panel:devel'
+    ] 

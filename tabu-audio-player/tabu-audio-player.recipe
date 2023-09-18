@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TabuAudioPlayer(AutoPackageRecipe):
+    name = 'tabu-audio-player'
+    version = '2.1'
+
+    packageSummary = 'Simple gstreamer audio player'
+    packageDescription = 'Simple gstreamer audio player with client-side decorations and playback controls drawn with cairo'
+ 
+    buildRequires = ['atk:devel',
+			'cairo:devel',
+			'expat:devel',
+			'fontconfig:devel',
+			'freetype:devel',
+			'gettext:runtime',
+			'glib:devel',
+			'gstreamer:devel',
+			'gtk:devel',
+			'intltool:runtime',
+			'libX11:devel',
+			'libXrender:devel',
+			'libpng:devel',
+			'libxml2:devel',
+			'pango:devel',
+			'pixman:devel',
+			'pkgconfig:devel',
+			'taglib:devel',
+			'zlib:devel',
+			'desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        #r.addGitSnapshot('git://github.com/kalmbach/tabu_audio_player.git')
+	r.addArchive('http://kalmbach.com.ar/download/')
+        #r.addSource('tabu-audio-player.desktop')
+        #r.addSource('tabu-audio-player.png')
+	#r.Move('tabu-audio-player.png', '/usr/share/tabu-audio-player/')
+        #r.Desktopfile('tabu-audio-player.desktop')

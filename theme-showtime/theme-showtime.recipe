@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ThemeShowtime(AutoPackageRecipe):
+    name = 'theme-showtime'
+    version = '1.3.1'
+ 
+    buildRequires = [ 'gtk:devel', ]
+
+    def setup(r):
+        r.addArchive('https://launchpad.net/~bisigi/+archive/ppa/+files/showtime-theme_%(version)s.natty.ppa2+nmu1.tar.gz')
+        r.addArchive('showtime.tar.gz', dir='%(datadir)s/themes/', sourceDir='Gtk/')
+        r.addArchive('showtime.tar.bz2', dir='%(datadir)s/icons/', sourceDir='Icons/')

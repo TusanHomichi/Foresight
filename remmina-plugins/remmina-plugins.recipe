@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RemminaPlugins(AutoPackageRecipe):
+    name = 'remmina-plugins'
+    version = '0.9.2'
+    packageSummary = "a set of remmina plugins"
+    packageDescription = ""
+    buildRequires = [
+'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freerdp:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gnutls:devel', 'gtk:devel', 'intltool:runtime', 'libjpeg:devel', 'libpng:devel', 'libssh:devel', 'libxkbfile:devel', 'pango:devel', 'pkgconfig:devel', 'remmina:devel', 'telepathy-glib:devel', 'zlib:devel',
+	'telepathy-glib',
+	]
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/remmina/')

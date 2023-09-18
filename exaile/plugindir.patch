@@ -1,0 +1,13 @@
+--- xl/plugins.py	2009-08-28 11:02:29.000000000 +0200
++++ xl/plugins.py	2009-08-28 11:46:06.128002339 +0200
+@@ -29,7 +29,9 @@
+     def __init__(self, exaile, load=True):
+         self.plugindirs = [ os.path.join(p, 'plugins') \
+                 for p in xdg.get_data_dirs() ]
+-        
++        self.flpluginsdir = None
++        if self.flpluginsdir != None:
++            self.plugindirs.append(self.flpluginsdir)
+         for dir in self.plugindirs:
+             try:
+                 os.makedirs(dir)

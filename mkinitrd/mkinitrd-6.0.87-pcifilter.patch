@@ -1,0 +1,39 @@
+--- mkinitrd	2010-01-11 17:32:30.000000000 -0500
++++ mkinitrd.new	2010-01-11 17:37:58.000000000 -0500
+@@ -66,6 +66,7 @@
+ ncryptolvs=0
+ ncryptoraids=0
+ root=""
++stabilize_scsi="no"
+ scsi_wait_scan="no"
+ usb_storage="no"
+ 
+@@ -1444,8 +1445,14 @@
+             echo "options $module $options" >> $MNTIMAGE/etc/modprobe.conf
+         fi
+ 
+-        emit "echo \"Loading $module module\""
+-        emit "modprobe -q $module"
++        if [ "${module::5}" == "pata_" -o "$module" == "ata_piix" -o "$module" == "ahci" -o "${module::5}" == "sata_" -o "$module" == "ibmvscsic" ]; then
++            stabilize_scsi="yes"
++            emit "echo \"Loading $module module\""
++            emit "modprobe --pci-filter -q $module"
++        else
++            emit "echo \"Loading $module module\""
++            emit "modprobe -q $module"
++        fi
+ 
+         # Hack - we need a delay after loading usb-storage to give things
+         #        time to settle down before we start looking a block devices
+@@ -1667,6 +1674,11 @@
+ 
+ emit_iscsi
+ 
++if [ "$stabilize_scsi" == "yes" ]; then
++    emit "echo Waiting for driver initialization."
++    emit "stabilized --hash --interval 250 /proc/scsi/scsi"
++fi
++
+ if [ "$scsi_wait_scan" == "yes" ]; then
+     emit "modprobe scsi_wait_scan"
+     emit "rmmod scsi_wait_scan"

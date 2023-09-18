@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2011-2012 The Foresight Linux Project
+#               2011-2012 Openfiler Ltd
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ed(AutoPackageRecipe):
+    name = 'ed'
+    version = '1.6'
+
+    # needs info-file tag description from the install-info package
+
+    if not Use.bootstrap:
+        # needs info-file tag description from the install-info package
+        buildRequires = [ 'install-info:runtime', ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/ed/')
+        r.macros.update({
+            'exec_prefix': '/',
+            'bindir': '/bin'
+        })
+        r.Remove('stamp-h.in')
+
+    def makeinstall(r):
+        AutoPackageRecipe.makeinstall(r)
+        r.MakeInstall(installtarget='install-man')

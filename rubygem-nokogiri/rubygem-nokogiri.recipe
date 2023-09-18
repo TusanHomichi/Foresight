@@ -1,0 +1,11 @@
+loadSuperClass('rubygempackage')
+class Nokogiri(RubygemPackageRecipe):
+
+    name = 'rubygem-nokogiri'
+    version = '1.5.0'
+
+
+    buildRequires = ['libxml2:devel', 
+					'libxslt:devel', 
+					'ruby:devellib'
+					]

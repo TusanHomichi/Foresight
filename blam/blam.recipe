@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Blam(AutoPackageRecipe):
+    name = 'blam'
+    version = '1.8.7'
+ 
+    buildRequires = ['GConf:runtime', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-sharp:cil', 'gtk-sharp:cil', 'gtk:runtime', 'intltool:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'ndesk-dbus-glib:cil', 'ndesk-dbus:cil', 'pkgconfig:devel', 'webkit-sharp:cil']
+ 
+    def unpack(r):
+        r.addArchive('http://www.cmartin.tk/%(name)s/%(name)s-%(version)s.tar.bz2')
+
+# builds and run ok, but wont show the messages in posts. Adding recipe in repo in meantime.

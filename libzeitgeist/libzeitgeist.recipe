@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libzeitgeist(AutoPackageRecipe):
+    name = 'libzeitgeist'
+    version = '0.3.10'
+ 
+    buildRequires = [ 'glib:devel', 'gtk-doc:runtime', 'pkgconfig:devel',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/0.3/%(version)s/+download/')
+
+    def configure(r):
+        r.Configure(' --disable-static ')

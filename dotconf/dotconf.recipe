@@ -1,0 +1,23 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DotConf(AutoPackageRecipe):
+    name = 'dotconf'
+    version = '1.3'
+    tag = '651d87f20fa'
+
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime',
+                      'libtool:runtime']
+
+    def unpack(r):
+        r.addGitSnapshot('https://github.com/williamh/dotconf', 
+                         tag = r.tag)
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.Configure('--disable-static')
+

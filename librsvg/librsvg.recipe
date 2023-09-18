@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Librsvg(GnomePackageRecipe):
+    name = 'librsvg'
+    version = '2.32.1'
+
+    buildRequires = [
+        'atk:devel', 'cairo:devel', 'docbook-utils:runtime', 'fontconfig:devel',
+        'freetype:devel', 'GConf:devel', 'glib:devel', 'gnome-vfs:devel',
+        'libart_lgpl:devel', 'libbonobo:devel', 'libcroco:devel',
+        'libcroco:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel',
+        'libgnomeprintui:devel', 'libgnomeprintui:devel', 'libgnomeui:devel',
+        'libgsf:devel', 'libpng:devel', 'libxml2:devel', 'ORBit2:devel',
+        'pango:devel', 'popt:devel', 'python:devel',  'gdk-pixbuf:devel'
+    ]
+    extraConfig = ' --disable-static --with-svgz --disable-gtk-doc  --disable-gtk-theme  --with-croco '
+    patches = [ '0001-Don-t-accidentally-return-NULL-from-parse_style_valu.patch']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+
+        if Arch.x86:
+            r.macros.isaBits = '32'
+        else:
+            r.macros.isaBits = '64'
+
+        r.Environment('GDK_PIXBUF_QUERYLOADERS', '%(bindir)s/gdk-pixbuf-query-loaders-%(isaBits)s')
+        r.Environment('enable_pixbuf_loader', 'yes')
+        
+    def policy(r):
+        for f in [ '%(libdir)s/mozilla/',
+                   '%(sysconfdir)s/gtk-2.0/gdk-pixbuf.loaders',
+                   '%(datadir)s/pixmaps/svg-viewer.svg']:
+            r.Remove(f, allowNoMatch = True, recursive = True)
+
+        r.Requires('gdk-pixbuf:lib', 'librsvg:lib')

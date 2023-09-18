@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Autoconf(AutoPackageRecipe):
+    name = 'autoconf'
+    version = '2.68'
+
+    buildRequires = [ 'm4:runtime', 'perl:runtime', 'install-info:runtime',
+                      'perl:devel', ]
+
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive('mirror://gnu/autoconf/')
+
+    def configure(r):
+        r.Configure(preConfigure='EMACS=emacs')
+
+    def policy(r):
+        r.Remove('%(infodir)s/standards*')
+        r.TestSuite('tests', 'check')
+        r.Requires('m4:runtime', '%(bindir)s/autom4te', '.*\.m4')

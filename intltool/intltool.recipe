@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2004-2010 rPath, Inc.
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Intltool(AutoPackageRecipe):
+    name = 'intltool'
+    version = '0.50.2'
+
+    buildRequires = [
+        'perl-XML-Parser:perl',
+        'automake:runtime',
+        'autoconf:runtime',
+        'gettext:runtime',
+        'perl:runtime',
+        'perl:devel',
+        'bzr:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/trunk/%(version)s/+download/')
+
+
+    def policy(r):
+        r.Requires('perl-XML-Parser:perl', '%(bindir)s/intltool-merge')
+        # to please autoconf ...
+        r.Requires('perl-XML-Parser:devel', '%(bindir)s/intltool-merge')
+        r.Requires('gettext:runtime', '%(bindir)s/intltool-update')
+        # Fix FL-2113
+        r.Requires('gettext:devel', '%(datadir)s/aclocal/intltool.m4')

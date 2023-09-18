@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlNetDns(CPANPackageRecipe):
+    name = 'perl-Net-DNS'
+    version = '0.66'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['perl-Digest-HMAC:perl', 'perl-Digest-SHA:perl', 'perl-IO-Socket-INET6:perl', 'perl:devel']

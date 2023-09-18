@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DesktopSwitcher(AutoPackageRecipe):
+    name = 'desktop-switcher'
+    version = '0.5.8'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'intltool:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel', 'gnome-common:runtime', 'gnome-common:devel', 'libtool:devel', 'libtool:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/desktop-switcher/0.5/ubuntu-9.10-beta-freeze/+download/desktop-switcher-0.5.8.tar.gz')
+#        r.addPatch('rebranding.patch')
+        r.Replace('Ubuntu Netbook Launcher', 'Netbook Launcher', 'data/ui.xml', allowNoChange=True)
+        r.Replace('Ubuntu', 'Foresight', 'data/ui.xml',allowNoChange=True)
+        r.Replace('Ubuntu Netbook Launcher', 'Netbook Launcher', 'po/*', allowNoChange=True)
+        r.Replace('Ubuntu-Netbook-Launcher', 'Netbook Launcher', 'po/*', allowNoChange=True)
+        r.Replace('Ubuntu', 'Foresight', 'po/*.po', allowNoChange=True)
+        r.addPatch('categories.patch')
+        r.addPatch('theme.patch')
+        r.addSource('classic-panel-config.xml', dir='data/')
+        r.addSource('netbook-panel-config.xml', dir='data/')
+
+    def policy(r):
+        for trove in ['maximus:runtime', 'window-picker-applet:runtime', 'go-home-applet:runtime', 'netbook-launcher:runtime']:
+            r.Requires(trove, '%(bindir)s/desktop-switcher')

@@ -1,0 +1,12 @@
+diff -Naur nautilus-2.14.1.orig/libnautilus-private/apps_nautilus_preferences.schemas.in nautilus-2.14.1/libnautilus-private/apps_nautilus_preferences.schemas.in
+--- nautilus-2.14.1.orig/libnautilus-private/apps_nautilus_preferences.schemas.in	2006-01-11 17:40:26.000000000 -0500
++++ nautilus-2.14.1/libnautilus-private/apps_nautilus_preferences.schemas.in	2006-06-07 22:35:19.000000000 -0400
+@@ -43,7 +43,7 @@
+       <applyto>/apps/nautilus/preferences/always_use_browser</applyto>
+       <owner>nautilus</owner>
+       <type>bool</type>
+-      <default>false</default>
++      <default>true</default>
+       <locale name="C">
+          <short>Enables the classic Nautilus behavior, where all windows are browsers</short>
+          <long>

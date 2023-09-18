@@ -1,0 +1,17 @@
+class fftw3f(CPackageRecipe):
+    name='fftwf'
+    version='3.1.2'
+
+    buildRequires = ['gcc-fortran:runtime', 'install-info:runtime']
+
+    def setup(r):
+        r.addArchive('http://www.fftw.org/fftw-%(version)s.tar.gz')
+#        r.addArchive('ftp://ftp.fftw.org/pub/fftw/old/fftw-%(version)s.tar.gz')
+
+        r.macros.cflags += " -fPIC"
+#	r.Run('./configure --enable-single')
+	r.Configure('--enable-single')
+	r.Make()
+	r.MakeInstall()
+        r.Remove('/usr/include/fftw3.h', '/usr/include/fftw3.f', '/usr/bin/fftw-wisdom-to-conf', '/usr/share/info/fftw3.info', '/usr/share/man/man1/fftw-wisdom-to-conf.1')
+        r.Requires('fftw:devel', 'fftw:runtime')

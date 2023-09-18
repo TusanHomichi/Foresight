@@ -1,0 +1,78 @@
+#
+# Copyright (c) 2006-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Brasero(GnomePackageRecipe):
+
+    buildRequires = [ 
+                'GConf:devel', 
+                'GConf:runtime', 
+                'ORBit2:devel', 
+                'atk:devel', 
+                'beagle:devel', 
+                'cairo:devel', 
+                'desktop-file-utils:runtime', 
+                'expat:devel', 
+                'fontconfig:devel', 
+                'freetype:devel', 
+                'gettext:runtime', 
+                'glib:devel', 
+                'libisofs:devel', 
+                'libgnome-keyring:devel', 
+                'gnome-vfs:devel', 
+                'gst-plugins-base:devel', 
+                'gstreamer:devel', 
+                'gtk:runtime', 
+                'hal:devel', 
+                'libart_lgpl:devel', 
+                'libbonobo:devel', 
+                'libbonoboui:devel', 
+                'libgnome:devel', 
+                'libgnomecanvas:devel', 
+                'libgnomeui:devel', 
+                'libpng:devel', 
+                'libxml2:devel', 
+                'pango:devel', 
+                'perl:runtime', 
+                'popt:devel', 
+                'gnome-common:runtime', 
+                'shared-mime-info:runtime', 
+                'totem:devellib', 
+                'totem-pl-parser:devel', 
+                'rarian:runtime', 
+                'rarian:devel', 
+                'libbeagle:devel', 
+                'gst-plugins-ffmpeg:lib', 
+                'libburn:devel', 
+                'cdrkit:runtime', 
+                'cdrdao:runtime', 
+                'libtool:runtime', 
+                'nautilus:devel', 
+                'vcdimager:devel', 
+                'unique:devel', 
+                'libcanberra:devel'
+                    ]
+
+    name = 'brasero'
+    version = '2.32.1'
+
+    patches = [ 'brasero_Use-org-gnome-as-starting-path-for-schemas.patch', ]
+
+    extraConfig = (' --enable-caches=no '
+                   ' --disable-schemas-install '
+                   ' --disable-scrollkeeper '
+                   ' --enable-preview '
+                   ' --enable-nautilus '
+                   ' --enable-libburnia '
+                   ' --enable-search '
+                   ' --enable-playlist '
+                   ' --enable-preview '
+                   ' --enable-inotify '
+                   ' --disable-caches'
+                   ' --disable-static ')
+
+    def policy(r):
+        r.Requires('vcdimager:runtime', '%(bindir)s/brasero')

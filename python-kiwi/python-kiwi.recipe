@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonKiwi(PackageRecipe):
+    name = 'python-kiwi'
+    version = '1.9.26'
+
+    buildRequires = [
+        'pygobject:python',
+        'pygtk:python',
+        'python-ctypes:python',
+        'python-setuptools:python',
+        'python:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('http://download.gnome.org/sources/kiwi/1.9/kiwi-%(version)s.tar.gz')
+        r.PythonSetup()
+        r.Copy('pixmaps/validation-error-16.png',  '%(datadir)s/kiwi/pixmaps/')
+        r.Copy('glade/PluggableWizard.glade',  '%(datadir)s/kiwi/glade/')
+

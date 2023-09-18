@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux. 2004-2010 rPath, Inc. 2009-2010 Sony Pictures ImageWorks. 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlJSONAny(CPANPackageRecipe):
+    name = 'perl-JSON-Any'
+    version = '1.22'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['perl-JSON', 'perl-JSON-DWIW', 'strace:runtime']
+
+    def unpack(r):
+        CPANPackageRecipe.unpack(r)
+        r.Replace("'JSON::XS' => '.*'", "'JSON::XS' => '0'", 'Makefile.PL')
+        r.Replace('auto_install;', '', 'Makefile.PL')

@@ -1,0 +1,11 @@
+--- svn/python/pykde4/CMakeLists.txt-orig	2010-06-08 14:04:34.409956518 +0400
++++ svn/python/pykde4/CMakeLists.txt	2010-06-08 14:04:42.355956848 +0400
+@@ -257,7 +257,7 @@
+ 
+ ADD_SUBDIRECTORY(tools)
+ #ADD_SUBDIRECTORY(docs)
+-ADD_SUBDIRECTORY(examples)
++#ADD_SUBDIRECTORY(examples)
+ IF (NOT PYTHON_3)
+     ADD_SUBDIRECTORY(kpythonpluginfactory)
+ ENDIF (NOT PYTHON_3)

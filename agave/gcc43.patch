@@ -1,0 +1,10 @@
+--- agave-0.4.4/src/paletteparser/palette.h.gcc43	2009-11-18 21:22:41.778134993 +0530
++++ agave-0.4.4/src/paletteparser/palette.h	2009-11-18 21:23:15.044136768 +0530
+@@ -26,6 +26,7 @@
+ #ifndef __PP_PALETTE_H
+ #define __PP_PALETTE_H
+ 
++#include <cstring>
+ #include <iostream>
+ #include <vector>
+ #include <glibmm/ustring.h>

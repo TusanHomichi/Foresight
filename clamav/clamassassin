@@ -1,0 +1,197 @@
+#!/bin/sh
+#
+# $Id: clamassassin.in,v 1.43 2006/01/10 04:36:42 jlick Exp $
+#
+# clamassassin
+#
+# Author: James Lick <jlick-clamassassin@jameslick.com>
+# Website: http://jameslick.com/clamassassin/
+#
+# --- BEGIN LICENSE ---
+#
+# Copyright (c) 2003-2006, James Lick
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+# 
+#     * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+#     * Neither the name of James Lick nor the names of its contributors may
+# be used to endorse or promote products derived from this software without
+# specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# --- END LICENSE ---
+
+# CONFIGURATION:
+
+# Configure your full path to where you want temporary files
+TMPPATH=/tmp
+
+# Modify Subject line with a header ala spamassassin with rewrite_subject on
+# You'll want to add a trailing space before the old subject
+SUBJECTHEAD=""
+
+# Configure your full path to formail
+FORMAIL=/usr/bin/formail
+
+# Configure your full path to clamscan or clamdscan
+# (If you use clamdscan, see the README for directions) 
+CLAMSCAN=/usr/bin/clamscan
+
+# Configure options passed to clamscanner
+CLAMSCANOPT="--no-summary --stdout --mbox"
+
+# Configure flag to add clamscanner to version header
+ADDSCANNERFLAG=1
+
+# Configure the path to ClamAV's sigtool
+SIGTOOL=/usr/bin/sigtool
+
+# Configure the directory where the virus signature files are stored
+SIGLOC=/usr/share/clamav
+
+# Configure whether or not the virus signature version is added
+# Default: 0.80 and higher: off, others: on
+SIGVERSFLAG=0
+
+# Configure your full path to mktemp
+MKTEMP=/bin/mktemp
+
+# Paths for various basic unix utilities
+RM=/bin/rm
+CAT=/bin/cat
+SED=/bin/sed
+ECHO=/bin/echo
+
+# END CONFIGURATION
+
+# DO NOT MAKE CHANGES PAST THIS LINE
+
+# Routine to cleanup and exit with an error code
+bail()
+{
+  ${RM} -f ${MSGTMP} ${LOGTMP}
+  exit ${1}
+}
+
+# Routine to bail if error code is passed
+bailiferr()
+{
+  if [ ${1} != 0 ]
+  then
+    bail ${1}
+  fi
+}  
+
+# Make a temporary file, or bailout if it fails
+mktmp()
+{
+  MKTMPFILE=`${MKTEMP} -q ${TMPPATH}/${1}.XXXXXXXXXX`
+
+  # The usual method of bailing out when mktemp fails would cause mail to
+  # bounce, so instead we add extra logic to have it pass the message
+  # unfiltered intead
+  if [ $? != 0 ]
+  then
+    ${FORMAIL} -f -I "X-Virus-Status: Failed" -I \
+        "X-Virus-Report: Internal error mktemp ${2} failed" \
+        -I "X-Virus-Checker-Version: ${VERSION}"
+    bail $?
+  fi
+}
+  
+# make temporary file for message
+mktmp clamassassinmsg MSGTMP
+MSGTMP=${MKTMPFILE}
+
+# make temporary file for log
+mktmp clamassassinlog LOGTMP
+LOGTMP=${MKTMPFILE}
+
+# Store the message in the message tempfile for later processing
+${CAT} > ${MSGTMP}
+bailiferr $?
+
+# Set version header string
+CLAMVERS=`${CLAMSCAN} -V --stdout`
+
+if [ ${ADDSCANNERFLAG} != 0 ]
+then
+  SHORTCLAMSCAN=`${ECHO} ${CLAMSCAN} | ${SED} -e "s/.*\///"`
+  CLAMVERS="${SHORTCLAMSCAN} / ${CLAMVERS}"
+fi
+
+if [ ${SIGVERSFLAG} != 0 ]
+then
+  MAJOR=`${SIGTOOL} --stdout -i ${SIGLOC}/main.cvd \
+    | ${SED} -e "/^Version: /!d" -e "s/.* //"`
+  MINOR=`${SIGTOOL} --stdout -i ${SIGLOC}/daily.cvd \
+    | ${SED} -e "/^Version: /!d" -e "s/.* //"`
+  SIGVERS="${MAJOR}.${MINOR}"
+  VERSION="clamassassin 1.2.3 with ${CLAMVERS} signatures ${SIGVERS}"
+else
+  VERSION="clamassassin 1.2.3 with ${CLAMVERS}"
+fi
+
+# Have ClamAV check the message and save the simple results in the log
+# temp file
+
+${CLAMSCAN} ${CLAMSCANOPT} - < ${MSGTMP} > ${LOGTMP} \
+  2> /dev/null
+RESULT=$?
+
+# If the message is clean, clamscan exits with status 0
+
+if [ ${RESULT} = 0 ]
+then
+  # Spit out the message with a header indicating it is clean
+  ${FORMAIL} -f -I "X-Virus-Status: No" -I "X-Virus-Report:" \
+      -I "X-Virus-Checker-Version: ${VERSION}" < ${MSGTMP}
+  bailiferr $?
+else
+  # If the result is 1, then a virus was detected
+  if [ ${RESULT} = 1 ]
+  then
+    # Chop off the tempfile name off the virus message
+    # This is a bit complex because there may be multiple status lines
+    REASON=`${SED} -e 's/[^:]*: //' -e '/ FOUND$/!d' \
+      -e 's/ FOUND$/ FOUND /' < ${LOGTMP} | ${SED} -n -e 'H;${x;s/\n//g;p;}'`
+    # Extract the subject so it can be modified if SUBJECTHEAD is set 
+    # Note that some versions of formail will add a leading space to the
+    # subject line, so we strip off one leading space if present.
+    SUBJECT=`${FORMAIL} -c -x "Subject:" < ${MSGTMP} | ${SED} -e "s/^ //"`
+    # Spit out the message with the headers showing it is infected and how
+    ${FORMAIL} -f -I "Subject: ${SUBJECTHEAD}${SUBJECT}" \
+      -I "X-Virus-Status: Yes" -I "X-Virus-Report: ${REASON}" \
+      -I "X-Virus-Checker-Version: ${VERSION}" < ${MSGTMP}
+    bailiferr $?
+  else
+    # If the result was not 0 or 1 then some sort of error occured
+    ${FORMAIL} -f -I "X-Virus-Status: Failed" -I \
+      "X-Virus-Report: ${CLAMSCAN} error ${RESULT}" \
+      -I "X-Virus-Checker-Version: ${VERSION}" < ${MSGTMP}
+    bailiferr $?
+  fi
+fi
+
+# Clean up the temp files
+bail 0

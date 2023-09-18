@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2011-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('binarypackage')
+class Playonlinux(BinaryPackageRecipe):
+    name = 'playonlinux'
+    version = '4.2.2'
+
+    buildRequires = [ 
+        'binutils:runtime',
+        'desktop-file-utils:runtime', 
+        'python:devel', 
+        'wxPython:python',
+            ]
+
+
+    def unpack(r):
+        r.macros.site = 'http://www.playonlinux.com/script_files/PlayOnLinux/%(version)s'
+
+        dist = [
+            ('PlayOnLinux_%(version)s.deb'),
+        ]
+        for (deb) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/')
+
+    def policy(r):
+            r.Requires('wxPython:python', '%(bindir)s/playonlinux')
+            r.Requires('cabextract:runtime', '%(bindir)s/playonlinux')
+            r.Requires('wine:runtime', '%(bindir)s/playonlinux')
+            r.Requires('icoutils:runtime', '%(bindir)s/playonlinux')
+
+            r.ComponentSpec('locale', '%(datadir)s/%(name)s/lang/.*')

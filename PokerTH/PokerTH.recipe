@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pokerth(AutoPackageRecipe):
+
+    name = 'PokerTH'
+    version = '0.8.2'
+
+    buildRequires = [ 'libgsasl:devel', 'boost:devel', 'curl:devel',
+                      'gnutls:devel', 'libgcrypt:devel',
+                      'libstdc++:devel', 'qt4:devel', 'SDL:devel',
+                      'SDL_mixer:devel', 'libgpg-error:devel',
+    ]
+
+    def unpack(r):
+        r.macros.archive_version = '%s-src' % r.version.replace('_', '-')
+        r.addArchive('mirror://sourceforge/pokerth/')
+
+    def configure(r):
+        r.Replace('-no_dead_strip_inits_and_terms', '', '*.pro', allowNoChange=True)
+        r.Run('qmake-qt4 pokerth.pro')
+
+    def makeinstall(r):
+        r.MakeInstall(rootVar='INSTALL_ROOT')
+        r.Install('pokerth', '%(bindir)s/')
+        r.Install('bin/pokerth_server', '%(bindir)s/')
+
+    def policy(r):
+        r.TagSpec('desktop-file', '%(datadir)s/applications/pokerth.desktop')
+

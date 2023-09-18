@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gc(CPackageRecipe):
+    name = 'gc'
+    version = '7.2d'
+    buildRequires = [ 'libtool:runtime', 'automake:runtime',
+                      'autoconf:runtime', 'libstdc++:devel',
+                      'pkgconfig:devel']
+
+    def setup(r):
+        r.addArchive('http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-%(version)s.tar.gz')
+
+        r.addPatch('gc-7.2c-test-stack-infinite-loop.patch')
+
+        r.macros.cxxflags += '-DUSE_GET_STACKBASE_FOR_MAIN '
+
+        # refresh auto*/libtool to purge rpaths
+        r.Remove('{libtool,libtool.m4}')
+        r.Run('autoreconf -i -f')
+
+        r.Configure(' --disable-dependency-tracking '
+                    ' --disable-static '
+                    ' --enable-cplusplus '
+                    ' --enable-large-config '
+                    ' --enable-parallel-mark '
+                    ' --enable-threads=posix '
+                    ' --with-libatomic-ops=no')
+        r.Make()
+        r.Make(dir = 'libatomic_ops')
+        r.MakeInstall()
+        r.MakeInstall(dir = 'libatomic_ops', 
+                      package = 'libatomic_ops')
+        r.Install('doc/gc.man',
+                  '%(mandir)s/man3/', mode = 0644)
+        r.Remove('%(datadir)s/gc/',
+                 recursive = True)
+        

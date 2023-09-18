@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGtk2Notify(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Gtk2-Notify'
+    version = '0.05'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libnotify:devel', 'pango:devel', 'perl-Cairo:perl', 'perl-ExtUtils-Depends:perl', 'perl-ExtUtils-PkgConfig:perl', 'perl-Gtk2:perl', 'perl:devel', 'pkgconfig:devel']
+
+
+    def unpack(r):
+        CPANPackageRecipe.unpack(r)
+        r.addPatch('libnotify.patch')

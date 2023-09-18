@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MediaTemplate(PackageRecipe):
+    name = 'media-template'
+    version = '2.5'
+
+    def setup(r):
+        r.addSource('INSTALL', dest = '/usr/lib/media-template/disc1/')
+        #r.addSource('updates.img', dest = '/usr/lib/media-template/disc1/rPath/base/')
+        # FIXME
+        # bump version to 2.5.0 after content's of file bellow properly updated
+        r.addSource('RELEASE-NOTES-en_US.html', dir='/usr/lib/media-template/disc1/')
+

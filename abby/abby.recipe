@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Abby(PackageRecipe):
+    name = 'abby'
+    version = '0.4.8'
+ 
+    buildRequires = ['make:runtime', 'qt4:devel', 'libgcc:devellib', 'libstdc++:devel', 'desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://abby.googlecode.com/files/')
+	r.Run('qmake-qt4')
+	r.Make()
+	r.Move('abby', '%(bindir)s/')
+	r.Requires('cclive:runtime', '%(bindir)s/')
+        r.addSource('abby.png')
+	r.Move('abby.png', '%(datadir)s/pixmaps/')
+        r.addSource('abby.desktop')
+        r.Desktopfile('abby.desktop')

@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# Copyright (c) 2006 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class NotificationDaemon(AutoPackageRecipe):
+    name = 'notification-daemon'
+    version = '0.7.6'
+
+    buildRequires = [ 
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk3:devel', 
+        'intltool:runtime', 
+        'libX11:devel', 
+        'libcanberra:devel', 
+        'pango:devel', 
+        'pkgconfig:devel',
+            ]
+
+    def unpack(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/notification-daemon/0.7/')
+
+    def configure(r):
+        r.Configure('--disable-static')

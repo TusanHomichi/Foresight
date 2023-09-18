@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class SimpleMtpfs(AutoPackageRecipe):
+    name = 'simple-mtpfs'
+    version = '0.1'
+ 
+    buildRequires = [
+	'fuse:devel', 
+	'libmtp:devel', 
+	'libstdc++:devel', 
+	'pkgconfig:devel'
+		]
+ 
+    def unpack(r):
+        r.addArchive('https://github.com/downloads/phatina/simple-mtpfs/')
+	r.addPatch('simple-mtpfs.centos6.patch')
+	r.addPatch('simple-mtpfs.udev.patch')

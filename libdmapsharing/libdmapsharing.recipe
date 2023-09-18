@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libdmapsharing(AutoPackageRecipe):
+    name = 'libdmapsharing'
+    version = '2.1.9'
+ 
+    buildRequires = [
+            'avahi-glib:devel', 
+            'avahi:devel', 
+            'glib:devel', 
+            'gst-plugins-base:devel', 
+            'gstreamer:devel', 
+            'gtk-doc:runtime', 
+            'libsoup:devel', 
+            'libxml2:devel', 
+            'pkgconfig:devel', 
+            'zlib:devel'
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.flyn.org/projects/libdmapsharing/')

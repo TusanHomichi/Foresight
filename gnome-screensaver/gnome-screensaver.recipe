@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+loadSuperClass('rpmpackage')
+class GnomeScreenSaver(RPMPackageRecipe,GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel',
+        'cairo:devel', 'dbus:devel', 'fontconfig:devel', 'expat:devel',
+        'freetype:devel', 'glib:devel', 'libgnome-keyring:devel',
+        'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel',
+        'libbonoboui:devel', 'libglade:devel', 'libgnome:devel',
+        'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel',
+        'libxml2:devel', 'pam:devel', 'pango:devel', 'popt:devel',
+        'gnome-menus:devel', 'libexif:devel', 'dbus-glib:devellib',
+        'GConf:runtime', 'desktop-file-utils:runtime', 'gettext:runtime',
+        'Mesa:devel', 'libXxf86misc:devel', 'libXxf86vm:devel', 'xmlto:runtime',
+        'glib:runtime', 'perl:runtime', 'libXScrnSaver:devel', 'nss:devel',
+        'libXmu:devel', 'libnotify:devel', 'gnome-desktop:devel', 'libgnomekbd:devel',
+        'libxklavier:devel', 'startup-notification:devel', 'libXtst:devel']
+
+
+    name = 'gnome-screensaver'
+    version = '2.30.2'
+    rpmRelease = '2.fc14'
+    extraConfig =  (' --with-libgl -with-xscreensaverdir=/usr/share/xscreensaver/config '
+                    '--with-xscreensaverhackdir=/usr/libexec/xscreensaver --with-gdm-config=/usr/share/gdm/defaults.conf '
+                    ' --with-mit-screensaver=no ')
+
+    rpmPatches = [ 'gnome-screensaver-2.20.0-default-theme.patch',
+                   'gnome-screensaver-2.20.0-blank-by-default.patch',
+                   # 'xrandr-gamma.patch',
+                   ]
+    rpmSources= ['gnome-screensaver-hide-xscreensaver.menu']
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('gnome-screensaver-2.30.2-libnotify-0.7.patch')
+
+        r.Run(' libtoolize --force --copy; intltoolize --force; autoreconf ')
+
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+    def policy(r):
+        # hide xscreensaver from the menus
+        r.Install('gnome-screensaver-hide-xscreensaver.menu',
+                  '%(sysconfdir)s/xdg/menus/preferences-post-merged/gnome-screensaver-hide-xscreensaver.menu', mode = 0644)
+                  
+        # Enforce a sane PAM setup by making sure the user gets a non-merged file
+        r.addSource('gnome-screensaver.pamd')
+        r.Install('gnome-screensaver.pamd', '%(sysconfdir)s/pam.d/gnome-screensaver',
+                  mode=0644)
+        r.ComponentSpec('runtime', '%(sysconfdir)s/pam.d/gnome-screensaver')
+

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PulseaudioEqualizer(PackageRecipe):
+    name = 'pulseaudio-equalizer'
+    version = '2.7'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'pygobject:python', 'pygtk:python', 'python:devel']
+ 
+    def setup(r):
+        r.addBzrSnapshot('lp:~psyke83/+junk/pulseaudio-equalizer')
+        r.Run(''' sed -i 's|gnome-volume-control|multimedia-volume-control|g' usr/share/{applications/pulseaudio-equalizer.desktop,pulseaudio-equalizer/pulseaudio-equalizer.py} ''')
+        r.addPatch('pulseaudio-equalizer-2.7-force-default-persistence-value.patch')
+        r.addPatch('pulseaudio-equalizer-2.7-remove-preamp.patch')
+	r.Move('usr/*', '%(prefix)s')
+	r.Requires('ladspa-swh-plugins:lib', '%(bindir)s/pulseaudio-equalizer')

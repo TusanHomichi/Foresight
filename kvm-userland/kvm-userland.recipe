@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Kvm(AutoPackageRecipe):
+
+    name = 'kvm-userland'
+    version = '21'
+
+    buildRequires = [ 'SDL:devel', 'alsa-lib:devel', 'e2fsprogs:devel', 'zlib:devel', 'chkconfig:runtime', 'info-kvm:group']
+
+
+    def unpack(r):
+
+
+
+
+
+        r.addArchive('mirror://sourceforge/kvm/kvm-%(version)s.tar.gz')
+    def configure(r):
+        r.ManualConfigure(' DESTDIR=%(destdir)s  --disable-gcc-check --with-patched-kernel --prefix=%(prefix)s')
+#        r.ManualConfigure(' DESTDIR=%(destdir)s   --prefix=%(prefix)s',dir='user')
+
+    def make(r):
+
+        r.Replace('PREFIX=/usr/local','','user/config.mak')
+        r.Replace('/local','','qemu/config-host.mak')
+        r.Make('  -C user  PREFIX=%(prefix)s DESTDIR=%(destdir)s')
+        r.Make('  -C qemu  PREFIX=%(prefix)s DESTDIR=%(destdir)s')
+
+
+    def makeinstall(r):
+
+        r.Make('  -C user DESTDIR=%(destdir)s  install')
+        r.Make('  -C qemu DESTDIR=%(destdir)s  install')
+
+        r.Install('scripts/*kvm*.rules','/etc/udev/rules.d/')
+        r.Install('scripts/kvm','%(initdir)s/')
+        r.Install('scripts/qemu-ifup','%(sysconfdir)s/kvm/')
+
+        r.Remove('%(datadir)s/qemu/openbios-sparc32')
+
+
+
+
+
+

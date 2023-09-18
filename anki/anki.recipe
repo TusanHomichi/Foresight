@@ -1,0 +1,26 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Anki(PackageRecipe):
+
+    name = 'anki'
+    version = '1.2.11'
+
+    packageSummary = 'Anki is a program which makes remembering things easy.'
+    packageDescription = 'Anki is a program which makes remembering things easy. Because it is a lot more efficient than traditional study methods, you can either greatly decrease your time spent studying, or greatly increase the amount you learn. Anyone who needs to remember things in their daily life can benefit from Anki. Since it is content-agnostic and supports images, audio, videos and scientific markup (via LaTeX), the possibilities are endless.'
+
+    buildRequires = ['matplotlib:python', 'numpy:python', 'PyQt4:python', 'desktop-file-utils:runtime', 'pyaudio:python', 'python:devel', 'python-setuptools:python', 'python-simplejson:python', 'sip:python', 'sqlalchemy:python', 'python-sqlite:python']
+
+    def setup(r):
+        r.addArchive('http://anki.googlecode.com/files/')
+        r.Replace('Categories=Education;Languages;KDE;', 'Categories=Education;', 'anki.desktop')
+        r.Replace("""'checkForUpdates': True""", """'checkForUpdates': False""", """ankiqt/config.py""")
+#        r.addPatch('%(name)s-1.2.9-unicode.patch')
+        r.PythonSetup(dir='libanki')
+        r.PythonSetup()
+        r.Install('icons/%(name)s.png', '%(datadir)s/pixmaps/', mode=0644)
+        r.Desktopfile('%(name)s.desktop', vendor='foresight', category='Education')

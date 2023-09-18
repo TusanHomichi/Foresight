@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=SPE
+Comment=Keyboard practicing game
+Exec=spe 
+Icon=/usr/share/_spe/images/spe.png
+Terminal=false
+Type=Application
+Categories=Application;Development;

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoSorting(PackageRecipe):
+
+    name = 'django-sorting'
+    version = '0.1'
+
+    buildRequires = [
+        'django:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        #r.addGitSnapshot('git://github.com/directeur/django-sorting.git')
+        r.addArchive("http://pypi.python.org/packages/source/d/%(name)s/")
+        r.PythonSetup()
+

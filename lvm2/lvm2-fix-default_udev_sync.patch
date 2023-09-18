@@ -1,0 +1,17 @@
+ WHATS_NEW             |    1 +
+ lib/config/defaults.h |    2 +-
+ 2 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/lib/config/defaults.h b/lib/config/defaults.h
+index afd8dc1..7793d32 100644
+--- a/lib/config/defaults.h
++++ b/lib/config/defaults.h
+@@ -77,7 +77,7 @@
+ #define DEFAULT_LABELSECTOR UINT64_C(1)
+ #define DEFAULT_READ_AHEAD "auto"
+ #define DEFAULT_UDEV_RULES 1
+-#define DEFAULT_UDEV_SYNC 0
++#define DEFAULT_UDEV_SYNC 1
+ #define DEFAULT_VERIFY_UDEV_OPERATIONS 0
+ #define DEFAULT_ACTIVATION_CHECKS 0
+ #define DEFAULT_EXTENT_SIZE 4096	/* In KB */

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Gthumb(GnomePackageRecipe):
+
+    name = 'gthumb'
+    version = '2.12.3'
+
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'bison:runtime', 'desktop-file-utils:runtime', 'flex:runtime', 'gnome-keyring:devel', 'gnome-vfs:devel', 'libXtst:devellib', 'libXxf86vm:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libexif:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libjpeg:devel', 'libsoup:devel', 'libtiff:devel', 'libusb:devel', 'popt:devel', 'rarian:runtime', 'rarian:devel', 'unique:devel', 'exiv2:devel', 'libgphoto2:devel', 'brasero:devel', 'gst-plugins-base:devel', 'gstreamer:devel']
+
+    def policy(r):
+        GnomePackageRecipe.policy(r)
+        r.SharedLibrary('%(libdir)s/libgthumb.so')
+

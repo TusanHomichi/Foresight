@@ -1,0 +1,12 @@
+class PyDanceMusic(BuildPackageRecipe):
+    name = 'pydance-music'
+    version = '1'
+
+    def setup(r):
+        for danceFile in ('6jan.dance', '6jan.ogg', '6jan-bg.jpg',
+                          '6jan-banner.png',
+                          'forkbomb.dance', 'forkbomb.ogg', 'forkbomb-bg.jpg',
+                          'forkbomb-banner.png',
+                          'synrg.dance', 'synrg.ogg', 'synrg-bg.png'):
+            r.addSource(danceFile)
+            r.Install(danceFile, '%(datadir)s/games/pydance/songs/')

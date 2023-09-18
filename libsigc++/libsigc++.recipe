@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libsigcpp(AutoPackageRecipe):
+    name = 'libsigc++'
+    version = '2.2.8'
+
+    buildRequires = ['m4:runtime', 'libstdc++:devel', 'perl:runtime']
+
+    def unpack(r):
+        r.macros.majversion = '.'.join(r.version.split('.')[0:2])
+        r.addArchive('mirror://gnome/%(name)s/%(majversion)s/')
+

@@ -1,0 +1,15 @@
+diff -ur gtranslator-1.9.6.orig/data/desktop/Makefile.in gtranslator-1.9.6/data/desktop/Makefile.in
+--- gtranslator-1.9.6.orig/data/desktop/Makefile.in	2009-04-11 05:38:53.000000000 +0400
++++ gtranslator-1.9.6/data/desktop/Makefile.in	2009-05-30 16:42:04.000000000 +0400
+@@ -252,9 +252,9 @@
+ 
+ CLEANFILES = $(Application_DATA)
+ UPDATE_DESKTOP = \
+-	if [ -f $(Applicationdir)/defaults.list ] ; then \
++	if [ -f $(DESTDIR)$(Applicationdir)/defaults.list ] ; then \
+ 		if which update-desktop-database>/dev/null 2>&1 ; then \
+-			update-desktop-database $(Applicationdir); \
++			update-desktop-database $(DESTDIR)$(Applicationdir); \
+ 		fi \
+ 	fi
+ 

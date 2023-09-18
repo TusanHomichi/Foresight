@@ -1,0 +1,30 @@
+(FL-318) Seahorse Plugin crashes Epiphany
+
+This has been fixed in SVN - patch is [1] with the Changelog portion removed
+since it conflicts, upstream bug [2]
+
+[1] svn diff -r 1728:1729 http://svn.gnome.org/svn/seahorse/branches/gnome-2-18
+[2] http://bugzilla.gnome.org/show_bug.cgi?id=434716
+
+Index: plugins/epiphany/seahorse-extension.c
+===================================================================
+--- plugins/epiphany/seahorse-extension.c	(revision 1728)
++++ plugins/epiphany/seahorse-extension.c	(revision 1729)
+@@ -476,12 +476,13 @@
+     is_input = mozilla_is_input (embed);
+ 
+     if (is_input == FALSE)
+-        return FALSE;
+-        
+-	text = mozilla_get_text (embed);
++        text = NULL;
++    else
++        text = mozilla_get_text (embed);
+ 	
+ 	if (text != NULL)
+-        texttype = detect_text_type (text, -1, NULL, NULL);   
++        texttype = detect_text_type (text, -1, NULL, NULL);
++      
+ 
+ 	action = gtk_action_group_get_action (data->action_group, ENCRYPT_ACTION);
+ 	g_return_val_if_fail (action != NULL, FALSE);	

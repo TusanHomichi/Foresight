@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.freedesktop.Hal
+Exec=/usr/sbin/hald --daemon=no --use-syslog
+User=root

@@ -1,0 +1,67 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Shotwell(GnomePackageRecipe):
+    name = 'shotwell'
+    version = '0.14.1'
+ 
+    buildRequires = [
+            'GConf:devel', 
+            'WebKit:devel', 
+            'atk:devel', 
+            'cairo:devel', 
+            'dbus-glib:devel', 
+            'dbus:devel', 
+            'desktop-file-utils:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'glib:devel', 
+            'gtk:devel', 
+            'gtk:runtime', 
+            'libexif:devel', 
+            'libgee:devel', 
+            'libgphoto2:devel', 
+            'libsoup:devel', 
+            'libusb:devel', 
+            'libxml2:devel', 
+            'pango:devel', 
+            'sqlite:devel', 
+            'udev:devel', 
+            'gudev:devel', 
+            'unique:devel', 
+            'vala:runtime', 
+            'pkgconfig:devel', 
+            'gettext:runtime', 
+            'GConf:runtime', 
+            'exiv2:devel', 
+            'gexiv2:devel', 
+            'libstdc++:devel',
+            'libraw:devel',
+            'json-glib:devel',
+            'gstreamer:devel',
+            'gnome-vfs:devel',
+            'gst-plugins-base:devel',
+                 ]
+
+    extraConfig = ( ' --prefix=%(prefix)s '
+                    ' --lib=%(lib)s'
+                    ' --disable-desktop-update '
+                    ' --disable-icon-update '
+                    ' --assume-pkgs '
+                    )
+    externalArchive = 'http://www.yorba.org/download/shotwell/%(major_version)s/' 
+
+
+    def build(r):
+        r.ManualConfigure(r.extraConfig,
+                          configureName = r.configureName,
+                          preConfigure = r.preConfigure)
+        r.Replace('^CFLAGS\ =.*$', 'CFLAGS=%(cflags)s', 'Makefile')
+        r.Make(r.makeArgs, preMake=r.preMake)
+
+    def policy(r):
+        r.Remove('%(datadir)s/glib-2.0/schemas/gschemas.compiled')

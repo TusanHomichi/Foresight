@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class Usbutils(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'usbutils'
+    version = '0.86'
+    rpmRelease = '1.fc12'
+    rpmPatches = [ 'usbutils-0.86-hwdata.patch' ]
+
+
+    buildRequires = [ 'libusb:devel', 'zlib:devel',
+                      'automake:runtime', 'autoconf:runtime',
+                      'pkgconfig:devel']
+
+    def configure(r):
+        r.Run(""" autoreconf """)
+
+        r.Configure('--sbindir=%(essentialsbindir)s')
+
+    def policy(r):
+        # usb.ids is shipped in hwdata; nuke and adjust .pc file
+        r.Replace("usbids=/usr/share/usb.ids", "usbids=/usr/share/hwdata/usb.ids",
+                  '%(datadir)s/pkgconfig/usbutils.pc')
+        

@@ -1,0 +1,20 @@
+--- old/configure	2006-08-25 04:34:16.000000000 -0400
++++ new/configure	2006-08-30 14:17:50.000000000 -0400
+@@ -19198,7 +19198,7 @@
+     RUBY_LIB_PREFIX="/lib/ruby"
+     ;;
+   *)
+-    RUBY_LIB_PREFIX="${prefix}/lib/ruby"
++    RUBY_LIB_PREFIX="${libdir}/ruby"
+     ;;
+ esac
+ RUBY_LIB_PATH="${RUBY_LIB_PREFIX}/${MAJOR}.${MINOR}"
+@@ -19208,7 +19208,7 @@
+ if test "${with_sitedir+set}" = set; then
+   withval=$with_sitedir; sitedir=$withval
+ else
+-  sitedir='${prefix}/lib/ruby/site_ruby'
++  sitedir='${libdir}/ruby/site_ruby'
+ fi
+ 
+ SITE_DIR="`eval \"echo ${sitedir}\"`"

@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoAjaxSelects(PackageRecipe):
+
+    name = 'django-ajax-selects'
+    version = 'r24_patched'
+
+    buildRequires = [
+        'django:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        #r.addSvnSnapshot('http://django-ajax-selects.googlecode.com/svn/trunk')
+        r.addArchive('http://transifex.org/files/deps/django-ajax-selects-svnr24.tar.gz')
+        r.PythonSetup()

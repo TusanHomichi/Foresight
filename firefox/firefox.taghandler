@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# Copyright (c) 2005 rpath, Inc.
+#
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+while read tags; do
+    read file
+    case $tags in
+        firefox-chrome | firefox-xpt-component | firefox-extension)
+            ;;
+	*)
+	    echo "ERROR: taghandler invoked for a tag ($tags) that is unknown"
+	    exit 1
+	    ;;
+    esac
+done
+
+case $type in
+    files)
+	case $action in
+	    update)
+		# basically the only thing that needs to happen when
+		# getting a new component, chrome, extension, etc is
+		# "mozilla -register"
+		# we use "exec -c" in a subshell to start with a clean
+		# environment, then set up all the environment
+		# variables explicitly.  We use a temporary directory
+		# for $HOME because ~/.mozilla will be created.
+		(exec -c bash -e -c 'export HOME=$(mktemp -d /tmp/home-XXXXXX); MOZILLA_FIVE_HOME=%(fflib)s LD_LIBRARY_PATH=%(fflib)s PATH=/bin:/usr/bin %(fflib)s/firefox -register; rm -rf $HOME')
+		;;
+	    *)
+		echo "ERROR: taghandler invoked for an action ($action) that is not handled"
+		exit 1
+	    ;;
+	esac
+	;;
+    *)
+	echo "ERROR: taghandler invoked for a type ($type) that is not handled"
+	exit 1
+    ;;
+esac
+
+exit 0

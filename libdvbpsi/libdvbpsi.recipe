@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libdvbpsi(CPackageRecipe):
+	name = 'libdvbpsi'
+	version = '0.1.6'
+
+	def setup(r):
+		r.addArchive('http://download.videolan.org/pub/%(name)s/%(version)s/%(name)s5-%(version)s.tar.bz2')
+		r.Configure()
+		r.Make()
+		r.MakeInstall()

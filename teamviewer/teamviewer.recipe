@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('binarypackage')
+class Teamviewer(BinaryPackageRecipe):
+    name = 'teamviewer'
+    version = '9.0.24147'
+ 
+    buildRequires = [ 
+        'alsa-lib:devel', 
+        'binutils:runtime', 
+        'chkconfig:runtime', 
+        'desktop-file-utils:runtime',
+        'freetype:devel', 
+        'libgcc:devellib', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXdamage:devel',
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel',
+        'libXtst:devel', 
+        'zlib:devel',
+            ]
+ 
+    def setup(r):
+        r.macros.site = 'http://www.teamviewer.com/download/'
+
+        dist = [
+            ('teamviewer_linux_x64.deb', Arch.x86_64),
+            ('teamviewer_linux.deb', Arch.x86),
+        ]
+        for (deb, arch) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/', use=(arch==True))
+
+        r.Move('/opt/teamviewer9/tv_bin/script/teamviewerd.sysv', '%(initdir)s/teamviewerd', mode = 0755)
+        r.Symlink('/opt/teamviewer9/tv_bin/desktop/teamviewer-teamviewer9.desktop', '%(datadir)s/applications/')
+        r.Symlink('/opt/teamviewer9/tv_bin/script/teamviewer', '%(bindir)s/')
+
+        r.Requires('libgcc:lib', 'teamviewer:runtime')
+
+        r.Remove('/opt/teamviewer') # otherwise updates break (dir to symlink)
+        r.ExcludeDirectories(exceptions = ['/opt/teamviewer9/config', '/opt/teamviewer9/logfiles'])
+        # we use system's one
+        r.Remove('/opt/teamviewer9/tv_bin/xdg-utils', recursive = True)

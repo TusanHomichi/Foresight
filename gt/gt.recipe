@@ -1,0 +1,52 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gt(AutoPackageRecipe):
+    name = 'gt'
+    version = '0.4'
+ 
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'ncurses:devel',
+                    ]
+
+    def unpack(r):
+        r.addArchive('ftp://ling.lll.hawaii.edu/pub/greg/gt-%(version)s.tar.gz')
+        r.addPatch('gt-0.4-compile-fix.patch')
+        r.addPatch('gt-0.4-config-default-velocity-layer.patch')
+        r.addPatch('gt-0.4-noac3.patch')
+        r.addPatch('gt-0.4-optflags.patch')
+        r.addPatch('gt-0.4-unsf-bigendian-fix.patch')
+        r.addPatch('gt-0.4-unsf-tremolo.patch')
+
+    def makeinstall(r):
+        r.MakeInstall('DESTDIR=%(destdir)s')
+        r.Move('%(destdir)s%(bindir)s/dim', '%(destdir)s%(bindir)s/midi-disasm')
+        r.Move('%(destdir)s%(mandir)s/man1/dim.1', '%(destdir)s%(mandir)s/man1/midi-disasm.1')
+        r.Run("""sed -i 's/dim/midi-disasm/g' %(destdir)s%(mandir)s/man1/midi-disasm.1""")
+        r.Run('touch -r utils/midifile.c %(destdir)s%(mandir)s/man1/midi-disasm.1')
+
+    def packagespec(r):
+        r.PackageSpec('soundfont-utils', '%(bindir)s/sf2cfg')
+        r.PackageSpec('soundfont-utils', '%(bindir)s/unsf')
+        r.PackageSpec('soundfont-utils', '%(bindir)s/midi-disasm')
+        r.PackageSpec('soundfont-utils', '%(bindir)s/patinfo')
+        r.PackageSpec('soundfont-utils', '%(bindir)s/wav2pat')
+        r.PackageSpec('soundfont-utils', '%(bindir)s/sfz2pat')
+        r.PackageSpec('soundfont-utils', '%(mandir)s/man1/sfz2pat.1')
+        r.PackageSpec('soundfont-utils', '%(mandir)s/man1/midi-disasm.1')
+        r.PackageSpec('soundfont-utils', '%(mandir)s/man1/patcat.1')
+        r.PackageSpec('soundfont-utils', '%(mandir)s/man1/unsf.1')
+        r.PackageSpec('soundfont-utils', '%(mandir)s/man1/sf2cfg.1')
+
+    def setup(r):
+        r.unpack()
+        r.configure()
+        r.make()
+        r.makeinstall()
+        r.packagespec()
+        r.policy()

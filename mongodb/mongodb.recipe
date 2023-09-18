@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mongodb(PackageRecipe):
+    name = 'mongodb'
+    version = '2.0.2'
+ 
+    buildRequires = ['pcre-c++:devel', 'boost:devel', 'chkconfig:runtime', 'js:devel', 'libgcc:devellib', 'libpcap:devel', 'libstdc++:devel', 'make:runtime', 'ncurses:devel', 'readline:devel', 'scons:runtime', 'xterm:runtime', 'gcc-c++:runtime', 'gcc:runtime', 'gcc:devel', 'glibc:devel']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.mongodb.org/src/mongodb-src-r%(version)s.tar.gz')
+        r.addPatch('mongodb-src-r2.0.2-js.patch')
+        r.disableParallelMake()
+        r.Environment('TERM', 'xterm')
+        r.Make(makeName='scons all --full --cpppath=/usr/include/pcre/')
+        r.Run('scons install --prefix=%(destdir)s/%(exec_prefix)s --cpppath=/usr/include/pcre/')
+        r.Install('rpm/init.d-mongod', '%(initdir)s/mongod', mode=0755)
+        r.Install('rpm/mongod.sysconfig', '%(sysconfdir)s/sysconfig/mongod', mode=0755)
+        r.Install('rpm/mongod.conf', '%(sysconfdir)s/mongod.conf')
+        r.MakeDirs('%(localstatedir)s/lib/mongo')
+        r.MakeDirs('%(localstatedir)s/log/mongo')
+        r.Group('mongod',1002)
+        r.User('mongod', 999, group='mongod', groupid=1002,
+               homedir='/var/lib/mongo', shell='%(essentialbindir)s/nologin',
+               comment='MongoDB Database Server')
+        r.Ownership('mongod', 'mongod', '%(localstatedir)s/log/mongo')
+        r.Ownership('mongod', 'mongod', '%(localstatedir)s/lib/mongo')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/')
+

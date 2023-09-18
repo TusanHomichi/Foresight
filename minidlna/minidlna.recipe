@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+#                     
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class MiniDLNA(AutoPackageRecipe):
+    name = 'minidlna'
+    version = '1.1.0'
+    buildRequires = [ 'ffmpeg:devel', 'flac:devel', 'gettext:runtime',
+                      'intltool:runtime', 'libexif:devel', 'libid3tag:devel',
+                      'libjpeg:devel', 'libogg:devel', 'libvorbis:devel',
+                      'sqlite:devel', 'chkconfig:runtime', ]
+    
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/%(name)s/%(version)s/')
+        r.addSource('minidlna.init', dest='%(initdir)s/minidlna', mode = 0755)
+
+    def policy(r):
+        r.Install('minidlna.conf', '%(sysconfdir)s/minidlna.conf', mode = 0644)
+

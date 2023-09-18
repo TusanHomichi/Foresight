@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# All rights reserved
+#
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class FileSlurp(CPANPackageRecipe):
+    name='perl-File-Slurp'
+    version='9999.13'
+
+    buildRequires = [ ]
+
+    def post(r):
+	CPANPackageRecipe.post(r)
+

@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlMailSpf(CPANPackageRecipe):
+    name = 'perl-Mail-SPF'
+    version = 'v2.007'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['git:perl', 'perl-Net-DNS:perl', 'perl-NetAddr-IP:perl', 'perl-URI:perl', 'perl-version:perl', 'perl:devel', 'perl-Net-DNS:perl', 'perl-Net-DNS-Resolver-Programmable:perl']

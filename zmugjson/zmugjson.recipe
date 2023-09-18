@@ -1,0 +1,12 @@
+import datetime
+class ZMugjson(AutoPackageRecipe):
+    name = 'zmugjson'
+    version = datetime.date.today().strftime("%Y%m%d") +'.git'
+
+    buildRequires = [ 'python:devel', 'python-setuptools:python', 'fuse:devel', 'python-simplejson:python']
+    
+    def setup(r):
+        r.addGitSnapshot('git://github.com/jmrodri/zmugfs.git')
+        r.mainDir('%(name)s-master/%(name)s/')
+        r.PythonSetup()
+

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MediaPlayerInfo(AutoPackageRecipe):
+    name = 'media-player-info'
+    version = '16'
+ 
+    buildRequires = ['pkgconfig:devel', 'udev:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.freedesktop.org/software/media-player-info/')

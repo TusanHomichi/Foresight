@@ -1,0 +1,10 @@
+--- crypto/perlasm/x86unix.pl
++++ crypto/perlasm/x86unix.pl
+@@ -586,6 +586,7 @@
+ 		push(@out,$const);
+ 		$const="";
+ 		}
++	push(@out, ".section 	.note.GNU-stack,\"\",\@progbits");
+ 	}
+ 
+ sub main'data_word

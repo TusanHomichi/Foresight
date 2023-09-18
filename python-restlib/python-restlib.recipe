@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class pyRESTlib(CPackageRecipe):
+    name = 'python-restlib'
+    version = '0.99'
+    tag = '132e6de26752'
+
+    if tag:
+        version += '_' + tag
+
+    buildRequires = [
+        'python:devel',
+        'xobj:python',
+        'mod_python:python'
+      ]
+
+    def setup(r):
+        if r.tag:
+            r.addMercurialSnapshot('http://hg.rpath.com/restlib', tag=r.tag)
+        else:
+            r.addArchive('ftp://download.rpath.com/restlib/')
+        r.Make()
+        r.MakeInstall()

@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class ModemManager(AutoPackageRecipe):
+    name = 'ModemManager'
+    version = '0.5.2.0'
+
+    buildRequires = [ 'dbus-glib:devel', 'dbus:devel', 'glib:devel', 'pkgconfig:devel',
+                      'udev:devel', 'gudev:devel', 'dbus-glib:runtime', 'ppp:devel',
+                      'intltool:runtime', 'automake:runtime', 'autoconf:runtime',
+                      'libtool:runtime', 'intltool:devel', 'gettext:devel',
+                      'libxslt:runtime',
+                      ]
+
+
+    def unpack(r):
+        r.addGitSnapshot('git://anongit.freedesktop.org/ModemManager/ModemManager', 
+                         branch = '%(version)s')
+
+    def configure(r):
+        r.Configure(' --enable-more-warnings=yes '
+                    ' --with-udev-base-dir=/lib/udev '
+                    ' --disable-static'
+                    ' --with-pppd-plugin-dir=`ls -1d %(libdir)s/pppd/2*` '
+                    ' --with-polkit=no', configureName = './autogen.sh'
+                    )
+
+    def policy(r):
+        r.Remove('%(libdir)s/pppd/2.*/*.so')
+        r.Remove('%(includedir)s/mm/mm-modem.h')

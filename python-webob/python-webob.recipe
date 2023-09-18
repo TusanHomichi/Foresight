@@ -1,0 +1,8 @@
+loadSuperClass('pypipackage')
+class WebOb(PyPiPackage):
+    name = 'python-webob'
+    pyname = 'WebOb'
+    version = '1.2'
+
+    def install(r):
+        r.SetModes('%(sitepkgs)s/WebOb*/*', 0644)

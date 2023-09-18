@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Linphone(AutoPackageRecipe):
+    name = 'linphone'
+    version = '3.5.2'
+ 
+    buildRequires = [ 'alsa-lib:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime',
+                      'doxygen:runtime', 'ffmpeg:devel', 'fontconfig:devel', 'freetype:devel',
+                      'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gsm:devel', 'gtk:devel',
+                      'intltool:runtime', 'libX11:devel', 'libXv:devel', 'libeXosip2:devel',
+                      'libnotify:devel', 'libogg:devel', 'libosip:devel', 'libpng:devel',
+                      'libsoup:devel', 'libstdc++:devel', 'libtheora:devel', 'libv4l:devel',
+                      'libvpx:devel', 'ncurses:devel', 'pango:devel', 'pkgconfig:devel',
+                      'pulseaudio:devel', 'readline:devel', 'sound-theme-freedesktop:runtime',
+                      'speex:devel', 'videoproto:devel', 'openssl:devel',]
+ 
+    def unpack(r):
+        r.addArchive('http://download-mirror.savannah.gnu.org/releases/linphone/3.5.x/sources/')
+        r.addPatch('linphone-3.5.1-unusedvar.patch')
+        r.addPatch('linphone-3.5.2-glib-2.31.patch')
+
+    def configure(r):
+        r.Configure(' --disable-static'
+                    # FIXME until we get is working with latest ffmpeg bump
+                    ' --disable-video'
+                    ' --disable-ffmpeg'
+                    #
+                    ' --disable-rpath'
+                    ' --enable-console_ui=yes'
+                    ' --enable-gtk_ui=yes'
+                    ' --enable-ipv6'
+                    ' --enable-truespeech'
+                    ' --enable-alsa'
+                    ' --enable-strict'
+                    ' --enable-nonstandard-gsm'
+                    ' --enable-rsvp'
+                    ' --enable-ssl')

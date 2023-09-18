@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Gizmo Project
+GenericName=Soft Phone
+Comment=An open standards VOIP and IM client
+Type=Application
+Exec=gizmo
+Icon=/usr/share/gizmo/pixmaps/icons/gizmo-icon-48.png
+Terminal=0
+Categories=Application;Network;Telephony;

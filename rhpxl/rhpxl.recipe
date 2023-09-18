@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Rhpxl(RPMPackageRecipe, CPackageRecipe):
+    name = 'rhpxl'
+    version = '0.49'
+    rpmRelease = '2.fc8'
+    distroVersion = '8'
+
+    buildRequires = [ 'python:devel', 'gettext:devel', 'libXrandr:devel',
+        'libX11:devel', 'gettext:runtime', 'kudzu:python',
+        'pyxf86config:python', 'rhpl:python', ]
+
+    def setup(r):
+        r.unpack()
+        r.Make()
+        r.MakeInstall()

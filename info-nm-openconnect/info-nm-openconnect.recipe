@@ -1,0 +1,9 @@
+class info_NMOpenconnect(UserInfoRecipe):
+    name = 'info-nm-openconnect'
+    version = '1'
+
+    def setup(r):
+        r.User('nm-openconnect', 290,
+               groupid=290,
+               comment='NetworkManager user for OpenConnect',
+               shell='/sbin/nologin')

@@ -1,0 +1,18 @@
+class PocketSphinx(AutoPackageRecipe):
+    name = "pocketsphinx"
+    version = "0.5.1"
+
+    buildRequires = [ 'alsa-lib:devel', 'doxygen:runtime', 'glib:devel', 'gst-plugins-base:devel', 'gstreamer:devel', 'gstreamer:runtime', 'libxml2:devel', 'pkgconfig:devel', 'python:devel', 'sphinxbase:devel', 'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive("http://downloads.sourceforge.net/project/cmusphinx/%(name)s/%(version)s/")
+        r.Replace('setup.py\ install\ \-\-prefix\ \$\(DESTDIR\)\$\(prefix\)', 'setup.py install --skip-build --root $(DESTDIR)', 'python/Makefile.in')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-static')
+
+        # Get rid of undesirable hardcoded runpaths
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'libtool')
+        
+

@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mediatomb(CPackageRecipe):
+    name = 'mediatomb'
+    version = '0.12.1'
+ 
+    buildRequires = [
+        'autoconf:runtime', 'automake:runtime',
+        'chkconfig:runtime', 'curl:devel', 'expat:devel',
+        'faac:devel', 'ffmpeg:devel', 'ffmpegthumbnailer:devel', 'file:devel',
+        'js:devel', 'libdvdnav:devel', 'libdvdread:devel',
+        'libexif:devel', 'libstdc++:devel', 'openssl:devel',
+        'sqlite:devel', 'taglib:devel', 'zlib:devel',
+    ]
+ 
+    def setup(r):
+        #r.addSvnSnapshot('http://svn.mediatomb.cc/svnroot/mediatomb/trunk/mediatomb/')
+        r.addArchive('mirror://sourceforge/mediatomb/MediaTomb/')
+        # autoreconf is needed if building from an svn snapshot
+        #r.Run('autoreconf -i')
+        r.addPatch('https://launchpadlibrarian.net/71985647/libav_0.7_support.patch')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+        r.Create('%(sysconfdir)s/logrotate.d/%(name)s', contents="""\
+/var/log/mediatomb {
+create 644 root root
+      monthly
+      compress
+      missingok
+}""")
+        r.Install('scripts/mediatomb-service-fedora', '%(initdir)s/%(name)s')
+        r.Install('config/mediatomb-conf-fedora', '%(sysconfdir)s/%(name)s.conf')
+        r.Create('%(sysconfdir)s/%(name)s/config.xml')
+        r.Ownership('%(name)s', '%(name)s', '%(sysconfdir)s/%(name)s/.*')

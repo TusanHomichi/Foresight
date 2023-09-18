@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Ethos(GnomePackageRecipe):
+    name = 'ethos'
+    version = '0.2.2'
+
+    externalArchive = 'http://ftp.dronelabs.com/sources/ethos/%(major_version)s/'
+
+    packageSummary = 'Ethos is a library providing a standard plugin system that can be re-used'
+
+    buildRequires = [
+        'gjs:devel',
+        'pygtk:devel',
+        'python:devel',
+        'vala:devel',
+        'vala:runtime'
+        ]
+
+    extraConfig = ' --enable-introspection'

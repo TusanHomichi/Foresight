@@ -1,0 +1,19 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libassuan(AutoPackageRecipe):
+
+    name = 'libassuan'
+    version = '1.0.5'
+
+    buildRequires = [
+        'install-info:runtime', 'pth:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.cflags += ' -fPIC '
+        r.addArchive('ftp://ftp.gnupg.org/gcrypt/libassuan/', keyid='1CE0C630')
+

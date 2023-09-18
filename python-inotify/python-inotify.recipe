@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonInotify(CPackageRecipe):
+    name = 'python-inotify'
+    version = '0.9.3'
+ 
+    buildRequires = ['glibc:devel', 'python:devel', 'python-setuptools']
+ 
+    def setup(r):
+        r.addArchive('http://seb.dbzteam.org/pub/pyinotify/releases/pyinotify-%(version)s.tar.gz', keyid='E8440341')
+        r.PythonSetup()

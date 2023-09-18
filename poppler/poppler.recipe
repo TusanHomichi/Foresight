@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Poppler(AutoPackageRecipe):
+
+    name = 'poppler'
+    version = '0.16.7'
+
+    buildRequires = [
+        'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel',
+        'gtk:devel', 'libICE:devel', 'libjpeg:devel', 'libpng:devel',
+        'libstdc++:devel', 'libxml2:devel', 'openjpeg:devel', 'pango:devel',
+        'pkgconfig:devel', 'qt4:devel', 'qt:devel', 'which:runtime',
+        'zlib:devel', 'gobject-introspection:devel',
+        'gtk-doc:runtime', 'lcms:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://poppler.freedesktop.org/')
+        r.addPatch('poppler-0.12.4-annot-appearance.patch')
+
+    def configure(r):
+
+        r.Environment('QTLIB', '%(libdir)s/')
+        r.Environment('QTINC', '%(includedir)s/qt3/')
+
+        r.Configure(
+            ' --enable-libjpeg '
+            ' --enable-libopenjpeg'
+            ' --enable-zlib'
+            ' --enable-xpdf-headers'
+            ' --disable-static'
+            ' --enable-cairo-output '
+            ' --enable-poppler-qt '
+            ' --enable-poppler-qt4'
+            ' --enable-introspection=yes'
+        )
+
+    def makeinstall(r):
+
+        r.MakeInstall(dir='poppler')
+
+        for d in ('glib', 'qt', 'qt4'):
+            r.MakeInstall(dir=d, package='poppler-%s' % d)
+
+        r.MakeInstall()
+
+    def policy(r):
+        r.Requires('poppler-data:data', '%(libdir)s/libpoppler.so.*')
+

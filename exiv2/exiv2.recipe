@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Exiv2(AutoPackageRecipe):
+
+    name = 'exiv2'
+    version = '0.22'
+
+    buildRequires = [
+        'expat:devel', 'gettext:runtime', 'intltool:runtime', 'libstdc++:devel',
+        'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://www.exiv2.org/')
+

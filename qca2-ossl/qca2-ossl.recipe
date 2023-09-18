@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class QcaOsslPlugin2(AutoPackageRecipe):
+
+    name = 'qca2-ossl'
+    version = '2.0.0+beta3'
+
+    buildRequires = [
+        'gcc-c++:runtime', 'libstdc++:devel', 'openssl:devel', 'qca2:devel',
+        'qt4:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'qca-ossl'
+        r.macros.archive_version = r.version.replace('+', '-')
+        r.addArchive('http://delta.affinix.com/download/qca/%(major_version)s/plugins/')
+
+
+    def configure(r):
+
+        r.Environment('INSTALL_ROOT', '%(destdir)s/')
+
+        r.Run('MAKE=make ./configure --no-separate-debug-info')
+

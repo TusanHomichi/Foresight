@@ -1,0 +1,11 @@
+--- openssl-0.9.8/Configure.orig	2005-07-05 01:24:11.000000000 +0200
++++ openssl-0.9.8/Configure	2005-07-06 15:16:50.481056819 +0200
+@@ -957,7 +957,7 @@
+ my $no_shared_warn=0;
+ my $no_user_cflags=0;
+ 
+-if ($flags ne "")	{ $cflags="$flags$cflags"; }
++if ($flags ne "")	{ $cflags="$cflags $flags"; }
+ else			{ $no_user_cflags=1;       }
+ 
+ # Kerberos settings.  The flavor must be provided from outside, either through

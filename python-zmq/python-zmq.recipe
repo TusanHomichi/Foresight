@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonZmq(CPackageRecipe):
+
+    name = 'python-zmq'
+    version = '2.1.11'
+
+    buildRequires = ['python-setuptools:python', 'numpy:python', 'python-simplejson:python', 'python:devel', 'zeromq:devel']
+
+    def setup(r):
+        r.addArchive('http://cloud.github.com/downloads/zeromq/pyzmq/pyzmq-%(version)s.tar.gz')
+        r.PythonSetup()

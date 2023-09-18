@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('rpmpackage')
+class Freetype(RPMPackageRecipe,AutoPackageRecipe,CPackageRecipe):
+    name = 'freetype'
+    version = '2.4.12'
+    rpmRelease = '1.fc20'
+    rpmArchives = ['freetype-doc-%(version)s.tar.bz2']
+
+    buildRequires = [ 'libX11:devel', 'zlib:devel',
+                      'automake:runtime', 'autoconf:runtime',
+                      'libtool:runtime', 'bzip2:devel']
+
+    rpmPatches = [ 'freetype-2.3.0-enable-spr.patch',
+                   'freetype-2.2.1-enable-valid.patch',
+                   'freetype-multilib.patch',
+                   'freetype-2.4.12-enable-adobe-cff-engine.patch',
+                   ]
+
+
+    def configure(r):
+        r.Configure('--disable-static ')
+        # Get rid of undesirable hardcoded runpaths
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'builds/unix/libtool')
+
+    def makeinstall(r):
+        r.MakeInstall()
+
+        # Fix multilib issues
+        r.addSource('ftconfig-multilib.h')
+        r.macros.wordsize = '32'
+        if Arch.x86_64:
+            r.macros.wordsize = '64'
+
+        r.Move('%(includedir)s/freetype2/freetype/config/ftconfig.h',
+               '%(includedir)s/freetype2/freetype/config/ftconfig-%(wordsize)s.h')
+        r.Install('ftconfig-multilib.h',
+                  '%(includedir)s/freetype2/freetype/config/ftconfig.h',
+                  component='devel')
+
+        # freetype-config requries pkg-config
+        r.ComponentSpec('devel', '%(bindir)s/freetype-config')
+        r.Requires('pkgconfig:devel', '%(bindir)s/freetype-config')

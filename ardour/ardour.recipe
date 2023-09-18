@@ -1,0 +1,85 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ardour(CPackageRecipe):
+	buildRequires = [	'alsa-lib:devel',
+						'atk:devel',
+						'aubio:devel',
+						'autogen:runtime',
+						'binutils:runtime',
+						'boost:devel',
+						'cairo:devel',
+						'curl:devel',
+						'desktop-file-utils:runtime',
+						'expat:devel',
+						'fftw:devel',
+						'fftw:devellib',
+						'fontconfig:devel',
+						'freetype:devel',
+						'gcc-c++:runtime',
+						'gcc:runtime',
+						'glib:devel',
+						'glibc:devel',
+						'gtk:devel',
+						'jack:devel',
+						'libX11:devel',
+						'libXrender:devel',
+						'libart_lgpl:devel',
+						'libgcc:devellib',
+						'libgnomecanvas:devel',
+						'liblo:devel',
+						'liblrdf:devel',
+						'libpng:devel',
+						'libsamplerate:devel',
+						'libsndfile:devel',
+						'libstdc++:devel',
+						'libusb:devel',
+						'libxcb:devel',
+						'libxml2:devel',
+						'libxslt:devel',
+						'lv2core:devel',
+						'm4:runtime',
+						'openssl:devel',
+						'pango:devel',
+						'pixman:devel',
+						'pkgconfig:devel',
+						'raptor:devel',
+						'rasqal:devel',
+						'redland:devel',
+						'scons:runtime',
+						'slv2:devel',
+						'xcb-util:devel',
+						'zlib:devel']
+	name = "ardour"
+	version = "2.8.11"
+
+	packageSummary = 'Ardour is a multichannel hard disk recorder (HDR) and digital audio workstation (DAW)'
+	packageDescription = 'Ardour is a multichannel hard disk recorder (HDR) and digital audio workstation (DAW). It is capable of simultaneous recording 24 or more channels of 32 bit audio at 48kHz. Ardour is intended to function as a "professional" HDR system, replacing dedicated hardware solutions such as the Mackie HDR, the Tascam 2424 and more traditional tape systems like the Alesis ADAT series. It is also intended to provide the same or better functionality as software systems such as ProTools, Samplitude, Logic Audio, Nuendo and Cubase VST (we acknowledge these and all other names as trademarks of their respective owners). It supports MIDI Machine Control, and so can be controlled from any MMC controller, such as the Mackie Digital 8 Bus mixer and many other modern digital mixers.'
+
+	def setup(r):
+		r.addArchive('%(name)s-%(version)s.tar.bz2')
+		r.addSource('ardour.script')
+
+		if Arch.x86:
+			r.macros.archFlags = '-DARCH_X86 -DBUILD_SSE_OPTIMIZATIONS -msse -mfpmath=sse -DUSE_XMMINTRIN'
+			r.macros.targetCpu = 'i386'
+		else:
+			r.macros.archFlags = '-DARCH_X86 -DBUILD_SSE_OPTIMIZATIONS -DUSE_X86_64_ASM -msse -mfpmath=sse -DUSE_XMMINTRIN'
+			r.macros.targetCpu = 'x86_64'
+
+		r.addPatch('ardour-2.5-HOST_NOT_FOUND.patch')
+		r.addPatch('ardour-2.8-session.cc-no_stomp.patch')
+		r.addPatch('ardour-SConscript.patch')
+
+		r.Run('scons PREFIX=%(prefix)s DESTDIR=%(destdir)s SYSLIB=1 INCLUDEDIR=%(includedir)s DIST_TARGET="%(targetCpu)s" ARCH="%(archFlags)s" FREESOUND=1 AUSTATE=1 LIBDIR=%(libdir)s')
+
+		r.Run('scons DESTDIR=%(destdir)s install')
+
+		r.Move('%(bindir)s/ardour2', '%(libexecdir)s/ardour2')
+		r.Install('ardour.script', '%(bindir)s/ardour2', mode = 0755 )
+
+		r.addSource('ardour.desktop')
+		r.Desktopfile('ardour.desktop', category='AudioVideo')

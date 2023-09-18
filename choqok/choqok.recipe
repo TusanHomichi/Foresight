@@ -1,0 +1,19 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class Choqok(kdePackageRecipe):
+
+    name = 'choqok'
+    version = '1.0'
+
+    buildRequires = [
+        'attica:devel', 'qjson:devel', 'qoauth:devel', 'kdelibs:runtime',
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://choqok.gnufolks.org/pkgs/')
+

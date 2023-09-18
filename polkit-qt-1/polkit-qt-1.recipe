@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class PolkitQt1(CMakePackageRecipe):
+
+    name = 'polkit-qt-1'
+    version = '0.103.0'
+
+    buildRequires = [
+        'automoc:runtime', 'dbus:devel', 'glib:devel', 'libstdc++:devel',
+        'phonon:devel', 'polkit:devel', 'qt4:devel', 'qt4-sql:mysql', 'qt4-sql:odbc', 'qt4-sql:psql', 'qt4-sql:sqlite'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/apps/KDE4.x/admin/')
+

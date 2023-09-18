@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+
+class LibGnomeKeyring(GnomePackageRecipe):
+    name = 'libgnome-keyring'
+    version = '2.32.0'
+
+    buildRequires = [ 
+        'eggdbus:devel',
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+    ]
+
+    extraConfig = ' --disable-static'

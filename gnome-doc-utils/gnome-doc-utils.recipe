@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class GnomeDocUtils(AutoPackageRecipe):
+    buildRequires = [ 'gawk:runtime', 'gettext:runtime', 'glibc:runtime', 'libxml2:devel', 'libxml2:python', 'perl:runtime', 'pkgconfig:devel', 'python:lib', 'python:runtime', 'rarian:runtime',   'file:runtime', 'expat:devel', 'gettext:runtime',  'libxslt:runtime', 'libxml2:runtime', 'which:runtime', 'libxslt:devel', 'libxml2:devel', 'python:devel', 'intltool:runtime']
+
+    # Plz do note that calling GnomePackageRecipe superclass here is a good way to induce lots of build loops...
+    name = 'gnome-doc-utils'
+    version = '0.20.4'
+
+    def unpack(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/gnome-doc-utils/0.20/')
+
+    def configure(r):
+        r.Configure(' --disable-scrollkeeper --enable-build-utils' )

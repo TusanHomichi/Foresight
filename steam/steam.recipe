@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class Steam(BinaryPackageRecipe):
+    name = 'steam'
+    version = 'beta'
+ 
+    buildRequires = ['binutils:runtime', 'desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://media.steampowered.com/client/installer/steam.deb', dir='/')
+

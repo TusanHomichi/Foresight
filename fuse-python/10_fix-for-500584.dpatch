@@ -1,0 +1,21 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 10_fix-for-500584.dpatch by Sebastien Delafond <seb@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Fix race condition in xmp.py by making it single-threaded.
+
+@DPATCH@
+diff -urNad python-fuse-0.2-pre3~/example/xmp.py python-fuse-0.2-pre3/example/xmp.py
+--- python-fuse-0.2-pre3~/example/xmp.py	2008-01-28 22:15:40.000000000 -0800
++++ python-fuse-0.2-pre3/example/xmp.py	2008-09-30 09:23:43.000000000 -0700
+@@ -261,6 +261,10 @@
+                  usage=usage,
+                  dash_s_do='setsingle')
+ 
++    # Disable multithreading: if you want to use it, protect all method of
++    # XmlFile class with locks, in order to prevent race conditions
++    server.multithreaded = False
++
+     server.parser.add_option(mountopt="root", metavar="PATH", default='/',
+                              help="mirror filesystem from under PATH [default: %default]")
+     server.parse(values=server, errex=1)

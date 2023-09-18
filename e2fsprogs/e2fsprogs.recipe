@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class E2fsprogs(RPMPackageRecipe,CPackageRecipe):
+    name = 'e2fsprogs'
+    version = '1.42.4'
+    rpmRelease = '1.fc18'
+    rpmPatches = [ 'e2fsprogs-1.40.4-sb_feature_check_ignore.patch',
+                   ]
+    rpmSources = ['e2fsck.conf']
+    buildRequires = [ 'gettext:runtime', 'install-info:runtime', 'udev:devel',
+                      'perl:runtime', 'chkconfig:runtime', 'intltool:runtime',
+                      'python:devel', 'texinfo:runtime', 'pkgconfig:devel',
+                      'util-linux:devel']
+
+    def setup(r):
+        r.unpack()
+
+        r.Configure(' --enable-elf-shlibs --enable-nls --disable-uuidd '
+                    ' --disable-e2initrd-helper --disable-fsck  -disable-libblkid --disable-libuuid '
+                    ' --with-root-prefix=%(prefix)s', 
+                    # FIXME
+                    # stupid hack to get it built with new util-linux (that owns blkid)
+                    # and previous e2fsprogs:lib which also has it
+                    preConfigure="LD_LIBRARY_PATH='%(libdir)s:/%(lib)s'"
+                    )
+        r.Make("V=1")
+        r.MakeInstall('install-libs root_sbindir=%(essentialsbindir)s'
+                         ' root_libdir=%(essentiallibdir)s')
+        # This will prevent e2fsck from stopping boot just because the clock is wrong
+        r.Install('e2fsck.conf', '%(sysconfdir)s/e2fsck.conf')
+        
+        # get rid of upstream hardlinking stuff, which makes conary complaining loudly ...
+        r.Remove('%(includedir)s/com_err.h')
+        r.Symlink('%(includedir)s/et/com_err.h', '%(includedir)s/com_err.h')

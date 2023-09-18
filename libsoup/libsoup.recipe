@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Modified 2011 Foresightlinux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class LibSoup(GnomePackageRecipe):
+    buildRequires = [ 'glib:devel', 'pkgconfig:devel', 'libxml2:devel',
+                      'curl:runtime', 'gnutls:devel', 'libgcrypt:devel',
+                      'libgpg-error:devel', 'httpd:runtime', 'libproxy:devel', 
+                      'sqlite:devel', 'GConf:devel', 'libgnome-keyring:devel',
+                      'gobject-introspection:devel']
+
+    name = 'libsoup'
+    version = '2.40.3'
+
+    extraConfig = ' --disable-tls-check '
+    docs =  ['README', 'COPYING', 'NEWS',
+        'AUTHORS', ]
+
+
+    def postConfigure(r):
+        r.Run(r""" sed --in-place --expression 's! -shared ! -Wl,--as-needed\0!g' libtool """)
+
+    def policy(r):
+        r.Requires('glib-networking:lib', '%(libdir)s/libsoup-.*')

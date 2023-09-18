@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class UdevNotify(CPackageRecipe):
+    name = 'udev-notify'
+    version = '0.1.3' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = ['notify-python:python', 'python:devel', 'pyudev:python', 'xdg-utils:runtime', 'PyQt4:python']
+ 
+    def setup(r):
+        r.addBzrSnapshot('lp:udev-notify')
+        r.addPatch('fix-crash-on-resume.patch')
+	r.Replace('GNOME;XFCE;KDE;', 'GNOME;XFCE;KDE;LXDE;', 'src/udev-notify-autostart.desktop')
+        r.Move('src/udev-notify-autostart.desktop', '%(sysconfdir)s/xdg/autostart/')
+        r.Move('src/udev-notify.py', '%(datadir)s/udev-notify/')
+        r.Move('src/pyudev/*', '%(datadir)s/udev-notify/pyudev/')
+        r.Move('src/udev-notify', '%(bindir)s/')
+
+
+        r.Requires('pyudev:python', '%(bindir)s/udev-notify')

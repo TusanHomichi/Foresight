@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomePackage(GnomePackageRecipe):
+    name = 'gnome-system-monitor'
+    buildRequires = ['gtkmm:devel','libgnomeui:devel', 'libgtop:devel', 'libwnck:devel', 'pango:devel', 'gtk:devel', 'startup-notification:devel', 'intltool:runtime', 'gettext:runtime', 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libpng:devel', 'libxml2:devel', 'popt:devel', 'GConf:runtime', 'desktop-file-utils:runtime', 'perl:runtime', 'rarian:runtime', 'gnome-icon-theme:devellib', 'libstdc++:devel', 'libxslt:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'librsvg:devel']
+
+    version = '2.28.2'
+
+    extraConfig = GnomePackageRecipe.extraConfig
+    extraConfig += ' --disable-scrollkeeper'

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Texi2html(AutoPackageRecipe):
+
+    buildRequires = ['binutils:runtime', 'gettext:runtime', 'install-info:runtime', 'intltool:runtime', 'perl:runtime', 'perl:devel' ]
+
+    name = 'texi2html'
+    version = '5.0'
+
+    def unpack(r):
+        r.addArchive('http://download.savannah.gnu.org/releases/texi2html/')

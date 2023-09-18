@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Rarian(GnomePackageRecipe):
+    name = 'rarian'
+    version = '0.8.1'
+
+    buildRequires = [ 'libxml2:runtime' ]
+
+    extraConfig = GnomePackageRecipe.extraConfig
+    extraConfig += ' --disable-skdb-update'
+
+
+
+    def setup(r):
+        GnomePackageRecipe.setup(r)
+        r.addSource('scrollkeeper-record.tagdescription', macros=True,
+                    dest = '%(tagdescriptiondir)s/scrollkeeper-record')
+        r.addSource('scrollkeeper-record.taghandler', macros=True,
+                    dest = '%(taghandlerdir)s/scrollkeeper-record', mode=0755)
+
+        r.Remove('%(localstatedir)s/lib/rarian', recursive=True)
+
+        r.Requires('libxml2:runtime', '%(taghandlerdir)s/scrollkeeper-record')
+        r.Requires('sgml-common:runtime', '%(taghandlerdir)s/scrollkeeper-record')
+
+        for x in ('%(bindir)s/xmlcatalog', '%(bindir)s/rarian-sk-update',
+            '/dev/null', '%(essentialbindir)s/rm'):
+            r.Requires(x, '%(taghandlerdir)s/scrollkeeper-record')
+
+        # Setup and Create the catalog
+        r.XMLCatalogEntry('scrollkeeper.xml',
+                          'rewriteSystem',
+                          'http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/scrollkeeper-omf.dtd',
+                          'file://%(datadir)s/xml/scrollkeeper/dtds/scrollkeeper-omf.dtd' )
+        r.XMLCatalogEntry('scrollkeeper.xml',
+                          'rewriteURI',
+                          'http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/scrollkeeper-omf.dtd',
+                          'file://%(datadir)s/xml/scrollkeeper/dtds/scrollkeeper-omf.dtd' )
+
+        # This is a special case for xml catalog tag handling, we
+        # generate our own xml-catalog entries in order to avoid
+        # having to use a nasty multitag setup, or having to order
+        # taghandler runtime order.
+        r.TagSpec('xml-catalog', exceptions='%(sysconfdir)s/xml/scrollkeeper.xml')
+        r.Requires('util-linux:runtime', '%(bindir)s/rarian-sk-update')

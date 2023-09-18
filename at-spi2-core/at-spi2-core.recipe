@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('gnomepackage')
+class AtSpi2Core(GnomePackageRecipe):
+
+    name = 'at-spi2-core'
+    version = '2.6.3'
+
+    buildRequires = [
+        'autoconf:runtime', 
+        'intltool:devel', 
+        'automake:runtime', 
+        'libtool:runtime',
+        'libXtst:devel',
+            ]
+
+    extraConfig='--with-dbus-deamondir=/bin'
+    
+    patches=['use-gi-makefile.patch']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Run('autoreconf -fi')               

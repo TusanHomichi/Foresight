@@ -1,0 +1,55 @@
+class PythonTwistedPackage(PackageRecipe):
+
+    name = 'python-twisted-package'
+    version = '1.0'
+
+    buildRequires = [
+        'glibc:devel',
+        'pycrypto:python',
+        'python:devel',
+        'python-twisted:python',
+        'python-zopeinterface:python'
+    ]
+
+    docs = []
+    mans = []
+    skipDeps = []
+
+    def setup(r):
+        if r.__class__.__name__ == 'PythonTwistedPackage':
+            return
+
+        r.macros.major = r.version[:r.version.rfind('.')]
+        r.macros.shortName = r.name.split('-')[-1].capitalize()
+        r.macros.Name = ''.join([ x.capitalize() for x in r.name.split('-')[1:]])
+        r.macros.site = 'http://tmrc.mit.edu/mirror/twisted'
+        r.init()
+        r.unpack()
+        r.build()
+        r.basePolicy()
+
+    def init(r):
+        r.macros.url = '%(shortName)s/%(major)s/%(Name)s-%(version)s.tar.bz2'
+
+    def unpack(r):
+        r.addArchive('%(site)s/%(url)s')
+
+    def build(r):
+        r.Run('python setup.py build')
+        r.Run('python setup.py install --root=%(destdir)s --prefix=%(prefix)s')
+
+    def policy(r):
+        pass
+
+    def basePolicy(r):
+        r.policy()
+        r.AutoDoc(exceptions='/.+/')
+        if r.skipDeps:
+            r.Requires(exceptDeps='python: (%s)' % '|'.join(r.skipDeps))
+
+        for doc in r.docs:
+            r.Install('doc/'+doc, '%(thisdocdir)s/')
+
+        for n in r.mans:
+            r.Install('doc/man/*.'+n, '%(mandir)s/man'+n+'/')
+

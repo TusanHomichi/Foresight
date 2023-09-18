@@ -1,0 +1,25 @@
+=== modified file 'src/grail-gestures.c'
+--- a/src/grail-gestures.c	2011-02-24 22:50:31 +0000
++++ b/src/grail-gestures.c	2011-03-17 09:43:52 +0000
+@@ -167,6 +167,7 @@
+ void gru_motion(struct grail *ge,
+ 		const struct utouch_frame *frame)
+ {
++	const struct utouch_surface *s = utouch_frame_get_surface(ge->impl->fh);
+ 	struct gesture_recognizer *gru = ge->gru;
+ 	struct move_model *m = &gru->move;
+ 	grail_time_t t = frame->time;
+@@ -197,8 +198,10 @@
+ 		r = compute_radius(x, y, frame);
+ 		r = move_filter(&m->fm[FM_R], r);
+ 		a = m->fm[FM_A].value;
+-		a += compute_rotation(x, y, r, frame);
+-		a = move_filter(&m->fm[FM_A], a);
++		if (!s->is_semi_mt) {
++			a += compute_rotation(x, y, r, frame);
++			a = move_filter(&m->fm[FM_A], a);
++		}
+ 		move_update(m, FM_X, x, t);
+ 		move_update(m, FM_Y, y, t);
+ 		move_update(m, FM_R, r, t);
+

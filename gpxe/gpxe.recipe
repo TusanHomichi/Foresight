@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2010 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class GPxe(AutoPackageRecipe):
+
+    name = 'gpxe'
+    version = '1.0.1'
+    buildRequires = ['perl:runtime', 'syslinux:devel', 'mkisofs:runtime',
+                     'which:runtime', 'cdrkit:runtime']
+
+    def setup(r):
+        r.addArchive('http://git.etherboot.org/releases/%(name)s/')
+        r.addPatch('gpxe-1.0.1-virtionet-length.patch')
+        r.addSource('USAGE')
+        r.Environment('ISOLINUX_BIN', '%(datadir)s/syslinux')
+        r.Make('ISOLINUX_BIN=%(datadir)s/syslinux NO_WERROR=1', dir = 'src')
+        r.Make('bin/gpxe.lkrn', dir = 'src')
+        r.Make('allroms', dir = 'src')
+        #
+        r.Install('src/bin/{undionly.kpxe,gpxe.{iso,usb,dsk,lkrn}}',
+                  '%(datadir)s/%(name)s/',
+                  package='%(name)s-bootimgs')
+        r.Install('src/bin/{rtl8029,ne,8086100e,pcnet32,rtl8139,virtio-net}.rom',
+                  '%(datadir)s/%(name)s/',
+                  package='%(name)s-roms-qemu')
+        r.Remove('src/bin/{rtl8029,ne,8086100e,pcnet32,rtl8139,virtio-net}.rom')
+        r.Install('src/bin/*.rom', '%(datadir)s/%(name)s/',
+                  package='%(name)s-roms')
+
+        r.AutoDoc(exceptions='.*')
+        r.Doc('COPYING', 'COPYRIGHTS', package='%(name)s-bootimgs')
+        r.Doc('COPYING', 'COPYRIGHTS', package='%(name)s-roms')
+        r.Doc('COPYING', 'COPYRIGHTS', package='%(name)s-roms-qemu')
+        r.Doc('USAGE', package='%(name)s-bootimgs')

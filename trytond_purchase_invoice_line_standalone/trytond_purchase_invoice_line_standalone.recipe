@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Trytond_purchase_invoice_line_standalone(TrytonPackage):
+    name = 'trytond_purchase_invoice_line_standalone'
+
+    prebuild = []
+    deps = ["trytond_purchase:python","trytond_account_invoice_line_standalone:python"]
+
+    def setup(r):
+        TrytonPackage.setup(r)
+

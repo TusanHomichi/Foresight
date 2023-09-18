@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Tabu Audio Player
+Comment=Simple Audio Player
+Exec=tabu
+Icon=/usr/share/tabu-audio-player/tabu-audio-player.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;Audio;Music;Player;
+X-Desktop-File-Install-Version=0.11
+Name[sv_SE]=Simple Audio Player

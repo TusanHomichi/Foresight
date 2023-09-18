@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jbig2dec(AutoPackageRecipe):
+    name = 'jbig2dec'
+    version = '0.11'
+ 
+    buildRequires = ['libpng:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://ghostscript.com/~giles/jbig2/jbig2dec/')

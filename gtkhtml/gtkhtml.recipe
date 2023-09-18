@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GTKHtml(GnomePackageRecipe):
+
+    buildRequires = [
+        'GConf:devel',
+        'ORBit2:devel',
+        'cairo:devel',
+        'enchant:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gnome-icon-theme:devellib',
+        'iso-codes:devellib',
+        'libsoup:devel',
+        'libtool:runtime',
+        'pango:devel',
+        'perl:runtime',
+        'popt:devel',
+        ]
+
+    name = 'gtkhtml'
+    version = '3.32.2'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Replace('-Werror-implicit-function-declaration', '', 'configure')

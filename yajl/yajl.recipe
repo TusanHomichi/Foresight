@@ -1,0 +1,19 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Yajl(AutoPackageRecipe):
+    name = 'yajl'
+    version = '2.0.1'
+ 
+    buildRequires = ['cmake:runtime', 'doxygen:runtime', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addGitSnapshot('git://github.com/lloyd/yajl')
+
+    def configure(r):
+        r.CMake('-DCMAKE_INSTALL_PREFIX=%(prefix)s')
+

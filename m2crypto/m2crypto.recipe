@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('python=cantwait.rpath.org@rpl:2')
+class M2CryptoPackage(CPackageRecipe, Python.VersionMixIn):
+    name = 'm2crypto'
+    version = '0.20.2'
+
+    buildRequires = [ 'krb5:devel', 'openssl:devel', 'python:devel',
+        'swig:runtime', ]
+
+    def setup(r):
+        r.setDefaultPython()
+        r.addArchive('http://pypi.python.org/packages/source/M/M2Crypto/M2Crypto-%(version)s.tar.gz')
+        r.Replace(', opensslIncludeDir\\),',
+            ", opensslIncludeDir), '%(krbprefix)s/include',", 'setup.py')
+        # This is the "new way" to write PrivateKey, according to pem(3)
+#        r.Replace(
+#            "PEM_write_bio_PrivateKey", "PEM_write_bio_PKCS8PrivateKey",
+#            "SWIG/_evp.i")
+        r.Run('python%(pyver)s setup.py install --root=%(destdir)s')
+
+        r.RemoveNonPackageFiles("TwistedProtocolWrapper.*")
+
+        r.Doc('doc/*.html')
+        r.Doc('LICENCE')

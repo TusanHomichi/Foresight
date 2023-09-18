@@ -1,0 +1,7 @@
+loadSuperClass('firefox-addon')
+class CookieSafe(FirefoxAddonRecipe):
+    name = 'firefox-cookiesafe'
+    version = '3.0.5'
+    fileId = '45745'
+    maxVersion = '3.6a1pre' # AMO says this is right; install.rdf disagrees
+    # https://addons.mozilla.org/en-US/firefox/addons/versions/2497

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Conduit(GnomePackageRecipe):
+
+    name = 'conduit'
+    version = '0.3.17'
+
+    buildRequires = [ 'dbus-python:python', 'dbus:devel', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-python:python', 'libgmail:python', 'perl:runtime', 'pkgconfig:devel', 'pygobject:python', 'pygoocanvas:devellib', 'pygoocanvas:python', 'pygtk:devel', 'pygtk:python', 'python-sqlite:python', 'vobject:python', 'perl-XML-Parser:perl', 'gtk:devel', 'pygtk:devel', 'gnome-common:runtime', 'python-dateutil:python', 'PIL:python', 'gnome-python-extras:python', 'libgpod:python', 'rarian:devel', 'rarian:runtime', 'python-simplejson:python', 'gnome-doc-utils:devel', 'python:devel', 'pycairo:python', 'libxslt:runtime', 'gdata-python:python', 'gst-python:python', 'python-feedparser:python', 'gnome-python-desktop:python' ] 
+
+    extraConfig = ' --enable-nautilus-extension --enable-eog-plugin --enable-totem-plugin --disable-scrollkeeper '
+
+    def policy(r):
+        r.Requires('python-dateutil:python','%(bindir)s/start_conduit')
+        r.Requires('PyXML:python','%(bindir)s/start_conduit')
+        r.Requires('gdata-python:python','%(bindir)s/start_conduit')

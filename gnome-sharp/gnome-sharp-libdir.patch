@@ -1,0 +1,72 @@
+diff -r 29382f7d5180 art/art-sharp-2.0.pc.in
+--- a/art/art-sharp-2.0.pc.in	Wed Jun 11 00:19:15 2008 -0400
++++ b/art/art-sharp-2.0.pc.in	Wed Jun 11 00:22:06 2008 -0400
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/gapi-2.0
+ 
+ 
+diff -r 29382f7d5180 gconf/GConf.PropertyEditors/gconf-sharp-peditors-2.0.pc.in
+--- a/gconf/GConf.PropertyEditors/gconf-sharp-peditors-2.0.pc.in	Wed Jun 11 00:19:15 2008 -0400
++++ b/gconf/GConf.PropertyEditors/gconf-sharp-peditors-2.0.pc.in	Wed Jun 11 00:22:06 2008 -0400
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ 
+ 
+ Name: GConf.PropertyEditors#
+diff -r 29382f7d5180 gconf/GConf/gconf-sharp-2.0.pc.in
+--- a/gconf/GConf/gconf-sharp-2.0.pc.in	Wed Jun 11 00:19:15 2008 -0400
++++ b/gconf/GConf/gconf-sharp-2.0.pc.in	Wed Jun 11 00:22:06 2008 -0400
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ 
+ 
+ Name: GConf#
+diff -r 29382f7d5180 gconf/tools/Makefile.am
+--- a/gconf/tools/Makefile.am	Wed Jun 11 00:19:15 2008 -0400
++++ b/gconf/tools/Makefile.am	Wed Jun 11 00:22:06 2008 -0400
+@@ -1,4 +1,4 @@
+-assemblydir = $(prefix)/lib/gtk-sharp-2.0
++assemblydir = $(libdir)/gtk-sharp-2.0
+ assembly_DATA = gconfsharp-schemagen.exe
+ bin_SCRIPTS = gconfsharp2-schemagen
+ CLEANFILES = gconfsharp-schemagen.exe
+diff -r 29382f7d5180 gconf/tools/gconfsharp2-schemagen.in
+--- a/gconf/tools/gconfsharp2-schemagen.in	Wed Jun 11 00:19:15 2008 -0400
++++ b/gconf/tools/gconfsharp2-schemagen.in	Wed Jun 11 00:22:06 2008 -0400
+@@ -1,2 +1,3 @@
+ #!/bin/sh
+-@RUNTIME@ @prefix@/lib/gtk-sharp-2.0/gconfsharp-schemagen.exe "$@"
++d=`monodir`
++@RUNTIME@ $d/../gtk-sharp-2.0/gconfsharp-schemagen.exe "$@"
+diff -r 29382f7d5180 gnome/gnome-sharp-2.0.pc.in
+--- a/gnome/gnome-sharp-2.0.pc.in	Wed Jun 11 00:19:15 2008 -0400
++++ b/gnome/gnome-sharp-2.0.pc.in	Wed Jun 11 00:22:06 2008 -0400
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/gapi-2.0
+ 
+ 
+diff -r 29382f7d5180 gnomevfs/gnome-vfs-sharp-2.0.pc.in
+--- a/gnomevfs/gnome-vfs-sharp-2.0.pc.in	Wed Jun 11 00:19:15 2008 -0400
++++ b/gnomevfs/gnome-vfs-sharp-2.0.pc.in	Wed Jun 11 00:22:06 2008 -0400
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/gapi-2.0
+ 
+ 

@@ -1,0 +1,5 @@
+gtk-theme-name = "Foresight"
+gtk-icon-theme-name = "Tango"
+gtk-cursor-theme-name = "Human"
+gtk-button-images = 0
+gtk-menu-images = 0

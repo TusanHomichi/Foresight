@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class Anjuta(GnomePackageRecipe):
+    name = 'anjuta'
+    version = '2.32.1.1'
+
+    buildRequires = [ 'autogen:runtime', 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'apr-util:devel', 'apr:devel', 'atk:devel', 'binutils:devel', 'desktop-file-utils:runtime', 'devhelp:devel', 'cairo:devel', 'db:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gdl:devel', 'gettext:runtime', 'glade:devel', 'glib:devel', 'gnome-build:devel', 'gnome-doc-utils:devel', 'gnome-doc-utils:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel', 'gtksourceview:devel', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'libXft:devel', 'libXrender:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel', 'libgnomeui:devel', 'libpng:devellib', 'libstdc++:devel', 'libwnck:devel', 'libxml2:devel', 'libxslt:devel', 'libxslt:runtime', 'ncurses:devel', 'openldap:devel', 'pango:devel', 'pcre:devel', 'perl:lib', 'pkgconfig:devel', 'popt:devel', 'rarian:devel', 'rarian:runtime', 'shared-mime-info:runtime', 'subversion:devel', 'vte:devel', 'zlib:devel','glade:devel', 'e2fsprogs:devel', 'sqlite:devel', 'graphviz:devel', 'perl:devel', 'unique:devel', 'perl-Locale-gettext:devel', 'perl-Locale-gettext:perl', 'libgda:devel', 'gobject-introspection:devel', 'krb5:devel', 'neon:devel', 'openssl:devel', 'python:devel', 'util-linux:devel', 'vala:devel', 'vala:runtime'  ]
+
+    extraConfig = (' --disable-schemas-install --disable-silent-rules --disable-static'
+                   ' --enable-gtk-doc --enable-introspection=no --enable-plugin-devhelp '
+                   ' --enable-plugin-glade --enable-plugin-sourceview --enable-plugin-subversion '
+                   ' --enable-scrollkeeper --docdir=%(docdir)s/%(name)s-%(version)s '
+                   # until we bump
+                   ' --disable-vala'
+                   ' --with-svn-lib=%(libdir)s')
+
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+
+        # libbfd has two instances:
+        # - static library, which is not compiled with PIC and is unusable for
+        #   shared libanjuta library.
+        # - dynamic library, which is binutils version specific.
+        # We have to use dynamic library and make libanjuta dependent on
+        # specific version of binutils.
+        # above from SUSE anjuta srpm. 
+        r.addAction(""" sed -i "s/-Wl,-Bstatic -lbfd -liberty -Wl,-Bdynamic/-l$(echo %(libdir)s/libbfd*.so | sed 's:.*/lib::;s/\.so//') -Wl,-Bstatic -liberty -Wl,-Bdynamic/" configure """)
+        
+        # Remove rpaths.
+        r.Run(""" sed -i.libdir_syssearch --expression """
+              """ '/sys_lib_dlsearch_path_spec/s|/usr/lib |/usr/lib /usr/lib64 /lib /lib64 |' """
+              """ configure ;  sed -i.gecko --expression 's|-R\$GECKO_HOME||' configure """)
+        # handle newer vala
+        r.Replace('vala-0.10', 'libvala-0.12', 'configure')
+        r.Replace('vala-0.10', 'libvala-0.12', 'plugins/language-support-vala/Makefile.{in,am}')
+        r.Replace('vala-0.10', 'libvala-0.12', 'plugins/symbol-db/anjuta-tags/Makefile.{in,am}')
+
+
+    def policy(r):
+        #FIXME: This is required to build but there must be a better solution
+        r.ImproperlyShared(exceptions='%(datadir)s/%(name)s/scripts/anjuta-tags')
+        r.Requires('autogen:runtime', '%(bindir)s/anjuta')
+        r.MakeDirs('%(libdir)s/libglade/2.0')
+        r.Symlink('../../libanjuta.so.0', '%(libdir)s/libglade/2.0/libanjuta.so')

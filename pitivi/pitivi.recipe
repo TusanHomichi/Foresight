@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2008 - 2012 Foresight Linux Project
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Pitivi(GnomePackageRecipe):
+    name = 'pitivi'
+    version = '0.15.2'
+    buildRequires = [
+        'dbus-python:python', 
+        'desktop-file-utils:runtime', 
+        'gnome-python:python',
+        'gnonlin:lib', 
+        'gst-python:python',
+        'gstreamer:devellib', 
+        'numpy:python', 
+        'pycairo:python', 
+        'pygobject:python',
+        'pygoocanvas:python', 
+        'pygtk:python', 
+        'python:devel',
+        'python-twisted:python', 
+        'python-zopeinterface:python', 
+        'pyxdg:python', 
+        'shared-mime-info:runtime', 
+        'xz:runtime', 
+    ]
+    def policy(r):
+       r.Requires('python-zopeinterface:python', '%(bindir)s/pitivi')
+       r.Requires('gst-python:python', '%(bindir)s/pitivi')
+       r.Requires('gnonlin:lib', '%(bindir)s/pitivi')

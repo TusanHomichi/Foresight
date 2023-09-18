@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+# if the gtk-2.0 directory doesn't exist, create it
+if [ ! -d %(sysconfdir)s/gtk-2.0 ]; then
+    # just in case there is a file in the way, remove it
+    rm -f %(sysconfdir)s/gtk-2.0
+    mkdir %(sysconfdir)s/gtk-2.0
+fi
+
+case $type in 
+    files|handler)
+	case $action in 
+            update|remove|preremove)
+                for qm in %(bindir)s/gdk-pixbuf-query-loaders-%(isaBits)s; do
+                    $qm --update-cache
+                done
+                ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

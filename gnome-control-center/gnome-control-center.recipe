@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomeControlCenter(GnomePackageRecipe):
+
+    buildRequires = [ 'esound:devel', 'pango:devel', 'gtk:devel', 'GConf:devel', 'atk:devel', 'gnome-desktop:devel', 'libgnomeui:devel', 'libgnome:devel', 'libbonobo:devel', 'libbonoboui:devel', 'gnome-vfs:devel', 'fontconfig:devel', 'desktop-file-utils:runtime', 'metacity:runtime', 'libxklavier:devel', 'alsa-lib:devel', 'nautilus:runtime', 'libgnomekbd:devel', 'ORBit2:devel', 'librsvg:devel', 'audiofile:devel', 'cairo:devel', 'gnome-panel:devel', 'evolution-data-server:devel', 'freetype:devel', 'glib:devel', 'libgnome-keyring:devel', 'gnome-menus:devel', 'gst-plugins-base:devel', 'gstreamer:devel', 'libart_lgpl:devel', 'libglade:devel', 'libgnomecanvas:devel', 'libpng:devel', 'libxml2:devel', 'metacity:devel', 'nautilus:devel', 'popt:devel', 'startup-notification:devel', 'GConf:runtime', 'gettext:runtime', 'glib:runtime', 'gtk:runtime', 'perl:runtime', 'rarian:devel', 'rarian:runtime', 'intltool:runtime', 'gnome-doc-utils:devel', 'dbus-glib:devellib', 'dbus:devel', 'hal:devel', 'libXScrnSaver:devel', 'libXcursor:devel', 'libXfixes:devel', 'libXft:devel', 'libXrandr:devel', 'libXxf86misc:devel', 'shared-mime-info:runtime', 'libxslt:runtime', 'gnome-doc-utils:runtime', 'gnome-settings-daemon:devel', 'gnome-common:devel', 'gnome-common:runtime', 'libXcomposite:devel', 'polkit-gnome:devel', 'polkit:devel', 'libcanberra:devel', 'gettext:devel', 'unique:devel' ]
+
+    name = 'gnome-control-center'
+    version = '2.32.1'
+
+    extraConfig = ' --disable-scrollkeeper --disable-update-mimedb --disable-static --enable-aboutme'
+
+
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # Add -Wno-error to silence gswitchit
+        r.macros.cflags += ' -Wno-error '
+
+    def policy(r):
+        r.MakeDirs('%(datadir)s/gnome/wm-properties')
+        r.ExcludeDirectories(exceptions = '%(datadir)s/gnome/wm-properties')
+
+        r.Remove('%(datadir)s/gnome/autostart', recursive=True)
+        r.Remove('%(datadir)s/gnome/cursor-fonts', recursive=True)
+
+        r.Transient('%(datadir)s/applications/mimeinfo.cache')
+        
+        for i in ['apps_gnome_settings_daemon_default_editor.schemas', 
+                  'apps_gnome_settings_daemon_keybindings.schemas',
+                  'apps_gnome_settings_daemon_screensaver.schemas',
+                  'desktop_gnome_font_rendering.schemas' ]:
+            r.Remove('%(sysconfdir)s/gconf/schemas/' + i)
+

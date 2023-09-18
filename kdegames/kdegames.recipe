@@ -1,0 +1,59 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeGames(kdeCorePackageRecipe):
+
+    name = 'kdegames'
+    version = '4.6.1'
+
+    buildRequires = [
+        'Mesa:devel', 'pykde:python', 'python-twisted:python', 'python:devel',
+        'qca2:devel'
+    ]
+
+    modules = [
+        'bomber',
+        'bovo',
+        'granatier',
+        'kajongg',
+        'kapman',
+        'katomic',
+        'kbattleship',
+        'kblackbox',
+        'kblocks',
+        'kbounce',
+        'kbreakout',
+        'kdiamond',
+        'kfourinline',
+        'kgoldrunner',
+        'kigo',
+        'killbots',
+        'kiriki',
+        'kjumpingcube',
+        'klickety',
+        'klines',
+        'kmahjongg',
+        'kmines',
+        'knetwalk',
+        'kolf',
+        'kollision',
+        'konquest',
+        'kpat',
+        'kreversi',
+        'kshisen',
+        'ksirk',
+        'kspaceduel',
+        'ksquares',
+        'ksudoku',
+        'ktron',
+        'ktuberling',
+        'kubrick',
+        ('libkdegames', 'cmake', 'libkdegames'),
+        'libkmahjongg',
+        'lskat',
+        'palapeli',
+    ]
+

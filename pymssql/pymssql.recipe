@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pymssql(CPackageRecipe):
+
+    name = 'pymssql'
+    version = '1.9.908'
+
+    buildRequires = ['python-setuptools:python',
+                'freetds:devel', 
+                'python:devel',
+                'cython:devel',
+                "cython:python"]
+
+    def setup(r):
+        r.addArchive('http://pymssql.googlecode.com/files/')
+        r.PythonSetup()

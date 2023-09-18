@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PgAdmin(AutoPackageRecipe):
+
+    name = "pgadmin"
+    version = "1.12.2"
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'libstdc++:devel', 'libxml2:devel',
+        'libxslt:devel', 'openssl:devel', 'postgresql:devel', 'wxGTK:devel',
+        'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('ftp://ftp.postgresql.org/pub/%(name)s3/release/v%(version)s/src/%(name)s3-%(version)s.tar.gz', keyid='1A19643B')
+
+    def policy(r):
+
+        r.Install('pkg/debian/pgadmin3.xpm', '%(datadir)s/pgadmin3/pgadmin3.xpm')
+        r.Desktopfile('pkg/pgadmin3.desktop')
+
+        r.ComponentSpec("doc", "%(datadir)s/%(name)s3/docs/")
+

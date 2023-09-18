@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DocbookStyleDsssl(PackageRecipe):
+    name = 'docbook-dsssl'
+    version = '1.79'
+
+    buildRequires = [ 'libxml2:runtime', 'sgml-common:runtime',
+                      'sgml-common:config', 'perl:lib', 'make:runtime' ]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.addArchive('mirror://sourceforge/docbook/')
+        r.addSource('docbook-style-dsssl.Makefile')
+
+        r.Run('mv docbook-style-dsssl.Makefile Makefile')
+
+        r.Make('install BINDIR=%(destdir)s%(bindir)s'
+               ' DESTDIR=%(destdir)s%(datadir)s/sgml/stylesheet/dsssl/modular/')
+        r.AutoDoc('WhatsNew')
+
+        r.Requires('openjade:runtime', r'%(datadir)s/sgml/.*')
+        r.Requires('sgml-common:runtime', r'%(datadir)s/sgml/.*')
+        r.Requires('docbook-dtds:data', r'%(datadir)s/sgml/.*')
+        r.Requires('sgml-common:runtime', r'%(sysconfdir)s/sgml/.*')
+
+        # Setup the catalog
+        r.SGMLCatalogEntry('docbook-dsssl.cat', '%(datadir)s/sgml/stylesheet/dsssl/modular/catalog')
+        r.Config(exceptions='%(sysconfdir)s/')
+        r.ComponentSpec('data', '%(sysconfdir)s/')
+	# Setup initial contents so the package can be updated later
+	r.InitialContents('%(sysconfdir)s/sgml/')

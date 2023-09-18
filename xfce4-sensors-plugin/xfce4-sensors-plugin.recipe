@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4SensorsPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-sensors-plugin'
+    version = '1.2.3'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'libnotify:devel', 'libxfce4util:devel', 'libxfce4ui:devel',
+        'lm_sensors:devel', 'nc:runtime', 'xfce4-panel:devel',
+    ] 
+

@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2007 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class dhcdbd(CPackageRecipe):
+    buildRequires = [ 'dbus:devel', 'glibc:devel','chkconfig:runtime', 'pkgconfig:devel' ]
+    name = "dhcdbd"
+    version = "2.7"
+
+    def setup(r):
+        srpm = 'http://download.fedora.redhat.com/pub/fedora/linux/core/development/source/SRPMS/%(name)s-%(version)s-4.fc7.src.rpm'
+
+        r.addArchive(srpm)
+        r.addArchive('%(name)s-%(version)s.tar.bz2',rpm=srpm)
+        r.addPatch('dhcdbd-2.7-initscript.patch', rpm=srpm)
+
+#        r.addArchive("http://people.redhat.com/~jvdias/dhcdbd/%(name)s-%(version)s.tar.gz")
+
+        r.Make()
+        r.MakeInstall()
+
+        #r.Replace('chkconfig: - 98 02','chkconfig: 345 98 02', 'RedHat/dhcdbd.init')
+        r.Replace('/bin/dbus-send','%(bindir)s/dbus-send', 'dhcdbd.init')
+
+        r.Install('dhcdbd.init','%(initdir)s/dhcdbd', mode=0755)
+        r.Requires('dhclient:runtime','%(essentialsbindir)s/dhcdbd')

@@ -1,0 +1,28 @@
+--- 40-usb_modeswitch.rules.orig	2012-03-23 17:08:02.725778184 +0000
++++ 40-usb_modeswitch.rules	2012-03-23 17:08:41.288775812 +0000
+@@ -387,6 +387,9 @@
+ # Vodafone (Huawei) K4605
+ ATTRS{idVendor}=="12d1", ATTRS{idProduct}=="14c1", RUN+="usb_modeswitch '%b/%k'"
+ 
++# Vodafone (Huawei) K5005
++ATTRS{idVendor}=="12d1", ATTRS{idProduct}=="14c3", RUN+="usb_modeswitch '%b/%k'"
++
+ # Vodafone/Huawei K3771
+ ATTRS{idVendor}=="12d1", ATTRS{idProduct}=="14c4", RUN+="usb_modeswitch '%b/%k'"
+
+--- /dev/null
++++ usb_modeswitch.d/12d1:14c3
+@@ -0,0 +1,13 @@
++########################################################
++# Vodafone/Huawei K5005
++
++DefaultVendor= 0x12d1
++DefaultProduct=0x14c3
++
++TargetVendor=  0x12d1
++TargetProduct= 0x14c8
++
++MessageContent="55534243123456780000000000000011062000000100000000000000000000"
++
++CheckSuccess=20
++

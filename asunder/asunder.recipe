@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# zodman andres @ vampirito.com.mx
+
+class Asunder(AutoPackageRecipe):
+    name = 'asunder'
+    version = '2.2'
+
+    packageSummary = 'Asunder is a graphical Audio CD ripper and encoder for Linux'
+    packageDescription = "Asunder is a graphical Audio CD ripper and encoder for Linux. You can use it to save tracks from an Audio CD as any of WAV, MP3, OGG, FLAC, WavPack, Musepack, AAC, and Monkey's Audio files"
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libcddb:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'xcb-util:devel', 'zlib:devel','desktop-file-utils:runtime', 'gettext:runtime', 'intltool:runtime', 'pkgconfig:devel','flac:runtime','vorbis-tools:runtime','lame:runtime','wavpack:runtime']
+
+    def unpack(r):
+        r.addArchive('http://littlesvr.ca/asunder/releases/%(name)s-%(version)s.tar.bz2')
+	r.Requires('wavpack:runtime', '%(bindir)s/asunder')

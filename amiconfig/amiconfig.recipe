@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AMIConfig(BuildPackageRecipe):
+    name = 'amiconfig'
+    version = '0.5.1'
+
+    buildRequires = [ 'dnspython:python', 'python:devel', ]
+
+    def setup(r):
+        r.addMercurialSnapshot('https://bitbucket.org/rpathsync/amiconfig',
+            tag='amiconfig-%(version)s')
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+        flags = 'libdir=%(libdir)s sitedir=%(sitepkgs)s initdir=%(initdir)s PYTHON=/usr/bin/python%(pyver)s'
+        r.Make(flags)
+        r.MakeInstall(flags)
+        r.TagSpec('initscript', '%(initdir)s/.*')
+
+        # Force flavor
+        if Arch.x86 or Arch.x86_64: pass
+

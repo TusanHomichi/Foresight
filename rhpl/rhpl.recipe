@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+loadSuperClass('rpmpackage')
+class Rhpl(RPMPackageRecipe, CPackageRecipe):
+    name = 'rhpl'
+    version = '0.210'
+    rpmRelease = '1'
+    distroVersion = '8'
+
+    buildRequires = [ 'python:devel', 'gettext:runtime',
+        'wireless-tools:devel', 'kudzu:python', 'pygtk:python', ]
+
+    def setup(r):
+        r.macros.pyver = 'python' + Python.majversion
+        r.unpack()
+
+        r.Replace('^PYTHON =.*', 'PYTHON = %(pyver)s', 'Makefile.inc')
+        r.Replace('xgettext', 'xgettext --from-code=utf-8', 'po/Makefile')
+        r.MakeInstall()
+
+        r.Requires(exceptDeps='python: gtk')

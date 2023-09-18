@@ -1,0 +1,23 @@
+loadSuperClass('binarypackage=conary.rpath.com@rpl:2-qa')
+class Blogbridge(BinaryPackageRecipe):
+    name = 'blogbridge'
+    version = '6.7'
+
+    buildRequires = [ 'desktop-file-utils:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://www.blogbridge.com/install/releases/',
+            dir='/opt/%(name)s/')
+
+        r.addSource('blogbridge.png', dir='%(datadir)s/pixmaps/', mode = 0755)
+        r.addSource('blogbridge.desktop')
+        r.Desktopfile('blogbridge.desktop')
+
+    def policy(r):
+       r.SetModes('/opt/blogbridge/%(name)s-%(version)s/blogbridge.sh', 0755) 
+       # this drops a lot of jars we do not want exposed elsewhere
+       # so we just hide them. 
+       # as byDefault users get already installed a java jre
+       # things will keep behaving as usual
+       r.Requires(exceptDeps=r'java.*')
+       r.Provides(exceptDeps = 'java: .*')

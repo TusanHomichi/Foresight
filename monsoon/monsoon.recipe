@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Lance Haig.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MonSoon(AutoPackageRecipe):
+    name = "monsoon"
+    version = "0.20"
+
+    buildRequires = ['monotorrent:devellib', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-sharp:cil', 'gnome-sharp', 'gtk-sharp:cil', 'intltool:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'ndesk-dbus:cil', 'perl:runtime', 'pkgconfig:devel', 'ndesk-dbus-glib', 'mono-nat:devellib', 'ndesk-dbus-glib:cil']
+
+    def unpack(r):
+        #r.addArchive('http://www.monsoon-project.org/jaws/data/files/')
+        r.addArchive('http://www.monotorrent.com/Files/')

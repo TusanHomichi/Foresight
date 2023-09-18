@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2007-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CMemCache(CPackageRecipe):
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+        'libmemcache:devel',
+    ]
+
+    name = 'cmemcache'
+    version = '0.95'
+
+    def setup(r):
+        r.addArchive('http://gijsbert.org/downloads/%(name)s/')
+        r.PythonSetup()

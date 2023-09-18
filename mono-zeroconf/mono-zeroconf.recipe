@@ -1,0 +1,14 @@
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MonoZeroconf(AutoPackageRecipe):
+    name = 'mono-zeroconf'
+    version = '0.9.0'
+    buildRequires = [ 'avahi-sharp:devellib', 'avahi-sharp:cil', 'gnome-sharp:devellib', 'mono:devel', 'mono:devellib', 'mono:lib', 'pkgconfig:devel', 'mono:cil', 'mono:runtime',]
+
+    def unpack(r):
+        r.addArchive('http://banshee-project.org/files/%(name)s/')
+        r.Run(""" sed -i -e 's!$(DESTDIR)$(prefix)/lib!$(DESTDIR)%(libdir)s!' configure.ac ; sed -i -e 's!$(DESTDIR)$(prefix)/lib!$(DESTDIR)%(libdir)s!' configure """)
+        r.disableParallelMake()

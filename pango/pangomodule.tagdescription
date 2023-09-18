@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/pangomodule
+include		%(libdir)s/pango/[^/]*/modules/[^/]*.so 
+implements	files update
+implements	files remove
+implements	files preremove

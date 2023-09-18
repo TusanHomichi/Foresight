@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Tuxmath
+Name[sv]=Tuxmath
+Comment=An educational math tutor game starring Tux.
+Exec=tuxmath
+Icon=/usr/share/tuxmath/images/icons/icon.png
+Terminal=false
+Type=Application
+Categories=Game

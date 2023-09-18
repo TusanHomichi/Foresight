@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SofiaSip(AutoPackageRecipe):
+    name = 'sofia-sip'
+    version = '1.12.10'
+ 
+    buildRequires = ['doxygen:runtime', 'glib:devel', 'openssl:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/sofia-sip/')

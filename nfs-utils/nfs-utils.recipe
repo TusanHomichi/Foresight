@@ -1,0 +1,205 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class NfsUtils(RPMPackageRecipe, CPackageRecipe):
+    name = 'nfs-utils'
+    version = '1.2.3'
+
+    buildRequires = [ 'libevent:devel', 'libnfsidmap:devel', 'krb5:devel',
+                      'tcp_wrappers:devel', 'autoconf:runtime', 'automake:runtime',
+                      'libgssapi:devel', 'librpcsecgss:devel', 'libtool:runtime',
+                      'userspace-kernel-headers:devel', 'e2fsprogs:devel',
+                      'pkgconfig:devel','keyutils:devel','libcap:devel', 'libtirpc:devel',
+                      'python:devel', 'util-linux:devel', 'chkconfig:runtime', ]
+
+    rpmRelease = '26.el6'
+
+    rpmSources = [ 'nfs.init', 'nfslock.init', 'rpcsvcgssd.init',
+                   'rpcgssd.init', 'rpcidmapd.init','nfs.sysconfig',
+                   'id_resolver.conf']
+    rpmPatches = [ 'nfs-utils-1.2.4-rc5.patch',
+                   'nfs-utils-1.2.3-krb5-ad-style.patch',
+                   'nfs-utils-1.2.3-rpcsvcgssd-segfault.patch',
+                   'nfs-utils-1.2.3-svcgssd-manpage.patch',
+                   'nfs-utils-1.2.3-mountnfs-cve20111749.patch',
+                   'nfs-utils-1.2.3-exportfsman-ipv6-update.patch',
+                   'nfs-utils-1.2.3-mountd-segfault.patch',
+                   'nfs-utils-1.2.3-exportfs-reliable.patch',
+                   'nfs-utils-1.2.3-umount-spaces.patch',
+                   'nfs-utils-1.2.3-umount-ipv6.patch',
+                   'nfs-utils-1.2.3-double-export.patch',
+                   'nfs-utils-1.2.3-mount-newmessage.patch',
+                   'nfs-utils-1.2.3-mount-versfails.patch',
+                   'nfs-utils-1.2.3-mount-filesize.patch',
+                   'nfs-utils-1.2.3-mount-ipv6-norollback.patch',
+                   'nfs-utils-1.2.3-rpcdebug-pnfs-debug.patch',
+                   'nfs-utils-1.2.3-nfsidmap-keyring.patch',
+                   'nfs-utils-1.2.3-nfsman-tcp-timout.patch',
+                   'nfs-utils-1.2.3-idmapd-sigio.patch',
+                   'nfs-utils-1.2.3-link-libtirpc.patch',
+                   'nfs-utils-1.2.3-procfs-stdio-size.patch',
+                   'nfs-utils-1.2.3-gssd-creds.patch',
+                   'nfs-utils-1.2.3-mount-background.patch',
+                   'nfs-utils-1.2.3-umount-norm-paths.patch',
+                   'nfs-utils-1.2.3-nfsmount-parse-error.patch',
+                   'nfs-utils-1.2.3-idmap-umlauts-support.patch',
+                   'nfs-utils-1.2.3-exportfs-serial.patch',
+                   'nfs-utils-1.2.3-idmapd-octal-encoded.patch',
+                   'nfs-utils-1.2.3-mount-bg-v23.patch',
+                   'nfs-utils-1.2.3-umount-symlink.patch',
+                   'nfs-utils-1.2.3-mountd-vroots-rootsquash.patch',
+                   'nfs-utils-1.2.1-statdpath-man.patch',
+                   'nfs-utils-1.2.2-statdpath.patch',
+                   'nfs-utils-1.2.1-exp-subtree-warn-off.patch',
+                   ]
+    isRHEL = True
+    rhel_url = 'ftp://ftp.redhat.com/redhat/linux/enterprise/6Server/en/os/SRPMS/%(name)s-%(version)s-%(rpmRelease)s.src.rpm'
+    def setup(r):
+
+        r.macros.cflags += ' -fpie -D_FILE_OFFSET_BITS=64'
+        r.macros.ldflags += ' -pie'
+
+        r.unpack()
+        # Source: ftp://nfs.sourceforge.net/pub/nfs/
+        #r.addArchive('nfs.doc.tar.gz', rpm=r.srpm, dir=r.theMainDir)
+        r.addAction("sed -i '/# chkconfig:/s/ 14/ 09/g' nfslock.init")
+
+        r.addSource('sysconfig.nfs')
+        # newer versions of autotools actually check for multilib systems, and
+        # we're patching *.in files
+        r.addAction('rm -f configure')
+        r.addAction('sh -x autogen.sh')
+
+
+        # TODO: enable gss once new kerberos (1.9 from rhel 6) has been built 
+        r.Configure(' --enable-ipv6'
+                    ' --enable-gss=no'
+                    ' --enable-nfsv4'
+                    ' --enable-mount '
+                    ' --enable-mountconfig'
+                    ' --with-statdpath=/var/lib/nfs/statd ',
+                    preConfigure='ac_cv_func_innetgr=yes')
+
+        r.Run("sed -i -e 's/env python/python/' mountstats.py", dir='tools/mountstats')
+
+        r.Make()
+
+        r.MakeInstall('prefix=%(prefix)s')
+
+        # explicitly create it for perms
+        # r.MakeDirs('%(localstatedir)s/lib/nfs', mode = 0711)
+
+        r.Install('tools/rpcdebug/rpcdebug', '%(essentialsbindir)s/')
+        r.Install('tools/rpcdebug/rpcdebug', '%(essentialsbindir)s/')
+        r.Install('nfs.init', '%(initdir)s/nfs', mode=0755)
+        r.Install('nfslock.init', '%(initdir)s/nfslock', mode=0755)
+        r.Install('rpcsvcgssd.init', '%(initdir)s/rpcsvcgssd', mode=0755)
+        r.Install('rpcgssd.init', '%(initdir)s/rpcgssd', mode=0755)
+        r.Install('rpcidmapd.init', '%(initdir)s/rpcidmapd', mode=0755)
+
+        r.Install('nfs.sysconfig','%(sysconfdir)s/sysconfig/nfs', mode=0644)
+        r.Install('utils/mount/nfsmount.conf', '%(sysconfdir)s/nfsmount.conf', mode=0644)
+
+        r.Install('id_resolver.conf', '%(sysconfdir)s/request-key.d/', 
+                  mode = 0644)
+
+        r.Create('%(localstatedir)s/lib/nfs/rmtab')
+        r.Move('%(sbindir)s/rpc.statd', '%(essentialsbindir)s/')
+
+        for p in [ 'mount.nfs',]:
+            # symlinks need no SetModes ...
+            # 'umount.nfs', 'mount.nfs4', 'umount.nfs4']:
+            r.SetModes('%%(essentialsbindir)s/%s' % p, 04755)
+
+        r.Symlink('mount.nfs.8', '%(mandir)s/man8/mount.nfs4.8')
+        r.Symlink('umount.nfs.8', '%(mandir)s/man8/umount.nfs4.8')
+
+        r.UtilizeUser('nobody', '%(sbindir)s/rpc.idmapd')
+        r.UtilizeUser('nfsnobody', '%(essentialsbindir)s/exportfs')
+        r.Ownership('rpcuser', 'rpcuser', '%(localstatedir)s/lib/nfs/statd')
+        r.Ownership('rpcuser','rpcuser', '%(localstatedir)s/lib/nfs/state')
+        r.SetModes('%(localstatedir)s/lib/nfs/state', 0644)
+        
+        r.Doc('nfs/*.html', 'nfs/*.ps', 'linux-nfs/*')
+
+        # files that don't need to be packaged
+        #r.Remove('%(localstatedir)s/lib/nfs/sm{,.bak}', recursive=True)
+
+
+        # rPath bug #489; prevents runtime error about not finding this dir
+        for neededDir in ('%(localstatedir)s/lib/nfs/v4recovery', '%(localstatedir)s/lib/nfs/statd/sm',
+                          '%(localstatedir)s/lib/nfs/statd/sm.bak',
+                          '%(localstatedir)s/lib/rpc_pipefs',
+                          '%(localstatedir)s/lib/nfs/rpc_pipefs',
+                          '%(localstatedir)s/lib/nfs/rpc_pipefs/nfs'): # RPL-2147
+            r.MakeDirs(neededDir)
+            r.ExcludeDirectories(exceptions=neededDir)
+
+        for rpcuserDir in ('%(localstatedir)s/lib/nfs/statd/sm',
+                           '%(localstatedir)s/lib/nfs/statd/sm.bak', 
+                           '%(localstatedir)s/lib/nfs/statd'):
+            r.Ownership('rpcuser','rpcuser',rpcuserDir)
+            r.Requires('info-rpcuser:user', rpcuserDir)
+            r.SetModes(rpcuserDir, 0700)
+
+        # start initscripts by default (RPL-418)
+        #r.Replace('chkconfig: -', 'chkconfig: 345', '%(initdir)s/nfs')
+
+        r.PackageSpec('nfs-server',
+                '%(mandir)s/man5/exports.5.gz',
+                '%(mandir)s/man7/nfsd.7.gz',
+                '%(mandir)s/man8/exportfs.8.gz',
+                '%(mandir)s/man8/mountd.8.gz',
+                '%(mandir)s/man8/nfsd.8.gz',
+                '%(mandir)s/man8/rpc.mountd.8.gz',
+                '%(mandir)s/man8/rpc.nfsd.8.gz',
+                '%(mandir)s/man8/rpc.svcgssd.8.gz',
+                '%(mandir)s/man8/svcgssd.8.gz',
+                '%(localstatedir)s/lib/nfs/etab',
+                '%(localstatedir)s/lib/nfs/rmtab',
+                '%(localstatedir)s/lib/nfs/state',
+                '%(localstatedir)s/lib/nfs/xtab',
+                '%(initdir)s/nfs',
+                '%(initdir)s/rpcsvcgssd',
+                '%(sbindir)s/exportfs',
+                '%(sbindir)s/rpc.nfsd',
+                '%(sbindir)s/rpc.mountd',
+                '%(sbindir)s/rpc.svcgssd',
+                )
+        r.PackageSpec('nfs-client',
+                '%(mandir)s/man8/gssd.8.gz',
+                '%(mandir)s/man8/mount.nfs.8.gz',
+                '%(mandir)s/man8/mount.nfs4.8.gz',
+                '%(mandir)s/man8/rpc.gssd.8.gz',
+                '%(mandir)s/man8/showmount.8.gz',
+                '%(mandir)s/man8/umount.nfs.8.gz',
+                '%(mandir)s/man8/umount.nfs4.8.gz',
+                '%(initdir)s/rpcgssd',
+                '%(essentialsbindir)s/mount.nfs',
+                '%(essentialsbindir)s/mount.nfs4',
+                '%(essentialsbindir)s/umount.nfs',
+                '%(essentialsbindir)s/umount.nfs4',
+                '%(sbindir)s/gss_clnt_send_err',
+                '%(sbindir)s/gss_destroy_creds',
+                '%(sbindir)s/rpc.gssd',
+                '%(sbindir)s/showmount',
+                )
+        #common:
+        #statd
+        #idmapd
+        #nfs
+        #nfsstat
+        #rpcdebug
+        r.Requires('nfs-utils:runtime', '%(essentialsbindir)s/mount.nfs')
+        r.Requires('nfs-utils:runtime', '%(sbindir)s/rpc.mountd')
+        for dep in ['lib','config']:
+            r.Requires('libtirpc:'+dep, '%(sbindir)s/rpc.nfsd')
+        r.Requires('rpcbind:runtime', '%(essentialsbindir)s/rpc.statd')
+         
+        for dirPath in ['xtab','etab','rmtab', 'state']: 
+            r.Config('%(localstatedir)s/lib/nfs/'+dirPath)
+        r.NormalizePythonInterpreterVersion(versionMap=(('%(bindir)s/python', '%(bindir)s/python2.6'),))

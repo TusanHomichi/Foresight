@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010-2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('python')
+class PythonMemcached(PackageRecipe, Python.VersionMixIn):
+    name = 'python-memcached'
+    version = '1.48'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.setDefaultPython()
+        r.addArchive('ftp://ftp.tummy.com/pub/%(name)s/')
+        r.PythonSetup()

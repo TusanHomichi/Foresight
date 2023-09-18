@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2005 Specifix, Inc.
+# All rights reserved
+#
+
+loadRecipe('cpanpackage.recipe')
+class PerlIOGzip(CPANPackageRecipe):
+    name = "perl-PerlIO-gzip"
+    version = "0.18"
+    module = 'PerlIO'
+
+    buildRequires = ['gcc:devel', 'gcc:runtime', 'glibc:devel', 'zlib:devel']

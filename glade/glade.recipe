@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Glade(GnomePackageRecipe):
+    name = 'glade'
+    version = '3.6.7'
+
+    buildRequires = [ 'atk:devel', 'desktop-file-utils:runtime', 'GConf:devel',
+                      'glib:devel', 'gnome-vfs:devel', 'libart_lgpl:devel',
+                      'libbonobo:devel', 'libbonoboui:devel', 'libxml2:devel',
+                      'ORBit2:devel', 'pango:devel', 'popt:devel',
+                      'rarian:devel', 'rarian:runtime', 'cairo:devel',
+                      'fontconfig:devel', 'freetype:devel',
+                      'gnome-keyring:devel', 'libpng:devel', 'perl:runtime',
+                      'gtk:runtime',
+                      ]
+
+    extraConfig = '--disable-gnome-db'
+
+    def unpack(r):
+        r.macros.topver = r.version.split('.')[0]
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/glade%(topver)s/%(major_version)s/glade%(topver)s-%(version)s.tar.bz2')
+

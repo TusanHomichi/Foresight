@@ -1,0 +1,16 @@
+class SoundThemeFreedesktop(AutoPackageRecipe):
+    name = 'sound-theme-freedesktop'
+    version = '0.7'
+
+    buildRequires = ['gettext:runtime', 'intltool:runtime']
+
+    def unpack(r):
+        r.addArchive('http://people.freedesktop.org/~mccann/dist/')
+
+        # FIXME: find a better way, if any
+        r.addSource('sound-themes.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/sound-themes')
+        r.addSource('sound-themes.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/sound-themes', mode=0755)
+	r.addSource('desktop-login.oga', dest='/usr/share/sounds/freedesktop/stereo/')
+	r.addSource('system-ready.oga', dest='/usr/share/sounds/freedesktop/stereo/')

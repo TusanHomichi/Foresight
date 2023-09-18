@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Hexchat(AutoPackageRecipe):
+    name = 'hexchat'
+    version = '2.9.6.1'
+ 
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'dbus-glib:devel', 
+        'dbus-glib:runtime', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gdk-pixbuf:runtime', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'libX11:devel', 
+        'libcanberra:devel', 
+        'libproxy:devel', 
+        'libxml2:devel', 
+        'monodevelop:runtime', 
+        'openssl:devel', 
+        'pango:devel', 
+        'perl:devel', 
+        'pkgconfig:devel', 
+        'zlib:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('hexchat-2.9.6.1.tar.xz')
+
+    def configure(r):
+        r.Configure('--disable-python')

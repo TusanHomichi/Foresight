@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux. 2004-2010 rPath, Inc. 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class IOTop(CPackageRecipe):
+    name = 'iotop'
+    version = '0.4.4'
+    buildRequires = [ 'python:devel', 'python-setuptools:python' ]
+
+    packageSummary = 'iotop is a Python program with top(1) like output interfaces organized by disk input and output'
+    packageDescription = 'iotop requires the ctypes module for python, along with a Linux Kernel >= 2.6.20 with TASK_DELAY_ACCT, '
+    packageDescription += 'CONFIG TASKST, TASK_IO_ACCOUNTING, and CONFIG_VM_EVENT_COUNTER options enabled. For more information '
+    packageDescription += 'on it\'s utility, configuration or requirements see Guillaume Chazarain\'s Geeky Page [http://guichaz.free.fr/iotop/].'
+
+    def setup(r):
+        r.macros.sitepkgs = Python.sitepkgs
+        r.macros.pyinc = '%(includedir)s/python' + Python.majversion
+        r.addArchive('http://guichaz.free.fr/iotop/files/')
+        r.addSource('http://git.sipsolutions.net/?p=pynl80211.git;a=blob_plain;f=netlink.c;hb=HEAD', dest='_netlink.c')
+        r.Replace('sys/types.h', 'linux/types.h', '_netlink.c')
+        r.Run('gcc -shared -fPIC -I%(pyinc)s -o _netlinkmodule.so _netlink.c')
+        r.Install('_netlinkmodule.so', '%(sitepkgs)s/')
+        r.PythonSetup()
+        for file in ['COPYING', 'README', 'PKG-INFO', 'NEWS', 'ChangeLog', 'THANKS']:
+            r.Install(file, '%(thisdocdir)s/')
+        r.Licenses('GPL-3')
+        r.Description(shortDesc=r.packageSummary, longDesc=r.packageDescription)

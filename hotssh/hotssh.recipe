@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hotssh(CPackageRecipe):
+
+    name = 'hotssh'
+    version = '0.2.7'
+
+    buildRequires = ['desktop-file-utils:runtime', 'gettext:runtime', 'intltool:runtime', 'python-sqlite:python', 'python:devel',
+                     'avahi:python', 'dbus-python:python', 'gnome-python:python', 'gtk:runtime', 'pygobject:python', 'pygtk:python',
+                     'vte:python']
+
+    def setup(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/hotssh/0.2/')
+    
+        r.ManualConfigure(' --prefix=%(prefix)s --destdir=%(destdir)s',
+                          configureName='waf configure')
+        r.Make('build', makeName='./waf')
+        r.Make('install --destdir=%(destdir)s', makeName ='./waf')

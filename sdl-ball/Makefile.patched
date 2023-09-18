@@ -1,0 +1,12 @@
+--- Makefile	2008-09-01 13:28:22.000000000 -0500
++++ Makefile.patch	2008-09-10 15:13:16.000000000 -0500
+@@ -1,7 +1,7 @@
+ CC=g++
+ #CFLAGS=-g -c -Wall
+ CFLAGS=-c -Wall
+-LDFLAGS=-lGL -lGLU -lSDL -lSDL_image -lSDL_ttf
++LDFLAGS=-L/usr/lib/xorg.mesa.3d/ -lGL -lGLU -lSDL -lSDL_image -lSDL_ttf
+ # -lopenal
+ SOURCES=main.cpp 
+ OBJECTS=$(SOURCES:.cpp=.o)
+

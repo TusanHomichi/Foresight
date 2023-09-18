@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Yelp(GnomePackageRecipe):
+
+    name = 'yelp'
+    version = '2.30.2'
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'rarian:runtime', 'rarian:devel',
+                      'beagle:devel', 'bzip2:devel', 'desktop-file-utils:runtime',
+                      'gnome-doc-utils:runtime', 'gnome-icon-theme:data',
+                      'libgnome-keyring:devel', 'gnome-vfs:devel', 'gtk:runtime',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+                      'libgcrypt:devel', 'libglade:devel', 'libgnome:devel', 
+                      'libgnomecanvas:devel', 'libgnomeui:devel', 'libgpg-error:devel',
+                      'libstdc++:devel', 'libxslt:devel', 'nspr:devel', 'popt:devel', 
+                      'startup-notification:devel', 'xulrunner:devel', 'gnome-doc-utils:devel',
+                      'gnome-doc-utils:runtime', 'libbeagle:devel', 
+                      'autoconf:runtime', 'automake:runtime']
+
+    extraConfig = ' --with-mozilla=libxul-embedding --enable-man --enable-info --disable-schemas-install '
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Remove('data/yelp.schema', recursive = True)
+        r.Run('autoreconf -fi')
+    def policy(r):
+        r.MakeDirs('%(datadir)s/gnome/help')
+        r.ExcludeDirectories(exceptions = ['%(datadir)s/gnome/help'])

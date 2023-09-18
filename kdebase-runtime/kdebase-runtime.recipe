@@ -1,0 +1,98 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeBaseRuntime(kdeCorePackageRecipe):
+
+    name = 'kdebase-runtime'
+    version = '4.8.4'
+
+    module = 'kde-runtime'
+
+    buildRequires = [
+        'alsa-lib:devel',
+        'attica:devel',
+        'bzip2:devel',
+        'bzr:runtime',
+        'clucene:devel',
+        'cvs:runtime',
+        'doxygen:runtime',
+        'exiv2:devel',
+        'graphviz:runtime',
+        'kdelibs:lib',
+        'kdelibs:runtime',
+        'kdelibs:devel',
+        'libcanberra:devel',
+        'libjpeg:devel',
+        'libssh:devel',
+        'libX11:devel',
+        'libXcursor:devel',
+        'libxkbfile:devel',
+        'libXpm:devel',
+        'libXScrnSaver:devel',
+        'libXtst:devel',
+        'libXv:devel',
+        'libXxf86misc:devel',
+        'NetworkManager:devel',
+        'OpenEXR:devel',
+        'openslp:devel',
+        'openssh:runtime',
+        'perl:devel',
+        'pulseaudio:devel',
+        'python:devel',
+        'qca2:devel',
+        'samba:devel',
+        'shared-desktop-ontologies:devellib',
+        'soprano:devel',
+        'soprano:runtime',
+        'strigi:devel',
+        'valgrind:runtime',
+        'xine-lib:devel',
+        'xz:devel',
+        'xz:runtime',
+        'git:runtime', 
+        'mercurial:runtime', 
+        'subversion:runtime',
+        ]
+
+    def unpack(r):
+        r.macros.module = r.module        
+        r.addArchive('mirror://kde//stable/%(version)s/src/%(module)s-%(version)s.tar.xz')
+
+        r.cmakeArgs += (
+            ' -DWITH_Nepomuk:BOOL=OFF '
+            ' -DCMAKE_SKIP_RPATH=ON '
+            ' -DWITH_QNtrack=OFF '
+            ' -DWITH_Xine=OFF '
+            )
+
+    def postUnpack(r):
+
+        r.addSource('kde.pam', dest='%(sysconfdir)s/pam.d/kde')
+
+#        r.addPatches(
+#            'kde-runtime-4.7.90-nepomuk_onlyshowin_kde.patch',
+#            'kdebase-runtime-4.1.x-searchproviders-shortcuts.patch',
+#            'kdebase-runtime-4.3.3-home_onlyshowin_kde.patch',
+#            'kdebase-runtime-4.3.4-man-overrides.patch',
+#            'kdebase-runtime-4.5.3-htsearch.patch',
+#            'kdebase-runtime-4.5.95-compiz.patch',
+#        )
+        
+        # need to add this to avoid some strange build error
+#        r.disableParallelMake()
+
+    def policy(r):
+
+        # Installed by hicolor-icon-theme
+        r.Remove('%(datadir)s/icons/hicolor/index.theme')
+
+        r.Requires('oxygen-icon-theme:data', '%(bindir)s/kcmshell4')
+        r.Requires('hicolor-icon-theme:data', '%(bindir)s/kcmshell4')
+        r.Requires('shared-mime-info:runtime', '%(bindir)s/kcmshell4')
+
+        r.SetModes('%(prefix)s/libexec/kdesud', 02755)
+
+        r.DanglingSymlinks(exceptions='%(datadir)s/icons/default.kde4')

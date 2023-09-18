@@ -1,0 +1,57 @@
+
+loadInstalled('ruby')
+class RubyGems(CPackageRecipe):
+
+    name = "rubygems"
+    version = "1.5.3"
+
+    buildRequires = [ "ruby:runtime" ]
+
+    def setup(r):
+        r.addArchive('http://rubyforge.org/frs/download.php/74343/rubygems-%(version)s.tgz')
+        # handpicked from RH
+        for p in [ 'rubygems-1.5.0-show-extension-build-process-in-sync.patch',
+                   'rubygems-1.5.0-test-under-umask.patch',
+                   'rubygems-1.5.2-show-rdoc-process-verbosely.patch']:
+            r.addPatch(p)
+
+        r.macros.ruby_majver =  '.'.join(Ruby.version.split('.')[0:2])
+
+        r.macros.ruby_sitelib = '%(libdir)s/ruby/site_ruby/%(ruby_majver)s' 
+
+        r.addSource('rubygems.sh', macros=True)
+        r.addSource('rubygems.csh', macros=True)
+
+        r.macros.gemHome = '%(libdir)s/ruby/gems/%(ruby_majver)s'
+        r.Environment('GEM_HOME', '%(destdir)s%(gemHome)s')
+
+        r.Run(' ruby setup.rb install --prefix=/ '
+              ' --destdir=%(destdir)s/%(libdir)s/ruby/site_ruby/%(ruby_majver)s '
+              ' --no-rdoc --no-ri ')
+
+        r.MakeDirs('%(bindir)s')
+        r.Move('%(ruby_sitelib)s/bin/gem', '/%(bindir)s/gem')
+        r.Move('%(ruby_sitelib)s/lib/*', '%(ruby_sitelib)s/')
+
+        # Install script which setup environment for rubygems
+        r.Install('rubygems.sh', '%(sysconfdir)s/profile.d/', mode=0755)
+        r.Install('rubygems.csh', '%(sysconfdir)s/profile.d/', mode=0755)
+
+        # Make sure stuff in cache and gems are marked Transient
+        #. so they get blown away on subsequent updates
+        for d in ['cache', 'gems', 'specifications', 'doc']:
+            r.MakeDirs('%(gemHome)s/'+ d)
+            r.ExcludeDirectories(exceptions='%(gemHome)s/' + d)
+            r.Transient('%(gemHome)s/'+ d)
+
+        r.ExcludeDirectories(exceptions='%(ruby_sitelib)s/lib')
+
+        # Gem docs are in here
+        r.ComponentSpec('doc', '%(gemHome)s/doc/')
+
+        # allows any recipe that has rubygems:runtime
+        # as buildReqs to inherit gemHome macro
+        r.Create('%(sysconfdir)s/conary/macros.d/%(name)s', 
+                 contents = 'gemHome = "%(gemHome)s"',
+                 mode = 0644)
+

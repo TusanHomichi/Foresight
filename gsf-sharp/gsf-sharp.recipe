@@ -1,0 +1,17 @@
+class GsfSharp(AutoPackageRecipe):
+    name = 'gsf-sharp'
+    version = '0.8.1'
+
+    buildRequires = [ 'glib:devel', 'libgsf:devel', 'libxml2:devel',
+                      'GConf:devel', 'ORBit2:devel', 'gnome-vfs:devel', 'gtk-sharp:lib','gtk-sharp:devellib', 'gtk-sharp:cil',
+                      'libbonobo:devel', 'mono:lib', 'mono:cil', 'zlib:devel', 'gawk:runtime', 'which:runtime',
+                      'gtk-sharp:runtime', 'gtk-sharp:cil', 'mono:runtime', 'pkgconfig:devel', 'mono:devel', 
+                       'mono-tools:runtime']
+
+    def unpack(r):
+        r.addArchive('http://primates.ximian.com/~joe/%(name)s-%(version)s.tar.gz')
+        r.Environment('MONO_SHARED_DIR', '/tmp') 
+
+    def makeinstall(r):
+        r.MakeInstall('GACUTIL_FLAGS="/package gtk-sharp /gacdir %(libdir)s /root %(destdir)s%(libdir)s"')
+

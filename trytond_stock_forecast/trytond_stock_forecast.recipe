@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Trytond_stock_forecast(TrytonPackage):
+    name = 'trytond_stock_forecast'
+
+    prebuild = []
+    deps = [
+        "trytond_stock:python",
+        "trytond_product:python",
+        "trytond_company:python",
+        "python-dateutil:python"
+    ]
+
+    def setup(r):
+        TrytonPackage.setup(r)
+

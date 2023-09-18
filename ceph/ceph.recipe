@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+#              
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ceph(AutoPackageRecipe):
+    name = 'ceph'
+    version = '0.61.2'
+    buildRequires = [ 'boost:devel', 'chkconfig:runtime', 'cryptopp:devel',
+                      'curl:devel', 'expat:devel', 'fcgi:devel', 'fuse:devel',
+                      'gperftools:devel', 'keyutils:devel', 'leveldb:devel',
+                      'libaio:devel', 'libatomic_ops:devel', 'libedit:devel',
+                      'libstdc++:devel', 'pkgconfig:devel', 'which:runtime',
+                      'python-argparse:python', 'python:devel',
+                      'snappy:devel', 'util-linux:devel', 'libtool:runtime',
+                      'autoconf:runtime', 'automake:runtime', ]
+
+    def unpack(r):
+        r.addArchive('http://ceph.com/download/')
+        for patch in [ 'ceph-build-support-for-automake-1.12.patch',
+                       'ceph-init-fix.patch',
+                       # 'ceph.logrotate.patch',
+                       ]:
+            r.addPatch(patch)
+        # same as ceph.logrotate.patch
+        r.Replace(r'invoke-rc.d ceph reload >/dev/null || service ceph reload >/dev/null',
+                  'service ceph reload >/dev/null 2>/dev/null || true',
+                  'src/logrotate.conf')
+
+    def configure(r):
+        r.Run('./autogen.sh')
+        r.macros.cxxflags += ' -fvisibility-inlines-hidden '
+
+        r.Configure(' --prefix=%(prefix)s --sbindir=%(essentialsbindir)s '
+                    ' --localstatedir=%(localstatedir)s '
+                    ' --sysconfdir=%(sysconfdir)s '
+                    ' --with-system-leveldb --without-hadoop '
+                    ' --with-radosgw --with-gtk2 ')
+
+    def policy(r):
+        r.Install('src/init-ceph', '%(initdir)s/ceph',
+                  mode = 0755)
+        r.SetModes('%(docdir)s/ceph/sample.ceph.conf', 0644)
+        r.Install('src/logrotate.conf', '%(sysconfdir)s/logrotate.d/ceph',
+                  mode = 0644)
+        for d in [ '%(localstatedir)s/lib/ceph/tmp',
+                   '%(localstatedir)s/log/ceph/',
+                   '%(localstatedir)s/log/ceph/stat',
+                   '%(sysconfdir)s/ceph',]:
+            r.MakeDirs(d)
+            r.ExcludeDirectories(exceptions = d)
+
+        # FIXME revise this later. 
+        r.PackageSpec('ceph-libcephfs', '%(libdir)s/libcephfs.so.*')
+        r.PackageSpec('ceph-fuse', '.*fuse.*')
+        r.PackageSpec('ceph-radosgw', '.*radosgw.*')

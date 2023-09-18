@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonGuppy(CPackageRecipe):
+
+    name = 'python-guppy'
+    version = '0.1.9'
+
+    buildRequires = ['python-setuptools:python',
+    'numpy:python', 
+    'python:devel', 
+    'python:tk'
+    
+    ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/g/guppy/guppy-%(version)s.tar.gz')
+        r.PythonSetup()

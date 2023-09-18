@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2006 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gobby(AutoPackageRecipe):
+    name = 'gobby'
+    version = '0.4.12'
+    packageSummary = "Gobby is a free collaborative editor"
+    packageDescription = "Gobby is a free collaborative editor supporting multiple documents in one session and a multi-user chat. It runs on Microsoft Windows, Mac OS X, Linux and other Unix-like platforms. It uses GTK+ 2.6 as its windowing toolkit and thus integrates nicely into the GNOME desktop environment."
+
+    buildRequires = [ 'atk:devel', 'avahi-glib:devel', 'cairo:devel',
+                      'cairomm:devel', 'desktop-file-utils:runtime',
+                      'expat:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gettext:runtime', 'glib:devel',
+                      'glibmm:devel', 'gnutls:devel', 'gtk:devel',
+                      'gtkmm:devel', 'gtksourceview:devel', 'libX11:devel',
+                      'libXau:devellib', 'libXdmcp:devellib', 'libXrender:devel',
+                      'libart_lgpl:devel', 'libgcrypt:devel', 'libgnomeprint:devel',
+                      'libgpg-error:devel', 'libpng:devel', 'libsigc++:devel',
+                      'libstdc++:devel', 'libxml++:devel', 'libxml2:devel',
+                      'net6:devel', 'obby:devel', 'pango:devel',
+                      'pkgconfig:devel', 'zlib:devel', 'GConf:devel', 'gnome-vfs:devel', 'intltool:runtime' ] 
+
+    def unpack(r):
+        r.addArchive('http://releases.0x539.de/%(name)s/')
+	r.Configure('--with-gnome')
+
+    def policy(r):
+        r.Install('contrib/gobby.desktop.in', '%(datadir)s/applications/gobby.desktop')
+        r.Replace('_Name', 'Name', '%(datadir)s/applications/gobby.desktop')
+        r.Replace('_Comment', 'Comment', '%(datadir)s/applications/gobby.desktop')

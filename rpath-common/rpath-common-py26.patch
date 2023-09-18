@@ -1,0 +1,26 @@
+# HG changeset patch
+# User Michael Tharp <mtharp@rpath.com>
+# Date 1233337223 0
+# Node ID 7215cb132eb9d55910f9482a63e3b0ec31c00b1c
+# Parent  df4ad461cd9bd38cdbe849d06e6898f3662f6cfa
+Python 2.6 compatibility tweak
+
+diff --git a/Make.rules b/Make.rules
+--- a/Make.rules
++++ b/Make.rules
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (c) 2006-2008 rPath, Inc.
++# Copyright (c) 2006-2009 rPath, Inc.
+ #
+ # This program is distributed under the terms of the Common Public License,
+ # version 1.0. A copy of this license should have been distributed with this
+@@ -12,7 +12,7 @@
+ # full details.
+ #
+ 
+-PYTHON = $(shell [ -x /usr/bin/python2.4 ] && echo /usr/bin/python2.4)
++PYTHON = $(shell [ -x /usr/bin/python ] && echo /usr/bin/python)
+ PYVERSION = $(shell $(PYTHON) -c 'import os, sys; print sys.version[:3]')
+ PYINCLUDE = $(shell $(PYTHON) -c 'import os, sys; print os.sep.join((sys.prefix, "include", "python" + sys.version[:3]))')
+ 

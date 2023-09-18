@@ -1,0 +1,83 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bugzilla(PackageRecipe):
+    name = 'bugzilla'
+    version = '4.0.1'
+
+    packageSummary = 'Bugzilla is a popular bug tracking system'
+    packageDescription = 'Bugzilla is a popular bug tracking system used by multiple open source projects. It requires a database engine installed - either MySQL, PostgreSQL or Oracle. Without one of these database engines (local or remote), Bugzilla will not work'
+
+    buildRequires = ['perl-DBD-MySQL:perl', 'perl-DBD-Pg:perl', 'perl-DBD-SQLite:perl', 'perl-DBI:perl', 'perl-HTML-Parser:perl', 'perl-HTTP-Cookies:perl', 'perl-URI:perl', 'perl-XML-Twig:perl', 'perl:devel' ]
+
+    def setup(r):
+        r.macros.bugzilladir = '%(servicedir)s/bugzilla'
+        r.addArchive('http://ftp.mozilla.org/pub/mozilla.org/webtools/')
+        r.addSource('bugzilla.conf', macros=True,
+                    dest='%(sysconfdir)s/httpd/conf.d/bugzilla.conf')
+        r.addSource('POSTINSTALL.rpath', macros=True, dest='%(thisdocdir)s/')
+
+        r.Run('find . -name "CVS" -type d | xargs rm -rf')
+        r.Run('find . -name ".cvsignore" | xargs rm -f')
+        
+        r.Install('*.{cgi,gif,html,jpg,js,pl,pm,txt}', '%(bugzilladir)s/')
+        r.Install('Bugzilla', '%(bugzilladir)s/')
+        r.Install('template/en', '%(bugzilladir)s/template/')
+	r.Install('skins/*', '%(bugzilladir)s/skins/')
+        r.Ownership('apache', 'apache', '%(bugzilladir)s/')
+
+        r.Doc('UPGRADING*')
+
+	r.Requires(exceptDeps=r'perl\:\ Bugzilla')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Attachment')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Attachment\:\:PatchReader')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Auth')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Auth\:\:Login')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Auth\:\:Login\:\:Stack')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Auth\:\:Persist\:\:Cookie')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Auth\:\:Verify')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Auth\:\:Verify\:\:Stack')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Bug')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:BugMail')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:CGI')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Chart')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Classification')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Component')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Config')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Config\:\:Common')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Constants')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:DB')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:DB\:\:Schema')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Error')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Field')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Flag')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:FlagType')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Group')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Hook')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Install')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Install\:\:DB')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Install\:\:Filesystem')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Install\:\:Localconfig')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Install\:\:Requirements')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Keyword')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Mailer')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Milestone')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Object')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Product')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Search')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Search\:\:Quicksearch')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Search\:\:Saved')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Series')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Template')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Token')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Update')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:User')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:User\:\:Setting')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Util')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:Version')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:WebService')
+        r.Requires(exceptDeps=r'perl\:\ Bugzilla\:\:WebService\:\:Constants')
+

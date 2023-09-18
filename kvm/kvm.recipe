@@ -1,0 +1,157 @@
+#
+# Copyright (c) 2004-2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class Kvm(RPMPackageRecipe,AutoPackageRecipe):
+
+    name = 'kvm'
+    version = '1.3.0'
+    rpmRelease = '6.fc19'
+    rpmName = 'qemu'
+    tarballName = 'qemu-%(version)s.tar.bz2'
+    # tarballName = rpmName + '-' + name + '-' + version + '.tar.gz' 
+    rpmSources = [ 'kvm.modules',
+                   # Creates /dev/kvm
+                   '80-kvm.rules',
+                   # KSM control scripts
+                   'ksm.sysconfig',
+                   'ksmtuned',
+                   'ksmtuned.conf',
+                   'bridge.conf',]
+    rpmPatches = [ '0001-libcacard-fix-missing-symbols-in-libcacard.so.patch',
+                   '0002-configure-move-vscclient-binary-under-libcacard.patch',
+                   '0003-rtc-test-skip-year-2038-overflow-check-in-case-time_.patch',
+                   '0004-Fix-migration-compat-with-qemu-kvm.patch',
+                   '0101-char-Split-out-tcp-socket-close-code-in-a-separate-f.patch',
+                   '0102-char-Add-a-QemuChrHandlers-struct-to-initialise-char.patch',
+                   '0103-iohandlers-Add-enable-disable_write_fd_handler-funct.patch',
+                   '0104-char-Add-framework-for-a-write-unblocked-callback.patch',
+                   '0105-char-Update-send_all-to-handle-nonblocking-chardev-w.patch',
+                   '0106-char-Equip-the-unix-tcp-backend-to-handle-nonblockin.patch',
+                   '0107-char-Throttle-when-host-connection-is-down.patch',
+                   '0108-virtio-console-Enable-port-throttling-when-chardev-i.patch',
+                   '0109-spice-qemu-char.c-add-throttling.patch',
+                   '0110-spice-qemu-char.c-remove-intermediate-buffer.patch',
+                   '0111-usb-redir-Add-flow-control-support.patch',
+                   '0112-char-Disable-write-callback-if-throttled-chardev-is-.patch',
+                   '0113-hw-virtio-serial-bus-replay-guest-open-on-destinatio.patch',
+                   '0114-libcacard-fix-missing-symbol-in-libcacard.so.patch'  ]
+
+    buildRequires = [ 'SDL:devel', 'alsa-lib:devel', 'e2fsprogs:devel',
+                      'zlib:devel', 'chkconfig:runtime', 'info-kvm:group',
+                      'iasl:runtime', 'gnutls:devel', 'kernel:build-tree',
+                      'dev86:runtime', 'pkgconfig:devel', 'ncurses:devel',
+                      'python:devel', 'esound:devel', 'git:runtime', 'rsync:runtime',
+                      'bluez:devel', 'curl:devel', 'cyrus-sasl:devel', 'libX11:devel',
+                      'openssl:devel', 'pulseaudio:devel', 'texi2html:runtime',
+                      'pciutils:devel', 'which:runtime', 'util-linux:devel',
+                      'attr:devel', 'libjpeg:devel', 'libpng:devel',
+                      'gpxe-roms-qemu:data', 'userspace-kernel-headers',
+                      'vgabios:data', 'seabios:data', 'gettext:runtime', 'intltool:runtime',
+                      'libcap:devel', 'pixman:devel', 'libtool:runtime',
+                      # for docs/man
+                      'texinfo:runtime', 'perl:runtime']
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.addSource('ksm.init')
+        r.addSource('ksmtuned.init')
+    
+    def configure(r):
+        r.disableParallelMake()
+
+        if Arch.x86:
+            r.Environment('ARCH', 'i386')
+        else:
+            r.Environment('ARCH', 'x86_64')
+
+        r.macros.securityflags = ''
+
+
+        cfg = ( ' --target-list=x86_64-softmmu '
+                ' --prefix=%(prefix)s'
+                ' --sysconfdir=%(sysconfdir)s ' # Adding this line fixes FL-2912
+                ' --audio-drv-list=pa,sdl,oss,alsa '
+                ' --disable-strip '
+                ' --disable-xen '
+                ' --enable-mixemu'
+                ' --disable-werror'
+                ' --enable-kvm'
+                # ' --enable-spice' 
+                ' --extra-cflags="%(optflags)s " '
+                ' --enable-sdl ' )
+#        if Arch.x86_64:
+#            cfg += ' --enable-spice '
+
+        r.ManualConfigure( cfg )
+
+
+    def make(r):
+        r.Make('V=1')
+
+    def makeinstall(r):
+        r.MakeInstall('datadir=%(datadir)s/qemu '
+                      'sharedir=%(datadir)s/qemu ')
+        # upstream Makefiles _features_ ...
+#        r.Install('kvm/scripts/qemu-ifup', '%(sysconfdir)s/qemu-ifup', mode = 0755)
+        
+        r.Install('scripts/kvm/kvm_stat', '%(bindir)s/', mode = 0755)
+
+        r.Install('kvm.modules', '%(sysconfdir)s/sysconfig/modules/kvm.modules', mode = 0755)
+        r.Install('80-kvm.rules', '%(sysconfdir)s/udev/rules.d/', mode = 0644)
+
+        r.Install('ksm.init', '%(initdir)s/ksm', mode = 0755)
+        r.Install('ksm.sysconfig', '%(sysconfdir)s/sysconfig/ksm', mode = 0644)
+
+        r.Install('ksmtuned.init', '%(initdir)s/ksmtuned', mode = 0755)
+        r.Install('ksmtuned', '%(sbindir)s/ksmtuned', mode = 0755)
+        r.Install('ksmtuned.conf', '%(sysconfdir)s/ksmtuned.conf', mode = 0644)
+
+        r.Install('qemu.sasl', '%(sysconfdir)s/sasl2/qemu.conf', mode = 0644)
+
+        r.Install('bridge.conf', '%(sysconfdir)s/qemu/', mode = 0644)
+        r.SetModes('%(libexecdir)s/qemu-bridge-helper', 4755)
+
+        r.Remove('%(datadir)s/qemu/pxe*bin', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/{,g}pxe*rom', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/vgabios*bin', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/bios.bin', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/openbios-ppc', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/openbios-sparc32', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/openbios-sparc64', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/petalogix-s3adsp1800.dtb', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/s390-zipl.rom', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/bamboo.dtb', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/slof.bin', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/ppc_rom.bin', allowNoMatch = True)
+        r.Remove('%(datadir)s/qemu/spapr-rtas.bin', allowNoMatch = True)
+
+        r.Remove('%(datadir)s/qemu/palcode-clipper')
+
+        for a, b in [('e1000', '8086100e'),
+                   ('ne2k_pci', 'rtl8029'),
+                   ('pcnet', 'pcnet32'),
+                   ('rtl8139', 'rtl8139'),
+                   ('virtio', 'virtio-net')]: 
+            r.Symlink('%(datadir)s/gpxe/' + b + '.rom', '%(datadir)s/qemu/pxe-'+a+'.rom')
+
+        r.Symlink('../vgabios/VGABIOS-lgpl-latest.bin', '%(datadir)s/qemu/vgabios.bin')
+        r.Symlink('../vgabios/VGABIOS-lgpl-latest.cirrus.bin', '%(datadir)s/qemu/vgabios-cirrus.bin')
+        r.Symlink('../vgabios/VGABIOS-lgpl-latest.qxl.bin',  '%(datadir)s/qemu/vgabios-qxl.bin')
+        r.Symlink('../vgabios/VGABIOS-lgpl-latest.stdvga.bin', '%(datadir)s/qemu/vgabios-stdvga.bin')
+        r.Symlink('../vgabios/VGABIOS-lgpl-latest.vmware.bin', '%(datadir)s/qemu/vgabios-vmware.bin')
+        r.Symlink('%(datadir)s/seabios/bios.bin', '%(datadir)s/qemu/bios.bin')
+        
+        r.Requires('seabios:data', '%(datadir)s/qemu/bios.bin')
+        r.Requires('vgabios:data', '%(datadir)s/qemu/vgabios.*')        
+        r.Requires('gpxe-roms-qemu:data', '%(datadir)s/qemu/pxe.*')        
+
+        r.Symlink('%(mandir)s/man1/qemu.1', '%(mandir)s/man1/qemu-kvm.1')
+
+        r.Symlink('%(bindir)s/qemu-system-x86_64', '%(bindir)s/qemu-kvm')
+
+        r.Requires('info-kvm:group', '%(bindir)s/qemu-kvm')
+
+        

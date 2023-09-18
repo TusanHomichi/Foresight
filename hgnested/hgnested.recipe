@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hgnested(PackageRecipe):
+
+    name = 'hgnested'
+    version = '0.3'
+
+    buildRequires = ['python-setuptools:python', 'mercurial:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://hgnested.googlecode.com/files/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()

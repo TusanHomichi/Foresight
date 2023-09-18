@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2007-2008 rPath Inc.
+#               2013      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class gnutls(AutoPackageRecipe):
+    name = 'gnutls'
+    version = '2.12.23'
+
+    packageSummary = 'The GNU Transport Layer Security Library'
+    packageDescription = 'GnuTLS is a project that aims to develop a library which provides a secure layer, over a reliable transport layer. Currently the GnuTLS library implements the proposed standards by the IETFs TLS working group.'
+
+    buildRequires = [ 'install-info:runtime', 'libgcrypt:devel',
+                      'libgpg-error:devel', 'libstdc++:devel',
+                      'lzo:devel', 'net-tools:runtime', 
+                      'ncurses:devel', 'readline:devel',
+                      'zlib:devel', 'gettext:runtime',
+                      'gtk-doc:runtime', 'guile:devel',
+                      'guile:runtime', 'intltool:runtime',
+                      'libtasn1:devel', 'pkgconfig:devel',
+                      'p11-kit:devel']
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnutls.org/gcrypt/gnutls/v2.12/')
+	r.addSource('libgnutls-config')
+        for patch in [ 'gnutls-2.12.11-rpath.patch',
+                       'gnutls-2.8.6-link-libgcrypt.patch',
+                       'gnutls-2.12.7-dsa-skiptests.patch',
+                       'gnutls-2.12.20-cli-debug-manpage.patch',
+                       'gnutls-2.12.21-fips-algorithms.patch',
+                   ]:
+            r.addPatch(patch)
+
+        r.macros.ldflags += ' -Wl,--no-add-needed'
+
+        
+    def configure(r):
+        r.Configure(' --with-libtasn1-prefix=%(prefix)s '
+                    ' --with-included-libcfg '
+                    ' --disable-static '
+                    # XXX enabling it brings build issues with gmp
+                    ' --disable-guile '
+
+                    # ' --disable-openssl-compatibility '
+                    ' --disable-rpath '
+                    ' --with-libgcrypt'
+                )
+
+    def policy(r):
+        r.Install('libgnutls-config', '%(bindir)s/')
+        r.Install('libgnutls-config', '%(bindir)s/libgnutls-extra-config')
+

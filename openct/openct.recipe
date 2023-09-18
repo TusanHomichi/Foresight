@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenCT(AutoPackageRecipe):
+
+    name = 'openct'
+    version = '0.6.20'
+
+    buildRequires = [
+        'autoconf:runtime', 'automake:runtime', 'flex:runtime', 'libtool:devel',
+        'libtool:runtime', 'libusb:devel', 'pcsc-lite:devel', 'pkgconfig:devel'
+    ]
+
+    def unpack(r):
+
+#        rev = r.version.split('+')[1][1:]
+#        r.addSvnSnapshot(
+#            'http://www.opensc-project.org/svn/openct/trunk/', revision=rev
+#        )
+        r.addArchive('http://www.opensc-project.org/files/openct/')
+        r.addSource('openct.init', dest='%(initdir)s/openct', mode=0755)
+        r.addSource('openct.sysconfig', dest='%(sysconfdir)s/sysconfig/openct')
+
+        r.Run(""" 
+sed -i -e 's|/lib /usr/lib\b|/%(lib)s %(libdir)s|' \
+       -e 's|^usrsbindir=.*$|usrsbindir="%(sbindir)s"|' \
+       -e 's|^usrlibdir=.*$|usrlibdir="%(libdir)s"|' configure 
+sed -i -e 's|^\([A-Z]\)|# \1|' etc/reader.conf.in
+
+""")
+    def configure(r):
+        r.macros.cflags += ' -D_GNU_SOURCE '
+        r.Configure('--disable-static --with-bundle-dir=%(libdir)s/pcsc/drivers/'
+                    ' --enable-usb '
+                    ' --enable-pcsc '
+                    ' --with-udev=/lib/udev ')
+
+    def makeinstall(r):
+
+        r.MakeDirs('/lib/udev')
+        r.MakeInstall()
+
+        r.Install('etc/openct.conf', '%(sysconfdir)s/openct.conf')
+        r.Install('etc/openct.udev', '%(sysconfdir)s/udev/rules.d/60-openct.rules')
+        r.Install('etc/openct.hald', '%(bindir)s/hald-addon-openct', mode=0755)
+        r.Install('etc/openct.fdi', '%(datadir)s/hal/fdi/information/10freedesktop/10-usb-openct.fdi')
+
+    def policy(r):
+        r.TagSpec('initscript', '%(initdir)s/openct')
+

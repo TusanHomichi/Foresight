@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('cpanpackage.recipe')
+class PerlIOStringy(CPANPackageRecipe):
+    name = 'perl-IO-stringy'
+    module = 'IO'
+    version = '2.110'
+
+    buildRequires = [ 'perl:devel', ]

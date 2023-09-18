@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gwget(AutoPackageRecipe):
+    name = 'gwget'
+    version = '1.0.4'
+ 
+    buildRequires = [
+        'GConf:devel', 
+        'GConf:runtime', 
+        'ORBit2:devel', 
+        'atk:devel', 
+        'cairo:devel', 
+        'dbus-glib:devel', 
+        'dbus-glib:runtime', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'epiphany:devel',
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gnome-vfs:devel', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libart_lgpl:devel', 
+        'libbonobo:devel', 
+        'libbonoboui:devel', 
+        'libgnome:devel', 
+        'libgnomecanvas:devel', 
+        'libgnomeui:devel', 
+        'libnotify:devel', 
+        'libpng:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'popt:devel', 
+        'zlib:devel'
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/%(name)s/%(major_version)s/%(name)s-%(version)s.tar.gz')
+        r.addPatch('gwget-1.0.4-epiphany.patch')
+        r.addPatch('gwget-1.0.4-libnotify-0.7.0.patch')
+
+
+    def configure(r):
+        r.Configure('--disable-static --enable-epiphany-extension')
+
+    def policy(r):
+        r.Requires('wget:runtime', 'gwget:runtime')

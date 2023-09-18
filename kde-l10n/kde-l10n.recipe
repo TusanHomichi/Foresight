@@ -1,0 +1,89 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class KdeL10n(kdeCorePackageRecipe):
+    name = 'kde-l10n'
+    version = '4.6.1'
+ 
+    buildRequires = ['dbus:devel', 'libXScrnSaver:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXft:devel', 'libXi:devel', 'libXpm:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel', 'libxkbfile:devel']
+
+    languages = ['ar',
+                'bg',
+                'ca',
+                'ca@valencia',
+                'cs',
+                'da',
+                'de',
+                'el',
+                'en_GB',
+                'es',
+                'et',
+                'eu',
+                'fi',
+                'fr',
+                'ga',
+                'gl',
+                'gu',
+                'he',
+                'hi',
+                'hr',
+                'hu',
+                'ia',
+                'id',
+                'is',
+                'it',
+                'ja',
+                'kk',
+                'km',
+                'kn',
+                'ko',
+                'lt',
+                'lv',
+                'mai',
+                'nb',
+                'nds',
+                'nl',
+                'nn',
+                'pa',
+                'pl',
+                'pt',
+                'pt_BR',
+                'ro',
+                'ru',
+                'sk',
+                'sl',
+                'sr',
+                'sv',
+                'th',
+                'tr',
+                'uk',
+                'wa',
+                'zh_CN',
+                'zh_TW'
+                  ]
+
+    def setup(r):
+        for lang in r.languages:
+        # unpack
+            r.addArchive('mirror://kde//stable/%(version)s/src/kde-l10n/%(name)s-' + lang + '-%(version)s.tar.bz2', dir='kde-l10n')
+        # build
+            r.CMake(r.cmakeArgs, dir = '%(name)s-' + lang + '-%(version)s')
+            r.Make(dir = '%(name)s-' + lang + '-%(version)s')
+
+            if type(lang) == type(""):
+                moduleName = lang
+                moduleSubDirs = ('%(name)s-' + lang +'-%(version)s', )
+            else:
+                moduleName, moduleSubDirs = module[0], module[1:]
+            for moduleSubDir in moduleSubDirs:
+                r.MakeInstall(dir=moduleSubDir, package='%(name)s-' + moduleName)
+
+        # policy
+            r.AutoDoc(exceptions='/\.svn/')
+            r.RemoveNonPackageFiles('.*\.bak')
+            r.DanglingSymlinks(exceptions='%(docdir)s/HTML/sr@latin/.*')

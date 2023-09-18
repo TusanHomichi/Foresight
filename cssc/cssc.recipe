@@ -1,0 +1,14 @@
+class CsscPackage(AutoPackageRecipe):
+
+    name = 'cssc'
+    version = '1.0.1'
+
+    buildRequires = [
+        'gcc-c++:runtime',
+    ]
+
+    def unpack(r):
+        # Upstream uses 'CSSC' for tarball name
+        r.macros.uppercaseName = r.macros.name.upper()
+
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/%(uppercaseName)s-%(version)s.tar.gz')

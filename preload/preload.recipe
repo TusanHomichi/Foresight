@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2008 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class PreLoad(AutoPackageRecipe):
+    buildRequires = [ 'glib:devel', 'chkconfig:runtime', 'pkgconfig:devel' ]
+    name = "preload"
+    version = "0.6.4"
+    rpmRelease = '1.fc10'
+    # Add preload-0.6-start-late.patch to start preload as last service.
+    # We use readahead for boot speedup, and want preload just for login/desktop speedup.
+    # So, start it last.
+    rpmPatches = ['preload-0.6-start-late.patch']
+
+    packageSummary = 'preload is an adaptive readahead daemon'
+    packageDescription = """
+preload is an adaptive readahead daemon. It monitors applications that users run, and by analyzing this data, predicts what applications users might run, and fetches those binaries and their dependencies into memory for faster startup times.
+"""
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+
+    def policy(r):
+        for f in ( '%(localstatedir)s/lib/preload/preload.state', 
+                   '%(localstatedir)s/log/preload.log'):
+            r.InitialContents( f )
+            r.SetModes(f, 0644)
+        r.SetModes('%(localstatedir)s/lib/preload', 0755)

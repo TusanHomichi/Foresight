@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004 Elliot Peele <elliot@bentlogic.net>
+#
+
+class LibID3(AutoPackageRecipe):
+
+    name = 'id3lib'
+    version = '3.8.3'
+
+    buildRequires = [ 'libstdc++:devel', 'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/id3lib/')
+        r.addPatch('id3lib-3.8.3-libtool-autofoo.patch.bz2')
+        r.addPatch('id3lib-3.8.3-includes.patch')
+        r.addPatch('id3lib-3.8.3-io_helpers-163101.patch')
+        r.addPatch('id3lib-3.8.3-mkstemp.patch')
+        r.addPatch('id3lib-dox.patch')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-static')
+
+    def make(r):
+        r.Make('libid3_la_LIBADD=-lz')
+
+    def policy(r):
+
+        r.Doc('AUTHORS', 'HISTORY', 'THANKS')
+

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Openmovieeditor(AutoPackageRecipe):
+    name = 'openmovieeditor'
+    version = '0.0.20090105'
+ 
+    buildRequires = ['Mesa:devel', 'desktop-file-utils:runtime', 'fltk:devel', 'gavl:devel', 'glib:devel', 'gmerlin-avdecoder:devel', 'gmerlin:devel', 'jack:devel', 'libX11:devel', 'libXext:devel', 'libjpeg:devel', 'libpng:devel', 'libquicktime:devel', 'libsamplerate:devel', 'libsndfile:devel', 'libstdc++:devel', 'libxml2:devel', 'pkgconfig:devel', 'portaudio:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/openmovieeditor/')
+
+	# fixes: /usr/bin/ld: cannot find -lGLU
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'

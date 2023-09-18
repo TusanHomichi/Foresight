@@ -1,0 +1,16 @@
+diff -up ./python2/httplib2/__init__.py.orig ./python2/httplib2/__init__.py
+--- ./python2/httplib2/__init__.py.orig	2012-02-24 14:07:01.232200397 +1000
++++ ./python2/httplib2/__init__.py	2012-02-24 14:13:51.290447860 +1000
+@@ -177,8 +177,10 @@ class CertificateHostnameMismatch(SSLHan
+ DEFAULT_MAX_REDIRECTS = 5
+ 
+ # Default CA certificates file bundled with httplib2.
+-CA_CERTS = os.path.join(
+-        os.path.dirname(os.path.abspath(__file__ )), "cacerts.txt")
++#CA_CERTS = os.path.join(
++#        os.path.dirname(os.path.abspath(__file__ )), "cacerts.txt")
++# We use system ca bundle file instead, to preserve backward compability.
++CA_CERTS = "/etc/pki/tls/certs/ca-bundle.crt"
+ 
+ # Which headers are hop-by-hop headers by default
+ HOP_BY_HOP = ['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailers', 'transfer-encoding', 'upgrade']

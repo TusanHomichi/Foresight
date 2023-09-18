@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+class Dash(AutoPackageRecipe):
+    name = 'dash'
+    version = '0.5.7'
+    buildRequires = [] 
+
+    def unpack(r):
+        r.addArchive('http://gondor.apana.org.au/~herbert/dash/files/')
+
+    def policy(r):
+        r.Move('%(bindir)s/%(name)s', '%(essentialbindir)s/')
+        r.TagSpec('shell', '%(essentialbindir)s/dash')

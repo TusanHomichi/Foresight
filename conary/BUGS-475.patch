@@ -1,0 +1,24 @@
+# HG changeset patch
+# User António Meireles <antonio.meireles@openfiler.com>
+# Date 1328881796 0
+# Node ID 8b87a34f248cb2adf34fdb8604839ae4cc92dc25
+# Parent  21bf2ba8f3407628acddcc5fff191bdfd309048a
+fix for BUGS-575.
+
+diff -r 21bf2ba8f340 -r 8b87a34f248c conary/build/policy.py
+--- a/conary/build/policy.py	Thu Feb 09 22:47:50 2012 +0000
++++ b/conary/build/policy.py	Fri Feb 10 13:49:56 2012 +0000
+@@ -829,6 +829,13 @@
+             if symbolName[0] != '_' and issubclass(policyCls, basePolicy):
+                 policyNameMap[symbolName] = policyCls
+ 
++    # add policyDirs to sys.path in advance so that the stuff there could
++    # be consumed by pluggable policies
++    for policyDir in recipeObj.cfg.policyDirs:
++        if os.path.isdir(policyDir):
++            if policyDir not in sys.path:
++                sys.path.append(policyDir)
++
+     # Load pluggable policy
+     for policyDir in recipeObj.cfg.policyDirs:
+         if not os.path.isdir(policyDir):

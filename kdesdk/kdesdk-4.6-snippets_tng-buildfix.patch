@@ -1,0 +1,20 @@
+--- svn/kate/plugins/snippets_tng/lib/completionmodel.cpp.orig	2010-03-15 01:22:57.047541689 +0300
++++ svn/kate/plugins/snippets_tng/lib/completionmodel.cpp	2010-03-15 01:23:11.215542498 +0300
+@@ -17,7 +17,7 @@
+ */
+ 
+ #include "completionmodel.h"
+-#include "completionmodel.moc"
++#include <completionmodel.moc>
+ #include <kdebug.h>
+ #include <klocale.h>
+ #include <ktexteditor/templateinterface.h>
+@@ -89,7 +89,7 @@
+ 
+     
+ #include "internalcompletionmodel.h"
+-#include "internalcompletionmodel.moc"
++#include <internalcompletionmodel.moc>
+     
+ namespace KTextEditor {
+   namespace CodesnippetsCore {

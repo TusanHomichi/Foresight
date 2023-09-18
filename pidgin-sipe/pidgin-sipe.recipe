@@ -1,0 +1,10 @@
+class PidginSipe(AutoPackageRecipe):
+    name = 'pidgin-sipe'
+    version = '1.15.1'
+    buildRequires = ['libpurple:devel', 'pkgconfig:devel', 'gtk:devel',
+                     'glib:devel', 'libtool:runtime', 'intltool:runtime',
+                     'krb5:devel', 'krb5:runtime', 'nss:devel', 'libxml2:devel']
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/sipe/sipe/pidgin-sipe-%(version)s/')
+

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class AlsaOSS(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'alsa-oss'
+    version = '1.0.17'
+    # http://koji.fedoraproject.org/koji/packageinfo?packageID=1293
+    rpmRelease = '4.fc12'
+
+    rpmPatches = [ 'alsa-oss-1.0.12-aoss.patch',
+                   'alsa-oss-glibc-open.patch',
+                   ]
+
+    buildRequires = [ 'alsa-lib:devel',  'pkgconfig:devel', 'autoconf:runtime', 'automake:runtime', 'libtool:runtime' ]
+
+    def configure(r):
+        r.Run('autoreconf -f -i')
+        extraConfig = ' --disable-static '
+        if Arch.x86_64:
+            extraConfig += ' --disable-rpath '
+        r.Configure(extraConfig)

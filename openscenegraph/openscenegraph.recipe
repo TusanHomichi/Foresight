@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Openscenegraph(CPackageRecipe):
+    name = 'openscenegraph'
+    version = '3.1.4'
+ 
+    buildRequires = [
+        'Mesa:devel',
+        'OpenEXR:devel',
+        'SDL:devel',
+        'boost:devel',
+        'cairo:devel',
+        'cmake:runtime',
+        'curl:devel',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gcc-c++:runtime',
+        'giflib:devel',
+        'glib:devel',
+        'gtk:devel',
+        'ilmbase:devel',
+        'jasper:devel',
+        'libICE:devel',
+        'libSM:devel',
+        'libX11:devel',
+        'libXScrnSaver:devel',
+        'libXau:devel',
+        'libXcomposite:devel',
+        'libXcursor:devel',
+        'libXdamage:devel',
+        'libXdmcp:devel',
+        'libXext:devel',
+        'libXfixes:devel',
+        'libXft:devel',
+        'libXi:devel',
+        'libXinerama:devel',
+        'libXmu:devel',
+        'libXpm:devel',
+        'libXrandr:devel',
+        'libXrender:devel',
+        'libXres:devel',
+        'libXt:devel',
+        'libXtst:devel',
+        'libXv:devel',
+        'libXxf86misc:devel',
+        'libjpeg:devel',
+        'libpng:devel',
+        'libstdc++:devel',
+        'libtiff:devel',
+        'libxkbfile:devel',
+        'libxml2:devel',
+        'libxml2:runtime',
+        'pango:devel',
+        'pcre-c++:devel',
+        'pcre:devel',
+        'pixman:devel',
+        'pkgconfig:devel',
+        'poppler-glib:devel',
+        'poppler:devel',
+        'unzip:runtime',
+        'zlib:devel',
+        ]
+ 
+    def setup(r):
+        r.addArchive('http://www.openscenegraph.org/downloads/developer_releases/OpenSceneGraph-%(version)s.zip')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()
+
+

@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class OGMRip(CPackageRecipe):
+    name = 'ogmrip'
+    version = '1.0.0'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'eject:runtime', 'enca:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk-doc:runtime', 'gtk:devel', 'hal:devel', 'intltool:runtime', 'libX11:devel', 'libXrender:devel', 'libdvdread:devel', 'libglade:devel', 'libogg:devel', 'libpng:devel', 'libstdc++:devel', 'libtheora:devel', 'libtiff:devel', 'libxcb:devel', 'libxml2:devel', 'mplayer:runtime', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel', 'enchant:devel', 'libnotify:devel']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/ogmrip/ogmrip/%(major_version)s/%(version)s/ogmrip-%(version)s.tar.gz')
+#        r.addPatch('ogmrip-0.13.6-libnotify-0.7.patch')
+#        r.macros.cflags = '-O2 -march=i686'
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+        r.Requires('gpac:runtime', '%(bindir)s/ogmrip')
+        r.Requires('gocr:runtime', '%(bindir)s/ogmrip')

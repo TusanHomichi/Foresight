@@ -1,0 +1,31 @@
+diff -uNr pdksh-5.2.14.orig/Makefile.in pdksh-5.2.14/Makefile.in
+--- pdksh-5.2.14.orig/Makefile.in	Tue Jul 13 13:06:53 1999
++++ pdksh-5.2.14/Makefile.in	Fri Jul 21 14:09:48 2000
+@@ -27,8 +27,8 @@
+ transform=@program_transform_name@
+ 
+ bindir = $(exec_prefix)/bin
+-mandir = $(prefix)/man/man$(manext)
+ manext = 1
++mandir = $(prefix)/man
+ 
+ # Suffix for executables: nothing for unix, .exe for os/2.
+ exe_suffix=@ac_exe_suffix@
+@@ -81,7 +81,7 @@
+ 
+ install: installdirs all
+ 	$(INSTALL_PROGRAM) $(SHELL_PROG)$(exe_suffix) $(bindir)/`echo $(SHELL_PROG)|sed '$(transform)'`$(exe_suffix)
+-	-$(INSTALL_DATA) $(SHELL_PROG).1 $(mandir)/`echo $(SHELL_PROG)|sed '$(transform)'`.$(manext)
++	-$(INSTALL_DATA) $(SHELL_PROG).1 $(mandir)/man$(manext)/`echo $(SHELL_PROG)|sed '$(transform)'`.$(manext)
+ 	-@prog=$(bindir)/`echo $(SHELL_PROG)|sed '$(transform)'`$(exe_suffix);\
+ 	    test -f /etc/shells \
+ 	    && (grep "^$$prog\$$" /etc/shells > /dev/null \
+@@ -90,7 +90,7 @@
+       you should add it if you want to set your shell to $(SHELL_PROG)")
+ 
+ installdirs:
+-	$(srcdir)/mkinstalldirs $(bindir) $(mandir)
++	$(srcdir)/mkinstalldirs $(bindir) $(mandir)/man$(manext)
+ 
+ uninstall:
+ 	rm -f $(bindir)/`echo $(SHELL_PROG)|sed '$(transform)'`$(exe_suffix)

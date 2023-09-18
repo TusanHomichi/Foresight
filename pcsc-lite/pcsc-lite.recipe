@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PCSCLite(AutoPackageRecipe):
+
+    name = 'pcsc-lite'
+    version = '1.4.99'
+
+    buildRequires = [
+        'flex:runtime', 'libusb:devel', 'pkgconfig:devel'
+    ]
+
+    def unpack(r):
+
+        # Alioth return .gz as .bz2 if we try to guess name
+        r.addArchive(
+            'https://alioth.debian.org'
+            '/frs/download.php/2257/%(name)s-%(version)s.tar.gz'
+        )
+
+        # Fix typo
+        r.Replace('pscsd', 'pcscd', 'etc/pcscd.init.in')
+
+    def configure(r):
+
+        r.Configure(
+            ' --disable-static'
+            ' --enable-runpid=%(localstatedir)s/run/pcscd.pid'
+            ' --enable-confdir=%(sysconfdir)s'
+            ' --enable-ipcdir=%(localstatedir)s/run'
+            ' --enable-usbdropdir=%(libdir)s/pcsc/drivers'
+        )
+
+    def makeinstall(r):
+
+        r.MakeInstall()
+
+        r.Install('etc/pcscd.init', '%(initdir)s/pcscd', mode=0755)
+
+    def policy(r):
+
+        r.TagSpec('initscript', '%(initdir)s/pcscd')
+

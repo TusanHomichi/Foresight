@@ -1,0 +1,19 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pycups(CPackageRecipe):
+
+    name = 'pycups'
+    version = '1.9.49'
+
+    buildRequires = [
+        'cups:devel', 'make:runtime', 'python:devel',
+        'python-setuptools:python'
+    ]
+
+    def setup(r):
+        r.addArchive('http://cyberelk.net/tim/data/pycups/')
+        r.macros.cflags += ' -DVERSION=\\\\\\"%(version)s\\\\\\" '
+        r.PythonSetup()

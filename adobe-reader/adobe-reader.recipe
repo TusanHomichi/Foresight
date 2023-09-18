@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('binarypackage')
+class AdobeReader(BinaryPackageRecipe):
+    name = 'adobe-reader'
+    version = '9.5.5'
+ 
+    buildRequires = [
+        'Mesa:devel', 
+        'atk:devel', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'gdk-pixbuf:devel', 
+        'glib:devel', 
+        'gtk:devel', 
+        'libX11:devel', 
+        'libXext:devel', 
+        'libXt:devel', 
+        'libgcc:devellib', 
+        'libidn:devel', 
+        'libstdc++:devel', 
+        'libxml2:devel', 
+        'pango:devel', 
+        'zlib:devel',
+            ]
+ 
+    archive = 'http://ardownload.adobe.com/pub/adobe/reader/unix/9.x/%(version)s/enu/AdbeRdr%(version)s-1_i486linux_enu.tar.bz2'
+
+    installPath = "/opt/"
+
+    def setup(r):
+        r.addArchive(r.archive, use=Arch.x86)
+
+        r.Run("tar -xf COMMON.TAR")
+        r.Run("tar -xf ILINXR.TAR")
+
+        r.Copy("Adobe",r.installPath)
+
+        r.addSource('adobe-reader.desktop')
+        r.Desktopfile('adobe-reader.desktop')
+
+
+        r.Symlink("/opt/Adobe/Reader9/bin/acroread","/usr/bin/acroread")
+        r.Symlink('/opt/Adobe/Reader9/Browser/intellinux/nppdf.so',
+                  '%(libdir)s/mozilla/plugins/libplugins.so')
+        r.ComponentSpec('runtime', '%(libdir)s/mozilla/plugins/libplugins.so')
+
+        r.Provides(exceptDeps = '.*')
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/opt\/Adobe\/Reader9\/.*')
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/.*\(SysV\ VERSION\ x86\)')
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libResAccess\.so\(SysV\ x86\)')
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libWRServices\.so\(SysV\ x86\)')
+        
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libpang.*')

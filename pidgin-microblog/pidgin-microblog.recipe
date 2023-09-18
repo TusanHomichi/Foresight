@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginMicroblogRecipe(AutoPackageRecipe):
+    name = 'pidgin-microblog'
+    version = '0.3.0'
+    buildRequires = ['pidgin:devel', 'pkgconfig:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://microblog-purple.googlecode.com/files/mbpurple-%(version)s.tar.gz')
+
+    def configure(r):
+        pass

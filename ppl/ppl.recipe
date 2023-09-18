@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2010-2011 António Meireles
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class pplSource(AutoPackageRecipe):
+    name = 'ppl'
+    version = '0.10.2'
+    buildRequires = [  'glpk:devel', 'gmp:devel',
+                       'gprolog:runtime', 'gprolog:devel',
+                       'libstdc++:devel', 'm4:runtime',
+                       'perl:devel', 'perl:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://www.cs.unipr.it/%(name)s/Download/ftp/releases/%(version)s/')
+        r.addPatch('ppl-0.10.2-Makefile.patch')
+
+        r.macros.cppflags += ' -I%(includedir)s/glpk'
+        r.macros.cppflags += """ -I%(libdir)s/gprolog-`gprolog --version 2>&1 | head -1 | sed -e "s/.* \([^ ]*\)$/\\1/g"`/include"""
+
+    def configure(r):
+        r.Configure(' --enable-shared --disable-rpath '
+                    ' --enable-interfaces="c++ c gnu_prolog "'
+                    ' CPPFLAGS="%(cppflags)s" ')
+
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  '{Watchdog/,}libtool')
+

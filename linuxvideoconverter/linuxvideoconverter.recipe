@@ -1,0 +1,21 @@
+#
+# Foresight Linux Template for Python packages Version 0.2 - March 31 2007
+# Feel free to delete those both lines!
+#
+# Copyright (c) 2007 Foresight Linux, [your name]
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class linuxvideoconverter(CPackageRecipe):
+
+    name = 'linuxvideoconverter'
+    version = '0.9.1'
+
+    buildRequires = ['python-setuptools:python', 'desktop-file-utils:runtime', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://rudd-o.com/new-projects/linuxvideoconverter/releases/0.9.1/linuxvideoconverter-0.9.1.tar.gz')
+	r.PythonSetup(data='--install-data=%(prefix)s')
+

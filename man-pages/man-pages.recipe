@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class ManPages(RPMPackageRecipe, CPackageRecipe):
+    name = 'man-pages'
+    version = '3.32'
+    rpmRelease = '8.fc15'
+
+    # glibc provides iconv
+    buildRequires = [ 'glibc:runtime', 'diffutils:runtime'  ]
+
+    rpmPatches = [
+        'man-pages-2.46-nscd.patch',
+        'man-pages-2.63-unimplemented.patch',
+        'man-pages-2.48-passwd.patch',
+        'man-pages-2.51-nscd-conf.patch',
+        'man-pages-2.78-stream.patch',
+        'man-pages-3.22-nsswitch.conf.patch',
+        'man-pages-3.23-proc.patch',
+        'man-pages-3.23-ld.so.patch',
+        'man-pages-3.22-sched_setaffinity.patch',
+        'man-pages-3.23-printf.patch',
+        'man-pages-3.24-getnameinfo.patch',
+        'man-pages-3.24-mmap64.patch',
+        'man-pages-3.26-rcmd.patch',
+        'man-pages-3.27-sd.patch',
+        'man-pages-3.29-uri.patch',
+        'man-pages-posix-2003-awk.patch',
+        'man-pages-posix-2003-man.patch',
+        'man-pages-posix-2003-printf.patch',
+        'man-pages-3.30-prctl.patch',
+        'man-pages-3.32-strtol.patch',
+        'man-pages-3.32-readdir.patch',
+        ]
+
+    def setup(r):
+        r.macros.posix_version = "2003"
+        r.macros.posix_release = "a"
+        r.macros.posix_archive = 'man-pages-posix-%(posix_version)s-%(posix_release)s'
+
+        r.addArchive('%(name)s-%(version)s.tar.bz2', rpm=r.srpm)
+        r.addArchive('%(posix_archive)s.tar.bz2', rpm=r.srpm)
+        r.addArchive('%(name)s-additional-20101006.tar.bz2', rpm=r.srpm,
+                     dir = '%(name)s-%(version)s')
+        # Remove the useless file from man-pages-additional-20101006.tar.bz2, or else it will be installed
+        r.Remove('man5/man-pages-3.22-gai.conf.patch')
+
+        # Have to use plain cp, or else the following r.addPatch runs first
+        r.addAction('cp -r ../%(posix_archive)s/man[0-9]* .')
+        r.addAction('cp ../%(posix_archive)s/POSIX-COPYRIGHT .')
+
+        for patch in r.rpmPatches:
+            r.addPatch(patch, rpm=r.srpm)
+
+        # FIXME update this section
+        # Convert some strange manpages to UTF-8
+        brokenManPages = [ ('iso_8859-15', '7'),
+                           ('iso_8859-16', '7'),
+                           ('iso_8859-1',  '7'),
+                           ('iso_8859-2',  '7'),
+                           ('iso_8859-9',  '7'),
+                           ('koi8-r',      '7') ]
+
+        for manpage, section in brokenManPages:
+            manFile = 'man' + section + '/' + manpage + '.' + section
+
+            r.Run('LANG=en iconv -f %s -t UTF-8 %s -o %s.conv' %
+                  (manpage.upper(), manFile, manFile))
+            r.Move(manFile+'.conv', manFile)
+
+        ### And now remove those we are not going to use:
+        # FIXME confilcts with quota
+        # to keep after we get rid of rPL
+        r.Remove('man2/quotactl.2')
+
+        # Part of libattr-devel
+        r.Remove('man2/{,f,l}{get,list,remove,set}xattr.2')
+
+        # Problem with db x db4 (#198597) - man pages are obsolete
+        r.Remove('man3/{db,btree,dbopen,hash,mpool,recno}.3')
+
+        # Deprecated
+        r.Remove('man2/pciconfig_{write,read,iobase}.2')
+
+        # Install appropriate man pages
+        r.Install('man[0-9]*', '%(mandir)s/')
+
+        r.Doc('man-pages-%(version)s.Announce')
+        r.Doc('POSIX-COPYRIGHT')

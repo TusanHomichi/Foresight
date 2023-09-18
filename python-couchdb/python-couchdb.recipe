@@ -1,0 +1,11 @@
+class PyCouchDB(AutoPackageRecipe):
+    name = 'python-couchdb'
+    version = '0.6.1'
+
+    buildRequires = [ 'python:devel', 'python-simplejson:python',
+                      'python-setuptools:python'
+                    ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/C/CouchDB/CouchDB-%(version)s.tar.gz')
+        r.PythonSetup()

@@ -1,0 +1,80 @@
+#
+# Copyright (c) 2007 - 2008 rPath, Inc.
+# Copyright (c) 2009 - 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Exaile(AutoPackageRecipe):
+    name = 'exaile'
+    version = '3.3.1'
+    buildRequires = [
+        'avahi:python',
+        'BeautifulSoup:python',
+        'bzr:python',
+        'cddb-py:python',
+        'cElementTree:python',
+        'chardet:python',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'gettext:runtime',
+        'gnome-python-extras:python',
+        'gst-python:python',
+        'help2man:runtime',
+        'intltool:runtime',
+        'ipython:python',
+        'libgpod:python',
+        'mutagen:python',
+        'mx:python',
+        'notify-python:python',
+        'PIL:python',
+        'pycairo:python',
+        'pygobject:python',
+        'pygobject:runtime',
+        'pygtk:devel',
+        'pygtk:python',
+        'python-cssutils:python',
+        'python-ctypes:python',
+        'python-daap:python',
+        'python-simplejson:python',
+        'python-sqlite:python',
+        'python:devel',
+        'pywebkitgtk:python',
+        'pyxdg:python',
+        'sexy-python:python',
+    ]
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.macros.stablever = r.version[0:5]
+        r.addArchive('http://www.launchpad.net/exaile/'
+                     '%(major_version)s.x/%(version)s/+download/')
+        r.addPatch('exaile-3.3.1-makefile.patch')
+        r.addPatch('exaile-3.3.0-udisks.patch')
+
+        #r.Replace('PLUGINSDIR =', 'PLUGINSDIR ?=', 'plugins/Makefile')
+        #r.addPatch('plugindir.patch')
+
+    def configure(r):
+        r.Environment('PREFIX', '%(prefix)s/')
+        r.Environment('LIBINSTALLDIR', '%(libdir)s/python2.6/site-packages')
+        r.Environment('PYTHON2_CMD', '%(bindir)s/python')
+        #r.Environment('PLUGINSDIR', '%(lib)s/python2.6/site-packages/exaile/plugins/')
+
+    def policy(r):
+        # runtime requirements
+        req = [
+            'pygtk:python',
+            'gst-python:python',
+            'mutagen:python',
+            'cddb-py:python',
+            'notify-python:python',
+            'gst-python:python',
+            'sexy-python:python',
+            'PIL:python',
+            'cElementTree:python',
+            'python-cssutils:python',
+            'pywebkitgtk:python',
+            ]
+        for p in req:
+            r.Requires(p, '%(bindir)s/exaile')

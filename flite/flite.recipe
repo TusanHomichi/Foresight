@@ -1,0 +1,29 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Flite(AutoPackageRecipe):
+    name = 'flite'
+    version = '1.4'
+
+    buildRequires = [ 'alsa-lib:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://www.speech.cs.cmu.edu/flite/packed/%(name)s-%(version)s/%(name)s-%(version)s-release.tar.bz2')
+        # taken from http://patch-tracker.debian.org/package/flite/1.4-release-6
+        for patch in [ 'no_rpath.patch',
+                       'shlib_deps.patch']:
+            r.addPatch(patch)
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure('--enable-shared --with-audio=alsa')
+
+    def makeinstall(r):
+        r.MakeInstall(' INSTALLBINDIR=%(destdir)s%(bindir)s '
+                      ' INSTALLLIBDIR=%(destdir)s%(libdir)s '
+                      ' INSTALLINCDIR=%(destdir)s%(includedir)s/flite')

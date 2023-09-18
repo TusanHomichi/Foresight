@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SuomiMalaga(AutoPackageRecipe):
+    name = 'suomi-malaga'
+    version = '1.6'
+ 
+    buildRequires = ['malaga:runtime']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/voikko/')
+
+    def make(r):
+	r.Make('voikko')
+
+    def makeinstall(r):
+	r.Make('voikko-install DESTDIR=%(destdir)s%(libdir)s/voikko')
+
+    def setup(r):
+	r.unpack()
+	r.make()
+	r.makeinstall()
+	r.policy()

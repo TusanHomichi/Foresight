@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkEquinoxEngine(AutoPackageRecipe):
+    name = 'gtk-equinox-engine'
+    version = '1.50'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'glitz:devel', 'gtk:devel', 'libX11:devel',
+                      'libXrender:devel', 'libpng:devel', 'libxcb:devel',
+                      'pango:devel', 'pkgconfig:devel', 'xcb-util:devel',
+                      'zlib:devel'
+                      ]
+
+    def setup(r):
+        r.addArchive('http://gnome-look.org/CONTENT/content-files/121881-equinox-%(major_version)s.tar.gz')
+        r.addArchive('http://gnome-look.org/CONTENT/content-files/140449-equinox-themes-%(version)s.tar.gz',
+                     dir = 'equinox-%(version)s/_themes_')
+        
+        r.Configure('--enable-animation')
+        r.Make()
+        r.MakeInstall()
+
+        # fixing strange crash of nautilus
+        r.Replace('separatorstyle = 0', 'separatorstyle = 1',
+            '_themes_/Equinox*/gtk-2.0/apps/nautilus.rc')
+
+        r.Remove('_themes_/*.crx')
+        r.Install('_themes_/Equinox*', '%(datadir)s/themes/')
+
+        # these themes uses the Faenza icon theme
+        r.Requires('faenza-icon-theme:data', '%(datadir)s/themes/Equinox.*/index.theme')

@@ -1,0 +1,7 @@
+loadSuperClass('rubygempackage')
+class TzInfo(RubygemPackageRecipe):
+
+    name = 'rubygem-tzinfo'
+    version = '0.3.31'
+
+    buildRequires = ['rubygem-rake:runtime']

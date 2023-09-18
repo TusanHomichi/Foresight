@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gmerlin(CPackageRecipe):
+    name = 'gmerlin'
+    version = '1.0.0'
+ 
+    buildRequires = ['alsa-lib:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'esound:devel', 'fontconfig:devel', 'freetype:devel', 'gavl:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'install-info:runtime', 'intltool:runtime', 'jack:devel', 'libICE:devel', 'libX11:devel', 'libXext:devel', 'libXinerama:devel', 'libXv:devel', 'libjpeg:devel', 'libpng:devel', 'libquicktime:devel', 'libtiff:devel', 'libv4l:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'pulseaudio:devel', 'texinfo:runtime', 'zlib:devel', 'Mesa:devel', 'doxygen:runtime', 'libSM:devel', 'libvisual:devel', 'libcdio:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/gmerlin/%(name)s-%(version)s.tar.gz')
+        r.addPatch('gmerlin-1.0.0-icon_link.patch')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+	r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.Configure('--libdir=%(libdir)s --datadir=%(datadir)s --includedir=%(includedir)s --disable-rpath')
+	r.Make()
+	r.MakeInstall('DESTDIR=%(destdir)s')

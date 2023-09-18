@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Check(AutoPackageRecipe):
+    name = 'check'
+    version = '0.9.8'
+
+    buildRequires = [ 'install-info:runtime', ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/%(name)s/%(version)s/')

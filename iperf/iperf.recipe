@@ -1,0 +1,27 @@
+#
+# António Meireles
+#
+# http://sbin.reboot.sh
+#
+# sbin@reboot.sh
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+# ermo: updated to version 2.0.5
+
+class Iperf(CPackageRecipe):
+    name = 'iperf'
+    version = '2.0.5'
+
+    buildRequires = ['libstdc++:devel']
+
+
+    def setup(r):
+	r.addArchive('http://downloads.sourceforge.net/iperf/'
+			'%(name)s-%(version)s.tar.gz?big_mirror=0')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+
+

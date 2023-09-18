@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Grantlee(CMakePackageRecipe):
+
+    name = 'grantlee'
+    version = '0.2.0'
+
+    buildRequires = [
+        'libstdc++:devel', 'qt4:devel',
+        'doxygen:runtime', 'graphviz:runtime', 'phonon:devel', 'qt4-sql:mysql', 'qt4-sql:odbc', 'qt4-sql:psql', 'qt4-sql:sqlite'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://www.loegria.net/grantlee/')
+

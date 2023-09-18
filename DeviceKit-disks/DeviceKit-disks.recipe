@@ -1,0 +1,35 @@
+
+class DeviceKitDisks(AutoPackageRecipe):
+    buildRequires = [ 'dbus-glib:devel', 'dbus:devel', 'glib:devel',
+                      'libxslt:runtime', 'pkgconfig:devel', 'udev:devel',
+                      'polkit:devel', 'gettext:runtime', 'gudev:devel',
+                      'intltool:runtime', 'libusb:devel', 'sg3_utils:devel',
+                      'parted:devel', 'device-mapper:devel', 'udev:devel',
+                      'libatasmart:devel', 'sqlite:devel', 'zlib:devel']
+
+    name = "DeviceKit-disks"
+    version = '1.0.1'
+
+    def unpack(r):
+        r.macros.name = 'udisks'
+        r.addArchive('http://hal.freedesktop.org/releases/')
+ 
+    def configure(r):
+        r.Replace('-Werror', '', 'configure')
+        # FIXME: get manpages generation to work inside mooks
+        # FIXME - understand lvm2 breackage
+        r.Configure(' --disable-gtk-doc --disable-man-pages '
+                    ' --disable-lvm2 ')
+
+    def policy(r):
+        # for now, include a compat symlink for the command-line tool
+        # and man page
+        r.Symlink('udisks', '%(bindir)s/devkit-disks')
+        # r.Symlink('udisks.1', '%(datadir)s/man/man1/devkit-disks.1')
+
+        r.SetModes('%(sysconfdir)s/profile.d/udisks-bash-completion.sh', 0644)
+        r.NonBinariesInBindirs(exceptions = '%(sysconfdir)s/profile.d/udisks-bash-completion.sh')
+
+        r.SetModes('%(localstatedir)s/run/udisks', 0700)
+        r.SetModes('%(localstatedir)s/lib/udisks', 0700)
+        

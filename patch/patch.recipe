@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2012 The Foresight Linux Project
+#               2011-2012 Openfiler Ltd.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Patch(AutoPackageRecipe):
+    name = 'patch'
+    version = '2.6.1'
+    buildRequires = [ 'ed:runtime', ]
+    
+    patches = [ 'patch-2.5.4-sigsegv.patch',
+                'patch-get-arg.patch',
+                'patch-CVE-2010-4651.patch',
+                'patch-backup-if-mismatch.patch',
+                'patch-coverity-leak.patch',
+               ]
+    
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/gnu/patch/')
+        for patch in r.patches:
+            r.addPatch(patch)
+        r.macros.cflags += ' -D_GNU_SOURCE '
+        
+    def makeinstall(r):
+        r.MakePathsInstall()

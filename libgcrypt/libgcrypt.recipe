@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+#               2013      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libgcrypt(AutoPackageRecipe) :
+    name = 'libgcrypt'
+    version = '1.5.0'
+    buildRequires = [ 'libgpg-error:devel', 'install-info:runtime' ]
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnupg.org/gcrypt/%(name)s/')
+        for patch in [  'libgcrypt-1.5.0-leak.patch',
+                       
+                    ]:
+            r.addPatch(patch)
+
+    # XXX look at fedoar packaging for F3
+
+    def configure(r):
+        r.Configure(' --disable-static'
+                    ' --enable-noexecstack'
+                    ' --enable-pubkey-ciphers="dsa elgamal rsa"'
+                    ' --disable-O-flag-munging')
+    def policy(r):
+        r.MakeDirs('%(sysconfdir)s/gcrypt')
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/gcrypt')

@@ -1,0 +1,13 @@
+class aubio(CPackageRecipe):
+    buildRequires = ['alsa-lib:devel', 'jack:devel', 'libsamplerate:devel', 'libsndfile:devel', 'fftw:devel', 'mod_python:python', 'pkgconfig:devel', 'python:devel', 'sound-theme-freedesktop:runtime', 'swig:runtime']
+    name = "aubio"
+    version = "0.3.2"
+
+    def setup(r):
+        r.addArchive('http://aubio.org/pub/aubio-0.3.2.tar.gz')
+#	r.Run('./bootstrap')
+	r.Configure()
+	r.Replace('{prefix}/lib', '{libdir}', 'Makefile')
+        r.Make()
+        r.MakeInstall()
+	r.Move('/usr/lib/python2.6/site-packages/*', '%(libdir)s/python2.6/site-packages/')

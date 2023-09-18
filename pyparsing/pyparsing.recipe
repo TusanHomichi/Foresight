@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pyparsing(PackageRecipe):
+
+    name = 'pyparsing'
+    version = '1.5.5'
+
+    buildRequires = ['python-setuptools:python', 'python:devel', 'unzip:runtime']
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/pyparsing/pyparsing/pyparsing-%(version)s/pyparsing-%(version)s.zip')
+        r.PythonSetup()

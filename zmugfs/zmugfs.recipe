@@ -1,0 +1,12 @@
+import datetime
+class ZMugfs(AutoPackageRecipe):
+    name = 'zmugfs'
+    version = datetime.date.today().strftime("%Y%m%d") +'.git'
+
+    buildRequires = [ 'python:devel', 'python-setuptools:python', 'fuse:devel']
+    
+    def setup(r):
+        r.addGitSnapshot('git://github.com/jmrodri/zmugfs.git')
+        r.mainDir('%(name)s-master/%(name)s/src')
+        r.PythonSetup()
+

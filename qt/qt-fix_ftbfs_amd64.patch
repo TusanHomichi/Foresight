@@ -1,0 +1,35 @@
+diff -urN qt-x11-free-3.3.3/tools/qvfb/qvfbview.cpp ./tools/qvfb/qvfbview.cpp
+--- qt-x11-free-3.3.3/tools/qvfb/qvfbview.cpp	2004-04-15 14:53:25.000000000 +0200
++++ ./tools/qvfb/qvfbview.cpp	2005-01-03 11:32:45.000000000 +0100
+@@ -115,7 +115,7 @@
+ 	data = (unsigned char *)shmat( shmId, 0, 0 );
+     }
+ 
+-    if ( (int)data == -1 )
++    if ( (long)data == -1 )
+ 	qFatal( "Cannot attach to shared memory" );
+ 
+     hdr = (QVFbHeader *)data;
+diff -urN qt-x11-free-3.3.3/examples/demo/opengl/fbm.c ./examples/demo/opengl/fbm.c
+--- qt-x11-free-3.3.3/examples/demo/opengl/fbm.c	2003-05-27 17:19:17.000000000 +0200
++++ ./examples/demo/opengl/fbm.c	2005-01-03 12:10:25.000000000 +0100
+@@ -50,6 +50,8 @@
+ 	r1 = r0 - 1.;
+ #define at3(rx,ry,rz) ( rx * q[0] + ry * q[1] + rz * q[2] )
+ 
++static float noise3(float vec[3]);
++
+ /* Fractional Brownian Motion function */
+ 
+ double fBm( Vector point, double H, double lacunarity, double octaves,
+diff -urN qt-x11-free-3.3.3/examples/demo/opengl/fbm.h ./examples/demo/opengl/fbm.h
+--- qt-x11-free-3.3.3/examples/demo/opengl/fbm.h	2003-05-27 17:19:17.000000000 +0200
++++ ./examples/demo/opengl/fbm.h	2005-01-03 12:10:05.000000000 +0100
+@@ -26,7 +26,6 @@
+     double z;
+ } Vector;
+     
+-float noise3(float vec[]);
+ double fBm( Vector point, double H, double lacunarity, double octaves, 
+ 	    int init );
+ #endif

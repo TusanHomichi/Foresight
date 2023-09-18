@@ -1,0 +1,6 @@
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class PerlHttpCookies(CPANPackageRecipe,CPackageRecipe):
+    name = 'perl-IO-Tty'
+    version = '1.02'
+
+    buildRequires = [ 'perl:devel', ]

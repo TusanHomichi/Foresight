@@ -1,0 +1,41 @@
+Index: gnome-session-2.27.5/data/gnome-wm
+===================================================================
+--- gnome-session-2.27.5.orig/data/gnome-wm
++++ gnome-session-2.27.5/data/gnome-wm
+@@ -68,8 +68,15 @@ if [ -z "$WINDOW_MANAGER" ] ; then
+   # Create a list of window manager we can handle, trying to only use the
+   # compositing ones when it makes sense
+ 
+-  xdpyinfo 2> /dev/null | grep -q "^ *Composite$" 2> /dev/null
+-  IS_X_COMPOSITED=$?
++  if [ "x$XDG_CONFIG_HOME" = "x" ]; then
++    COMPIZ_ENABLED_FILE="$HOME/.config/compiz/enable-compiz"
++  else
++    COMPIZ_ENABLED_FILE="$XDG_CONFIG_HOME/compiz/enable-compiz"
++  fi
++
++  #xdpyinfo 2> /dev/null | grep -q "^ *Composite$" 2> /dev/null
++  #IS_X_COMPOSITED=$?
++  IS_X_COMPOSITED=0
+ 
+   KNOWN_WM="sawfish sawmill enlightenment icewm wmaker fvwm2 qvwm fvwm twm kwm"
+   if [ $IS_X_COMPOSITED -eq 0 ] ; then
+@@ -78,6 +85,18 @@ if [ -z "$WINDOW_MANAGER" ] ; then
+   # metacity is still the default wm in GNOME
+   KNOWN_WM="metacity $KNOWN_WM"
+ 
++  if test -f "$COMPIZ_ENABLED_FILE" -a "$COMPIZ_ENABLED_FILE" -nt /etc/X11/xorg.conf; then
++    KNOWN_WM="compiz-manager $KNOWN_WM"
++  else
++      if [ ! -f "$HOME/.config/compiz/disable-compiz" ] ; then
++         # Check to see if hardware is supported by compiz, to have it as default WM if so
++         CM_DRY=yes compiz-manager > /dev/null 2>&1
++         if test $? -eq 0; then
++	     KNOWN_WM="compiz-manager $KNOWN_WM"
++         fi
++      fi
++  fi
++
+   OLDIFS=$IFS
+   if [ -z "$DEFWM" -o "x$DEFWM" = "xgnome-wm" ]; then
+ 

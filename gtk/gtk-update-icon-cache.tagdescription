@@ -1,0 +1,5 @@
+file            %(taghandlerdir)s/gtk-update-icon-cache
+implements      files update
+implements      files remove
+include         %(datadir)s/icons/.*
+datasource      stdin

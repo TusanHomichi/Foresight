@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class Nautilus(RPMPackageRecipe,AutoPackageRecipe):
+
+    buildRequires = [ 'install-info:runtime' ]
+
+    name = 'macchanger'
+    version = '1.5.0'
+    rpmRelease = '10.fc15'
+    rpmPatches = [ 'macchanger-1.5.0-OUI-list-update.diff',
+                   'macchanger-1.5.0-man-update.diff',
+                   'macchanger-1.5.0-random-seed.diff',
+                   'macchanger-1.5.0-dynamic-lists.diff',
+                   'macchanger-1.5.0-dev-name-overflow.diff',
+                   'macchanger-1.5.0-exit-code.diff' ]
+

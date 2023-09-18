@@ -1,0 +1,36 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libiodbc(AutoPackageRecipe):
+
+    name = 'libiodbc'
+    version = '3.52.7'
+
+    def unpack(r):
+
+        r.addArchive('http://www.iodbc.org/downloads/iODBC/')
+
+        r.addPatch('libiodbc-3.52.6-multilib.patch')
+
+    def configure(r):
+
+        r.Configure(
+            ' --enable-odbc3 '
+            ' --disable-static '
+            ' --enable-pthreads '
+            ' --disable-gui '
+            ' --disable-libodbc '
+            ' --with-iodbc-inidir=%(sysconfdir)s '
+            ' --includedir=%(includedir)s/libiodbc '
+        )
+
+        r.Replace('hardcode_libdir_flag_spec=".*"', 'hardcode_libdir_flag_spec=""', 'libtool')
+
+    def policy(r):
+
+        r.Move('%(datadir)s/libiodbc/samples', '%(thisdocdir)s/')
+
+        r.AutoDoc(exceptions='README.(Debian|MACOSX|MYODBC)')
+

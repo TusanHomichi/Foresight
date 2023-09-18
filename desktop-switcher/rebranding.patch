@@ -1,0 +1,843 @@
+diff -r 15c1ead15cb7 data/ui.xml
+--- a/data/ui.xml	Wed Nov 05 14:49:59 2008 -0500
++++ b/data/ui.xml	Wed Nov 05 14:58:10 2008 -0500
+@@ -40,8 +40,8 @@
+                     <child>
+                       <object class="GtkLabel" id="label1">
+                         <property name="visible">True</property>
+-                        <property name="label" translatable="yes">&lt;b&gt;Ubuntu Netbook Desktop&lt;/b&gt;
+-Provides a simple desktop with the Ubuntu Netbook Launcher.</property>
++                        <property name="label" translatable="yes">&lt;b&gt;Foresight Netbook Desktop&lt;/b&gt;
++Provides a simple desktop with the Netbook Launcher.</property>
+                         <property name="use_markup">True</property>
+                       </object>
+                       <packing>
+@@ -74,7 +74,7 @@
+                       <object class="GtkLabel" id="label2">
+                         <property name="visible">True</property>
+                         <property name="label" translatable="yes">&lt;b&gt;Classic Desktop&lt;/b&gt;
+-The default Ubuntu Desktop.</property>
++The default Foresight Desktop.</property>
+                         <property name="use_markup">True</property>
+                       </object>
+                       <packing>
+diff -r 15c1ead15cb7 po/ar.po
+--- a/po/ar.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/ar.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:37-0400\n"
+@@ -26,15 +26,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Classic Desktop</b>\n"
+-"وضع سطح مكتبUbuntu الافتراضي."
++"وضع سطح مكتبForesight الافتراضي."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"يوفر سطح مكتب بسيط مع Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"يوفر سطح مكتب بسيط مع Netbook Launcher."
+diff -r 15c1ead15cb7 po/ca.po
+--- a/po/ca.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/ca.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -26,15 +26,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Escriptori clàssic</b>\n"
+-"Escriptori Ubuntu predeterminat."
++"Escriptori Foresight predeterminat."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Escriptori Ubuntu Netbook</b>\n"
+-"Proporciona un escriptori senzill amb l'iniciador de l'Ubuntu Netbook."
++"<b>Escriptori Foresight Netbook</b>\n"
++"Proporciona un escriptori senzill amb l'iniciador de l'Foresight Netbook."
+diff -r 15c1ead15cb7 po/cs.po
+--- a/po/cs.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/cs.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klasická pracovní plocha</b>\n"
+-"Výchozí pracovní plocha Ubuntu."
++"Výchozí pracovní plocha Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Pracovní plocha Ubuntu Netbook</b>\n"
+-"Poskytuje jednoduchou pracovní plochu s aplikací Ubuntu Netbook Launcher."
++"<b>Pracovní plocha Foresight Netbook</b>\n"
++"Poskytuje jednoduchou pracovní plochu s aplikací Netbook Launcher."
+diff -r 15c1ead15cb7 po/da.po
+--- a/po/da.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/da.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klassisk skrivebord</b>\n"
+-"Ubuntu-standardskrivebordet."
++"Foresight-standardskrivebordet."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook-skrivebord</b>\n"
+-"Giver adgang til et enkelt skrivebord med Ubuntu Netbook-starteren."
++"<b>Foresight Netbook-skrivebord</b>\n"
++"Giver adgang til et enkelt skrivebord med Foresight Netbook-starteren."
+diff -r 15c1ead15cb7 po/de.po
+--- a/po/de.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/de.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klassischer Desktop</b>\n"
+-"Ubuntu-Standard-Desktop"
++"Foresight-Standard-Desktop"
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu-Netbook-Desktop</b>\n"
+-"Bietet einen einfachen Desktop mit dem Ubuntu-Netbook-Launcher."
++"<b>Foresight-Netbook-Desktop</b>\n"
++"Bietet einen einfachen Desktop mit dem Foresight-Netbook-Launcher."
+diff -r 15c1ead15cb7 po/el.po
+--- a/po/el.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/el.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Κλασική επιφάνεια εργασίας</b>\n"
+-"Η προεπιλεγμένη επιφάνεια εργασίας Ubuntu."
++"Η προεπιλεγμένη επιφάνεια εργασίας Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Eπιφάνεια εργασίας Ubuntu Netbook</b>\n"
+-"Παρέχει μια απλή επιφάνεια εργασίας με το Ubuntu Netbook Launcher."
++"<b>Eπιφάνεια εργασίας Foresight Netbook</b>\n"
++"Παρέχει μια απλή επιφάνεια εργασίας με το Netbook Launcher."
+diff -r 15c1ead15cb7 po/es.po
+--- a/po/es.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/es.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Escritorio clásico</b>\n"
+-"Escritorio predeterminado de Ubuntu."
++"Escritorio predeterminado de Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Escritorio de Ubuntu Netbook</b>\n"
+-"Escritorio sencillo con iniciador Ubuntu Netbook."
++"<b>Escritorio de Foresight Netbook</b>\n"
++"Escritorio sencillo con iniciador Foresight Netbook."
+diff -r 15c1ead15cb7 po/eu.po
+--- a/po/eu.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/eu.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -26,15 +26,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Mahaigaine klasikoa</b>\n"
+-"Ubuntu Mahaigaine lehenetsia."
++"Foresight Mahaigaine lehenetsia."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook Mahaigainea</b>\n"
+-"Mahaigaine sinplea eskaintzen du Ubuntu Netbook Abiaratzailearekin."
++"<b>Foresight Netbook Mahaigainea</b>\n"
++"Mahaigaine sinplea eskaintzen du Foresight Netbook Abiaratzailearekin."
+diff -r 15c1ead15cb7 po/fi.po
+--- a/po/fi.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/fi.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Perinteinen työpöytä</b>\n"
+-"Ubuntu-oletustyöpöytä."
++"Foresight-oletustyöpöytä."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook -työpöytä</b>\n"
+-"Antaa käyttöön pelkistetyn työpöydän, jolla on Ubuntu Netbook Launcher."
++"<b>Foresight Netbook -työpöytä</b>\n"
++"Antaa käyttöön pelkistetyn työpöydän, jolla on Netbook Launcher."
+diff -r 15c1ead15cb7 po/fr.po
+--- a/po/fr.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/fr.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Bureau classique</b>\n"
+-"Le bureau Ubuntu par défaut."
++"Le bureau Foresight par défaut."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Bureau d'Ubuntu Netbook</b>\n"
+-"Fournit un bureau simple avec le lanceur d'Ubuntu Netbook."
++"<b>Bureau d'Foresight Netbook</b>\n"
++"Fournit un bureau simple avec le lanceur d'Foresight Netbook."
+diff -r 15c1ead15cb7 po/gl.po
+--- a/po/gl.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/gl.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -26,15 +26,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Escritorio clásico</b>\n"
+-"Escritorio Ubuntu por defecto."
++"Escritorio Foresight por defecto."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Escritorio Ubuntu Netbook</b>\n"
+-"Fornece un escritorio simple co Lanzador Ubuntu Netbook."
++"<b>Escritorio Foresight Netbook</b>\n"
++"Fornece un escritorio simple co Lanzador Foresight Netbook."
+diff -r 15c1ead15cb7 po/he.po
+--- a/po/he.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/he.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:38-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>שולחן עבודה קלאסי</b>\n"
+-"שולחן ברירת מחדל של Ubuntu"
++"שולחן ברירת מחדל של Foresight"
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>שולחן העבודה של Ubuntu Netbook</b>\n"
+-"מספק שולחן עבודה פשוט יחד עם Ubuntu Netbook Launcher."
++"<b>שולחן העבודה של Foresight Netbook</b>\n"
++"מספק שולחן עבודה פשוט יחד עם Netbook Launcher."
+diff -r 15c1ead15cb7 po/hu.po
+--- a/po/hu.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/hu.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klasszikus asztal</b>\n"
+-"Az alapértelmezett Ubuntu asztal."
++"Az alapértelmezett Foresight asztal."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook asztal</b>\n"
+-"Egyszerű asztal Ubuntu Netbook Launcher programmal."
++"<b>Foresight Netbook asztal</b>\n"
++"Egyszerű asztal Netbook Launcher programmal."
+diff -r 15c1ead15cb7 po/it.po
+--- a/po/it.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/it.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Desktop classico</b>\n"
+-"Il desktop predefinito di Ubuntu."
++"Il desktop predefinito di Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Desktop Ubuntu per notebook</b>\n"
+-"Fornisce un semplice desktop tramite Ubuntu Netbook Launcher."
++"<b>Desktop Foresight per notebook</b>\n"
++"Fornisce un semplice desktop tramite Netbook Launcher."
+diff -r 15c1ead15cb7 po/ja.po
+--- a/po/ja.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/ja.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>クラシック デスクトップ</b>\n"
+-"デフォルトの Ubuntu デスクトップ。"
++"デフォルトの Foresight デスクトップ。"
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook デスクトップ</b>\n"
+-"Ubuntu Netbook Launcher を用いたシンプルなデスクトップ。"
++"<b>Foresight Netbook デスクトップ</b>\n"
++"Netbook Launcher を用いたシンプルなデスクトップ。"
+diff -r 15c1ead15cb7 po/ko.po
+--- a/po/ko.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/ko.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:39-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>고전 바탕 화면</b>\n"
+-"기본 Ubuntu 바탕 화면"
++"기본 Foresight 바탕 화면"
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu 넷북 바탕 화면</b>\n"
+-"Ubuntu 넷북 시작 관리자로 간결한 바탕 화면을 제공합니다."
++"<b>Foresight 넷북 바탕 화면</b>\n"
++"Foresight 넷북 시작 관리자로 간결한 바탕 화면을 제공합니다."
+diff -r 15c1ead15cb7 po/nl.po
+--- a/po/nl.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/nl.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:39-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klassiek bureaublad</b>\n"
+-"Het standaard-Ubuntu-bureaublad"
++"Het standaard-Foresight-bureaublad"
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook-bureaublad</b>\n"
+-"Een eenvoudig bureaublad met de Ubuntu Netbook-starter"
++"<b>Foresight Netbook-bureaublad</b>\n"
++"Een eenvoudig bureaublad met de Foresight Netbook-starter"
+diff -r 15c1ead15cb7 po/no.po
+--- a/po/no.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/no.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:39-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klassisk skrivebord</b>\n"
+-"Standard Ubuntu-skrivebord."
++"Standard Foresight-skrivebord."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook-skrivebord</b>\n"
+-"Et enkelt skrivebord med Ubuntu Netbook-oppstarter."
++"<b>Foresight Netbook-skrivebord</b>\n"
++"Et enkelt skrivebord med Foresight Netbook-oppstarter."
+diff -r 15c1ead15cb7 po/pl.po
+--- a/po/pl.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/pl.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -28,15 +28,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Pulpit klasyczny</b>\n"
+-"Domyślny pulpit Ubuntu."
++"Domyślny pulpit Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Puplit Ubuntu Netbook</b>\n"
+-"Prosty pulpit wyposażony w aplikację Ubuntu Netbook Launcher."
++"<b>Puplit Foresight Netbook</b>\n"
++"Prosty pulpit wyposażony w aplikację Netbook Launcher."
+diff -r 15c1ead15cb7 po/pt_BR.po
+--- a/po/pt_BR.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/pt_BR.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Área de trabalho clássica</b>\n"
+-"Área de trabalho padrão do Ubuntu."
++"Área de trabalho padrão do Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Área de trabalho do Netbook Ubuntu</b>\n"
+-"Oferece uma área de trabalho simples com o Iniciador do Netbook Ubuntu."
++"<b>Área de trabalho do Netbook Foresight</b>\n"
++"Oferece uma área de trabalho simples com o Iniciador do Netbook Foresight."
+diff -r 15c1ead15cb7 po/ro.po
+--- a/po/ro.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/ro.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:39-0400\n"
+@@ -28,15 +28,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Suprafaţă de lucru clasică</b>\n"
+-"Suprafaţa de lucru implicită Ubuntu."
++"Suprafaţa de lucru implicită Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Suprafaţă de lucru notebook Ubuntu</b>\n"
+-"Oferă o suprafaţă de lucru simplă cu programul de lansare Ubuntu."
++"<b>Suprafaţă de lucru notebook Foresight</b>\n"
++"Oferă o suprafaţă de lucru simplă cu programul de lansare Foresight."
+diff -r 15c1ead15cb7 po/ru.po
+--- a/po/ru.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/ru.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -28,15 +28,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Классический рабочий стол</b>\n"
+-"Рабочий стол, используемый в Ubuntu по умолчанию."
++"Рабочий стол, используемый в Foresight по умолчанию."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Рабочий стол Ubuntu для нетбуков</b>\n"
+-"Простой рабочий стол с модулем запуска Ubuntu для нетбуков."
++"<b>Рабочий стол Foresight для нетбуков</b>\n"
++"Простой рабочий стол с модулем запуска Foresight для нетбуков."
+diff -r 15c1ead15cb7 po/sl.po
+--- a/po/sl.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/sl.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:39-0400\n"
+@@ -28,15 +28,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klasično namizje></b>\n"
+-"Privzeto namizje Ubuntu."
++"Privzeto namizje Foresight."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Namizje Ubuntu Netbook</b>\n"
+-"Nudi preprosto namizje z zaganjalnikom Ubuntu Netbook."
++"<b>Namizje Foresight Netbook</b>\n"
++"Nudi preprosto namizje z zaganjalnikom Foresight Netbook."
+diff -r 15c1ead15cb7 po/sv.po
+--- a/po/sv.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/sv.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:39-0400\n"
+@@ -27,15 +27,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klassiskt skrivbord</b>\n"
+-"Ubuntu standardskrivbord."
++"Foresight standardskrivbord."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook-skrivbord</b>\n"
+-"För ett enkelt skrivbord med Ubuntu Netbook Launcher."
++"<b>Foresight Netbook-skrivbord</b>\n"
++"För ett enkelt skrivbord med Netbook Launcher."
+diff -r 15c1ead15cb7 po/tr.po
+--- a/po/tr.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/tr.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -5,7 +5,7 @@
+ # 
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: Ubuntu Netbook Remix\n"
++"Project-Id-Version: Foresight Netbook Remix\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2008-09-18 09:34-0400\n"
+ "PO-Revision-Date: 2008-09-16 13:39-0400\n"
+@@ -27,16 +27,16 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>Klasik Masaüstü</b>\n"
+-"Varsayılan Ubuntu Masaüstü."
++"Varsayılan Foresight Masaüstü."
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook Masaüstü</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Başlatıcısı ile basit bir "
++"<b>Foresight Netbook Masaüstü</b>\n"
++"Provides a simple desktop with the Foresight Netbook Başlatıcısı ile basit bir "
+ "masaüstü sağlar."
+diff -r 15c1ead15cb7 po/zh_CN.po
+--- a/po/zh_CN.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/zh_CN.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -26,15 +26,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>经典桌面</b>\n"
+-"默认 Ubuntu 桌面。"
++"默认 Foresight 桌面。"
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook 桌面</b>\n"
+-"提供一个带有 Ubuntu Netbook 启动程序的简单桌面。"
++"<b>Foresight Netbook 桌面</b>\n"
++"提供一个带有 Foresight Netbook 启动程序的简单桌面。"
+diff -r 15c1ead15cb7 po/zh_TW.po
+--- a/po/zh_TW.po	Wed Nov 05 14:49:59 2008 -0500
++++ b/po/zh_TW.po	Wed Nov 05 14:58:10 2008 -0500
+@@ -26,15 +26,15 @@
+ #: ../data/ui.xml.h:1
+ msgid ""
+ "<b>Classic Desktop</b>\n"
+-"The default Ubuntu Desktop."
++"The default Foresight Desktop."
+ msgstr ""
+ "<b>經典桌面</b>\n"
+-"預設 Ubuntu 桌面。"
++"預設 Foresight 桌面。"
+ 
+ #: ../data/ui.xml.h:3
+ msgid ""
+-"<b>Ubuntu Netbook Desktop</b>\n"
+-"Provides a simple desktop with the Ubuntu Netbook Launcher."
++"<b>Foresight Netbook Desktop</b>\n"
++"Provides a simple desktop with the Netbook Launcher."
+ msgstr ""
+-"<b>Ubuntu Netbook 桌面</b>\n"
+-"提供一個帶有 Ubuntu Netbook 啟動程式的簡單桌面。"
++"<b>Foresight Netbook 桌面</b>\n"
++"提供一個帶有 Foresight Netbook 啟動程式的簡單桌面。"

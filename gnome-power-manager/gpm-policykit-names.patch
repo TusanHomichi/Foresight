@@ -1,0 +1,22 @@
+Index: src/gpm-control.c
+===================================================================
+--- src/gpm-control.c	(revision 3009)
++++ src/gpm-control.c	(working copy)
+@@ -225,7 +225,7 @@
+ 	g_return_val_if_fail (can, FALSE);
+ 	*can = FALSE;
+ 	fg = gpm_control_check_foreground_console (control);
+-	polkit_ok = gpm_control_is_user_privileged (control, "hal-power-shutdown");
++	polkit_ok = gpm_control_is_user_privileged (control, "org.freedesktop.hal.power-management.shutdown");
+ 	if (polkit_ok && fg) {
+ 		*can = TRUE;
+ 	}
+@@ -249,7 +249,7 @@
+ 	g_return_val_if_fail (can, FALSE);
+ 	*can = FALSE;
+ 	fg = gpm_control_check_foreground_console (control);
+-	polkit_ok = gpm_control_is_user_privileged (control, "hal-power-reboot");
++	polkit_ok = gpm_control_is_user_privileged (control, "org.freedesktop.hal.power-management.reboot");
+ 	if (polkit_ok && fg) {
+ 		*can = TRUE;
+ 	}

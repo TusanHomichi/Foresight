@@ -1,0 +1,34 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Heldenviewer(AutoPackageRecipe):
+    name = 'heldenviewer'
+    version = '1.0.2'
+
+    packageSummary = 'HeldenViewer makes it very easy to search, download and view videos of the Youtube platform'
+    packageDescription = 'HeldenViewer makes it very easy to search, download and view videos of the Youtube platform. On top it has the following features: Easy to use and very fast, Clear arrangement of search results, No commercials, Downloads can be stopped and resumed later on, Videos can be watched while downloading, The download quality of a video can be chosen if the author provides different versions, Authors can be added as favorites in order to announce new videos of the author for the next start of HeldenViewer, Colorcoding of the videos contributes to the usability, there are colors for new, downloading, already seen, unseen and known videos' 
+ 
+    buildRequires = ['cmake:runtime', 'desktop-file-utils:runtime', 'gcc-c++:runtime', 'libstdc++:devel', 'pkgconfig:devel', 'qt4-core:devellib', 'qt4-gui:devellib', 'qt4-qt3support:devellib', 'qt4-sql:mysql', 'qt4-sql:odbc', 'qt4-sql:psql', 'qt4-sql:sqlite', 'qt4:devel']
+
+ 
+    def unpack(r):
+        r.addArchive('HeldenViewer_src_1_0_2.tar.gz')
+        r.addSource('%(name)s.desktop', macros='true')
+        r.addSource('%(name)s.wrapper', macros='true')
+
+    def configure(r):
+        r.CMake('.')
+
+
+    def makeinstall(r):
+        r.MakeDirs('%(datadir)s/%(name)s')
+        r.Install('HeldenViewer', '%(datadir)s/%(name)s/%(name)s', mode=0755)
+        r.Install('%(name)s.wrapper', '%(bindir)s/%(name)s', mode=0755)
+        r.Install('build/*.qm', '%(datadir)s/%(name)s/', mode=0644)
+        r.Install('build/icon.png', '%(datadir)s/pixmaps/%(name)s.png', mode=0644)
+        r.Desktopfile('%(name)s.desktop', vendor='foresight')
+        r.ImproperlyShared(exceptions='%(datadir)s/%(name)s/.*')

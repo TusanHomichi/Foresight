@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GUDevSharp(AutoPackageRecipe):
+    name = 'gudev-sharp'
+    tag='2c53e2f57a'
+    version = '0.1'
+
+    buildRequires = [
+            'gtk:devel',
+            'gudev:devel',
+            'gtk-sharp:cil',
+            'gio-sharp:devellib',
+            'mono:cil',
+            'mono:runtime',
+            'mono:devel',
+            'gtk-sharp:devellib',
+            'pkgconfig:devel',
+            'automake:runtime',
+            'autoconf:runtime',
+            'libtool:runtime',
+            'gtk-sharp:runtime',
+
+                    ]
+
+    def unpack(r):
+        r.macros.src = 'GUDEV_SHARP_' + r.version.replace('.','_')
+        r.addArchive('https://github.com/mono/gudev-sharp/tarball/%(src)s')
+        r.Replace('/lib', '/%(lib)s', 'gudev-sharp-1.0.pc.in')
+
+    def configure(r):
+        r.Configure(configureName='autogen.sh')

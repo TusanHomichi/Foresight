@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+from conary.build.filesetrecipe import _FilesetRecipe
+
+class FilesetRecipe(_FilesetRecipe, BaseRequiresRecipe):
+    name = 'fileset'
+    version = '0'
+    abstractBaseClass = 1

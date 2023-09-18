@@ -1,0 +1,20 @@
+#
+# Pawel Pogorzelski (pawelpogorzelski@gmail.com) 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+class Gsopcast(AutoPackageRecipe):
+
+    name = 'gsopcast'
+    version = '0.4.0'
+
+    buildRequires = ['alsa-lib:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libstdc++:devel', 'libxcb:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel']
+
+    def setup(r):
+        r.addArchive('http://gsopcast.googlecode.com/files/%(name)s-%(version)s.tar.bz2')
+        r.addArchive('http://download.sopcast.cn/download/sp-auth.tgz', dir='%(name)s-%(version)s/')
+	r.Install('sp-auth/sp-sc-auth','%(bindir)s/sp-sc') 
+     	r.Configure()
+        r.Make()
+        r.MakeInstall()
+

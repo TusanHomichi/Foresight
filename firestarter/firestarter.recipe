@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class Firestarter(GnomePackageRecipe):
+
+    buildRequires = [ 'gtk:devel', 'libgnomeui:devel', 'libglade:devel', 'glib:devel',	'gnome-vfs:devel', 'perl-XML-Parser:devel', 'gettext:runtime', 'desktop-file-utils:runtime', 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gnome-keyring:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'popt:devel', 'GConf:runtime', 'chkconfig:runtime', 'expat:devel' ]
+
+    name = 'firestarter'
+    version = '1.0.3'
+
+    def setup(r):
+	r.addArchive('mirror://sourceforge/%(name)s/')
+	# patch from https://bugzilla.redhat.com/show_bug.cgi?id=245321
+	r.addPatch('https://bugzilla.redhat.com/attachment.cgi?id=157621')
+	r.Install('firestarter.console', '%(sysconfdir)s/security/console.apps/firestarter')
+	r.Install('firestarter.pam', '%(sysconfdir)s/pam.d/firestarter')
+	r.Install('fedora.init', '%(sysconfdir)s/init.d/firestarter')
+	r.Install('pixmaps/firestarter.png','%(datadir)s/pixmaps/')
+        r.Replace('Exec=','Exec=gksudo ','%(name)s.{desktop,desktop.in}')
+        r.Replace('Categories=System;Application;','Categories=Application;System;Settings;','%(name)s.desktop')
+        r.build()
+        r.install()
+        r.Move('%(datadir)s/gnome/apps/Internet/firestarter.desktop','%(datadir)s/applications/')

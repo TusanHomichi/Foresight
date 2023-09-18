@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GupnpVala(AutoPackageRecipe):
+    name = 'gupnp-vala'
+    version = '0.10.3'
+ 
+    buildRequires = ['vala:devellib', 'pkgconfig:devel', 'vala:runtime', 'gupnp-ui:devellib', 
+                     'gupnp-dlna:devellib', 'gupnp-av:devellib', 'xz:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.heanet.ie/mirrors/gnome/sources/gupnp-vala/0.10/')

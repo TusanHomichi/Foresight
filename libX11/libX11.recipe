@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class libX11(RPMPackageRecipe,AutoPackageRecipe,BuildPackageRecipe):
+    name = 'libX11'
+    version = '7.6'
+    rpmRelease = '73.1'
+    rpmName = 'xorg-x11-%(name)s'
+    isOPENsuse = True
+    isXOrgFactory = True
+
+    buildRequires = [
+        'bigreqsproto:devel', 'inputproto:devel', 'kbproto:devel',
+        'libXau:devel', 'libXdmcp:devel', 'xcmiscproto:devel', 'xmlto:runtime',
+        'xextproto:devel', 'xf86bigfontproto:devel', 'xproto:devel',
+        'xtrans:devel', 'libxcb:devel', 'libxcb:devellib', 'pkgconfig:devel',
+        'autoconf:runtime','automake:runtime','pkgconfig:devel', 'libxml2:runtime',
+        'libtool:devel', 'libtool:runtime', 'util-macros:devel', 'pkgconfig:devel'
+        ]
+
+    rpmPatches = [ 'bug153744.diff',
+                   'p_new-locales.diff',
+                   'p_sr_CS-compose.diff',
+                   'p_khmer-compose.diff',
+                   'p_khmer-locale.diff',
+                   'p_xlib_skip_ext_env.diff',
+                   'bug-239698_libx11.diff',
+                   'bug-221326-xim-sync.patch',
+                   'en-locales.diff',
+                   'Xcms.diff',
+                   'compose-zh_CN.UTF-8.diff',
+                   '0001--XIM-Revert-commit-1a1a42a3.patch',
+                  ]
+
+    tarballName = 'libX11-1.4.0.tar.bz2'
+    extraConfig = ' --with-xcb --datadir=%(datadir)s --disable-static  --disable-silent-rules '
+
+    def configure(r):
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Run('autoreconf -fi')
+        r.Configure(r.extraConfig)
+
+    # Some files are empty/missing for some UTF-8 locales
+    def policy(r):
+        r.Run("""cd %(destdir)s/%(datadir)s/X11/locale; for i in *.UTF-8; do echo $i;  if [ "$i" != "en_US.UTF-8" ]; then touch $i/Compose $i/XI18N_OBJS ;   test -s $i/Compose    || ln -snf ../en_US.UTF-8/Compose    $i ;     test -s $i/XI18N_OBJS || ln -snf ../en_US.UTF-8/XI18N_OBJS $i ;     test -s $i/XLC_LOCALE || ln -snf ../en_US.UTF-8/XLC_LOCALE $i ;  fi ; done """)
+
+        r.ComponentSpec('lib', '%(libdir)s/libX11.so')
+

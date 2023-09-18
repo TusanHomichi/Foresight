@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009 Dick Marinus (dick@mrns.nl)
+#
+
+class PyAlsaAudio(CPackageRecipe):
+    name = 'pyalsaaudio'
+    version = '0.6'
+
+    buildRequires = ['alsa-lib:devel', 'python:devel', 'python-setuptools:python']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.PythonSetup()

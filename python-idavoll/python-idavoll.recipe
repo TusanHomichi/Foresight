@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Idavoll(PackageRecipe):
+
+    name = 'python-idavoll'
+    version = '0.9.1'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+        'python-twisted:python',
+        'python-wokkel:python',
+        'python-simplejson:python',
+    ]
+
+    def setup(r):
+        r.macros.name = 'idavoll'
+        r.macros.sitepkg = '%(libdir)s/python%(pyver)s/site-packages'
+        r.addArchive('http://idavoll.ik.nu/releases/%(version)s/')
+        r.PythonSetup()
+
+        r.Install('twisted/plugins/*.py', '%(sitepkg)s/twisted/plugins/')
+        r.CompilePython('%(sitepkg)s/')

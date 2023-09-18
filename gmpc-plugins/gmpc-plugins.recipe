@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GmpcPlugins(AutoPackageRecipe):
+    name = 'gmpc-plugins'
+    version = '11.8.16'
+ 
+    buildRequires = ['WebKit:devel', 'atk:devel', 'avahi-glib:devel', 'avahi:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gob2:runtime', 'gtk:devel', 'intltool:runtime', 'libglade:devel', 'libmicrohttpd:devel', 'libmpd:devel', 'libsoup:devel', 'libxml2:devel', 'lirc:devel', 'pango:devel', 'pkgconfig:devel', 'sqlite:devel', 'taglib:devel', 'zlib:devel', 'gmpc:devel', 'vala:runtime']
+ 
+    def unpack(r):
+		r.addArchive('http://download.sarine.nl/Programs/gmpc/%(major_version)s/%(name)s-%(version)s.tar.gz')

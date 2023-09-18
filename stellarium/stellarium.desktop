@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Stellarium
+Comment=Stellarium is a free open source planetarium for your computer
+Exec=stellarium
+Icon=stellarium
+Terminal=false
+Type=Application
+Categories=Application;Education;

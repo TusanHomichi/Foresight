@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Spacefm(AutoPackageRecipe):
+    name = 'spacefm'
+    version = '0.8.6'
+ 
+    buildRequires = [
+            'cairo:devel', 
+            'desktop-file-utils:runtime', 
+            'gdk-pixbuf:devel', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gtk:devel', 
+            'intltool:runtime', 
+            'libX11:devel', 
+            'pango:devel', 
+            'pkgconfig:devel', 
+            'startup-notification:devel', 
+            'udev:devel', 
+            'xz:runtime', 
+                ]
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/spacefm/')
+
+    def configure(r):
+        r.Configure('--with-preferable-sudo=/usr/bin/gksudo')
+        
+
+        r.addSource('session', dir='/etc/xdg/spacefm', mode = 0755)

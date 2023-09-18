@@ -1,0 +1,30 @@
+diff -r 62909a7706d8 libnautilus-private/apps_nautilus_preferences.schemas.in
+--- a/libnautilus-private/apps_nautilus_preferences.schemas.in	Sat Aug 30 23:45:22 2008 -0400
++++ b/libnautilus-private/apps_nautilus_preferences.schemas.in	Sat Aug 30 23:48:38 2008 -0400
+@@ -864,7 +864,7 @@
+       <applyto>/apps/nautilus/desktop/home_icon_visible</applyto>
+       <owner>nautilus</owner>
+       <type>bool</type>
+-      <default>true</default>
++      <default>false</default>
+       <locale name="C">
+          <short>Home icon visible on desktop</short>
+          <long>
+@@ -879,7 +879,7 @@
+       <applyto>/apps/nautilus/desktop/computer_icon_visible</applyto>
+       <owner>nautilus</owner>
+       <type>bool</type>
+-      <default>true</default>
++      <default>false</default>
+       <locale name="C">
+          <short>Computer icon visible on desktop</short>
+          <long>
+@@ -894,7 +894,7 @@
+       <applyto>/apps/nautilus/desktop/trash_icon_visible</applyto>
+       <owner>nautilus</owner>
+       <type>bool</type>
+-      <default>true</default>
++      <default>false</default>
+       <locale name="C">
+          <short>Trash icon visible on desktop</short>
+          <long>

@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2007 Lance Haig.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class VirtViewer(AutoPackageRecipe):
+    name = 'virt-viewer'
+    version = '0.5.7'
+    buildRequires = [ 'libvirt:devel',
+                      'libxml2:devel',
+                      'libvirt:runtime',
+                      'gtk-vnc:devel',
+                      'gtk-vnc:python',
+                      'gtk-vnc:lib',
+                      'gtk-vnc:devellib',
+                      'pkgconfig:devel',
+                      'expat:devel',
+                      'pygtk:python', 
+                      'pygtk:devel',
+                      'pygtk:runtime',
+                      'pygtk:devellib',
+                      'pygtk:lib',
+                      'libvirt:devel',
+                      'gtk:devel',
+                      'libxml2:devel',
+                      'perl:devel',
+                      'gettext:runtime',
+                      'libglade:devel',
+                      'intltool:runtime',
+                      'desktop-file-utils:runtime',
+                      ]
+        
+
+    def unpack(r):	
+        r.addArchive('http://virt-manager.et.redhat.com/download/sources/virt-viewer/')
+        r.addSource('xauth-libvirt-sdl-hack.sh')
+
+    def configure(r):
+        # mozilla plugin not ready for prime time...
+        r.Configure('--enable-plugin=no --with-gtk=2.0 --without-spice-gtk --prefix=%(prefix)s --localstatedir=%(localstatedir)s --libdir=%(libdir)s')
+
+    def policy(r):
+        # virt-viewer SDL support hack (see source for details --ermo)
+        r.Install('xauth-libvirt-sdl-hack.sh', '%(sysconfdir)s/X11/xinit/xinitrc.d/',
+                    mode=0755)
+        # ensure that users always get the latest version of the script
+        r.ComponentSpec('runtime', '%(sysconfdir)s/X11/xinit/xinitrc.d/xauth-libvirt-sdl-hack.sh')

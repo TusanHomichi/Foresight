@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:devel')
+class Freeguide(BinaryPackageRecipe):
+    name = 'freeguide'
+    version = '0.10.12'
+ 
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.macros.site = 'mirror://sourceforge/freeguide-tv/'
+
+        dist = [
+            ('freeguide-0.10.12-1.noarch.rpm'),
+        ]
+
+        for (rpm) in dist:
+            r.addArchive('%(site)s/'+rpm, dir='/')

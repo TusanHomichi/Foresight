@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibMikMod(AutoPackageRecipe):
+    name = 'libmikmod'
+    version = '3.1.11'
+
+    buildRequires = ['install-info:runtime']
+
+    def unpack(r):
+        r.addArchive('http://mikmod.raphnet.net/files/')

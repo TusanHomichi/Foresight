@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class libfontenc(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libfontenc'
+    version = '7.6'
+    rpmRelease = '16.1'
+    rpmName = 'xorg-x11-%(name)s'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = [ 'xproto:devel', 'zlib:devel', 'pkgconfig:devel', ]
+    rpmPatches = [ ] 
+    tarballName = '%(name)s-1.1.0.tar.bz2'
+    extraConfig = (' --with-encodingsdir=%(datadir)s/fonts/encodings '
+                   ' --disable-static --with-pic ')
+
+    def configure(r):
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure(r.extraConfig)
+
+
+
+

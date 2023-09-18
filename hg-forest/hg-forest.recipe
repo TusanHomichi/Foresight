@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class hgForest(BuildPackageRecipe):
+    name = 'hg-forest'
+    version = 'tip'
+
+    buildRequires = [ 'mercurial:python', 'python:devel', ]
+
+    def setup(r):
+        r.macros.sitepkgs = Python.sitepkgs
+        # Need newer version for compatibility with newer python
+        r.addMercurialSnapshot('http://bitbucket.org/gxti/hgforest')
+
+        r.Install('forest.py', '%(sitepkgs)s/hgext/')

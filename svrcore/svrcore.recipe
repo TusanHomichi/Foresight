@@ -1,0 +1,11 @@
+
+class MozillaSvrCore(AutoPackageRecipe):
+    name = 'svrcore'
+    version = '4.0.4'
+    buildRequires = [
+        'pkgconfig:devel',
+        'nspr:devel', 'nss:devel' 
+    ]
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.mozilla.org/pub/mozilla.org/directory/svrcore/releases/%(version)s/src/')

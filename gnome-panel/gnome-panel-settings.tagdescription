@@ -1,0 +1,3 @@
+file         %(taghandlerdir)s/gnome-panel-settings
+implements   files update
+include      %(sysconfdir)s/gconf/schemas/panel-default-setup.entries

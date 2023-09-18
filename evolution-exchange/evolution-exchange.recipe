@@ -1,0 +1,25 @@
+loadRecipe('gnomepackage')
+class EvolutionExchange(GnomePackageRecipe):
+    name = 'evolution-exchange'
+    version = '2.32.3'
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel',
+        'atk:devel', 'cairo:devel', 'evolution-data-server:devel',
+        'evolution:devel', 'fontconfig:devel', 'freetype:devel',
+        'gettext:runtime', 'glib:devel', 'libgnome-keyring:devel',
+        'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel',
+        'libbonoboui:devel', 'libglade:devel', 'libgnome:devel',
+        'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeui:devel',
+        'libpng:devel', 'libsoup:devel', 'libxml2:devel', 'openldap:devel',
+        'pango:devel', 'perl:runtime', 'popt:devel','expat:devel', 'db:devel',
+        'autoconf:runtime', 'automake:runtime' ]
+
+    # add krb5 support
+    extraConfig = ' --with-krb5=/usr/kerberos'
+    buildRequires.append('krb5:devel')
+
+    patches = ['http://patch-tracker.debian.org/patch/series/dl/evolution-exchange/2.32.2-2/02_remove-disable-deprecated.patch']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Run('autoreconf -fi')

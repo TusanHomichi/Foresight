@@ -1,0 +1,8 @@
+class FastUserSwitchApplet(RedirectRecipe):
+
+    name = 'fast-user-switch-applet'
+    version = '0'
+
+    def setup(r):
+        r.addRedirect('gdm-user-switch-applet')
+

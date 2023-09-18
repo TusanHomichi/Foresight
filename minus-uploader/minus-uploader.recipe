@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class MinusUploader(BinaryPackageRecipe):
+    name = 'minus-uploader'
+    version = '1.7'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'binutils:runtime']
+ 
+    def unpack(r):
+        r.macros.site = 'http://blog.minus.com/updates'
+
+        dist = [
+            ('minus-desktop-tool_i386.deb', Arch.x86),
+            ('minus-desktop-tool_amd64.deb', Arch.x86_64),
+        ]
+        for (deb, arch) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/', use=(arch==True))
+        r.Config(exceptions='min.us.37.default.png')
+        r.Requires('qjson:lib', 'minus-uploader:runtime')

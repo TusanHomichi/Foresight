@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2008-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ProductDefinition(BuildPackageRecipe):
+    name = 'rpath-product-definition'
+    version = '4.4'
+    tag = '9fab2e2'
+
+    buildRequires = [
+        'lxml:python',
+        'python:devel',
+        'rpath-common:python',
+        'util-linux:runtime',
+    ]
+
+    def setup(r):
+        r.macros.tag = r.tag
+        r.addMercurialSnapshot('https://bitbucket.org/rpathsync/rpath-product-definition', tag='%(tag)s')
+        # This package doesn't need to run pylint or build API docs
+        r.Replace('^SUBDIRS=.*', 'SUBDIRS=rpath_proddef xsd', 'Makefile')
+        r.Make()
+        r.MakeInstall('lib=%(lib)s')
+        r.Doc('doc/example.*')

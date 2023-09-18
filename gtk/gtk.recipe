@@ -1,0 +1,229 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('rpmpackage')
+loadInstalled('glib')
+class Gtk2(RPMPackageRecipe,CPackageRecipe):
+    name = 'gtk'
+    version = '2.24.16'
+    rpmName = 'gtk2'
+    rpmRelease = '1.fc18'
+    tarballName = '%(name)s+-%(version)s.tar.xz'
+    rpmPatches = [ 'gtk-lib64.patch',
+                   'system-python.patch',
+                   # https://bugzilla.gnome.org/show_bug.cgi?id=583273
+                   'icon-padding.patch',
+                   # https://bugzilla.gnome.org/show_bug.cgi?id=599617
+                   # 'fresh-tooltips.patch',
+                   # https://bugzilla.gnome.org/show_bug.cgi?id=599618
+                   'tooltip-positioning.patch',
+                   # https://bugzilla.gnome.org/show_bug.cgi?id=611313
+                   # 'window-dragging.patch',
+                   ]
+
+    rpmSources = [ 'im-cedilla.conf' ]
+
+    buildRequires = [ 'atk:devel',
+                      'pango:devel',
+                      'pango:devellib',
+                      'glib:devel',
+                      'libtiff:devel',
+                      'libjpeg:devel',
+                      'libpng:devel',
+                      'pkgconfig:devel',
+                      'freetype:devel',
+                      'fontconfig:devel',
+                      'zlib:devel',
+                      'cairo:devel',
+                      'indent:runtime',
+                      'libtool:runtime',
+                      'perl:runtime',
+                      'libX11:devel',
+                      'libXcursor:devel',
+                      'libXext:devel',
+                      'libXfixes:devel',
+                      'libXi:devel',
+                      'libXinerama:devellib',
+                      'libXrandr:devel',
+                      'libXrender:devel',
+                      'libXt:devel',
+                      'libXau:devel',
+                      'libXdmcp:devel',
+                      'libXrandr:devel',
+                      'libICE:devel',
+                      'libSM:devel',
+                      'gettext:runtime',
+                      'gcc-c++:runtime',
+                      'cups:devel',
+                      'openssl:devel',
+                      'expat:devel',
+                      'automake:runtime',
+                      'autoconf:runtime',
+                      'docbook-utils:runtime',
+                      'gtk-doc:devel',
+                      'glib:runtime',
+                      'perl:runtime',
+                      'libXcomposite:devel',
+                      'libXdamage:devel',
+                      'intltool:runtime',
+                      'gtk-doc:runtime',
+                      'python:devel',
+                      'jasper:devel',
+                      'gnutls:devel',
+                      'gobject-introspection:devel',
+                      'gdk-pixbuf:devel',
+                      'gdk-pixbuf:runtime',
+                      ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        # from ubuntu. removes too much noise in ~/.xsession-errors
+        # gbz # 581526
+        # https://bugs.launchpad.net/ubuntu/+source/firefox-3.5/+bug/401823
+        r.addPatch('094_remove-xid-collision-warning.patch')
+
+        # indicator stack expects this...
+        for p in [ 'bugzilla-129753-gtk+-2.8.9-localize-font-style-name.diff',
+                   'gtk2-bnc130159-bgo319483-async-selection-in-gtk-font-selection.diff',
+
+                   '003_gdk.pc_privates.patch',
+                   '004_gtk+-ximian-gtk2-filesel-navbutton-5.patch',
+                   '005_support_disabling_x11_extensions.patch',
+
+                   '012_ubuntu-set-grab-add.patch',
+                   '015_default-fallback-icon-theme.patch',
+
+                   '022_disable-viqr-im-for-vi-locale.patch',
+
+                   '042_treeview_single-focus.patch',
+                   '043_ubuntu_menu_proxy.patch',
+                   '044_grips.patch',
+
+                   '060_ignore-random-icons.patch',
+                   '062_dnd_menubar.patch',
+                   '063_treeview_almost_fixed.patch',
+                   '064_gir_build_workaround.patch',
+                   '065_gir_set_packages.patch',
+
+                   '071_no_offscreen_widgets_grabbing.patch',
+                   '072_indicator_menu_update.patch',
+
+                   '092_default_to_xdg_document_dir.patch',
+                   '093_gtk3_gtkimage_fallbacks_use.patch',
+                   '095_git_menus_scrolling.patch',
+                   '096_git_gtkprintsettings.patch',
+                   '097_statusicon_image_fallback.patch',
+
+                   '100_overlay_scrollbar_loading.patch',
+                   ]:
+            r.addPatch(p)
+
+        # make sure that gtkmarshalers.{c, h} get regenerated during the build
+        r.addAction('rm --force ./gtk/gtkmarshalers.c; rm --force ./gtk/gtkmarshalers.h')
+
+        # set up HOST definition for gtk.modules location
+        r.macros.host = r.macros.target
+        if r.macros.target.endswith("linux"):
+            # autotools appends -gnu to -linux
+            r.macros.host += '-gnu'
+
+        if Arch.x86:
+            r.macros.isaBits = '32'
+        else:
+            r.macros.isaBits = '64'
+
+        # setup some macros to make the taghandler work properly
+        r.macros.fieldnum = str(len(r.macros.datadir.split('/'))+2)
+
+        r.Replace('tests ','','Makefile.*')
+
+        r.addSource('gtk-input-method.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/gtk-input-method')
+        r.addSource('gtk-input-method.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/gtk-input-method', mode=0755)
+        r.addSource('gtk-update-icon-cache.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/gtk-update-icon-cache')
+        r.addSource('gtk-update-icon-cache.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/gtk-update-icon-cache', mode=0755)
+
+        # lib64 patch touches Makefile.am
+        # ensure all autofoo files are regenerated
+        r.Run('libtoolize --force --copy; autoreconf -vfi')
+        extraConfigure = ' --build=%(host)s --host=%(host)s'
+
+        if not Use.builddocs:
+            extraConfigure += ' --disable-gtk-doc '
+
+        r.Configure('--with-xinput=xfree ' + extraConfigure)
+
+        r.Make()
+
+        r.MakeInstall('RUN_QUERY_IMMODULES_TEST=false'
+                      ' RUN_QUERY_LOADER_TEST=false')
+        r.MakeDirs('%(sysconfdir)s/gtk-2.0')
+
+        # input methodes ...
+        r.MakeDirs('%(sysconfdir)s/X11/xinit/xinput.d')
+        r.Install('im-cedilla.conf', '%(sysconfdir)s/X11/xinit/xinput.d/')
+
+	r.MakeDirs('%(sysconfdir)s/gtk-2.0/%(host)s')
+
+        r.macros.loadersfile = '%(sysconfdir)s/gtk-2.0/%(host)s/gdk-pixbuf.loaders'
+
+        r.macros.queryimmodules = '%(bindir)s/gtk-query-immodules-2.0-%(host)s'
+        r.macros.immodulesfile = '%(sysconfdir)s/gtk-2.0/%(host)s/gtk.immodules'
+
+        # separate query modules for multilib installation
+        r.Move('%(bindir)s/gtk-query-immodules-2.0', '%(queryimmodules)s')
+
+        r.Remove('%(sysconfdir)s/gtk-2.0/gdk-pixbuf.loaders', allowNoMatch=True)
+        r.Remove('%(sysconfdir)s/gtk-2.0/gtk.immodules', allowNoMatch=True)
+        r.ComponentSpec('runtime', '%(sysconfdir)s/gtk-2.0/im-multipress.conf')
+
+        # zero-length config files
+        r.Create('%(loadersfile)s')
+        r.Create('%(immodulesfile)s')
+        r.InitialContents('%(loadersfile)s')
+        r.InitialContents('%(immodulesfile)s')
+
+        r.MakeDirs('%(libdir)s/gtk-2.0/modules')
+        r.MakeDirs('%(libdir)s/gtk-2.0/immodules')
+        r.MakeDirs('%(libdir)s/gtk-2.0/2.10/filesystems')
+
+        r.ExcludeDirectories(exceptions = ['%(libdir)s/gtk-2.0/modules',
+                                           '%(libdir)s/gtk-2.0/immodules',
+                                           '%(libdir)s/gtk-2.0/2.10/filesystems']
+                             )
+        # :runtime can be installed only once, :lib has multilib, so
+        # move de-collided paths into :lib where they belong
+        r.ComponentSpec('lib',
+                        '%(bindir)s/.*query.*',
+                        '%(sysconfdir)s/gtk-.*/.*',
+                        '%(libdir)s/libgdk-x11-.*.so',
+                        '%(loadersfile)s',
+                        '%(immodulesfile)s',)
+
+        r.Doc('docs/tutorial', 'docs/faq', 'examples')
+        r.ComponentSpec('devel', '%(bindir)s/gdk-pixbuf-csource')
+        r.ComponentSpec('doc', '%(datadir)s/gtk-.*/demo/')
+
+        # these pkg-config files have Requires: statements
+        r.Requires('atk:devel', '%(libdir)s/pkgconfig/gtk.*pc')
+        r.Requires('gdk-pixbuf:devel', '%(libdir)s/pkgconfig/gtk.*pc')
+        r.Requires('pango:devel', '%(libdir)s/pkgconfig/gdk-x11.*pc',
+                                  '%(libdir)s/pkgconfig/gdk-2.0.pc')
+
+        # modules require tag handlers being run in order to be loaded
+        r.Requires('gtk:runtime',
+                   r'%(libdir)s/gtk-[^/]*/[^/]*/immodules/[^/]*\.so')
+
+        # needed to avoid update noise on newer glibs
+        glibReq = 'glib:lib(%s)' % '.'.join(Glib.version.split('.')[0:2])
+        r.Requires(glibReq,
+                   '%(taghandlerdir)s/.*') 
+
+        

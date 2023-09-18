@@ -1,0 +1,12 @@
+class LIBSynce(AutoPackageRecipe):
+    name = 'libsynce'
+    version = '0.15.1'
+ 
+    buildRequires = [ 'dbus-glib:devel', 'dbus:devel', 'glib:devel',
+                      'pkgconfig:devel', 'udev:devel',]
+ 
+    def unpack(r):
+        r.addArchive('http://download.sf.net/synce/')
+    
+    def configure(r):
+        r.Configure('--disable-static --disable-rpath --disable-hal-support --enable-udev-support')

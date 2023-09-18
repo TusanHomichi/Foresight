@@ -1,0 +1,9 @@
+class EFILinux(CPackageRecipe):
+    name = 'efilinux'
+    version = '0.8git'
+    buildRequires = ['git:runtime','gnu-efi:devel']
+    def setup(r):
+        r.addGitSnapshot('git://github.com/mfleming/efilinux.git')
+        r.addPatch('libdir.patch')
+        r.Make()
+        r.Install('efilinux.efi','/usr/share/%(name)s/')

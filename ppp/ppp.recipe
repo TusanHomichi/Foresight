@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ppp(CPackageRecipe):
+    name = 'ppp'
+    version = '2.4.4'
+
+    buildRequires = [ 'pam:devel', 'libpcap:devel']
+
+    def setup(r):
+        r.addArchive('ftp://ftp.samba.org/pub/ppp/ppp-%(version)s.tar.gz')
+        srpm = 'http://download.fedora.redhat.com/pub/fedora/linux/core/5/source/SRPMS/ppp-2.4.3-6.2.1.src.rpm'
+        r.addSource('ppp-2.3.5-pamd.conf', rpm=srpm)
+        r.addSource('ppp.logrotate', rpm=srpm)
+
+        r.addPatch('ppp-2.3.6-sample.patch', rpm=srpm)
+        r.addPatch('ppp-2.4.1-varargs.patch', rpm=srpm)
+        r.addPatch('ppp-2.4.4-lib64.patch')
+        r.addPatch('ppp-2.4.3-dontwriteetc.patch')
+
+        # deal with new libpcap version
+        r.Replace('#include <net/bpf.h>', '#include <pcap-bpf.h>',
+                  'pppd/plugins/rp-pppoe/if.c')
+
+        r.Configure()
+        r.Make()
+        r.MakePathsInstall('INSTROOT=%(destdir)s')
+
+        # why upstream packages a setuid *library* I have no idea
+        r.SetModes('%(libdir)s/pppd/%(version)s/*.so', 0755)
+
+        r.MakeDirs('%(localstatedir)s/log/ppp', mode=0700)
+        r.Install('ppp-2.3.5-pamd.conf', '/etc/pam.d/ppp', mode=0644)
+        r.Install('ppp.logrotate', '/etc/logrotate.d/ppp', mode=0644)
+
+        # fixes runtime error about being unable to find this file
+        r.Create('/var/log/ppp/connect-errors')

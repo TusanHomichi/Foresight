@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DvdPlusrwTools(CPackageRecipe):
+    name = 'dvd+rw-tools'
+    version = '7.1'
+ 
+    buildRequires = ['libstdc++:devel', 'm4:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://fy.chalmers.se/~appro/linux/DVD+RW/tools/')
+        r.addPatch('remove-restriction.patch')
+        r.addPatch('dvd+rw-tools-7.0.manpatch')
+        r.addPatch('dvd+rw-tools-7.0-wexit.patch')
+        r.addPatch('dvd+rw-tools-7.0-glibc2.6.90.patch')
+        r.addPatch('dvd+rw-tools-7.0-reload.patch')
+        r.addPatch('dvd+rw-tools-7.0-wctomb.patch')
+
+        r.Make()
+        r.MakePathsInstall()

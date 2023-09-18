@@ -1,0 +1,18 @@
+class Numpy(CPackageRecipe):        
+   name = "numpy"
+   version = "1.8.0"
+   buildRequires = [
+	'python-ctypes:python', 
+	'python-numeric:python', 
+	'python:devel', 
+	'python-setuptools:python', 
+	'gcc-fortran:devellib', 
+	'lapack:devellib',
+	'pytz:python',
+		]
+
+
+   def setup(r):	
+	r.addArchive('http://downloads.sourceforge.net/numpy/')
+	r.Run('env ATLAS=%(libdir)s FFTW=%(libdir)s BLAS=%(libdir)s LAPACK=%(libdir)s python setup.py build')
+	r.Run('env ATLAS=%(libdir)s FFTW=%(libdir)s BLAS=%(libdir)s LAPACK=%(libdir)s python setup.py install --root %(destdir)s') 

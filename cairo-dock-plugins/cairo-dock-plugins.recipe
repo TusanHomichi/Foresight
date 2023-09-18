@@ -1,0 +1,97 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CairoDockPlugins(AutoPackageRecipe):
+    name = 'cairo-dock-plugins'
+    version = '2.3.0rc1'
+ 
+    buildRequires = [
+            'GConf:devel', 
+            'Mesa:devel', 
+            'ORBit2:devel', 
+            'WebKit:devel', 
+            'alsa-lib:devel', 
+            'atk:devel', 
+            'autoconf:runtime', 
+            'automake:runtime', 
+            'cairo:devel', 
+            'cairo-dock:devel', 
+            'dbus-glib:devel', 
+            'dbus:devel', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gnome-vfs:devel', 
+            'gtk-sharp:devellib',
+            'gtk:devel', 
+            'gtkglext:devel', 
+            'inputproto:devel',
+            'intltool:runtime', 
+            'libICE:devel', 
+            'libSM:devel', 
+            'libX11:devel', 
+            'libXcomposite:devel', 
+            'libXfixes:devel', 
+            'libXinerama:devel', 
+            'libXmu:devel', 
+            'libXrender:devel', 
+            'libXt:devel', 
+            'libXtst:devel', 
+            'libXxf86vm:devel', 
+            'libart_lgpl:devel', 
+            'libbonobo:devel', 
+            'libbonoboui:devel', 
+            'curl:devel',
+            'libdbusmenu:runtime',
+            'libdbusmenu-gtk:devel',
+            'libetpan:devel',
+            'libexif:devel', 
+            'libgnome:devel', 
+            'libgnomecanvas:devel', 
+            'libgnomeui:devel', 
+            'libindicator:devel',
+            'libtool:devel', 
+            'libtool:runtime', 
+            'librsvg:devel', 
+            'libsoup:devel', 
+            'libxml2:devel', 
+            'openssl:devel',
+            'pango:devel', 
+            'pkgconfig:devel', 
+            'popt:devel', 
+            'python:devel',
+            'gnome-menus:devel', 
+            'libxklavier:devel', 
+            'vte:devel', 
+            'cmake:runtime', 
+            'gcc-c++:runtime', 
+            'libXrandr:devel', 
+            'gtk-sharp:cil', 
+            'libical:devel', 
+            'libzeitgeist:devel', 
+            'lm_sensors:devel', 
+            'mono:cil', 
+            'mono:devel', 
+            'mono:runtime', 
+            'ndesk-dbus-glib:cil', 
+            'ndesk-dbus:devellib',
+            'ndesk-dbus-glib:devellib',
+            'ndesk-dbus:cil', 
+            'ruby:runtime', 
+            'vala:runtime', 
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/cairo-dock-plug-ins/2.3/2.3.0-0rc1/+download/cairo-dock-plugins-2.3.0~0rc1.tar.gz')
+	r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+	r.PackageSpec('cairo-dock-plug-ins-xfce', '.*xfce.*')
+
+    def configure(r):
+        if Arch.x86_64:
+	        r.CMake('-DCMAKE_SKIP_BUILD_RPATH=TRUE -DCMAKE_LIBRARY_PATH=%(libdir)s -DCMAKE_INSTALL_PREFIX=%(prefix)s -Denable-gio-in-gmenu=TRUE -Denable-network-monitor=TRUE -Dscooby-do=TRUE -DFORCE_LIB64=yes')
+        else:
+	        r.CMake('-DCMAKE_SKIP_BUILD_RPATH=TRUE -DCMAKE_LIBRARY_PATH=%(libdir)s -DCMAKE_INSTALL_PREFIX=%(prefix)s -Denable-gio-in-gmenu=TRUE -Denable-network-monitor=TRUE -Dscooby-do=TRUE')

@@ -1,0 +1,14 @@
+--- src/device.c        2010/06/24 00:35:37     1.1
++++ src/device.c        2010/06/24 00:53:10     1.7
+@@ -135,7 +135,9 @@
+     if ((sbservices_get_icon_pngdata(sbc, display_identifier, &png, &pngsize) == SBSERVICES_E_SUCCESS) && (pngsize > 0)) {
+         /* save png icon to disk */
+         FILE *f = fopen(filename, "w");
+-        fwrite(png, 1, pngsize, f);
++        if (fwrite(png, 1, pngsize, f) != sizeof(pngsize)){
++           *error = g_error_new(device_domain, EIO, _("Could not save icon png to disk!"));
++       }
+         fclose(f);
+         res = TRUE;
+     } else {
+

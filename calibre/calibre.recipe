@@ -1,0 +1,98 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonCalibre(AutoPackageRecipe):
+    name = 'calibre'
+    version = '0.7.46'
+    buildRequires = [
+        'bzr:python',
+        'chmlib:devel',
+        'dbus-python:python',
+        'docutils:python',
+        'dnspython:python',
+        'gcc-c++:runtime',
+        'gcc:devel',
+        'gcc:runtime',
+	'icu:devel',
+        'ImageMagick:devel',
+        'help2man:runtime',
+        'libjpeg:devel',
+        'libusb:devel',
+        'lxml:python',
+        'make:runtime',
+        'mod_python:python',
+        'mx:python',
+        'PIL:python',
+        'podofo:devel',
+        'poppler:devel',
+        'pyOpenSSL:python',
+        'pyPdf:python',
+        'PyQt4:python',
+        'PyQt4:runtime',
+        'python-cssutils:python',
+        'python-dateutil:python',
+        'python:devel',
+        'python-feedparser:python',
+        'python-mechanize:python',
+        'python-setuptools:python',
+        'qt4:devel',
+        'sip:devel',
+        'sip:python',
+        'sip:runtime',
+        'python-memcached:python',
+        'paramiko:python',
+        'xdg-utils:runtime',
+        'ipython:python',
+    ]
+
+    def setup(r):
+        # r.addArchive('http://calibre-ebook.googlecode.com/files/')
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.addPatch('calibre-no-update.patch')
+        r.addPatch('calibre-0.7.38-pyPdf-fix.patch')
+        r.addPatch('calibre-manpages.patch')
+
+        r.macros.cflags += ' -fPIC '
+
+        r.Run(" OVERRIDE_CFLAGS='%(cflags)s %(ldflags)s'"
+              " LIBPATH=%(libdir)s"
+              " python%(pyver)s setup.py install --prefix=%(prefix)s "
+              " --bindir=%(bindir)s --libdir=%(libdir)s "
+              " --sharedir=%(datadir)s --root=%(destdir)s "
+              " --staging-bindir=%(destdir)s%(bindir)s "
+              " --staging-libdir=%(destdir)s%(libdir)s "
+              " --staging-sharedir=%(destdir)s%(datadir)s")
+
+        r.Requires('pyPdf:python', '%(bindir)s/calibre')
+
+        r.Install('resources/images/library.png',
+                  '%(datadir)s/pixmaps/%(name)s-gui.png')
+        r.Install('resources/images/viewer.png',
+                  '%(datadir)s/pixmaps/calibre-viewer.png')
+
+        # every file is empty here
+        r.Create('%(datadir)s/%(name)s/mime.types', contents = '')
+        r.InitialContents('%(datadir)s/%(name)s/mime.types')
+
+        # packages aren't allowed to register mimetypes like this
+        r.Remove('%(datadir)s/applications/defaults.list')
+        r.Remove('%(datadir)s/applications/mimeinfo.cache')
+
+        # mimetype icon for lrf
+        r.Remove('%(datadir)s/icons/hicolor/128x128', recursive = True)
+        r.Install('resources/images/mimetypes/lrf.png',
+                  '%(datadir)s/icons/hicolor/scalable/mimetypes/application-x-sony-bbeb.png')
+        r.Install('resources/images/viewer.png',
+                  '%(datadir)s/icons/hicolor/scalable/apps/calibre-viewer.png')
+
+        # these are provided as separate packages
+        # r.Remove('%(libdir)s/%(name)s/{odf,cherrypy,pyPdf,encutils,cssutils}', recursive = True)
+        # r.Remove('%(libdir)s/%(name)s/cal/utils/genshi', recursive = True)
+        # r.Remove('%(libdir)s/%(name)s/cal/trac', recursive = True)
+
+        # mv man
+        r.Move('%(datadir)s/%(name)s/man', '%(mandir)s/')
+        # XXX TODO mv locales too to canonic locations

@@ -1,0 +1,29 @@
+--- configure.ac.orig	2011-03-11 21:20:08.691967760 +0000
++++ configure.ac	2011-03-11 21:21:00.548967762 +0000
+@@ -149,25 +149,9 @@
+ dnl Check for SDS extensions to VA-API
+ AC_CACHE_CHECK([for VA-API],
+   ac_cv_libva_sds_extensions, [
+-  saved_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS $LIBVA_DEPS_CFLAGS"
+-  AC_TRY_COMPILE([
+-    #include <va/va_version.h>
+-    #if VA_MAJOR_VERSION == 0 && VA_MINOR_VERSION == 29
+-    # if !defined(VA_SDS_VERSION) || (VA_SDS_VERSION < $LIBVA_SDS_VERSION_0_29)
+-    #  error "VA-API version >= 0.29.0-sds$LIBVA_SDS_VERSION_0_29 is required"
+-    # endif
+-    #elif VA_MAJOR_VERSION == 0 && VA_MINOR_VERSION == 30
+-    # if !defined(VA_SDS_VERSION) || (VA_SDS_VERSION < $LIBVA_SDS_VERSION_0_30)
+-    #  error "VA-API version >= 0.30.0-sds$LIBVA_SDS_VERSION_0_30 is required"
+-    # endif
+-    #elif !VA_CHECK_VERSION(0,31,0)
+-    # error "VA-API version >= 0.31 is required"
+-    #endif
+-  ], [],
++  AC_CHECK_HEADERS([va/va_glx.h],
+   [ac_cv_libva_sds_extensions="yes"],
+   [ac_cv_libva_sds_extensions="no"])
+-  CFLAGS="$saved_CFLAGS"
+ ])
+ VA_VERSION=`$PKG_CONFIG --modversion libva`
+ VA_MAJOR_VERSION=`echo "$VA_VERSION" | cut -d'.' -f1`

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MtdUtils(CPackageRecipe):
+    name = 'mtd-utils'
+    version = '1.0.1'
+
+    buildRequires = ['acl:devel', 'zlib:devel']
+
+    def setup(r):
+        r.addArchive('ftp://ftp.infradead.org/pub/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.Make()
+        r.MakeInstall()

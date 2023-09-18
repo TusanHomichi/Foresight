@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class RazorAgents(CPackageRecipe,CPANPackageRecipe):
+    name = 'razor-agents'
+    version = '2.84'
+ 
+    buildRequires = ['perl-Digest-SHA1:perl', 'perl-URI:perl', 'perl:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/razor/')
+	r.Run('perl Makefile.PL')
+	r.Make()
+	r.MakeInstall()

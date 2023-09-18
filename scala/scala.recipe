@@ -1,0 +1,42 @@
+loadSuperClass('binarypackage')
+class Scala(BinaryPackageRecipe):
+    name = 'scala'
+    version = '2.7.7'
+
+    # To get all dependencies that the Scala classes depend upon add
+    # these requirements even though they are not used during the
+    # build.
+    buildRequires = ['ant:java', 'icedtea-jdk:runtime']
+
+    def unpack(r):
+        # FIXME build this from ground. F3 material
+        r.addArchive('http://www.scala-lang.org/downloads/distrib/files/scala-%(version)s.final.tgz')
+
+        # The shell scripts that come with Scala distribution break if
+        # the jar files in the /usr/lib directory are moved to
+        # /usr/share/java, so use Debian's shell script wrappers that
+        # work if the Scala jars are moved.  These four files were
+        # downloaded from the debian/command-scripts directory from
+        # http://git.debian.org/git/pkg-scala/packages/scala.git .
+        for f in ['fsc', 'scala', 'scalac', 'scaladoc']:
+            r.addSource(f)
+            r.Install(f, '%(bindir)s/', mode=0755)
+
+        for f in ['scala-compiler.jar', 'scala-dbc.jar', 'scala-library.jar']:
+            r.Copy('lib/%s' % f, '%(datadir)s/java/')
+
+        r.Move('man/man1', '%(mandir)s/')
+
+    def policy(r):
+        # These are provided by scala.  See this bug which should
+        # resolve this issue and then this method can be deleted:
+        # https://issues.rpath.com/browse/CNY-3260 .
+        # FIXME 
+        r.Requires(exceptDeps=r'java: scala.*')
+        # XXX
+        # old eclipse versions provided this too and this makes
+        # groups to miscarriage. 
+        r.Requires(exceptDeps=r'java: org.apache.tools.ant.*')
+        r.Requires('ant:java', '%(bindir)s/.*')
+        
+        

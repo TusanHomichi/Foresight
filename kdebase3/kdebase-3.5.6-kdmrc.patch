@@ -1,0 +1,47 @@
+--- kdebase-3.5.6/kdm/config.def.orig	2007-03-01 21:58:27.000000000 +0300
++++ kdebase-3.5.6/kdm/config.def	2007-03-01 22:10:34.000000000 +0300
+@@ -1247,7 +1247,7 @@
+ Default: None
+ User: core
+ User: greeter
+-Instance: #Grub
++Instance: Grub
+ Merge: kdm:UseLilo(P_UseLilo)
+ Comment: &
+ Description:
+@@ -2046,7 +2046,7 @@
+ Type: string
+ Default: "Welcome to %s at %n"
+ User: greeter
+-Instance: #*/"K Desktop Environment (%n)"
++Instance: */"KDE on Foresight (%n)"
+ Comment:
+  The headline in the greeter. The following character pairs are replaced:
+  - %d -> current display
+@@ -2098,7 +2098,7 @@
+ Type: bool
+ Default: false
+ User: greeter
+-Instance: #*/!
++Instance: */true
+ Comment: &
+ Description:
+  Whether the fonts used in the greeter should be antialiased.
+@@ -2270,7 +2270,7 @@
+  UserOnly/FACE_USER_ONLY: from the user's <filename>$<envar>HOME</envar>/.face[.icon]</filename>
+ Default: AdminOnly
+ User: greeter
+-Instance: #*/PreferUser
++Instance: */PreferUser
+ Comment:
+  Specify, where the users' pictures should be taken from.
+ Description:
+@@ -2290,7 +2290,7 @@
+ Type: string
+ Default: *KDMDATA "/faces"
+ User: greeter
+-Instance: #*/"/usr/share/faces"
++Instance: */"/usr/share/apps/kdm/pics/users"
+ Update: upd_facedir
+ Comment:
+  The directory containing the user images if FaceSource is not UserOnly.

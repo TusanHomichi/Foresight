@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sqlalchemy(PackageRecipe):
+    name = 'SQLAlchemy'
+    version = '0.7.1'
+
+    packageSummary = "The Python SQL Toolkit and Object Relational Mapper"
+    packageDescription = "SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL."
+
+    buildRequires = [
+        'python-setuptools:python',
+        'MySQL-python:python',
+        'mx:python',
+        'python-sqlite:python',
+        'python:devel'
+    ]
+
+    def setup(r):
+        r.addArchive('http://cheeseshop.python.org/packages/source/S/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()

@@ -1,0 +1,189 @@
+class Dracut(PackageRecipe):
+    name = 'dracut'
+    version = '009'
+
+    buildRequires = [ 'docbook-xsl', 'docbook-dtds', 'libxslt', 'make:runtime' ]
+
+    def setup(r):
+        # down :( 
+        # r.addGitSnapshot('git://git.kernel.org/pub/scm/boot/dracut/dracut.git', tag= '%(version)s')
+        r.addArchive('%(name)s-%(version)s.tar.bz2')
+
+        for patch in [ '0001-dracut-don-t-skip-zero-length-string-outfile-argumen.patch',
+                       '0002-dracut-simplify-kernel-version-argument-setting.patch',
+                       '0003-dracut-source-reformat-with-line-breaks.patch',
+                       '0004-dracut-functions-bashified-ret-ret-to-ret.patch',
+                       '0005-dracut-removed-extra-char-in-Including-modules-done.patch',
+                       '0006-dracut-add-lib-firmware-updates-to-default-firmware-.patch',
+                       '0007-40network-dhcp-root.sh-s-initqueue-finished-initqueu.patch',
+                       '0008-Ensure-rpc_pipefs-is-mounted.patch',
+                       '0009-plymouth-gensplash-check-for-console_init-before-cal.patch',
+                       '0010-base-init-fix-cdrom-polling.patch',
+                       '0011-base-dracut-lib.sh-relax-getargbool-value-parsing.patch',
+                       '0012-doc-s-init.log-run-initramfs-init.log-g.patch',
+                       '0013-base-init-fixed-compat-dev-.initramfs-copy.patch',
+                       '0014-fips-fixed-boot-dev-handling.patch',
+                       '0015-plymouth-use-run-plymouth-pid-instead-of-run-initram.patch',
+                       '0016-dmsquash-live-dmsquash-live-genrules.sh-fixed-udev-r.patch',
+                       '0017-base-dracut-lib.sh-changed-kmgs-log-levels.patch',
+                       '0018-base-init-reset-PATH-after-the-run-move.patch',
+                       '0019-dracut-don-t-fail-on-empty-etc-ld.so.conf.d.patch',
+                       '0020-mkdir-always-with-m-0755.patch',
+                       '0025-init-create-run-with-p.patch',
+                       '0026-dmsquash-live-dmsquash-live-root-add-missing-changes.patch',
+                       '0027-dracut-fix-overlayfs-paths.patch',
+                       '0028-correct-module-name.patch',
+                       '0029-skip-condition-fixed.patch',
+                       '0030-don-t-overwrite-ifname.patch',
+                       '0031-network-net-genrules.sh-also-honor-rename-events.patch',
+                       '0032-network-parse-ip-opts.sh-fix-ifname-for-ibft-with-al.patch',
+                       '0033-iscsi-add-additional-hardcoded-modules.patch',
+                       '0034-iscsi-mount-lun.sh-use-NEWROOT.patch',
+                       '0035-iscsi-find-iscsi-kernel-modules-by-symbol-names.patch' ]:
+            r.addPatch(patch)
+
+        r.addSource('kernel.tagdescription', macros=True, dest='%(tagdescriptiondir)s/kernel')
+        r.addSource('kernel.taghandler', macros=True, dest='%(taghandlerdir)s/kernel', mode=0755)
+        if Use.xen and Use.domU:
+            r.Replace('run_bommy add \$version \$pre \$initrd \$xenmultiboot',
+                      'run_bommy add $version $pre $initrd',
+                      '%(taghandlerdir)s/kernel')
+ 
+        r.Make('sysconfdir=/etc sbindir=%(essentialsbindir)s')
+        r.MakeInstall('sysconfdir=/etc sbindir=%(essentialsbindir)s')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/dracut.conf.d')
+        r.Create('%(localstatedir)s/log/dracut.log', contents='')
+        r.InitialContents('%(localstatedir)s/log/dracut.log')
+
+        r.Create('%(sysconfdir)s/dracut.conf.d/01-dist.conf',
+                 contents = """
+# Dracut config file customized for Foresight Linux.
+
+# i18n
+i18n_vars="/etc/sysconfig/keyboard:KEYTABLE-KEYMAP /etc/sysconfig/i18n:SYSFONT-FONT,FONTACM-FONT_MAP,FONT_UNIMAP"
+add_dracutmodules+=" "
+stdloglvl=3
+
+""",
+                 mode = 0644)
+
+        for req in ('%(essentialbindir)s/awk',
+                    '%(essentialsbindir)s/dmsetup',
+                    '%(essentialsbindir)s/ip',
+                    '%(essentialsbindir)s/modprobe',
+                    '%(essentialsbindir)s/lvm',
+                    '%(essentialsbindir)s/ldconfig',
+                    '/dev/null',
+                    '%(bindir)s/head',
+                    '%(bindir)s/tail',
+                    '%(essentialbindir)s/cat',
+                    '%(essentialbindir)s/chmod',
+                    '%(bindir)s/cmp',
+                    #'%(bindir)s/strip', # RPL-2413
+                    '%(bindir)s/wc',
+                    '%(bindir)s/bzgrep',
+                    '%(bindir)s/bzip2',
+                    '%(bindir)s/tr',
+                    '%(bindir)s/find',
+                    '%(essentialbindir)s/cp',
+                    '%(essentialbindir)s/cpio',
+                    '%(essentialbindir)s/df',
+                    '%(essentialbindir)s/egrep',
+                    '%(essentialbindir)s/grep',
+                    '%(essentialbindir)s/zgrep',
+                    '%(essentialbindir)s/gzip',
+                    '%(essentialbindir)s/ln',
+                    '%(essentialbindir)s/mkdir',
+                    '%(essentialbindir)s/mknod',
+                    '%(essentialbindir)s/mktemp',
+                    '%(essentialbindir)s/rm',
+                    '%(essentialbindir)s/mv',
+                    '%(essentialbindir)s/sed',
+                    '%(essentialbindir)s/cut',
+                    '%(essentialbindir)s/basename',
+                    '%(essentialbindir)s/sort',
+                    '%(essentialbindir)s/loadkeys',
+                    '%(essentialbindir)s/ash.static',
+                    '%(essentialbindir)s/ls',
+                    '%(essentialsbindir)s/ext3flush',
+                    '%(essentialsbindir)s/lvm',
+                    '%(essentialsbindir)s/modprobe',
+                    '%(essentialsbindir)s/bootman',
+                    '%(essentialsbindir)s/bommy',
+                    '%(essentialsbindir)s/modinfo',
+                    '%(essentialsbindir)s/depmod',
+                    '%(essentialsbindir)s/kpartx',
+                    'initscripts:runtime',
+                    'plymouth:runtime'
+                    ):
+            r.Requires(req, '%(essentialsbindir)s/dracut')
+
+        for req in ('%(essentialsbindir)s/bootman',
+                    '%(essentialsbindir)s/bommy',
+                    '%(bindir)s/grubtobootman',
+                    '%(bindir)s/wc',
+                    '%(essentialsbindir)s/ext3flush',
+                    '%(essentialbindir)s/awk',
+                    'bootman:runtime(bommy-get)',):
+            r.Requires(req, '%(taghandlerdir)s/kernel')
+
+        # rm modules specific to foreign distros. 
+        for rm in [ # RH and / or rpm specific 
+                    '98selinux',
+                    '10rpmversion',
+                    # gentoo specific
+                    '50gensplash',
+                    ]:
+            r.Remove('%(datadir)s/dracut/modules.d/' + rm, recursive=True)
+
+        # dracut-fips
+        r.Install('dracut.conf.d/fips.conf.example', '%(sysconfdir)s/dracut.conf.d/40-fips.conf',
+                  mode = 0644)
+        r.PackageSpec('dracut-fips', '%(datadir)s/dracut/modules.d/01fips/.*',
+                      '%(sysconfdir)s/dracut.conf.d/40-fips.conf')
+
+        # XXX smooth upgrade path from mkinitrd 
+        # XXX to be dropped in f3
+        r.PackageSpec('mkinitrd',
+                      '%(essentialsbindir)s/lsinitrd',
+                      '%(essentialsbindir)s/mkinitrd')
+        r.Requires('mkinitrd:runtime', 'dracut:runtime')
+        r.Requires('dracut:runtime', 'mkinitrd:runtime')
+        r.Requires('lvm2:runtime(DRACUT)', '%(essentialsbindir)s/dracut')
+
+        # dracut-network
+        for module in [ '40network', '95fcoe', '95iscsi', 
+                        '95nbd', '45ifcfg', '95znet' ]:
+            r.PackageSpec('dracut-network',
+                          '%(datadir)s/dracut/modules.d/' + module + '/.*' )
+
+        # dracut-tools
+        r.MakeDirs('%(localstatedir)s/lib/dracut/overlay')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/dracut/overlay')
+        r.MakeDirs('/boot/dracut')
+        r.ExcludeDirectories(exceptions='/boot/dracut')
+        r.PackageSpec('dracut-tools',
+                      '%(mandir)s/man8/dracut-gencmdline.8.*',
+                      '%(mandir)s/man8/dracut-catimages.8.*',
+                      '%(essentialsbindir)s/dracut-gencmdline',
+                      '%(essentialsbindir)s/dracut-catimages',
+                      '%(localstatedir)s/lib/dracut/overlay',
+                      '/boot/dracut', 
+                      )
+        # 
+        r.Requires('dracut-fips:config',
+                   'dracut-fips:data')
+        r.Requires('dracut-fips:data',
+                   'dracut-fips:config')
+
+        r.Requires('dracut:runtime',
+                   '%(datadir)s/dracut/modules.d/01fips/')
+        r.Requires('dracut:runtime',
+                   '%(localstatedir)s/lib/dracut/overlay')
+        r.Requires('dracut:runtime',
+                   '%(datadir)s/dracut/modules.d/')
+
+        r.Requires('grubby:runtime',
+                   'dracut:runtime')
+        
+

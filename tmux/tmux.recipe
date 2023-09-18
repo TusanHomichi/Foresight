@@ -1,0 +1,24 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Tmux(AutoPackageRecipe):
+    name = 'tmux'
+    version = '1.8'
+
+    buildRequires = [
+                    'libbsd:devel', 
+                    'libevent:devel',
+                    'ncurses:devel',
+                    'pkgconfig:devel',
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/tmux/files/tmux/tmux-%(version)s/tmux-%(version)s.tar.gz')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('examples/bash_completion_tmux.sh', '%(sysconfdir)s/bash_completion.d/tmux_completion.sh', mode=0755)

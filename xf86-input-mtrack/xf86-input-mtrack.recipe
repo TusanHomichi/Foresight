@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project 
+# 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class XorgDriverInputMtrack(AutoPackageRecipe):
+    name = 'xf86-input-mtrack'
+    stamp = datetime.date.today().strftime("%Y.%m.%d")
+    version = 'git+%s' % stamp
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime',
+                      'mtdev:devel', 'pkgconfig:devel',
+                      'util-macros:devel', 'libtool:devel',
+                      'libtool:runtime', 'xorg-server:devel',
+                      'xproto:devel', 'inputproto:devel', ]
+
+    def unpack(r):
+        r.addGitSnapshot('http://github.com/BlueDragonX/xf86-input-mtrack', 
+                         branch = 'dev')
+        r.addPatch('https://github.com/BlueDragonX/xf86-input-mtrack/commit/129489164d8fd61e2d7b33018db69338f63c108b.patch',
+                   extraArgs = '-R')
+        r.Run('autoreconf -fi')

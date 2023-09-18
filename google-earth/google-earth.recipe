@@ -1,0 +1,64 @@
+class GoogleEarth(AutoPackageRecipe):
+    name = 'google-earth'
+    version = '6.1.0.5001'
+
+
+    buildRequires = [ 'bash:runtime', 'fontconfig:devel', 'freetype:devel',
+                      'glibc:devel', 'perl:lib', 'perl:runtime',
+                      'desktop-file-utils:runtime','atk:devel',
+                      'glib:devel', 'gtk:devel', 'pango:devel',
+                      'libICE:devel', 'libSM:devel', 'libX11:devel', 'curl:devel',
+                      'libXcursor:devel', 'libXext:devel', 'perl:devel',
+                      'libXft:devel', 'libXrender:devel', 'Mesa:devel', 'gawk:runtime',
+                      'libXi:devel', 'libXrandr:devel', 'libgcc:devellib', 'libstdc++:devel',
+                      'qt4-core:lib', 'qt4-gui:lib', 'qt4:devel', 'libgcc:lib', 'libstdc++:lib']
+
+    def setup(r):
+
+        r.addArchive('http://dl.google.com/dl/earth/client/current/google-earth-stable_current_i386.rpm',
+                     dir = '%(destdir)s', use=Arch.x86)
+        r.addArchive('http://dl.google.com/dl/earth/client/current/google-earth-stable_current_x86_64.rpm',
+                     dir = '%(destdir)s', use=Arch.x86_64)
+       
+        r.addSource('googleearth', macros = True)
+        r.addSource('google-earth.desktop')
+        r.Install('googleearth',
+                  '%(bindir)s/%(name)s',
+                  mode = 0755)
+        
+        r.Remove('%(sysconfdir)s/', recursive = True)
+
+        r.Desktopfile('google-earth.desktop')
+        
+        r.Symlink('%(bindir)s/google-earth', '%(bindir)s/googleearth')
+
+        # stuff we have and that works, and so we wipe it to make pkg smaller...
+        r.Remove('/opt/google/earth/free/{qt.conf,plugins}', recursive = True)
+        r.Symlink('%(libdir)s/qt4/plugins/', '/opt/google/earth/free/plugins')
+        r.DanglingSymlinks(exceptions='/opt/google/earth/free/.*')
+        r.Remove('/opt/google/earth/free/{{lib{crypto,z,curl,GLU,Qt}.*},google-earth.desktop}', recursive = True)
+
+        for x in ['16', '22', '24', '32', '48', '64', '128',]:
+            r.Move('/opt/google/earth/free/product_logo_%s.png' % x,
+                   '%%(datadir)s/pixmaps/google-earth-%s.png' % x)
+
+        r.Move('/opt/google/earth/free/product_logo_32.xpm',
+               '%(datadir)s/pixmaps/google-earth.xpm')
+
+        # make sure global fl settings are consumed
+        r.Create('/opt/google/earth/free/qt.conf', mode = 0644,
+                 contents = """
+[Paths]
+Documentation=%(docdir)s/
+Libraries=%(libdir)s
+Plugins=%(libdir)s/qt4/plugins
+Translations=/usr/share/qt4/translations
+""")
+        r.Create('/opt/%(name)s/pangorc', mode = 0644,
+                 contents = """
+[Pango]
+ModuleFiles=%(libdir)s/pango/1.6.0/modules/
+[PangoX]
+AliasFiles=/etc/pango/pangox.aliases
+""")
+

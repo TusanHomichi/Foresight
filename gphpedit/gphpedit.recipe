@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gphpedit(AutoPackageRecipe):
+    name = 'gphpedit'
+    version = '0.9.91'
+ 
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'esound:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gail:devel', 'gettext:runtime', 'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libgtkhtml:devel', 'libpng:devel', 'libstdc++:devel', 'libxcb:devel', 'libxml2:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'popt:devel', 'xcb-util:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.gphpedit.org/download/get.php?file=main-tarball&version=%(version)s')

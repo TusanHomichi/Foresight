@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Vor
+Comment=Dodge the rocks until you die
+Exec=vor
+Icon=/usr/local/share/vor/icon.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Game;
+X-Desktop-File-Install-Version=0.11
+Name[sv_SE]=Vor

@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2005 rPath, Inc.
+# All rights reserved
+#
+
+loadInstalled('python')
+class CDDB(CPackageRecipe):
+    name = 'cddb-py'
+    version = '1.4'
+
+    buildRequires = [ 'python:runtime', 'python:devel',  'python-setuptools:python',
+                      # FIXME
+                      'python:bin'
+                      ]
+
+    def setup(r):
+        r.macros.url = 'http://umn.dl.sourceforge.net/sourceforge/cddb-py'
+        r.macros.pyver = Python.majversion
+
+        r.addArchive('%(url)s/CDDB-%(version)s.tar.gz')
+
+        r.Run(""" sed -e '/^#!/,1d' < CDDB.py > CDDB.py.tmp
+mv CDDB.py.tmp CDDB.py
+sed -e '/^#!/,1d' < DiscID.py > DiscID.py.tmp
+mv DiscID.py.tmp DiscID.py """)
+        r.PythonSetup()
+
+#         r.Replace('lib/python', '%(lib)s/python', 'Makefile.pre.in')
+#         r.Make('-f Makefile.pre.in boot')
+#         r.Replace('DEFS=.*', 'DEFS=%(cflags)s', 'Makefile')
+#         r.Make()
+
+#         r.Install('cdrommodule.so',
+#                   '%(libdir)s/python%(pyver)s/site-packages/', mode=0755)
+#         r.Install('{CDDB,DiscID}.py',
+#                   '%(libdir)s/python%(pyver)s/site-packages/', mode=0644)
+#         r.CompilePython('%(libdir)s/python%(pyver)s/site-packages/')
+        r.Doc('cddb-info.py')

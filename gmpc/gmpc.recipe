@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gmpc(AutoPackageRecipe):
+    name = 'gmpc'
+    version = '11.8.16'
+ 
+    buildRequires = [
+		'atk:devel', 
+		'automake:runtime',
+		'autoconf:runtime',
+		'binutils:runtime', 
+		'cairo:devel', 
+		'curl:devel', 
+		'desktop-file-utils:runtime', 
+		'diffutils:runtime', 
+		'expat:devel', 
+		'file:runtime', 
+		'fontconfig:devel', 
+		'freetype:devel', 
+		'gcc-c++:runtime', 
+		'gettext:runtime', 
+		'glib:devel', 
+		'glibc:devel', 
+		'gob2:runtime', 
+		'gob2:devel', 
+		'gtk:devel', 
+		'gtk:runtime', 
+		'intltool:runtime',
+		'intltool:devel', 
+		'libICE:devel', 
+		'libSM:devel', 
+		'libX11:devel', 
+		'libXrender:devel', 
+		'libglade:devel', 
+		'libmpd:devel', 
+		'libpng:devel', 
+		'libsoup:devel', 
+		'libtool:runtime', 
+		'libxcb:devel', 
+		'libxml2:devel', 
+		'make:runtime', 
+		'openssl:devel', 
+		'pango:devel', 
+		'perl:runtime', 
+		'pixman:devel', 
+		'pkgconfig:devel', 
+		'sqlite:devel', 
+        'unique:devel',
+		'vala:runtime',
+		'xcb-util:devel', 
+		'zlib:devel', 
+		]
+ 
+    def unpack(r):
+	r.addArchive('http://download.sarine.nl/Programs/%(name)s/%(major_version)s/')
+	r.Requires('mpd:runtime', '%(bindir)s/gmpc')
+	r.Requires('gmpc-plugins:data', '%(bindir)s/gmpc')

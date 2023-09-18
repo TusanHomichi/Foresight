@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DejavuFontsTtf(PackageRecipe):
+    name = 'dejavu-fonts-ttf'
+    version = '2.22'
+ 
+    buildRequires = [ 'fontconfig:runtime', 'mkfontdir:runtime' ]
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/dejavu/%(name)s-%(version)s.tar.bz2')
+
+        r.Move('ttf/*',        '%(datadir)s/fonts/dejavu/')
+        r.Move('fontconfig/*', '%(sysconfdir)s/fonts/conf.d/')

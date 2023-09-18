@@ -1,0 +1,9 @@
+class libdc1394(AutoPackageRecipe):
+    name = 'libdc1394'
+    version = '2.1.2'
+
+    buildRequires = [ 'libraw1394:devel', 'doxygen:runtime', 'libICE:devel', 'libSM:devel', 'libXext:devel', 'libXv:devel', 'pkgconfig:devel' ]
+ 
+    def unpack(r):
+	r.macros.version = r.macros.version.replace('_', '-')
+       	r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')

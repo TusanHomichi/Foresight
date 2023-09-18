@@ -1,0 +1,50 @@
+From 43f4c730c8048aec4422cb2f56aeb4414423dbc3 Mon Sep 17 00:00:00 2001
+From: Frederic Crozat <fcrozat@mandriva.com>
+Date: Fri, 26 Mar 2010 16:30:38 +0100
+Subject: [PATCH] handle dmrc not in cache when migrating
+
+https://bugzilla.gnome.org/show_bug.cgi?id=614028
+---
+ daemon/gdm-session-settings.c |   26 ++++++++++++++++++++++++--
+ 1 files changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/daemon/gdm-session-settings.c b/daemon/gdm-session-settings.c
+index 421d87a..306d55c 100644
+--- a/daemon/gdm-session-settings.c
++++ b/daemon/gdm-session-settings.c
+@@ -290,8 +290,30 @@ gdm_session_settings_load (GdmSessionSettings  *settings,
+         load_error = NULL;
+         if (!g_key_file_load_from_file (key_file, filename,
+                                         G_KEY_FILE_NONE, &load_error)) {
+-                g_propagate_error (error, load_error);
+-                goto out;
++	        struct passwd *passwd_entry;
++		char *userfile;
++
++		/* try ~/.dmrc if we are just migrating */
++	        passwd_entry = getpwnam (username);
++	        if (passwd_entry != NULL) {
++			g_error_free (load_error);
++			load_error = NULL;
++		        userfile = g_build_filename (passwd_entry->pw_dir, ".dmrc", NULL);
++        		if (!g_key_file_load_from_file (key_file, userfile,
++                                        G_KEY_FILE_NONE, &load_error)) {
++				g_free (userfile);
++
++		                g_propagate_error (error, load_error);
++		                goto out;
++			}
++			else {
++				g_free (filename);
++				filename = userfile;
++			}
++		} else {
++		                g_propagate_error (error, load_error);
++		                goto out;
++		}
+         }
+ 
+         session_name = g_key_file_get_string (key_file, "Desktop", "Session",
+-- 
+1.7.0.3
+

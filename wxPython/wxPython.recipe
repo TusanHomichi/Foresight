@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2008 Foresight Linux, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadInstalled('python')
+class WxPython(CPackageRecipe):
+
+    name = 'wxPython'
+    version = '2.8.11.0'
+
+    buildRequires = [ 'python-setuptools:python', 'gcc-c++:runtime',
+        'glibc:devel', 'gtk:devel', 'libgcc:devellib', 'libstdc++:devel', 
+        'libxml2:python', 'mx:python', 'pkgconfig:devel', 'python-ctypes:python', 
+        'python:devel', 'python-numeric:python', 'Mesa:devel', 'wxGTK:devel', 'PIL:python', 'numpy:python', 'pycairo:python' ]
+
+    def setup(r):
+        r.macros.pyver = Python.majversion
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.addArchive('mirror://sourceforge/wxpython/%(name)s-src-%(version)s.tar.bz2')
+        # included distutils is not multilib aware; use system's one
+        r.Remove('distutils', recursive = True)
+       #r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/wxPython/wxPython-2.8.9.2-treelist.patch')
+        r.addPatch('wxPython-2.8.9.2-treelist.patch')
+        r.addPatch('patch.diff')
+
+       # Remove eggs because they break install:
+        # Setup with some fixes:
+        # r.PythonSetup(' --single-version-externally-managed', rootDir='%(destdir)s', dir='wxPython', purePython=False)
+        r.Run('python setup.py WXPORT=gtk2 UNICODE=1  NO_SCRIPTS=1 build',  dir='wxPython')
+        r.Run('python setup.py WXPORT=gtk2 UNICODE=1  NO_SCRIPTS=1 install --root=%(destdir)s ',  dir='wxPython')
+
+        if Arch.x86_64:
+            r.Move('/usr/lib/python%(pyver)s/site-packages/*', '%(libdir)s/python%(pyver)s/site-packages/')
+        r.Remove("%(libdir)s/python%(pyver)s/site-packages/wx-2.8-gtk2-unicode/wx/tools/Editra", recursive=True)

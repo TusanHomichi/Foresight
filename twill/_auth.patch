@@ -1,0 +1,22 @@
+diff -r 57d2269417c0 twill/other_packages/_mechanize_dist/_auth.py
+--- a/twill/other_packages/_mechanize_dist/_auth.py	Fri Feb 20 02:27:06 2009 -0600
++++ b/twill/other_packages/_mechanize_dist/_auth.py	Fri Feb 20 02:27:54 2009 -0600
+@@ -11,7 +11,8 @@
+ 
+ """
+ 
+-import re, base64, urlparse, posixpath, md5, sha, sys, copy
++import re, base64, urlparse, posixpath, hashlib,  sys, copy
++import hashlib as sha
+ 
+ from urllib2 import BaseHandler
+ from urllib import getproxies, unquote, splittype, splituser, splitpasswd, \
+@@ -401,7 +402,7 @@
+     def get_algorithm_impls(self, algorithm):
+         # lambdas assume digest modules are imported at the top level
+         if algorithm == 'MD5':
+-            H = lambda x: md5.new(x).hexdigest()
++            H = lambda x: hashlib.md5().new(x).hexdigest()
+         elif algorithm == 'SHA':
+             H = lambda x: sha.new(x).hexdigest()
+         # XXX MD5-sess

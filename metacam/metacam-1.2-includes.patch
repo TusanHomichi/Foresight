@@ -1,0 +1,56 @@
+diff -ruN metacam-1.2.orig/datatiff.h metacam-1.2/datatiff.h
+--- metacam-1.2.orig/datatiff.h	2004-08-21 10:56:53.000000000 -0700
++++ metacam-1.2/datatiff.h	2011-01-14 10:28:56.868183719 -0800
+@@ -24,6 +24,7 @@
+ #define DATATIFF_H_INCLUDED
+ 
+ #include "metatiff.h"
++#include <cstdlib>
+ 
+ class _DataIFD;
+ class _DataIFDEntry;
+diff -ruN metacam-1.2.orig/dpyfuncs.cc metacam-1.2/dpyfuncs.cc
+--- metacam-1.2.orig/dpyfuncs.cc	2004-08-21 10:56:53.000000000 -0700
++++ metacam-1.2/dpyfuncs.cc	2011-01-14 10:29:03.290871316 -0800
+@@ -23,6 +23,7 @@
+ #include <iostream>
+ #include <math.h>
+ #include <cstdio>
++#include <cstring>
+ #include <ctype.h>
+ 
+ #include "metacam.h"
+diff -ruN metacam-1.2.orig/edittiff.h metacam-1.2/edittiff.h
+--- metacam-1.2.orig/edittiff.h	2004-08-21 10:56:53.000000000 -0700
++++ metacam-1.2/edittiff.h	2011-01-14 10:28:56.869183919 -0800
+@@ -24,6 +24,7 @@
+ #define EDITTIFF_H_INCLUDED
+ 
+ #include "metatiff.h"
++#include <cstdlib>
+ 
+ class _EditIFD;
+ 
+diff -ruN metacam-1.2.orig/metacam.cc metacam-1.2/metacam.cc
+--- metacam-1.2.orig/metacam.cc	2004-08-21 10:56:53.000000000 -0700
++++ metacam-1.2/metacam.cc	2011-01-14 10:29:03.357913358 -0800
+@@ -23,6 +23,7 @@
+ #include <iostream>
+ #include <fstream>
+ #include <cstdio>
++#include <cstdlib>
+ #include <errno.h>
+ #include <netinet/in.h>
+ #include <string.h>
+diff -ruN metacam-1.2.orig/ocontext.cc metacam-1.2/ocontext.cc
+--- metacam-1.2.orig/ocontext.cc	2004-08-21 10:56:53.000000000 -0700
++++ metacam-1.2/ocontext.cc	2011-01-14 10:29:03.412066280 -0800
+@@ -25,6 +25,8 @@
+ #include "odrivers.h"
+ 
+ #include <ctype.h>
++#include <cstdlib>
++#include <cstring>
+ 
+ OutputContext::~OutputContext()
+ {

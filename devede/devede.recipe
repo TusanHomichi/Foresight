@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Devede(PackageRecipe):
+    name = 'devede'
+    version = '3.23.0'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'gettext:runtime',
+        'intltool:runtime', 'pycairo:python', 'python:devel',
+	'pygobject:python', 'pygtk:python', 'dbus-python:python'
+    ]
+
+    def setup(r):
+        r.addArchive('http://www.rastersoft.com/descargas/')
+        r.Replace('/usr/local','%(prefix)s','install.sh')
+        r.Run('DESTDIR=%(destdir)s ./install.sh')
+        r.Requires('vcdimager:runtime', '%(bindir)s/devede')
+        r.Requires('dvdauthor:runtime', '%(bindir)s/devede')
+        r.Requires('mplayer:runtime', '%(bindir)s/devede')

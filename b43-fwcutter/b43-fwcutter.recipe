@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class B43Fwcutter(CPackageRecipe):
+    name = 'b43-fwcutter'
+    version = '017'
+    buildRequires = ['make:runtime', 'gcc:runtime', 'python:bin', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('http://bues.ch/b43/fwcutter/')
+        r.Make()
+        r.Install('%(name)s', '%(bindir)s/')
+        r.Install('%(name)s.1', '%(mandir)s/man1/')

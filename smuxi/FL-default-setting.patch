@@ -1,0 +1,15 @@
+--- smuxi/smuxi-master/src/Engine/Config/Config.cs	2010-09-08 00:11:11.000000000 +0200
++++ smuxi/smuxi-master/src/Engine/Config/Config-copy.cs	2010-09-09 09:13:35.000000000 +0200
+@@ -353,6 +353,12 @@
+             Get(prefix + "Password", String.Empty);
+             Get(prefix + "UseEncryption", false);
+             Get(prefix + "ValidateServerCertificate", false);
++            Get(prefix + "OnStartupConnect", true);
++            Get(prefix + "OnConnectCommands",
++                new string[] {
++                    "/join #foresight",
++                }
++            );
+             
+             prefix = "Engine/Users/";
+             Get(prefix+"Users", new string[] { "local" });

@@ -1,0 +1,8 @@
+# Files in the conary-proxy cache which have not been accessed in
+# GRACE_PERIOD will be removed by tmpwatch
+#
+# - m for minutes, h for hours, d for days
+# - if no suffix is supplied, the default is hours
+#
+GRACE_PERIOD="30d"
+

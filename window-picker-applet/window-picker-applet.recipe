@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008 - 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WindowPickerApplet(AutoPackageRecipe):
+    name = 'window-picker-applet'
+    version = '0.5.8'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'esound:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel',  'gettext:runtime', 'glib:devel', 'gnome-keyring:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'gtk:devel', 'intltool:devel', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel', 'libXres:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'libwnck:devel', 'libxcb:devel', 'libxml2:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'popt:devel', 'startup-notification:devel', 'xcb-util:devel', 'zlib:devel', 'autoconf:runtime','automake:runtime', 'libtool:runtime', 'libtool:devel', 'gnome-common:devel', 'gnome-common:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/window-picker-applet/0.5/ubuntu-9.10-beta-freeze/+download/window-picker-applet-0.5.8.tar.gz')
+        r.addPatch('buildfix.patch')
+        #r.Replace('gnome-session-save --kill --gui','gnome-shutdown','src/task-title.c')

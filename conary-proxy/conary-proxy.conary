@@ -1,0 +1,10 @@
+# If you have local repositories, insert them here
+#proxyMap       conaryLocalRepo       DIRECT
+
+# Go through the conary-proxy when fetching troves to cut down on bandwidth waste
+# and re-downloads
+# By default, always go through the proxy
+proxyMap       *                     conary://localhost:8008/conary/
+
+# Fallback if the proxy is down (file is parsed in order)
+proxyMap       *                     DIRECT

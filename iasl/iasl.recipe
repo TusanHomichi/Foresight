@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class iasl(CPackageRecipe):
+    name = 'iasl'
+    version = '20061109'
+
+    buildRequires = [ 'bison:runtime', 'flex:runtime', ]
+
+    def setup(r):
+        r.macros.archive_name = 'acpica-unix'
+        r.addArchive('http://www.intel.com/technology/iapc/acpi/downloads/')
+        r.Make(dir='compiler')
+        r.Install('compiler/iasl', '%(bindir)s/')

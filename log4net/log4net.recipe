@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Log4net(PackageRecipe):
+    name = 'log4net'
+    version = '1.2.10'
+ 
+    buildRequires = [ 'findutils:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'unzip:runtime' ]
+ 
+    def setup(r):
+        r.addArchive('http://archive.apache.org/dist/incubator/log4net/%(version)s/incubating-%(name)s-%(version)s.zip')
+        r.addSource('log4net.snk')
+
+        r.Create('%(libdir)s/pkgconfig/log4net.pc', contents = """\
+prefix=%(prefix)s
+exec_prefix=%(prefix)s
+libdir=%(libdir)s
+
+Name: Log4net
+Description: Log4net - Logging library for .Net
+Version: %(version)s
+Libs: -r:${libdir}/mono/log4net/log4net.dll
+""")
+
+        r.Run('mcs -out:log4net.dll -target:library -keyfile:log4net.snk -r:System.Data -r:System.Web `find src -name "*.cs"`')
+        r.Run('gacutil -package %(name)s -i log4net.dll -root %(destdir)s%(libdir)s')

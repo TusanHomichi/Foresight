@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class SeahorsePlugins(GnomePackageRecipe):
+    name = 'seahorse-plugins'
+    version = '2.30.1'
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'avahi-glib:devel', 'avahi:devel', 'dbus-glib:runtime', 'desktop-file-utils:runtime', 'epiphany:devel', 'gcc-c++:runtime', 'gedit:devel', 'libgnome-keyring:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'gnupg:runtime', 'gpgme:devel', 'gtksourceview:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel', 'libgnomeui:devel', 'libgpg-error:devel', 'libnotify:devel', 'libsoup:devel', 'nautilus:devel', 'nspr:devel', 'openldap:devel', 'openssh-client:runtime', 'openssh:runtime', 'popt:devel', 'rarian:devel', 'rarian:runtime', 'shared-mime-info:runtime', 'gnome-doc-utils:runtime', 'gnome-doc-utils:devel', 'vala:runtime', 'seahorse:devel', 'xulrunner:lib', 'epiphany:devel']
+
+    extraConfig = ' --disable-update-mime-database --disable-scrollkeeper --disable-epiphany '
+    patches = [ 'notify.patch', 'clipboard-disconnect.patch', 'seahorse-agent-uninit.patch' ]
+
+    def policy(r):
+        r.Create('/etc/X11/xinit/xinitrc.d/seahorse-agent.sh', contents="""
+#!/bin/sh
+if [ -x /usr/bin/seahorse-agent ]; then
+    export `/usr/bin/seahorse-agent --variables`
+fi
+""", mode = 0755)
+

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('xfcepackage')
+class Xfce4TimeOutPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-time-out-plugin'
+    version = '1.0.0'
+    subtree = 'panel-plugins'
+
+    buildRequires = ['libxfce4util:devel', 'libxfcegui4:devel', 'xfce4-panel:devel']
+
+

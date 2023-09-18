@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ccache(AutoPackageRecipe):
+    name = 'ccache'
+    version = '3.1.4'
+    buildRequires = ['xz:runtime', 'zlib:devel',]
+
+
+    def unpack(r):
+        r.addArchive('http://samba.org/ftp/%(name)s/%(name)s-%(version)s.tar.xz')
+        for x in ['sh', 'csh']:
+            r.addSource('ccache-set-paths.'+ x,
+                        dir='%(sysconfdir)s/profile.d/',
+                        macros = True, mode = 0644)
+
+        r.Remove('zlib', recursive=True)
+ 
+    def policy(r):
+        r.MakeDirs('%(libdir)s/%(name)s')
+        r.MakeDirs('%(localstatedir)s/cache/%(name)s')
+        r.SetModes('%(localstatedir)s/cache/%(name)s', 02770)
+
+        r.Ownership('root', '%(name)s', '%(localstatedir)s/cache/%(name)s')
+        r.Group('%(name)s', 9123)
+        r.UtilizeGroup('%(name)s', '%(localstatedir)s/cache/%(name)s')
+
+        # set up ccache dir and symlink gcc into it
+
+        if Arch.x86:
+            archs = ['i686']
+        elif Arch.x86_64:
+            archs = ['i686', 'x86_64']
+
+        for n in ['cc', 'gcc', 'g++', 'c++']:
+            r.Symlink('%(bindir)s/ccache', '%(libdir)s/%(name)s/' + n)
+            for x in archs:
+                r.Symlink('%(bindir)s/ccache', '%(libdir)s/%(name)s/' + x + '-%(targetvendor)s-%(targetos)s-'+n)
+
+        r.NonBinariesInBindirs(exceptions='%(sysconfdir)s/profile.d/.*')

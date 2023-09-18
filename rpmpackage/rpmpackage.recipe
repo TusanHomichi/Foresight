@@ -1,0 +1,144 @@
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import errno
+from conary.lib import log
+from conary.build import source
+from conary.build import lookaside
+from conary.build.source import SourceError
+
+# if you need the CPackage build reqs, please inherit from both
+# RPMPackageRecipe and CPackageRecipe; do the same for AutoPackageRecipe
+# if you would normally inherit from only PackageRecipe, you should only
+# inherit from RPMPackageRecipe and simply call r.unpack() in setup
+class RPMPackageRecipe(PackageRecipe):
+    name = 'rpmpackage'
+    version = '1'
+    abstractBaseClass = True
+
+    # set these in the recipe if the package is not the normal Fedora srpm url
+    externalArchive = ''
+    tarballName = ''
+    distroVersion = 'development'
+    isUpdate = False
+    rpmRelease = '1'
+    isRHEL = False
+    isOPENsuse = False
+    isXOrgFactory = False
+    rpmPatches = []
+    rpmArchives = []
+    rpmSources = []
+    rpmUpVer = ''
+    rpmName = ''
+    rpmURL = ''
+
+    rhel_url = 'ftp://ftp.redhat.com/pub/redhat/linux/enterprise/%(distroVersion)s/en/os/i386/SRPMS/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+    new_rhel_url = 'ftp://ftp.redhat.com/pub/redhat/linux/enterprise/%(distroVersion)s/en/os/SRPMS/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+    koji_fedora_url = 'http://kojipkgs.fedoraproject.org/packages/%(rpmName)s/%(rpmUpVer)s/%(rpmRelease)s/src/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+    old_fedora_url = 'mirror://fedora/%(distroVersion)s/SRPMS/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+    fedora_url = 'mirror://fedora/%(distroVersion)s/source/SRPMS/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+    opensuse_url = 'http://download.opensuse.org/factory/repo/src-oss/suse/src/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm' 
+    opensuse_xorg_factory_url = 'http://widehat.opensuse.org/repositories/X11:/XOrg/openSUSE_11.4/src/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm' 
+    rawhide_url = 'mirror://fedora/../development/source/SRPMS/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+    fedora_sans_core = 'mirror://fedora/../releases/%(distroVersion)s/Fedora/source/SRPMS/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+    fedora_updates_sans_core = 'mirror://fedora/../updates/%(distroVersion)s/SRPMS/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+
+    def __init__(self, *args, **kwargs):
+        PackageRecipe.__init__(self, *args, **kwargs)
+        self.macros.externalArchive = self.externalArchive
+        self.macros.rpmRelease = self.rpmRelease
+        self.macros.distroVersion = self.distroVersion
+        self.macros.rpmUpVer = self.rpmUpVer
+        if self.rpmName:
+            self.macros.rpmName = self.rpmName 
+        else:
+            self.macros.rpmName = self.name
+
+        if not self.rpmUpVer:
+            self.macros.rpmUpVer = self.macros.version
+
+        if self.rpmURL:
+            self.srpm = self.rpmURL + '/%(rpmName)s-%(rpmUpVer)s-%(rpmRelease)s.src.rpm'
+        elif self.isRHEL:
+            if self.macros.distroVersion == 'development':
+                self.macros.distroVersion = '4'
+            if self.macros.distroVersion.isdigit() and int(self.macros.distroVersion) < 5:
+                self.srpm = self.rhel_url
+            else:
+                self.srpm = self.new_rhel_url
+        elif self.isOPENsuse:
+            if self.isXOrgFactory:
+                self.srpm = self.opensuse_xorg_factory_url
+            else: 
+                self.srpm = self.opensuse_url
+        else:
+            self.macros.distroVersion = self.distroVersion
+            if self.macros.distroVersion != 'development' and int(self.macros.distroVersion) < 5:
+                self.srpm = self.old_fedora_url
+            else:
+                self.srpm = self.koji_fedora_url
+
+    def unpack(r):
+        if r.rpmUpVer and not r.externalArchive:
+            raise SourceError('you must declare an externalArchive if you use rpmUpVer!')
+        if r.externalArchive:
+            r.addArchive('%s' % r.externalArchive)
+        elif r.tarballName:
+            print r.tarballName
+            print r.srpm
+            r.addArchive('%s' % r.tarballName, rpm=r.srpm)
+        else:
+            r.AddArchiveFromSRPM('%(name)s-%(version)s', rpm=r.srpm)
+
+        for archive in r.rpmArchives:
+            r.addArchive(archive, rpm=r.srpm, dir = '%(name)s-%(version)s')
+        for source in r.rpmSources:
+            r.addSource(source, rpm=r.srpm)
+        for patch in r.rpmPatches:
+            r.addPatch(patch, rpm=r.srpm)
+
+    def AddArchiveFromSRPM(r, *args, **keywords):
+        r.extraSource(ArchiveFromSRPM(r, *args, **keywords))
+
+class ArchiveFromSRPM(source.Archive):
+    def _extractFromRPM(self):
+        sourcename = self.sourcename
+        extensions = ['tar.xz', 'tar.bz2', 'tgz', 'tar.gz', 'tar', 'tar.Z', 'zip', 'tbz2', 'Z']
+
+        # If the file ends in a known extension behave normally
+        if [ x for x in extensions if sourcename.endswith(x) ]:
+            log.info('sourcename ends in a known extension')
+            source._Source._extractFromRPM(self)
+            return
+
+        # Search for archive already unpacked from srpm
+        log.info('searching cache')
+        for extension in extensions:
+            self.sourcename = '%s.%s' % (sourcename, extension)
+            log.info("trying %s" % self.sourcename)
+            try:
+                f = lookaside.findAll(self.recipe.cfg,
+                                    self.recipe.laReposCache,
+                                    self.sourcename,
+                                    self.recipe.name,
+                                    self.recipe.srcdirs,
+                                    autoSource=True)
+            except OSError:
+                f = False
+                pass # we can hopefully find the source in the rpm itself
+            if f: return f
+
+        # Get the srpm to pull the source from
+        log.info('searching srpm for source')
+        for extension in extensions:
+            self.sourcename = '%s.%s' % (sourcename, extension)
+            try:
+                log.info("trying %s" % self.sourcename)
+                source._Source._extractFromRPM(self)
+                return
+            except IOError:
+                pass
+
+        raise IOError, (errno.ENOENT, os.strerror(errno.ENOENT), sourcename)

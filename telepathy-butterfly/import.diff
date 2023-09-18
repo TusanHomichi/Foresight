@@ -1,0 +1,12 @@
+diff -r 40d92bd4d9ee butterfly/channel/im.py
+--- a/butterfly/channel/im.py	Fri Jan 28 23:14:37 2011 -0600
++++ b/butterfly/channel/im.py	Fri Jan 28 23:15:32 2011 -0600
+@@ -30,7 +30,7 @@
+ 
+ from butterfly.channel.text import ButterflyTextChannel
+ 
+-from butterfly.Channel_Interface_Conference import CHANNEL_INTERFACE_CONFERENCE
++from telepathy import CHANNEL_INTERFACE_CONFERENCE
+ 
+ __all__ = ['ButterflyImChannel']
+ 

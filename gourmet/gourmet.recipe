@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gourmet(AutoPackageRecipe):
+
+    name = 'gourmet'
+    version = '0.13.4'
+
+    buildRequires = ['python-setuptools:python', 'PIL:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-python-desktop:python', 'gnome-python:python', 'intltool:runtime', 'pygobject:python', 'pygtk:python', 'python-sqlite:python', 'python:devel', 'reportlab:python']
+
+    def setup(r):
+        r.macros.count = '2'
+        r.addArchive('mirror://sourceforge/grecipe-manager/gourmet-%(version)s-%(count)s.tar.gz')
+        r.addPatch('import-failure.patch')
+        r.Run('python setup.py install --root %(destdir)s')
+

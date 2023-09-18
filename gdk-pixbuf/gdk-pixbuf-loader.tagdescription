@@ -1,0 +1,5 @@
+file            %(taghandlerdir)s/gdk-pixbuf-loader-%(isaBits)s
+implements      files update
+implements      files remove
+implements      handler update
+include         %(libdir)s/gdk-[^/]*/[^/]*/loaders/[^/]*\.so$

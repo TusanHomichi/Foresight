@@ -1,0 +1,48 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class scummvm(AutoPackageRecipe):
+    name = 'scummvm'
+    version = '1.5.0'
+    packageSummary = "Allows you to run certain classic graphical point-and-click adventure games."
+    packageDescription = "Run certain classic graphical point-and-click adventure games."\
+                         "The clever part about this: ScummVM just replaces the executables shipped with the games,"\
+                         "allowing you to play them on systems for which they were never designed! "
+
+    buildRequires = [
+        'alsa-lib:devel',
+        'bzip2:devel',
+        'desktop-file-utils:runtime',
+        'diffutils:runtime',
+        'file:runtime',
+        'flac:devel',
+        'fluidsynth:devel',
+        'freetype:devel',
+        'gcc:runtime',
+        'glibc:devel',
+        'libgcc:devellib',
+        'libmad:devel',
+        'libogg:devel',
+        'libpng:devel',
+        'libstdc++:devel',
+        'libtheora:devel',
+        'libvorbis:devel',
+        'make:runtime',
+        'SDL:devel',
+        'zlib:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://prdownloads.sourceforge.net/scummvm/scummvm-%(version)s.tar.bz2')
+        r.addSource('scummvm.desktop')
+
+    def configure(r):
+        r.ManualConfigure('--mandir=%(mandir)s','--prefix=%(prefix)s', '--enable-all-engines')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('icons/scummvm.svg','%(datadir)s/pixmaps/')
+        r.Desktopfile('scummvm.desktop', vendor='foresight')

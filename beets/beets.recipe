@@ -1,0 +1,17 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Beets(PackageRecipe):
+
+    name = 'beets'
+    version = '1.0b10'
+
+    buildRequires = ['Unidecode:python', 'python-setuptools:python', 'flask:python', 'gst-python:python', 'libgpod:python', 'mutagen:python', 'pygobject:python', 'python-munkres:python', 'python-musicbrainz2:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://beets.googlecode.com/files/')
+        r.PythonSetup()

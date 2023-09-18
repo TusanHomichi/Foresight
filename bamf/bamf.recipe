@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bamf(AutoPackageRecipe):
+    name = 'bamf'
+    version = '0.2.78'
+ 
+    buildRequires = [ 'automake:runtime', 'dbus-glib:runtime',
+                      'autoconf:runtime', 'libtool:runtime',
+                      'atk:devel', 'cairo:devel', 'dbus-glib:devel',
+                      'dbus:devel', 'fontconfig:devel', 'freetype:devel',
+                      'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel',
+                      'libX11:devel', 'libgtop:devel', 'libpng:devel',
+                      'libwnck:devel', 'pango:devel', 'gtk-doc:runtime',
+                      'pkgconfig:devel', 'vala:runtime', 'gnome-common:devel',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/0.2/%(version)s/+download/')
+        r.addPatch('bamf-0.2.64-gio_parameter.patch')
+        r.Run('autoreconf -fi')
+
+    def configure(r):
+        r.Configure(' --disable-static  --enable-introspection=no '
+                    ' --disable-gio-module ')

@@ -1,0 +1,13 @@
+--- eclipse-sdk--eclipse-build/build.xml.orig	2009-10-23 18:28:57.136348345 +0100
++++ eclipse-sdk--eclipse-build/build.xml	2009-10-23 18:30:08.309473137 +0100
+@@ -205,6 +205,10 @@
+ 	</target>
+ 
+ 	<target name="applyPatches" depends="insertBuildId" unless="patch.complete">
++                <patch patchfile="${basedir}/patches/eclipse-swt-mesa-fix.patch" dir="${buildDirectory}" strip="0" />
++                <patch patchfile="${basedir}/patches/eclipse-sdk-iterators.patch" dir="${buildDirectory}" strip="0" />
++                <patch patchfile="${basedir}/patches/eclipse-sdk-bug317829.patch" dir="${buildDirectory}" strip="0" />
++                <patch patchfile="${basedir}/patches/eclipse-sdk-bug309059.patch" dir="${buildDirectory}" strip="0" />
+ 		<!-- eclipse-build-only patches -->
+ 		<patch patchfile="${basedir}/patches/eclipse-buildswtnatives.patch" dir="${buildDirectory}" strip="0" />
+ 		<patch patchfile="${basedir}/patches/eclipse-jdt_launch-customBuild.patch" dir="${buildDirectory}" strip="0" />

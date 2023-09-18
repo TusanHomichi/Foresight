@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 - 2012 Foresight Linux.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class xfce4DevTools(AutoPackageRecipe):
+
+    name = 'xfce4-dev-tools'
+    version = '4.10.0'
+
+    buildRequires = ['gawk:runtime', 'glib:devel', 'pkgconfig:devel',
+                     'libtool:runtime',  'automake:runtime', 'autoconf:runtime']
+
+    def unpack(r):
+        r.addArchive('http://archive.xfce.org/src/xfce/%(name)s/%(major_version)s/')

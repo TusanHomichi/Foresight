@@ -1,0 +1,68 @@
+#!/bin/bash
+
+GUILE_MVER=%(mver)s
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+do_update_catalog()
+{
+    # Remove files created in guile < 1.8.3
+    rm -f %(datadir)s/guile/site/slibcat
+
+    do_erase
+    SCHEME_LIBRARY_PATH=%(datadir)s/slib \
+        %(bindir)s/guile -l %(datadir)s/slib/guile.init \
+        -c "(use-modules (ice-9 slib))
+            (set! implementation-vicinity (lambda () \"%(datadir)s/guile/$GUILE_MVER/\"))
+            (require 'new-catalog)" 2> /dev/null || :
+}
+
+do_erase()
+{
+    echo -n > %(datadir)s/guile/$GUILE_MVER/slibcat
+}
+
+case $type in 
+    files)
+        case $action in
+            update)
+                do_update_catalog "$@"
+            ;;
+            remove)
+                do_update_catalog "$@"
+            ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+            ;;
+        esac
+        ;;
+    handler)
+        case $action in
+            update)
+                do_update_catalog "$@"
+            ;;
+            preremove)
+                do_erase "$@"
+            ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+            ;;
+        esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

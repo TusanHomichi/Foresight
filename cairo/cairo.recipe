@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+class Cairo(AutoPackageRecipe):
+    name = 'cairo'
+    version = '1.12.14'
+
+    buildRequires = [ 'fontconfig:devel', 'freetype:devel', 'libpng:devel',
+                      'zlib:devel', 'gcc-c++:runtime', 'libXau:devel', 'libxml2:devel',
+                      'libstdc++:devel', 'pkgconfig:devel', 'libX11:devel',
+                      'libICE:devel','libSM:devel', 'libXdmcp:devel',
+                      'libXrender:devel', 'pkgconfig:devel', 'expat:devel', 
+                      'xcb-util:devel', 'librsvg:devel', 'poppler:devel', 'poppler-glib:devel',
+                      'ghostscript:runtime', 'pixman:devel', 'libspectre:devel',
+                      'gobject-introspection:devel', 'gtk-doc:runtime',
+                      'Mesa:devel', 'lzo:devel',]
+
+    def unpack(r):
+        r.addArchive('http://cairographics.org/releases/')
+        r.addPatch('0001-xlib-Don-t-crash-when-swapping-a-0-sized-glyph.patch')
+        r.addPatch('0002-xcb-Don-t-crash-when-swapping-a-0-sized-glyph.patch')
+        
+    def configure(r):
+        r.Configure(' --disable-static'
+                    ' --enable-warnings'
+                    ' --enable-xlib'
+                    ' --enable-freetype'
+                    ' --enable-ps'
+                    ' --enable-pdf'
+                    ' --enable-svg'
+                    ' --enable-tee'
+                    ' --enable-gl'
+                    ' --enable-gobject'
+                    ' --disable-gtk-doc'
+                    )
+
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+        

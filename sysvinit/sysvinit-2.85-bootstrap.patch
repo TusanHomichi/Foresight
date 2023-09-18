@@ -1,0 +1,15 @@
+--- sysvinit-2.85/src/Makefile.bootstrap	2004-03-31 20:35:53.000000000 -0500
++++ sysvinit-2.85/src/Makefile	2004-03-31 20:36:02.000000000 -0500
+@@ -133,12 +133,3 @@
+ 		for i in $(MAN8); do \
+ 			$(INSTALL) -m 644 ../man/$$i $(ROOT)$(MANDIR)/man8/; \
+ 		done
+-ifeq ($(ROOT),)
+-		#
+-		# This part is skipped on Debian systems, the
+-		# debian.preinst script takes care of it.
+-		@if [ ! -p /dev/initctl ]; then \
+-		 echo "Creating /dev/initctl"; \
+-		 rm -f /dev/initctl; \
+-		 mknod -m 600 /dev/initctl p; fi
+-endif

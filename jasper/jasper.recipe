@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jasper(AutoPackageRecipe):
+    name = 'jasper'
+    version = '1.900.1'
+
+    buildRequires = [
+        'libjpeg:devel', 'libstdc++:devel', 'unzip:runtime',
+        'libICE:devel', 'Mesa:devel', 'freeglut:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://www.ece.uvic.ca/~mdadams/jasper/software/')
+        for p in [ 'jasper-1.701.0-GL-ac.patch',
+                   'jasper-1.701.0-GL.patch',
+                   'jpc_dec.c.patch',
+                   'patch-libjasper-stepsizes-overflow.diff']:
+            r.addPatch(p)
+
+        # Install docs and images
+        r.Move('doc/*', '%(thisdocdir)s/pdf/')
+        r.Move('data/*', '%(thisdocdir)s/')
+
+    def configure(r):
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.Configure('--enable-shared --disable-static')

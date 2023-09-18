@@ -1,0 +1,13 @@
+diff --git a/configure.ac b/configure.ac
+index 69d8cba..d1e9a5d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -59,7 +59,7 @@ fi
+ AC_SUBST(GCC_FLAGS)
+ 
+ PKG_CHECK_MODULES(DEPS,
+-                  indicate-0.5 >= 0.4.91
++                  indicate >= 0.3.0
+                   evolution-plugin
+                   dbus-1
+                   dbus-glib-1

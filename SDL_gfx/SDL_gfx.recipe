@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SDLgfxRecipe(AutoPackageRecipe):
+    name = 'SDL_gfx'
+    version = '2.0.23'
+
+    buildRequires = [ 'SDL:devel', 'libICE:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://www.ferzkopp.net/Software/SDL_gfx-2.0/')
+
+    def configure(r):
+        extraConfig = ''
+        if Arch.x86_64:
+            extraConfig += '--disable-mmx'
+        r.Configure(extraConfig)    

@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bake(PackageRecipe):
+    name = 'bake'
+    version = '0.1.1'
+ 
+    def setup(r):
+        r.addSource('bake', dir='%(bindir)s/', mode=0755)

@@ -1,0 +1,22 @@
+--- mailman-2.1.4/messages/Makefile.in.permissions	2003-12-01 00:29:57.000000000 +0200
++++ mailman-2.1.4/messages/Makefile.in	2004-01-04 04:58:30.009219051 +0200
+@@ -60,7 +60,7 @@
+ # Modes for directories and executables created by the install
+ # process.  Default to group-writable directories but
+ # user-only-writable for executables.
+-DIRMODE=	775
++DIRMODE=	2775
+ EXEMODE=	755
+ FILEMODE=	644
+ INSTALL_PROGRAM=$(INSTALL) -m $(EXEMODE)
+--- mailman-2.1.4/templates/Makefile.in.permissions	2003-12-13 18:32:44.000000000 +0200
++++ mailman-2.1.4/templates/Makefile.in	2004-01-04 04:57:06.232654991 +0200
+@@ -48,7 +48,7 @@
+ # Modes for directories and executables created by the install
+ # process.  Default to group-writable directories but
+ # user-only-writable for executables.
+-DIRMODE=	775
++DIRMODE=	2775
+ EXEMODE=	755
+ FILEMODE=	644
+ INSTALL_PROGRAM=$(INSTALL) -m $(EXEMODE)

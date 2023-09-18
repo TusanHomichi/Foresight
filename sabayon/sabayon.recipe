@@ -1,0 +1,40 @@
+# Gil Hamlin
+# gil@foresightlinux.com
+# 10th October 2005
+
+loadSuperClass('gnomepackage')
+class sabayon(GnomePackageRecipe):
+    buildRequires = [ 'cairo:devel', 'desktop-file-utils:runtime',
+                      'fontconfig:devel', 'freetype:devel',
+                      'gamin:python', 'pessulus:python', 'rarian:runtime',
+                      'gettext:runtime', 'glib:devel',
+                      'gnome-python:python', 'gnome-python:devel',
+                      'gtk:runtime', 'libpng:devel', 'libxml2:python', 'python:devel', 
+                      'pango:devel', 'pygobject:python', 'pygtk:python', 'pygtk:devel',
+                      
+                      'usermode:runtime', 'xorg-server:runtime', 'pyxdg:python', 'xinit:runtime']
+    name = "sabayon"
+    version = '2.30.1'
+
+    extraConfig = (' --with-distro=redhat --disable-scrollkeeper '
+                   ' --enable-console-helper=yes '
+                   ' --with-prototype-user=%(name)s ')
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Environment('PAM_PREFIX', '%(builddir)s/%(sysconfdir)s')
+
+    def policy(r):
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/%(name)s/profiles')
+
+        r.Create('%(sysconfdir)s/gconf/2/local-defaults.path',
+                 contents = 'include "$(HOME)/.gconf.path.defaults"',
+                 mode = 0644)
+        r.Create('%(sysconfdir)s/gconf/2/local-mandatory.path',
+                 contents = 'include "$(HOME)/.gconf.path.mandatory"',
+                 mode = 0644)
+
+        r.Symlink('%(bindir)s/consolehelper',
+                  '%(bindir)s/%(name)s')
+
+        r.UtilizeUser('sabayon', '%(bindir)s/%(name)s')

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomeUtils(GnomePackageRecipe):
+    name = 'gnome-utils'
+    version = '2.32.0'
+    buildRequires = [ 'gnome-vfs:devel', 'libgnome:devel', 'libgnomeui:devel', 'gnome-desktop:devel', 'gnome-panel:devel', 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus:devel', 'e2fsprogs:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'libgnome-keyring:devel', 'hal:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'popt:devel', 'startup-notification:devel', 'GConf:runtime', 'bison:runtime', 'desktop-file-utils:runtime', 'gettext:runtime', 'glib:runtime', 'perl:runtime', 'rarian:devel', 'rarian:runtime', 'usermode:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'gtk:runtime', 'libgtop:devel', 'libXmu:devel', 'userspace-kernel-headers:devel', 'libxslt:runtime', 'which:runtime', 'libcanberra:devel']
+
+    extraConfig = '--enable-hal --enable-gfloppy'
+    extraConfig += ' --disable-scrollkeeper'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Replace('Exec=', 'Exec=gksudo ', 'logview/data/gnome-system-log.desktop.in.in')
+        r.Replace('Icon=logviewer', 'Icon=gnome-log', 'logview/data/gnome-system-log.desktop.in.in')

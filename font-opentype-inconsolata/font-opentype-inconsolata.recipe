@@ -1,0 +1,14 @@
+class FontOpentypeInconsolataRecipe(PackageRecipe):
+
+    name = 'font-opentype-inconsolata'
+    version = '1'
+
+    buildRequires = [
+         'fontconfig:runtime',
+         'mkfontdir:runtime'
+    ]
+
+    def setup(r):
+        r.addSource('http://www.levien.com/type/myfonts/Inconsolata.otf',
+            dir='/usr/share/fonts/opentype/')
+

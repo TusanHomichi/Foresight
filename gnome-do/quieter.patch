@@ -1,0 +1,21 @@
+diff -r 3d856f49104e Do/src/Do.Core/UniverseManager.cs
+--- a/Do/src/Do.Core/UniverseManager.cs	Tue Apr 01 16:20:43 2008 -0400
++++ b/Do/src/Do.Core/UniverseManager.cs	Tue Apr 01 16:21:59 2008 -0400
+@@ -137,7 +137,7 @@
+ 						universe.Remove (oldItem);
+ 					}
+ 				}
+-				Log.Info ("Updated \"{0}\" Item Source.", itemSource.Name);
++				// Log.Info ("Updated \"{0}\" Item Source.", itemSource.Name);
+ 				t_update += (DateTime.Now - then).Milliseconds;
+ 			}
+ 
+@@ -162,7 +162,7 @@
+ 					firstResults.Remove (firstResultKey);
+ 				}
+ 				firstResults[firstResultKey] = SortAndNarrowResults (universe.Values, firstResultKey, null, true);
+-				Log.Info ("Updated first results for '{0}'.", firstResultKey);
++				// Log.Info ("Updated first results for '{0}'.", firstResultKey);
+ 				t_update += (DateTime.Now - then).Milliseconds;
+ 			}
+ 		}

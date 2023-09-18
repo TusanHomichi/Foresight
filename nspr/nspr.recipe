@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nspr(CPackageRecipe):
+    name = 'nspr'
+    version = '4.10'
+
+    extraConfig = (' --enable-optimize="%(optflags)s" '
+                   ' --includedir=%(includedir)s/nspr4 '
+                   ' --disable-debug')
+
+    if Arch.x86_64:
+        extraConfig += ' --enable-64bit '
+
+    def setup(r):
+        r.addArchive('ftp://ftp.mozilla.org/pub/mozilla.org/%(name)s/releases/v%(version)s/src/')
+
+        r.addAction('pwd; cp config/nspr-config.in config/nspr-config-pc.in')
+        r.addPatch('nspr-config-pc.patch')
+
+        r.mainDir('%(name)s-%(version)s/nspr')
+
+        r.Configure(r.extraConfig)
+        r.Make()
+        r.MakeInstall()
+
+        r.addSource('%(name)s.pc.in')
+
+        r.MakeDirs('%(libdir)s/pkgconfig/')
+       
+        # Get rid of the things we don't want installed (per upstream)
+        for f in [ '%(bindir)s/{compile-et.pl,prerr.properties}',
+                   '%(libdir)s/*.a',
+                   '%(datadir)s/aclocal/nspr.m4',
+                   '%(includedir)s/nspr4/md',]:
+            r.Remove(f, recursive = True)
+
+        for i in ['libnspr4.so', 'libplc4.so', 'libplds4.so']:
+            r.Move('%(libdir)s/' + i, '/%(lib)s/' +i)
+            r.Symlink('/%(lib)s/' +i, '%(libdir)s/' + i)

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TuxpaintTtf(PackageRecipe):
+    name = 'tuxpaint-ttf'
+    version = '2005.03.24'
+ 
+    buildRequires = [ 'make:runtime' ]
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/tuxpaint/%(name)s-georgian-%(version)s.tar.gz')
+        r.addAction("sed -i 's,^PREFIX=.*,PREFIX=$(DESTDIR)/usr/,' Makefile")
+        r.Make()
+        r.MakeInstall()

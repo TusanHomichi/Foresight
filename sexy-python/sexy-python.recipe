@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SexyPython(AutoPackageRecipe):
+    name = "sexy-python"
+    version = "0.1.9"
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'expat:devel',
+                     'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                     'glitz:devel', 'gtk:devel', 'libX11:devel',
+                     'libXrender:devel', 'libpng:devel', 'libsexy:devel',
+                     'libxcb:devel', 'libxml2:devel', 'pango:devel',
+                     'pkgconfig:devel', 'pygtk:devel', 'python:devel',
+                     'xcb-util:devel', 'zlib:devel', 'pygobject:runtime']
+
+    def unpack(r):
+        r.addArchive('http://releases.chipx86.com/libsexy/%(name)s/')
+
+
+

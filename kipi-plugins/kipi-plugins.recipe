@@ -1,0 +1,27 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class kipiPlugins(kdePackageRecipe):
+
+    name = 'kipi-plugins'
+    version = '1.8.0'
+
+    buildRequires = [
+        'dbus:devel', 'gettext:runtime', 'gtk:devel', 'libgomp:devellib',
+        'libgpod:devel', 'libjpeg:devel', 'libkdcraw:devel', 'libkexiv2:devel',
+        'libkipi:devel', 'libksane:devel', 'libtiff:devel',
+        'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel',
+        'libXfixes:devel', 'libXft:devel', 'libXi:devel', 'libxkbfile:devel',
+        'libxml2:devel', 'libXpm:devel', 'libXScrnSaver:devel', 'libxslt:devel',
+        'libxslt:runtime', 'libXt:devel', 'libXtst:devel', 'libXv:devel',
+        'libXxf86misc:devel', 'opencv:devel', 'qca2:devel', 'qjson:devel',
+        'sane-backends:devel', 'xdg-utils:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/kipi/')
+

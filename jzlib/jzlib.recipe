@@ -1,0 +1,27 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class JZLib(PackageRecipe):
+
+    name = 'jzlib'
+    version = '1.0.7'
+
+    buildRequires = [
+        'ant:runtime', 'icedtea-jdk:runtime'
+    ]
+
+    def setup(r):
+
+        r.addArchive('http://www.jcraft.com/jzlib/')
+        r.addSource('build.xml')
+
+        r.Move('com', 'src/')
+
+        r.Run('ant dist')
+
+        r.Move('dist/lib/jzlib.jar', '%(datadir)s/java/')
+
+        r.Doc('example', 'misc')
+

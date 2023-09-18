@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadRecipe('gnomepackage')
+class PyGObject(GnomePackageRecipe):
+
+    buildRequires = [ 'glib:devel', 'libxslt:runtime', 'python:devel',
+                      'gobject-introspection:devel', 'xz:runtime',
+                      'pycairo:devel']
+
+    name = 'pygobject'
+    version = '2.28.6'
+    makeArgs = 'LIBTOOL=%(bindir)s/libtool'
+    makeInstallArgs = 'LIBTOOL=%(bindir)s/libtool'
+    extraConfig = ' --disable-introspection '
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Environment('tagname', 'CC')
+        r.addPatch('fix-gio-flags.patch')
+
+
+    def policy(r):
+        # make devel require both runtime and python
+        r.Requires('pygobject:runtime', '%(includedir)s/.*')
+        r.Requires('pygobject:python', '%(includedir)s/.*')

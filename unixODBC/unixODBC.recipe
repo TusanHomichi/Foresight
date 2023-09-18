@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UnixODBC(AutoPackageRecipe):
+    name = 'unixODBC'
+    version = '2.2.14'
+
+    buildRequires = [ 'bison:runtime', 'flex:runtime', 'fontconfig:devel',
+                      'freetype:devel', 'libjpeg:devel', 'libpng:devel',
+                      'libstdc++:devel', 'ncurses:devel',
+                      'qt:devel',
+                      # FIXME: temporary workaround for rMake dumbiness
+                      'qt:config', 'qt:devellib', 'qt:lib', 'qt:data',
+                      # 
+                      'readline:devel', 'zlib:devel', 'file:runtime',
+                      'libICE:devel', 'libSM:devel', 'libX11:devel',
+                      'libXcursor:devel', 'libXext:devel', 'libXft:devel',
+                      'libXi:devel', 'libXinerama:devel', 'libXt:devel',
+                      'libXrandr:devel', 'libXrender:devel',
+                      'Mesa:devel', 'libXmu:devel', ]
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.unixodbc.org/pub/%(name)s/%(name)s-%(version)s-p2.tar.gz')
+
+    def configure(r):
+        r.macros.cflags += ' -fno-strict-aliasing'
+        r.Configure(' --x-includes=%(includedir)s --x-libraries=%(libdir)s --with-gnu-ld=yes --enable-threads=yes --enable-gui=yes --enable-drivers  '
+                    ' --with-qt-includes=%(includedir)s/qt3/ --with-qt-libraries=%(libdir)s')
+
+    def make(r):
+        r.Make('all')
+
+    def policy(r):
+
+        r.AutoDoc(exceptions='/.+/')
+
+        for dir in (
+            'AdministratorManual', 'UserManual', 'lst',
+            'ProgrammerManual', 'ProgrammerManual/Tutorial'
+        ):
+            r.Doc('doc/'+dir+'/*.{html,gif,vsd,sql,css}', dir=dir)
+
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/ODBCDataSources')
+        # we don't want runtimes (such as suna-java dragging :devel stuff
+        r.ComponentSpec('lib', '%(libdir)s/.*.so')

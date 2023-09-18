@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2006-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#
+
+class ICU(CPackageRecipe):
+    name = 'icu'
+    version = '4.4.2'
+
+    buildRequires = [
+        'libstdc++:devel', 'unzip:runtime', 'perl:runtime',
+        'autoconf:runtime', 'doxygen:runtime'
+    ]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.macros.site = 'http://download.icu-project.org/files/icu4c/%(version)s'
+        r.macros.upver = r.version.replace('.', '_')
+
+        r.addArchive('%(site)s/%(name)s4c-%(upver)s-src.tgz')
+        for p in [ 'icu-3.4-multiarchdevel.patch',
+                   'icu.6995.kannada.patch',
+                   'icu.7971.buildfix.patch',
+                   'icu.7972.buildfix.patch',
+                   'icu.7932.doublecompare.patch',
+                   'icu.8011.buildfix.patch',
+                   ]:
+            r.addPatch(p)
+
+        r.addPatch('icu.8198.revert.icu5431.patch', extraArgs = '-R')
+        r.addSource('icu-config')
+
+        r.Run('autoconf ', dir = 'source')
+        r.macros.cflags += ' %(optflags)s -fno-strict-aliasing '
+        r.macros.cxxflags += ' %(optflags)s -fno-strict-aliasing '
+        r.Configure('--disable-samples --with-data-packaging=library', dir='source')
+        r.Replace('-nodefaultlibs -nostdlib', '', 'source/config/mh-linux')
+        r.Make(dir='source')
+        r.Make('doc', dir='source')
+        r.MakeInstall(dir='source')
+
+        r.Install('icu-config', '%(bindir)s/', mode = 0755)
+
+        r.Replace('\$\(THREADSCXXFLAGS\)','', '%(libdir)s/pkgconfig/icu.pc')
+        r.Replace('\$\(THREADSCPPFLAGS\)','-D_REENTRANT', '%(libdir)s/pkgconfig/icu.pc')
+
+        r.Doc('*.html')
+        r.Doc('source/docs/html/*', dir='docs')
+
+        r.ComponentSpec('devel', '%(libdir)s/%(name)s/.*')
+        r.ComponentSpec('devel', '%(datadir)s/%(name)s/.*')

@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Dirac(AutoPackageRecipe):
+    name = 'dirac'
+    version = '1.0.2'
+
+    buildRequires = [ 'doxygen:runtime', 'graphviz:runtime', 'libstdc++:devel',
+                      'perl:devel', 'tetex-latex:runtime', 'tetex:runtime'
+                      ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/')
+        r.addPatch('0001-Fix-uninitialised-memory-read-that-causes-the-encode.patch')
+        r.addPatch('dirac-1.0.2-backports.patch')
+
+        r.Replace('-Werror', '', 'configure{,.ac}')
+
+    def configure(r):
+        config = (' --program-prefix=dirac_ '
+                  ' --program-transform-name=s,dirac_dirac_,dirac_, '
+                  ' --enable-overlay '
+                  ' --disable-static ')
+        if Arch.x86_64:
+            config += ' --enable-mmx=yes '
+        else:  
+            config += '--enable-mmx=no '
+
+        r.Configure(config)
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+
+    def policy(r):
+        # Transform-name fix
+        r.Move('%(bindir)s/dirac_create_dirac_testfile.pl',
+               '%(bindir)s/create_dirac_testfile.pl')
+        r.Replace("RGBtoYUV","dirac_RGBtoYUV", "%(bindir)s/create_dirac_testfile.pl")
+        r.Replace('/home/guest/dirac-0.5.0/util/conversion','%(bindir)s', '%(bindir)s/create_dirac_testfile.pl')

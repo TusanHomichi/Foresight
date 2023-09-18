@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginEncryption(AutoPackageRecipe):
+
+        name = 'pidgin-encryption'
+        version = '3.1'
+
+        buildRequires = ['nspr:devel', 'nss:devel', 'pkgconfig:devel', 'pidgin:devel', 'gtk:devel', 'perl-XML-Parser:perl', 'zlib:devel', 'zlib:lib', 
+                         'libxcb:devel', 'xcb-util:devel', 'libXrender:devel', 'libX11:devel', 'libpng:devel', 'glitz:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'cairo:devel', 'atk:devel']
+
+
+        def unpack(r):
+                r.addArchive("mirror://sourceforge/pidgin-encrypt/%(name)s-%(version)s.tar.gz")
+

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class S3gUtils(RPMPackageRecipe,AutoPackageRecipe):
+
+    buildRequires = [ 'glibc:devel' ]
+
+    name = 'sg3_utils'
+    version = '1.34'
+    rpmRelease = '1.fc18'
+    rpmSources = [ 'rescan-scsi-bus.sh-1.56' ]
+
+    def configure(r):
+        r.Configure('--disable-static')
+        # Don't use rpath!
+        r.Run(""" sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool """)
+
+    def policy(r):
+        r.Install('rescan-scsi-bus.sh-1.56', '%(bindir)s/', mode = 0755)

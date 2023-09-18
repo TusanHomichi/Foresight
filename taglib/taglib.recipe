@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class TagLib(CMakePackageRecipe):
+
+   name = "taglib"
+   version = "1.8"
+
+   buildRequires = [
+        'libstdc++:devel', 'zlib:devel', 'pkgconfig:devel'
+   ]
+
+   def unpack(r):
+
+        r.addArchive('https://github.com/downloads/taglib/taglib/taglib-%(version)s.tar.gz')
+
+        r.cmakeArgs += (
+            '-DWITH_ASF=1 '
+            '-DWITH_MP4=1 '
+        )
+

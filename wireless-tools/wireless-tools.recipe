@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+#               2006-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class WirelessTools(CPackageRecipe):
+    name = 'wireless-tools'
+    version = '29'
+
+    def setup(r):
+        r.disableParallelMake()
+        r.addArchive('http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/wireless_tools.%(version)s.tar.gz')
+        r.addPatch('wireless-tools-29-makefile.patch')
+
+        r.Make('OPT_FLAGS="%(cflags)s"  BUILD_SHARED=1 FORCE_WEXT_VERSION=16')
+
+        r.MakeDirs('%(essentialsbindir)s', '%(libdir)s', '%(mandir)s/man8',
+                   '%(includedir)s', '%(essentiallibdir)s')
+        r.MakeInstall('INSTALL_DIR=%(destdir)s/%(essentialsbindir)s '
+                      'INSTALL_LIB=%(destdir)s/%(essentiallibdir)s '
+                      'INSTALL_INC=%(destdir)s/%(includedir)s '
+                      'INSTALL_MAN=%(destdir)s/%(mandir)s')
+        r.Remove('%(essentiallibdir)s/libiw.a')
+        r.Symlink('%(essentiallibdir)s/libiw.so.%(version)s',
+                  '%(libdir)s/libiw.so')
+        r.AutoDoc('DISTRIBUTIONS.txt')
+

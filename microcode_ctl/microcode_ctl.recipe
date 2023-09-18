@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+#               2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MicrocodeCtl(CPackageRecipe):
+    name = 'microcode_ctl'
+    version = '2.1'
+
+    def setup(r):
+        r.macros.version = r.version.replace('_', '-')
+        #        r.addArchive('http://www.urbanmyth.org/microcode/')
+        r.addArchive('https://fedorahosted.org/released/microcode_ctl/')
+        r.addSource('microcode_ctl.rules',
+                    dest = '/lib/udev/rules.d/89-microcode.rules',
+                    mode = 0644)
+        r.Make()
+        r.MakeInstall('PREFIX=%(prefix)s INSDIR=%(sbindir)s clean')
+

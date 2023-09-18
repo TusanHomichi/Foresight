@@ -1,0 +1,21 @@
+diff -r fa66f9729dc9 Makefile
+--- a/Makefile	Wed Feb 20 00:48:44 2008 -0500
++++ b/Makefile	Wed Feb 20 00:50:30 2008 -0500
+@@ -18,10 +18,13 @@
+ 
+ # install
+ install:
+-	-mkdir /etc/screenlets
+-	@echo $(PREFIX) > /etc/screenlets/prefix
+-	python setup.py install --record=$(INSTALL_LOG) --prefix=$(PREFIX)
+-	cp desktop-menu/screenlets-daemon.desktop $(HOME)/.config/autostart
++	-mkdir -p $(DESTDIR)/etc/screenlets
++	@echo $(PREFIX) > $(DESTDIR)/etc/screenlets/prefix
++	python setup.py install --record=$(INSTALL_LOG) --prefix=$(PREFIX) --root=$(DESTDIR)
++	mkdir -p $(DESTDIR)/usr/share/gnome/autostart
++	cp desktop-menu/screenlets-daemon.desktop $(DESTDIR)/usr/share/gnome/autostart/
++	mkdir -p $(DESTDIR)/usr/share/icons/
++	cp desktop-menu/screenlets.svg $(DESTDIR)/usr/share/icons/
+ 
+ # uninstall
+ uninstall:

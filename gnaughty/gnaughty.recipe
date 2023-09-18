@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gnaughty(AutoPackageRecipe):
+    name = 'gnaughty'
+    version = '1.2.0'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'curl:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libglade:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'pcre:devel', 'pixman:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/gnaughty/')

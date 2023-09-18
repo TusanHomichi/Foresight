@@ -1,0 +1,21 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class PhononBackendGstreamer(CMakePackageRecipe):
+
+    name = 'phonon-backend-gstreamer'
+    version = '4.4.4'
+
+    buildRequires = [
+        'alsa-lib:devel', 'automoc:runtime', 'gst-plugins-base:devel',
+        'gstreamer:devel', 'libstdc++:devel', 'libxml2:devel', 'Mesa:devel',
+        'phonon:devel', 'qt4:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/phonon/phonon-backend-gstreamer/%(version)s/src/')
+

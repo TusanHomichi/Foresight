@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=xmaxima
+Comment=Symbolic Computation Program
+Exec=xmaxima
+Icon=/usr/share/maxima/5.25.1/xmaxima/maxima-icon.png
+#MimeType=
+Type=Application
+Categories=Development;Math;
+Encoding=UTF-8

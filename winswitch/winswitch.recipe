@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WinSwitch(CPackageRecipe):
+    name = 'winswitch'
+    version = '0.12.16'
+
+    buildRequires = [ 'PIL:python', 'PyPAM:python', 'avahi:python',
+                      'dbus-python:python', 'gnome-python-desktop:python',
+                      'gst-python:python', 'libappindicator:python',
+                      'libvirt:python', 'notify-python:python', 'xpra:python',
+                      'pycairo:python', 'pygobject:python', 'pygtk:python',
+                      'python-argparse:python', 'python-twisted:python',
+                      'python:devel', 'desktop-file-utils:runtime',
+                      ]
+
+    def setup(r):
+        r.addArchive('http://winswitch.org/src/%(name)s-%(version)s.src.tar.bz2')
+        # Remove bundled Vash
+        r.Remove('skel/share/Vash', recursive = True)
+        # actually this is just plain upstream breackage
+        # [as they try to install stuff at runtime (!)]
+        # but trick bellow allows us to move forward
+        r.Replace('/etc/redhat-release', '/etc/distro-release',
+                  'winswitch/util/distro_packaging_util.py')
+
+        r.Replace('^OnlyShowIn=.*', '',
+                  'skel/share/applications/winswitch.desktop')
+
+        r.PythonSetup(data = '')
+        
+        r.Requires('python-pyasn1:python', 'winswitch:python')

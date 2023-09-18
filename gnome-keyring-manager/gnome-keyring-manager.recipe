@@ -1,0 +1,22 @@
+# Gil Hamlin
+# gil@foresightlinux.com
+# 12th May 2005
+
+loadSuperClass('gnomepackage.recipe')
+class GnomeKeyringManager(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel',
+        'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel',
+        'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+        'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+        'libgnomeui:devel', 'libpng:devel', 'libxml2:devel',
+        'pango:devel', 'popt:devel', 'GConf:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+        'desktop-file-utils:runtime', 'gettext:runtime',
+        'perl:runtime', 'rarian:runtime', 'libxslt:runtime' ]
+
+    name = "gnome-keyring-manager"
+    version = '2.20.0'
+
+    extraConfig = ' --disable-scrollkeeper'
+

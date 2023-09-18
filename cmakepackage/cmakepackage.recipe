@@ -1,0 +1,88 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CMakePackageRecipe(CPackageRecipe):
+    """
+    NAME
+    ====
+
+    B{C{CMakePackageRecipe}} - Build simple packages with cmake
+
+    SYNOPSIS
+    ========
+
+    C{class I{className(CMakePackageRecipe):}}
+
+    DESCRIPTION
+    ===========
+
+    The  C{CMakePackageRecipe} class provides a simple means for the
+    creation of packages from minimal recipes, which are built from source
+    code using the cmake.
+
+    Processing in the C{CMakePackageRecipe} class is a simple workflow modeled
+    after building software from source code, and is essentially comprised of
+    these steps:
+
+        1. Unpack source archive
+        2. C{cmake}
+        3. C{make}
+        4. C{make install}
+        5. Applying Conary policy (optional)
+
+    With C{CMakePackageRecipe} the recipe writer does not necessarily need to
+    define the C{cmake}, C{make}, or C{makeinstall} methods, which allows
+    for very compact, and simple recipes.
+
+    The recipe's child classes should define the C{unpack()} method in order
+    to populate the source list.
+
+    Invoke the C{policy} method, with necessary policy parameters, and
+    keywords in your recipe to enforce Conary policy in the package.
+
+    If the standard C{cmake()}, C{make()}, and C{makeinstall()} methods
+    are insufficient for your package requirements, you should define your own
+    methods to override them.
+
+    Of the three methods, C{configure}, and C{make} are least likely to be
+    insufficient, and require overriding for the majority of recipes using
+    C{CMakePackageRecipe}.
+
+    EXAMPLE
+    =======
+
+    C{class SimIM(CMakePackageRecipe):}
+
+    Defines the class for a SIM Instant Messenger recipe using
+    C{CMakePackageRecipe}.
+    """
+
+    name = 'cmakepackage'
+    version = '1'
+
+    buildRequires = [ 'cmake:runtime' ]
+
+    cmakeArgs = ''
+
+    abstractBaseClass = True
+
+    def setup(r):
+        r.unpack()
+        r.cmake()
+        r.make()
+        r.makeinstall()
+        r.policy()
+
+    def unpack(r):
+        pass
+    def cmake(r):
+        r.CMake(r.cmakeArgs)
+    def make(r):
+        r.Make()
+    def makeinstall(r):
+        r.MakeInstall()
+    def policy(r):
+        pass
+

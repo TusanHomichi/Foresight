@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GConfEditor(GnomePackageRecipe):
+
+    name = 'gconf-editor'
+    version = '2.32.0'
+
+    buildRequires = [ 'pango:devel', 'gtk:devel', 'GConf:devel', 'desktop-file-utils:runtime', 'libgnome:devel', 'libgnomeui:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnomecanvas:devel', 'libpng:devel', 'libxml2:devel', 'popt:devel', 'intltool:runtime', 'GConf:runtime', 'gettext:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'glib:runtime', 'gtk:runtime', 'perl:runtime', 'rarian:devel', 'rarian:runtime', 'libxslt:runtime',  'polkit:devel', 'polkit:runtime']
+
+    extraConfig = ' --disable-scrollkeeper'

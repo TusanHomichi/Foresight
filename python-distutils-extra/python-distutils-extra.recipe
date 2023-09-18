@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonDistutilsExtra(PackageRecipe):
+
+    name = 'python-distutils-extra'
+    version = '2.26'
+
+    packageSummary = "Enhancements to Python's distutils"
+    packageDescription = "Enables you to easily integrate gettext support, themed icons and scrollkeeper based documentation into Python's distutils"
+
+    buildRequires = ['python-setuptools:python', 'python:devel', 'python:bin']
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/%(archive_name)s/trunk/%(version)s/+download/')
+        r.PythonSetup()

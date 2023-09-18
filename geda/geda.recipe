@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Geda(CPackageRecipe):
+    name = 'geda'
+    version = '1.7.0'
+ 
+    buildRequires = [
+            'atk:devel', 
+            'cairo:devel', 
+            'desktop-file-utils:runtime', 
+            'flex:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel',
+            'gdk-pixbuf:devel', 
+            'gettext:runtime', 
+            'git:runtime', 
+            'glib:devel', 
+            'gmp:devel', 
+            'groff:runtime', 
+            'gtk:devel', 
+            'guile:devel', 
+            'intltool:runtime', 
+            'libpng:devel', 
+            'libtool:devel', 
+            'm4:runtime', 
+            'pango:devel', 
+            'perl:devel', 
+            'pkgconfig:devel', 
+            'python:devel',
+                ]
+ 
+    def setup(r):
+        r.addArchive('http://geda.seul.org/devel/v1.7/1.7.0/geda-gaf-%(version)s.tar.gz')
+        r.Configure('--disable-static')
+        r.Make()
+        r.MakeInstall()
+        r.Remove('%(datadir)s/applications/mimeinfo.cache')
+        r.Remove('%(datadir)s/mime/{XMLnamespaces,aliases,generic-icons,globs,globs2,icons,magic,mime.cache,subclasses,treemagic,types}')

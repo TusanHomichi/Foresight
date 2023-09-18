@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bino(AutoPackageRecipe):
+    name = 'bino'
+    version = '1.2.1'
+ 
+    buildRequires = [
+	'Mesa:devel', 
+	'desktop-file-utils:runtime', 
+	'ffmpeg:devel', 
+	'gettext:runtime', 
+	'glew:devel', 
+	'install-info:runtime', 
+	'intltool:runtime', 
+	'libX11:devel', 
+	'libass:devel', 
+	'libstdc++:devel', 
+	'openal:devel', 
+	'pkgconfig:devel', 
+	'qt4-core:devellib', 
+	'qt4-gui:devellib', 
+	'qt4:devel', 
+	'xz:runtime'
+		]
+ 
+    def unpack(r):
+        r.addArchive('http://download.savannah.nongnu.org/releases/bino/')

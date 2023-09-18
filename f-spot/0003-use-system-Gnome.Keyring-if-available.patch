@@ -1,0 +1,73 @@
+diff -uNr f-spot-0.6.2.old/configure.ac f-spot-0.6.2/configure.ac
+--- f-spot-0.6.2.old/configure.ac	2010-05-14 20:38:21.000000000 +0200
++++ f-spot-0.6.2/configure.ac	2010-05-24 16:33:04.000000000 +0200
+@@ -150,6 +150,7 @@
+ LCMS_REQUIRED=1.12
+ LIBGPHOTO2_REQUIRED=2.4
+ MONOADDINS_REQUIRED=0.3
++KEYRING_REQUIRED=1.0.0.0
+ 
+ PKG_CHECK_MODULES(F, libgnome-2.0 >= $LIBGNOME_REQUIRED libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED libexif >= $LIBEXIF_REQUIRED_MIN libexif < $LIBEXIF_REQUIRED_MAX gtk-sharp-2.0 >= $GTKSHARP_REQUIRED glib-sharp-2.0 >= $GTKSHARP_REQUIRED glade-sharp-2.0 >= $GTKSHARP_REQUIRED gnome-vfs-sharp-2.0 >= $GTKSHARP_REQUIRED gtk+-2.0 >= $GTK_REQUIRED mono-cairo >= $MONO_CAIRO_REQUIRED cairo >= $CAIRO_REQUIRED mono-addins >= $MONOADDINS_REQUIRED mono-addins-gui >= $MONOADDINS_REQUIRED mono-addins-setup >= $MONOADDINS_REQUIRED)
+ AC_SUBST(F_CFLAGS)
+@@ -199,6 +200,23 @@
+ PKG_CHECK_MODULES(NDESK_DBUS, ndesk-dbus-1.0 >= $NDESK_DBUS_REQUIRED ndesk-dbus-glib-1.0 >= $NDESK_DBUS_GLIB_REQUIRED)
+ AC_SUBST(NDESK_DBUS_LIBS)
+ 
++dnl -- mono-addins link or bundle ?
++PKG_CHECK_MODULES(GNOME_KEYRING, 
++		  gnome-keyring-sharp-1.0 >= $KEYRING_REQUIRED,
++[
++	DIR_KEYRING=""
++	DIR_GNOME_KEYRING=""
++	LINK_KEYRING="-pkg:gnome-keyring-sharp-1.0"
++],
++[
++	DIR_KEYRING="gnome-keyring-sharp"
++	DIR_GNOME_KEYRING='$(top_builddir)/lib/gnome-keyring-sharp'
++	LINK_KEYRING='-r:$(DIR_GNOME_KEYRING)/gnome-keyring-sharp.dll'
++])
++AC_SUBST(DIR_KEYRING)
++AC_SUBST(DIR_GNOME_KEYRING)
++AC_SUBST(LINK_KEYRING)
++
+ dnl -- nunit
+ PKG_CHECK_MODULES(NUNIT, nunit >= $NUNIT_REQUIRED, 
+ 	do_tests="yes", do_tests="no")
+@@ -344,7 +362,6 @@
+ lib/gio-sharp/Makefile
+ lib/gio-sharp/gio/Makefile
+ lib/gio-sharp/generator/Makefile
+-lib/gnome-keyring-sharp/Makefile
+ lib/gtk-sharp-beans/Makefile
+ lib/libfspot/Makefile
+ lib/libgphoto2-sharp/Makefile
+diff -uNr f-spot-0.6.2.old/lib/Makefile.am f-spot-0.6.2/lib/Makefile.am
+--- f-spot-0.6.2.old/lib/Makefile.am	2010-02-16 15:39:27.000000000 +0100
++++ f-spot-0.6.2/lib/Makefile.am	2010-05-24 16:32:18.000000000 +0200
+@@ -4,7 +4,6 @@
+ UNCONDITIONAL_SUBDIRS = \
+ 	GKeyFile 			\
+ 	gio-sharp			\
+-	gnome-keyring-sharp	\
+ 	gtk-sharp-beans		\
+ 	libjpegtran			\
+ 	libfspot			\
+diff -uNr f-spot-0.6.2.old/Makefile.include f-spot-0.6.2/Makefile.include
+--- f-spot-0.6.2.old/Makefile.include	2010-02-16 15:39:27.000000000 +0100
++++ f-spot-0.6.2/Makefile.include	2010-05-24 16:29:38.000000000 +0200
+@@ -8,7 +8,6 @@
+ DIR_GPHOTO2 = $(top_builddir)/lib/libgphoto2-sharp
+ DIR_ICONS = $(top_builddir)/icons
+ DIR_JPEGTRAN = $(top_builddir)/lib/libjpegtran
+-DIR_KEYRING = $(top_builddir)/lib/gnome-keyring-sharp
+ DIR_LIBFSPOT = $(top_builddir)/lib/libfspot
+ DIR_SEMWEB = $(top_builddir)/lib/semweb
+ DIR_SRC = $(top_builddir)/src
+@@ -18,7 +17,6 @@
+ 
+ ## Links
+ 
+-LINK_KEYRING = -r:$(DIR_KEYRING)/gnome-keyring-sharp.dll
+ LINK_GPHOTO2 = -r:$(DIR_GPHOTO2)/libgphoto2-sharp.dll
+ LINK_SEMWEB = -r:$(DIR_SEMWEB)/SemWeb.dll
+ LINK_GIOSHARP = -r:$(DIR_GIOSHARP)/gio-sharp.dll

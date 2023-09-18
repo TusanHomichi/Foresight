@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+class Bmon(AutoPackageRecipe):
+    name = 'bmon'
+    version = '2.1.0'
+    buildRequires = ['ncurses']
+
+    def unpack(r):
+        r.addArchive('%(name)s-%(version)s.tar.gz')
+
+        r.Replace(".om_shutdown xml_event_shutdown,",
+                  ".om_shutdown = xml_event_shutdown,",
+                  "src/out_xml_event.c")
+
+        r.Replace(".om_shutdown audio_shutdown,",
+                  ".om_shutdown = audio_shutdown,",
+                  "src/out_audio.c")
+
+        r.Replace(".om_shutdown db_shutdown,",
+                  ".om_shutdown = db_shutdown,",
+                  "src/out_db.c")
+

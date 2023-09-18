@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class NaclToolchainNewlib(AutoPackageRecipe):
+    name = 'nacl-toolchain-newlib'
+    version = '10520' 
+
+    binutilsVersion = '2.20.1'
+    gccVersion = '4.4.3'
+    newlibVersion = '1.20.0'
+
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime', 'cloog:devel',
+                      'dejagnu:runtime', 'expect:runtime', 'flex:runtime',
+                      'gettext:runtime', 'gmp:devel', 'intltool:runtime',
+                      'm4:runtime', 'mpfr:devel', 'ppl:devel',
+                      'texinfo:runtime', ]
+
+    def setup(r):
+        r.baseURL = 'http://commondatastorage.googleapis.com/nativeclient-archive2/x86_toolchain'
+        r.addArchive('%s/r%s/nacltoolchain-buildscripts-r%s.tar.gz' % (r.baseURL, r.version, r.version))
+
+        r.mainDir('../nacl-toolchain-newlib')
+
+        r.addArchive('http://ftp.gnu.org/gnu/binutils/binutils-%s.tar.bz2' % r.binutilsVersion, dir = 'SRC')
+        r.addArchive('ftp://sources.redhat.com/pub/newlib/newlib-%s.tar.gz' % r.newlibVersion, dir = 'SRC')
+        r.addArchive('http://ftp.gnu.org/gnu/gcc/gcc-%s/gcc-%s.tar.bz2' % (r.gccVersion, r.gccVersion), dir = 'SRC')
+
+        for d in ['gcc', 'binutils', 'newlib']:
+            r.addAction('pwd; mv %s* %s' %(d, d), dir = 'SRC')
+        
+        r.addPatch('%s/r%s/naclbinutils-%s-r%s.patch.bz2' % (r.baseURL, r.version, r.binutilsVersion, r.version),
+                   dir = 'SRC')
+        r.addPatch('%s/r%s/naclnewlib-%s-r%s.patch.bz2' %(r.baseURL, r.version, r.newlibVersion, r.version),
+                   dir = 'SRC/')
+        r.addPatch('%s/r%s/naclgcc-%s-r%s.patch.bz2' %(r.baseURL, r.version, r.gccVersion, r.version), 
+                   dir = 'SRC')
+        # from gentoo. to allow parallel builds
+        r.addPatch('gcc-parallel-build-r0.patch', dir = 'SRC/gcc')
+
+        r.Make('PREFIX=$(pwd)/%(name)s CANNED_REVISION="yes" build-with-newlib ')
+
+        r.Move('%(name)s', '%(libdir)s/')
+        
+        # autodoc too smart here 
+        del r.AutoDoc

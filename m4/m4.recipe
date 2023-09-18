@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class M4(AutoPackageRecipe):
+    name = 'm4'
+    version = '1.4.16'
+
+    # needs info-file tag description from the install-info package
+    buildRequires = [ 'install-info:runtime' ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/m4/')
+

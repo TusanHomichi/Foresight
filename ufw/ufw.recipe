@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ufw(CPackageRecipe):
+
+    name = 'ufw'
+    version = '0.30.1'
+
+    buildRequires = ['python-setuptools:python', 'python:devel', 'iptables:runtime', 'gettext:runtime']
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/ufw/0.30/0.30.1/+download/')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        r.addSource('ufw.rc')
+        r.Install('ufw.rc', '%(sysconfdir)s/rc.d/')
+        r.SetModes('%(sysconfdir)s/ufw/*.rules', 0644)
+        r.SetModes('%(libdir)s/ufw/*.rules', 0644)

@@ -1,0 +1,66 @@
+=== modified file 'src/qindicatelistener.cpp'
+--- src/qindicatelistener.cpp	2010-03-08 09:02:19 +0000
++++ src/qindicatelistener.cpp	2010-09-30 07:49:24 +0000
+@@ -62,7 +62,7 @@
+     Listener* listener = sQListenerFromGListener.value(_listener);
+     QString type = QString::fromUtf8(_type);
+     Listener::Server* server = reinterpret_cast<Listener::Server*>(_server);
+-    QMetaObject::invokeMethod(listener, "serverAdded", Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(QString, type));
++    QMetaObject::invokeMethod(listener, "serverAdded", Qt::QueuedConnection, Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(QString, type));
+ }
+ 
+ static void serverRemovedCB(IndicateListener* _listener, void* _server, gchar* _type)
+@@ -70,14 +70,14 @@
+     Listener* listener = sQListenerFromGListener.value(_listener);
+     QString type = QString::fromUtf8(_type);
+     Listener::Server* server = reinterpret_cast<Listener::Server*>(_server);
+-    QMetaObject::invokeMethod(listener, "serverRemoved", Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(QString, type));
++    QMetaObject::invokeMethod(listener, "serverRemoved", Qt::QueuedConnection, Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(QString, type));
+ }
+ 
+ static void serverCountChangedCB(IndicateListener* _listener, void* _server, guint value)
+ {
+     Listener* listener = sQListenerFromGListener.value(_listener);
+     Listener::Server* server = reinterpret_cast<Listener::Server*>(_server);
+-    QMetaObject::invokeMethod(listener, "serverCountChanged", Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(int, value));
++    QMetaObject::invokeMethod(listener, "serverCountChanged", Qt::QueuedConnection, Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(int, value));
+ }
+ 
+ static void indicatorAddedCB(IndicateListener* _listener, void* _server, void* _indicator)
+@@ -85,7 +85,7 @@
+     Listener* listener = sQListenerFromGListener.value(_listener);
+     Listener::Server* server = reinterpret_cast<Listener::Server*>(_server);
+     Listener::Indicator* indicator = reinterpret_cast<Listener::Indicator*>(_indicator);
+-    QMetaObject::invokeMethod(listener, "indicatorAdded",
++    QMetaObject::invokeMethod(listener, "indicatorAdded", Qt::QueuedConnection,
+         Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(QIndicate::Listener::Indicator*, indicator));
+ }
+ 
+@@ -94,7 +94,7 @@
+     Listener* listener = sQListenerFromGListener.value(_listener);
+     Listener::Server* server = reinterpret_cast<Listener::Server*>(_server);
+     Listener::Indicator* indicator = reinterpret_cast<Listener::Indicator*>(_indicator);
+-    QMetaObject::invokeMethod(listener, "indicatorRemoved",
++    QMetaObject::invokeMethod(listener, "indicatorRemoved", Qt::QueuedConnection,
+         Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(QIndicate::Listener::Indicator*, indicator));
+ }
+ 
+@@ -104,7 +104,7 @@
+     Listener::Server* server = reinterpret_cast<Listener::Server*>(_server);
+     Listener::Indicator* indicator = reinterpret_cast<Listener::Indicator*>(_indicator);
+     QString property = QString::fromUtf8(_property);
+-    QMetaObject::invokeMethod(listener, "indicatorModified",
++    QMetaObject::invokeMethod(listener, "indicatorModified", Qt::QueuedConnection,
+         Q_ARG(QIndicate::Listener::Server*, server), Q_ARG(QIndicate::Listener::Indicator*, indicator), Q_ARG(QString, property));
+ }
+ 
+@@ -124,6 +124,8 @@
+ 
+ void Listener::init(IndicateListener* gListener)
+ {
++    qRegisterMetaType<QIndicate::Listener::Server*>("QIndicate::Listener::Server*");
++    qRegisterMetaType<QIndicate::Listener::Indicator*>("QIndicate::Listener::Indicator*");
+     d->mGListener = gListener;
+ 
+     #define gconnect(gsignal, callback) \
+

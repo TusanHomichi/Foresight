@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyCurl(AutoPackageRecipe):
+
+    buildRequires = ['curl:devel', 'e2fsprogs:devel', 'glibc:devel', 'krb5:devel', 'openssl:devel', 'zlib:devel','python:devel']
+    name = 'pycurl'
+    version = '7.18.2'
+
+    def setup(r):
+        r.addArchive('http://pycurl.sourceforge.net/download/%(name)s-%(version)s.tar.gz')
+    	r.Run('python setup.py install --root=%(destdir)s --prefix=%(prefix)s')
+

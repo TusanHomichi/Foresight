@@ -1,0 +1,16 @@
+class GDataSharp(AutoPackageRecipe):
+    name = 'gdata-sharp'
+    version = '1.6.0.0'
+    buildRequires = ['mono:cil', 'mono:devel']
+    upstream_name = 'libgoogle-data-mono'
+
+    def setup(r):
+        r.addArchive('http://google-gdata.googlecode.com/files/' + r.upstream_name + '-%(version)s.tar.gz')
+        
+        r.Replace('\$\(PREFIX\)/lib', '$(PREFIX)/%(lib)s', 'Makefile')
+        r.Replace('libdir=\${prefix\}/lib', 'libdir=${prefix}/%(lib)s', 'misc/*.pc.in')
+
+        r.Make('PREFIX=%(prefix)s')
+        r.MakeInstall('DESTDIR=%(destdir)s PREFIX=%(prefix)s')
+        
+

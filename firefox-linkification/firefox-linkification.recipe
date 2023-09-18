@@ -1,0 +1,6 @@
+loadSuperClass('firefox-addon')
+class Linkification(FirefoxAddonRecipe):
+    name = 'firefox-linkification'
+    version = '1.3.6'
+    fileId = '49518'
+    # https://addons.mozilla.org/en-US/firefox/addons/versions/190

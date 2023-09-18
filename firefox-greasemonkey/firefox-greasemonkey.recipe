@@ -1,0 +1,5 @@
+loadSuperClass('firefox-addon')
+class Greasemonkey(FirefoxAddonRecipe):
+    name = 'firefox-greasemonkey'
+    version = '0.9.1'
+    fileId = '748'

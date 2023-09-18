@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ansible(PackageRecipe):
+    name = 'ansible'
+    version = '1.3.2'
+
+    buildRequires = [
+        'MySQL-python:python',
+        'PyYAML:python',
+        'jinja2:python',
+        # 'libselinux:python',
+        'libvirt:python',
+        'paramiko:python',
+        'python-simplejson:python',
+        'dnspython:python',
+        'python:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('http://ansibleworks.com/releases/')
+        r.PythonSetup()
+        r.RemoveNonPackageFiles('.gitdir', '.asciidoc.in')
+        r.Doc('examples/')
+        r.Install('examples/ansible.cfg', '%(sysconfdir)s/%(name)s/')
+        r.Install('examples/hosts', '%(sysconfdir)s/%(name)s/')
+        r.Install('docs/man/*', '%(mandir)s/')
+        r.MakeDirs('%(datadir)s/%(name)s/')
+        r.Install('library/*', '%(datadir)s/%(name)s/')
+
+        # r.PackageSpec('ansible-fireball', '%(datadir)s/.*fireball.*')

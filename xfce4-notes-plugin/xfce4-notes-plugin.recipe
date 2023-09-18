@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4NotesPlugin (XfcePackageRecipe):
+
+    name = 'xfce4-notes-plugin'
+    version = '1.7.7'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'libxfce4util:devel', 'libxfcegui4:devel',
+        'xfce4-panel:devel', 'xfconf:devel', 'unique:devel'
+    ]
+
+    def policy(r):
+        r.ComponentSpec('lib', '%(libdir)s/xfce4/panel-plugins/libnotes.so')

@@ -1,0 +1,94 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+do_recompute_authfile()
+{
+    for fname in "$@"; do
+        [ -f "$fname" ] || continue
+        # Extract dirname
+        dirname="${fname%/*}"
+        # Filename should be user
+        username="${dirname##*/}"
+        IFS=: read gid userdir < <(getent passwd "$username" | cut -d: -f4,6)
+        [ -z "$userdir" ] && continue
+        sshkeydir="$userdir/.ssh"
+        install -d -o "$username" -g "$gid" -m 0700 "$sshkeydir"
+        akfile="$sshkeydir/authorized_keys"
+
+        tmpakfile=$(mktemp --tmpdir="$sshkeydir" -t authorized_keys.XXXXXXXX)
+        chmod 0600 "$tmpakfile"
+        chown "$username:$gid" "$tmpakfile"
+        # Create the authorized_keys file if it doesn't exist (instead of
+        # trying to concatenate the existing one with the new file)
+        cat "$fname" >> "$akfile"
+        sort -u "$akfile" > "$tmpakfile" && mv "$tmpakfile" "$akfile"
+    done
+}
+
+do_erase_key()
+{
+    for fname in "$@"; do
+        [ -f "$fname" ] || continue
+        # Extract dirname
+        dirname="${fname%/*}"
+        # Filename should be user
+        username="${dirname##*/}"
+        IFS=: read gid userdir < <(getent passwd "$username" | cut -d: -f4,6)
+        [ -z "$userdir" ] && continue
+        sshkeydir="$userdir/.ssh"
+        [ -d "$sshkeydir" ] || continue
+        akfile="$sshkeydir/authorized_keys"
+        [ -f "$akfile" ] || continue
+
+        tmpakfile=$(mktemp --tmpdir="$sshkeydir" -t authorized_keys.XXXXXXXX)
+        chmod 0600 "$tmpakfile"
+        chown "$username:$gid" "$tmpakfile"
+        comm -2 -3 <(sort -u "$akfile") <(sort -u "$fname") > "$tmpakfile"
+        mv "$tmpakfile" "$akfile"
+    done
+}
+
+case $type in 
+    files)
+        case $action in
+            update)
+                do_recompute_authfile "$@"
+            ;;
+            preremove|preupdate)
+                # pre-update needs to remove the old key; update will add
+                # the new key afterward
+                do_erase_key "$@"
+            ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+            ;;
+        esac
+        ;;
+    handler)
+        case $action in
+            update)
+                [ -d /etc/ssh/keys.d ] && do_recompute_authfile $(find /etc/ssh/keys.d -name \*.pub)
+            ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+            ;;
+        esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

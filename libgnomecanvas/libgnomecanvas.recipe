@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Libgnomecanvas(GnomePackageRecipe):
+
+    buildRequires = ['gtk:devel', 'libart_lgpl:devel', 'libglade:devel',
+        'glib:runtime', 'perl:runtime', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', ]
+
+    name = 'libgnomecanvas'
+    version = '2.30.3'

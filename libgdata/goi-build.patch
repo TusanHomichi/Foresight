@@ -1,0 +1,24 @@
+diff -up libsoup-2.32.0/configure.ac.goi libsoup-2.32.0/configure.ac
+--- libsoup-2.32.0/configure.ac.goi	2010-09-28 11:58:40.871472003 -0400
++++ libsoup-2.32.0/configure.ac	2010-09-28 11:58:49.047472004 -0400
+@@ -220,7 +220,7 @@ GTK_DOC_CHECK([1.10])
+ dnl *****************************
+ dnl *** gobject-introspection ***
+ dnl *****************************
+-GOBJECT_INTROSPECTION_CHECK([0.9.5])
++GOBJECT_INTROSPECTION_CHECK([0.9.3])
+ 
+ dnl *************************************
+ dnl *** Warnings to show if using GCC ***
+diff -up libsoup-2.32.0/libsoup/Makefile.am.goi libsoup-2.32.0/libsoup/Makefile.am
+--- libsoup-2.32.0/libsoup/Makefile.am.goi	2010-09-28 11:58:18.077472002 -0400
++++ libsoup-2.32.0/libsoup/Makefile.am	2010-09-28 11:58:32.128472005 -0400
+@@ -238,7 +238,7 @@ gi_soup_gnome_files = $(filter-out soup-
+ 		          $(libsoupgnomeinclude_HEADERS) \
+ 	                  $(filter-out %.h, $(libsoup_gnome_2_4_la_SOURCES)))
+ SoupGNOME-2.4.gir: libsoup-gnome-2.4.la Soup-2.4.gir
+-SoupGNOME_2_4_gir_SCANNERFLAGS = --identifier-prefix=Soup --symbol-prefix=soup
++SoupGNOME_2_4_gir_SCANNERFLAGS = --strip-prefix=Soup
+ SoupGNOME_2_4_gir_INCLUDES = Soup-2.4
+ SoupGNOME_2_4_gir_CFLAGS = $(INCLUDES)
+ SoupGNOME_2_4_gir_LIBS = libsoup-gnome-2.4.la

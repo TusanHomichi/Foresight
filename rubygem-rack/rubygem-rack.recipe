@@ -1,0 +1,11 @@
+loadSuperClass('rubygempackage')
+class Rack(RubygemPackageRecipe):
+
+    name = 'rubygem-rack'
+    version = '1.3.5'
+
+    buildRequires = ['rubygem-rake:runtime']
+    
+    def policy(r):
+        r.Move('%(gemHome)s/bin/*', '%(bindir)s/')
+        r.Replace('../../bin/rackup', '%(bindir)s/rackup', '%(libdir)s/ruby/gems/1.8/gems/rack-1.3.5/test/cgi/test.ru')

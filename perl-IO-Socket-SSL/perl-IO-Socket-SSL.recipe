@@ -1,0 +1,13 @@
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class IOSocketSSL(CPANPackageRecipe):
+    name='perl-IO-Socket-SSL'
+    version='1.31'
+
+    #In your recipe if you get an IO error, you may need to discover one or
+    #both of the following
+    #author='CPANAUTHORNAME'
+    #upstreamname=''
+
+    buildRequires = ['perl:devel', 'perl-Net-SSLeay:perl']
+

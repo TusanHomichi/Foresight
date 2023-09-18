@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Openvrml(CPackageRecipe):
+    name = 'openvrml'
+    version = '0.16.7'
+ 
+    buildRequires = ['GConf:devel', 'Mesa:devel', 'ORBit2:devel', 'SDL:devel', 'atk:devel', 'boost:devel', 'cairo:devel', 'curl:devel', 'dbus-glib:devel', 'dbus-glib:runtime', 'dbus:devel', 'doxygen:runtime', 'fontconfig:devel', 'freetype:devel', 'gcc-java:runtime', 'glib:devel', 'gnome-vfs:devel', 'gtk:devel', 'gtkglext:devel', 'icedtea-jdk:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXmu:devel', 'libXt:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'libstdc++:devel', 'libtool:devel', 'libxml2:devel', 'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'popt:devel', 'python:bin', 'xulrunner:devel', 'zlib:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/openvrml/')
+        r.Configure(" BOOST_LIB_SUFFIX='' LDFLAGS='-L%(libdir)s/xorg.mesa.3d/' --disable-script-node-java --disable-script-node-javascript")
+        r.Make()
+        r.MakeInstall()

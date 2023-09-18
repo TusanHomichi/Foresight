@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Parted(RPMPackageRecipe,CPackageRecipe):
+    name = 'parted'
+    version = '3.1'
+    rpmRelease = '10.fc18'
+    rpmPatches = [ 'parted-3.0-libparted-copy-pmbr_boot-when-duplicating-GPT-disk.patch',
+                   'parted-3.1-libparted-check-PMBR-before-GPT-partition-table-8052.patch',
+                   'parted-3.1-tests-add-t0301-overwrite-gpt-pmbr.sh.patch',
+                   'parted-3.1-libparted-Fix-endian-error-with-FirstUsableLBA.patch',
+                   'parted-2.1-libparted-use-dm_udev_wait-698121.patch',
+                   'parted-3.1-libparted-use-largest_partnum-in-dm_reread_part_tabl.patch',
+                   'parted-3.1-test-creating-20-device-mapper-partitions.patch',
+                   'parted-3.1-libparted-preserve-the-uuid-on-dm-partitions.patch',
+                   'parted-3.1-tests-Make-sure-dm-UUIDs-are-not-erased.patch',
+                   'parted-3.1-libparted-reallocate-buf-after-_disk_analyse_block_s.patch',
+                   'parted-3.1-tests-cleanup-losetup-usage.patch',
+                   'parted-3.1-libparted-add-support-for-implicit-FBA-DASD-partitions.patch',
+                   'parted-3.1-libparted-add-support-for-EAV-DASD-partitions.patch',
+                   'parted-3.1-libparted-don-t-canonicalize-dev-md-paths.patch',
+                   'parted-3.1-libparted-mklabel-eav.patch',
+                   'parted-3.1-avoid-dasd-as-default-file-image-type.patch',
+    ] 
+
+    buildRequires = [ 'e2fsprogs:devel', 'libtool:runtime',
+                      'install-info:runtime', 'autoconf:runtime', 'automake:runtime',
+                      'xdelta:devel', 'gettext:devel', 'libtool:runtime',
+                      'readline:devel', 'libtermcap:devel', 'ncurses:devel',
+                      'pkgconfig:devel', 'check:devel', 'device-mapper:devel',
+                      'gettext:runtime', 'intltool:runtime', 'util-linux:devel',
+                      # grrr... (for autoreconf)
+                      'cvs:runtime', 
+                      ]
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        # cheat ... (for gettext)
+        r.Replace('0.18', '0.17', 'configure.ac')
+        r.Run('autoreconf -fi')
+        r.macros.cflags += ' -Wno-unused-but-set-variable'
+        if 'LINGUAS' in os.environ:
+            del os.environ['LINGUAS']
+
+        r.Configure(' --enable-device-mapper  --enable-shared --enable-part-static --enable-pc98=no'
+                    ' --enable-Werror=no --disable-dynamic-loading --with-readline')
+
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+        r.Make('V=1')
+        r.MakeInstall()
+
+        r.Doc('doc/API', 'doc/FAT')

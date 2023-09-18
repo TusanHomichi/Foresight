@@ -1,0 +1,43 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Love(AutoPackageRecipe):
+    name = 'love'
+    version = '0.8.0'
+
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'DevIL:devel',
+        'freetype:devel',
+        'libmodplug:devel',
+        'libmpg123:devel',
+        'libstdc++:devel',
+        'libvorbis:devel',
+        'luajit:devel',
+        'Mesa:devel',
+        'openal:devel',
+        'physfs:devel',
+        'SDL:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('https://bitbucket.org/rude/love/downloads/love-%(version)s-linux-src.tar.gz')
+        r.addSource('https://bitbucket.org/rude/love/raw/%(version)s/platform/unix/app.svg')
+        r.addSource('https://bitbucket.org/rude/love/raw/%(version)s/platform/unix/game.svg')
+        r.addSource('https://bitbucket.org/rude/love/raw/%(version)s/platform/unix/love.desktop')
+        r.addSource('https://bitbucket.org/rude/love/raw/%(version)s/platform/unix/love.xml')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+    def configure(r):
+        r.Configure('--prefix=%(prefix)s --with-luajit')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('app.svg', '%(datadir)s/pixmaps/love.svg', mode=0644)
+        r.Install('game.svg', '%(datadir)s/icons/hicolor/scalable/mimetypes/gnome-mime-application-x-love-game.svg', mode=0644)
+        r.Desktopfile('%(name)s.desktop', vendor='foresight')
+        r.Install('%(name)s.xml', '%(datadir)s/mime/packages/love.xml')

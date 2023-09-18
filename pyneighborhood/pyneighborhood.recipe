@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pyneighborhood(PackageRecipe):
+
+    name = 'pyneighborhood'
+    version = '0.5.4'
+
+    buildRequires = ['pygobject:python', 'pygtk:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/pyneighborhood/%(major_version)s/%(version)s/+download/')
+        r.PythonSetup()

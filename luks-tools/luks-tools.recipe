@@ -1,0 +1,11 @@
+loadRecipe('gnomepackage.recipe')
+class LuksTools(GnomePackageRecipe):
+ 
+    name = 'luks-tools'
+    version = '0.0.12'
+ 
+    buildRequires = ['cryptsetup:runtime', 'e2fsprogs:devel', 'dbus-python:python', 'gcc-java:runtime', 'pygobject:python', 'pygobject:devel', 'pygtk:python', 'pygtk:devel', 'python:devel']
+    extraConfig = '--disable-scrollkeeper'
+
+    def unpack(r):
+        r.addArchive("http://www.flyn.org/projects/luks-tools/")

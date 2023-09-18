@@ -1,0 +1,11 @@
+--- qemu-0.8.0/Makefile.target.64	2006-04-07 14:38:01.000000000 -0400
++++ qemu-0.8.0/Makefile.target	2006-04-07 14:40:16.000000000 -0400
+@@ -92,7 +92,7 @@
+ 
+ ifeq ($(ARCH),x86_64)
+ OP_CFLAGS=$(CFLAGS) -falign-functions=0
+-LDFLAGS+=-Wl,-T,$(SRC_PATH)/x86_64.ld
++#LDFLAGS+=-Wl,-T,$(SRC_PATH)/x86_64.ld
+ endif
+ 
+ ifeq ($(ARCH),ppc)

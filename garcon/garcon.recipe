@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009 - 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class garcon(XfcePackageRecipe):
+    name = 'garcon'
+    version = '0.2.1'
+
+    buildRequires = [
+        'libxfce4util:devel'
+    ] 

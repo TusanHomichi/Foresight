@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Phonon(CMakePackageRecipe):
+
+    name = 'phonon'
+    version = '4.6.0'
+
+    buildRequires = [
+        'alsa-lib:devel', 
+        'automoc:runtime', 
+        'dbus:devel', 
+        'glib:devel',
+        'gst-plugins-base:devel', 
+        'gstreamer:devel', 
+        'libstdc++:devel',
+        'libxcb:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXpm:devel', 
+        'libXScrnSaver:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'Mesa:devel', 
+        'pulseaudio:devel', 
+        'qt4:devel',
+        'xine-lib:devel', 
+        'xz:runtime', 
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/phonon/%(version)s/src/')
+

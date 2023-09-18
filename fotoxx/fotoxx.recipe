@@ -1,0 +1,34 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fotoxx(AutoPackageRecipe):
+    name = 'fotoxx'
+    version = '12.01.2'
+
+    packageSummary = 'Fotoxx is a free open-source Linux program for improving image files made with a digital camera.'
+    packageDescription = 'Fotoxx is a free open-source Linux program for improving image files made with a digital camera. The following functions are provided: Show thumbnails of image files in a directory, navigate, choose files to view or edit. Adjust overexposed or underexposed areas to improve visibility of detail (change brightness independently for different brightness levels). Reduce fog or haze by removing "whiteness" and intensifying colors. High dynamic range (HDR) photography: combine an underexposed and overexposed image to improve details visible in both bright and dark areas. Automatic image alignment. Photo stitching or panorama: stitch two or more images together to make an ultra-wide image. Simple image alignment and brightness / color matching. Crop an image (choose the area of interest and cut-off the margins). Rotate an image by any angle (level a tilted image, or turn in 90 degree steps). Resize an image, with convenience buttons for 2/3, 1/2, 1/3 and 1/4 size. Red-eye removal.'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'image-exiftool:runtime', 'libstdc++:devel', 'libtiff:devel', 'pango:devel', 'pkgconfig:devel', 'ufraw:runtime', 'which:runtime', 'xdg-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://kornelix.squarespace.com/storage/downloads/')
+        #r.addSource('fotoxx.desktop')
+
+    def make(r):
+        r.Make('-B DESTDIR=%(destdir)s PREFIX=%(prefix)s BINDIR=%(bindir)s DATADIR=%(datadir)s MANDIR=%(mandir)s/man1')
+
+    def makeinstall(r):
+        r.MakeInstall('DESTDIR=%(destdir)s PREFIX=%(prefix)s BINDIR=%(bindir)s DATADIR=%(datadir)s MANDIR=%(mandir)s/man1')
+        #r.Desktopfile('fotoxx.desktop', vendor='foresight')
+        #r.Install('doc/fotoxx.man', '%(mandir)s/man1/fotoxx.1')
+        r.Requires('image-exiftool:runtime', '%(bindir)s/fotoxx')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

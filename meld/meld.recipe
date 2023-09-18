@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('gnomepackage')
+class Meld(GnomePackageRecipe):
+    name = 'meld'
+    version = '1.7.4'
+
+    buildRequires = [ 
+        'dbus-python:python',
+        'desktop-file-utils:runtime', 
+        'gnome-python:python',
+        'intltool:runtime', 
+        'pygtk:python', 
+        'pygtk:runtime', 
+        'python:runtime',
+        'rarian:devel', 
+        'rarian:runtime', 
+        'python:devel', 
+        'pycairo:python',
+        'subversion:python', 
+        'xz:runtime', 
+            ]
+
+    def build(r):
+       r.Make('prefix=%(prefix)s libdir=%(libdir)s sharedir=%(datadir)s')
+
+    def install(r):
+        r.MakePathsInstall('prefix=%(destdir)s%(prefix)s libdir=%(destdir)s%(libdir)s')
+    
+        r.Remove('%(datadir)s/mime/{*,application/*}')
+        r.Remove('%(datadir)s/applications/mimeinfo.cache')

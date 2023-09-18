@@ -1,0 +1,86 @@
+# vim:set ts=4 sw=4 et:
+
+class MythTV(AutoPackageRecipe):
+    name = 'mythtv'
+    version = '0.24.1'
+
+    packageSummary = 'MythTV is a Free Open Source software digital video recorder '
+    packageDescription = "MythTV is a Free Open Source software digital video recorder (DVR) project distributed under the terms of the GNU GPL. It has been under heavy development since 2002, and now contains most features one would expect from a good DVR (and many new ones that you soon won't be able to live without)."
+
+    buildRequires = [ 'DirectFB:devel', 'DirectFB:lib-core', 
+                        'Mesa:devel', 'MySQL-python:python', 
+                        'alsa-lib:devel', 'bzip2:devel', 
+                        'chkconfig:runtime', 'desktop-file-utils:runtime', 
+                        'faac:devel', 'faad2:devel', 
+                        'fftw:devel', 'freetype:devel', 
+                        'jack:devel', 'lame:devel', 
+                        'libX11:devel', 'libXext:devel', 
+                        'libXinerama:devel', 'libXrandr:devel', 
+                        'libXv:devel', 'libXvMC:devel', 
+                        'libXxf86vm:devel', 'libogg:devel', 
+                        'libstdc++:devel', 'libtheora:devel', 
+                        'libvdpau:devel', 'libvorbis:devel',
+                        'perl-DBD-MySQL:perl', 'perl-DBD-Pg:perl', 
+                        'perl-DBD-SQLite:perl', 'perl-DBI:perl',
+                        'perl-HTTP-Cookies:perl',
+#'perl-Net-UPnP:perl',
+                        'perl-URI:perl', 'perl:devel',
+                        'pkgconfig:devel', 'pulseaudio:devel',
+                        'python:devel',
+#'qt4-core:devellib', 'qt4-gui:devellib', 
+#'qt4-qt3support:devellib', 'qt4-sql:devellib', 
+                        'qt4:devel', 'udev:devel',
+                        'which:runtime', 'xvidcore:devel',
+                        'yasm:runtime', 'zlib:devel' ]
+ 
+    def unpack(r):
+        r.addSvnSnapshot('http://code.mythtv.org/svn/branches/release-0-24-fixes/mythtv/')
+        r.addSource('mythfrontend.desktop')
+        r.addSource('mythfrontend.png', dest='%(datadir)s/pixmaps/')
+        r.addSource('mythtv-setup.desktop')
+        r.addSource('mythtv-setup.png', dest='%(datadir)s/pixmaps/')
+        r.addSource('mysql.txt', dest='%(sysconfdir)s/mythtv/')
+        r.addSource('config.xml', dest='%(sysconfdir)s/mythtv/')
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.Environment('$QTDIR', '%(includedir)s/qt4')
+
+        r.Run("""grep -rlZ '/lib/' . | xargs -r0 sed -i -e 's,/lib/,/%(libdir)s/,g'""")
+        r.Run("""grep -rlZ '/lib$' . | xargs -r0 sed -i -e 's,/lib$,/%(libdir)s,'""")
+        r.Run("""grep -rlZ '/lib ' . | xargs -r0 sed -i -e 's,/lib ,/%(libdir)s ,g'""")
+
+        r.macros.kver = os.uname()[2]
+        r.macros.extraconfig = '--prefix=%(prefix)s --libdir=%(libdir)s --enable-dvb --enable-xvmc --enable-iptv --enable-pthreads --disable-distcc --qmake=qmake-qt4 --enable-ffmpeg-pthreads --enable-joystick-menu --enable-audio-alsa --enable-audio-oss --enable-audio-jack --enable-libfftw3 --enable-x11 --enable-xv --enable-opengl-video --enable-opengl-vsync --enable-xrandr --enable-lirc --enable-ivtv --enable-firewire --enable-libfaac --enable-nonfree --enable-libmp3lame --enable-libtheora --enable-libvorbis --enable-libxvid --enable-directfb --enable-libfftw3 --enable-vdpau'
+
+    def configure(r):
+        r.ManualConfigure('--prefix=%(prefix)s --libdir=%(libdir)s --enable-vdpau')
+
+    def make(r):
+        r.Make()
+
+    def makeinstall(r):
+        r.MakeInstall(rootVar='INSTALL_ROOT')
+        r.addSource('mythbackend.sysconfig', dest='%(sysconfdir)s/sysconfig/mythbackend')
+        r.addSource('mythbackend.init', dest='%(initdir)s/mythbackend', mode=0755)
+        r.addSource('mythbackend.logrotate', dest='%(sysconfdir)s/logrotate.d/mythbackend')
+        r.Desktopfile('mythfrontend.desktop')
+        r.Desktopfile('mythtv-setup.desktop')
+        r.Doc('docs/')
+        r.Doc('database/mc.sql')
+
+    def policy(r):
+        r.Requires('wget:runtime', '%(bindir)s/.*')
+        r.Requires('mysql-server:runtime', '%(bindir)s/mythbackend')
+        r.Requires('qt4:runtime', '%(bindir)s/mythfrontend')
+        
+        for file in '%(initdir)s/mythbackend', '%(sysconfdir)s/sysconfig/mythbackend', '%(bindir)s/mythbackend':
+            r.PackageSpec('mythtv-backend', file)
+
+        for file in '%(datadir)s/i18n/mythfrontend_*', '%(bindir)s/mythfrontend', '%(datadir)s/pixmaps/mythfrontend.png', '%(datadir)s/applications/mythfrontend.desktop':
+            r.PackageSpec('mythtv-frontend', file)
+
+    def setup(r):
+        r.unpack()
+        r.configure()
+        r.make()
+        r.makeinstall()
+        r.policy()

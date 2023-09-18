@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2006-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+class LibGPod(CPackageRecipe):
+
+    name = 'libgpod'
+    version = '0.8.2'
+
+    buildRequires = [
+        'gcc-c++:runtime', 'gettext:runtime', 'glib:devel', 'gtk:devel',
+        'udev:devel', 'intltool:runtime', 'libxml2:devel', 'mutagen:python',
+        'perl:runtime', 'pkgconfig:devel', 'pygobject:devel', 'pygtk:devel',
+        'python:devel', 'sg3_utils:devel', 'swig:runtime', 'taglib:devel',
+        'zlib:devel', 'gnutls:devel', 'gtk-doc:runtime', 'libimobiledevice:devel', 
+        'libplist:devel', 'libtasn1:devel', 'libusbx:devel', 
+        'pygtk:python', 'sqlite:devel', 'usbmuxd:devel', 'autoconf:runtime', 'automake:runtime',
+        'gettext:devel', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'mono:cil', 'mono:devel', 'mono:runtime'
+        ]
+
+    def setup(r):
+
+        r.addArchive('http://downloads.sourceforge.net/project/gtkpod/libgpod/libgpod-0.8/')
+        #r.addPatch('0001-Make-the-temporary-mount-point-configurable.patch')
+        r.Run('autoreconf -f')
+        r.MakeDirs('%(localstatedir)s/run/libgpod')
+        r.Configure('--without-hal --enable-udev --with-mount-dir=%(localstatedir)s/run/libgpod --with-mono')
+        r.Make()
+        r.MakeInstall()
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/run/libgpod')
+        r.ComponentSpec('cil', '%(libdir)s/%(name)s/libgpod-sharp.*')

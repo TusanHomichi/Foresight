@@ -1,0 +1,14 @@
+_nss_files_parse_grent() destroys its input, so we need to reset it
+nss_files has this problem, too!
+--- nss_db-2.2.3pre1/src/db-initgroups.c
++++ nss_db-2.2.3pre1/src/db-initgroups.c
+@@ -140,6 +140,9 @@ _nss_db_initgroups_dyn (const char *user
+ 		  buffer = extend_alloca (buffer, buflen, newbuflen);
+ 		  alloca_used += newbuflen;
+ 		}
++	      p = memcpy (line, value.data, value.size);
++	      while (isspace (*p))
++	        ++p;
+ 	    }
+ 
+ 	  if (err > 0 && grp.gr_gid != group)

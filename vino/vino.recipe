@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Vino(GnomePackageRecipe):
+
+    buildRequires = [ 'gtk:devel', 'glib:devel',
+                      'libgnomeui:devel', 'GConf:devel', 'ORBit2:devel',
+                      'atk:devel', 'cairo:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gnome-keyring:devel',
+                      'gnome-vfs:devel', 'libart_lgpl:devel',
+                      'libbonobo:devel', 'libbonoboui:devel',
+                      'libglade:devel', 'libgnome:devel', 'expat:devel',
+                      'libgnomecanvas:devel', 'libjpeg:devel',
+                      'libpng:devel', 'libxml2:devel', 'pango:devel',
+                      'popt:devel', 'GConf:runtime', 'desktop-file-utils:runtime',
+                      'gettext:runtime', 'glib:runtime', 'gtk:runtime',
+                      'libXdamage:devel', 'libXfixes:devel', 'libXtst:devellib',
+                      'libgcrypt:devel', 'libgpg-error:devel', 'perl:runtime', 'gnutls:devel', 'libnotify:devel', 
+                      'avahi-glib:devel', 'avahi:devel', 'libsoup:devel', 'dbus-glib:runtime',
+                      ]
+
+    name = 'vino'
+    version = '2.32.1'
+
+    extraConfig = GnomePackageRecipe.extraConfig
+    extraConfig += '--enable-gnome-keyring --enable-session-support --enable-avahi --enable-libnotify'

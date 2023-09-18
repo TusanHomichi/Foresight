@@ -1,0 +1,29 @@
+Index: padevchooser-0.9.4/src/padevchooser.c
+===================================================================
+--- padevchooser-0.9.4.orig/src/padevchooser.c
++++ padevchooser-0.9.4/src/padevchooser.c
+@@ -36,6 +36,10 @@
+ #include <libgnome/gnome-desktop-item.h>
+ #include <libgnomeui/gnome-ui-init.h>
+ #include <libnotify/notify.h>
++#ifndef NOTIFY_CHECK_VERSION
++#define NOTIFY_CHECK_VERSION(x,y,z) 0
++#endif
++
+ 
+ #include <pulse/pulseaudio.h>
+ #include <pulse/browser.h>
+@@ -171,7 +175,12 @@ static void notify_event(const char *tit
+ 
+     if (!notification) {
+         s = g_strdup_printf("<i>%s</i>\n%s", title, text);
+-        notification = notify_notification_new_with_status_icon(title, s, "audio-card", tray_icon);
++        notification = notify_notification_new(title, s, "audio-card"
++#if  NOTIFY_CHECK_VERSION (0, 7, 0)
++     			       );
++#else
++			, tray_icon);
++#endif
+         notify_notification_set_category(notification, "device.added");
+         notify_notification_set_urgency(notification, NOTIFY_URGENCY_LOW);
+         g_signal_connect_swapped(G_OBJECT(notification), "closed", G_CALLBACK(notification_closed), NULL);

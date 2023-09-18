@@ -1,0 +1,34 @@
+diff --git a/Makefile.am b/Makefile.am
+index 4abdf8e..e0d8839 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -77,10 +77,10 @@ install-data-hook:
+ 		$(DESTDIR)$(libdir)/libnss_db.so
+ 	cp db-Makefile db-Makefile.orig
+ 	if test "$(localstatedir)" = '$(prefix)/var'; then \
+-		$(install_sh) -m 644 -c db-Makefile /var/db/Makefile; \
++		$(install_sh) -m 644 -c db-Makefile $(DESTDIR)/var/db/Makefile; \
+ 	else \
+ 		sed -i -e "s@/var/db@$(localstatedir)@" db-Makefile; \
+-		$(install_sh) -m 644 -c db-Makefile $(localstatedir)/Makefile; \
++		$(install_sh) -m 644 -c db-Makefile $(DESTDIR)$(localstatedir)/Makefile; \
+ 	fi
+ 	cp db-Makefile.orig db-Makefile
+ 	if test -f $(DESTDIR)$(slibdir)/nss_files.so.1; then \
+diff --git a/Makefile.in b/Makefile.in
+index eef4666..71607cd 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -1461,10 +1461,10 @@ install-data-hook:
+ 		$(DESTDIR)$(libdir)/libnss_db.so
+ 	cp db-Makefile db-Makefile.orig
+ 	if test "$(localstatedir)" = '$(prefix)/var'; then \
+-		$(install_sh) -m 644 -c db-Makefile /var/db/Makefile; \
++		$(install_sh) -m 644 -c db-Makefile $(DESTDIR)/var/db/Makefile; \
+ 	else \
+ 		sed -i -e "s@/var/db@$(localstatedir)@" db-Makefile; \
+-		$(install_sh) -m 644 -c db-Makefile $(localstatedir)/Makefile; \
++		$(install_sh) -m 644 -c db-Makefile $(DESTDIR)$(localstatedir)/Makefile; \
+ 	fi
+ 	cp db-Makefile.orig db-Makefile
+ 	if test -f $(DESTDIR)$(slibdir)/nss_files.so.1; then \

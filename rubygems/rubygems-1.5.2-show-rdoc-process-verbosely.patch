@@ -1,0 +1,22 @@
+--- rubygems-1.5.2/lib/rubygems/commands/setup_command.rb.debug	2011-02-10 10:34:53.000000000 +0900
++++ rubygems-1.5.2/lib/rubygems/commands/setup_command.rb	2011-02-20 04:03:59.000000000 +0900
+@@ -329,7 +329,7 @@
+ 
+     require 'rdoc/rdoc'
+ 
+-    args << '--quiet'
++    args << '--quiet' unless Gem.configuration.really_verbose
+     args << '--main' << 'README.rdoc'
+     args << '.'
+     args << 'README.rdoc' << 'UPGRADING.rdoc'
+--- rubygems-1.5.2/lib/rubygems/doc_manager.rb.debug	2011-02-05 05:29:22.000000000 +0900
++++ rubygems-1.5.2/lib/rubygems/doc_manager.rb	2011-02-20 04:02:22.000000000 +0900
+@@ -162,7 +162,7 @@
+   def run_rdoc(*args)
+     args << @spec.rdoc_options
+     args << self.class.configured_args
+-    args << '--quiet'
++    args << '--quiet' unless Gem.configuration.really_verbose
+     args << @spec.require_paths.clone
+     args << @spec.extra_rdoc_files
+     args << '--title' << "#{@spec.full_name} Documentation"

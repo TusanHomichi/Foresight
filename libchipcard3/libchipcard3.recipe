@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Changes 2007 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibChipcard3(RedirectRecipe):
+    name = 'libchipcard3'
+    version = '0'
+
+
+    def setup(r):
+        r.addRemoveRedirect()
+

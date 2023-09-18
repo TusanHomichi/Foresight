@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyXML(CPackageRecipe):
+    name = 'PyXML'
+    version = '0.8.4'
+
+    buildRequires = [ 'python:devel', 'python:runtime', 'sgmlop:python',
+                      'python-setuptools:python', 'expat:devel' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/pyxml/')
+        r.addPatch("python2.6-support.patch")
+        r.addAction('rm -rf extensions/expat')
+        r.PythonSetup(' --with-libexpat=%(prefix)s')
+

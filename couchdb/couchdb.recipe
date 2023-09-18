@@ -1,0 +1,59 @@
+class CouchDBRecipe(AutoPackageRecipe):
+    name = 'couchdb'
+    version = '0.10.0'
+
+    buildRequires = [ 'chkconfig:runtime',
+                      'erlang:devel',
+                      'erlang:runtime',
+                      'icu:devel',
+              #        'info-couchdb:user',
+                      'readline:devel',
+                      'gcc-c++:runtime',
+                      'nspr:devel', 
+                      'nspr:devellib',
+                      'nspr:lib', 
+                      'pkgconfig:devel',
+                      'js:devel',
+                      'curl:devel',
+                      'help2man:runtime'
+                      
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://www.apache.org/dist/%(name)s/%(version)s/apache-%(name)s-%(version)s.tar.gz')
+        r.addPatch('couchdb-0.10.0-initenabled.patch')
+        r.addSource('couchdb.init')
+
+
+    def policy(r):
+         r.Requires('erlang:runtime', '%(libdir)s/couchdb/erlang/.*')
+         r.Install('couchdb.init', '%(initdir)s/%(name)s', mode = 0755)
+
+         # Create /var/log/couchdb
+         for d in [ '%(localstatedir)s/log/couchdb',
+                    '%(localstatedir)s/run/couchdb',
+                    '%(localstatedir)s/lib/couchdb',
+                    '%(sysconfdir)s/couchdb/default.d',
+                    '%(sysconfdir)s/couchdb/local.d',
+                    '%(sysconfdir)s/sysconfig',]:
+             r.MakeDirs(d)
+             r.ExcludeDirectories(exceptions=d)
+         r.Move('%(destdir)s/%(sysconfdir)s/default/couchdb',
+                '%(sysconfdir)s/sysconfig/couchdb')
+         r.Remove('%(sysconfdir)s/default')
+
+         # Documenation cleanup
+         r.Remove('%(thisdocdir)s/README.gz')
+         r.Remove('%(docdir)s/%(name)s/NEWS.gz')
+         r.Move('%(docdir)s/%(name)s/*', '%(thisdocdir)s/')
+         
+         # here instead of a separate pkg for now
+         r.User('couchdb', 242, comment='CouchDB User',
+               homedir='%(localstatedir)s/lib/couchdb')
+
+
+         # Owned!
+         for d in [ 'log', 'run', 'lib']:
+             r.Ownership('couchdb', 'root', '%(localstatedir)s/' + d + '/couchdb/')
+
+

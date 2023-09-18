@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class normalize(AutoPackageRecipe):
+    name = 'normalize'
+    version = '0.7.7'
+ 
+    buildRequires =	[
+			'audiofile:devel',
+			'binutils:runtime',
+			'flac:runtime',
+			'gawk:runtime',
+			'glibc:devel',
+			'lame:runtime',
+			'libmad:devel',
+			'perl:lib',
+			'perl:runtime',
+			'vorbis-tools:runtime'
+			]
+
+    def unpack(r):
+       	r.addArchive('http://savannah.nongnu.org/download/%(name)s/')

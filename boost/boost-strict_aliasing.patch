@@ -1,0 +1,12 @@
+--- libs/python/build/Jamfile.v2
++++ libs/python/build/Jamfile.v2
+@@ -24,7 +24,8 @@
+ 
+ project boost/python
+   : source-location ../src
+-  ;
++  : requirements <cxxflags>-fno-strict-aliasing
++   ;
+ 
+ rule cond ( test ? : yes * : no * ) { if $(test) { return $(yes) ; } else { return $(no) ; } }
+ rule unless ( test ? : yes * : no * ) { if ! $(test) { return $(yes) ; } else { return $(no) ; } }

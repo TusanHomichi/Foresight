@@ -1,0 +1,14 @@
+diff -ur gsl-1.12.orig/Makefile.in gsl-1.12/Makefile.in
+--- gsl-1.12.orig/Makefile.in	2008-12-15 17:55:21.000000000 +0300
++++ gsl-1.12/Makefile.in	2009-07-29 21:49:11.000000000 +0400
+@@ -266,8 +266,8 @@
+ EXTRA_DIST = autogen.sh gsl-config.in gsl.pc.in configure.ac THANKS BUGS SUPPORT gsl.spec.in gsl.m4 test_gsl_histogram.sh
+ lib_LTLIBRARIES = libgsl.la
+ libgsl_la_SOURCES = version.c
+-libgsl_la_LIBADD = $(SUBLIBS) $(am__append_1)
+-libgsl_la_LDFLAGS = -version-info $(GSL_LT_VERSION) $(am__append_2)
++libgsl_la_LIBADD = $(SUBLIBS) cblas/libgslcblas.la $(am__append_1)
++libgsl_la_LDFLAGS = -no-undefined -version-info $(GSL_LT_VERSION) $(am__append_2)
+ noinst_HEADERS = templates_on.h templates_off.h build.h
+ MINGW32_HOST = @MINGW32_HOST@
+ m4datadir = $(datadir)/aclocal

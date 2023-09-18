@@ -1,0 +1,29 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libPQxx(AutoPackageRecipe):
+
+    name = 'libpqxx'
+    version = '2.6.9'
+
+    buildRequires = [
+        'libstdc++:devel', 'pkgconfig:devel', 'postgresql:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://pqxx.org/download/software/libpqxx/')
+
+        # Disable visibility
+        r.addPatch('libpqxx-2.6.9-visibility.patch')
+
+    def configure(r):
+
+        r.Configure('--enable-shared')
+
+    def policy(r):
+
+        r.CheckSonames(exceptions='%(libdir)s/libpqxx.*')
+

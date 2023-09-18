@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Expat(AutoPackageRecipe):
+    name = 'expat'
+    version = '2.0.0'
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/expat/')
+        # CVE-2009-3560, RPL-3257
+        r.addPatch('expat-1.95.8-CVE-2009-3560-revised.patch')
+        # CVE-2009-3720, RPL-3257
+        r.addPatch('expat-1.95.8-CVE-2009-3720.patch')
+
+    def makeinstall(r):
+        r.MakePathsInstall('man1dir=%(destdir)s/%(mandir)s/man1')
+        # apr-util needs this file to link against expat
+        r.RemoveNonPackageFiles(exceptions='%(libdir)s/libexpat.la')
+
+        # FIXME - hack on our side while  CNY-3143 is not resolved (FL-2088)
+        r.ComponentSpec('devellib', '%(libdir)s/libexpat.la')

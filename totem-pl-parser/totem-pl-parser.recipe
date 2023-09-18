@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class TotemPlParser(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'hal:devel', 'evolution-data-server:devel', 'gmime:devel' ]
+    name = 'totem-pl-parser'
+    version = '2.32.3'

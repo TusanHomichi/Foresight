@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonTornado(PackageRecipe):
+
+    name = 'tornado'
+    version = '2.1.1'
+
+    buildRequires = [ 'MySQL-python:python', 'python-simplejson:python',
+        'python-setuptools:python', 'python:devel' ]
+
+    def setup(r):
+        r.addGitSnapshot('git://github.com/facebook/tornado.git', tag = 'v%(version)s')
+        r.PythonSetup()
+

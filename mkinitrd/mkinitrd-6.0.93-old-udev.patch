@@ -1,0 +1,21 @@
+--- mkinitrd	2010-01-19 15:59:49.000000000 -0500
++++ mkinitrd.new	2010-01-19 16:08:52.000000000 -0500
+@@ -1555,10 +1555,6 @@
+     fi
+ fi
+ 
+-if [ -n "$I18N" ]; then
+-    inst /lib/udev/console_init "$MNTIMAGE"
+-fi
+-
+ echo -n >| $RCFILE
+ cemit << EOF
+ #!/bin/nash
+@@ -1596,7 +1592,6 @@
+ EOF
+ fi
+ 
+-[ -n "$I18N" ] && emit "/lib/udev/console_init tty0"
+ 
+ emit "plymouth --show-splash"
+ 

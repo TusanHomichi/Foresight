@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EclipseEpic(CPackageRecipe):
+    name = 'eclipse-epic'
+    version = '0.6.35'
+
+    buildRequires = [
+        'unzip:runtime',
+        'eclipse-sdk:java',
+        ]
+
+    shortDesc  = 'Perl framework for Eclipse platform'
+    longDesc   = """
+EPIC is an open source Perl IDE (including editor and debugger) based
+on the Eclipse platform, compatible with Windows, Linux and Mac OS
+X. Whether you are into CGI scripting or full-fledged Perl projects
+with hundreds of modules, EPIC is the most feature-rich and extensible
+free Perl IDE available today, thanks to a seamless integration with
+all the major features and GUI conventions of Eclipse.
+"""
+    url        = 'http://www.epic-ide.org/'
+    licenses   = [ 'GPL-2' ]
+    categories = [ 'Development/Utilities' ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/e-p-i-c/e-p-i-c/EPIC 0.6.35/org.epic.updatesite_%(version)s_20090521.zip')
+        
+        r.Install('features', '%(libdir)s/eclipse/dropins/epic/eclipse/')
+        r.Install('plugins', '%(libdir)s/eclipse/dropins/epic/eclipse/')
+
+        r.Requires('eclipse-sdk:runtime', '%(libdir)s/eclipse/dropins/epic/eclipse/')
+        r.Requires('eclipse-sdk:java', '%(libdir)s/eclipse/dropins/epic/eclipse/')
+        r.Requires('perl:runtime', '%(libdir)s/eclipse/dropins/epic/eclipse/')

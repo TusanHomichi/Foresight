@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libarchive(AutoPackageRecipe):
+    name = 'libarchive'
+    version = '2.8.4'
+    buildRequires = [
+        'acl:devel',
+        'attr:devel',
+        'bzip2:devel',
+        'e2fsprogs:devel',
+        'python:bin',
+        'xz:devel',
+        'zlib:devel'
+    ]
+
+    def unpack(r):
+        r.addArchive('http://libarchive.googlecode.com/files/')
+        #r.Replace('-Werror','','Makefile.*')

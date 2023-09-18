@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=FrostWire
+GenericName=P2P Gnutella/Bittorrent client
+Comment=Search and share all kinds of files on the Gnutella network
+Exec=/opt/frostwire/frostwire-4.18.1.noarch/runFrostwire.sh
+Icon=frostwire
+Terminal=false
+Type=Application
+Categories=Network;
+

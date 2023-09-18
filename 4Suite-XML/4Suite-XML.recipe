@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class FourSuiteXML(CPackageRecipe):
+    name = '4Suite-XML'
+    version = '1.0.2'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+        'PyXML:python',
+        'PyXML:runtime',
+    ]
+
+    def setup(r):
+        r.macros.sitepkgs = Python.sitepkgs
+
+        r.addArchive('mirror://sourceforge/foursuite/')
+        # PythonSetup does not work
+        r.Run('python setup.py install'
+              ' --prefix=%(prefix)s'
+              ' --install-purelib=%(sitepkgs)s'
+              ' --install-platlib=%(sitepkgs)s'
+              ' --install-data=%(sitepkgs)s'
+              ' --root=%(destdir)s')
+        r.Move('/usr/share/doc/4Suite/*', '%(thisdocdir)s/')

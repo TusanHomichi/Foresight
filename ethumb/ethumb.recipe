@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ethumb(AutoPackageRecipe):
+    name = 'ethumb'
+    version = '1.7.5'
+ 
+    buildRequires = [
+        'dbus:devel', 
+        'doxygen:runtime', 
+        'ecore:devel', 
+        'e-dbus:devel', 
+        'edje:devel', 
+        'edje:runtime', 
+        'eet:devel', 
+        'eina:devel', 
+        'emotion:devel', 
+        'epdf:devel',
+        'evas:devel', 
+        'libexif:devel', 
+        'pkgconfig:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive("http://download.enlightenment.org/releases/ethumb-%(version)s.tar.gz")

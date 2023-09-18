@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NotifyOsd(AutoPackageRecipe):
+    name = 'notify-osd'
+    version = '0.9.30'
+
+ 
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel', 'dbus-glib:runtime', 'libnotify:devel', 'libwnck:devel', 'gnome-common:runtime', 'gnome-common:devel', 'libtool:runtime']
+ 
+    def unpack(r):
+        r.addArchive('https://launchpad.net/~leolik/+archive/leolik/+files/notify-osd_%(version)s-0ubuntu4-leolik~ppa1-1.tar.gz')
+        #r.addPatch('notify-osd-0.9.30-libnotify-0.7.patch')
+        r.Replace('-Bsymbolic-functions','','src/Makefile.*')
+        r.Run(''' sed -i 's,/usr/lib/notify-osd/,@LIBEXECDIR@/,' data/org.freedesktop.Notifications.service.in ''')
+        r.Run('autoreconf -fi')
+        r.Run('''sed -i '/SUBDIRS/ s/tests //' Makefile.in''')

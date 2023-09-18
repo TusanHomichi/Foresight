@@ -1,0 +1,8 @@
+class info_polipo(UserInfoRecipe):
+    name = 'info-polipo'
+    version = '1'
+
+    def setup(r):
+        r.Group('polipo', 1001)
+        r.User('polipo', 1001,  group='polipo', groupid=1001, homedir='%(sysconfdir)s/polipo', shell='/sbin/nologin')
+

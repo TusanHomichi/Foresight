@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AutoTrace(AutoPackageRecipe):
+    buildRequires = [
+        'bzip2:devel',
+        'cairo:devel',
+        'djvulibre:devel',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gdk-pixbuf:devel',
+        'ghostscript:devel',
+        'glib:devel',
+        'graphviz:devel',
+        'ilmbase:devel',
+        'ImageMagick:devel',
+        'jasper:devel',
+        'lcms:devel',
+        'libICE:devel',
+        'libjpeg:devel',
+        'libpng:devel',
+        'librsvg:devel',
+        'libSM:devel',
+        'libtiff:devel',
+        'libtool:devel',
+        'libX11:devel',
+        'libXext:devel',
+        'libxml2:devel',
+        'libXt:devel',
+        'OpenEXR:devel',
+        'pango:devel',
+        'zlib:devel',
+    ]
+
+    name = 'autotrace'
+    version = '0.31.1'
+
+    def unpack(r):
+        r.addArchive('http://ftp1.sourceforge.net/autotrace/'
+                     'autotrace-%(version)s.tar.gz')

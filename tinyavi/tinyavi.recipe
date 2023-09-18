@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+ 
+class Tinyavi(PackageRecipe):
+    name = 'tinyavi'
+    version = '0.2.3'
+ 
+    buildRequires = ['gettext:runtime', 'python:devel',
+'python-setuptools:python', 'desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://download.berlios.de/tinyavi/')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+	r.Requires('mplayer:runtime', '%(bindir)s/tavi')

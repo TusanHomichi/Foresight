@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenVPN(CPackageRecipe):
+    name = 'openvpn'
+    version = '2.1_rc22'
+
+    buildRequires = [ 'chkconfig:runtime', 'iproute:runtime', 'krb5:devel',
+        'lzo:devel', 'net-tools:runtime', 'openssl:devel', 'pam:devel',
+        'perl:lib', 'perl:runtime', 'perl:devel']
+
+    def setup(r):
+        r.addArchive('http://openvpn.net/release/')
+
+        r.Configure('--with-ssl-headers=/usr/kerberos/include')
+        r.Make()
+        r.Make(dir='plugin/down-root')
+        r.Make(dir='plugin/auth-pam')
+
+        r.MakeInstall()
+        r.Replace('^# chkconfig: 345 24', '# chkconfig: 2345 21',
+                  'sample-scripts/openvpn.init')
+        r.Install('sample-scripts/openvpn.init', '%(initdir)s/openvpn')
+        r.MakeDirs('%(sysconfdir)s/openvpn')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/openvpn')
+        r.Copy('{sample-{scripts,config-files,keys},easy-rsa}', '%(sysconfdir)s/openvpn/')
+        # trailing newline issues
+        r.Run('echo >> %(destdir)s/%(sysconfdir)s/openvpn/sample-keys/pkcs12.p12')
+
+        r.Provides(exceptions='%(libdir)s/openvpn/plugins/')
+        for plugin in ('auth-pam', 'down-root'):
+            r.Install('plugin/%s/openvpn-%s.so'%(plugin, plugin),
+                      '%(libdir)s/openvpn/plugins/')

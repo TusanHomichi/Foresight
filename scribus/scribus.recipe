@@ -1,0 +1,78 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the MIT License
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Scribus(CPackageRecipe):
+    name = 'scribus'
+    version = '1.4.3'
+
+    buildRequires = [
+        'aspell:devel', 
+        'aspell:runtime', 
+        'autoconf:runtime', 
+        'automake:runtime', 
+        'cairo:devel', 
+        'cmake:runtime', 
+        'cups:devel',
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'expat:devel',
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gcc:devel',
+        'ghostscript:runtime', 
+        'glib:devel', 
+        'lcms2:devel',
+        'lcms:devel', 
+        'libart_lgpl:devel',
+        'libICE:devel', 
+        'libjpeg:devel', 
+        'libpng:devel', 
+        'libSM:devel',
+        'libstdc++:devel', 
+        'libtiff:devel', 
+        'libX11:devel', 
+        'libXcursor:devel',
+        'libXext:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXinerama:devel',
+        'libxml2:devel', 
+        'libxml2:runtime', 
+        'libXmu:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel',
+        'Mesa:devel', 
+        'MySQL-python:python', 
+        'openssl:devel', 
+        'phonon:devel', 
+        'PIL:python',
+        'pkgconfig:devel', 
+        'podofo:devel', 
+        'python:devel', 
+        'python:tk', 
+        'qt4-core:devellib', 
+        'qt4:devel', 
+        'qt4-gui:devellib', 
+        'qt4:runtime', 
+        'qt4-sql:mysql', 
+        'qt4-sql:odbc', 
+        'qt4-sql:psql', 
+        'qt4-sql:sqlite',
+        'qt:devel',
+        'shared-mime-info:runtime', 
+        'zlib:devel', 
+    ]
+
+    def setup(r):
+           r.addArchive('http://downloads.sourceforge.net/scribus/%(version)s/scribus-%(version)s.tar.xz')
+           r.CMake(dir='scribus-1.4.3')
+           r.Make(dir='scribus-1.4.3')
+           r.MakeInstall(dir='scribus-1.4.3')
+           r.Replace("Icon=scribus",
+                     "Icon=%(datadir)s/%(name)s/icons/%(name)s.png",
+                     "scribus-1.4.3/scribus.desktop")
+           r.Desktopfile('scribus-1.4.3/scribus.desktop')

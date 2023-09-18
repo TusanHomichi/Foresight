@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Nas(RPMPackageRecipe,CPackageRecipe):
+        name = 'nas'
+        version = '1.9'
+        rpmRelease = '4.fc8'
+
+        buildRequires = [ 'flex:runtime', 'bison:runtime', 'libXaw:devel',
+                          'libX11:devel', 'libXau:devel', 'libXext:devel',
+                          'libXmu:devel', 'libXpm:devel',
+                          'libXt:devel', 'libSM:devel', 'libICE:devel',
+                          'imake:runtime', 'gccmakedep:runtime',
+                          'xorg-cf-files:lib']
+
+        def setup(r):
+            r.addArchive('%(name)s-%(version)s.src.tar.gz', rpm=r.srpm)
+            r.addPatch('nasd_250453.patch', rpm=r.srpm)
+            r.addPatch('nasd_245712.patch', rpm=r.srpm)
+            r.Run('xmkmf')
+            # FIXME! 
+            #            r.Run(""" find . -name Makefile | xargs sed -i -e 's/^\(\s*CDEBUGFLAGS\s*=.*\)/ %(dbgflags)s/' """)
+            r.Make('World LIBDIR=%(libdir)s/X11')
+            r.Make('DESTDIR=%(destdir)s LIBDIR=%(libdir)s/X11 install install.man')
+
+            # NOTE: we have this for strict *legacy* purposes (some packages still link against it)
+            # with the above stated we don't want to have it loaded *ever*, so initscripts are not 
+            # installed. 

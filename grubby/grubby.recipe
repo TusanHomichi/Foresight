@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Grubby(CPackageRecipe):
+    name = 'grubby'
+    version = '8.3'
+    buildRequires = [ 'glib:devel', 'popt:devel', 'util-linux:devel' ]
+
+
+    def setup(r):
+        r.addGitSnapshot('git://git.fedorahosted.org/git/grubby.git',
+                         tag='b26c6808cc3f6d6d5780611506c457e6b80e5c75')
+        r.Make()
+        r.MakeInstall()
+        r.Move('/man8/*', '%(mandir)s/man8/')

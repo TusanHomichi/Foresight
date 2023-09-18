@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+class Cups(AutoPackageRecipe):
+    name = 'python-otrace'
+    stamp = datetime.date.today().strftime("%Y.%m.%d")
+    baseVersion = '0.30.9'
+    version = '%s+%s' % (baseVersion, stamp) 
+    commit = '6905eaa876b81c9f554e0cd19cf7027b1844fee0'
+
+    buildRequires = [ 'python:devel', 'python-setuptools:python' ]
+
+    def setup(r):
+        # http://code.mindmeldr.com/otrace/
+        r.addGitSnapshot('https://github.com/mitotic/otrace.git',
+                         tag = r.commit)
+        r.PythonSetup()
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*egg-info/', recursive = True)

@@ -1,0 +1,90 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Csound(AutoPackageRecipe):
+    name = 'csound'
+    version = '5.13.0'
+ 
+    packageSummary = 'Csound is a sound and music synthesis system'
+    packageDescription = 'Csound is a sound and music synthesis system, providing facilities for composition and performance over a wide range of platforms. It is not restricted to any style of music, having been used for many years in at least classical, pop, techno, ambient...'
+ 
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'bison:runtime',
+                    'flex:runtime',
+                    'fltk:devel',
+                    'fluidsynth:devel',
+                    'gettext:runtime',
+                    'jack:devel',
+                    'libgomp:devellib',
+                    'libjpeg:devel',
+                    'liblo:devel',
+                    'libogg:devel',
+                    'libpng:devel',
+                    'libsndfile:devel',
+                    'libstdc++:devel',
+                    'libvorbis:devel',
+                    'libXext:devel',
+                    'libXinerama:devel',
+                    'perl:devel',
+                    'portaudio:devel',
+                    'pulseaudio:devel',
+                    'python:devel',
+                    'scons:runtime',
+                    'tcl:devel',
+                    'tk:devel',
+                    'zlib:devel',
+                    ]
+
+    def setup(r):
+        r.unpack()
+        r.setmacros()
+        r.patches()
+        r.make()
+        r.makeinstall()
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/csound/csound5/csound%(major_version)s/Csound%(version)s.tar.gz')
+
+    def setmacros(r):
+        if Arch.x86:
+            r.macros.build64bit = '0'
+            r.macros.install64bit = ''
+            r.macros.useDouble = '0'
+        else:
+            r.macros.build64bit = '1'
+            r.macros.install64bit = '--word64'
+            r.macros.useDouble = '1'
+
+    def patches(r):
+#        r.addPatch('csound-5.10.1-default-opcodedir.patch')
+#        r.addPatch('csound-5.10.1-rtalsa-fix.patch')
+#        r.addPatch('csound-5.10.1-64-bit-plugin-path.patch')
+#        r.addPatch('csound-5.10.1-fix-conflicts.patch')
+#        r.addPatch('csound-5.10.1-fix-locale-install.patch')
+#        r.addPatch('csound-5.10.1-enable-oggplay.patch')
+#        r.addPatch('csound-default-pulse.patch')
+#        r.addPatch('csound-5.10.1-compile-flag.patch')
+        r.addPatch('csound-5.12.1-fixpython.patch')
+        r.addPatch('csound-5.13.0-no-usr-local.patch')
+        r.addPatch('csound-5.13.0-default-opcodedir.patch')
+        r.addPatch('csound-5.10.1-rtalsa-fix.patch')
+        r.addPatch('csound-5.13.0-tclversion.patch')
+        r.addPatch('csound-5.10.1-64-bit-plugin-path.patch')
+        r.addPatch('csound-5.13.0-fix-conflicts.patch')
+        r.addPatch('csound-5.13.0-fix-locale-install.patch')
+        r.addPatch('csound-5.10.1-enable-oggplay.patch')
+        r.addPatch('csound-5.13.0-default-pulse.patch')
+        r.addPatch('csound-5.13.0-compile-flag.patch')
+        r.addPatch('csound-5.13.0-fixpythonint.patch')
+        r.addPatch('csound-5.13.0-fltk.patch')
+
+    def make(r):
+        r.Make('dynamicCsoundLibrary=1 buildCSEditor=1 buildRelease=0 noDebug=0 disableGStabs=1 buildInterfaces=0 useGettext=1 useALSA=1 usePortAudio=0 usePortMIDI=0 useOGG=1 useOSC=1 useJack=1 useFLTK=1 buildVirtual=1 useFluidsynth=1 generatePdf=0 buildCsound5GUI=1 buildPythonOpcodes=1 buildPythonWrapper=1 buildLuaWrapper=1 buildTclcsound=1 buildJavaWrapper=0 buildDSSI=1 buildUtilities=1 prefix=%(prefix)s Word64=%(build64bit)s useDouble=%(useDouble)s', makeName='scons')
+
+    def makeinstall(r):
+        r.Run('python install.py --prefix=%(prefix)s --instdir=%(destdir)s %(install64bit)s')

@@ -1,0 +1,29 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class ADeskBar(GnomePackageRecipe):
+    name = 'adeskbar'
+    version = '0.4.1a'
+ 
+    buildRequires = [ 'dbus-python:python', 'gnome-menus:python',
+                      'gnome-python-desktop:python',
+                      'pycairo:python', 'pygobject:python',
+                      'pygtk:python', 'desktop-file-utils:runtime',
+                      'python-alsaaudio:python', 'python:devel',
+                      'pyxdg:python',
+                      'vte:python' ]
+    
+    def setup(r):
+        r.addArchive('http://www.ad-comp.be/public/projets/ADeskBar/%(name)s_%(version)s.tar.bz2')
+        r.MakeDirs('%(datadir)s/%(name)s')
+        r.Copy('src/*', '%(datadir)s/%(name)s/')
+        r.Copy('src/images/adeskbar.png', '%(datadir)s/pixmaps/')
+        r.Copy('adeskbar.desktop', '%(datadir)s/applications/')
+        r.Copy('adeskbar.sh', '%(bindir)s/adeskbar', mode = 0755)
+
+        r.Remove('%(datadir)s/%(name)s/po/*.sh')

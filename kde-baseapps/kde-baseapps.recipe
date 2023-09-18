@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class KdeBaseapps(CPackageRecipe):
+    name = 'kde-baseapps'
+    version = '4.8.4'
+ 
+
+    buildRequires = [
+        'glib:devel', 
+        'kdebase-workspace:devel', 
+        'libraw1394:devel',
+        'libX11:devel', 
+        'libXext:devel', 
+        'libXrender:devel', 
+        'libXt:devel',
+        'Mesa:devel', 
+        'pciutils:devel', 
+        'qimageblitz:devel', 
+        'ruby:runtime',
+        'strigi:devel', 
+        'zlib:devel',
+        'automoc:runtime', 
+        'cmake:runtime', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'kdelibs:devel', 
+        'libXScrnSaver:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXpm:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'libstdc++:devel', 
+        'libxkbfile:devel', 
+        'openssh:runtime', 
+        'phonon:devel', 
+        'soprano:devel', 
+        'soprano:runtime', 
+        'subversion:runtime', 
+        'valgrind:runtime', 
+        'xz:runtime',
+    ]
+
+    def setup(r):
+        r.addArchive('mirror://kde//stable/%(version)s/src/')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()
+
+        r.DanglingSymlinks(exceptions='%(docdir)s/HTML/.*/common')

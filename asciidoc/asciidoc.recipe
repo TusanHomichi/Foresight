@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+#               2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AsciiDoc(AutoPackageRecipe):
+    name = 'asciidoc'
+    version = '8.4.5'
+    buildRequires = [ 'python:devel' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s/%(version)s/')
+        r.addPatch('asciidoc-8.4.5-datadir.patch')
+        r.addPatch('asciidoc-8.4.5-use-unsafe-mode-by-default.patch')
+
+        
+    def policy(r):
+        for dd in [ 'dblatex', 'docbook-xsl',
+                    'images', 'javascripts', 
+                    'stylesheets',]:
+            r.Move('%%(sysconfdir)s/asciidoc/%s' % dd,
+                   '%(datadir)s/asciidoc/')
+            r.Symlink('%%(datadir)s/asciidoc/%s' % dd,
+                      '%%(sysconfdir)s/asciidoc/%s' % dd)
+        # Python API
+        r.Install('asciidocapi.py',
+                  '%(libdir)s/python%(pyver)s/site-packages/',
+                  mode = 0644)

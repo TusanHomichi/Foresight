@@ -1,0 +1,24 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Eigen2(CMakePackageRecipe):
+
+    name = 'eigen2'
+    version = '2.0.15'
+
+    buildRequires = [
+        'gcc-c++:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://bitbucket.org/eigen/eigen/get/%(version)s.tar.bz2')
+
+        # XXX know nothing about c++
+        # but our libstdc++ has no _M_erase_at_end, so have to hack
+        # fixes kdeedu compilation
+        r.addPatch('eigen2-stdvector-resize.patch')
+

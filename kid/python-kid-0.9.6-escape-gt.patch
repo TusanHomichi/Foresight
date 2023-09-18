@@ -1,0 +1,27 @@
+diff -up kid-0.9.6/kid/serialization.py.escape-gt kid-0.9.6/kid/serialization.py
+--- kid-0.9.6/kid/serialization.py.escape-gt	2007-07-16 13:02:53.000000000 +0200
++++ kid-0.9.6/kid/serialization.py	2010-01-10 14:42:09.000000000 +0100
+@@ -408,6 +408,7 @@ class XMLSerializer(Serializer):
+                     return encode_entity(text, entities=entity_map)
+             text = text.replace("&", "&amp;")
+             text = text.replace("<", "&lt;")
++            text = text.replace("]]>", "]]&gt;")
+         except (TypeError, AttributeError):
+             raise_serialization_error(text)
+         return text
+@@ -423,6 +424,7 @@ class XMLSerializer(Serializer):
+                     return encode_entity(text, entities=entity_map)
+             text = text.replace("&", "&amp;")
+             text = text.replace("<", "&lt;")
++            text = text.replace("]]>", "]]&gt;")
+             text = text.replace("\"", "&quot;")
+         except (TypeError, AttributeError):
+             raise_serialization_error(text)
+@@ -684,6 +686,7 @@ class HTMLSerializer(HTMLBased, Serializ
+             if escape:
+                 text = text.replace("&", "&amp;")
+                 text = text.replace("<", "&lt;")
++                text = text.replace("]]>", "]]&gt;")
+         except (TypeError, AttributeError):
+             raise_serialization_error(text)
+         return text

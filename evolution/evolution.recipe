@@ -1,0 +1,85 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Evolution(GnomePackageRecipe):
+    name = 'evolution'
+    version = '2.32.3'
+
+    # FIXME - enabling mono manages to make it crash at startup. 
+    extraConfig = ' --enable-nss=yes  --enable-mono=no'
+    # runtime requirements include gnome-spell:runtime
+
+    buildRequires = [ 'evolution-data-server:devel',
+                      'libsoup:devel', 'gtkhtml:devel', 'nss:devel', 
+                      'libbonobo:devel', 'libbonoboui:devel', 'gnome-vfs:devel',
+                      'libgnomecanvas:devel', 'libxml2:devel', 'GConf:devel', 
+                      'intltool', 'ORBit2:devel', 'flex', 'bison', 'byacc', 
+                      'libtool', 'gettext', 'pkgconfig', 'desktop-file-utils',
+                      'psmisc', 'atk:devel', 'cairo:devel', 'dbus:devel', 
+                      'fontconfig:devel', 'freetype:devel', 'expat:devel',
+                      'glib:devel', 'glibc:devel', 'gstreamer:devel', 'libart_lgpl:devel', 
+                      'libglade:devel', 'libgnome:devel', 'libgnomeprint:devel', 
+                      'libgnomeprintui:devel', 'libgnomeui:devel', 'libpng:devel', 
+                      'libytnef:devel', 'libgdata:devel',
+                      'mono:devel', 'mono:cil', 'nspr:devel',
+                      'pango:devel', 'popt:devel', 'libgnome-keyring:devel',
+                      'GConf:runtime', 'bison:runtime', 'docbook-utils:runtime', 
+                      'flex:runtime', 'gettext:runtime', 'perl:runtime',
+                      'NetworkManager:devel', 'dbus-glib:devellib', 'hal:devel',
+                      'libnotify:devel', 'desktop-file-utils:runtime', 'perl:lib',
+                      'rarian:runtime', 'rarian:devel', 'psmisc:runtime', 'gnome-icon-theme:devellib',
+                      'gnome-pilot:devel', 'pilot-link:devel', 'libxslt:runtime',
+                      'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'perl:devel', 
+                      'shared-mime-info:devellib','shared-mime-info:runtime', 'libgweather:devel',
+                      'gnome-desktop:devel', 'unique:devel', 'libcanberra:devel',
+                      ]
+
+    # add ldap support
+
+    extraConfig += ' --with-openldap=yes'
+    buildRequires.append('openldap:devel')
+
+    # add krb5 support
+    extraConfig += ' --with-krb5=/usr/kerberos'
+    buildRequires.append('krb5:devel')
+
+    # enable support for pilot
+    extraConfig += ' --enable-pilot-conduits=yes'
+
+    # enable experimental plugins
+    extraConfig += '  --enable-plugins=all'
+
+    # default to nss
+    extraConfig += ' --enable-nss=yes --enable-smime=yes '
+
+    # 
+    extraConfig += ' --enable-exchange '
+
+    # needed by other packages which build against evolution
+    majversion = '.'.join(version.split('.')[0:2])
+
+    # FIXME until we get gtkimageview in our tree
+    #                    libpst
+    extraConfig += '  --disable-image-inline --disable-pst-import '
+
+    patches = ['evolution-2.9.1-im-context-reset.patch', 'evolution-2.32.1-libnotify-0.7.patch']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # line bellow replaces old evolution-1.4.4-ldap-x86_64-hack.patch
+        r.Replace('\-lldap', '-lldap -lresolv', 'configure')
+
+    def build(r):
+        r.macros.cflags += ' -UGNOME_DISABLE_DEPRECATED -fPIC'
+        r.Replace('\-DGTK_DISABLE_DEPRECATED', '', 'configure')
+        GnomePackageRecipe.build(r)
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        r.SharedLibrary(subtrees='%(libdir)s/evolution/%(majversion)s')
+        # FL-2372
+        r.Requires('bogofilter:runtime', '%(bindir)s/%(name)s')

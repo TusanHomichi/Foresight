@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fuseiso(AutoPackageRecipe):
+    name = 'fuseiso'
+    version = '20070708'
+ 
+    buildRequires = ['fuse:devel', 'glib:devel', 'zlib:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/%(name)s/files/%(name)s/%(version)s/%(name)s-%(version)s.tar.bz2')

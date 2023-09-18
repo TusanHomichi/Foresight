@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FBReader(AutoPackageRecipe):
+    name = 'fbreader'
+    version = '0.99.4'
+
+    buildRequires = [
+        'atk:devel',
+        'bzip2:devel',
+        'cairo:devel',
+        'curl:devel',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'fribidi:devel',
+        'glib:devel',
+        'gtk:devel',
+        'libjpeg:devel',
+        'libunibreak:devel',
+        'libpng:devel',
+        'libstdc++:devel',
+        'libX11:devel',
+        'libxcb:devel',
+        'libXrender:devel',
+        'pango:devel',
+        'pixman:devel',
+        'pkgconfig:devel',
+        'sqlite:devel',
+        'xcb-util:devel',
+        'zlib:devel',
+        'qt4-core:devellib', 
+        'qt4-gui:devellib', 
+        'qt4:devel',
+        'which:runtime',
+    ]
+
+    def unpack(r):
+        r.macros.archive_name = "fbreader-sources"
+        r.addArchive("http://fbreader.org/files/desktop/")
+        r.Replace(r"\$\(INSTALLDIR\)/lib", "$(INSTALLDIR)/%(lib)s",
+            "makefiles/config.mk")
+        r.makeArgs = "TARGET_ARCH=desktop UI_TYPE=qt4 TARGET_STATUS=release"
+
+    def configure(r):
+        pass
+
+    def make(r):
+        r.Make(r.makeArgs)
+
+    def makeinstall(r):
+        r.MakeInstall(r.makeArgs)

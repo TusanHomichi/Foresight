@@ -1,0 +1,30 @@
+
+class Three89DSBase(AutoPackageRecipe):
+    name = '389-ds-base'
+    version = '1.2.10.11'
+
+    buildRequires = [
+        'chkconfig:runtime',
+        'cyrus-sasl:devel',
+        'db:devel',
+        'e2fsprogs:devel',
+        'icu:devel',
+        'krb5:devel',
+        'libstdc++:devel',
+        'lm_sensors:devel',
+        'mozldap:devel',
+        'net-snmp:devel',
+        'nspr:devel',
+        'nss:devel',
+        'openldap:devel',
+        'openssl:devel',
+        'pam:devel',
+        'pcre:devel',
+        'perl:devel',
+        'pkgconfig:devel',
+        'python:devel',
+        'svrcore:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://port389.org/sources/')

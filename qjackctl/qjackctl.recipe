@@ -1,0 +1,43 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Qjackctl(AutoPackageRecipe):
+    name = 'qjackctl'
+    version = '0.3.9'
+ 
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'autoconf:runtime',
+                    'automake:runtime',
+                    'desktop-file-utils:runtime',
+                    'jack:devel',
+                    'libstdc++:devel',
+                    'portaudio:devel',
+                    'qt4:devel',
+                    'qt:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/qjackctl/qjackctl (stable)/%(version)s/')
+        #r.addPatch('qjackctl-fix-locale-path.patch')
+        r.addSource('%(name)s.desktop')
+        r.Environment('QMAKE', '%(bindir)s/qmake-qt4')
+        r.Environment('QT4DIR', '%(libdir)s/')
+        
+    def configure(r):
+        r.Run('autoreconf')
+        r.Configure('--prefix=%(destdir)s/%(prefix)s --bindir=%(destdir)s/%(bindir)s --libdir=%(destdir)s/%(libdir)s --includedir=%(destdir)s/%(includedir)s --datarootdir=%(destdir)s/%(datadir)s --enable-jack-midi --enable-jack-session --enable-alsa-seq --enable-portaudio --enable-dbus --enable-system-tray')
+
+    def make(r):
+        r.disableParallelMake()
+        r.Run('qmake-qt4')
+        r.Make()
+
+    def makeinstall(r):
+        r.MakeInstall('DESTDIR=%(destdir)s')
+        r.Remove('%(datadir)s/applications/qjackctl.desktop')
+        r.Desktopfile('%(name)s.desktop', vendor='foresight')

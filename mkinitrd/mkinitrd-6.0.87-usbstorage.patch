@@ -1,0 +1,40 @@
+diff -u --recursive mkinitrd-6.0.87.orig/mkinitrd mkinitrd-6.0.87/mkinitrd
+--- mkinitrd-6.0.87.orig/mkinitrd	2009-08-25 12:24:40.205391000 +0100
++++ mkinitrd-6.0.87/mkinitrd	2009-08-25 12:26:51.426012988 +0100
+@@ -68,6 +68,7 @@
+ root=""
+ stabalize_scsi="no"
+ scsi_wait_scan="no"
++usb_storage="no"
+ 
+ NET_LIST=""
+ LD_SO_CONF=/etc/ld.so.conf
+@@ -263,6 +264,16 @@
+         FIRMWARE=" $(cat /etc/mkinitrd-firmware.d/$modName)"
+     fi
+ 
++    # add usb storage module if we're including usb support
++    if [    "$modName" = "uhci-hcd" \
++         -o "$modName" = "ohci-hcd" \
++         -o "$modName" = "ehci-hcd" ]; then
++        locatemodule usb-storage
++        if [ -n "$fmPath" -a -f "$fmPath" ]; then
++            usb_storage="yes"
++        fi
++    fi
++
+     # need to handle prescsimods here -- they need to go _after_ scsi_mod
+     if [ "$modName" = "scsi_mod" ]; then
+         for n in $PRESCSIMODS ; do
+@@ -1590,6 +1601,11 @@
+     installmodule scsi_wait_scan
+ fi
+ 
++if [ "$usb_storage" == "yes" ]; then
++    vecho "Adding module usb-storage"
++    installmodule usb-storage
++fi
++
+ /sbin/depmod -a -b $MNTIMAGE $kernel
+ if [ $? -ne 0 ]; then
+     error "\"/sbin/depmod -a $kernel\" failed."

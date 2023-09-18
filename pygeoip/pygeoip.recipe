@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pygeoip(PackageRecipe):
+    name = 'pygeoip'
+    version = '0.1.4'
+ 
+    buildRequires = ['python:devel', 'unzip:runtime', 'python-setuptools:python']
+ 
+    def setup(r):
+        r.addArchive('http://pygeoip.googlecode.com/files/%(name)s-%(version)s.zip')
+        r.PythonSetup()

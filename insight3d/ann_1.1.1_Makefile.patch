@@ -1,0 +1,12 @@
+--- insight3d/insight3d/ann_1.1.1/Makefile	2011-12-14 20:59:45.435904402 +0100
++++ insight3d/insight3d/ann_1.1.1/Makefile	2011-12-14 21:00:26.901901386 +0100
+@@ -84,9 +84,7 @@
+ 	cd test ; $(MAKE) realclean
+ 	cd sample ; $(MAKE) realclean
+ 	cd ann2fig ; $(MAKE) realclean
+-	cd doc ; $(MAKE) realclean
+ 	cd MS_Win32; $(MAKE) realclean
+-	cd validate ; $(MAKE) realclean
+ 
+ #-----------------------------------------------------------------------------
+ # Make distribution package (for use by authors only)

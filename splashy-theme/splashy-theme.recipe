@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008-2009 Foresight Linux Project
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Splashy(PackageRecipe):
+    name = 'splashy-theme'
+    version = '0.blackhole.0'
+
+    def setup(r):
+        # hack for CNY-3000 
+        # redirect to NIL won't do as rPL version may got picked 
+        r.Create('%(datadir)s/%(name)s/bogus')

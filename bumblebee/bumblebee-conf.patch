@@ -1,0 +1,20 @@
+--- bumblebee/bumblebee-3.2.1/conf/bumblebee.conf.in	2013-04-26 11:49:03.010174177 -0400
++++ bumblebee/bumblebee-3.2.1/conf/bumblebee.conf.in-patch	2014-06-09 21:27:26.006580141 -0400
+@@ -19,7 +19,7 @@
+ # The Driver used by Bumblebee server. If this value is not set (or empty),
+ # auto-detection is performed. The available drivers are nvidia and nouveau
+ # (See also the driver-specific sections below)
+-Driver=@CONF_DRIVER@
++Driver=nvidia
+ # Directory with a dummy config file to pass as a -configdir to secondary X
+ XorgConfDir=@XCONFDDIR@
+ 
+@@ -52,7 +52,7 @@
+ ## Section with nvidia driver specific options, only parsed if Driver=nvidia
+ [driver-nvidia]
+ # Module name to load, defaults to Driver if empty or unset
+-KernelDriver=@CONF_DRIVER_MODULE_NVIDIA@
++KernelDriver=nvidia
+ PMMethod=@CONF_PM_METHOD@
+ # colon-separated path to the nvidia libraries
+ LibraryPath=@CONF_LDPATH_NVIDIA@

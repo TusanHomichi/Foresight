@@ -1,0 +1,12 @@
+diff -Naur system-config-display-1.0.44.orig/Makefile system-config-display-1.0.44/Makefile
+--- system-config-display-1.0.44.orig/Makefile	2006-01-10 18:30:19.000000000 -0500
++++ system-config-display-1.0.44/Makefile	2006-09-06 09:42:18.000000000 -0400
+@@ -39,7 +39,7 @@
+ 	install ${PKGNAME}.pam $(INSTROOT)$(PAMD_DIR)/${PKGNAME}
+ 	install ${PKGNAME}.console $(INSTROOT)$(SECURITY_DIR)/${PKGNAME}
+ 	install ${PKGNAME}.desktop $(INSTROOT)/usr/share/applications/${PKGNAME}.desktop
+-	ln -sf consolehelper $(INSTROOT)/usr/bin/${PKGNAME}
++	install src/${PKGNAME} $(INSTROOT)/usr/bin/${PKGNAME}
+ 	for d in $(SUBDIRS); do \
+ 	(cd $$d; $(MAKE) INSTROOT=$(INSTROOT) MANDIR=$(MANDIR) install) \
+ 		|| case "$(MFLAGS)" in *k*) fail=yes;; *) exit 1;; esac; \

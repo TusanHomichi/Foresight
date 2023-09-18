@@ -1,0 +1,290 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+import datetime
+class Chromium(AutoPackageRecipe):
+    name = 'chromium'
+    baseVersion = '27.0.1453.116' 
+    version = baseVersion + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [ 'depot_tools:runtime',
+                      'nss:devel',
+                      'nspr:devel',
+                      'gcc-c++:runtime',
+                      'gcc:runtime',
+                      'bison:runtime',
+                      'flex:runtime',
+                      'gperf:runtime',
+                      'pkgconfig:devel',
+                      'glib:devel',
+                      'gtk:devel',
+                      'msttcorefonts:data',
+                      'freetype:devel',
+                      'cairo:devel',
+                      'dbus:devel',
+                      'subversion:runtime',
+                      'GConf:devel',
+                      'gcc:devel',
+                      'xextproto:devel',
+                      'util-linux:runtime',
+                      'alsa-lib:devel',
+                      'libXext:devel',
+                      'desktop-file-utils:runtime',
+                      'mozilla-filesystem:runtime',
+                      'make:runtime',
+                      'gettext:runtime',
+                      'intltool:runtime',
+                      'bzip2:devel',
+                      'libjpeg:devel',
+                      'scrnsaverproto:devel',
+                      'Mesa:devel',
+                      'libXScrnSaver:devel',
+                      'dbus-glib:devel',
+                      'cups:devel',
+                      'libgnome-keyring:devel',
+                      'gnutls:devel', 
+                      'libgcrypt:devel',
+                      'libgpg-error:devel',
+                      'rsync:runtime',
+                      'libevent:devel',
+                      'yasm:runtime',
+                      'libxml2:devel',
+                      'libxslt:devel',
+                      'libXtst:devel',
+                      'libXi:devel',
+                      'which:runtime',
+                      'sqlite:devel',
+                      'icu:devel',
+                      'libvpx:devel',
+                      'flac:devel',
+                      'ffmpeg:devel',
+                      'pam:devel',
+                      'libXinerama:devel',
+                      'speex:devel',
+                      'pulseaudio:devel',
+                      'unzip:runtime',
+                      'elfutils:devel',
+                      'libelf:devel',
+                      'udev:devel',
+                      'nacl-toolchain-newlib:devel',
+                      'pciutils:devel',
+                      'libopus:devel',
+                      'speech-dispatcher:devel',
+                      # 'harfbuzz:devel'
+                    ]
+
+    if Arch.x86_64:
+        # NaCl build expects it ...
+        buildRequires += ['zlib:lib[is:x86]']
+
+
+    def setup(r):
+        r.addArchive('http://gsdview.appspot.com/chromium-browser-official/%(name)s-'+ r.baseVersion +'.tar.xz')
+        r.addArchive('http://commondatastorage.googleapis.com/nativeclient-mirror/nacl/nacl_sdk/nacl_sdk.zip',
+                     dir = '%%(name)s-%s' % r.baseVersion)
+        
+        r.addSource('chromium.default')
+
+        # loaned from gentoo
+        for patch in [ 'chromium-pnacl-r0.patch',
+                       # 'chromium-speech-dispatcher-0.8-r0.patch',
+                       'chromium-smhasher-r0.patch', ]:
+            r.addPatch(patch)
+
+        # Decrease debuginfo verbosity to reduce memory consumption even more
+        # to avoid running into 4 GB ar format limit
+        # https://bugs.webkit.org/show_bug.cgi?id=91154 
+        # on x86 we get ... 
+        # ... /usr/bin/ld: failed to set dynamic section sizes: Memory exhausted
+        r.macros.dbgflags = '-g1'
+
+        # needed in order to NaCl build to proceed
+        r.macros.cflags  = re.sub('-fstack-protector', '', r.macros.cflags)
+
+        # for reasons that need to be better understood ... libpci places /pkgconfig/
+        # under includedir
+        r.Environment('PKG_CONFIG_PATH', '%(includedir)s/pkgconfig/:$PKG_CONFIG_PATH')
+
+        r.macros.gypDefines =  ('release_extra_cflags=\"%(cflags)s \" '
+                                'no_strict_aliasing=1 '
+                                'use_system_xdg_utils=1 '
+                                # XXX - http://code.google.com/p/chromium/issues/detail?id=143623
+                                'use_system_zlib=0 '
+                                ##  system's ffmpeg plus system's libvpx forces disabling of 
+                                ## remoting. upstream linking mess
+                                'use_system_libvpx=0 '
+                                # system's one works but flacky ...
+                                'use_system_ffmpeg=0 '
+
+                                # until http://crbug.com/22208
+                                'use_system_sqlite=0 '
+                                # https://bugzilla.mozilla.org/show_bug.cgi?id=547312 is fixed now...
+                                # ... but build still failing with plain nss
+                                # http://crbug.com/58087
+                                'use_system_ssl=0 '
+
+                                'ffmpeg_branding=Chrome '
+                                'proprietary_codecs=1 '
+
+                                # we are at icu-4.4.x. builtin at 4.6
+                                'use_system_icu=0 '
+                                'use_cups=1 '
+                                'use_system_libjpeg=1 '
+                                'use_system_libxml=1 '
+                                'use_system_libxslt=1 '
+                                'use_system_bzip2=1 '
+                                # until we bump system ...
+                                'use_system_flac=0 '
+                                'use_system_speex=1 '
+
+                                'use_system_libevent=1 '
+
+                                'use_system_libpng=0 '
+                                # we'd need a newer ICU ...
+                                # 'use_system_harfbuzz=1 '
+                                'linux_link_gnome_keyring=1 '
+                                'linux_link_gsettings=1 '
+                                'linux_link_libpci=1 '
+
+                                'linux_link_libspeechd=1 '
+                                'linux_link_pulseaudio=1 '
+
+                                'use_gconf=0 '
+                                'use_cups=1 '
+                                'werror= '
+                                'gcc_version=44 '
+                                'use_system_yasm=1 '
+                                'use_system_webp=1 '
+                                'use_system_opus=1 '
+                                'disable_newlib_untar=1 '
+                                # 
+                                'linux_strip_binary=1 '
+                                'remove_webcore_debug_symbols=1 '
+                                #
+                                'linux_sandbox_path=%(libdir)s/chromium-browser/chrome_sandbox '
+                                'disable_sse2=1 '
+                                # to get around build issues. 
+                                'v8_use_snapshot=0 '
+                                'linux_use_gold_binary=0 '
+                                'linux_use_gold_flags=0 '
+                                'disable_glibc=1 '
+                                'disable_pnacl=1 '
+                                # https://code.google.com/p/chromium/issues/detail?id=123583
+                                # issue mostly with ... nvidia closed drivers. 
+                                'linux_use_tcmalloc=0 '
+                                )
+        if Arch.x86_64:
+            r.macros.gypDefines += 'target_arch=x64 '
+        else:
+            r.macros.gypDefines += 'target_arch=ia32 '
+
+        r.MakeDirs('out')
+
+        # Missing gyp files in tarball (http://crbug.com/144823)
+        r.Run(""" sed -i '/nacl_test_data\.gyp/d' chrome/chrome_tests.gypi """)
+
+
+        # Disable prefixing to allow linking against system zlib
+        r.Replace('^#include "mozzconf.h"$',
+                  '',
+                  # 'chromium_build/third_party/zlib/zconf.h')
+                  'third_party/zlib/zconf.h')
+        # http://code.google.com/p/chromium/issues/detail?id=109527
+        # r.Replace('glib/gutils.h', 'glib.h', 'ui/base/l10n/l10n_util.cc')
+
+        # Prepare NaCL bits toolchain comming from nacl-toolchain-newlib
+        # as if the build system wasn't dumb and tortuous enough ...
+        r.MakeDirs('out/Release/obj/gen/sdk/toolchain')
+        r.Run('cp -a %(libdir)s/nacl-toolchain-newlib out/Release/obj/gen/sdk/toolchain/linux_x86_newlib')
+        r.Create('out/Release/obj/gen/sdk/toolchain/linux_x86_newlib/stamp.untar')
+
+        r.Run("GYP_DEFINES=\'%(gypDefines)s\'  GYP_GENERATORS=make "
+              "build/gyp_chromium "
+              " build/all.gyp --depth=. ",
+              )
+
+        # Make.
+        for t in [ 'chrome',
+                   'chrome_sandbox',
+                   'chromedriver',]:
+            r.Make(t + ' BUILDTYPE=Release V=1 ')
+
+        # Install.
+        r.addSource('chromium-browser',
+                    macros=True )
+        r.Install('chromium-browser',
+                  '%(bindir)s/chromium-browser',
+                  mode = 0755)
+        r.Symlink('%(bindir)s/chromium-browser',
+                  '%(bindir)s/chromium')
+
+        buildLoc = 'out/Release/'
+        artifacts = [ '*.pak',
+                      'locales',
+                      'chrome',
+                      'chrome_sandbox',
+                      'chromedriver',
+                      # bellow needed while we use internal ffmpeg
+                      'libffmpegsumo.so',
+                      # 'ffmpegsumo_nolink'
+                      # NaCl bits
+                      'nacl_helper',
+                      'nacl_helper_bootstrap',
+                      'libppGoogleNaClPluginChrome.so',
+                      'nacl_irt_*.nexe',
+                      ]
+
+        r.MakeDirs('%(libdir)s/chromium-browser')
+        # 
+        if Arch.x86:
+            r.Remove(buildLoc + 'nacl_irt{,_srpc}_x86_64.nexe')
+        
+        for artifact in artifacts:
+            r.Install(buildLoc + artifact,
+                      '%(libdir)s/chromium-browser/')
+
+        r.SetModes('%(libdir)s/chromium-browser/chrome_sandbox', 04755)
+
+        r.addSource('chromium-browser.desktop')
+        r.Desktopfile('chromium-browser.desktop')
+        # closes FL-2783
+        r.addSource('chromium-browser.xml', 
+                    dir = '%(datadir)s/gnome-control-center/default-apps/',
+                    mode = 0644)
+
+        r.Install(buildLoc + 'chrome.1',
+                  '%(mandir)s/man1/%(name)s.1',
+                  mode = 0644)
+
+        for size in ['22', '24',
+                     '48', '64', '128', '256',]:
+            r.Install('chrome/app/theme/chromium/product_logo_'+size+'.png',
+                      '%(datadir)s/icons/hicolor/' + size + 'x' + size + '/apps/%(name)s-browser.png',
+                      mode = 0644)
+        for size in ['16', '32']:
+            r.Install('chrome/app/theme/default_100_percent/chromium/product_logo_' + size + '.png',
+                      '%(datadir)s/icons/hicolor/' + size + 'x' + size + '/apps/chromium-browser.png',
+                      mode = 0644)
+
+        r.Symlink('%(datadir)s/icons/hicolor/48x48/apps/%(name)s-browser.png', 
+                  '%(datadir)s/pixmaps/chromium-browser.png')
+
+        # Chromium doesn't look in the mozilla plugins dir by default.
+        r.Symlink('%(libdir)s/mozilla/plugins',
+                  '%(libdir)s/chromium-browser/plugins')
+        
+        # when using system ffmpeg
+        # Chromium looks for these in its folder
+        # See media_posix.cc and base_paths_linux.cc
+        #for x in ['libavcodec.so.52', 
+        #          'libavformat.so.52',
+        #          'libavutil.so.50']:
+        #    r.Symlink('%(libdir)s/'+x, '%(libdir)s/chromium-browser/'+x)
+
+        # Allow users to override command-line options
+        r.Install('chromium.default', '/etc/chromium/default', mode = 0644)
+
+        r.Requires('speech-dispatcher:runtime', '%(bindir)s/chromium')

@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tinyxml(PackageRecipe):
+    name = 'tinyxml'
+    version = '2.6.2'
+ 
+    buildRequires = [
+        'ccache:lib',
+        'gcc-c++:runtime',
+        'gcc:devel',
+        'gcc:runtime',
+        'glibc:devel',
+        'libgcc:devellib',
+        'libstdc++:devel',
+        'make:runtime',
+        'unzip:runtime',
+        ]
+ 
+    def setup(r):
+        r.macros.mod_version = r.macros.version.replace('.','_')
+        r.addArchive('http://downloads.sourceforge.net/project/tinyxml/tinyxml/%(version)s/%(name)s_%(mod_version)s.zip')
+        r.addPatch('tinyxml-2.5.3-stl.patch')
+        r.Replace('TINYXML_USE_STL := NO','TINYXML_USE_STL := YES','Makefile')
+        r.Replace('RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3','RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3 -fPIC','Makefile')
+        r.Make()
+        r.Run('g++ -shared -o libtinyxml.so.0.%(version)s -Wl,-soname,libtinyxml.so.0 *.o')
+        r.Install('*.h', '%(includedir)s/')
+        r.Install('*.so.0*', '%(libdir)s/')
+        r.Symlink('%(libdir)s/libtinyxml.so.0.%(version)s', '%(libdir)s/libtinyxml.so.0')
+        r.Symlink('%(libdir)s/libtinyxml.so.0.%(version)s', '%(libdir)s/libtinyxml.so')
+

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+# ignore input
+cat > /dev/null
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in 
+    files)
+	case $action in 
+            update|remove)
+                texhash &> /dev/null
+                ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

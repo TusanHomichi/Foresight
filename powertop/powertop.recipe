@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2007 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Powertop(AutoPackageRecipe):
+    name = 'powertop'
+    version = '2.6.1'
+
+    buildRequires = [ 'ncurses:devel', 
+                      'gettext:runtime', 
+                      'libnl:devel',
+                      'libstdc++:devel', 
+                      'pciutils:devel', 
+                      'pkgconfig:devel', 
+                      'zlib:devel', 
+                      'intltool:runtime', 
+            ]
+
+    def unpack(r):
+        r.addArchive('https://01.org/sites/default/files/downloads/powertop/')
+        # taken from fedora
+        r.addPatch('powertop-2.3-always-create-params.patch')
+
+    def policy(r):
+        # Hooks for powertop not to show warnings on first start
+        r.MakeDirs('%(localstatedir)s/cache/powertop/')
+
+        for file in [ 'saved_parameters.powertop',
+                      'saved_results.powertop',
+                  ]:
+            target = '%%(localstatedir)s/cache/powertop/%s' % file
+            r.Create(target)
+            r.InitialContents(target)

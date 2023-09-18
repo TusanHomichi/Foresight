@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2009-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GupnpTools(AutoPackageRecipe):
+    name = 'gupnp-tools'
+    version = '0.8.4'
+ 
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'e2fsprogs:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gnome-icon-theme:devellib', 
+        'gtk3:devel', 
+        'gtk:devel', 
+        'gupnp-av:devel', 
+        'gupnp:devel', 
+        'libsoup:devel', 
+        'libxml2:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'xz:runtime',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.heanet.ie/mirrors/gnome/sources/gupnp-tools/0.8/')

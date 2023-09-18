@@ -1,0 +1,71 @@
+From 752727a13d2d55439aefe618677f7e932acc9862 Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Fri, 30 Oct 2009 04:20:24 +0100
+Subject: [PATCH] core-util: introduce pa_fopen_cloexec()
+
+---
+ src/pulsecore/core-util.c |   29 +++++++++++++++++++++++++++--
+ src/pulsecore/core-util.h |    1 +
+ 2 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/src/pulsecore/core-util.c b/src/pulsecore/core-util.c
+index a199daa..40da8f4 100644
+--- a/src/pulsecore/core-util.c
++++ b/src/pulsecore/core-util.c
+@@ -2961,7 +2961,7 @@ int pa_accept_cloexec(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
+ 
+ #ifdef HAVE_ACCEPT4
+     if ((fd = accept4(sockfd, addr, addrlen, SOCK_CLOEXEC)) >= 0)
+-        return fd;
++        goto finish;
+ 
+     if (errno != EINVAL && errno != ENOSYS)
+         return fd;
+@@ -2970,7 +2970,32 @@ int pa_accept_cloexec(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
+     if ((fd = accept(sockfd, addr, addrlen)) < 0)
+         return fd;
+ 
++finish:
+     pa_make_fd_cloexec(fd);
++    return fd;
++}
+ 
+-    return 0;
++FILE* pa_fopen_cloexec(const char *path, const char *mode) {
++    FILE *f;
++    char *m;
++
++    m = pa_sprintf_malloc("%se", mode);
++
++    errno = 0;
++    if ((f = fopen(path, m))) {
++        pa_xfree(m);
++        goto finish;
++    }
++
++    pa_xfree(m);
++
++    if (errno != EINVAL)
++        return NULL;
++
++    if (!(f = fopen(path, mode)))
++        return NULL;
++
++finish:
++    pa_make_fd_cloexec(fileno(f));
++    return f;
+ }
+diff --git a/src/pulsecore/core-util.h b/src/pulsecore/core-util.h
+index 323fdcb..d50f79a 100644
+--- a/src/pulsecore/core-util.h
++++ b/src/pulsecore/core-util.h
+@@ -263,5 +263,6 @@ int pa_open_cloexec(const char *fn, int flags, mode_t mode);
+ int pa_socket_cloexec(int domain, int type, int protocol);
+ int pa_pipe_cloexec(int pipefd[2]);
+ int pa_accept_cloexec(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
++FILE* pa_fopen_cloexec(const char *path, const char *mode);
+ 
+ #endif
+-- 
+1.6.3.3
+

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ftgl(AutoPackageRecipe):
+    name = 'ftgl'
+    version = '2.1.3rc5'
+ 
+    buildRequires = ['ImageMagick:runtime', 'Mesa:devel', 'dejavu-fonts-ttf:data', 'doxygen:runtime', 'freeglut:devel', 'freetype:devel', 'libICE:devel', 'libstdc++:devel', 'pkgconfig:devel', 'tetex-dvips:runtime', 'tetex:runtime', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://dfn.dl.sourceforge.net/sourceforge/ftgl/ftgl-2.1.3-rc5.tar.bz2')
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'

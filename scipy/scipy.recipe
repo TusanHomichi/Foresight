@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Scipy(CPackageRecipe):
+    name = 'scipy'
+    version = '0.7.2'
+ 
+    buildRequires = ['PIL:python', 'gcc-fortran:devellib', 'gcc-fortran:runtime', 'lapack:devellib', 'libstdc++:devel', 'numpy:python', 'python-numeric:python', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/scipy/')
+	
+	r.Run('env ATLAS=%(libdir)s/atlas FFTW=%(libdir)s BLAS=%(libdir)s LAPACK=%(libdir)s python setup.py config_fc --fcompiler=gnu95 --noarch build')
+	r.Run('env ATLAS=%(libdir)s/atlas FFTW=%(libdir)s BLAS=%(libdir)s LAPACK=%(libdir)s python setup.py install --root=%(destdir)s')

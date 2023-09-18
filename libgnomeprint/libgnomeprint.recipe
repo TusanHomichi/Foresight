@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Libgnomeprint(GnomePackageRecipe):
+
+    buildRequires = [ 'glib:devel', 'libxml2:runtime', 'libart_lgpl:devel',
+        'libbonobo:devel', 'freetype:devel', 'cups:devel',
+        'libgnomecups:devel', 'pango:devel', 'fontconfig:devel',
+        'libxml2:devel', 'openssl:devel', 'popt:devel',
+        'docbook-utils:runtime', 'flex:runtime', 'gettext:runtime',
+        'glib:runtime', 'perl:runtime', 'gcc-c++:runtime',
+        'bison:runtime', 'gnutls:devel' ]
+
+    name = 'libgnomeprint'
+    version = '2.18.8'

@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ephy="http://gnome.org/ns/epiphany#">
+  <channel rdf:about="file:///tmp/bookmarks.rdf">
+    <title>Epiphany bookmarks</title>
+    <link>http://www.gnome.org/projects/epiphany/</link>
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="http://www.google.com"/>
+        <rdf:li rdf:resource="http://www.foresightlinux.org/"/>
+        <rdf:li rdf:resource="http://www.foresightlinux.org/forum/"/>
+        <rdf:li rdf:resource="http://www.rpath.com/rbuilder/search?search=test&amp;type=Packages"/>
+        <rdf:li rdf:resource="http://wiki.rpath.com/wiki/Main_Page"/>
+        <rdf:li rdf:resource="http://wiki.foresightlinux.com/confluence/dashboard.action"/>
+        <rdf:li rdf:resource="http://issues.foresightlinux.org"/>
+      </rdf:Seq>
+    </items>
+  </channel>
+  <item rdf:about="http://www.google.com">
+    <title>Search in Web</title>
+    <link>http://www.google.com</link>
+    <ephy:smartlink>http://www.google.com/search?q=%s&amp;ie=UTF-8&amp;oe=UTF-8</ephy:smartlink>
+  </item>
+  <item rdf:about="http://www.foresightlinux.org/">
+    <title>Foresight Linux | Welcome !</title>
+    <link>http://www.foresightlinux.org/</link>
+    <dc:subject>foresight</dc:subject>
+  </item>
+  <item rdf:about="http://www.foresightlinux.org/forum/">
+    <title>Foresight Linux | The forums</title>
+    <link>http://www.foresightlinux.org/forum/</link>
+    <dc:subject>foresight</dc:subject>
+  </item>
+  <item rdf:about="http://www.rpath.com/rbuilder/search?search=test&amp;type=Packages">
+    <title>Search rBuilder Online</title>
+    <link>http://www.rpath.com/rbuilder/search?search=test&amp;type=Packages</link>
+    <dc:subject>rpath</dc:subject>
+  </item>
+  <item rdf:about="http://wiki.rpath.com/wiki/Main_Page">
+    <title>Main Page - RPath Wiki</title>
+    <link>http://wiki.rpath.com/wiki/Main_Page</link>
+    <dc:subject>wiki</dc:subject>
+    <dc:subject>rpath</dc:subject>
+    <dc:subject>conary</dc:subject>
+  </item>
+  <item rdf:about="http://wiki.foresightlinux.com/confluence/dashboard.action">
+    <title>Dashboard - Foresight Linux Wiki</title>
+    <link>http://wiki.foresightlinux.com/confluence/dashboard.action</link>
+    <dc:subject>wiki</dc:subject>
+    <dc:subject>foresight</dc:subject>
+  </item>
+  <item rdf:about="http://issues.foresightlinux.org">
+    <title>Search Foresight Issues</title>
+    <link>http://issues.foresightlinux.org</link>
+    <ephy:smartlink>http://issues.foresightlinux.org/secure/QuickSearch.jspa?searchString=%s</ephy:smartlink>
+    <dc:subject>foresight</dc:subject>
+  </item>
+</rdf:RDF>

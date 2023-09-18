@@ -1,0 +1,48 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage.recipe')
+class kOffice(kdeCorePackageRecipe):
+
+    name = 'koffice'
+    version = '2.3.2'
+
+    buildRequires = [
+        'boost:devel', 'eigen2:devel', 'exiv2:devel', 'fftw:devel',
+        'giflib:devel', 'glew:devel', 'gmm:devel', 'GraphicsMagick:devel',
+        'gsl:devel', 'ilmbase:devel', 'lcms:devel', 'libjpeg:devel',
+        'libkdcraw:devel', 'libtiff:devel', 'libwpd:devel', 'libxml2:devel',
+        'libxslt:devel', 'Mesa:devel', 'mysql:devel', 'OpenEXR:devel',
+        'OpenGTL:devel', 'PIL:python', 'poppler-qt4:devel', 'poppler:devel',
+        'PyQt4:python', 'python:devel', 'qca2:devel', 'qimageblitz:devel',
+        'wv2:devel', 'libgomp:devellib', 'okular:devel', 'kdelibs:runtime',
+    ]
+
+    apps = [
+        'karbon',
+        'kplato',
+        'kpresenter',
+        'kspread',
+        'kword',
+    ]
+    modules = []
+    for app in apps:
+        modules.append((app, app, 'filters/%s' % app), )
+
+    modules.append('krita', )
+
+    modules.append(('koffice-common', '.'), )
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/koffice-latest/')
+
+        # Empty
+        r.Remove('doc/kword', recursive=True)
+        r.Remove('doc/krita', recursive=True)
+
+    def policy(r):
+        r.PackageSpec('koffice-common', '%(thisdocdir)s/')
+

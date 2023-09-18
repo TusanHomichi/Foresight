@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('rpmpackage')
+class Curl(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'curl'
+    version = '7.27.0'
+    rpmRelease = '9.fc18'
+    externalArchive = 'http://curl.haxx.se/download/'+name+'-'+version+'.tar.bz2'
+    rpmPatches = [
+                  #upstream patches
+                  '0001-curl-7.27.0-1f8518c5.patch',
+                  '0002-curl-7.27.0-f05e5136.patch',
+                  '0003-curl-7.27.0-382429e7.patch',
+                  '0004-curl-7.27.0-52b6eda4.patch',
+                  '0005-curl-7.27.0-f208bf5a.patch',
+                  '0006-curl-7.27.0-68d2830e.patch',
+                  '0007-curl-7.27.0-b36f1d26.patch',
+                  '0008-curl-7.27.0-26613d78.patch',
+                  '0009-curl-7.27.0-f206d6c0.patch',
+                  '0010-curl-7.27.0-57ccdfa8.patch',
+                  '0011-curl-7.27.0-2eb8dcf2.patch',
+                  '0012-curl-7.27.0-25e577b3.patch',
+                  '0013-curl-7.27.0-b37b5233.patch',
+                  #fedora patches
+                  '0101-curl-7.27.0-multilib.patch',
+                  '0102-curl-7.27.0-debug.patch',
+                  '0104-curl-7.19.7-localhost6.patch',
+                  '0106-curl-7.21.0-libssh2-valgrind.patch',
+                  '0107-curl-7.21.4-libidn-valgrind.patch',
+                  '0108-curl-7.27.0-utf8.patch',
+    ]
+ 
+    buildRequires = [ 'libtool:runtime',
+                      'pkgconfig:devel',
+                      'krb5:devel',
+                      'zlib:devel',
+                      'perl:runtime',
+                      'openssl:devel', 
+                      'libidn:devel',
+                      'openldap:devel',
+                      'perl:devel',
+                      'groff:runtime',
+                      'rtmpdump:devel',
+                      'libssh2:devel',
+                      'nss:devel' ]
+
+    def configure(r):
+        r.macros.cppflags += ' $(pkg-config --cflags openssl)'
+        r.macros.ldflags += ' $(pkg-config --libs openssl)'
+
+        extraConfig = (' --disable-static'
+                       ' --enable-hidden-symbols'
+                       ' --enable-ipv6 '
+                       ' --enable-manual'
+                       ' --enable-threaded-resolver '
+                       ' --with-openssl=%(prefix)s'
+                       ' --without-ssl'
+                       ' --with-nss '
+                       ' --enable-crypto-auth'
+                       ' --enable-ldaps'
+                       ' --with-libidn'
+                       ' --enable-tls-srp'
+                       ' --enable-cookies '
+                       ' --with-gssapi=%(prefix)s/kerberos'
+                       ' --with-ca-bundle=%(sysconfdir)s/ssl/certs/ca-bundle.crt '
+        )
+        r.Configure(extraConfig)
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                   'libtool')
+
+    def policy(r):
+        r.Install('docs/libcurl/libcurl.m4',
+                  '%(datadir)s/aclocal/', mode = 0644)
+
+        r.Doc('docs/BUGS', 'docs/CONTRIBUTE', 'docs/FAQ',
+              'docs/FEATURES', 'docs/INSTALL', 'docs/INTERNALS',
+              'docs/MANUAL', 'docs/RESOURCES',
+              'docs/TheArtOfHttpScripting', 'docs/TODO')
+        r.ComponentSpec('devel',
+            '%(bindir)s/curl-config',
+            '%(mandir)s/man1/curl-config.*')

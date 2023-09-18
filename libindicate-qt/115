@@ -1,0 +1,189 @@
+=== modified file 'CMakeLists.txt'
+--- CMakeLists.txt	2010-03-08 09:02:19 +0000
++++ CMakeLists.txt	2011-02-01 15:58:40 +0000
+@@ -17,7 +17,7 @@
+ 
+ add_definitions(-Wall)
+ 
+-pkg_check_modules(INDICATE REQUIRED indicate>=0.3.3)
++pkg_check_modules(INDICATE REQUIRED indicate-0.5)
+ 
+ include_directories(
+     ${QT_INCLUDE_DIR}
+
+=== modified file 'src/qindicateindicator.cpp'
+--- src/qindicateindicator.cpp	2010-02-10 16:40:27 +0000
++++ src/qindicateindicator.cpp	2011-02-01 15:58:40 +0000
+@@ -127,20 +127,20 @@
+ 
+ QDateTime Indicator::dateTimeIndicatorProperty(const QString& key) const
+ {
+-    const GValue* value = indicate_indicator_get_property_value(d->mGIndicator, key.toUtf8().data());
+-    return value ? Decode::dateTimeFromValue(g_value_get_string(value)): QDateTime();
++    GVariant* variant = indicate_indicator_get_property_variant(d->mGIndicator, key.toUtf8().data());
++    return variant ? Decode::dateTimeFromValue(g_variant_get_string(variant, 0)): QDateTime();
+ }
+ 
+ int Indicator::intIndicatorProperty(const QString& key, int defaultValue) const
+ {
+-    const GValue* value = indicate_indicator_get_property_value(d->mGIndicator, key.toUtf8().data());
+-    return value ? g_value_get_int(value) : defaultValue;
++    GVariant* variant = indicate_indicator_get_property_variant(d->mGIndicator, key.toUtf8().data());
++    return variant ? g_variant_get_int32(variant) : defaultValue;
+ }
+ 
+ bool Indicator::boolIndicatorProperty(const QString& key, bool defaultValue) const
+ {
+-    const GValue* value = indicate_indicator_get_property_value(d->mGIndicator, key.toUtf8().data());
+-    return value ? g_value_get_boolean(value) : defaultValue;
++    GVariant* variant = indicate_indicator_get_property_variant(d->mGIndicator, key.toUtf8().data());
++    return variant ? g_variant_get_boolean(variant) : defaultValue;
+ }
+ 
+ static void propertyList_helper(gchar* _item, QStringList* list)
+
+=== modified file 'src/qindicatelistener.cpp'
+--- src/qindicatelistener.cpp	2010-09-30 07:49:24 +0000
++++ src/qindicatelistener.cpp	2011-02-01 15:58:40 +0000
+@@ -155,22 +155,28 @@
+     return &instance;
+ }
+ 
+-static QVariant variantFromGValue(const GValue* value)
++static QVariant variantFromGVariant(GVariant* gvariant)
+ {
+-    if (!value) {
+-        qWarning() << "variantFromGValue(): value is NULL";
++    if (!gvariant) {
++        qWarning() << "variantFromGVariant(): gvariant is NULL";
+         return QVariant();
+     }
+-    if (G_VALUE_HOLDS_STRING(value)) {
+-        return QVariant(QByteArray(g_value_get_string(value)));
+-    }
+-    if (G_VALUE_HOLDS_INT(value)) {
+-        return QVariant(g_value_get_int(value));
+-    }
+-    if (G_VALUE_HOLDS_BOOLEAN(value)) {
+-        return QVariant(g_value_get_boolean(value));
+-    }
+-    qWarning() << "variantFromGValue(): don't know how to handle GValue of type " << G_VALUE_TYPE_NAME(value);
++    if (g_variant_is_of_type(gvariant, G_VARIANT_TYPE_STRING)) {
++        return QVariant(QByteArray(g_variant_get_string(gvariant, 0)));
++    }
++    if (g_variant_is_of_type(gvariant, G_VARIANT_TYPE_INT16)) {
++        return QVariant(g_variant_get_int16(gvariant));
++    }
++    if (g_variant_is_of_type(gvariant, G_VARIANT_TYPE_INT32)) {
++        return QVariant(g_variant_get_int32(gvariant));
++    }
++    if (g_variant_is_of_type(gvariant, G_VARIANT_TYPE_INT64)) {
++        return QVariant(qlonglong(g_variant_get_int64(gvariant)));
++    }
++    if (g_variant_is_of_type(gvariant, G_VARIANT_TYPE_BOOLEAN)) {
++        return QVariant(g_variant_get_boolean(gvariant));
++    }
++    qWarning() << "variantFromGVariant(): don't know how to handle GVariant of type " << g_variant_get_type_string(gvariant);
+     return QVariant();
+ }
+ 
+@@ -205,7 +211,7 @@
+ 
+     static void indicatorGetPropertyAsVariantCB(IndicateListener* listener,
+         IndicateListenerServer* _server, IndicateListenerIndicator* _indicator,
+-        gchar* _key, const GValue* value, gpointer data)
++        gchar* _key, GVariant* gvariant, gpointer data)
+     {
+         GetPropertyHelper* helper = static_cast<GetPropertyHelper*>(data);
+         if (helper->mReceiver) {
+@@ -213,7 +219,7 @@
+             Listener::Indicator* indicator = reinterpret_cast<Listener::Indicator*>(_indicator);
+             QString key = QString::fromUtf8(_key);
+ 
+-            QVariant variant = variantFromGValue(value);
++            QVariant variant = variantFromGVariant(gvariant);
+ 
+             QMetaObject::invokeMethod(helper->mReceiver, helper->mMethod.data(),
+                 Q_ARG(QIndicate::Listener::Server*, server),
+@@ -225,7 +231,7 @@
+     }
+ 
+     static void serverGetQByteArrayPropertyCB(IndicateListener* listener,
+-        IndicateListenerServer* server, gchar* value, gpointer data)
++        IndicateListenerServer* server, const gchar* value, gpointer data)
+     {
+         serverGetPropertyCB(listener, server, Q_ARG(QByteArray, value), data);
+     }
+@@ -237,7 +243,7 @@
+     }
+ 
+     static void serverGetQStringPropertyCB(IndicateListener* listener,
+-        IndicateListenerServer* server, gchar* value, gpointer data)
++        IndicateListenerServer* server, const gchar* value, gpointer data)
+     {
+         serverGetPropertyCB(listener, server, Q_ARG(QString, QString::fromAscii(value)), data);
+     }
+@@ -281,7 +287,7 @@
+ {
+     GetPropertyHelper* helper = new GetPropertyHelper(receiver, slot);
+ 
+-    indicate_listener_get_property_value(d->mGListener,
++    indicate_listener_get_property_variant(d->mGListener,
+         reinterpret_cast<IndicateListenerServer*>(server),
+         reinterpret_cast<IndicateListenerIndicator*>(indicator),
+         key.toUtf8().data(), GetPropertyHelper::indicatorGetPropertyAsVariantCB, helper);
+
+=== modified file 'tests/communicationtest.cpp'
+--- tests/communicationtest.cpp	2010-02-10 15:46:12 +0000
++++ tests/communicationtest.cpp	2011-02-01 15:58:40 +0000
+@@ -34,7 +34,7 @@
+ 
+ void CommunicationTest::init()
+ {
+-    mListener = new QIndicate::Listener;
++    mListener = QIndicate::Listener::defaultInstance(); //new QIndicate::Listener;
+ 
+     mServer = QIndicate::Server::defaultInstance();
+     mServer->setType(SERVER_TYPE);
+@@ -63,8 +63,6 @@
+ {
+     delete mServer;
+     mServer = 0;
+-    delete mListener;
+-    mListener = 0;
+ }
+ 
+ void CommunicationTest::testIndicatorModified()
+
+=== modified file 'tests/listenertest.cpp'
+--- tests/listenertest.cpp	2009-09-14 15:10:58 +0000
++++ tests/listenertest.cpp	2011-02-01 15:58:40 +0000
+@@ -32,10 +32,10 @@
+ 
+ void ListenerTest::testServerAddedRemoved()
+ {
+-    QIndicate::Listener listener;
++    QIndicate::Listener* listener = QIndicate::Listener::defaultInstance();
+ 
+-    QSignalSpy addedSpy(&listener, SIGNAL(serverAdded(QIndicate::Listener::Server*, const QString&)));
+-    QSignalSpy removedSpy(&listener, SIGNAL(serverRemoved(QIndicate::Listener::Server*, const QString&)));
++    QSignalSpy addedSpy(listener, SIGNAL(serverAdded(QIndicate::Listener::Server*, const QString&)));
++    QSignalSpy removedSpy(listener, SIGNAL(serverRemoved(QIndicate::Listener::Server*, const QString&)));
+ 
+     QIndicate::Server* server = QIndicate::Server::defaultInstance();
+     server->setType(SERVER_TYPE);
+@@ -58,10 +58,10 @@
+ 
+ void ListenerTest::testIndicatorAddedRemoved()
+ {
+-    QIndicate::Listener listener;
++    QIndicate::Listener* listener = QIndicate::Listener::defaultInstance();
+ 
+-    QSignalSpy addedSpy(&listener, SIGNAL(indicatorAdded(QIndicate::Listener::Server*, QIndicate::Listener::Indicator*)));
+-    QSignalSpy removedSpy(&listener, SIGNAL(indicatorRemoved(QIndicate::Listener::Server*, QIndicate::Listener::Indicator*)));
++    QSignalSpy addedSpy(listener, SIGNAL(indicatorAdded(QIndicate::Listener::Server*, QIndicate::Listener::Indicator*)));
++    QSignalSpy removedSpy(listener, SIGNAL(indicatorRemoved(QIndicate::Listener::Server*, QIndicate::Listener::Indicator*)));
+ 
+     QIndicate::Server* server = QIndicate::Server::defaultInstance();
+     server->setType(SERVER_TYPE);
+

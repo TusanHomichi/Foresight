@@ -1,0 +1,12 @@
+class PostMarkup(PackageRecipe):
+    name = 'postmarkup'
+    version = 'r66'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addSvnSnapshot("http://postmarkup.googlecode.com/svn/trunk", revision="66")
+        r.PythonSetup()

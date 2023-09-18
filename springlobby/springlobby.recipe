@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2011-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Springlobby(PackageRecipe):
+    name = 'springlobby'
+    version = '0.147'
+ 
+    buildRequires = [ 'cmake:runtime',
+                      'make:runtime', 
+                      'binutils:runtime', 
+                      'boost:devel', 
+                      'curl:devel', 
+                      'desktop-file-utils:runtime', 
+                      'gcc-c++:runtime', 
+                      'gcc:runtime', 
+                      'gdk-pixbuf:devel', 
+                      'gettext:runtime', 
+                      'glib:devel', 
+                      'intltool:runtime', 
+                      'libgcc:devellib', 
+                      'libnotify:devel', 
+                      'libpng:devel', 
+                      'libstdc++:devel', 
+                      'libtorrent-rasterbar:devel', 
+                      'openal:devel', 
+                      'pkgconfig:devel', 
+                      'wxWidgets:devel', 
+                      'wxWidgets:runtime',
+                      'libmpg123:devel',
+                      'atk:devel',
+                      'cairo:devel',
+                      'freetype:devel',
+                      'gtk:devel',
+                      'pango:devel',
+                      ]
+ 
+    def setup(r):
+        r.addArchive('http://www.springlobby.info/tarballs/')
+        r.addPatch('springlobby-gtkfix.patch')
+        # r.Replace('boost_system-mt', 'boost_system', 'CMakeLists.txt')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()
+        r.Requires('spring:runtime', '%(bindir)s/springlobby')
+        r.Requires('spring:lib', '%(bindir)s/springlobby')
+
+        r.Remove('%(prefix)s/config.h')

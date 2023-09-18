@@ -1,0 +1,62 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Tcl(RPMPackageRecipe,CPackageRecipe):
+    name = 'tcl'
+    version = '8.5.9'
+
+    rpmUpVer = '8.5.9'
+    rpmRelease = '2.fc15'
+    externalArchive = 'mirror://sourceforge/%(name)s/%(name)s%(version)s-src.tar.gz'
+
+    buildRequires = [ 'autoconf:runtime', ]
+
+    rpmPatches = [ 'tcl-8.5.1-autopath.patch',
+                   'tcl-8.5.0-conf.patch',
+                   'tcl-8.5.9-hidden.patch' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s%(version)s-html.tar.gz')
+        RPMPackageRecipe.unpack(r)
+
+        r.Run('cd unix && autoconf')
+
+        r.Configure('--enable-dtrace --disable-threads --enable-symbols --enable-shared', dir='unix')
+        r.Make('TCL_LIBRARY=%(datadir)s/%(name)s%(major_version)s', dir='unix')
+
+        r.MakeInstall('INSTALL_ROOT=%(destdir)s'
+                      ' TCL_LIBRARY=%(datadir)s/%(name)s%(major_version)s',
+                      dir='unix')
+        r.Symlink('%(bindir)s/tclsh%(major_version)s', '%(bindir)s/tclsh')
+        r.Symlink('%(libdir)s/lib%(name)s%(major_version)s.so',
+                  '%(libdir)s/lib%(name)s.so')
+
+        # backward compatible symlink for legacy tcl packages that hardcode
+        # lib path to prefix/lib/%(name)s%(major_version)s
+        r.Symlink('%(datadir)s/%(name)s%(major_version)s', '%(libdir)s/%(name)s%(major_version)s')
+
+        # add headers to devel package.  This is required for tk to build
+        r.Run('''
+                mkdir -p %(destdir)s/%(includedir)s/%(name)s-private/{generic,unix}
+                find generic unix -name "*.h" -exec cp -p '{}' %(destdir)s/%(includedir)s/%(name)s-private/'{}' ';'
+                ( cd %(destdir)s/%(includedir)s
+                  for i in *.h ; do
+                    [ -f %(destdir)s/%(includedir)s/%(name)s-private/generic/$i ] && ln -sf ../../$i %(destdir)s/%(includedir)s/%(name)s-private/generic ;
+                  done
+                )''')
+
+        r.Replace(('%(builddir)s/unix', '%(libdir)s'),
+                  ('%(builddir)s', '%(includedir)s/%(name)s-private'),
+                  '%(destdir)s/%(libdir)s/%(name)sConfig.sh')
+
+
+        # 
+        r.macros.protver = '.'.join(r.version.split('.')[0:2])
+        r.ComponentProvides('%(protver)s')
+
+

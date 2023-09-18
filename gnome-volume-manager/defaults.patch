@@ -1,0 +1,93 @@
+diff -r f854d1cd02e7 gnome-volume-manager.schemas.in
+--- a/gnome-volume-manager.schemas.in	Wed Feb 06 21:29:50 2008 -0500
++++ b/gnome-volume-manager.schemas.in	Wed Feb 06 21:50:52 2008 -0500
+@@ -40,7 +40,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autobrowse</key>
+         <applyto>/desktop/gnome/volume_manager/autobrowse</applyto>
+         <type>bool</type>
+-        <default>true</default>
++        <default>false</default>
+         <locale name="C">
+           <short>Autorun nautilus</short>
+           <long>Open nautilus on removeable media insert.</long>
+@@ -109,7 +109,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autoplay_cda_command</key>
+ 	<applyto>/desktop/gnome/volume_manager/autoplay_cda_command</applyto>
+ 	<type>string</type>
+-	<default>gnome-cd --unique --play --device=%d</default>
++	<default>banshee --audio-cd %d</default>
+ 	<locale name="C">
+ 	  <short>CD play command</short>
+ 	  <long>Command to run when an audio CD is inserted.</long>
+@@ -132,7 +132,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autoburn_audio_cd_command</key>
+ 	<applyto>/desktop/gnome/volume_manager/autoburn_audio_cd_command</applyto>
+ 	<type>string</type>
+-	<default>nautilus --no-desktop burn:</default>
++	<default>banshee --burn-cd</default>
+ 	<locale name="C">
+ 	  <short>Audio CD burn command</short>
+ 	  <long>Command to run when the user wishes to burn an Audio CD.</long>
+@@ -166,7 +166,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autoplay_dvd_command</key>
+ 	<applyto>/desktop/gnome/volume_manager/autoplay_dvd_command</applyto>
+ 	<type>string</type>
+-	<default>totem %d</default>
++	<default>totem dvd://%d</default>
+ 	<locale name="C">
+ 	  <short>DVD play command</short>
+ 	  <long>Command to run when a video DVD is inserted.</long>
+@@ -200,7 +200,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autophoto</key>
+ 	<applyto>/desktop/gnome/volume_manager/autophoto</applyto>
+ 	<type>bool</type>
+-	<default>false</default>
++	<default>true</default>
+ 	<locale name="C">
+ 	  <short>Run photo management command</short>
+ 	  <long>Whether, when a digital camera is connected or media from a
+@@ -213,7 +213,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autophoto_command</key>
+ 	<applyto>/desktop/gnome/volume_manager/autophoto_command</applyto>
+ 	<type>string</type>
+-	<default></default>
++	<default>f-spot --import %h</default>
+ 	<locale name="C">
+ 	  <short>Photo management command</short>
+ 	  <long>Command to run when a digital camera is connected or media 
+@@ -225,7 +225,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autoipod</key>
+ 	<applyto>/desktop/gnome/volume_manager/autoipod</applyto>
+ 	<type>bool</type>
+-	<default>false</default>
++	<default>true</default>
+ 	<locale name="C">
+ 	  <short>Run iPod program</short>
+ 	  <long>Whether, when an iPod is connected, gnome-volume-manager should run
+@@ -237,7 +237,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autoipod_command</key>
+ 	<applyto>/desktop/gnome/volume_manager/autoipod_command</applyto>
+ 	<type>string</type>
+-	<default></default>
++	<default>banshee --dap=%h</default>
+ 	<locale name="C">
+ 	  <short>iPod sync command</short>
+ 	  <long>Command to run when an iPod is connected.</long>
+@@ -248,7 +248,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autoprinter</key>
+ 	<applyto>/desktop/gnome/volume_manager/autoprinter</applyto>
+ 	<type>bool</type>
+-	<default>true</default>
++	<default>false</default>
+ 	<locale name="C">
+ 	  <short>Run printer program</short>
+ 	  <long>Whether, when a printer is connected, gnome-volume-manager should run
+@@ -317,7 +317,7 @@
+         <key>/schemas/desktop/gnome/volume_manager/autowebcam</key>
+ 	<applyto>/desktop/gnome/volume_manager/autowebcam</applyto>
+ 	<type>bool</type>
+-	<default>false</default>
++	<default>true</default>
+ 	<locale name="C">
+ 	  <short>Run webcam stream display program</short>
+ 	  <long>Whether, when a web camera is connected, gnome-volume-manager should run

@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Sets the appropriate xorg.conf and GL links according to what is defined in /etc/X11/xorg.conf
+#
+# (C) 2007 - Antonio Meireles (aka doniphon) 
+# The Foresight Linux Project
+#
+
+NVIDIA=`cat /etc/X11/xorg.conf |grep -c \"nvidia\"`
+FGLRX=`cat /etc/X11/xorg.conf |grep -c \"fglrx\"`
+IS64bits=`arch | grep -c 64`
+
+if [ "$IS64bits" = 1 ]; then
+    LIBdir="/usr/lib64"
+else
+    LIBdir="/usr/lib"
+fi
+
+if [ "$NVIDIA" = 1 ]; then
+    echo "nvidia proprietary driver detected in use"
+
+    ls $LIBdir/*.nvidia $LIBdir/xorg/modules/extensions/*.nvidia | sed -e 's,.nvidia,,g' | awk '{print "ln -sf "$1".nvidia "$1}  ' | sh
+
+else
+
+    echo "stock xorg video driver (using Mesa for 3d) detected"
+
+    ls $LIBdir/*.mesa $LIBdir/xorg/modules/extensions/*.mesa | sed -e 's,.mesa,,g' | awk '{print "ln -sf "$1".mesa "$1}  ' | sh
+
+fi
+
+ldconfig   $LIBdir $LIBdir/xorg/modules/extensions/
+
+
+

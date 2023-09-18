@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2010 - 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Performous(AutoPackageRecipe):
+    name = 'performous'
+    version = '0.7.0'
+ 
+    buildRequires = ['ImageMagick:devel', 'Mesa:devel', 'SDL:devel', 'alsa-lib:devel', 'boost:devel', 'cairo:devel', 'cmake:runtime', 'desktop-file-utils:runtime', 'ffmpeg:devel', 'freetype:devel', 'gcc-c++:runtime', 'gettext:runtime', 'glew:devel', 'glib:devel', 'glibmm:devel', 'gstreamer:devel', 'gtk:devel', 'jack:devel', 'libjpeg:devel', 'libpng:devel', 'librsvg:devel', 'libsigc++:devel', 'libstdc++:devel', 'libtiff:devel', 'libxml++:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'portaudio:devel', 'pulseaudio:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/%(name)s/files/%(name)s/%(version)s/performous-%(version)s.tar.bz2')
+        r.macros.ldflags +='-L%(libdir)s/xorg.mesa.3d/ '
+        r.MakeDirs('Build')
+
+    def configure(r):
+        r.Run('cmake -DCMAKE_BUILD_TYPE=None -DCMAKE_INSTALL_PREFIX=%(prefix)s -DCMAKE_LIBRARY_PATH=%(libdir)s -DLibDA_PLUGIN_GSTREAMER=1 -DLibDA_PLUGIN_JACK=1 -DLibDA_PLUGIN_PULSE=1 ..', dir='Build')
+        
+    def make(r):
+        r.Make(dir='Build')
+    
+    def makeinstall(r):
+        r.MakeInstall(dir='Build')

@@ -1,0 +1,30 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sip(AutoPackageRecipe):
+
+    name = 'sip'
+    version = '4.13.2'
+
+    buildRequires = [
+        'libstdc++:devel', 'python:devel', 'python:runtime'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_version = r.version.replace('+', '-snapshot-')
+        r.addArchive('http://www.riverbankcomputing.com/static/Downloads/sip4/')
+
+    def configure(r):
+
+        conf = '-d %(libdir)s/python2.6/site-packages/'
+        r.ManualConfigure(
+            conf, preConfigure='python', configureName='configure.py'
+        )
+
+    def policy(r):
+
+        r.Doc('doc/*')
+

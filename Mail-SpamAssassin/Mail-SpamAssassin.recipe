@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('cpanpackage')
+class SpamAssassin(CPANPackageRecipe, CPackageRecipe):
+    name = 'Mail-SpamAssassin'
+    version = '3.3.0'
+
+    buildRequires = [ 'perl-Net-DNS:perl', 'perl-Mail-SPF-Query:perl',
+                    'perl-IP-Country:perl', 'perl-Net-Ident:perl',
+                    'perl-IO-Socket-SSL:perl', 'perl-Archive-Tar:perl',
+                    'perl-IO-Zlib:perl', 'glibc:devel', 'chkconfig:runtime',
+                    'perl-DBD-Pg:perl', 'perl-DBI:perl',
+                    'perl-Digest-SHA1:perl', 'perl-HTML-Parser:perl',
+                    'perl-Time-HiRes:perl', 'perl-URI:perl',
+                    'perl-HTTP-Cookies:perl', 'openssl:devel', 
+		    'perl-DBD-MySQL:perl', 'perl-DBD-SQLite:perl', 
+		    'perl-Term-ReadKey:perl', 'perl:devel']
+    def unpack(r):
+	r.addArchive('http://search.cpan.org/CPAN/authors/id/J/JM/JMASON/')
+
+    def build(r):
+        r.macros.extraConfig = 'ENABLE_SSL="yes" '
+        r.macros.cflags += ' -DSPAMC_SSL'
+        CPANPackageRecipe.build(r)
+
+    def install(r):
+        CPANPackageRecipe.install(r)
+        r.Install('spamd/redhat-rc-script.sh', '%(initdir)s/spamd', mode=0755)

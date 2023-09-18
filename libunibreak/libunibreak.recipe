@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Libunibreak(AutoPackageRecipe):
+    name = 'libunibreak'
+    version = '1.1'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/vimgadgets/libunibreak/1.1/')

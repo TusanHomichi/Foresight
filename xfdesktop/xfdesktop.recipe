@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class xfdesktop(XfcePackageRecipe):
+
+    name = 'xfdesktop'
+    version = '4.10.2'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'Thunar:devel', 'desktop-file-utils:runtime', 'libXres:devel',
+        'libexo:devel', 'libexo:runtime', 'libwnck:devel', 'libnotify:devel',
+        'garcon:devel', 'libxfce4util:devel', 'libxfce4ui:devel',
+        'libxml2:devel', 'perl:devel', 'startup-notification:devel',
+        'xfce4-panel:devel', 'xfconf:devel'
+    ])
+
+    def setup(r):
+        XfcePackageRecipe.setup(r)
+        r.addSource('xfce4-desktop.xml', dir='%(sysconfdir)s/xdg/xfce4/xfconf/xfce-perchannel-xml/')

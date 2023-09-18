@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Changes 2007 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+#loadRecipe('rpmpackage')
+#class GnomeDesktop(RPMPackageRecipe,GnomePackageRecipe):
+class GnomeDesktop(GnomePackageRecipe):
+
+    buildRequires = [ 'glib:devel', 'pango:devel', 'gtk:devel', 'GConf:devel', 'gnome-vfs:devel', 'libgnomeui:devel', 'libgnome:devel', 'startup-notification:devel', 'rarian:devellib', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'libgnome-keyring:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnomecanvas:devel', 'libpng:devel', 'libxml2:devel', 'popt:devel', 'intltool:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'gcc-c++:runtime', 'rarian:runtime', 'desktop-file-utils:runtime', 'gettext:runtime', 'perl:runtime', 'libxslt:runtime', 'docbook-dtds:data', 'rarian:devel', 'gnome-python:python', 'gtk-doc:runtime', 'pycairo:python', 'pygobject:python', 'pygtk:python', 'python:devel', 'gnome-common:devel', 'gnome-common:runtime', 'gtk-doc:devel', 'libXrandr:devel', 'gettext:devel' ]
+
+    name = 'gnome-desktop'
+    version = '2.32.1'
+    rpmRelease = '3.fc13'
+
+    extraConfig = (' --with-pnp-ids-path="/usr/share/hwdata/pnp.ids"  --disable-scrollkeeper '
+                   ' --with-gnome-distributor="Foresight Linux" --enable-gtk-doc=no')
+
+    patches = ['patch-glib2_34.patch']
+
+    def policy(r):
+        r.MakeDirs('%(sysconfdir)s/skel/Documents')
+        r.MakeDirs('%(sysconfdir)s/skel/Music')
+        r.MakeDirs('%(sysconfdir)s/skel/Photos')
+        r.MakeDirs('%(sysconfdir)s/skel/Videos')
+        r.ExcludeDirectories(exceptions=[ '%(sysconfdir)s/skel/Documents',
+                                          '%(sysconfdir)s/skel/Music',
+                                          '%(sysconfdir)s/skel/Photos',
+                                          '%(sysconfdir)s/skel/Videos']
+                             )
+

@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+#              
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LevelDB(AutoPackageRecipe):
+    name = 'leveldb'
+    version = '1.9.0'
+    buildRequires = [ 'autoconf:runtime',
+                      'snappy:devel',
+                      'automake:runtime',
+                      'libtool:runtime', 
+                      'gcc-c++:runtime', ]
+
+    def unpack(r):
+        r.addArchive('http://leveldb.googlecode.com/files/')
+        for patch in [ 'leveldb-0001-Initial-commit-of-the-autotools-stuff.patch',
+                       'leveldb-0003-bloom_test-failure-on-big-endian-archs.patch',
+                       'leveldb-0002-Add-memory-barrier-on-PowerPC.patch',
+                       'leveldb-0004-leveldbjni.patch' ]:
+            r.addPatch(patch)
+        r.Run('autoreconf -fi')
+        
+    def configure(r):
+        r.Configure('--disable-static --with-pic')

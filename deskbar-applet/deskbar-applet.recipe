@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class DeskbarApplet(GnomePackageRecipe):
+    buildRequires = [ 'gnome-python-desktop:python', 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'evolution-data-server:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gnome-desktop:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'popt:devel', 'rarian:runtime', 'rarian:devel', 'startup-notification:devel', 'gnome-python:python', 'gnome-python:devel', 'pygtk:python', 'GConf:runtime', 'gettext:runtime', 'perl:runtime', 'pygtk:devel', 'expat:devel', 'python:devel', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'desktop-file-utils:runtime', 'elementtree:python', 'gtk:runtime', 'dbus-python:devel', 'dbus-python:python', 'pygobject:python', 'pygobject:devel', 'pygobject:runtime', 'python-simplejson:python' ]
+
+    name = "deskbar-applet"
+    version = '2.32.0'
+    extraConfig = ' --disable-scrollkeeper'
+
+    patches = [
+        # Install *.py and *.so in the same place, i.e. /usr/lib64 for x86_64
+        # FL-1882
+        # Gnome Bug 579499
+        # Taken from http://cvs.fedoraproject.org/viewvc/F-13/deskbar-applet/
+        '2.30.0-py_sitearch.patch',
+        ]
+
+    def policy(r):
+        r.SetModes('%(libexecdir)s/%(name)s/modules-2.20-compatible/.*', 0644)
+        r.NonBinariesInBindirs(exceptions = '%(libexecdir)s/%(name)s/modules-2.20-compatible/.*')

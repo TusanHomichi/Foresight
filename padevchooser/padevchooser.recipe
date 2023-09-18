@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PAdevChooser(AutoPackageRecipe):
+    name = 'padevchooser'
+    version = '0.9.4'
+
+    buildRequires = [ 'gcc-c++:runtime', 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gnome-desktop:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libnotify:devel', 'libpng:devel', 'libxml2:devel', 'lynx:runtime', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'popt:devel', 'pulseaudio:devel', 'startup-notification:devel', 'zlib:devel']
+
+    def unpack(r):
+        r.addArchive('padevchooser-0.9.4.svn20070925.tar.gz')
+        for p in [ 'padevchooser-0.9.4-ld.patch',
+                'padevchooser-0.9.4-libnotify.patch',]:
+            r.addPatch(p)

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tuxmath(AutoPackageRecipe):
+    name = 'tuxmath'
+    version = '2.0.1'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'gettext:runtime', 'intltool:runtime', 
+        'SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'SDL_ttf:devel', 'SDL_Pango:devel', 'SDL_net:devel', 'cairo:devel', 'gdk-pixbuf:devel', 'glib:devel', 'libpng:devel', 'librsvg:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 't4k_common:devel', 'unix2dos:runtime']
+ 
+    def unpack(r):
+        r.addArchive('https://alioth.debian.org/frs/download.php/3561/tuxmath_w_fonts-%(version)s.tar.gz')
+        r.addSource('tuxmath.desktop')
+        r.Desktopfile('tuxmath.desktop')

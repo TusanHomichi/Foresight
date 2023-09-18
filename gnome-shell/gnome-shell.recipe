@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2009-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeShell(GnomePackageRecipe):
+    name = 'gnome-shell'
+    version = '2.29.1'
+
+    buildRequires = [
+        'GConf:devellib',
+        'GConf:runtime',
+        'clutter:devellib',
+        'desktop-file-utils:runtime',
+        
+        'gjs:devellib',
+        'gnome-desktop:devellib',
+        'gnome-menus:devellib',
+        'gnome-python:python',
+        
+        'gstreamer:devel',
+        'libXScrnSaver:devellib',
+        'libcroco:devellib',
+        'libgsf:devellib',
+        'librsvg:devellib',
+        'libwnck:devellib',
+        'mutter:devellib',
+        'mutter:runtime',
+        'python:devel',
+	'dbus-python:python',
+        'gobject-introspection:devel',
+    ]
+
+    # we are not interested in compile-warnings
+    extraConfig = ' --enable-compile-warnings=no'
+
+    def policy(r):
+        r.Requires('pkgconfig:runtime', '%(bindir)s/gnome-shell') # line 157
+        r.Requires('mutter:runtime', '%(bindir)s/gnome-shell') # line 201
+
+        # FIXME 
+        # we pkgSpec default theme and add a Provides to it so that the later
+        # Requires just works
+        # please do note that all themes will need to have gthe exact same
+        # Provides line
+	r.PackageSpec('gnome-shell-theme-default', '%(datadir)s/%(name)s/theme/')
+        
+        #r.Remove('%(datadir)s/%(name)s/theme/')
+        # r.Provides('file', '%(datadir)s/%(name)s/theme/this-is-a-gnome-shell-theme')
+
+        # we just require a theme to be installed. we do not care about which one
+        # that will allow either gnome-shell-theme-default or gnome-shell-theme-forest
+        # to be installed
+        # r.Requires('%(datadir)s/%(name)s/theme/this-is-a-gnome-shell-theme', '%(bindir)s/%(name)s') 
+
+        r.Requires('gnome-shell-theme-forest:data', '%(bindir)s/%(name)s') 

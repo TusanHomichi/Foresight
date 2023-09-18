@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Genshi(PackageRecipe):
+    name = 'Genshi'
+    version = '0.5.1'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+      ]
+
+    def setup(r):
+        r.addArchive('http://ftp.edgewall.com/pub/genshi/')
+
+        r.PythonSetup()

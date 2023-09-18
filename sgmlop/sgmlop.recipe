@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class sgmlop(CPackageRecipe):
+    name = 'sgmlop'
+    version = '1.1.1'
+
+    buildRequires = [ 'unzip:runtime', 'python:devel', 'python:runtime',
+        'python-setuptools:python', ]
+
+    def setup(r):
+        if Use.bootstrap:
+            r.macros.pyver = Python.majversion
+            r.macros.cflags += ' -I%(sysroot)s/%(includedir)s/python%(pyver)s/'
+
+        r.macros.rel = '20040207'
+        r.addArchive('http://effbot.org/downloads/%(name)s-%(version)s-%(rel)s.zip')
+
+        r.PythonSetup()
+        r.Doc('selftest.py')
+

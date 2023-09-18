@@ -1,0 +1,12 @@
+diff -up rdate-1.4/rdate.1.spellerr rdate-1.4/rdate.1
+--- rdate-1.4/rdate.1.spellerr	2011-01-19 13:33:06.419091665 +0100
++++ rdate-1.4/rdate.1	2011-01-19 13:33:20.729243747 +0100
+@@ -23,7 +23,7 @@ Use UDP instead of TCP as the transport.
+ Use syslog to output errors (cron.warning) and output (cron.info).
+ .TP
+ .I \-t
+-Set timeout in seconds for every attempt to retreive date.
++Set timeout in seconds for every attempt to retrieve date.
+ .SH "HISTORY"
+ .TP
+ 2004\-03\-16 Johan Nilsson <joh-nils@dsv.su.se>

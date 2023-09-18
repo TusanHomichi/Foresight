@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Bluez(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'bluez'
+    version = '4.42'
+    rpmRelease = '3.fc11'
+
+    buildRequires = [ 'bison:runtime', 'dbus:devel',
+                      'expat:devel', 'flex:runtime', 'libusb:devel',
+                      'pkgconfig:devel', 'alsa-lib:devel', 'glib:devel',
+                      'gst-plugins-base:devel', 'gstreamer:devel',
+                      'libxml2:devel', 'zlib:devel', 'chkconfig:runtime',
+                      'gstreamer:runtime', 'gtk-doc:runtime']
+
+    rpmPatches = [ 'bluez-utils-oui-usage.patch',
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=450081
+                   # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
+                   'bluez-try-utf8-harder.patch',
+                   # http://thread.gmane.org/gmane.linux.bluez.kernel/1754
+                   'bluez-activate-wacom-mode2.patch',
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=498756
+                   'bluez-socket-mobile-cf-connection-kit.patch',
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=507572
+                   'cups-less-errors.patch',
+                   ]
+
+    rpmSources = [ 'bluetooth.init',
+                   'bluez-uinput.modules']
+
+    def configure(r):
+        r.Configure('--enable-cups --enable-hid2hci '
+                    '--enable-dfutool --enable-tools '
+                    '--enable-bccmd --enable-gstreamer '
+                    '--enable-hidd --enable-pand '
+                    '--enable-dund')
+
+    def policy(r):
+        r.Install('bluetooth.init', '%(initdir)s/bluetooth', mode = 0755)
+
+
+        # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
+        if Arch.x86_64:
+            r.Install('%(libdir)s/cups/backend/bluetooth', '/usr/lib/cups/backend/bluetooth', mode = 0755)
+            r.Remove('%(libdir)s/cups',  recursive = True)
+
+
+        r.Install('scripts/bluetooth-serial.rules', '%(sysconfdir)s/udev/rules.d/97-bluetooth-serial.rules', mode = 0644)
+        r.Install('scripts/bluetooth_serial', '/lib/udev/bluetooth_serial', mode = 0755)
+
+        r.Move('%(sysconfdir)s/udev/bluetooth-hid2hci.rules', '%(sysconfdir)s/udev/rules.d/')
+
+        r.Install('bluez-uinput.modules', '%(sysconfdir)s/sysconfig/modules/bluez-uinput.modules', mode = 0755)
+
+        r.MakeDirs('%(localstatedir)s/lib/bluetooth')
+        r.ExcludeDirectories(exceptions = '/var/lib/bluetooth')

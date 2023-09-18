@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2012-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Tcpdump(AutoPackageRecipe):
+    name = 'tcpdump'
+    version = '4.5.1'
+    buildRequires = [ 'openssl:devel', 'libpcap:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://www.tcpdump.org/release/')
+
+    def configure(r):
+        r.Configure('--enable-ipv6 --with-user=pcap',
+                    preConfigure='CFLAGS="%(cflags)s -DIP_MAX_MEMBERSHIPS=20"')
+
+
+    def makeinstall(r):
+        r.Replace('TCPDUMP 1', 'TCPDUMP8', 'tcpdump.1')
+        r.MakeInstall()
+	r.SetModes('%(sbindir)s/%(name)s', 04755)
+        r.Move('%(mandir)s/man1/tcpdump.1', '%(mandir)s/man8/tcpdump.8')
+        r.UtilizeUser('pcap', '%(sbindir)s/tcpdump')

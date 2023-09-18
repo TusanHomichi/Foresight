@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EclipseCdt(CPackageRecipe):
+    name = 'eclipse-cdt'
+    version = '7.0.0'
+    pkg_date = '201006141710'
+    pkg_name = 'helios'
+
+    buildRequires = [
+        'unzip:runtime',
+        'eclipse-sdk:java',
+        ]
+
+    shortDesc  = 'C/C++ Plugin for Eclipse'
+    longDesc   = """
+The CDT Project provides a fully functional C and C++ Integrated
+Development Environment based on the Eclipse platform.
+"""
+
+    def setup(r):
+        r.macros.pkg_date = r.pkg_date
+        r.macros.pkg_name = r.pkg_name
+        r.addArchive('http://download.eclipse.org/tools/cdt/releases/%(pkg_name)s/dist/'
+                     'cdt-master-%(version)s-I%(pkg_date)s.zip',
+                     dir='%(name)s-%(version)s')
+
+        r.Install('features', '%(libdir)s/eclipse/dropins/eclipse/')
+        r.Install('plugins', '%(libdir)s/eclipse/dropins/eclipse/')
+
+        # Setup eclipse-cdt requirements
+        r.Requires('eclipse-sdk:runtime', '%(libdir)s/eclipse/')
+        r.Requires('eclipse-sdk:java', '%(libdir)s/eclipse/')

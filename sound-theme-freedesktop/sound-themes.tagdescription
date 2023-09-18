@@ -1,0 +1,6 @@
+file		%(taghandlerdir)s/sound-themes
+include         %(datadir)s/sounds/.*
+datasource	stdin
+implements	files update
+implements	files remove
+implements	files preremove

@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2005 Pavel Volkovitskiy (int@mtx.ru)
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class libetpan(AutoPackageRecipe):
+
+    name = 'libetpan'
+    version = '1.1'
+
+    buildRequires = [
+        'openssl:devel', 'bash:runtime', 'cyrus-sasl:devel', 'gnutls:devel', 
+        'db:devel', 'curl:devel', 'expat:devel', 'libstdc++:devel'
+    ]
+
+    def unpack(r):
+        r.addArchive(#'http://downloads.sourceforge.net/project/'
+                     #'%(name)s/%(name)s/%(major_version)s/'
+                     '%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+
+        if Use.krb:
+            r.macros.cppflags = '%(cppflags)s -I%(prefix)s/kerberos/include'
+            r.macros.ldflags = '%(ldflags)s -L%(prefix)s/kerberos/lib'
+        r.Configure()
+
+    def policy(r):
+        r.Requires('sed:runtime', '%(bindir)s/%(name)s-config')

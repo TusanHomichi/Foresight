@@ -1,0 +1,49 @@
+# Gil Hamlin
+# gil@foresightlinux.com
+# 11th October 2005
+
+loadRecipe('gnomepackage')
+class XchatGnome(GnomePackageRecipe):
+    buildRequires = [ 'glibc:devel', 'krb5:lib', 'expat:devel',
+        'gtk:runtime', 'python:devel', 'perl:runtime', 
+        'e2fsprogs:devel', 'pkgconfig:devel', 'bison:runtime',
+        'gettext:runtime', 'zlib:lib', 'GConf:runtime',
+        'GConf:devel', 'ORBit2:devel', 'atk:devel',
+        'cvs:runtime',
+        'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel',
+        'libICE:devel',
+        'libart_lgpl:devel', 'libsexy:devel', 'libbonobo:devel',
+        'libbonoboui:devel', 'libglade:devel', 'libgnome:devel',
+        'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel',
+        'libxml2:devel', 'openssl:devel', 'pango:devel', 'popt:devel',
+        'tcl:devel', 'dbus:devel', 'dbus-glib:devellib', 'krb5:devel',
+        'libnotify:devel', 'dbus-glib:runtime', 'glib:runtime',
+        'rarian:runtime', 'desktop-file-utils:runtime', 
+        'gnome-doc-utils:runtime', 'gnome-doc-utils:devel',
+        'libcanberra:devel', 'glitz:devel', 'xcb-util:devel',
+                      ]
+
+    name = "xchat-gnome"
+    version = "0.26.2+be9d339"
+
+    extraConfig = (
+        ' --disable-scrollkeeper'
+        ' --disable-perl'
+        ' --with-plugins=autoaway,dbus,net-monitor,notification,sound-notification,notify-osd,python,tcl,url_scraper'
+        )
+
+    def unpack(r):
+        r.macros.tag=r.version.split('+')[-1]
+        r.addGitSnapshot('git://git.gnome.org/xchat-gnome', tag='%(tag)s')
+
+       # Patches for xchat-indicate support (thanks, kenvandine).
+       # Remove after bump to next xchat-gnome release.
+       # (see http://blogs.gnome.org/kenvandine/2010/01/12/xchat-indicator/)
+#       r.addPatch('http://bugzilla-attachments.gnome.org/attachment.cgi?id=146834')
+#       r.addPatch('http://bugzilla-attachments.gnome.org/attachment.cgi?id=150877')
+
+        r.Run('NOCONFIGURE=yes ./autogen.sh')
+
+    def policy(r):
+       r.Requires('enchant:lib','%(bindir)s/xchat-gnome')

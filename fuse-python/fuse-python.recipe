@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2006-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FusePython(CPackageRecipe):
+    name = 'fuse-python'
+    version = '0.2'
+
+    buildRequires = [ 'fuse:devel', 'pkgconfig:devel',
+        'python:devel', 'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/f/fuse-python/')
+        for p in [ # from debian
+                   '10_fix-for-500584.dpatch',
+                   '20_API-0.dpatch',
+                   # from RH
+                   'fuse-python--libewf_fix.diff'
+                   ]:
+            r.addPatch(p)
+        
+        r.PythonSetup('--skip-build', purePython=False)
+        r.Doc('example/*')

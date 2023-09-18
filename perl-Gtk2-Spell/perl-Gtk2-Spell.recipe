@@ -1,0 +1,20 @@
+#
+# Copyright (c) %(year)s Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# http://zod.com.mx
+# andres at vampirito.com.mx
+# zodman 
+
+class PerlGtk2Spell(AutoPackageRecipe):
+	name = 'perl-Gtk2-Spell'
+	version = '1.03'
+	buildRequires = ['aspell:devel', 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'glibc:devel', 'gtk:devel', 'gtkspell:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'xcb-util:devel', 'zlib:devel','perl-Gtk2:perl', 'perl:devel','perl-Cairo:perl','perl-ExtUtils-Depends:perl','perl-ExtUtils-PkgConfig:perl','gtkspell:devel','make:runtime','pkgconfig:devel','gcc:runtime']
+	def setup(r):
+		r.macros.pname = r.name[5:]
+		r.addArchive("mirror://cpan/modules/by-module/Gtk2/%(pname)s-%(version)s.tar.gz")
+		r.addAction('perl Makefile.PL')
+		r.Make()
+		r.MakeInstall()
+
+

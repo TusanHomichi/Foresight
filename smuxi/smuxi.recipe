@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Smuxi(AutoPackageRecipe):
+    name = 'smuxi'
+    version = '0.8'
+ 
+    buildRequires = [ 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-sharp:cil', 'gnome-sharp:devellib', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'intltool:runtime', 'log4net:cil', 'log4net:devellib', 'mono:cil', 'mono:devel', 'mono:runtime', 'nini:cil', 'nini:devellib', 'perl:runtime', 'pkgconfig:devel', 'automake:runtime', 'autoconf:runtime', 'git:runtime', 'intltool:devel', 'notify-sharp:cil', 'notify-sharp:devellib']
+ 
+    def unpack(r):
+        r.addArchive('http://www.smuxi.org/jaws/data/files/smuxi-%(version)s.tar.gz')
+        r.addPatch('FL-default-setting.patch')
+
+    def configure(r):
+        r.Configure('--without-indicate --with-db4o=included --enable-release')
+
+    def make(r):
+        r.Make('-j1')

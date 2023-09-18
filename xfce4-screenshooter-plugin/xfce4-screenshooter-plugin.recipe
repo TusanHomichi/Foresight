@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4ScreenshooterPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-screenshooter-plugin'
+    version = '1.8.0'
+    sourcename = 'xfce4-screenshooter'
+    subtree = 'apps'
+
+    buildRequires = [
+        'libxfce4util:devel', 'libexo:devel', 'libsoup:devel',
+        'libxfce4ui:devel', 'xfce4-panel:devel'
+    ] 

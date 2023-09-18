@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+#               
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibUnwind(AutoPackageRecipe):
+    name = 'libunwind'
+    version = '1.0.1'
+    buildRequires = [ 'libatomic_ops:devel',
+                      'automake:runtime',
+                      'libtool:runtime',
+                      'autoconf:runtime', ]
+
+    def unpack(r):
+        r.addArchive('http://download.savannah.gnu.org/releases/libunwind/')
+        for patch in [ 'libunwind-disable-setjmp.patch',
+                       'libunwind-install-ptrace.patch',
+                       'libunwind-arm-register-rename.patch', ]:
+            r.addPatch(patch)
+        
+        r.Run('aclocal; libtoolize --force; autoheader; automake --add-missing;'
+              'autoconf')
+
+    def configure(r):
+        r.Configure('--enable-static --enable-shared')
+
+    def policy(r):
+        # /usr/include/libunwind-ptrace.h
+        # [...] aren't really part of the libunwind API.  They are implemented in
+        # a archive library called libunwind-ptrace.a.
+        r.Move('%(libdir)s/libunwind-ptrace.a', '%(libdir)s/libunwind-ptrace.a-save')
+        r.Remove('%(libdir)s/libunwind*.a')
+        r.Move('%(libdir)s/libunwind-ptrace.a-save', '%(libdir)s/libunwind-ptrace.a')
+        r.Remove('%(libdir)s/libunwind-ptrace*.so*')

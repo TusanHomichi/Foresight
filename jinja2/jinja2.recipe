@@ -1,0 +1,17 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jinja2(PackageRecipe):
+
+    name = 'jinja2'
+    version = '2.6'
+
+    buildRequires = ['python:devel', 'python-setuptools:python']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/J/Jinja2/Jinja2-%(version)s.tar.gz')
+        r.PythonSetup()

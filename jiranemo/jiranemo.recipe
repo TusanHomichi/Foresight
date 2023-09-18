@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2006-2011 rPath, Inc.
+# All rights reserved
+#
+
+loadInstalled('python')
+class JiraRecipe(BuildPackageRecipe):
+    name = 'jiranemo'
+    version = '0.5'
+    tag = 'b6a5f6c8fe41ecc'
+
+    if tag:
+        version += '_' + tag
+
+    buildRequires = [
+        'python:devel',
+        'SOAPpy:python',
+    ]
+
+    def setup(r):
+        r.macros.pyver = Python.majversion
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+
+        if r.tag:
+            r.addMercurialSnapshot('http://hg.rpath.com/%(name)s', tag=r.tag)
+        else:
+            r.addArchive('ftp://download.rpath.com/%(name)s/')
+
+        # drop hardcoded py
+        r.Replace('python2.4', 'python%(pyver)s','Make.rules')
+
+        r.Make('libdir=%(libdir)s')
+        r.MakeInstall('libdir=%(libdir)s')
+
+        r.PackageSpec('pyjira', '.*/pyjira/')

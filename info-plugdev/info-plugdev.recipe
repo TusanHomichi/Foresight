@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class info_plugdev(GroupInfoRecipe):
+    name = 'info-plugdev'
+    version = '1'
+
+    def setup(r):
+        r.Group('plugdev', 46)

@@ -1,0 +1,13 @@
+class AmazonMp3(PackageRecipe):
+    name = "amazonmp3"
+    version = "1.0.4"
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'shared-mime-info:runtime'
+    ]
+
+    def setup(r):
+        r.addArchive('amazonmp3.tar.gz', dir = '/')
+        r.EnforceSonameBuildRequirements(exceptions = '.*')
+        r.Requires(exceptDeps= r'soname\:\ ELF32\/libicu.*')
+        r.FixupMultilibPaths(exceptions='.*')

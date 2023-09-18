@@ -1,0 +1,26 @@
+From: Thomas Moschny <thomas.moschny@gmx.de>
+Subject: [PATCH] t/0.1.1-vala-0.12.1
+
+Fix issue with vala 0.12.1.
+
+Signed-off-by: Thomas Moschny <thomas.moschny@gmx.de>
+
+---
+ postler/postler-content.vala |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/postler/postler-content.vala b/postler/postler-content.vala
+index 7cf230e..9ce3a75 100644
+--- a/postler/postler-content.vala
++++ b/postler/postler-content.vala
+@@ -1086,7 +1086,7 @@ public class Postler.Content : WebKit.WebView {
+                     var escaped = GLib.Regex.escape_string (" " + emoticon.token);
+                     var regex = new GLib.Regex (escaped);
+                     body_chunk = regex.replace_eval (body_chunk, -1, 0, 0,
+-                        (match_info, result) => { evaluate_emoticon (match_info, result, emoticon); });
++                        (match_info, result) => { return evaluate_emoticon (match_info, result, emoticon); });
+                 }
+                 catch (GLib.RegexError error) { }
+             }
+-- 
+tg: (a562267..) t/0.1.1-vala-0.12.1 (depends on: 0.1.1)

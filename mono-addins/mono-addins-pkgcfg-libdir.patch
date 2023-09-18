@@ -1,0 +1,44 @@
+diff -Nuar mono-addins-0.6.2.orig/Mono.Addins/mono-addins.pc.in mono-addins-0.6.2/Mono.Addins/mono-addins.pc.in
+--- mono-addins-0.6.2.orig/Mono.Addins/mono-addins.pc.in	2011-08-09 08:52:58.000000000 -0700
++++ mono-addins-0.6.2/Mono.Addins/mono-addins.pc.in	2011-12-17 18:23:55.000000000 -0700
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-pkglibdir=${prefix}/lib/mono/@PACKAGE@
++pkglibdir=${prefix}/lib64/mono/@PACKAGE@
+ 
+ Libraries=${pkglibdir}/@MONO_ADDINS_DEFAULT_LIB@
+ 
+diff -Nuar mono-addins-0.6.2.orig/Mono.Addins.Gui/mono-addins-gui.pc.in mono-addins-0.6.2/Mono.Addins.Gui/mono-addins-gui.pc.in
+--- mono-addins-0.6.2.orig/Mono.Addins.Gui/mono-addins-gui.pc.in	2011-08-09 08:52:58.000000000 -0700
++++ mono-addins-0.6.2/Mono.Addins.Gui/mono-addins-gui.pc.in	2011-12-17 18:24:13.000000000 -0700
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-pkglibdir=${prefix}/lib/mono/@PACKAGE@
++pkglibdir=${prefix}/lib64/mono/@PACKAGE@
+ 
+ Libraries=${pkglibdir}/@MONO_ADDINS_GUI_DEFAULT_LIB@
+ 
+diff -Nuar mono-addins-0.6.2.orig/Mono.Addins.MSBuild/mono-addins-msbuild.pc.in mono-addins-0.6.2/Mono.Addins.MSBuild/mono-addins-msbuild.pc.in
+--- mono-addins-0.6.2.orig/Mono.Addins.MSBuild/mono-addins-msbuild.pc.in	2011-08-09 08:52:58.000000000 -0700
++++ mono-addins-0.6.2/Mono.Addins.MSBuild/mono-addins-msbuild.pc.in	2011-12-17 18:23:42.000000000 -0700
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-pkglibdir=${prefix}/lib/mono/@PACKAGE@
++pkglibdir=${prefix}/lib64/mono/@PACKAGE@
+ 
+ Libraries=${pkglibdir}/@MONO_ADDINS_MSBUILD_DEFAULT_LIB@
+ 
+diff -Nuar mono-addins-0.6.2.orig/Mono.Addins.Setup/mono-addins-setup.pc.in mono-addins-0.6.2/Mono.Addins.Setup/mono-addins-setup.pc.in
+--- mono-addins-0.6.2.orig/Mono.Addins.Setup/mono-addins-setup.pc.in	2011-08-09 08:52:58.000000000 -0700
++++ mono-addins-0.6.2/Mono.Addins.Setup/mono-addins-setup.pc.in	2011-12-17 18:21:08.000000000 -0700
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-pkglibdir=${prefix}/lib/mono/@PACKAGE@
++pkglibdir=${prefix}/lib64/mono/@PACKAGE@
+ 
+ Libraries=${pkglibdir}/@MONO_ADDINS_SETUP_DEFAULT_LIB@
+ 

@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GoogleGadgets(AutoPackageRecipe):
+
+    name = 'google-gadgets'
+    version = '0.11.2'
+
+    buildRequires = [
+        'atk:devel', 
+	'cairo:devel', 
+	'curl:devel', 
+	'dbus:devel',
+        'desktop-file-utils:runtime', 
+	'expat:devel', 
+	'flex:runtime',
+        'fontconfig:devel', 
+	'freetype:devel', 
+	'glib:devel',
+        'gst-plugins-base:devel', 
+	'gstreamer:devel', 
+	'gtk:devel', 
+	'js:devel',
+        'libICE:devel', 
+	'libpng:devel', 
+	'librsvg:devel', 
+	'libSM:devel',
+        'libstdc++:devel', 
+	'libtool:devel', 
+	'libtool:runtime', 
+	'libX11:devel',
+        'libxcb:devel', 
+	'libXext:devel', 
+	'libxml2:devel', 
+	'libXrender:devel',
+        'libXt:devel', 
+	'nspr:devel', 
+	'openssl:devel', 
+	'pango:devel',
+        'pixman:devel', 
+	'pkgconfig:devel', 
+	'qt4:devel',
+        'shared-mime-info:runtime', 
+	'startup-notification:devel',
+        'xcb-util:devel', 
+	'xdg-utils:runtime', 
+	'xulrunner:devel', 
+	'zip:runtime',
+        'zlib:devel', 
+	'libXScrnSaver:devel', 
+	'libXcomposite:devel', 
+	'libXcursor:devel', 
+	'libXi:devel', 
+	'libXpm:devel', 
+	'libXtst:devel', 
+	'libXv:devel', 
+	'libXxf86misc:devel', 
+	'libsoup:devel',
+	'WebKit:devel',
+	'NetworkManager:devel',
+	'bison:runtime'
+    ]
+
+    def unpack(r):
+        r.macros.archive_name = 'google-gadgets-for-linux'
+        r.addArchive('http://google-gadgets-for-linux.googlecode.com/files/')
+
+    def configure(r):
+        r.Configure(' --prefix=%(prefix)s '
+                    ' --disable-static'
+                    ' --disable-werror --with-browser-plugins-dir=%(libdir)s/mozilla/plugins')
+        # from RH
+        r.Run("""
+sed -i.libdir_syssearch -e  '/sys_lib_dlsearch_path_spec/s|/usr/lib |/usr/lib /usr/lib64 /lib /lib64 |' configure
+sed -i.extra_R -e  's|-R\$(libdir)||' hosts/*/Makefile.in
+""")
+
+    def make(r):
+        r.Make('DEFAULT_COMPILE_FLAGS=')
+
+
+    def makeinstall(r):
+        r.MakeInstall()
+        # we _really) don't want to require kde on gnome and vice-versa
+        for d, pkg in (('gtk', 'gnome'), ('qt', 'kde')):
+             pkg_name = '%(name)s-'+pkg
+             r.PackageSpec(pkg_name, '.*'+ d +'.*')
+             # have -{kde,gnome} require main pkg stuff no matter what
+             r.Requires('%(name)s:lib', '%(libdir)s/google-gadgets/modules/'+d+'.*')
+

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pekwmmenutools(AutoPackageRecipe):
+    name = 'pekwm_menu_tools'
+    version = 'r1108'
+ 
+    buildRequires = ['atk:devel', 'boost:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libstdc++:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel','automake:runtime']
+ 
+    def unpack(r):
+        r.addGitSnapshot("http://www.pekwm.org/git/%(name)s.git")
+        r.Run("./autogen.sh")

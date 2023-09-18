@@ -1,0 +1,250 @@
+#!/bin/sh
+
+# Make sure mention of running this script shows up in output
+echo
+
+# When editing this script, remember that -d returns true for a
+# symlink to a directory, as well as for a directory proper
+
+if [ -d /usr/lib64/firefox -a ! -h /usr/lib64/firefox/plugins ] ; then
+    # change the directory to a symlink to prepare for update that
+    # makes /usr/lib64/xulrunner/plugins the canonical location for
+    # xulrunner/firefox lib64 plugins, avoiding duplication
+    mkdir -p /usr/lib64/xulrunner/plugins
+    [ -d /usr/lib64/firefox/plugins ] && mv /usr/lib64/firefox/plugins/* /usr/lib64/xulrunner/plugins && rm -rf /usr/lib64/firefox/plugins
+    rm -rf /usr/lib64/firefox/plugins
+    ln -s ../../../usr/lib64/xulrunner/plugins /usr/lib64/firefox/plugins
+fi
+
+if [ -d /usr/lib/firefox -a ! -h /usr/lib/firefox/plugins ] ; then
+    # change the directory to a symlink to prepare for update that
+    # makes /usr/lib/xulrunner/plugins the canonical location for
+    # xulrunner/firefox plugins, avoiding duplication
+    mkdir -p /usr/lib/xulrunner/plugins
+    [ -d /usr/lib/firefox/plugins ] && mv /usr/lib/firefox/plugins/* /usr/lib/xulrunner/plugins && rm -rf /usr/lib/firefox/plugins
+    ln -s ../../../usr/lib/xulrunner/plugins /usr/lib/firefox/plugins
+fi
+
+# alsa cfg files changed places yet again..
+
+if [  -h /usr/share/alsa -a -d /usr/share/alsa ] ; then
+    mkdir -p /usr/share/alsa__
+    mv /usr/share/alsa/* /usr/share/alsa__/
+    rm -rf /usr/share/alsa
+    mv  /usr/share/alsa__ /usr/share/alsa/
+    mv /usr/share/alsa/* /etc/alsa/
+fi
+
+if [ -s /etc/alsa/asound.state -a ! -s /etc/asound.state ] ; then
+    mv /etc/alsa/asound.state /etc/asound.state
+fi
+
+
+
+if [ -h /etc/localtime ] ; then
+    # work around previously broken system-tools-backends
+    cat /etc/localtime > /etc/localtime.removesymlink.tmp
+    chmod 644 /etc/localtime.removesymlink.tmp
+    rm -f /etc/localtime
+    mv /etc/localtime.removesymlink.tmp /etc/localtime
+fi
+
+if [ -h /etc/pam.d/system-auth ] ; then
+    # keep backup for post script to recover
+    cat /etc/pam.d/system-auth > /etc/pam.d/system-auth.gsbackup
+    # get the file out of the way to avoid 4-way-merge
+    rm -f /etc/pam.d/system-auth
+fi
+
+# move the grub device.map to the right place
+if [ -f /etc/grub/device.map -a -d /boot/grub ] ; then
+    mv /etc/grub/device.map /boot/grub/device.map
+fi
+
+# fix /usr/lib* bug
+[ -d '/usr/lib*' ] && rm -r '/usr/lib*'
+# openoffice.org update changes directories to symlinks
+oodir=/usr/lib/OpenOffice.org-2.4
+if [ -d '/usr/lib64' ] ; then
+    oodir=/usr/lib64/OpenOffice.org-2.4
+fi
+allbitmap=${oodir}/share/template/wizard/bitmap
+if [ -d $oodir -a ! -d $allbitmap ] ; then
+    mkdir -p $allbitmap
+    for bitmapdir in ${oodir}/share/template/*/wizard/bitmap ;
+    do
+        if [ "$(echo $bitmapdir/*)" != $bitmapdir/'*' ] ; then
+            mv -f $bitmapdir/* $allbitmap/
+        fi
+        rmdir $bitmapdir
+        ln -s ../../wizard/bitmap $bitmapdir
+    done
+fi
+
+# remove unmanaged conary config file that contains pinning
+for i in /etc/conary/config.d/{foresight,shuttle}-* ; do
+  rm -f $i
+done
+# handle pinned kerneloops due to bad pinning (FL-1492)
+#if conary q kerneloops --info | grep 'Pinned.*: True' >/dev/null 2>&1 ; then
+#    echo 'warning: working around bug FL-1492...'
+#    echo 'unpinning kerneloops, please retry update operation after 30 seconds'
+#    echo 'expect and ignore "error: preupdate script failed"'
+#    ((i=0;
+#     while [ $i -lt 30 ] ; do
+#         sleep 1;
+#         conary unpin kerneloops --no-interactive
+#         if  conary q kerneloops --info | grep 'Pinned.*: True' ; then : else
+#            exit 0
+#         fi
+#         i=$(($i+1));
+#     done </dev/null >/dev/null 2>&1)&)&
+#     exit 1
+#fi
+# similar issue as kerneloops for some ppl. 
+# FIXME
+#if conary q kernel-tools --info | grep 'Pinned.*: True' >/dev/null 2>&1 ; then
+#    echo '[WARNING]'
+#    echo 'this system is affected by http://issues.foresightlinux.org/jira/browse/FL-2877'
+#    echo 'please run the following commands:'
+#    echo '   conary unpin kernel-tools --no-interactive'
+#    echo '   conary erase kernel-tools --no-deps --no-interactive'
+#    echo 'then run "conary sync" to restart'
+#    echo 'unpinning and unconditionally removing kernel-tools.'
+#    echo 'please retry update operation after 30 seconds.'
+#    echo 'expect and ignore "error: preupdate script failed"'
+#    
+#    ((i=0;
+#     while [ $i -lt 30 ] ; do
+#         sleep 1;
+#         conary unpin kernel-tools --no-interactive
+#         conary erase kernel-tools --no-deps --no-interactive  && exit 0
+#         i=$(($i+1));
+#     done </dev/null >/dev/null 2>&1) </dev/null >/dev/null 2>&1 & exit )&
+#     exit 1
+#fi
+echo 
+echo "-----"
+echo " [WARNING]"
+echo " if while updating, you see an error similar to ..."
+echo "    Install cpupower-tools(:config :doc :lib :locale :runtime)=3.2.29-1-1"
+echo "    Downloading 23 of 31: 128KB (0%) of 38819KB at 33KB/sec ...changeset cannot be applied:"
+echo "    applying update would cause errors:"
+echo "    /usr/lib64/libcpupower.so.0.0.0 conflicts with a file owned by kernel-tools:lib=..."
+echo " then you've just hit http://issues.foresightlinux.org/jira/browse/FL-2877"
+echo " please run two commands:"
+echo "    'conary unpin kernel-tools --no-interactive --ignore-model'"
+echo "    'conary erase kernel-tools --no-deps --no-interactive --ignore-model'"
+echo 
+echo " afterward, run 'conary sync' again, which should restart your update."
+echo "-----"
+
+# handle multiple versions of lm_sensors being installed (FL-1468)
+#if conary q lm_sensors | grep '2.9.2-1-0.1' && conary q lm_sensors | grep '3.0.1-1-0.1' >/dev/null 2>&1 ; then
+#    if conary q group-gnome-dist-devel >/dev/null ; then
+#        echo 'Error: This system is affected by https://issues.foresightlinux.org/browse/FL-1468'
+#        echo 'Follow the instructions in that issue to update'
+#    else
+#        echo 'warning: working around bug FL-1468...'
+#        echo 'erasing lm_sensors, please retry update operation after 30 seconds'
+#        echo 'expect and ignore "error: preupdate script failed"'
+#        touch /var/lib/sync_lm_sensors
+#        ((i=0;
+#          while [ $i -lt 30 ] ; do
+#              sleep 1;
+#              conary erase lm_sensors --no-deps --no-interactive && exit 0
+#              i=$(($i+1));
+#          done </dev/null >/dev/null 2>&1)&)&
+#    fi
+#    exit 1
+#fi
+
+
+# preserve old xorg.conf files during migrate from fl:1 (FL-916)
+if [ -s /etc/X11/xorg.conf -a ! -f /etc/X11/xorg.conf.preupdate ] ; then
+    # This is intended primarily for updates from fl:1 where xorg.conf
+    # will be overwritten; at least we'll have one good copy of xorg.conf
+    # easily available to help folks recover
+    cp /etc/X11/xorg.conf /etc/X11/xorg.conf.preupdate
+fi
+
+# convert pre-existing xorg.conf configs to work with xorg-server 1.5+
+# this is straight from RH migration scripts... 
+if [ -s /etc/X11/xorg.conf -a ! -f /etc/X11/xorg.conf.pre-xorg-server-1.5 ] ; then
+    # This is intended for updates from pre xorg-server-1.5 to newer xorg. 
+    # will be overwritten; at least we'll have one good copy of xorg.conf
+    # easily available to help folks recover
+
+    cp /etc/X11/xorg.conf /etc/X11/xorg.conf.pre-xorg-server-1.5
+    sed -i 's/^.*Load.*"(pex5|xie|xtt).*\n$"//gi' /etc/X11/xorg.conf
+    sed -i 's/^\(\s*Driver.*\)"keyboard"/\1"kbd"/gi' /etc/X11/xorg.conf
+    sed -i 's/^.*Option.*"XkbRules".*"(xfree86|xorg)".*\n$//gi' /etc/X11/xorg.conf
+    sed -i 's#^\s*RgbPath.*$##gi' /etc/X11/xorg.conf
+    # lame, the nvidia driver needs to override this
+    if ! grep -q 'ModulePath.*nvidia' /etc/X11/xorg.conf ; then
+      sed -i 's#^\s*ModulePath.*$##gi' /etc/X11/xorg.conf
+    fi
+
+    # we are using prefdm now, xfs is not needed
+    # for now we will just chkconfig them off with this script,
+    # later we will turn them off with an override and maybe
+    # remove xdm from the group
+    /sbin/chkconfig xfs reset
+
+fi
+if [ -s /etc/X11/xorg.conf -a ! -f /etc/X11/xorg.conf.pre-xorg-server-1.6.hal ] ; then
+     cp /etc/X11/xorg.conf /etc/X11/xorg.conf.pre-xorg-server-1.6.hal
+     sed -i 's#.*AllowEmptyInput.*$##gi' /etc/X11/xorg.conf
+fi
+
+# # handle ati users who use ati oss driver which doesn't like kms at all
+# if [ -s /etc/X11/xorg.conf -a ! -f /etc/bootloader.d/gfx.ati ] ; then
+#   # check if user is using radeon ati driver
+#   # if so, make sure kms gets disabled on boot
+#   # actually do it also for fgrlx users to assure a sane fallback to oss drivers
+#   if grep  -q "Driver.*radeon" /etc/X11/xorg.conf || grep  -q "Driver.*fglrx" /etc/X11/xorg.conf ; then
+#       echo add_options nomodeset enable_mtrr_cleanup nopat > /etc/bootloader.d/gfx.ati
+#       bootman
+#   fi
+# fi
+
+# # now intel users ...
+# if [ -s /etc/X11/xorg.conf -a ! -f /etc/bootloader.d/gfx.intel ] ; then
+#   # check if user is using intel driver
+#   # if so, make sure  enable_mtrr_cleanup gets set on boot
+#   if grep  -q "Driver.*intel" /etc/X11/xorg.conf  ; then
+#       echo add_options enable_mtrr_cleanup  > /etc/bootloader.d/gfx.intel
+#       bootman
+#   fi
+# fi
+
+# drop stuff commented above
+# as we now have proper kms support
+if [ -f /etc/bootloader.d/gfx.ati ] ; then
+    rm /etc/bootloader.d/gfx.ati
+    bootman
+fi
+if [ -f /etc/bootloader.d/gfx.intel ] ; then
+    rm /etc/bootloader.d/gfx.intel
+    bootman
+fi
+
+# pm-utils was unproperly packaged and now updates break...
+
+if [ -d /usr/bin/pm-utils-bugreport-info.sh ] ; then
+    rm -rf /etc/pm-utils-hd-apm-restore.conf
+    rm -rf /usr/bin/pm-utils-bugreport-info.sh
+    if [ -d '/usr/lib64' ] ; then
+	# x86_64
+	rm -rf /usr/lib64/pm-utils/sleep.d/99hd-apm-restore.hook
+    else
+	# x86
+	rm -rf /usr/lib/pm-utils/sleep.d/99hd-apm-restore.hook
+    fi 
+
+fi 
+
+
+
+# it is very important to return success; failure stops the operation
+exit 0

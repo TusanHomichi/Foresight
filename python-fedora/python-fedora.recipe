@@ -1,0 +1,9 @@
+class PythonFedora(PackageRecipe):
+    name = 'python-fedora'
+    version = '0.3.20'
+    buildRequires = ['Paver:runtime', 'python:devel', 'python-simplejson:python',
+                     'python-setuptools:python']
+    def setup(r):
+        r.addArchive('https://fedorahosted.org/releases/p/y/python-fedora/')
+        r.Replace("call_task\('make_catalogs'\)", 'pass #', 'pavement.py')
+        r.Run('paver install --root=%(destdir)s')

@@ -1,0 +1,177 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('rpmpackage')
+class NsPluginwrapper(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'nspluginwrapper'
+    version = '1.4.4'
+    rpmRelease = '16.fc18'
+
+    buildRequires = [ 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXt:devel',
+                      'zlib:devel', 'expat:devel', 'nspr:devel', 'gcc-c++:runtime',
+                      'GConf:runtime', 'pkgconfig:devel', 'which:runtime',
+                      'xextproto:devel', 'xulrunner:devel', 'alsa-plugins:devellib',
+                      'curl:devel', 'openssl:devel',
+                      'libXext:devel' 
+                      ]
+
+    rpmPatches = [ 'nspluginwrapper-1.4.4-make.patch',
+                   'nspluginwrapper-1.3.0-directory.patch',
+                   'nspluginwrapper-1.3.0-compiz.patch',
+                   'nspluginwrapper-1.3.0-comp.patch',
+                   # 'nspluginwrapper-pthread.patch',
+                   'nspluginwrapper-arm.patch',
+                   'nspluginwrapper-1.4.4-restart.patch',
+               ]
+
+    plugin_config_version = '1.9'
+    rpmArchives = ['plugin-config-%s.tar.gz' % plugin_config_version]
+    tarballName = '%(name)s-%(version)s-928c322.tar.gz'
+
+    def setup(r):
+        r.unpack()
+        r.addPatch('nspluginwrapper-pthread.patch',
+                   rpm=r.srpm,
+                   filter = 'THREAD_LIBS=`pkg-config --libs gthread-2.0` sed -e "s/__PTHREAD_LIBS__/$THREAD_LIBS/" ')
+
+        r.addSource('plugin-config.sh.in', rpm=r.srpm)
+        r.addSource('%(name)s.sh.in', rpm=r.srpm)
+
+        # for nspluginwrapper-pthread.patch
+        r.addAction(""" THREAD_LIBS=`pkg-config --libs gthread-2.0` sed -i s/__PTHREAD_LIBS__/$THREAD_LIBS/ Makefile """)
+
+        r.addPatch('plugin-config-setuid.patch' , rpm=r.srpm, dir = '%(plugin_config_name)s')
+        r.addPatch('plugin-config-umask.patch' , rpm=r.srpm, dir = '%(plugin_config_name)s')
+        r.addPatch('plugin-config-print.patch' , rpm=r.srpm, dir = '%(plugin_config_name)s')
+        r.addPatch('plugin-config-non-native.patch' , rpm=r.srpm, dir = '%(plugin_config_name)s')
+        r.addPatch('plugin-config-time-check.patch' , rpm=r.srpm, dir = '%(plugin_config_name)s')
+        r.addPatch('plugin-config-help.patch' , rpm=r.srpm, dir = '%(plugin_config_name)s')
+        r.addPatch('plugin-config-dlopen.patch' , rpm=r.srpm)
+
+        # Define libraries for 32/64 arches
+        r.macros.lib32 = 'lib'
+        r.macros.lib64 = 'lib64'
+        r.macros.libdir32 = '%(prefix)s/%(lib32)s'
+
+        # define mozilla plugin dir and back up dir for 64-bit browsers
+        r.macros.pluginsourcedir = '%(libdir)s/mozilla/plugins'
+        r.macros.plugindir = '%(libdir)s/mozilla/plugins-wrapped'
+        if Arch.x86:
+            r.macros.cflags += ' -m32 '
+            r.macros.ldflags += '-m32 -L%(libdir)s -ldl'
+        else:
+            r.macros.cflags += ' -m64 '
+            r.macros.ldflags += '-m64 -L%(libdir)s -ldl'
+
+
+        commonConfig  = (' --prefix=%(prefix)s'
+                         ' --pkglibdir=%(libdir)s/%(name)s'
+                         ' --with-lib32=%(lib32)s'
+                         ' --with-lib64=%(lib64)s'
+                         ' --viewer-paths=%(libdir)s/%(name)s'
+                         ' --enable-viewer'
+                         ' --viewer-paths=%(libdir32)s/%(name)s:%(libdir)s/%(name)s'
+                         ' --disable-biarch'
+                         )
+
+        if Arch.x86:
+            commonConfig += (' --target-cpu=i386')
+            objDir = 'objs-32'
+        else:
+            commonConfig += (' --target-cpu=x86_64' )
+            objDir = 'objs-64'
+
+        r.MakeDirs(objDir)
+        r.ManualConfigure(commonConfig, configureName='../configure', dir = objDir)
+
+        # FIXME - simplify this
+        r.macros.plugin_config_version = r.plugin_config_version
+        r.macros.plugin_config_binary = 'plugin-config'
+        r.macros.plugin_config_name= '%(plugin_config_binary)s-%(plugin_config_version)s'
+
+        r.Configure(dir='%(plugin_config_name)s')
+
+        r.Make(dir = objDir)
+        r.Make(dir='%(plugin_config_name)s')
+
+        r.MakeInstall(dir = objDir)
+        r.MakeInstall(dir='%(plugin_config_name)s')
+
+        r.MakeDirs('%(plugindir)s')
+        r.MakeDirs('%(libdir)s/%(name)s')
+
+        # no longer needed according to upstream
+        # r.Symlink('%(libdir)s/%(name)s/npwrapper.so', '%(plugindir)s/')
+
+        r.Move('%(bindir)s/%(plugin_config_binary)s', '%(libdir)s/%(name)s/%(plugin_config_binary)s')
+        r.Remove('/usr/doc', recursive=True)
+
+        r.SetModes('%(libdir)s/nspluginwrapper/plugin-config', 04755)
+
+        r.Install('plugin-config.sh.in', '%(bindir)s/mozilla-plugin-config', mode = 0755)
+
+        r.Replace('EXCLUDE_LIST',
+                  'libjavaplugin*:libnsISpicec*:libgnashplugin*:liblightsparkplugin*:'
+                  '*googletalk*:*3dautoplugin*:'
+                  '*flashpl*:'
+                  'nsdejavu*:libmoon*:libtotem*:libjavaplugin*:gecko-mediaplayer*:'
+                  'mplayerplug-in*:librhythmbox*:packagekit*:*vlcplug*:'
+                  'libnsISpicec*:libgnashplugin*:liblightsparkplugin*:npesteid*:mozplugger*',
+                  '%(name)s.sh.in')
+
+        r.Install('%(name)s.sh.in', '%(sysconfdir)s/sysconfig/%(name)s', mode = 0644)
+
+        r.Requires('xulrunner:lib',  '%(libdir)s/')
+
+        r.Requires('soname: %(libdir)s/alsa-lib/libasound_module_pcm_pulse.so',
+                   '%(libdir)s/')
+
+        r.Requires('setarch:runtime', '%(bindir)s/mozilla-plugin-config')
+        r.Requires('mozilla-filesystem:runtime',
+                   '%(bindir)s/mozilla-plugin-config')
+
+        r.addSource('moz.global.env.vars.sh', dest = '%(sysconfdir)s/profile.d/', mode = 0755)
+
+        # set up nsplugin player starting script
+        r.Create('%(libdir)s/%(name)s/nspluginplayer',
+                 contents = """
+export MOZ_PLUGIN_PATH=%(libdir)s/mozilla/plugins
+%(libdir)s/%(name)s/npplayer "$@"
+""", mode = 0755)
+        r.ExcludeDirectories(exceptions = '%(plugindir)s')
+
+        if Arch.x86_64:
+            r.ComponentSpec('runtime', '.*' )
+
+            # cheap way of requiring the x86 part
+            r.Requires('%(libdir32)s/%(name)s/plugin-config', '%(bindir)s/nspluginplayer')
+
+            r.TagSpec('nspluginwrapper', '%(bindir)s/mozilla-plugin-config')
+
+            r.ScriptPreErase(contents="#!/bin/bash\n %(bindir)s/mozilla-plugin-config -r  > /dev/null 2>&1 || :" % r.macros)
+            r.ScriptPostInstall(contents="#!/bin/bash\n %(bindir)s/mozilla-plugin-config -i -f  > /dev/null 2>&1 || :" % r.macros)
+            r.ScriptPostUpdate(contents="#!/bin/bash\n %(bindir)s/mozilla-plugin-config -i -f  > /dev/null 2>&1 || :" % r.macros)
+
+        if Arch.x86:
+            r.ComponentSpec('lib', '.*' )
+            r.Provides('file', '%(libdir)s/%(name)s/plugin-config')
+            
+            r.Remove('%(sysconfdir)s', recursive=True)
+            r.Remove('%(bindir)s', recursive=True)
+            r.Remove('%(datadir)s', recursive=True)
+            # Docs only in one side
+            r.AutoDoc(exceptions = '.*')
+
+            # those go in x86 as that way we can put nspluginwrapper:lib
+            # in buildReqs of x86 plugins we want to consume
+            r.addSource('%(name)s.tagdescription', macros=True,
+                        dest='%(tagdescriptiondir)s/%(name)s')
+            r.addSource('%(name)s.taghandler', macros=True,
+                        dest='%(taghandlerdir)s/%(name)s', mode=0755)
+
+            # force presence of at-spi:lib
+            r.Requires('soname: libcspi.so.0(SysV x86)', '%(libdir)s/%(name)s/plugin-config')

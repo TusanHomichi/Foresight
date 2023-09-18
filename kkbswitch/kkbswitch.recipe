@@ -1,0 +1,22 @@
+
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class kKBSwitch(kdePackageRecipe):
+
+    name = 'kkbswitch'
+    version = '1.4.3'
+
+    buildRequires = [
+        'libxkbfile:devel'
+    ]
+
+    enableFinal = False
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/kkbswitch/')
+

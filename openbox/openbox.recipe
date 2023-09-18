@@ -1,0 +1,50 @@
+
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class OpenBox(AutoPackageRecipe):
+    name = 'openbox'
+    version = '3.5.0' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [
+        'autoconf:runtime', # ./bootstrap
+        'automake:runtime', # ./bootstrap
+        'cvs:runtime', # autopoint (gettext)
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'imlib2:devel',
+        'intltool:runtime',
+        'libICE:devel',
+        'libSM:devel',
+        'libtool:runtime',
+        'libX11:devel',
+        'libXau:devel',
+        'libXcursor:devel',
+        'libXdmcp:devel',
+        'libXext:devel',
+        'libXfixes:devel',
+        'libXft:devel',
+        'libXinerama:devellib',
+        'libxml2:devel',
+        'libXrandr:devel',
+        'libXrender:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        'python:devel',
+        'pyxdg:python',
+        'startup-notification:devel',
+        'zlib:devel',
+        'desktop-file-utils:runtime',
+      ]
+
+    def unpack(r):
+        # From Git
+        r.addGitSnapshot('git://git.openbox.org/dana/openbox.git', branch='master')
+        r.Run('./bootstrap')
+        # From tarball
+        #r.addArchive('http://openbox.org/dist/%(name)s/')

@@ -1,0 +1,26 @@
+# This is the application's private directory, architecture-dependent. 
+# VBOX_PATH_APP_PRIVATE_ARCH := /usr/lib/virtualbox
+
+# Where to put the shared libraries, usually the same directory as the private path
+# as the VirtualBox shared libraries are normally not used by any other application. 
+# VBOX_PATH_SHARED_LIBS := $(VBOX_PATH_APP_PRIVATE_ARCH)
+
+# Disable RPATH=$ORIGIN and use a fixed RUNPATH. 
+VBOX_WITH_ORIGIN :=
+
+# Set RUNPATH to the directory where our shared libraries can be found. 
+# VBOX_WITH_RUNPATH := $(VBOX_PATH_APP_PRIVATE_ARCH)
+
+# This is the applications's private directory, not architecture-dependent. 
+# VBOX_PATH_APP_PRIVATE := /usr/share/virtualbox
+
+# Set the directory containing the documentation. The file VirtualBox.chm and
+# UserManual.pdf (both are not part of the OSE distribution) are searched
+# within this directory. 
+# VBOX_PATH_APP_DOCS := /usr/share/doc/virtualbox
+
+# Save compile time by not building the testcases. 
+VBOX_WITH_TESTCASES :=
+
+# Save compile time by not building the testsuite.
+VBOX_WITH_TESTSUITE :=

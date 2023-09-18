@@ -1,0 +1,89 @@
+#
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AbiWord(AutoPackageRecipe):
+
+    name = 'abiword'
+    version = '2.9.4'
+
+    buildRequires = [
+            'automake:runtime', 
+            'autoconf:runtime', 
+            'GConf:devel',
+            'ORBit2:devel', 
+            'atk:devel', 
+            'boost:devel', 
+            'cairo:devel',
+	        'dbus-glib:devel', 
+            'desktop-file-utils:runtime', 
+            'enchant:devel',
+	        'esound:devel', 
+            'expat:devel',
+            'flex:runtime', 
+            'fontconfig:devel',
+	        'freetype:devel', 
+            'fribidi:devel', 
+            'glib:devel', 
+            'gnome-keyring:devel', 
+	        'gnome-vfs:devel', 
+            'goffice:devel', 
+            'gtk:devel', 
+            'gtk:runtime',
+	        'gucharmap:devel', 
+            'libICE:devel', 
+            'libSM:devel', 
+            'libX11:devel',
+	        'libXau:devel',	
+            'libXdmcp:devel', 
+            'libXft:devel', 
+            'libXrender:devel',
+	        'libart_lgpl:devel', 
+            'libbonobo:devel', 
+            'libbonoboui:devel',
+	        'libjpeg:devel', 
+            'libglade:devel', 
+            'libtool:runtime', 
+            'libtool:devel',
+            'libgnome:devel', 
+            'libgnomecanvas:devel', 
+            'libgnomeprint:devel',
+            'libgnomeprintui:devel', 
+            'libgnomeui:devel', 
+            'libgsf:devel',
+            'libpng:devel', 
+            'librsvg:devel', 
+            'libstdc++:devel', 
+            'libwmf:devel',
+	        'libwpd:devel',	
+            'libxcb:devel', 
+            'libxml2:devel', 
+            'libxslt:devel',
+            'link-grammar:devel',
+            'ots:devel',
+            'pango:devel', 
+            'perl:devel', 
+            'perl:runtime', 
+            'pixman:devel',
+	        'pkgconfig:devel', 
+            'popt:devel', 
+            'psiconv:devel', 
+            'readline:devel',
+	        'wv:devel', 
+            'xcb-util:devel', 
+            'zlib:devel',
+            'rasqal:devel',
+            'redland:devel',
+            'raptor:devel',
+            'loudmouth:devel'
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://abisource.org/downloads/abiword/%(version)s/source/')
+        r.addPatch('abiword-2.8.3-desktop.patch')
+
+    def configure(r):
+        r.Configure('--enable-plugins --enable-clipart --enable-templates')
+

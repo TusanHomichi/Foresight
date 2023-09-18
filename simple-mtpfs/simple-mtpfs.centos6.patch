@@ -1,0 +1,59 @@
+diff -Naur simple-mtpfs-0.1/config.h.in simple-mtpfs-0.1.new/config.h.in
+--- simple-mtpfs-0.1/config.h.in	2012-09-22 06:43:24.000000000 -0400
++++ simple-mtpfs-0.1.new/config.h.in	2013-09-15 22:25:09.000000000 -0400
+@@ -59,3 +59,17 @@
+ 
+ /* Version number of package */
+ #undef VERSION
++
++/* Backwards Compatibility for Centos 6 Systems */
++const                        // this is a const object...
++class {
++public:
++  template<class T>          // convertible to any type
++    operator T*() const      // of null non-member
++    { return 0; }            // pointer...
++  template<class C, class T> // or any type of null
++    operator T C::*() const  // member pointer...
++    { return 0; }
++private:
++  void operator&() const;    // whose address can't be taken
++} nullptr = {};              // and whose name is nullptr
+diff -Naur simple-mtpfs-0.1/src/simple-mtpfs-fuse.cpp simple-mtpfs-0.1.new/src/simple-mtpfs-fuse.cpp
+--- simple-mtpfs-0.1/src/simple-mtpfs-fuse.cpp	2012-10-02 15:53:21.000000000 -0400
++++ simple-mtpfs-0.1.new/src/simple-mtpfs-fuse.cpp	2013-09-15 22:18:07.000000000 -0400
+@@ -237,6 +237,8 @@
+     removeTmpDir();
+ }
+ 
++#define FUSE_OPT_END { NULL, 0, 0 }
++
+ bool SMTPFileSystem::parseOptions(int argc, char **argv)
+ {
+     #define SMTPFS_OPT_KEY(t, p, v) { t, offsetof(SMTPFileSystemOptions, p), v }
+@@ -602,19 +604,19 @@
+         return -ENOENT;
+     const std::set<TypeDir> dirs = content->dirs();
+     const std::set<TypeFile> files = content->files();
+-    for (const TypeDir &d : dirs) {
++    for (std::set<TypeDir>::iterator it=dirs.begin(); it!=dirs.end(); ++it){
+         struct stat st;
+         memset(&st, 0, sizeof(st));
+-        st.st_ino = d.id();
++        st.st_ino = (*it).id();
+         st.st_mode = S_IFDIR | 0775;
+-        filler(buf, d.name().c_str(), &st, 0);
++        filler(buf, (*it).name().c_str(), &st, 0);
+     }
+-    for (const TypeFile &f : files) {
++    for (std::set<TypeFile>::iterator it=files.begin(); it!=files.end(); ++it){
+         struct stat st;
+         memset(&st, 0, sizeof(st));
+-        st.st_ino = f.id();
++        st.st_ino = (*it).id();
+         st.st_mode = S_IFREG | 0664;
+-        filler(buf, f.name().c_str(), &st, 0);
++        filler(buf, (*it).name().c_str(), &st, 0);
+     }
+     return 0;
+ }

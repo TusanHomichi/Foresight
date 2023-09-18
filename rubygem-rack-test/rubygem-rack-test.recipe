@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class RackTest(RubygemPackageRecipe):
+
+    name = 'rubygem-rack-test'
+    version = '0.6.1'
+

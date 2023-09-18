@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MonoNat(AutoPackageRecipe):
+    name = 'mono-nat'
+    version = '1.0'
+    packageSummary = 'Mono-nat 0pen source nat library'
+    packageDescription = """ 
+        Mono-nat nat library for monotorrent. 
+        """
+
+    buildRequires = ['mono:cil', 'mono:devel', 'mono:runtime', 'pkgconfig:devel']
+
+    def unpack(r):
+        #r.addArchive('mirror://sourceforge/monotorrent/')
+        r.addArchive('http://monotorrent.com/Files/')

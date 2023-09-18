@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Arel(RubygemPackageRecipe):
+
+    name = 'rubygem-arel'
+    version = '2.2.1'
+

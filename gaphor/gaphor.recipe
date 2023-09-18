@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gaphor(PackageRecipe):
+
+    name = 'gaphor'
+    version = '0.12.5'
+
+    buildRequires = ['python-setuptools:python', 'gnome-python:python', 'pycairo:python', 'pygobject:python', 'pygtk:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/g/%(name)s/')
+        r.PythonSetup()

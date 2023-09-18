@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class EpiphanyExtensions(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:runtime', 'dbus-glib:devel','epiphany:devel',
+                      'gcc-c++:runtime', 'gettext:runtime', 'gnome-python:python',
+                      'nspr:devel', 'opensp:devel', 'pcre:devel', 'perl:runtime',
+                      'pygtk:python', 'pygobject:python', 'WebKit:devel',
+                      'gnome-doc-utils:runtime', 'gnome-doc-utils:devel',
+                      'libxml2:runtime', 'gvfs:devel', 'python:devel', 'rarian:runtime', 
+                      'libglade:devel', 'GConf:devel']
+
+    name = 'epiphany-extensions'
+    version = '2.32.0'
+
+    # We rather disable rarian:
+    extraConfig = ' --disable-scrollkeeper    --with-extensions=really-all '
+

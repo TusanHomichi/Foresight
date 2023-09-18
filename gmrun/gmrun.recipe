@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gmrun(AutoPackageRecipe):
+    name = 'gmrun'
+    version = '0.9.2'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libstdc++:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'popt:devel', 'xcb-util:devel', 'zlib:devel', 'autoconf:runtime', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/gmrun/')

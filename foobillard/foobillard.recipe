@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class FooBillard(AutoPackageRecipe):
+    name = 'foobillard'
+    version = '3.0a'
+
+    buildRequires = [ 'Mesa:devel', 'SDL:devel', 'freetype:devel',
+                      'libICE:devel', 'libSM:devel', 'libXaw:devel',
+                      'libXi:devel', 'libpng:devel', 'zlib:devel',
+                      'desktop-file-utils:runtime', 'pkgconfig:devel',
+                      'autoconf:runtime', 'automake:runtime', 'libtool:runtime']
+
+
+    def unpack(r):
+        r.addArchive('http://foobillard.sunsite.dk/dnl/')
+        r.addSource('FooBillard.png')
+        r.Install('FooBillard.png', '%(datadir)s/pixmaps/')
+        r.addSource('FooBillard.desktop')
+        r.Desktopfile('FooBillard.desktop')
+
+
+    def configure(r):
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.Run('autoreconf -fi')
+        r.Configure('--enable-nvidia=off --enable-sound=on')

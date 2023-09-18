@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2011-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Aria2(AutoPackageRecipe):
+    name = 'aria2'
+    version = '1.17.1'
+ 
+    buildRequires = [
+            'asciidoc:runtime', 
+            'c-ares:devel', 
+            'cppunit:devel', 
+            'gettext:runtime', 
+            'gnutls:devel', 
+            'intltool:runtime', 
+            'libgcrypt:devel', 
+            'libgpg-error:devel', 
+            'libstdc++:devel', 
+            'libxml2:devel', 
+            'pkgconfig:devel', 
+            'sqlite:devel', 
+            'zlib:devel'
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/aria2/stable/aria2-%(version)s/')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('%(docdir)s/%(name)s/bash_completion/aria2c', '%(sysconfdir)s/bash_completion.d/aria2c_completion', mode=0755)

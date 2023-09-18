@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2010-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Postler(CPackageRecipe):
+    name = 'postler'
+    version = '0.1.1'
+ 
+    buildRequires = [ 'WebKit:devel', 'atk:devel', 'cairo:devel', 'db:devel',
+                      'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime',
+                      'fontconfig:devel', 'freetype:devel', 'gettext:runtime',
+                      'glib:devel', 'gtk:devel', 'intltool:runtime', 'libcanberra:devel',
+                      'libnotify:devel', 'libsoup:devel', 'openssl:devel', 'pango:devel',
+                      'unique:devel', 'zlib:devel', 'msmtp:runtime', 'vala:runtime',
+                      'libdbusmenu-glib:devel', 'pkgconfig:devel',]
+ 
+    def setup(r):
+        r.addArchive('http://git.xfce.org/apps/%(name)s/snapshot/')
+        r.addPatch('postler-0.1.1-rename_icon.patch')
+        r.addPatch('postler-0.1.1-vala-0.12.1.patch')
+        r.addPatch('postler-0.1.1-vala-0.17.2.patch')
+        r.addPatch('postler-0.1.1-soup.patch')
+        r.ManualConfigure(' --prefix=%(prefix)s --destdir=%(destdir)s --disable-libindicate',
+                          configureName='waf configure')
+        r.Make(makeName='./waf build')
+        r.Run('./waf --destdir=%(destdir)s install')

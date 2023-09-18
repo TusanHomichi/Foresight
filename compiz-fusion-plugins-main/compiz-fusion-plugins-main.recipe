@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CompizPluginsMain(AutoPackageRecipe):
+    name = 'compiz-fusion-plugins-main'
+    version = '0.8.6'
+
+    buildRequires = ['Mesa:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                     'glib:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel',
+                     'libXau:devel', 'libXcomposite:devel', 'libXdamage:devel',
+                     'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXinerama:devellib',
+                     'libXrandr:devel', 'libXrender:devel', 'libjpeg:devel', 'libpng:devel',
+                     'libxml2:devel', 'pango:devel', 'startup-notification:devel',
+                     'zlib:devel', 'autoconf:runtime', 'automake:runtime', 'compiz:devel',
+                     'GConf:devel', 'libtool:devel', 'intltool:runtime', 'autoconf:data',
+                     'libtool:runtime', 'pkgconfig:devel', 'bcop:devellib', 'bcop:runtime',
+                     'util-linux:runtime', 'libxslt:runtime', 'expat:devel', 'expat:devellib',
+                     'intltool:devel', 'GConf:runtime', 'gettext:runtime', 'gettext:devel'
+                     ]
+
+    def unpack(r):
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/compiz-plugins-main-%(version)s.tar.gz')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+    def configure(r):
+        r.Configure('--enable-schemas')
+
+
+    def policy(r):
+        # avoid collisions with main compiz pkg
+        r.Remove('%(datadir)s/compiz/wall.xml')
+        r.Remove('%(libdir)s/compiz/libwall.so')
+        r.Remove('%(sysconfdir)s/gconf/schemas/compiz-wall.schemas')

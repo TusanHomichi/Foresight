@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Flush(AutoPackageRecipe):
+    name = 'flush'
+    version = '0.9.12'
+ 
+    buildRequires = ['atk:devel', 'atkmm:devel', 'boost:devel', 'cairo:devel', 'cairomm:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'doxygen:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'glibmm:devel', 'gtk:devel', 'gtkmm:devel', 'intltool:runtime', 'libconfig:devel', 'libglade:devel', 'libglademm:devel', 'libnotify:devel', 'libsigc++:devel', 'libstdc++:devel', 'libtorrent-rasterbar:devel', 'libxml2:devel', 'openssl:devel', 'pango:devel', 'pangomm:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/flush/flush/0.9.12/flush-0.9.12.tar.bz2')

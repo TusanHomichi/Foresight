@@ -1,0 +1,28 @@
+--- branches/mono-2-2/mono/mono/mini/basic.cs	2009/03/11 14:29:38	129066
++++ branches/mono-2-2/mono/mono/mini/basic.cs	2009/03/11 14:30:17	129067
+@@ -190,6 +190,11 @@
+ 		return b % 8;
+ 	}
+ 
++	public static int test_0_rem_imm_0 () {
++		int b = 12;
++		return b % 1;
++	}
++
+ 	public static int test_4_rem_big_imm () {
+ 		int b = 10004;
+ 		return b % 10000;
+--- branches/mono-2-2/mono/mono/mini/mini-amd64.c	2009/03/11 14:29:38	129066
++++ branches/mono-2-2/mono/mono/mini/mini-amd64.c	2009/03/11 14:30:17	129067
+@@ -3519,6 +3519,11 @@
+ 			g_assert (ins->dreg == X86_EAX);
+ 			g_assert (power >= 0);
+ 
++			if (power == 0) {
++				amd64_mov_reg_imm (code, ins->dreg, 0);
++				break;
++			}
++
+ 			/* Based on gcc code */
+ 
+ 			/* Add compensation for negative dividents */

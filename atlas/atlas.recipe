@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Atlas(AutoPackageRecipe):
+    name = 'atlas'
+    version = '3.9.24'
+ 
+    buildRequires = ['gcc-fortran:devellib', 'gcc-fortran:runtime']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/math-atlas/%(name)s%(version)s.tar.bz2')
+
+    def configure(r):
+	if Arch.x86:
+		r.ManualConfigure('--prefix=%(destdir)s%(prefix)s --libdir=%(destdir)s%(libdir)s -b 32 -Si cputhrchk 0', objDir='build')
+	else:
+		r.ManualConfigure('--prefix=%(destdir)s%(prefix)s --libdir=%(destdir)s%(libdir)s -b 64 -Si cputhrchk 0', objDir='build')
+
+    def make(r):
+	r.Make('build', dir='build')
+
+    def makeinstall(r):
+	r.MakeInstall('DESTDIR=%(destdir)s', dir='build')

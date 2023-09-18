@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2010-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rrdtool(AutoPackageRecipe):
+    name = 'rrdtool'
+    version = '1.4.7'
+
+    buildRequires = ['cairo:devel', 
+                     'gettext:runtime', 
+                     'glib:devel', 
+                     'groff:runtime', 
+                     'intltool:runtime', 
+                     'libpng:devel', 
+                     'libxml2:devel', 
+                     'lua:devel', 
+                     'lua:runtime', 
+                     'pango:devel', 
+                     'perl:devel', 
+                     'pkgconfig:devel', 
+                     'python:devel', 
+                     'ruby:devellib', 
+                     'ruby:runtime',
+                     'lua:devel',
+                     'tcl:devel',
+                     'pkgconfig:devel'
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://oss.oetiker.ch/rrdtool/pub/rrdtool-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure(' -with-perl-options=\'INSTALLDIRS=\"vendor\"\' '
+                    ' --enable-tcl-site  --with-tcllib=%(libdir)s '
+                    ' --enable-python --enable-ruby --disable-static '
+                    ' --with-pic')
+
+    def policy(r):
+        r.ComponentSpec('tcl', 'tcl$')
+        r.ComponentSpec('examples', '%(datadir)s/%(name)s/examples/')

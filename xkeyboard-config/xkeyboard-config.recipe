@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XkeyboardConfig(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'xkeyboard-config'
+    version = '2.2.1'
+    rpmRelease = '25.6'
+    isOPENsuse = True
+    isXOrgFactory = True
+
+    rpmPatches = [ 'p_suse.diff',
+                   'disable-2xalt_2xctrl-toggle.diff',
+                   'MDSW-change-keycode.diff',
+                   ]
+
+    buildRequires = [ 'gettext:runtime', 'perl:runtime', 'perl-XML-Parser:perl',
+        'xkbcomp:runtime', 'intltool:runtime', 'pkgconfig:devel' ]
+
+    extraConfig = ( ' --with-xkb-base=%(datadir)s/X11/xkb'
+                    ' --enable-compat-rules'
+                    ' --disable-xkbcomp-symlink'
+                    ' --disable-runtime-deps'
+                    ' --with-xkb-rules-symlink=xfree86,xorg' )
+
+
+    def configure(r):
+        r.Configure(r.extraConfig)
+        r.Run('rm -rf */*.dir')
+
+
+    def policy(r):
+        r.MakeDirs('%(localstatedir)s/lib/xkb')
+        r.Symlink('%(bindir)s/xkbcomp', '%(datadir)s/X11/xkb/xkbcomp')
+        r.MakeDirs('%(localstatedir)s/lib/xkb/compiled/')
+        r.Symlink('%(localstatedir)s/lib/xkb/compiled/', '%(datadir)s/X11/xkb/compiled')
+        r.ExcludeDirectories(exceptions = '%(localstatedir)s/lib/xkb/compiled')

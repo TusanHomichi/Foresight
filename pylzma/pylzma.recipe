@@ -1,0 +1,7 @@
+class PyLZMA(PackageRecipe):
+    name = 'pylzma'
+    version = '0.4.4'
+    buildRequires = ['python:bin', 'python:devel', 'python-setuptools:python', 'gcc:runtime', 'glibc:devel']
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+        r.PythonSetup()

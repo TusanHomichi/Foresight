@@ -1,0 +1,89 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('rpmpackage')
+class Usermode(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'usermode'
+    version = '1.109'
+    rpmRelease = '1.fc18'
+
+    buildRequires = [ 
+        'atk:devel',
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'e2fsprogs:devel', 
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel',
+        'intltool:runtime', 
+        'libglade:devel', 
+        'libpng:devel',
+        'libuser:devel', 
+        'libX11:devel', 
+        'libXau:devel',
+        'libXdmcp:devel', 
+        'libxml2:devel', 
+        'libXt:devel', 
+        'pam:devel',
+        'pango:devel',
+        'perl:runtime', 
+        'pkgconfig:devel',
+        'startup-notification:devel', 
+        'util-linux:devel', 
+        'util-linux:runtime', 
+        'zlib:devel', 
+            ]
+
+
+    def policy(r):
+        r.Symlink('%(bindir)s/usermount', '%(bindir)s/userformat')
+        r.MakeDirs('%(sysconfdir)s/pam.d')
+
+        for wrappedapp in ('halt', 'reboot', 'poweroff'):
+            r.Symlink('consolehelper', '%(bindir)s/' + wrappedapp)
+            r.Install(wrappedapp, '%(sysconfdir)s/security/console.apps/')
+            r.Run('cp shutdown.pamd %(destdir)s/%(sysconfdir)s/pam.d/' + wrappedapp)
+
+        r.Remove('%(bindir)s/shutdown')
+
+        r.Run("""echo 'USER=root' > %(destdir)s/etc/security/console.apps/config-util""")
+        r.Run(""" 
+for i in redhat-userinfo.desktop redhat-userpasswd.desktop; do
+  echo 'NoDisplay=true' >> %(destdir)s/%(datadir)s/applications/$i
+done
+
+""")
+
+        r.Run(""" 
+for i in redhat-userinfo.desktop redhat-usermount.desktop; do
+  echo 'NoDisplay=true' >> %(destdir)s/%(datadir)s/applications/$i
+done
+
+""")
+        r.SetModes('%(sbindir)s/userhelper', 04711)
+        r.Provides('file', '%(bindir)s/consolehelper', '%(sbindir)s/userhelper')
+        r.Requires('%(bindir)s/consolehelper'%r.macros,
+                   '%(bindir)s/(halt|poweroff|reboot)')
+        r.Requires('%(sbindir)s/userhelper'%r.macros,
+                   '%(bindir)s/consolehelper')
+        r.PackageSpec('%(name)s-gtk',
+                      '%(datadir)s/usermode/usermode.glade',
+                      '%(mandir)s/man1/usermount.*',
+                      '%(mandir)s/man1/userinfo.*',
+                      '%(mandir)s/man1/userpasswd.*',
+                      '%(datadir)s/applications/.*',
+                      '%(datadir)s/pixmaps/.*',
+                      '%(bindir)s/usermount',
+                      '%(bindir)s/userformat',
+                      '%(bindir)s/userinfo',
+                      '%(bindir)s/userpasswd', 
+                      '%(bindir)s/consolehelper-gtk',
+                      '%(bindir)s/pam-panel-icon',
+                      )

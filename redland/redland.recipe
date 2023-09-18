@@ -1,0 +1,25 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Redland(AutoPackageRecipe):
+
+    name = 'redland'
+    version = '1.0.15'
+
+    buildRequires = [
+        'curl:devel', 'db:devel', 'dmalloc:devel', 'e2fsprogs:devel',
+        'flex:runtime', 'krb5:devel', 'libiodbc:devel', 'libtool:devel',
+        'libxml2:devel', 'libxslt:devel', 'm4:runtime', 'mysql:devel',
+        'openssl:devel', 'pcre:devel', 'perl:runtime', 'pkgconfig:devel',
+        'postgresql:devel', 'raptor:devel', 'rasqal:devel', 'sqlite:devel',
+        'zlib:devel', 'gtk-doc:runtime'
+    ]
+
+    def unpack(r):
+        r.addArchive('http://download.librdf.org/source/')
+
+    def configure(r):
+        r.Configure('--with-bdb-lib=%(libdir)s')
+

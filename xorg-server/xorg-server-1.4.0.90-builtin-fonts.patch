@@ -1,0 +1,26 @@
+--- dix/dixfonts.c.jau	2008-03-05 15:43:32.000000000 -0500
++++ dix/dixfonts.c	2008-03-05 16:16:13.000000000 -0500
+@@ -1897,11 +1897,8 @@
+     } else 
+ #endif
+     {
+-#ifdef BUILTIN_FONTS
+         BuiltinRegisterFpeFunctions();
+-#else
+ 	FontFileRegisterFpeFunctions();
+-#endif
+ #ifndef NOFONTSERVERACCESS
+ 	fs_register_fpe_functions();
+ #endif
+--- hw/xfree86/common/xf86Init.c.jau	2008-03-05 16:21:55.000000000 -0500
++++ hw/xfree86/common/xf86Init.c	2008-03-05 16:23:47.000000000 -0500
+@@ -985,9 +985,7 @@
+   signal(SIGCHLD, SIG_DFL);	/* Need to wait for child processes */
+ #endif
+   OsDelayInitColors = TRUE;
+-#ifndef BUILTIN_FONTS
+   loadableFonts = TRUE;
+-#endif
+ 
+   if (!beenHere)
+     xf86LogInit();

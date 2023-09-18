@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2010-2013 Andy Grimm (https://issues.rpath.com/)
+#                         António Meireles The Foresight Linux Project
+
+import datetime
+class LinuxFirmware(PackageRecipe):
+    name = 'linux-firmware'
+    version = datetime.date.today().strftime("%Y.%m.%d")
+    tag = '600caefd8'
+
+    buildRequires = []
+
+    def setup(r):
+        r.addGitSnapshot('git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git',
+                         tag = r.tag)
+
+        r.Install('*', '/lib/firmware/', mode = 0755)
+
+        r.SetModes('/lib/firmware/.*', 0755)
+
+        r.MakeDirs('%(thisdocdir)s/')
+
+        r.Move('/lib/firmware/{WHENCE,GPL-3,LIC*}', '%(thisdocdir)s/')
+
+        r.ComponentSpec('lib', '/lib/firmware/')
+
+        # trim
+        # # Remove source files we don't need to install
+        r.Remove('/lib/firmware/{usbdux/*dux,*/*.asm}')
+
+        # this is a cheap hack to avoid redirects hell
+        for p in ['userspace-kernel-firmware', 
+
+                  'rt61pci-firmware',
+                  'rt71pci-firmware',
+
+                  'rt2860-firmware',
+                  'rt2870-firmware',
+                  'rtl8192se-firmware',
+
+                  #'ipw2100-fw',
+                  #'ipw2200-fw',
+                  'iwlwifi-100-ucode',
+                  'iwlwifi-1000-ucode',
+                  'iwlwifi-3945-ucode',
+                  'iwlwifi-4965-ucode',
+                  'iwlwifi-5000-ucode',
+                  'iwlwifi-5150-ucode',
+                  'iwlwifi-6000-ucode',
+                  'iwlwifi-6050-ucode',
+
+                  # this one had come rPL
+                  'qla-firmware',]:
+            obsolete = '%(datadir)s/%(name)s/obsoletes/' + p
+            r.Create(obsolete, mode = 0644)
+            r.PackageSpec(p, obsolete)
+            r.Requires('%(name)s:lib', obsolete)
+
+        for t in ['ipw2100-fw', 
+                  'ipw2200-fw',]:
+            r.Requires(t+':lib',
+                       '%(name)s:lib')
+            
+        # unflavor everything
+        # firmware not arch specific
+        r.Flavor(exceptions='/.*')
+                    
+

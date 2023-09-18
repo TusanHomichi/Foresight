@@ -1,0 +1,40 @@
+--- gcc/gcc-4.1.1-20070105/libjava/Makefile.in	2007-09-06 11:43:33.000000000 -0500
++++ gcc-4.1.1-20070105.java/libjava/Makefile.in	2007-09-06 11:48:13.000000000 -0500
+@@ -7520,7 +7520,12 @@
+ MULTISUBDIR = 
+ MULTIDO = true
+ MULTICLEAN = true
++ifeq ($(MULTISUBDIR),)
+ all: all-recursive
++else
++all:
++	echo Multilib libjava build disabled
++endif
+ 
+ .SUFFIXES:
+ .SUFFIXES: .class .java .h .properties .list .c .cc .jar .lo .o .obj
+@@ -9021,14 +9026,24 @@
+ 	       $(distcleancheck_listfiles) ; \
+ 	       exit 1; } >&2
+ check-am: all-am
++ifeq ($(MULTISUBDIR),)
+ check: check-recursive
++else
++check:
++	echo Multilib libjava check disabled
++endif
+ all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(SCRIPTS) $(DATA)
+ installdirs: installdirs-recursive
+ installdirs-am:
+ 	for dir in "$(DESTDIR)$(dbexecdir)" "$(DESTDIR)$(toolexeclibdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(dbexecdir)" "$(DESTDIR)$(jardir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(toolexecmainlibdir)"; do \
+ 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
+ 	done
++ifeq ($(MULTISUBDIR),)
+ install: install-recursive
++else
++install:
++	echo Multilib libjava install disabled
++endif
+ install-exec: install-exec-recursive
+ install-data: install-data-recursive
+ uninstall: uninstall-recursive

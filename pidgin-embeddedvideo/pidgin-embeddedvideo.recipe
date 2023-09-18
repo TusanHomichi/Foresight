@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginEmbeddedvideo(AutoPackageRecipe):
+    name = 'pidgin-embeddedvideo'
+    revision = 'r69'
+    version = '1.2+' + revision
+ 
+    buildRequires = ['WebKit:devel', 
+		'atk:devel', 
+		'cairo:devel', 
+		'curl:devel', 
+		'fontconfig:devel', 
+		'freetype:devel', 
+		'glib:devel', 
+		'gtk:devel', 
+		'libpurple:devel', 
+		'libsoup:devel', 
+		'openssl:devel', 
+		'pango:devel', 
+		'pkgconfig:devel', 
+		'zlib:devel',
+		'pidgin:devel'
+			]
+ 
+    def unpack(r):
+        r.addSvnSnapshot('http://pidgin-embeddedvideo.googlecode.com/svn/trunk/', revision = r.revision)

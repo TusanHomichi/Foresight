@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#loadRecipe('rpmpackage')
+#loadRecipe('gnomepackage')
+class LibAtomicOPS(AutoPackageRecipe):
+    name = 'libatomic_ops'
+    version = '1.2'
+
+    def unpack(r):
+        r.addArchive('http://www.hpl.hp.com/research/linux/atomic_ops/download/%(name)s-%(version)s.tar.gz')

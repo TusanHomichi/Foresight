@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pymedia(CPackageRecipe):
+
+    name = 'pymedia'
+    version = '1.3.7.3'
+
+    buildRequires = ['python-setuptools:python', 'alsa-lib:devel', 'faad2:devel', 'ffmpeg:devel', 'lame:devel', 'libgcc:devellib', 'libogg:devel', 'libstdc++:devel', 'libvorbis:devel', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://sourceforge.net/projects/pymedia/files/pymedia/pymedia-%(version)s/pymedia-%(version)s.tar.gz')
+        r.addPatch('pymedia-1.3.7.3-amd64-gentoo.diff')
+        r.Run('yes | python setup.py install --root=%(destdir)s')

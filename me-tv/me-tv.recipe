@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MeTv(RedirectRecipe):
+    name = 'me-tv'
+    version = '0'
+ 
+    def setup(r):
+        r.addRemoveRedirect()

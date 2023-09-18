@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class faad2(AutoPackageRecipe):
+    name = 'faad2'
+    version = '2.7'
+ 
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime', 'expat:devel',
+ 'libstdc++:devel', 'libtool:devel', 'libtool:runtime', 'pkgconfig:devel',
+'m4:runtime', 'sysfsutils:devel' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/faac/')
+        r.addPatch('bootstrap.patch')
+        r.Run('autoreconf -vif')
+        r.Configure(' --with-mp4v2=no --without-drm')
+       	r.Make()
+       	r.MakeInstall()

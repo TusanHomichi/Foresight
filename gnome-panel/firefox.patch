@@ -1,0 +1,12 @@
+diff -r 896d1f670815 gnome-panel/panel-default-setup.entries
+--- a/gnome-panel/panel-default-setup.entries	Fri Mar 07 14:32:51 2008 +0000
++++ b/gnome-panel/panel-default-setup.entries	Fri Mar 07 14:33:51 2008 +0000
+@@ -262,7 +262,7 @@
+       <key>objects/browser_launcher/launcher_location</key>
+       <schema_key>/schemas/apps/panel/objects/launcher_location</schema_key>
+       <value>
+-        <string>epiphany.desktop</string>
++        <string>net-firefox.desktop</string>
+       </value>
+     </entry>
+ 

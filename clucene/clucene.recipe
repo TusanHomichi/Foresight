@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CLucene(AutoPackageRecipe):
+
+    buildRequires = [
+                    'cmake:runtime',
+                    'libstdc++:devel',
+                    'pkgconfig:devel',
+                    'zlib:devel',
+    ]
+
+    name = 'clucene'
+    version = '2.3.3.4'
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/clucene/clucene-core-unstable/%(major_version)s/clucene-core-%(version)s.tar.gz')
+        r.addPatch('clucene-core-2.3.3.4-install_contribs_lib.patch')
+        r.addPatch('clucene-core-2.3.3.4-pkgconfig.patch')
+
+    def configure(r):
+        r.CMake('-DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%(prefix)s -DBUILD_CONTRIBS_LIB=BOOL:ON -DLIB_DESTINATION:PATH=%(libdir)s -DLUCENE_SYS_INCLUDES:PATH=%(libdir)s')
+

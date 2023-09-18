@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadRecipe('gnomepackage')
+class GnomePaint(GnomePackageRecipe):
+
+    name = 'gnome-paint'
+    version = '0.3'
+
+    packageSummary = 'gnome-paint is a simple, easy to use paint program for GNOME'
+    packageDescription = 'gnome-paint is a simple, easy to use paint program for GNOME. It is inspired on MS-Paint. Features: Open file, Save file, Dynamic resize image, Line Tool, Line size selection, Line color selection'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'gtk:runtime', 'intltool:runtime', 'pango:devel', 'pkgconfig:devel']
+
+    def unpack(r):
+        r.addArchive('http://gnome-paint.googlecode.com/files/')
+
+    def setup(r):
+	GnomePackageRecipe.setup(r)

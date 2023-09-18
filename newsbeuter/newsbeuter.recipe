@@ -1,0 +1,31 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Newsbeuter(AutoPackageRecipe):
+    name = 'newsbeuter'
+    version = '2.6'
+ 
+    buildRequires = [
+        'curl:devel',
+        'gettext:runtime',
+        'json-c:devel',
+        'libstdc++:devel',
+        'libxml2:devel',
+        'ncurses:devel',
+        'pkgconfig:devel',
+        'sqlite:devel',
+        'stfl:devel',
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.newsbeuter.org/downloads/')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

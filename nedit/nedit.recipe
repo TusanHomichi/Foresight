@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class Nedit(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'nedit'
+    version = '5.5'
+    rpmRelease = '25.fc15'
+ 
+    tarballName = '%(name)s-%(version)s-src.tar.bz2'
+    rpmPatches = [ 'nedit-5.5-security.patch',
+                   'nedit-5.4-makefiles.patch',
+                   'nedit-5.5-utf8.patch',
+                   'nedit-5.5-motif223.patch',
+                   'nedit-5.5-varfix.patch',
+                   'nedit-5.5-nc-manfix.patch',
+                   'nedit-5.5-visfix.patch',
+                   'nedit-5.5-nocsh.patch',
+                   'nedit-5.5-scroll.patch'
+                   ]
+    rpmSources = [ 'nedit.desktop',
+                   'nedit-icon.png' ]
+
+    buildRequires = [ 'desktop-file-utils:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXmu:devel', 'libXp:devel', 'libXpm:devel', 'libXt:devel', 'openmotif:devel' ]
+ 
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+
+        r.addPatch('nedit-5.4-max-regex-size.patch')
+
+        r.Environment('C_OPT_FLAGS', '%(cflags)s')
+
+        r.Make('linux')
+
+        r.Move('source/nc', 'source/nedit-client')
+        r.Move('doc/nc.man', 'doc/nedit-client.man')
+
+        
+        r.Install('source/nedit{,-client}', '%(bindir)s/', mode = 0755)
+        r.Install('doc/nedit.man', '%(mandir)s/man1/nedit.1x', mode = 0644)
+        r.Install('doc/nedit-client.man', '%(mandir)s/man1/nedit-client.1x')
+
+        r.Install('nedit-icon.png', '%(datadir)s/icons/hicolor/48x48/apps/nedit.png', mode = 0644)
+        r.Desktopfile('nedit.desktop')
+        
+        r.Doc('doc/nedit.doc', 'README', 'ReleaseNotes')

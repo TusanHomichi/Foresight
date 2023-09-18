@@ -1,0 +1,9 @@
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:devel')
+class NetDBus(CPANPackageRecipe,CPackageRecipe):
+    buildRequires = [ 'dbus:devel', 'glibc:devel', 'perl-Time-HiRes:perl',
+        'perl-XML-Grove:perl', 'perl-libxml-perl:perl', 'perl-XML-Twig:perl',
+        'pkgconfig:devel' ]
+
+    name='perl-Net-DBus'
+    version='0.33.5'

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gphoto2(AutoPackageRecipe):
+    name = 'gphoto2'
+    version = '2.4.5'
+    buildRequires = [ 'gtk:devel', 'findutils:runtime', 'flex:runtime',
+                      'libexif:devel', 'libusb:devel', 'bison:runtime',
+                      'lockdev:devel', 'libjpeg:devel', 'swig:runtime',
+                      'pkgconfig:devel', 'libtool:runtime', 'libtool:devel',
+                      'gettext:runtime', 'libexif:devel', 'doxygen:runtime',
+                      'dbus:devel', 'hal:devel', 'graphviz:runtime', 'popt:devel',
+                      'readline:devel', 'intltool:runtime', 'autoconf:runtime', 
+                      'libgphoto2:devel']
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/gphoto/%(name)s-%(version)s.tar.bz2')

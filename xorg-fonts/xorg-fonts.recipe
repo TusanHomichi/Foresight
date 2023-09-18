@@ -1,0 +1,156 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgFonts(RPMPackageRecipe,CPackageRecipe):
+    name = 'xorg-fonts'
+    version = '7.6'
+    rpmRelease = '74.1'
+    rpmName = 'xorg-x11-fonts'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = ['font-util:runtime', 'fontconfig:runtime', 'mkfontdir:runtime', 'mkfontscale:runtime', 'perl:runtime', 'pkgconfig:devel', 'bdftopcf:runtime' ,'font-util:devel', 'util-macros:devel']
+
+    def setup(r):
+        r.addArchive(r.srpm)
+
+        # unpack all
+        r.addAction(""" for p in $(fgrep Source ../xorg-x11-fonts.spec); do  ARGN=`echo $p |  grep -c tar.bz2`;  if [ "$ARGN" = 1 ]; then  (cd ../; ARG=`echo $p ` ; mv $ARG %(name)s-%(version)s/; cd %(name)s-%(version)s; tar xjf "$ARG"; rm -rf "$ARG"  );   fi  done """)
+
+
+        # normalize dir names
+        r.addAction(""" ls | grep X11R7.0 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.0//2'| /bin/sh """)
+        r.addAction(""" ls | grep X11R7.1 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.1//2'| /bin/sh """)
+
+        r.addAction(""" ls |   awk '{print("mv "$1" "$1)}' | sed 's/-[.0-9]*$//' | /bin/sh """)
+
+        fonts = [
+            'encodings',
+            'font-adobe-100dpi',
+            'font-adobe-75dpi',
+            'font-adobe-utopia-100dpi',
+            'font-adobe-utopia-75dpi',
+            'font-adobe-utopia-type1',
+            'font-alias',
+            'font-arabic-misc',
+            'font-bh-100dpi',
+            'font-bh-75dpi',
+            'font-bh-lucidatypewriter-100dpi',
+            'font-bh-lucidatypewriter-75dpi',
+            'font-bh-ttf',
+            'font-bh-type1',
+            'font-bitstream-100dpi',
+            'font-bitstream-75dpi',
+            'font-bitstream-speedo',
+            'font-bitstream-type1',
+            'font-cronyx-cyrillic',
+            'font-cursor-misc',
+            'font-daewoo-misc',
+            'font-dec-misc',
+            'font-ibm-type1',
+            'font-isas-misc',
+            'font-jis-misc',
+            'font-micro-misc',
+            'font-misc-cyrillic',
+            'font-misc-ethiopic',
+            'font-misc-meltho',
+            'font-misc-misc',
+            'font-mutt-misc',
+            'font-schumacher-misc',
+            'font-screen-cyrillic',
+            'font-sony-misc',
+            'font-sun-misc',
+            'font-winitzki-cyrillic',
+            'font-xfree86-type1',
+             ]
+
+        patches = [
+            # srpm patchnumber (for reference), patch, level, package (dir)
+            ]
+
+        for n, p, l, d in patches:
+            if l <> -1:
+                r.addPatch(p, dir = d, level = l, rpm= r.srpm )
+            else:
+                r.addPatch(p, dir = d, rpm= r.srpm )
+
+        for d in fonts:
+            ftype = d.split('-')[-1]
+            options = ''
+            options2 = ''
+            if ftype == 'alias':
+                options = ''
+                options2 = '--with-fontrootdir=%(datadir)s/fonts'
+            elif ftype == 'encodings':
+                options = ''
+                options2 = '--with-encodingsdir=%(datadir)s/fonts/encodings'
+            elif ftype == '100dpi':
+                options = '%(datadir)s/fonts/100dpi/'
+                options2 = ''
+            elif ftype == '75dpi':
+                options = '%(datadir)s/fonts/75dpi/'
+                options2 = ''
+            elif ftype == 'type1':
+                options = '%(datadir)s/fonts/Type1/'
+                options2 = ''
+            elif ftype == 'ethiopic':
+                options = ''
+                options2 = '--with-ttf-fontdir=%(datadir)s/fonts/truetype --with-otf-fontdir=%(datadir)s/fonts/truetype'
+            elif ftype == 'meltho':
+                options = '%(datadir)s/fonts/truetype/'
+                options2 = ''
+            elif ftype == 'misc':
+                options = '%(datadir)s/fonts/misc/'
+                options2 = ''
+            elif ftype == 'ttf':
+                options = '%(datadir)s/fonts/truetype/'
+                options2 = ''
+            elif ftype == 'speedo':
+                options = '%(datadir)s/fonts/Speedo/'
+                options2 = ''
+            elif ftype == 'cyrillic':
+                # to cover font-misc-cyrillic case
+                if d.split('-')[-2] != 'misc':
+                    options = '%(datadir)s/fonts/cyrillic/'
+                else:
+                    options = '%(datadir)s/fonts/misc/'
+                options2 = ''
+            else:
+                raise Exception('Don\'t know where to package unknown font '
+                                'type \'%s\';' % ftype)
+
+            if options != '':
+                fdir = '--with-fontdir='+options
+            else:
+                fdir = ''
+
+            r.Configure('%s %s' % (fdir, options2), dir = d)
+            if d == 'font-misc-cyrillic':
+                mkOpt = 'FONT_FILES=\"koi12x24b koi12x24 koi6x13b koi7x14b koi8x16b koi8x16 koi9x15b koi9x18b\"'
+            else:
+                mkOpt = 'NOOPT='
+            r.Make(mkOpt, dir = d)
+            r.MakeInstall(mkOpt + ' DESTDIR=%(destdir)s', dir = d,
+                          package = d)
+
+            if ftype <> '':
+                if ftype == 'type1':
+                    r.TagSpec('cacheable-font', '%s' % options)
+                r.TagSpec('x-font', '%s' % options)
+
+        r.AutoDoc(exceptions='/')
+        r.Remove('%(datadir)s/fonts/75dpi/fonts.dir')
+        r.Remove('%(datadir)s/fonts/75dpi/fonts.scale')
+
+        # populating %(sysconfdir)s/X11/fontpath.d
+        # adding symlinks to 'encodings' pkg
+        r.Symlink('%(datadir)s/fonts/misc/', '%(sysconfdir)s/X11/fontpath.d/misc', package = 'encodings')
+        r.Symlink('%(datadir)s/fonts/cyrillic/', '%(sysconfdir)s/X11/fontpath.d/cyrillic', package = 'encodings')
+        r.Symlink('%(datadir)s/fonts/Speedo/', '%(sysconfdir)s/X11/fontpath.d/Speedo', package = 'encodings')
+        r.Symlink('%(datadir)s/fonts/truetype/', '%(sysconfdir)s/X11/fontpath.d/truetype', package = 'encodings')
+        r.Symlink('%(datadir)s/fonts/Type1/', '%(sysconfdir)s/X11/fontpath.d/Type1', package = 'encodings')
+        r.Symlink('%(datadir)s/fonts/75dpi/', '%(sysconfdir)s/X11/fontpath.d/75dpi', package = 'encodings')
+        r.Symlink('%(datadir)s/fonts/100dpi/', '%(sysconfdir)s/X11/fontpath.d/100dpi', package = 'encodings')

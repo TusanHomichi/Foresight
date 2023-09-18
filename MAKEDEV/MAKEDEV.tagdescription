@@ -1,0 +1,4 @@
+file            %(taghandlerdir)s/MAKEDEV
+implements      files update
+implements      handler preremove
+include         %(essentialsbindir)s/MAKEDEV

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gnomecc(AutoPackageRecipe):
+    name = 'gnomecc'
+    version = '0.2.5'
+ 
+    buildRequires = ['atkmm:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'glibmm:devel', 'gtk:devel', 'gtkmm:devel', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libglademm:devel', 'libgnome:devel', 'libgnomeui:devel', 'libsigc++:devel', 'libstdc++:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'popt:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/gnomecc/files/gnome-color-chooser/%(version)s/gnome-color-chooser-%(version)s.tar.gz')

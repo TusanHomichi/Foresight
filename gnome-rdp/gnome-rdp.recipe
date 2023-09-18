@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GnomeRdp(AutoPackageRecipe):
+    buildRequires = [ 'desktop-file-utils:runtime', 'mono:runtime', 'gettext:runtime', 'gnome-sharp:lib', 'gtk-sharp:lib', 'mono:lib', 'perl:runtime', 'pkgconfig:devel', 'gnome-desktop-sharp:devellib', 'gnome-desktop-sharp:cil', 'gnome-sharp:cil', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'mono:cil', 'mono:devel', 'intltool:runtime', 'gnome-sharp:devellib', 'gnome-terminal:runtime', 'openssh-client:runtime', 'rdesktop:runtime', 'xorg-server:runtime' ]
+
+    name = "gnome-rdp"
+    version = "0.2.2.3"
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.Replace('/usr/lib/mono/1.0','/%(libdir)s/mono/1.0','configure')
+        r.Replace('/lib/mono/1.0','/%(lib)s/mono/1.0','configure')
+
+        r.Replace('vte-sharp-2.0','vte-sharp-0.16','configure')
+        # Argh!
+        r.Replace('\(Process\)_processes', '(System.Diagnostics.Process)_processes', 'src/ProcessCaller.cs')
+        r.Replace('_processes.Add\(new Process\(\)\);', '_processes.Add(new System.Diagnostics.Process());', 'src/ProcessCaller.cs')
+
+
+    def configure(r):
+        r.Configure()
+        r.Replace('/../lib/mono', '/../%(lib)s/mono', '*/Makefile', allowNoChange = True)
+        r.Replace('/../lib/mono', '/../%(lib)s/mono', 'Makefile', allowNoChange = True)
+
+    def policy(r):
+        for dep in ['gnome-terminal:runtime', 'openssh-client:runtime', 'rdesktop:runtime', 'xorg-server:runtime']:
+            r.Requires(dep,'%(bindir)s/%(name)s')
+
+        r.Replace('\/usr\/lib','%(libdir)s','%(bindir)s/gnome-rdp')

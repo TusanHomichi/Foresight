@@ -1,0 +1,80 @@
+--- kudzu-1.1.62/hwconf.c.slow	2004-09-22 13:16:52.000000000 -0400
++++ kudzu-1.1.62/hwconf.c	2004-09-22 13:25:41.000000000 -0400
+@@ -46,6 +46,7 @@
+ static int timeout=0;
+ static int probeonly=0;
+ static int safe=0;
++static int fast=0;
+ 
+ struct device **storedDevs;
+ int numStored=0;
+@@ -1852,6 +1853,10 @@
+ 		  _("do only 'safe' probes that won't disturb hardware"),
+ 		  NULL
+ 		},
++		{ "fast", '\0', POPT_ARG_NONE, &fast, 0,
++		  _("do only 'fast' probes (probes without delays)"),
++		  NULL
++		},
+ 		{ "timeout", 't', POPT_ARG_INT, &timeout, 0,
+ 		  _("set timeout in seconds"), NULL
+ 		},
+@@ -1937,6 +1942,8 @@
+ 	else {
+ 		if (safe)
+ 		  currentDevs = probeDevices(probeClass, probeBus, (PROBE_ALL|PROBE_SAFE));
++                else if (fast)
++		  currentDevs = probeDevices(probeClass, probeBus, (PROBE_ALL|PROBE_FAST));
+ 		else
+ 		  currentDevs = probeDevices(probeClass, probeBus, PROBE_ALL);
+ 	}
+--- kudzu-1.1.62/kudzumodule.c.slow	2004-09-22 13:19:05.000000000 -0400
++++ kudzu-1.1.62/kudzumodule.c	2004-09-22 13:26:54.000000000 -0400
+@@ -93,6 +93,7 @@
+     { "PROBE_ALL",	PROBE_ALL },
+     { "PROBE_SAFE",	PROBE_SAFE },
+     { "PROBE_ONE",	PROBE_ONE },
++    { "PROBE_FAST",	PROBE_FAST },
+     { NULL },
+ } ;
+ static int numModeEntries = sizeof (modeTable) / sizeof (TableEntry);
+--- kudzu-1.1.62/device.h.slow	2004-09-22 13:19:43.000000000 -0400
++++ kudzu-1.1.62/device.h	2004-09-22 13:20:25.000000000 -0400
+@@ -103,6 +103,8 @@
+ #define PROBE_SAFE (1<<1)
+ /* Stop at first device found */
+ #define PROBE_ONE       (1<<2)
++/* Don't do 'slow' probes that sleep() */
++#define PROBE_FAST (1<<3)
+ 
+ /* Return devices for which modules are currently loaded */
+ /* Only implemented for network cards currently */
+--- kudzu-1.1.62/serial.c.slow	2004-09-22 13:20:40.000000000 -0400
++++ kudzu-1.1.62/serial.c	2004-09-22 13:21:00.000000000 -0400
+@@ -892,6 +892,7 @@
+     DEBUG("Probing for serial ports\n");
+     
+     if (probeFlags & PROBE_SAFE) return devlist;
++    if (probeFlags & PROBE_FAST) return devlist;
+ 
+     if (!access("/initrd/rhgb-socket",F_OK)) return devlist;
+ 
+--- kudzu-1.1.62/kudzu.sysconfig.slow	2004-09-22 13:24:04.000000000 -0400
++++ kudzu-1.1.62/kudzu.sysconfig	2004-09-22 13:24:19.000000000 -0400
+@@ -4,3 +4,4 @@
+ # - DDC monitor probing
+ # - PS/2 probing
+ SAFE=no
++FAST=yes
+--- kudzu-1.1.62/kudzu.init.slow	2004-09-22 13:24:26.000000000 -0400
++++ kudzu-1.1.62/kudzu.init	2004-09-22 13:26:21.000000000 -0400
+@@ -37,6 +37,9 @@
+ if [ "$SAFE" != "no" ]; then
+ 	KUDZU_ARGS="-s"
+ fi
++if [ "$FAST" == "yes" ]; then
++	KUDZU_ARGS="$KUDZU_ARGS --fast"
++fi
+ 
+ RETVAL=$?
+ 

@@ -1,0 +1,15 @@
+class PythonZopeInterface(CPackageRecipe):
+    name = 'python-zopeinterface'
+    version = '3.3.0'
+
+    buildRequires = [
+        'python-setuptools:python', 'python:devel', 'python:runtime'
+    ]
+
+    def setup(r):
+        r.addArchive('http://www.zope.org/Products'
+                     '/ZopeInterface/%(version)s/zope.interface-%(version)s.tar.gz')
+
+        r.PythonSetup()
+
+        r.AutoDoc(exceptions='/.*/')

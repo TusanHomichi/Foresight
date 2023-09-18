@@ -1,0 +1,30 @@
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Podsleuth(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'podsleuth'
+    version = '0.6.7'
+    buildRequires = [ 'dbus:devel',
+                      'hal:devel',
+                      'hal:runtime',
+                      'libtool:devel',
+                      'mono:devel',
+                      'mono:runtime',
+                      'ndesk-dbus:cil',
+                      'ndesk-dbus:devellib',
+                      'pkgconfig:devel',
+                      'sg3_utils:devel',
+                      'zlib:devel']
+    rpmRelease = '1.fc13'
+    rpmPatches = [ 'podsleuth-0.6.6-libdir.patch',
+                   'podsleuth-0.6.0-wapidir.patch' ]
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure('--prefix=%(prefix)s --with-hal-callouts-dir=%(prefix)s/libexec')
+
+    def policy(r):
+        r.Requires('sg3_utils:lib', '%(libdir)s/podsleuth/PodSleuth.dll')

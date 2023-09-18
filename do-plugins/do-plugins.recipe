@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DoPlugins(AutoPackageRecipe):
+    name = 'do-plugins'
+    version = '0.8.4'
+    buildRequires = [ 'gnome-common:runtime', 'gnome-common:devel', 'autoconf:runtime', 'automake:runtime', 'desktop-file-utils:runtime', 'gnome-sharp:devellib', 'gnome-sharp:cil', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'm4:runtime', 'mono:devel', 'mono:lib', 'mono:runtime', 'ndesk-dbus-glib:devellib', 'ndesk-dbus-glib:cil', 'ndesk-dbus:devellib', 'ndesk-dbus:cil', 'pkgconfig:devel', 'gettext:runtime', 'gettext:devel', 'intltool:runtime', 'evolution-sharp:cil', 'evolution-sharp:devellib', 'gnome-do:lib', 'gnome-do:devellib', 'monodevelop:runtime', 'gnome-desktop-sharp:cil', 'gnome-desktop-sharp:devellib', 'gnome-keyring-sharp:devellib', 'gnome-keyring-sharp:cil', 'notify-sharp:devellib', 'notify-sharp:cil', 'mono-addins:cil', 'mono-addins:devellib' , 'mono-addins:runtime', 'flickrnet:cil']
+
+    def unpack(r):
+        r.addArchive('http://edge.launchpad.net/do-plugins/trunk/%(version)s/+download/gnome-%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure(' --enable-debug=no --enable-release=yes '
+                    ' --enable-evolution=no --enable-youtube ')

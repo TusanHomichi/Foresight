@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Osmo(AutoPackageRecipe):
+    name = 'osmo'
+    version = '0.2.10'
+ 
+    buildRequires = ['aspell:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'gtkspell:devel', 'libgtkhtml:devel', 'libical:devel', 'libnotify:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'sound-theme-freedesktop:runtime', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/osmo-pim/files/osmo-pim/osmo-%(version)s/osmo-%(version)s.tar.gz')
+        r.addPatch('osmo-0.2.10-libnotify-0.7.0.patch')
+        r.addPatch('osmo-0.2.10-fix-version-string.patch')
+        r.addPatch('osmo-0.2.10-aplay.patch')

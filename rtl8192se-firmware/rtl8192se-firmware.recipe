@@ -1,0 +1,7 @@
+class RTL8192fw(RedirectRecipe):
+
+    name = 'rtl8192se-firmware'
+    version = '0'
+
+    def setup(r):
+        r.addRemoveRedirect()

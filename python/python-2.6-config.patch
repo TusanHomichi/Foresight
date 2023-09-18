@@ -1,0 +1,40 @@
+--- Python-2.6/Include/pyexpat.h.orig	2008-10-21 14:08:40.000000000 -0400
++++ Python-2.6/Include/pyexpat.h	2008-10-21 14:09:41.000000000 -0400
+@@ -5,6 +5,19 @@
+ 
+ #define PyExpat_CAPI_MAGIC  "pyexpat.expat_CAPI 1.0"
+ 
++#ifdef XML_LARGE_SIZE  /* Use large integers for file/stream positions. */
++    #if defined(XML_USE_MSC_EXTENSIONS) && _MSC_VER < 1400
++        typedef __int64 XML_Index;·
++        typedef unsigned __int64 XML_Size;
++    #else
++        typedef long long XML_Index;
++        typedef unsigned long long XML_Size;
++    #endif
++#else
++    typedef long XML_Index;
++    typedef unsigned long XML_Size;
++#endif /* XML_LARGE_SIZE */
++
+ struct PyExpat_CAPI 
+ {
+     char* magic; /* set to PyExpat_CAPI_MAGIC */
+--- Python-2.6/setup.py.orig	2008-10-21 14:19:25.000000000 -0400
++++ Python-2.6/setup.py	2008-10-21 14:20:06.000000000 -0400
+@@ -1189,7 +1189,6 @@
+ 
+         exts.append(Extension('pyexpat',
+                               define_macros = define_macros,
+-                              include_dirs = [expatinc],
+                               sources = ['pyexpat.c',
+                                          'expat/xmlparse.c',
+                                          'expat/xmlrole.c',
+@@ -1204,7 +1203,6 @@
+             define_macros.append(('USE_PYEXPAT_CAPI', None))
+             exts.append(Extension('_elementtree',
+                                   define_macros = define_macros,
+-                                  include_dirs = [expatinc],
+                                   sources = ['_elementtree.c'],
+                                   ))
+         else:

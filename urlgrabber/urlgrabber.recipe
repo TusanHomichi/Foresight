@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Urlgrabber(PackageRecipe):
+    name = 'urlgrabber'
+    version = '3.1.0'
+
+    buildRequires = [ 'python:runtime', 'python:devel', 'python-setuptools:python', ]
+
+    def setup(r):
+        r.addArchive('http://linux.duke.edu/projects/urlgrabber/download/')
+        r.PythonSetup(data = '--install-data=%(prefix)s')
+        r.Remove('/usr/lib*/python*/site-packages/*egg-info', recursive = True)

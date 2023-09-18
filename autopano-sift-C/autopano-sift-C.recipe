@@ -1,0 +1,20 @@
+loadSuperClass('cmakepackage')
+class AutoPanoSiftC(CMakePackageRecipe):
+    name = 'autopano-sift-C'
+    version = '2.5.1'
+    buildRequires = ['libpano13:devel', 'libpng:devel', 'libtiff:devel', 'libjpeg:devel', 'zlib:devel' , 'libxml2:devel', 'gcc-c++:runtime']
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/hugin/%(name)s/%(name)s-%(version)s/%(name)s-%(version)s.tar.gz')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()
+
+        # install manpages
+        r.Install('doc/*.1', '%(mandir)s/man1/')
+        r.Install('doc/*.7', '%(mandir)s/man7/')
+
+        # install docs, remove extra bits
+        r.Doc('doc/')
+        r.Remove('%(thisdocdir)s/doc/*.{1,7}')
+

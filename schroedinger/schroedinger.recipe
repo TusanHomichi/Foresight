@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Schroedinger(AutoPackageRecipe):
+    name = 'schroedinger'
+    version = '1.0.10'
+
+    buildRequires = ['liboil:devel', 'gtk-doc:runtime',
+                     'libstdc++:devel', 'pkgconfig:devel',
+                     'orc:devel', 'orc:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://diracvideo.org/download/schroedinger/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

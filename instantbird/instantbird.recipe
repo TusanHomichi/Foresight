@@ -1,0 +1,31 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Instantbird(CPackageRecipe):
+    name = 'instantbird'
+    version = '0.2'
+ 
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'alsa-lib:devel', 'atk:devel', 'autoconf213:runtime', 'cairo:devel', 'curl:devel', 'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gnome-vfs:devel', 'gtk:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXrender:devel', 'libXt:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libnotify:devel', 'libpng:devel', 'libstdc++:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'popt:devel', 'which:runtime', 'wireless-tools:devel', 'zip:runtime', 'zlib:devel', 'xulrunner:devel', 'startup-notification:devel', 'sqlite:devel', ]
+ 
+    def setup(r):
+        r.addArchive('http://instantbird.com/downloads/0.2/instantbird-%(version)s.src.tgz')
+        r.addSource('http://www.mozillablog.de/wp-content/uploads/2008/08/instantbird-icon.png')
+        r.addPatch('nss.patch')
+        r.addSource('%(name)s.desktop')
+        r.addSource('mozconfig', macros = True)
+        
+        r.Run('autoconf-2.13')
+        r.Make(' -j1 -f client.mk build')
+        # above make call needs to be single-threaded
+        # bellow one multithreads well. 
+        r.Make('package', dir='../obj-instantbird')
+        r.Install('../obj-instantbird/mozilla/dist/instantbird', '%(libdir)s/')
+        r.Symlink('%(libdir)s/%(name)s/instantbird', '%(bindir)s/instantbird')
+        r.Install('%(name)s-icon.png', '%(datadir)s/pixmaps/%(name)s.png')
+        r.Desktopfile('%(name)s.desktop')
+
+

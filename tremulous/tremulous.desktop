@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Tremulous
+Comment=First person shooter game
+Exec=/opt/games/tremulous/tremulous.x86
+Icon=/opt/games/tremulous/tremulous.ico
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Game;Action;
+X-Desktop-File-Install-Version=0.11
+

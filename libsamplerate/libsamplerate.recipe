@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+#               2005-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibSampleRate(AutoPackageRecipe):
+    name = 'libsamplerate'
+    version = '0.1.7'
+
+    buildRequires = [ 'libsndfile:devel', 'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://www.mega-nerd.com/SRC/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-fftw --disable-static')
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

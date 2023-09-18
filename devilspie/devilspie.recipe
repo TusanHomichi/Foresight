@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Devilspie(AutoPackageRecipe):
+    name = 'devilspie'
+    version = '0.22'
+    buildRequires = [ 'intltool:runtime', 'intltool:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+        'freetype:devel', 'glib:devel', 'gtk:devel', 'libpng:devel',
+        'libwnck:devel', 'pango:devel',  'zlib:devel', 'gettext:runtime',
+        'gettext:runtime', 'perl:runtime', 'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://www.burtonini.com/computing/%(name)s-%(version)s.tar.gz')
+

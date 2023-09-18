@@ -1,0 +1,12 @@
+
+class Dvtm(CPackageRecipe):
+    name = 'dvtm'
+    version = '0.4'
+
+    buildRequires = ['ncurses:devel']
+
+    def setup(r):
+        r.addArchive('http://www.brain-dump.org/projects/%(name)s/')
+        r.Replace('PREFIX = /usr/local', 'PREFIX = /usr', 'config.mk')
+        r.Make()
+        r.MakeInstall()

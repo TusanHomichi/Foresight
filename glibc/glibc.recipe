@@ -1,0 +1,456 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Glibc(RPMPackageRecipe, PackageRecipe):
+    name = 'glibc'
+    version = '2.12'
+    rpmRelease = '1.107.el6'
+    distroVersion = '6Server'
+    isRHEL = True
+    glibcDate = 'gc4ccff1'
+
+    keepBuildReqs = True
+    if Use.cross:
+        buildRequires = [ 'gcc[!cross]' ]
+        crossRequires = [ 'userspace-kernel-headers:devel' ]
+    elif Use.bootstrap:
+        buildRequires = [ 'gcc[cross,gcc.core]',
+                          'gcc:runtime[!cross]',
+                          'gcc:devel[!cross]',
+                          'gcc:devellib[!cross]',
+                          'gcc:lib[!cross]',
+                          'binutils:runtime[!cross]', 'glibc:devel',
+                          'glibc-headers[cross]', 'make',
+                          'userspace-kernel-headers:devel[!bootstrap]' ]
+        crossRequires = [ 'userspace-kernel-headers:devel[bootstrap]' ]
+
+    else:
+        # tzdata:data is required so that rMake knows to build tzdata with
+        # bootstrap glibc which doesn't require tzdata to install.
+        buildRequires = [ 'gd:devel', 'libpng:devel', 'libstdc++:devel',
+                          'userspace-kernel-headers:devel', 'perl:runtime',
+                          'zlib:devel', 'texinfo:runtime', 'findutils:runtime',
+                          'gettext:runtime', 'grep:runtime', 'autoconf:runtime',
+                          'diffutils:runtime', 'elfutils:runtime', 'gcc:runtime',
+                          'coreutils:runtime', 'sed:runtime', 'gcc:devel',
+                          'glibc:devel', 'make:runtime', 'tzdata:data', 'file:runtime',
+                          'debugedit:runtime', 'nss:devel',
+                          'pkgconfig:runtime', 'pkgconfig:devel',
+                          ]
+
+    srpm = '%(name)s-%(version)s-%(rpmRelease)s.src.rpm'
+
+    rpmPatches = [  '%(name)s-fedora.patch',
+                    'glibc-rh587360.patch',
+                    'glibc-rh582738.patch',
+                    'glibc-getlogin-r.patch',
+                    'glibc-localedata.patch',
+                    'glibc-rh593396.patch',
+                    'glibc-recvmmsg.patch',
+                    'glibc-aliasing.patch',
+                    'glibc-rh593686.patch',
+                    'glibc-rh607461.patch',
+                    'glibc-rh621959.patch',
+                    'glibc-rh607010.patch',
+                    'glibc-rh630801.patch',
+                    'glibc-rh631011.patch',
+                    'glibc-rh641128.patch',
+                    'glibc-rh642584.patch',
+                    'glibc-rh643822.patch',
+                    'glibc-rh645672.patch',
+                    'glibc-rh580498.patch',
+                    'glibc-rh615090.patch',
+                    'glibc-rh623187.patch',
+                    'glibc-rh646954.patch',
+                    'glibc-rh647448.patch',
+                    'glibc-rh615701.patch',
+                    'glibc-rh652661.patch',
+                    'glibc-rh656530.patch',
+                    'glibc-rh656014.patch',
+                    'glibc-rh661982.patch',
+                    'glibc-rh601686.patch',
+                    'glibc-rh676076.patch',
+                    'glibc-rh667974.patch',
+                    'glibc-rh625893.patch',
+                    'glibc-rh681054.patch',
+                    'glibc-rh689471.patch',
+                    'glibc-rh692177.patch',
+                    'glibc-rh692838.patch',
+                    'glibc-rh703480.patch',
+                    'glibc-rh705465.patch',
+                    'glibc-rh703481.patch',
+                    'glibc-rh694386.patch',
+                    'glibc-rh676591.patch',
+                    'glibc-rh711987.patch',
+                    'glibc-rh695595.patch',
+                    'glibc-rh695963.patch',
+                    'glibc-rh713134.patch',
+                    'glibc-rh714823.patch',
+                    'glibc-rh718057.patch',
+                    'glibc-rh688980.patch',
+                    'glibc-rh712248.patch',
+                    'glibc-rh731042.patch',
+                    'glibc-rh730379.patch',
+                    'glibc-rh700507.patch',
+                    'glibc-rh699724.patch',
+                    'glibc-rh736346.patch',
+                    'glibc-rh737778.patch',
+                    'glibc-rh738665.patch',
+                    'glibc-rh738763.patch',
+                    'glibc-rh739184.patch',
+                    'glibc-rh711927.patch',
+                    'glibc-rh688720.patch',
+                    'glibc-rh726517.patch',
+                    'glibc-rh752122.patch',
+                    'glibc-rh739971.patch',
+                    'glibc-rh751750.patch',
+                    'glibc-rh740506.patch',
+                    'glibc-rh757888.patch',
+                    'glibc-rh750531.patch',
+                    'glibc-rh749188.patch',
+                    'glibc-rh767746.patch',
+                    'glibc-rh767693.patch',
+                    'glibc-rh740506-2.patch',
+                    'glibc-rh696472.patch',
+                    'glibc-rh771342.patch',
+                    'glibc-rh657572.patch',
+                    'glibc-rh767693-2.patch',
+                    'glibc-rh782585.patch',
+                    'glibc-rh784402.patch',
+                    'glibc-rh697421.patch',
+                    'glibc-rh785984.patch',
+                    'glibc-rh767146.patch',
+                    'glibc-rh766513.patch',
+                    'glibc-rh789209.patch',
+                    'glibc-rh788959.patch',
+                    'glibc-rh789189.patch',
+                    'glibc-rh789238.patch',
+                    'glibc-rh794817.patch',
+                    'glibc-rh797094-1.patch',
+                    'glibc-rh797094-2.patch',
+                    'glibc-rh789238-2.patch',
+                    'glibc-rh795498.patch',
+                    'glibc-rh794817-2.patch',
+                    'glibc-rh804689.patch',
+                    'glibc-rh809602.patch',
+                    'glibc-rh808337.patch',
+                    'glibc-rh788959-2.patch',
+                    'glibc-rh808545.patch',
+                    'glibc-rh833717.patch',
+                    'glibc-rh823909.patch',
+                    'glibc-rh826149.patch',
+                    'glibc-rh841787.patch',
+                    'glibc-rh809726.patch',
+                    'glibc-rh806404.patch',
+                    'glibc-rh832516.patch',
+                    'glibc-rh830127.patch',
+                    'glibc-rh832694.patch',
+                    'glibc-rh843673.patch',
+                    'glibc-rh847932.patch',
+                    'glibc-rh837918.patch',
+                    'glibc-rh849203.patch',
+                    'glibc-rh849651.patch',
+                    'glibc-rh827362.patch',
+                    'glibc-rh837695.patch',
+                    'glibc-rh804686.patch',
+                    'glibc-rh848082.patch',
+                    'glibc-rh846342.patch',
+                    'glibc-rh852445.patch',
+                    'glibc-rh861167.patch',
+                    'glibc-rh863453.patch',
+                    'glibc-rh864322.patch',
+                   ] 
+
+    # we don't specify --libdir here because glibc is smart enough
+    # to figure that out.  Furthermore, if we use --libdir=/usr/lib64
+    # on 64-bit systems, glibc will start looking for locale data in
+    # /usr/lib64/locale instead of /usr/lib/locale, which is bad.
+    baseConf = ('--prefix=%(prefix)s '
+                '--without-cvs '
+                '--enable-kernel=2.6.18 '
+                '--enable-bind-now '
+                '--with-tls '
+                '--with-__thread '
+                '--build=%(build)s '
+                '--host=%(host)s '
+                '--target=%(target)s '
+                '--cache-file=config.cache '
+                '--disable-profile '
+                '--enable-multi-arch '
+                '--enable-experimental-malloc '
+                '--enable-nss-crypt '
+                )
+
+    def setup(r):
+        r.macros.glibcDate = r.glibcDate
+        # XXX
+        r.disableParallelMake()
+        
+        # make the build more quiet 
+        r.macros.parallelmflags += ' -s'
+
+        # FIXME: may want to add -finline-limit=2000 to CFLAGS
+        r.macros.cflags = '-DNDEBUG=1 -g -O3 -fasynchronous-unwind-tables '
+        if not (Use.cross | Use.bootstrap):
+            r.macros.cflags += ' -mtune=generic'
+
+        if Arch.x86.i686:
+            r.macros.cflags += ' -march=i686'
+
+            if Use.xen:
+                r.macros.cflags += ' -mno-tls-direct-seg-refs'
+
+        r.addArchive('%(name)s-%(version)s-2-%(glibcDate)s.tar.bz2', rpm=r.srpm)
+        r.addArchive('%(name)s-%(version)s-2-%(glibcDate)s-fedora.tar.bz2', rpm=r.srpm)
+
+        for patch in r.rpmPatches:
+            r.addPatch(patch, rpm=r.srpm)
+
+        r.addSource('hardlink.c')
+        r.Run('rm -f sysdeps/alpha/alphaev6/memcpy.S')
+
+        r.Run('touch `find . -name configure`')
+        r.Run('touch locale/programs/*-kw.h')
+        # fix for make 3.82
+        r.Run(r""" sed -i 's/ot \$/ot:\n\ttouch $@\n$/' manual/Makefile """) 
+
+        r.install()
+
+        r.installCommon()
+        # LinkCount exceptions for Locale
+        r.LinkCount(exceptions='.*')
+        # /etc/ld.so.cache is a binary file, do not treat it as a config file.
+        r.Config(exceptions='%(sysconfdir)s/ld.so.cache')
+        # We never want to overwrite the contents of ld.so.cache
+        r.InitialContents('%(sysconfdir)s/ld.so.cache')
+        r.InitialContents('%(sysconfdir)s/nsswitch.conf')
+
+        # Shared library files in glibc do not have version numbers after
+        # the .so
+        r.SharedLibrary(inclusions=(r'..*\.so$', None, stat.S_IFDIR))
+        # make sure that /usr/lib/locale /usr/share/i18n go in the
+        # :locale component so they can be shared
+        r.ComponentSpec('locale','%(prefix)s/lib/locale/')
+        r.ComponentSpec('locale','%(datadir)s/i18n/')
+
+        # XXX part of CNY-3596 'fix' XXX
+        # the fact that we need to do 'soname: ld-linux...'
+        # below and not 'soname: ELF(32|64)/ld-linux...' is 
+        # a complete mistery for me
+        if Arch.x86:
+            r.Provides( 'soname: ld-linux.so.2(Linux)',
+                        '%(essentiallibdir)s/ld-linux.so.2')
+        else:
+            r.Provides( 'soname: ld-linux-x86-64.so.2(Linux)',
+                        '%(essentiallibdir)s/ld-linux-x86-64.so.2')
+
+        if not Use.bootstrap:
+            # libpthread-using applications cannot be debugged without
+            # glibc:debuginfo installed, unless we leave some extra
+            # information in libpthread-.*.so
+            r.Strip(exceptions='%(essentiallibdir)s/libpthread-.*.so')
+            # First, copy source files into the builddir manually for
+            # debugging purposes, and modify the file to point to the
+            # new location for the sources, ignoring <built-in> files
+            # that do not exist.
+            r.Run('cd ..;'
+                  '%(debugedit)s -b $(dirname %(builddir)s) -d %(debugsrcdir)s'
+                  ' -l /dev/stdout'
+                  ' %(destdir)s%(essentiallibdir)s/libpthread-*.so |'
+                  r" tr '\000' '\n' |"
+                  ' grep -v built-in |'
+                  ' xargs -n 1 -i cp -a --parents {}'
+                  ' %(destdir)s%(debugsrcdir)s/')
+            # Make a copy from which to strip debugging information
+            r.Copy('%(essentiallibdir)s/libpthread-*.so',
+                   '%(essentiallibdir)s/libpthread-dbtp')
+            # Copy out the full debugging information for :debuginfo
+            r.MakeDirs('%(debuglibdir)s%(essentiallibdir)s')
+            r.Run('%(strip)s -f %(destdir)s%(debuglibdir)s%(essentiallibdir)s/'
+                   '$(basename'
+                   ' %(destdir)s/%(essentiallibdir)s/libpthread-*.so).debug'
+                   ' %(destdir)s%(essentiallibdir)s/libpthread-dbtp')
+            # Remove the (broken) copy from :lib
+            r.Remove('%(essentiallibdir)s/libpthread-dbtp')
+            # strip out only the bits that we actually want to remove
+            r.Run('strip -g --remove-section=.comment --remove-section=.note'
+                  ' %(destdir)s/%(essentiallibdir)s/libpthread-*.so')
+
+
+        # Remove tzselect from the ~bootstrap :runtime as tzdata:data req
+        # perl which we do not want to bootstrap.
+        if Use.bootstrap:
+            r.Remove('%(bindir)s/tzselect')
+
+        r.Requires('tzdata:data', '%(bindir)s/tzselect')
+        # make sure that ldconfig is installed
+        r.Requires('%(essentialsbindir)s/ldconfig', r'%(essentiallibdir)s/.*lib.*-.*so')
+        r.Requires('userspace-kernel-headers:devel', '%(includedir)s/.*')
+
+        if not Use.cross:
+            for utilFile in ('mtrace', 'pcprofiledump', 'sprof', 'xtrace',
+                             'memusage', 'memusagestat'):
+                r.PackageSpec('glibc-utils', '%(bindir)s/' + utilFile)
+
+            for develFile in 'gencat', 'rpcgen', 'localedef':
+                r.ComponentSpec('glibc:devel', '%(bindir)s/' + develFile)
+
+        # These headers should be present for multilib
+        r.ComponentSpec('devellib', '%(includedir)s/gnu/stubs-(32|64).h')
+
+        r.TagSpec('info-file', '/usr/share/info/')
+
+        r.PackageSpec('nscd',
+                '%(sbindir)s/nscd.*',
+                '%(initdir)s/nscd',
+                '%(sysconfdir)s/nscd.conf')
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.UtilizeUser('nscd', '%(initdir)s/nscd')
+
+        r.Create('%(sysconfdir)s/ld.so.cache')
+
+        r.Remove('%(lib)s/libnss1-*', allowNoMatch = True)
+        r.Remove('%(lib)s/libnss-*.so.*', allowNoMatch = True)
+
+    def build(r, conf, objDir='obj'):
+        """
+        configure and build glibc for a given configration
+
+        @param conf: the configuration flags to pass to configure.
+        @param objDir: the location that object files will be placed during
+                       the build
+        """
+        r.Create('obj/config.cache',
+                 contents='libc_cv_forced_unwind=yes\n'
+                          'libc_cv_c_cleanup=yes\n')
+        r.macros.objdir = objDir
+        r.ManualConfigure(conf, objDir=objDir)
+        r.Make("PARALLELMFLAGS='%(parallelmflags)s'", dir=objDir)
+
+    def buildBootstrap(r):
+        r.Environment('BUILD_CC', '%(buildcc)s')
+        conf = r.baseConf + ('--with-headers=%(builddir)s/override_headers:%(headerpath)s '
+                             '--enable-add-ons=nptl '
+                             '--cache-file=config.cache ')
+        # glibc-redhat-%(glibcdate)s adds -lgcc_eh, which we don't
+        # have yet.  Remove it for bootstrap.
+        r.Run('sed -i "s/-lgcc -lgcc_eh/-lgcc/g" Makeconfig')
+        r.Run('sed -i "s/-lgcc_eh/-lgcc/g" Makeconfig')
+
+        # the ./configure tests for forced unwind and c cleanup
+        # attempt to build and run binaries.  since we don't have
+        # a libc yet, we can't run them.
+        r.Create('obj/config.cache',
+                 contents='libc_cv_forced_unwind=yes\n'
+                          'libc_cv_c_cleanup=yes\n')
+
+        r.build(conf, 'obj')
+        r.MakeInstall(rootVar='install_root', dir='obj')
+
+        # since we're cross compiling and placing this libc in
+        # a sys-root, we need to modify the linker scripts to remove
+        # the absolute paths (since that isn't where the libraries
+        # actually are)
+        r.Run("""
+for file in `find %(destdir)s -name "*.so" -exec grep -l nonshared {} \;`; do
+    sed -i 's,/usr/lib/,,g;s,/usr/lib64/,,g;s,/lib/,,g;s,/lib64/,,g' $file
+done""")
+
+    def install(r):
+        if Use.bootstrap:
+            r.buildBootstrap()
+            # pt_chown is no longer needed on systems with devpts.  We
+            # include it just in case someone wants to run without devpts
+            # mounted, in which case they need to chmod 04755 it on their
+            # local system
+            r.SetModes('%(libexecdir)s/pt_chown', 0755)
+            # we need ld.so.cache to exit for the bootstrap version so
+            # it can be owned.  (without this touch it wouldn't).
+            # Otherwise, upgrading from the bootstrap version to the
+            # non-bootstrap version complains of overwriting
+            # the unowned ld.so.cache
+            r.Create('%(sysconfdir)s/ld.so.cache')
+            # the bootstrap case is simple, there's nothing left to do
+            return
+
+        r.macros.kernelver = '2.6.18'
+
+        conf = r.baseConf + ('--with-headers=%(builddir)s/override_headers:%(includedir)s '
+                             '--enable-add-ons=nptl,rtkaio,c_stubs,libidn ')
+
+        # now build the vanilla fallback libs.  These require the
+        # default Linux ABI version for this architecture
+        r.build(conf + '--enable-kernel=%(kernelver)s ', 'obj')
+        r.MakeInstall(rootVar='install_root', dir='obj')
+        # pt_chown is no longer needed on systems with devpts.  We
+        # include it just in case someone wants to run without devpts
+        # mounted, in which case they need to chmod 04755 it on their
+        # local system
+        r.SetModes('%(libexecdir)s/pt_chown', 0755)
+
+        r.addSource('nsswitch.conf', dest='%(sysconfdir)s/')
+        r.addSource('localtime', dest='%(sysconfdir)s/')
+
+        # nscd package items
+        r.Install('%(objdir)s/nscd/nscd', '%(sbindir)s')
+        r.Install('nscd/nscd.init', '%(initdir)s/nscd', mode=0755)
+        r.Install('nscd/nscd.conf', '%(sysconfdir)s/')
+
+    def installCommon(r):
+        # we use Make instead of MakeInstall here because install-locales
+        # benefits from -jN, but MakeInstall never uses -jN
+        r.Make('-C ../localedata install-locales objdir=`pwd` '
+               'install_root=%(destdir)s', dir='obj')
+        r.Create('%(sysconfdir)s/ld.so.conf')
+        # We never want to overwrite the contents of ld.so.conf
+        r.Config(exceptions='%(sysconfdir)s/ld.so.conf')
+        r.InitialContents('%(sysconfdir)s/ld.so.conf')
+        # zoneinfo files come from the tzdata package
+        r.Remove('%(datadir)s/zoneinfo', recursive=True)
+        r.InitialContents('%(sysconfdir)s/localtime')
+        # these belong in quota package
+        r.Remove('%(includedir)s/rpcsvc/rquota.{h,h}')
+
+        # Create missing directory, required by mkinitrd
+        r.MakeDirs('%(sysconfdir)s/ld.so.conf.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/ld.so.conf.d')
+
+        # Include sanitized libc-lock.h and stdio-lock.h
+        r.Copy('bits/stdio-lock.h', '%(includedir)s/bits/')
+        r.Copy('fedora/libc-lock.h', '%(includedir)s/bits/')
+
+        r.MakeDirs('%(sysconfdir)s/default/')
+        r.Copy('fedora/nsswitch.conf', '%(sysconfdir)s/nsswitch.conf', mode = 0644)
+        r.Copy('nis/nss', '%(sysconfdir)s/default/nss', mode = 0644)
+
+        if not Use.bootstrap:
+            # hard link duplicate locale files to save space
+            r.Run('%(buildcc)s -O2 -o hardlink hardlink.c')
+            r.Run('./hardlink -vc %(destdir)s/%(prefix)s/lib/locale')
+            r.Run('%(buildcc)s -Os -static -o tzdata-update fedora/tzdata-update.c')
+            r.Install('tzdata-update', '%(sbindir)s/')
+
+        # making sure policy is not to smart for it's own good
+        # FixupMultilibPaths should just ignore stuff under 
+        # /usr/lib/debug/
+        r.FixupMultilibPaths(exceptions='/usr/lib/debug/') 
+
+        # 
+
+        r.Remove('%(libdir)s/librtkaio.*')
+        r.Remove('%(essentiallibdir)s/librtkaio.*')
+        r.Remove('%(libdir)s/librt.so.*', allowNoMatch = True)
+        
+        r.MakeDirs('%(essentiallibdir)s/rtkaio')
+        r.Move('%(essentiallibdir)s/librtkaio-*.so', '%(essentiallibdir)s/rtkaio/')
+
+        librtso = 'librt.so.1'
+        r.Remove('%(essentiallibdir)s/' + librtso)
+
+        r.Symlink('%(essentiallibdir)s/librt-2.12.so',  '%(essentiallibdir)s/' + librtso )
+        r.Symlink('%(essentiallibdir)s/rtkaio/librtkaio-2.12.so', '%(essentiallibdir)s/rtkaio/' + librtso )
+

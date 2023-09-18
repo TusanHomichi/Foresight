@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Flightgear(AutoPackageRecipe):
+    name = 'flightgear'
+    version = '2.0.0'
+ 
+    buildRequires = ['Mesa:devel', 'SimGear:devel', 'freealut:devel', 'freeglut:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXi:devel', 'libXmu:devel', 'libXt:devel', 'libstdc++:devel', 'openal:devel', 'openscenegraph:devel', 'plib:devel', 'zlib:devel', 'boost:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://ftp3.linux.kiev.ua/pub/fgfs/Source/FlightGear-%(version)s.tar.gz')

@@ -1,0 +1,27 @@
+# Copyright (c) 2007-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class sshMenu(GnomePackageRecipe):
+    name = 'sshmenu'
+    version = '3.18'
+    patches = [ 'sshmenu-3.18-libexec.patch',
+                ]
+
+    buildRequires = [ 'ruby:runtime',
+                      'ruby-gnome2:ruby']
+
+    externalArchive = 'mirror://sourceforge/sshmenu/'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.disableParallelMake()
+        r.Replace('LIB\ \ \ \=\ \$\(DESTDIR\)/usr/lib', 'LIB   = $(DESTDIR)%(libdir)s', 'Makefile')
+        r.Replace('/usr/bin/ssh-askpass', '/usr/libexec/openssh/ssh-askpass', 'lib/sshmenu.rb')
+
+    def build(r):
+        r.Requires('x11-ssh-askpass:runtime',
+                   '%(bindir)s/.*')
+

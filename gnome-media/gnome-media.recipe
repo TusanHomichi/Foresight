@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeMedia(GnomePackageRecipe):
+    
+    buildRequires = [ 'glib:devel', 'pango:devel', 'gtk:devel',
+                      'libgnomeui:devel',  'gstreamer:devel', 'gst-plugins-base:devel',
+                      'gst-plugins-base:runtime',  'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+                      'rarian:runtime', 'rarian:devel', 'GConf:devel', 'ORBit2:devel', 'atk:devel',
+                      'audiofile:devel', 'cairo:devel', 'esound:devel', 'fontconfig:devel',
+                      'freetype:devel', 'glibc:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel',
+                      'libgnome:devel', 'libgnomecanvas:devel', 'libpng:devel', 'libxml2:devel',
+                      'popt:devel', 'GConf:runtime',
+                      'docbook-utils:runtime', 'gettext:runtime', 'glib:runtime', 'perl:runtime',
+                      'desktop-file-utils:runtime', 'dbus:devel', 'hal:devel', 'libcanberra:devel',
+                      'unique:devel', 'pulseaudio:devel', 'sound-theme-freedesktop:runtime',
+                      'glade:devel',
+                      ]
+
+    name = 'gnome-media'
+    version = '2.32.0'
+
+    extraConfig = ' --disable-schemas-install --enable-gnomecd=no --enable-cddbslave=no'
+
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # force regeneration
+        r.Remove('profiles/gnome-audio-profiles.schemas')
+        r.Replace('GNOME;XFCE;', 'GNOME;XFCE;LXDE;', 'gnome-volume-control/data/gnome-volume-control-applet.desktop.in')
+        r.Replace('GNOME;', 'GNOME;XFCE;LXDE;', 'gnome-volume-control/data/gnome-volume-control.desktop.in.in')
+        r.Replace('GNOME;XFCE;', 'GNOME;XFCE;LXDE;', 'gnome-volume-control/data/gnome-volume-control-applet.desktop.in')
+        r.Replace('GNOME;', 'GNOME;XFCE;LXDE;', 'gnome-volume-control/data/gnome-volume-control.desktop.in.in')
+
+    def policy(r):
+        # These files are used with glade, so should be in devel component.
+        r.ComponentSpec('devellib',
+            '%(datadir)s/glade3/catalogs/gnome-media-profiles.xml')
+        r.ComponentSpec('devellib',
+            '%(libdir)s/glade3/modules/libgnome-media-profiles.so')

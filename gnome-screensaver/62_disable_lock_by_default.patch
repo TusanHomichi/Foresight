@@ -1,0 +1,12 @@
+diff -Nur gnome-screensaver-2.13.5/data/gnome-screensaver.schemas.in gnome-screensaver-2.13.5.new/data/gnome-screensaver.schemas.in
+--- gnome-screensaver-2.13.5/data/gnome-screensaver.schemas.in	2006-01-17 18:19:36.000000000 +0100
++++ gnome-screensaver-2.13.5.new/data/gnome-screensaver.schemas.in	2006-01-17 18:20:15.000000000 +0100
+@@ -21,7 +21,7 @@
+       <applyto>/apps/gnome-screensaver/lock_enabled</applyto>
+       <owner>gnome-screensaver</owner>
+       <type>bool</type>
+-      <default>TRUE</default>
++      <default>FALSE</default>
+       <locale name="C">
+         <short>Lock on activation</short>
+         <long>

@@ -1,0 +1,195 @@
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('rpmpackage')
+class FireFox(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'firefox'
+    version = '24.0'
+    rpmRelease = '1.fc18'
+    buildRequires = ['atk:devel', 'autoconf:runtime', 
+                     'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel',
+                     'freetype:devel', 'gcc:devel', 'glib:devel', 'gtk:devel', 'nss:devel',
+                     'libIDL:devel', 'libjpeg:devel', 'libpng:devel', 'pango:devel',
+                     'perl:runtime', 'pkgconfig:devel', 'zip:runtime', 'yasm:runtime',
+                     'zlib:devel', 'libstdc++:devel', 'libgcc:devellib', 'nspr:devel',
+                     'krb5:devel', 'expat:devel', 'libevent:devel', 'sqlite:devel',
+                     'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel',
+                     'libXft:devel', 'libXinerama:devellib', 'libXrender:devel', 'libXScrnSaver:devel',
+                     'libXt:devel', 'libXau:devel', 'libXdmcp:devel', 'wireless-tools:devel',
+                     'GConf:devel', 'ORBit2:devel', 'gnome-vfs:devel', 'Mesa:devel',
+                     'libbonobo:devel', 'libgnome:devel', 'popt:devel','alsa-lib:devel',
+                     'gnome-keyring:devel', 'libart_lgpl:devel', 'libbonoboui:devel',
+                     'libgnomecanvas:devel', 'libgnomeui:devel', 'libxml2:devel', 'unzip:runtime',
+                     'startup-notification:devel', 'libXinerama:devel', 'dbus-glib:devel',
+                     'dbus:devel', 'libnotify:devel', 'xz:runtime', 'libvpx:devel',
+                     'python:devel', 'pixman:devel', 'libffi:devel', 'pulseaudio:devel',
+                     'gstreamer:devel', 'gst-plugins-base:devel',
+                     # for JIT enabling patch
+                     'autoconf213:runtime',
+                     # for hostname
+                     'net-tools:runtime',
+                     # XXX this needs py27, just for the build.
+                     # XXX right now we hack this thru the context
+                     # 'python-ply:python',
+                     ]
+
+    tarballName = '%(name)s-%(version)s.source.tar.bz2'
+    rpmArchives = ['firefox-langpacks-%(version)s-20130913.tar.xz']
+    rpmSources = [ 'firefox.sh.in', 'firefox-redhat-default-prefs.js', 'firefox.1']
+    rpmPatches = [ 'firefox-5.0-asciidel.patch',
+                   'firefox-15.0-enable-addons.patch',
+    ]
+
+    def setup(r):
+        # XXX FIXME check if we still _really_ need of this tag-handler machinery
+        # for ff4+
+        RPMPackageRecipe.unpack(r)
+
+        ## https://bugzilla.mozilla.org/show_bug.cgi?id=722975
+        # r.addPatch('https://bug722975.bugzilla.mozilla.org/attachment.cgi?id=753610')
+
+        # r.macros.version = '4.0'
+        # macros bellow called by taghandler
+        r.macros.fflib = '%(libdir)s/%(name)s-%(version)s/'
+
+        r.addPatch('shared-libs.patch')
+
+        r.addSource('firefox.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/firefox', mode=0755)
+
+        for descr in ('extension', 'xpt-component', 'chrome'):
+            r.addSource('firefox-%s.tagdescription' %descr, macros=True,
+                        dest='%(tagdescriptiondir)s/firefox-' + descr)
+
+        # alsa-lib not an inplicit Requires. we make it explicit to control 
+        # update order and avoid errors like the one bellow ...
+        #  [firefox-xpt-component] /usr/lib64/firefox-3.5/firefox-bin: error while loading shared libraries:
+        #  libasound.so.2: cannot open shared object file: No such file or directory
+        r.Requires('alsa-lib:lib', '%(taghandlerdir)s/.*')
+
+        r.addSource('fl.mozconfig', dest='.mozconfig', macros=True)
+
+        # XXX should not be needed but it is so that inside rMake
+        # shell, and term are detected by the new py27 based build machinery
+        r.Environment('SHELL', '%(essentialbindir)s/bash')
+        r.Environment('TERM', 'vt100')
+        #
+        r.Environment('mozdir','%(libdir)s/%(name)s-%(version)s')
+        r.macros.mozdir = '%(libdir)s/%(name)s-%(version)s'
+
+        r.macros.ldflags += ' -Wl,-rpath,%(mozdir)s '
+        r.Environment('MOZ_MAKE_FLAGS', '%(parallelmflags)s')
+
+        # HACK ALERT. THIS SHOULD HAD NOT BE NEEDED
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=850088 supposed to have been fixed
+        r.Replace('sys\.exit\(1\)', 'sys.exit(0)', 'js/src/config/check-sync-dirs.py')
+
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=824381
+        r.MakeDirs('js/src/.deps')
+        #
+        r.Make('-f client.mk build  MOZ_SERVICES_SYNC="1" STRIP="/bin/true" ')
+
+        # set up our default preferences
+        # place the preferences
+        r.Replace(r'browser.startup.homepage=http://start.fedoraproject.org/', 
+                  'browser.startup.homepage=http://www.foresightlinux.org/',
+                  '%(name)s-redhat-default-prefs.js')
+        r.Copy('%(name)s-redhat-default-prefs.js', 'dist/bin/browser/defaults/preferences/all-foresight.js')
+
+        r.Replace('@BINPATH@/browser/@PREF_DIR@/firefox.js',
+                  '@BINPATH@/browser/@PREF_DIR@/all-foresight.js\n'
+                  '@BINPATH@/browser/@PREF_DIR@/firefox.js',
+                  'browser/installer/package-manifest.in')
+        
+        r.Create('dist/bin/browser/defaults/preferences/firefox-l10n.js', 
+                 contents = (""" pref("general.useragent.locale", "chrome://global/locale/intl.properties");\n"""
+                             """ // Use LANG environment variable to choose locale\n"""
+                             """ pref("intl.locale.matchOS", true);\n """
+                             """ // Disable default browser checking.\n """
+                             """ pref("browser.shell.checkDefaultBrowser", false);\n """
+                             """ // Don't disable our bundled extensions in the application directory\n """ 
+                             """ pref("extensions.autoDisableScopes", 11);\n """
+                             """ pref("extensions.shownSelectionUI", true);\n"""))
+
+        r.MakeInstall()
+
+        r.addSource('firefox.desktop')
+        r.Desktopfile('firefox.desktop')
+
+        # set up the firefox start script
+##        r.Remove('%(bindir)s/%(name)s')
+
+##       r.Install('%(name)s.sh.in', '%(bindir)s/%(name)s', mode = 0755)
+
+##        r.Replace('FIREFOX_VERSION', '%(version)s', '%(bindir)s/%(name)s')
+##        r.Replace('XULRUNNER_DIRECTORY', 'xulrunner-2.0', '%(bindir)s/%(name)s')
+##        r.Replace('gre', 'x20gre', '%(bindir)s/%(name)s')
+##        r.Replace('/usr/bin/xulrunner', '/usr/bin/xulrunner20', '%(bindir)s/%(name)s')
+
+        r.Install('firefox.1', '%(mandir)s/man1/firefox.1', mode = 0644)
+
+        r.Remove('%(libdir)s/%(name)s-%(version)s/firefox-config')
+
+        # r.macros.langpackdir = '%(mozdir)s/langpacks/'
+        r.macros.langpackdir = '%(mozdir)s/extensions/'
+        r.MakeDirs('%(langpackdir)s')
+        # langpacks
+        r.Run(""" 
+cd ../%(name)s-%(version)s/
+for langpack in `ls firefox-langpacks/*.xpi`; do
+  language=`basename $langpack .xpi`
+  extensionID=langpack-$language@firefox.mozilla.org
+  mkdir  $extensiondID
+  unzip $langpack -d $extensionID
+  find $extensionID -type f | xargs chmod 644
+  sed -i -e "s|browser.startup.homepage.*$|browser.startup.homepage=http://www.foresightlinux.org|g;" \
+     $extensionID/browser/chrome/$language/locale/branding//browserconfig.properties
+
+  cd $extensionID
+  zip -r9mX ../${extensionID}.xpi *
+  cd -
+  cp ${extensionID}.xpi %(destdir)s/%(langpackdir)s/
+done
+
+
+""")
+
+        firefox_app_id = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+        for d in ["%(datadir)s/mozilla/extensions/", "%(libdir)s/mozilla/extensions/"]:
+            dd = d + firefox_app_id
+            #r.MakeDirs(dd)
+            r.Run("""mkdir -p ./%s"""  % dd , dir = '%(destdir)s' )
+            r.ExcludeDirectories(exceptions = dd)
+
+
+        r.MakeDirs('%(mozdir)s/browser/defaults/preferences')
+        r.ExcludeDirectories(exceptions = '%(mozdir)s/browser/defaults/preferences')
+
+        # r.Create('%(mozdir)s/components/compreg.dat')
+        r.Create('%(mozdir)s/components/xpti.dat')
+        # r.InitialContents('%(mozdir)s/components/compreg.dat')
+        r.InitialContents('%(mozdir)s/components/xpti.dat')
+
+        # icons 
+        r.Install('browser/branding/official/default16.png', '%(mozdir)s/icons/')
+
+        for siz in [ '16', '22', '24', '32', '48', '256', ]:
+            r.Install('browser/branding/official/default%s.png' % siz,
+                      '%%(datadir)s/icons/hicolor/%sx%s/apps/firefox.png' % (siz,siz),
+                      mode = 0644)
+        r.Requires(exceptDeps='java:.*')
+        
+        # XXX nothing should build against this... so wipe :devel{,lib} 
+        # this is the way it is until we can consume a wide system xulrunner-2
+        r.Remove('%(libdir)s/%(name)s-devel-%(version)s/', recursive = True)
+        r.Remove('%(includedir)s/', recursive = True)
+        r.Remove('%(datadir)s/idl/', recursive = True)
+        
+        r.Create('%(sysconfdir)s/ld.so.conf.d/%(name)s-%(version)s.conf',
+                 contents = """%(libdir)s/%(name)s-%(version)s/""",
+                 package = ':lib')
+
+

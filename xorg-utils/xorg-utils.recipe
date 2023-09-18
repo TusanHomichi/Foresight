@@ -1,0 +1,82 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgX11Utils(RPMPackageRecipe,CPackageRecipe):
+    name = 'xorg-utils'
+    version = '7.6'
+    isOPENsuse = True
+    rpmRelease = '34.1'
+    rpmName = 'xorg-x11-util-devel'
+    isXOrgFactory = True
+    buildRequires = ['perl:lib', 'perl:runtime', 'pkgconfig:devel', 'xproto:devel', 'perl:devel', 'util-macros:devel']
+
+    def setup(r):
+        r.addArchive(r.srpm)
+
+        # unpack all
+        r.addAction(""" for p in $(fgrep Source ../%(rpmName)s.spec); do  ARGN=`echo $p |  grep -c tar.bz2`;  if [ "$ARGN" = 1 ]; then  (cd ../; ARG=`echo $p ` ; mv $ARG %(name)s-%(version)s/; cd %(name)s-%(version)s; tar xjf "$ARG"; rm -rf "$ARG"  );   fi  done """)
+        # normalize dir names
+        r.addAction(""" ls | grep X11 | awk '{print("mv "$1" "$1)}' | sed -e 's/-X11R6.9//2' -e 's/-X11R7.0//2' -e 's/-X11R7.1//2' -e 's/-X11R7.2//2'| /bin/sh """)
+
+        r.addAction(""" ls |   awk '{print("mv "$1" "$1)}' | sed 's/-[.0-9]*$//' | /bin/sh """)
+
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.macros.configdir = '%(datadir)s/X11/config'
+
+        r.Create('xorg-cf-files/host.def', contents = """
+#define ConfigDir %(configdir)s
+#define XAppLoadDir %(datadir)s/X11/app-defaults
+#define UseSeparateConfDir NO
+#define ManPath /usr/share/man
+
+#define ModuleDir %(libdir)s/xorg/modules
+
+#ifdef  i386Architecture
+#undef  DefaultGcc2i386Opt
+#define DefaultGcc2i386Opt      %(cflags)s -fno-strict-aliasing
+#endif
+#ifdef  MipsArchitecture
+#undef  DefaultGcc2MipsOpt
+#define DefaultGcc2MipsOpt      %(cflags)s -fno-strict-aliasing
+#endif
+#ifdef  PpcArchitecture
+#undef  DefaultGcc2PpcOpt
+#define DefaultGcc2PpcOpt       %(cflags)s -fno-strict-aliasing
+#endif
+#ifdef  Ppc64Architecture
+#undef  DefaultGcc2Ppc64Opt
+#define DefaultGcc2Ppc64Opt     %(cflags)s -fno-strict-aliasing
+#endif
+#ifdef  AMD64Architecture
+#undef  DefaultGcc2AMD64Opt
+#define DefaultGcc2AMD64Opt     %(cflags)s -fno-strict-aliasing
+#endif
+#ifdef  s390xArchitecture
+#undef  OptimizedCDebugFlags
+#define OptimizedCDebugFlags    %(cflags)s -fno-strict-aliasing
+#endif
+#ifdef  ia64Architecture
+#undef  OptimizedCDebugFlags
+#define OptimizedCDebugFlags    %(cflags)s -fno-strict-aliasing
+#endif
+""")
+
+
+        for d in [ 'gccmakedep',
+                   'imake',
+                   'xorg-cf-files',
+                   'lndir',
+                   'makedepend',
+                   'xorg-sgml-doctools'
+                   ]:
+                   r.Configure('--with-config-dir=%(configdir)s', dir = d)
+                   r.Make(dir = d)
+                   r.MakeInstall('DESTDIR=%(destdir)s', dir = d, package = d)
+
+                   # FIXME: workaround for CNP-87
+                   r.PackageSpec(d, '%(thisdocdir)s/'+d+'/')
+

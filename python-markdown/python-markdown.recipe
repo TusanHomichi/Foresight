@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class PythonMarkdown(PackageRecipe):
+
+    name = 'python-markdown'
+    version = '2.0.3'
+
+    buildRequires = [ 'python-setuptools:python', 'unzip:runtime', 'python:devel' ]
+
+    def setup(r):
+        r.macros.pyver = Python.majversion
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+
+        r.addArchive('http://pypi.python.org/packages/source/M/Markdown/Markdown-%(version)s.tar.gz')
+        r.addSource("mdx_codehilite.py",dir="%(sitepkgs)s/")
+
+        r.PythonSetup()

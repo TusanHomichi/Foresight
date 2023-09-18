@@ -1,0 +1,10 @@
+diff -r 07a3d66fdeb7 setup.py
+--- a/setup.py	Fri Apr 29 09:47:56 2011 -0500
++++ b/setup.py	Fri Apr 29 09:48:35 2011 -0500
+@@ -32,4 +32,5 @@
+     long_description = "\n".join(pydot.__doc__.split('\n')),
+     py_modules = ['pydot', 'dot_parser'],
+     install_requires = ['pyparsing', 'setuptools'],
+-    data_files = [('.', ['LICENSE', 'README'])] )
++#    data_files = [('.', ['LICENSE', 'README'])] 
++)

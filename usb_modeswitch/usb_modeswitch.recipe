@@ -1,0 +1,15 @@
+
+
+class USBmodeSwitch(CPackageRecipe):
+    name = 'usb_modeswitch'
+    version = '1.2.5'
+
+    buildRequires = ['libusb:devel']
+
+    def setup(r):
+        r.addArchive('http://www.draisberghof.de/usb_modeswitch/usb-modeswitch-%(version)s.tar.bz2')
+        # r.addPatch('usb_modeswitch-dir.patch')
+        r.Make()
+        r.MakeInstall()
+        r.Requires('usb_modeswitch-data:data', '%(sbindir)s/')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/usb_modeswitch')

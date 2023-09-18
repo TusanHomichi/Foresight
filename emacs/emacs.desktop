@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=GNU Emacs (X11)
+GenericName=Text Editor
+Comment=Extensible, customizable, self-documenting real-time display editor.
+Exec=emacs
+TryExec=emacs
+Icon=emacs
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Application;Development;

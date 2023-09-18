@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:1')
+class GnomeI18nManageVcs(BinaryPackageRecipe):
+    name = 'gnome-i18n-manage-vcs'
+    version = '20090701'
+ 
+    buildRequires = ['lxml:python', 'python:devel']
+ 
+    def unpack(r):
+        r.addGitSnapshot('git://github.com/simos/gnome-i18n-manage-vcs.git')
+	r.Install('gnome-i18n-manage-vcs', '%(bindir)s/')

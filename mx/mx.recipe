@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2006-2012 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MX(CPackageRecipe):
+    name = 'mx'
+    version = '3.2.4'
+    buildRequires = [ 'glibc:devel', 'python:devel',
+        'python-setuptools:python', 'util-linux:runtime', ]
+
+    def setup(r):
+        r.addArchive('http://www.egenix.com/files/python/'
+                     'egenix-%(name)s-base-%(version)s.tar.gz')
+
+        r.Replace('#!/usr/local.*/python.*', '#!/usr/bin/python',
+                  'mx/BeeBase/FileLock.py',
+                  'mx/BeeBase/showBeeDict.py',
+                  'mx/Log.py',
+                  'mx/Misc/FileLock.py',
+                  'mx/Misc/OrderedMapping.py',
+                  'mx/Queue/queuebench.py',
+                  'mx/Stack/stackbench.py')
+
+        r.PythonSetup(purePython=False)
+
+        # Clean up non-multilib-friendly pieces.
+        # We already have these files in %(thisdocdir)s, no need for
+        # duplicates.
+        r.Run('find %(destdir)s%(prefix)s/lib/python%(pyver)s/site-packages'
+              ' -name README -o -name COPYRIGHT -o -name LICENSE'
+              ' | xargs rm -f')
+
+        # mx has unusual use of data_files that we need to clean up
+        # after for multilib friendliness.  Unfortunately, this
+        # takes a bit of magic.
+        def transplant(filespec, location, top='%(libdir)s'):
+            r.Run('find %%(destdir)s%s/python%%(pyver)s/site-packages'
+                  r' -name %s'
+                  r" | sed 's:%%(libdir)s\(..\|\)/python.*/site-packages:%s:;s:/[^/]*$::'"
+                  ' | xargs mkdir -p'
+                  %(top, filespec, location))
+            r.Run('find %%(destdir)s%s/python%%(pyver)s/site-packages'
+                  r' -name %s'
+                  ' | xargs rename'
+                     ' %%(destdir)s%s/python%%(pyver)s/site-packages'
+                     ' %%(destdir)s%s'
+                  %(top, filespec, top, location))
+
+        # Move html files to docs
+        transplant(r'\*.pdf', '%(thisdocdir)s')
+        # Move test files to docs
+        transplant(r'test.py\*', '%(thisdocdir)s', top='%(libdir)s')
+        # Move Examples directories to docs
+        transplant(r'Examples', '%(thisdocdir)s', top='%(libdir)s')

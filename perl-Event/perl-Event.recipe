@@ -1,0 +1,11 @@
+loadSuperClass('cpanpackage')
+class Event(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Event'
+    version = '1.13'
+
+    buildRequires = ['glibc:devel', 'perl-Time-HiRes:perl', 'perl:devel']
+
+    server = 'http://search.cpan.org/CPAN/'
+
+    def unpack(r):
+        CPANPackageRecipe.unpack(r)

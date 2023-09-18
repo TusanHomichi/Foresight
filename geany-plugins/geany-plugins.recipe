@@ -1,0 +1,52 @@
+# vim: ts=4 sw=4 expandtab ai
+#
+# Copyright (c) 2009 Erik Southworth <erik.southworth@gmail.com>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GeanyPlugins(CPackageRecipe):
+    name = 'geany-plugins'
+    version = '1.24'
+
+    buildRequires = [
+        'aspell:devel', 'atk:devel', 'cairo:devel', 'enchant:devel',
+        'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel',
+        'gtk:devel', 'gtkspell:devel', 'intltool:runtime', 'pango:devel',
+        'pkgconfig:devel', 'python:bin', 'geany:devel', 'WebKit:devel',
+        'gpgme:devel', 'libgpg-error:devel', 'libsoup:devel', 'libxml2:devel',
+        'vte:devel', 'GConf:devel', 'libwnck:devel'
+    ]
+
+    def setup(r):
+        r.macros.homepage = r.packageHomepage
+        r.buildGeanyPlugins()
+        r.policy()
+
+    pluginsArchive = 'http://plugins.geany.org/geany-plugins/'
+    def buildGeanyPlugins(r):
+        r.addArchive(r.pluginsArchive)
+        #waf build seems broken use autotools for 1.22+
+        #r.SetModes('./waf', 0755)
+        #r.ManualConfigure(' --prefix=%(prefix)s --libdir=%(libdir)s', configureName='waf configure')
+        #r.Make(makeName='./waf')
+        #r.Run('./waf --destdir=%(destdir)s install')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+
+    def policy(r):
+        #r.PackageSpec('%(name)s', '')
+        #r.ComponentSpec(catchall='%(name)s-plugins')
+
+        r.Licenses('GPLv2')
+
+        r.Description(
+            shortDesc=r.packageSummary,
+            longDesc =r.packageDescription)
+    packageHomepage = 'http://plugins.geany.org'
+    packageSummary = 'Plugins for Geany'
+    packageDescription = \
+        """Geany is a small and lightweight integrated development
+           environment. It was developed to provide a small and
+           fast IDE. Homepage: %(homepage)s"""

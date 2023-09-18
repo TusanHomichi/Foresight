@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GstRtspServer(AutoPackageRecipe):
+    name = 'gst-rtsp-server'
+    version = '0.10.4'
+ 
+    buildRequires = [
+        'gstreamer:devel',
+        'gst-plugins-base:devel',
+        'gst-python:devellib',
+        'vala:runtime',
+        'vala:devel',
+        'glib:devellib',
+        'pkgconfig:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://people.freedesktop.org/~wtay/gst-rtsp-%(version)s.tar.bz2')
+
+    def configure(r):
+        r.Configure('--with-vapi-dir=%(datadir)s/vala/vapi')

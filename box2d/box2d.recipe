@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Box2d(CPackageRecipe):
+    name = 'box2d'
+    version = '2.2.1'
+ 
+    buildRequires = ['Mesa:devel', 'cmake:runtime', 'gcc-c++:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXau:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXft:devel', 'libXi:devel', 'libXinerama:devel', 'libXpm:devel', 'libXrandr:devel', 'libXrender:devel', 'libXt:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel', 'pkgconfig:devel', 'unzip:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://box2d.googlecode.com/files/Box2D_v%(version)s.zip')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

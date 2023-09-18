@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('vim')
+class Cscope(AutoPackageRecipe):
+    name = 'cscope'
+    version = '15.7a'
+ 
+    buildRequires = [
+        'bison:runtime',
+        'flex:devel',
+        'flex:runtime',
+        'ncurses:devel',
+        'pkgconfig:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/cscope/')
+        r.macros.vimdir = ''.join(Vim.version.split('.')[:2])
+        r.addSource('http://cscope.sourceforge.net/cscope_maps.vim', dest='%(datadir)s/vim/vim%(vimdir)s/plugin/')

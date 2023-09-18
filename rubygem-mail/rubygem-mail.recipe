@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Mail(RubygemPackageRecipe):
+
+    name = 'rubygem-mail'
+    version = '2.3.0'
+

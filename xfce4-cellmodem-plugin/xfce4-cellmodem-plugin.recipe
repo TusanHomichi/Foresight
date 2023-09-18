@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4CellmodemPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-cellmodem-plugin'
+    version = '0.0.5'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'libusb:devel', 'libxfce4util:devel', 'libxfcegui4:devel',
+        'pciutils:devel', 'xfce4-panel:devel'
+    ] 
+   

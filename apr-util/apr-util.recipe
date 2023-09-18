@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2013      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AprUtil(AutoPackageRecipe):
+    name = 'apr-util'
+    version = '1.4.1'
+
+    buildRequires = [ 'libtool:runtime', 'apr:devel', 'openldap:devel',
+                      'db:devel', 'e2fsprogs:devel', 'expat:devel',
+                      'sqlite:devel', 'autoconf:runtime', 'automake:runtime',
+                      'openssl:devel', 'pkgconfig:devel', 'postgresql:devel',
+                      'unixODBC:runtime', 'nss:devel', ]
+
+
+    def unpack(r):
+        r.macros.apuver = '1'
+        # FIXME: enable key checking
+        r.addArchive('http://www.apache.org/dist/apr/') #,  keyid='10FDE075')
+        for patch in [ 'apr-util-1.2.7-pkgconf.patch',
+                       'apr-util-1.3.7-nodbmdso.patch',
+                       'apr-util-1.4.1-r1346875.patch', ]:
+            r.addPatch(patch)
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.Environment('ac_cv_ldap_set_rebind_proc_style', 'three')
+        r.Configure(' --with-apr=%(prefix)s '
+                    ' --includedir=%(includedir)s/apr-%(apuver)s '
+                    ' --with-ldap'
+                    ' --without-gdbm'
+                    ' --with-sqlite3'
+                    ' --with-berkeley-db '
+                    ' --without-sqlite2 '
+                    ' --with-mysql'
+                    ' --with-pgsql '
+                    ' --with-freetds'
+                    ' --with-odbc'
+                    ' --with-crypto'
+                    ' --with-openssl'
+                    ' --with-nss'
+        )
+
+    def policy(r):
+        r.Remove('%(libdir)s/aprutil.exp')
+        # include libtool .la files, they are used by programs that
+        # link with `apu-config --link-libtool`
+        r.RemoveNonPackageFiles(exceptions=r'\.la$')
+        r.ComponentProvides('berkeley-db')
+        r.Install('build/find_apu.m4', '%(datadir)s/aclocal/', 
+                  mode = 0644)

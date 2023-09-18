@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2006 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibGalago(AutoPackageRecipe):
+    name = 'libgalago'
+    version = '0.5.2'
+
+    buildRequires = [ 'dbus-glib:devel', 'dbus:devel', 'glib:devel',
+        'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://www.galago-project.org/files/releases/source/%(name)s/')

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=UliPad
+Comment=Editor of Python with wxPython
+Exec=ulipad
+Icon=ulipad
+Type=Application
+Categories=Development;Viewer;IDE;

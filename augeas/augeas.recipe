@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Augeas(AutoPackageRecipe):
+    name = 'augeas'
+    version = '0.8.0'
+
+    buildRequires = [ 'python:devel', 'flex:runtime',
+                      'bison:devel', 'bison:runtime',
+                      'flex:devel', 'readline:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://augeas.net/download/')
+
+    def configure(r):
+        r.Configure('--disable-static')

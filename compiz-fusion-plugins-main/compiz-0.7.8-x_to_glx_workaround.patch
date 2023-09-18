@@ -1,0 +1,29 @@
+diff -upNr compiz-fusion-plugins-main-0.7.8.orign/metadata/workarounds.xml.in compiz-fusion-plugins-main-0.7.8/metadata/workarounds.xml.in
+--- compiz-fusion-plugins-main-0.7.8.orign/metadata/workarounds.xml.in	2008-09-17 15:29:14.000000000 +0200
++++ compiz-fusion-plugins-main-0.7.8/metadata/workarounds.xml.in	2009-03-14 17:51:07.383791735 +0100
+@@ -53,6 +53,12 @@
+                 <_long>Fix for broken GLX_MESA_copy_sub_buffer on XGL in fglrx.</_long>
+                 <default>false</default>
+             </option>
++            <option type="bool" name="force_glx_sync">
++                <_short>Force synchronization between X and GLX</_short>
++                <_long>Force synchronization between X and GLX, which may help for window parts not redrawing correctly when using Nvidia drivers, but also may decrease performance.</_long>
++                <default>false</default>
++            </option>
++
+             <subgroup>
+                 <_short>Window stickyness</_short>
+                 <option type="bool" name="sticky_alldesktops">
+diff -upNr compiz-fusion-plugins-main-0.7.8.orign/src/workarounds/workarounds.c compiz-fusion-plugins-main-0.7.8/src/workarounds/workarounds.c
+--- compiz-fusion-plugins-main-0.7.8.orign/src/workarounds/workarounds.c	2008-09-17 15:29:14.000000000 +0200
++++ compiz-fusion-plugins-main-0.7.8/src/workarounds/workarounds.c	2009-03-14 17:49:39.978731517 +0100
+@@ -198,6 +198,9 @@ workaroundsPaintScreen (CompScreen   *s,
+ 
+     currentScreen = s;
+ 
++    if (workaroundsGetForceGlxSync (s->display))
++	glXWaitX ();
++
+     UNWRAP (ws, s, paintScreen);
+     (*s->paintScreen) (s, outputs, numOutputs, mask);
+     WRAP (ws, s, paintScreen, workaroundsPaintScreen);

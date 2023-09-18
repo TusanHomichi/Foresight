@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2012-2014 The Foresight Linux Project
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class unRAR(CPackageRecipe):
+    name = 'unrar'
+    version = '5.1.6'
+
+    buildRequires =  [ 'libstdc++:devel', ]
+
+    def setup(r):
+        r.macros.archive_name = 'unrarsrc'
+        r.addArchive('http://www.rarlab.com/rar/')
+        r.macros.cflags += ' -fPIC'
+        r.addPatch('makefile-fix-build.patch')
+        r.addPatch('missing-revcol.patch')
+
+        r.Replace(('^CXX=.*', ''),
+                  ('^CXXFLAGS=.*', ''),
+                  ('^STRIP=.*', 'STRIP=true'),
+                  'makefile')
+
+        r.Make()
+        r.Make('lib')
+        r.Install('unrar', '%(bindir)s/')
+        r.Install('libunrar.so', '%(libdir)s/')
+        r.Doc('*.txt')

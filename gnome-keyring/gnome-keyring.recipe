@@ -1,0 +1,73 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+
+class GnomeKeyring(GnomePackageRecipe):
+    name = 'gnome-keyring'
+    version = '2.32.1'
+
+    buildRequires = [ 'atk:devel', 'glib:devel', 'pango:devel',
+                      'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                      'libpng:devel', 'gettext:runtime', 'perl:runtime',
+                      'libgcrypt:devel', 'libgpg-error:devel', 'pam:devel',
+                      'hal:devel', 'GConf:devel', 'GConf:runtime',
+                      'ORBit2:devel', 'libtasn1:devel', 'gettext:devel',
+                      'autoconf:runtime', 'libtasn1:runtime', 'libgnome-keyring:devel'
+                      ]
+
+    extraConfig = (' --enable-pam --with-pam-dir=/%(lib)s/security '
+                   ' --disable-acl-prompts --disable-gtk-doc '
+                   '--with-gtk=2.0 --enable-pam ')
+
+    makeInstallArgs = ' install install-pam '
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+
+        # PATCH-FIX-OPENSUSE gnome-keyring-pam-auth-prompt-password.patch
+        # bnc466732 bgo560488 vuntz@novell.com
+        # -- Make the pam module prompt the password in auth, so we can
+        #    use pam-config. This is a workaround until bnc#477488 is implemented.       
+        # FL: Without this, pam/gkr-pam-module.c can't get access to the
+        #     user's password in pam_sm_authenticate(), which in turn means
+        #     that it cannot save the password for later use in
+        #     pam_sm_open_session(), which in turn means that it cannot unlock the
+        #     keyring.  I had to manually graft vuntz' patch onto the 2.28 code;
+        #     it's still his patch though. -- /ermo
+        # r.addPatch('gnome-keyring-pam-auth-prompt-password.patch')
+
+        # This doesnt work as expected -- besides, we're already starting the
+        # gnome-keyring-daemon only if we're running from gdm. -- /ermo
+        # r.addPatch('gnome-keyring-check-session.patch')
+
+    	# PATCH-FEATURE-FL gnome-keyring-pam-verbose-syslog.patch
+    	# -- Make the pam module print very verbose status info at
+    	#    key points when invoked by the PAM stack. -- /ermo
+        # r.addPatch('gnome-keyring-pam-verbose-syslog.patch')
+
+        # This rebases and rolls up the auth-prompt-password patch 
+        # and the verbose-syslog patch for use w/2.30.3. -- /ermo
+        r.addPatch('gnome-keyring-pam-auth-prompt-password+verbose-syslog.patch')
+        # http://bugzilla.redhat.com/529709
+        # http://bugs.gnome.org/598494
+        # rebased against patch above
+        r.addPatch('gnome-keyring-2.28.1-nopass.patch')
+
+        r.Run('autoreconf -fi')
+
+    def policy(r):
+        # use a dependency flag to force pam to be updated first so that
+        # the comments are applied there before they are removed here...
+        r.Requires('pam:data(gkropt)', '.*/security/pam_gnome_keyring.so')
+        enableScript = r'''#!/bin/sh
+set -x
+[ -f /etc/pam.d/system-auth -a -x /bin/sed ] && \
+    /bin/sed -i 's/^##PGK###//' /etc/pam.d/system-auth
+'''
+        # gnome-keyring:lib contains pam_gnome_keyring.so
+        r.ScriptPostInstall('gnome-keyring:lib', contents=enableScript)
+        r.ScriptPostUpdate('gnome-keyring:lib', contents=enableScript)

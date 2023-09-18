@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2012 The Foresight Linux Project
+#               2011-2012 Openfiler Ltd
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UserspaceKernelHeaders(CPackageRecipe):
+    name = 'userspace-kernel-headers'
+    version = '3.4.55'
+
+    keepBuildReqs = True
+    if Use.bootstrap:
+        clearBuildReqs(
+        'binutils:runtime',
+        'binutils:lib',
+        'binutils:devellib',
+        'gcc:runtime',
+        'gcc:lib',
+        'gcc:devel',
+        'gcc:devellib',
+        'libgcc:lib',
+        'libgcc:devellib')
+
+    buildRequires = [ 'unifdef:runtime',
+                      'gcc[!cross]',
+                      'binutils[!cross]',
+                      'perl:runtime' ]
+
+    def setup(r):
+        # kernel headers are arch specific so we do need to flavor the build
+        # even if we don't pass the traditional arch checks.
+        if Arch.x86:
+             r.macros.headerarch='i386'
+        else:    
+            r.macros.headerarch=r.macros.targetarch
+
+        r.addArchive(
+            'http://ftp.kernel.org/pub/linux/kernel'
+            '/v3.x/linux-%s.tar.bz2' % r.version,
+            keyid='517D0F0E'
+            )
+
+        if Use.bootstrap:
+            r.Environment('PATH', '%(sysroot)s%(bindir)s:%(sbindir)s:%(bindir)s')
+         
+        # Ensures that the kernel source dir is clean.
+        r.Make('mrproper')
+        
+        r.Make('headers_install ARCH=%(headerarch)s INSTALL_HDR_PATH=%(destdir)s/%(prefix)s')
+        # Sanitizes the raw kernel headers so that they can be used by userspace programs.
+        r.Make('headers_check INSTALL_HDR_PATH=%(destdir)s/%(prefix)s')
+        # clean cruft
+        for string in ['install', 'check']:
+            r.RemoveNonPackageFiles(r'.*\.%s' % string)
+            r.RemoveNonPackageFiles(r'.*\..%s.cmd' % string)
+        #
+        # glibc provides scsi headers for itself, for now
+        r.Remove('%(includedir)s/scsi', allowNoMatch=True, recursive = True)
+        r.Remove('%(includedir)s/asm*/{atomic.h,io.h,irq.h}', allowNoMatch=True)
+
+        # No need for AutoDoc here since it is the same docs which appear
+        # in the kernel package
+        r.AutoDoc(exceptions='.*')

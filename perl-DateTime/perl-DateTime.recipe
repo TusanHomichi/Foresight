@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+loadSuperClass('cpanpackage')
+class PerlDatetime(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-DateTime'
+    version = '0.63'
+    buildRequires = ['perl-DateTime-Locale:perl', 'perl-ExtUtils-CBuilder:perl', 'perl-Params-Validate:perl']
+
+    def setup(r):
+        r.addArchive('http://search.cpan.org/CPAN/authors/id/D/DR/DROLSKY/DateTime-%(version)s.tar.gz')
+        r.addAction('perl Build.PL --destdir=%(destdir)s')
+        r.addAction('perl Build')
+        r.addAction('perl Build install')
+

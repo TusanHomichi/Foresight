@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class DjangoEvolution(PackageRecipe):
+    name = 'django-evolution'
+    tarname = 'django_evolution'
+    version = '0.5'
+
+    buildRequires = [
+        'django:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.macros.tarname = r.tarname
+        r.mainDir('%(tarname)s-%(version)s')
+        r.addArchive('http://pypi.python.org/packages/source/d/%(tarname)s/%(tarname)s-%(version)s.tar.gz')
+        r.PythonSetup()
+
+        r.macros.pyver = Python.majversion
+        r.macros.sitepkgs = '/%(libdir)s/python%(pyver)s/site-packages'
+        r.Remove('%(sitepkgs)s/tests', recursive=True)

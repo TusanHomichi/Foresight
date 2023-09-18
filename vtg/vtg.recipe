@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Vtg(AutoPackageRecipe):
+    name = 'vtg'
+    version = '0.12.1'
+ 
+    buildRequires = ['GConf:devel', 
+                    'autoconf:runtime',
+                    'automake:runtime',
+                    'atk:devel', 
+                    'cairo:devel', 
+                    'fontconfig:devel', 
+                    'freetype:devel', 
+                    # 'gedit:devel',
+                    'gettext:runtime', 
+                    'glib:devel', 
+                    'gnome-common:runtime',
+                    'gtk-doc:runtime', 
+                    'gtk-doc:devel',
+                    'gtk:devel', 
+                    'gtk3:devel',
+                    'gtksourceview:devel', 
+                    'intltool:runtime', 
+                    'libtool:runtime',
+                    'pango:devel', 
+                    'pkgconfig:devel', 
+                    'vala:devel', 
+                    'vala:runtime'
+                        ]
+ 
+    def unpack(r):
+        r.addArchive('https://vtg.googlecode.com/files/vtg-0.12.1.tar.bz2')
+        #r.addGitSnapshot('git://gitorious.org/vala-toys/vala-toys.git', tag='9ec1f44')
+        r.disableParallelMake()
+
+    def configure(r):
+        r.Configure(' --datadir=%(datadir)s/gedit-2/plugins/ --disable-vtg-plugin --disable-afrodite')
+        
+    def policy(r):
+        r.Requires('gedit:runtime', '%(datadir)s/gedit-2/plugins/.*')

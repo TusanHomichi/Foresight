@@ -1,0 +1,29 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Puddletag(PackageRecipe):
+    name = 'puddletag'
+    version = '1.0.1'
+
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'ConfigObj:python',
+        'lxml:python',
+        'mutagen:python',
+        'PIL:python',
+        'pyparsing:python',
+        'PyQt4:python',
+        'python-musicbrainz2:python',
+        'python:devel',
+        'sip:python',
+    ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/puddletag/')
+        r.PythonSetup()
+        r.Install('%(name)s.png', '%(datadir)s/pixmaps/')
+        r.Desktopfile('%(name)s.desktop', vendor='foresight')

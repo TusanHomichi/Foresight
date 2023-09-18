@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Setup(RPMPackageRecipe):
+    name = 'setup'
+    version = '2.6.4'
+    rpmRelease = '1.fc7'
+
+    if Use.bootstrap:
+        clearBuildReqs()
+
+    def setup(r):
+        r.unpack()
+        r.addSource('shell.tagdescription', macros=True,
+            dest='%(tagdescriptiondir)s/shell')
+        r.addSource('shell.taghandler', macros=True,
+            dest='%(taghandlerdir)s/shell', mode=0755)
+
+        r.addPatch('profile.patch')
+        r.addPatch('openvpn.services.patch')
+        r.addPatch('csync2.patch')
+
+        r.addSource('passwd')
+        r.addSource('group')
+
+        # do not depend on net-tools being installed for profile to work
+        r.Replace('^HOSTNAME.*',
+                  'HOSTNAME=`[ -x /bin/hostname ] && /bin/hostname || echo localhost.localdomain`',
+                  'profile')
+        r.Install('*', '%(sysconfdir)s/')
+
+        # since conary has a method to add users and groups as packages
+        # need them, the version contained here in the setup package
+        # should just be considered an example.  Therefore we'll mark
+        # them as initialcontents since conary might have added some
+        # users and groups before setup gets installed for the first time
+        # and we don't want to cause a file conflict. printcap is marked
+        # initialcontents because cups generates a copy on its own
+        r.InitialContents('%(sysconfdir)s/(passwd|shadow|group|gshadow|printcap)')
+        r.Create('%(sysconfdir)s/{shadow,gshadow}', mode=0400)
+        r.Create('%(localstatedir)s/log/lastlog', mode=0400)
+        r.Remove('/etc/uidgid', '/etc/serviceslint', '/etc/aliases',
+                 '/etc/setup.spec', '/etc/Makefile')
+        r.Doc('uidgid')
+
+        for req in ('%(essentialbindir)s/grep',
+                    '%(essentialbindir)s/sed', '/dev/null'):
+            r.Requires(req, '%(taghandlerdir)s/shell')

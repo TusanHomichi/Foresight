@@ -1,0 +1,72 @@
+diff -r e697752393b6 Lib/lib2to3/refactor.py
+--- a/Lib/lib2to3/refactor.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/refactor.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ # Copyright 2006 Google, Inc. All Rights Reserved.
+ # Licensed to PSF under a Contributor Agreement.
+ 
+diff -r e697752393b6 Lib/lib2to3/tests/benchmark.py
+--- a/Lib/lib2to3/tests/benchmark.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/tests/benchmark.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ """
+ This is a benchmarking script to test the speed of 2to3's pattern matching
+ system. It's equivalent to "refactor.py -f all" for every Python module
+diff -r e697752393b6 Lib/lib2to3/tests/pytree_idempotency.py
+--- a/Lib/lib2to3/tests/pytree_idempotency.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/tests/pytree_idempotency.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ # Copyright 2006 Google, Inc. All Rights Reserved.
+ # Licensed to PSF under a Contributor Agreement.
+ 
+diff -r e697752393b6 Lib/lib2to3/tests/test_all_fixers.py
+--- a/Lib/lib2to3/tests/test_all_fixers.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/tests/test_all_fixers.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ """Tests that run all fixer modules over an input stream.
+ 
+ This has been broken out into its own test module because of its
+diff -r e697752393b6 Lib/lib2to3/tests/test_fixers.py
+--- a/Lib/lib2to3/tests/test_fixers.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/tests/test_fixers.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ """ Test suite for the fixer modules """
+ # Author: Collin Winter
+ 
+diff -r e697752393b6 Lib/lib2to3/tests/test_parser.py
+--- a/Lib/lib2to3/tests/test_parser.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/tests/test_parser.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ """Test suite for 2to3's parser and grammar files.
+ 
+ This is the place to add tests for changes to 2to3's grammar, such as those
+diff -r e697752393b6 Lib/lib2to3/tests/test_pytree.py
+--- a/Lib/lib2to3/tests/test_pytree.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/tests/test_pytree.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ # Copyright 2006 Google, Inc. All Rights Reserved.
+ # Licensed to PSF under a Contributor Agreement.
+ 
+diff -r e697752393b6 Lib/lib2to3/tests/test_util.py
+--- a/Lib/lib2to3/tests/test_util.py	Thu Oct 02 11:33:43 2008 -0400
++++ b/Lib/lib2to3/tests/test_util.py	Thu Oct 02 12:07:56 2008 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python
+ """ Test suite for the code in fixes.util """
+ # Author: Collin Winter
+ 

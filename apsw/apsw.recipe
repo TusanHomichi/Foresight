@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# All rights reserved
+#
+
+class Apsw(CPackageRecipe):
+    buildRequires = [
+        'python:devel', 'python-setuptools:python',
+        'sqlite:devel', 'unzip:runtime',
+    ]
+
+    name = 'apsw'
+    upversion = '3.6.18-r1'
+    version = upversion.replace('-', '_')
+
+    def setup(r):
+        r.macros.upversion = r.upversion
+        r.addArchive('http://apsw.googlecode.com/files/%(name)s-%(upversion)s.zip')
+        r.Replace('__file__', '""', 'setup.py')
+        r.PythonSetup()

@@ -1,0 +1,111 @@
+#
+# Copyright (c) 2005-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LVM2(CPackageRecipe):
+    name = 'lvm2'
+    version = '2.02.86'
+
+    buildRequires = [ 'ncurses:devel', 'readline:devel',
+                      'userspace-kernel-headers:devel',
+                      'autoconf:runtime', 'automake:runtime',
+                      'chkconfig:runtime', 'udev:devel',
+                      'device-mapper:devel', 'pkgconfig:devel',
+                      ]
+
+    def setup(r):
+        r.addArchive('ftp://sources.redhat.com/pub/lvm2/LVM2.%(version)s.tgz', keyid='567E2C17')
+
+        for p in [ 'lvm2-set-default-preferred_names.patch',
+                   'lvm2-new-oom-adj-interface.patch',
+                   'lvm2-fix-default_udev_sync.patch',
+                   'lvm2-fix-dmsetup-table.patch',
+                   ]:
+            r.addPatch(p)
+
+        # FL-2711
+        r.addPatch('https://332905.bugs.gentoo.org/attachment.cgi?id=243283')
+
+
+        r.Run('autoreconf -fi')
+        r.Configure(
+            '--enable-lvm1_fallback '
+            '--enable-fsadm '
+
+            '--with-cluster=internal '
+            # clustering is off for now. 
+            '--with-clvmd=none '
+            '--disable-cmirrord '
+
+            '--with-pool=internal '
+            '--with-user= '
+            '--with-group= '
+            '--with-device-uid=0 '
+            '--with-device-gid=6 '
+            '--with-device-mode=0660 '
+
+            '--exec-prefix= '
+            '--bindir=%(essentialbindir)s '
+            '--sbindir=%(essentialsbindir)s '
+            '--libdir=%(essentiallibdir)s '
+            '--with-usrsbindir=%(sbindir)s '
+            '--with-usrlibdir=%(libdir)s '
+
+            '--enable-static_link '
+            '--enable-readline '
+
+            '--enable-applib '
+            '--enable-cmdlib '
+            '--enable-dmeventd '
+            '--enable-pkgconfig '
+
+            '--with-udevdir=/lib/udev/rules.d '
+            '--enable-udev_sync '
+            '--with-default-data-alignment=0 '
+            # explicitly disable it
+            '--disable-selinux '
+            )
+        r.Make()
+        r.MakeInstall()
+        r.Make('install_system_dirs DESTDIR=%(destdir)s')
+        r.Make('install_initscripts DESTDIR=%(destdir)s')
+
+        for x in ('lvm', 'pvscan', 'vgchange', 'vgscan'):
+            r.Symlink('lvm.static', '%(essentialsbindir)s/' + x)
+        r.Doc('VERSION', 'WHATS_NEW')
+
+        # udev rules are arch insensitive and do not belong in :lib
+        # as it creates multilib issues
+        r.ComponentSpec('data', '/lib/udev/rules.d/')
+
+        r.PackageSpec('device-mapper',
+                      '%(essentiallibdir)s/libdevmapper.*',
+                      '%(libdir)s/libdevmapper.*',
+                      '%(essentialsbindir)s/dmsetup.*',
+                      '%(essentialsbindir)s/dmeventd',
+                      '%(includedir)s/libdevmapper.h',
+                      '%(includedir)s/libdevmapper-event.h',
+                      '%(libdir)s/pkgconfig/devmapper.pc',
+                      '%(libdir)s/pkgconfig/devmapper-event.pc',
+                      '%(mandir)s/man8/dmsetup.8.gz'
+                      )
+
+        # This version is required to work with dracut, and it's
+        # easier to just call this "DRACUT" support than to
+        # enumerate features...
+        r.ComponentProvides('DRACUT')
+
+        for i in ('archive', 'backup', 'cache'):
+            d = '%(sysconfdir)s/lvm/' + i
+            r.SetModes(d, 0700)
+
+        r.SetModes('%(localstatedir)s/lock/lvm', 0700)
+        r.SetModes('%(localstatedir)s/run/lvm', 0700)
+
+        r.Create('%(sysconfdir)s/lvm/cache/.cache', mode = 0600)
+        r.InitialContents('%(sysconfdir)s/lvm/cache/.cache')
+
+        # r.Install('scripts/clvmd_init_red_hat', '%(initdir)s/clvmd', mode = 0755)
+        # r.Install('scripts/lvmconf.sh', '/sbin/lvmconf', mode = 0755)

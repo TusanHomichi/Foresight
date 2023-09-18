@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Actionpack(RubygemPackageRecipe):
+
+    name = 'rubygem-actionpack'
+    version = '3.1.1'
+

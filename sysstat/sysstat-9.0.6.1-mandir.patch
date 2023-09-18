@@ -1,0 +1,33 @@
+diff -up sysstat-9.0.6.1/configure.in.pom sysstat-9.0.6.1/configure.in
+--- sysstat-9.0.6.1/configure.in.pom	2010-09-23 17:36:43.000000000 +0200
++++ sysstat-9.0.6.1/configure.in	2010-09-23 17:40:54.000000000 +0200
+@@ -483,12 +483,7 @@ AC_MSG_RESULT($AUX_DOC)
+ AC_SUBST(INSTALL_DOC)
+ 
+ # Set directory for installing manual pages (see comment in Makefile)
+-if test $mandir != "\${datarootdir}/man"; then
+-	AuxMandir=$mandir
+-else
+-	AuxMandir=$AuxPrefix/man
+-fi
+-AC_SUBST(AuxMandir)
++AC_SUBST(mandir)
+ 
+ # Create files
+ echo .
+diff -up sysstat-9.0.6.1/Makefile.in.pom sysstat-9.0.6.1/Makefile.in
+--- sysstat-9.0.6.1/Makefile.in.pom	2009-09-12 20:59:04.000000000 +0200
++++ sysstat-9.0.6.1/Makefile.in	2010-09-23 17:38:22.000000000 +0200
+@@ -45,10 +45,7 @@ endif
+ BIN_DIR = @bindir@
+ 
+ ifndef MAN_DIR
+-# With recent versions of autoconf, mandir defaults to ${datarootdir}/man
+-# (i.e. $prefix/share/man) which is not necessarily in man path!
+-# MAN_DIR = @mandir@
+-MAN_DIR = @AuxMandir@
++MAN_DIR = @mandir@
+ endif
+ MAN1_DIR = $(MAN_DIR)/man1
+ MAN8_DIR = $(MAN_DIR)/man8
+diff -up sysstat-9.0.6.1/.pom sysstat-9.0.6.1/

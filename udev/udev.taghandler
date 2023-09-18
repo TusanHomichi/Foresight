@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in
+    files)
+        case $action in
+	    update)
+		echo 'restarting udevd'
+                # start daemon if we are not in a chroot
+		if test -f /proc/1/exe -a -d /proc/1/root; then
+		    if test "$(/usr/bin/stat -Lc '%%D-%%i' /)" = "$(/usr/bin/stat -Lc '%%D-%%i' /proc/1/root)"; then
+			/sbin/udevd -d
+			/sbin/udevadm control --start-exec-queue
+		    fi
+		fi
+
+
+		;;
+	    preupdate)
+		echo 'killing running udev'
+		if test -f /proc/1/exe -a -d /proc/1/root; then
+		    if test -x /usr/bin/stat -a "$(/usr/bin/stat -Lc '%%D-%%i' /)" = "$(/usr/bin/stat -Lc '%%D-%%i' /proc/1/root)"; then
+			if test -x /sbin/udevd -a -x /sbin/pidof ; then
+			    /sbin/udevadm control --stop-exec-queue
+			    pid=$(/sbin/pidof -c udevd)
+			    while [ -n "$pid" ]; do
+				for p in $pid; do
+				    kill $hard $p;
+				done
+				pid=$(/sbin/pidof -c udevd)
+				hard="-9"
+			    done
+			fi
+		    fi
+		fi
+
+		;;
+
+	    preremove)
+		if [ -x /sbin/pidof ]; then
+		    pid=$(/sbin/pidof -c udevd)
+		    if [ -n "$pid" ]; then
+			kill $pid
+			fi
+		    fi
+		;;
+
+	esac
+esac
+
+exit 0

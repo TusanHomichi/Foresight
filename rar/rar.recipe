@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('binarypackage')
+class rar(BinaryPackageRecipe):
+    buildRequires=[ ]
+
+    name = 'rar'
+    version = '5.1.0'
+
+    def unpack(r):
+        r.addArchive('http://www.rarlab.com/rar/rarlinux-%(version)s.tar.gz')
+	r.Install('rar', '%(bindir)s/')

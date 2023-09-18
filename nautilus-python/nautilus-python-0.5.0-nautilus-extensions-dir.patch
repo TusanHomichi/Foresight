@@ -1,0 +1,21 @@
+diff -p -up nautilus-python-0.5.0/src/nautilus-python.c~ nautilus-python-0.5.0/src/nautilus-python.c
+--- nautilus-python-0.5.0/src/nautilus-python.c~	2008-01-11 11:26:55.000000000 +0000
++++ nautilus-python-0.5.0/src/nautilus-python.c	2008-01-23 15:15:40.000000000 +0000
+@@ -332,7 +332,7 @@ nautilus_module_initialize(GTypeModule *
+ 
+ 	all_types = g_array_new(FALSE, FALSE, sizeof(GType));
+ 
+-	nautilus_python_load_dir(module, NAUTILUS_LIBDIR "/nautilus/extensions-1.0/python");
++	nautilus_python_load_dir(module, NAUTILUS_LIBDIR "/nautilus/extensions-2.0/python");
+ 	user_extensions_dir = g_strdup_printf("%s/.nautilus/python-extensions/",
+ 										  g_get_home_dir());
+ 	nautilus_python_load_dir(module, user_extensions_dir);
+diff -p -up nautilus-python-0.5.0/nautilus-python.pc.in~ nautilus-python-0.5.0/nautilus-python.pc.in
+--- nautilus-python-0.5.0/nautilus-python.pc.in~	2008-01-11 11:07:15.000000000 +0000
++++ nautilus-python-0.5.0/nautilus-python.pc.in	2008-01-23 15:16:23.000000000 +0000
+@@ -4,4 +4,4 @@ Version: @VERSION@
+ 
+ prefix=@prefix@
+ libdir=${prefix}/lib
+-pythondir=@NAUTILUS_LIBDIR@/nautilus/extensions-1.0/python
++pythondir=@NAUTILUS_LIBDIR@/nautilus/extensions-2.0/python

@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2009-2010 Foresight Linux Project
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bzr(CPackageRecipe):
+    name = 'bzr'
+    version = '2.2.1'
+
+    buildRequires = [
+        'cElementTree:python', 'ConfigObj:python', 'pygobject:python',
+        'python-cssutils:python', 'python-ctypes:python',
+        'python-setuptools:python', 'python:devel',
+        # tests were in wrong place prior to
+        # http://lists.rpath.org/pipermail/foresight-commits/2010-December/045634.html
+        # http://lists.rpath.org/pipermail/foresight-commits/2010-December/045635.html
+        # which induced some spurious deps to land in groups.
+        # this is a way to get around it
+        'papyon:python',
+        'python-cssutils:python',
+    ]
+
+    def setup(r):
+
+        r.addArchive('http://launchpad.net/bzr/%(major_version)s/%(version)s/+download/')
+
+        # use packaged version
+        r.Remove('bzrlib/util/elementtree', recursive=True)
+
+        # fix for PythonSetup
+        r.Replace('dirname = .*', 'dirname = "%(builddir)s"', 'setup.py')
+
+        r.PythonSetup(' --install-data=%(datadir)s build_ext')
+
+        # Bash completion stuff
+        r.Install('contrib/bash/bzr',
+                  '%(sysconfdir)s/bash_completion.d/', mode = 0644)
+
+        r.Install('contrib', '%(thisdocdir)s/')
+
+        r.Config(exceptions='%(sysconfdir)s/bash_completion.d/')
+

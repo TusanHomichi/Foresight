@@ -1,0 +1,602 @@
+commit c262e3d65a37abedc507705cddfec72c901c321f
+Author: Derek Poon <gnomebugs@acrotect.com>
+Date:   Sun May 2 11:27:25 2010 -0400
+
+    Update keybindings when XKB keyboard layout changes
+    
+    * Select for XKB keyboard notification events explicitly; since GTK+
+      has selected for XKB events, delivery of old-school MappingNotify
+      events is disabled.
+    
+    * Fix a bug where once a keycode was loaded for a key binding,
+      it would never be reassigned; we want to laod new keycodes for
+      all bindings that have a key symbol rather than a fixed
+      keycode.
+    
+    [ With fixes from Owen W. Taylor <otaylor@fishsoup.net> ]
+    
+    https://bugzilla.gnome.org/show_bug.cgi?id=565540
+
+diff --git a/src/core/display.c b/src/core/display.c
+index 4c7b4c0..b59571d 100644
+--- a/src/core/display.c
++++ b/src/core/display.c
+@@ -2391,6 +2391,10 @@ event_callback (XEvent   *event,
+                   meta_bell_notify (display, xkb_ev);
+                 }
+ 	      break;
++            case XkbNewKeyboardNotify:
++            case XkbMapNotify:
++              meta_display_process_mapping_event (display, event);
++              break;
+ 	    }
+ 	}
+ #endif
+diff --git a/src/core/keybindings.c b/src/core/keybindings.c
+index 63596bb..f6c276a 100644
+--- a/src/core/keybindings.c
++++ b/src/core/keybindings.c
+@@ -262,9 +262,11 @@ reload_keycodes (MetaDisplay *display)
+       i = 0;
+       while (i < display->n_key_bindings)
+         {
+-          if (display->key_bindings[i].keycode == 0)
++          if (display->key_bindings[i].keysym != 0)
++            {
+               display->key_bindings[i].keycode = XKeysymToKeycode (
+                       display->xdisplay, display->key_bindings[i].keysym);
++            }
+           
+           ++i;
+         }
+@@ -504,6 +506,22 @@ void
+ meta_display_process_mapping_event (MetaDisplay *display,
+                                     XEvent      *event)
+ { 
++#ifdef HAVE_XKB
++  if (event->type == display->xkb_base_event_type)
++    {
++      meta_topic (META_DEBUG_KEYBINDINGS,
++                  "XKB mapping changed, will redo keybindings\n");
++
++      reload_keymap (display);
++      reload_modmap (display);
++
++      reload_keycodes (display);
++      reload_modifiers (display);
++
++      regrab_key_bindings (display);
++    }
++  else
++#endif
+   if (event->xmapping.request == MappingModifier)
+     {
+       meta_topic (META_DEBUG_KEYBINDINGS,
+@@ -589,6 +607,14 @@ meta_display_init_keys (MetaDisplay *display)
+   /* Keys are actually grabbed in meta_screen_grab_keys() */
+   
+   meta_prefs_add_listener (bindings_changed_callback, display);
++
++#ifdef HAVE_XKB
++  /* meta_display_init_keys() should have already called XkbQueryExtension() */
++  if (display->xkb_base_event_type != -1)
++    XkbSelectEvents (display->xdisplay, XkbUseCoreKbd,
++                     XkbNewKeyboardNotifyMask | XkbMapNotifyMask,
++                     XkbNewKeyboardNotifyMask | XkbMapNotifyMask);
++#endif
+ }
+ 
+ void
+
+commit ba2e5f7f541446931299814bafa642d09047f386
+Author: Owen W. Taylor <otaylor@fishsoup.net>
+Date:   Sun May 2 11:35:33 2010 -0400
+
+    Unify keymap-reloading code branches
+    
+    Simplify the keymap loading logic by unifying the different
+    branches; in the reorganization this patch fixes a bug where when
+    we got a MappingKeyboard event we wouldn't update virtual modifiers
+    correctly.
+    
+    Based on a patch by Thomas Thurman <tthurman@gnome.org>
+    
+    https://bugzilla.gnome.org/show_bug.cgi?id=565540
+
+diff --git a/src/core/keybindings.c b/src/core/keybindings.c
+index f6c276a..1659c02 100644
+--- a/src/core/keybindings.c
++++ b/src/core/keybindings.c
+@@ -506,19 +506,17 @@ void
+ meta_display_process_mapping_event (MetaDisplay *display,
+                                     XEvent      *event)
+ { 
++  gboolean keymap_changed = FALSE;
++  gboolean modmap_changed = FALSE;
++
+ #ifdef HAVE_XKB
+   if (event->type == display->xkb_base_event_type)
+     {
+       meta_topic (META_DEBUG_KEYBINDINGS,
+                   "XKB mapping changed, will redo keybindings\n");
+ 
+-      reload_keymap (display);
+-      reload_modmap (display);
+-
+-      reload_keycodes (display);
+-      reload_modifiers (display);
+-
+-      regrab_key_bindings (display);
++      keymap_changed = TRUE;
++      modmap_changed = TRUE;
+     }
+   else
+ #endif
+@@ -527,21 +525,32 @@ meta_display_process_mapping_event (MetaDisplay *display,
+       meta_topic (META_DEBUG_KEYBINDINGS,
+                   "Received MappingModifier event, will reload modmap and redo keybindings\n");
+ 
+-      reload_modmap (display);
+-
+-      reload_modifiers (display);
+-      
+-      regrab_key_bindings (display);
++      modmap_changed = TRUE;
+     }
+   else if (event->xmapping.request == MappingKeyboard)
+     {
+       meta_topic (META_DEBUG_KEYBINDINGS,
+                   "Received MappingKeyboard event, will reload keycodes and redo keybindings\n");
+ 
+-      reload_keymap (display);
++      keymap_changed = TRUE;
++    }
++
++  /* Now to do the work itself */
++
++  if (keymap_changed || modmap_changed)
++    {
++      if (keymap_changed)
++        reload_keymap (display);
++
++      /* Deciphering the modmap depends on the loaded keysyms to find out
++       * what modifiers is Super and so forth, so we need to reload it
++       * even when only the keymap changes */
+       reload_modmap (display);
+-      
+-      reload_keycodes (display);
++
++      if (keymap_changed)
++        reload_keycodes (display);
++
++      reload_modifiers (display);
+ 
+       regrab_key_bindings (display);
+     }
+
+commit 859d214a04c29ec839d5552f3e13dff937260083
+Author: Owen W. Taylor <otaylor@fishsoup.net>
+Date:   Mon Nov 22 18:21:47 2010 -0500
+
+    Add an "Above_Tab" pseudo-keysym
+    
+    We want switching between the windows of an application to be an easily
+    accessible operation. The convenient and memorable keybinding is the
+    key above the tab key - but the keysym for that key isn't consistent
+    across different keyboard layouts.
+    
+    Add code that figures out the key from the XKB geometry and a magic
+    keysym name "Above_Tab" that refers to this key and switch
+    the default binding for cycle_group to <Alt>Above_Tab.
+    
+    https://bugzilla.gnome.org/show_bug.cgi?id=635569
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index bd3420f..ef9a3a0 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -17,6 +17,7 @@ metacity_SOURCES= 				\
+ 	compositor/compositor-xrender.c		\
+ 	compositor/compositor-xrender.h		\
+ 	include/compositor.h			\
++	core/above-tab-keycode.c		\
+ 	core/constraints.c			\
+ 	core/constraints.h			\
+ 	core/core.c				\
+diff --git a/src/core/above-tab-keycode.c b/src/core/above-tab-keycode.c
+new file mode 100644
+index 0000000..56966ab
+--- /dev/null
++++ b/src/core/above-tab-keycode.c
+@@ -0,0 +1,241 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++
++/* Find the keycode for the key above the tab key */
++/*
++ * Copyright 2010 Red Hat, Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++ * 02111-1307, USA.
++ */
++
++/* The standard cycle-windows keybinding should be the key above the
++ * tab key. This will have a different keysym on different keyboards -
++ * it's the ` (grave) key on US keyboards but something else on many
++ * other national layouts. So we need to figure out the keycode for
++ * this key without reference to key symbol.
++ *
++ * The "correct" way to do this is to get the XKB geometry from the
++ * X server, find the Tab key, find the key above the Tab key in the
++ * same section and use the keycode for that key. This is what I
++ * implemented here, but unfortunately, fetching the geometry is rather
++ * slow (It could take 20ms or more.)
++ *
++ * If you looking for a way to optimize Mutter startup performance:
++ * On all Linux systems using evdev the key above TAB will have
++ * keycode 49. (KEY_GRAVE=41 + the 8 code point offset between
++ * evdev keysyms and X keysyms.) So a configure option
++ * --with-above-tab-keycode=49 could be added that bypassed this
++ * code. It wouldn't work right for displaying Mutter remotely
++ * to a non-Linux X server, but that is pretty rare.
++ */
++
++#include <config.h>
++
++#include <string.h>
++
++#include "display-private.h"
++
++#include <X11/keysym.h>
++
++#ifdef HAVE_XKB
++#include <X11/XKBlib.h>
++#include <X11/extensions/XKBgeom.h>
++
++static guint
++compute_above_tab_keycode (Display *xdisplay)
++{
++  XkbDescPtr keyboard;
++  XkbGeometryPtr geometry;
++  int i, j, k;
++  int tab_keycode;
++  char *tab_name;
++  XkbSectionPtr tab_section;
++  XkbBoundsRec tab_bounds;
++  XkbKeyPtr best_key = NULL;
++  guint best_keycode = (guint)-1;
++  int best_x_dist = G_MAXINT;
++  int best_y_dist = G_MAXINT;
++
++  /* We need only the Names and the Geometry, but asking for these results
++   * in the Keyboard information retrieval failing for unknown reasons.
++   * (Testing with xorg-1.9.1.) So we ask for a part that we don't need
++   * as well.
++   */
++  keyboard = XkbGetKeyboard (xdisplay,
++                             XkbGBN_ClientSymbolsMask | XkbGBN_KeyNamesMask | XkbGBN_GeometryMask,
++                             XkbUseCoreKbd);
++
++  geometry = keyboard->geom;
++
++  /* There could potentially be multiple keys with the Tab keysym on the keyboard;
++   * but XKeysymToKeycode() returns us the one that the alt-Tab binding will
++   * use which is good enough
++   */
++  tab_keycode = XKeysymToKeycode (xdisplay, XK_Tab);
++  if (tab_keycode == 0 || tab_keycode < keyboard->min_key_code || tab_keycode > keyboard->max_key_code)
++    goto out;
++
++  /* The keyboard geometry is stored by key "name" rather than keycode.
++   * (Key names are 4-character strings like like TAB or AE01.) We use the
++   * 'names' part of the keyboard description to map keycode to key name.
++   *
++   * XKB has a "key aliases" feature where a single keyboard key can have
++   * multiple names (with separate sets of aliases in the 'names' part and
++   * in the 'geometry' part), but I don't really understand it or how it is used,
++   * so I'm ignoring it here.
++   */
++
++  tab_name = keyboard->names->keys[tab_keycode].name; /* Not NULL terminated! */
++
++  /* First, iterate through the keyboard geometry to find the tab key; the keyboard
++   * geometry has a three-level heirarchy of section > row > key
++   */
++  for (i = 0; i < geometry->num_sections; i++)
++    {
++      XkbSectionPtr section = &geometry->sections[i];
++      for (j = 0; j < section->num_rows; j++)
++        {
++          int x = 0;
++          int y = 0;
++
++          XkbRowPtr row = &section->rows[j];
++          for (k = 0; k < row->num_keys; k++)
++            {
++              XkbKeyPtr key = &row->keys[k];
++              XkbShapePtr shape = XkbKeyShape (geometry, key);
++
++              if (row->vertical)
++                y += key->gap;
++              else
++                x += key->gap;
++
++              if (strncmp (key->name.name, tab_name, XkbKeyNameLength) == 0)
++                {
++                  tab_section = section;
++                  tab_bounds = shape->bounds;
++                  tab_bounds.x1 += row->left + x;
++                  tab_bounds.x2 += row->left + x;
++                  tab_bounds.y1 += row->top + y;
++                  tab_bounds.y2 += row->top + y;
++
++                  goto found_tab;
++                }
++
++              if (row->vertical)
++                y += (shape->bounds.y2 - shape->bounds.y1);
++              else
++                x += (shape->bounds.x2 - shape->bounds.x1);
++            }
++        }
++    }
++
++  /* No tab key found */
++  goto out;
++
++ found_tab:
++
++  /* Now find the key that:
++   *  - Is in the same section as the Tab key
++   *  - Has a horizontal center in the Tab key's horizonal bounds
++   *  - Is above the Tab key at a distance closer than any other key
++   *  - In case of ties, has its horizontal center as close as possible
++   *    to the Tab key's horizontal center
++   */
++  for (j = 0; j < tab_section->num_rows; j++)
++    {
++      int x = 0;
++      int y = 0;
++
++      XkbRowPtr row = &tab_section->rows[j];
++      for (k = 0; k < row->num_keys; k++)
++        {
++          XkbKeyPtr key = &row->keys[k];
++          XkbShapePtr shape = XkbKeyShape(geometry, key);
++          XkbBoundsRec bounds = shape->bounds;
++          int x_center;
++          int x_dist, y_dist;
++
++          if (row->vertical)
++            y += key->gap;
++          else
++            x += key->gap;
++
++          bounds.x1 += row->left + x;
++          bounds.x2 += row->left + x;
++          bounds.y1 += row->top + y;
++          bounds.y2 += row->top + y;
++
++          y_dist = tab_bounds.y1 - bounds.y2;
++          if (y_dist < 0)
++            continue;
++
++          x_center = (bounds.x1 + bounds.x2) / 2;
++          if (x_center < tab_bounds.x1 || x_center > tab_bounds.x2)
++            continue;
++
++          x_dist = ABS (x_center - (tab_bounds.x1 + tab_bounds.x2) / 2);
++
++          if (y_dist < best_y_dist ||
++              (y_dist == best_y_dist && x_dist < best_x_dist))
++            {
++              best_key = key;
++              best_x_dist = x_dist;
++              best_y_dist = y_dist;
++             }
++
++          if (row->vertical)
++            y += (shape->bounds.y2 - shape->bounds.y1);
++          else
++            x += (shape->bounds.x2 - shape->bounds.x1);
++        }
++    }
++
++  if (best_key == NULL)
++    goto out;
++
++  /* Now we need to resolve the name of the best key back to a keycode */
++  for (i = keyboard->min_key_code; i < keyboard->max_key_code; i++)
++    {
++      if (strncmp (best_key->name.name, keyboard->names->keys[i].name, XkbKeyNameLength) == 0)
++        {
++          best_keycode = i;
++          break;
++        }
++    }
++
++ out:
++  XkbFreeKeyboard (keyboard, 0, True);
++
++  return best_keycode;
++}
++#else /* !HAVE_XKB */
++static guint
++compute_above_tab_keycode (Display *xdisplay)
++{
++  return XKeysymToKeycode (xdisplay, XK_grave);
++}
++#endif /* HAVE_XKB */
++
++guint
++meta_display_get_above_tab_keycode (MetaDisplay *display)
++{
++  if (display->above_tab_keycode == 0) /* not yet computed */
++    display->above_tab_keycode = compute_above_tab_keycode (display->xdisplay);
++
++  if (display->above_tab_keycode == (guint)-1) /* failed to compute */
++    return 0;
++  else
++    return display->above_tab_keycode;
++}
+diff --git a/src/core/display-private.h b/src/core/display-private.h
+index 19287f3..cc304c3 100644
+--- a/src/core/display-private.h
++++ b/src/core/display-private.h
+@@ -207,6 +207,7 @@ struct _MetaDisplay
+   KeySym *keymap;
+   int keysyms_per_keycode;
+   XModifierKeymap *modmap;
++  unsigned int above_tab_keycode;
+   unsigned int ignored_modifier_mask;
+   unsigned int num_lock_mask;
+   unsigned int scroll_lock_mask;
+@@ -497,4 +498,7 @@ void meta_display_queue_autoraise_callback  (MetaDisplay *display,
+                                              MetaWindow  *window);
+ void meta_display_remove_autoraise_callback (MetaDisplay *display);
+ 
++/* In above-tab-keycode.c */
++guint meta_display_get_above_tab_keycode (MetaDisplay *display);
++
+ #endif
+diff --git a/src/core/keybindings.c b/src/core/keybindings.c
+index 1659c02..8ea6b41 100644
+--- a/src/core/keybindings.c
++++ b/src/core/keybindings.c
+@@ -138,6 +138,10 @@ reload_keymap (MetaDisplay *display)
+   if (display->keymap)
+     meta_XFree (display->keymap);
+ 
++  /* This is expensive to compute, so we'll lazily load if and when we first
++   * need it */
++  display->above_tab_keycode = 0;
++
+   display->keymap = XGetKeyboardMapping (display->xdisplay,
+                                          display->min_keycode,
+                                          display->max_keycode -
+@@ -249,6 +253,16 @@ reload_modmap (MetaDisplay *display)
+               display->meta_mask);
+ }
+ 
++static guint
++keysym_to_keycode (MetaDisplay *display,
++                   guint        keysym)
++{
++  if (keysym == META_KEY_ABOVE_TAB)
++    return meta_display_get_above_tab_keycode (display);
++  else
++    return XKeysymToKeycode (display->xdisplay, keysym);
++}
++
+ static void
+ reload_keycodes (MetaDisplay *display)
+ {
+@@ -264,8 +278,8 @@ reload_keycodes (MetaDisplay *display)
+         {
+           if (display->key_bindings[i].keysym != 0)
+             {
+-              display->key_bindings[i].keycode = XKeysymToKeycode (
+-                      display->xdisplay, display->key_bindings[i].keysym);
++              display->key_bindings[i].keycode =
++                keysym_to_keycode (display, display->key_bindings[i].keysym);
+             }
+           
+           ++i;
+diff --git a/src/include/all-keybindings.h b/src/include/all-keybindings.h
+index 378a7ac..0759ec3 100644
+--- a/src/include/all-keybindings.h
++++ b/src/include/all-keybindings.h
+@@ -167,7 +167,7 @@ keybind (switch_panels_backward,   handle_switch,        META_TAB_LIST_DOCKS,
+           "using a popup window"))
+ 
+ keybind (cycle_group,               handle_cycle,         META_TAB_LIST_GROUP,
+-        BINDING_REVERSES,        "<Alt>F6",
++        BINDING_REVERSES,        "<Alt>Above_Tab",
+         _("Move between windows of an application immediately"))
+ keybind (cycle_group_backward,     handle_cycle,         META_TAB_LIST_GROUP,
+         REVERSES_AND_REVERSED,   NULL,
+diff --git a/src/include/ui.h b/src/include/ui.h
+index 6d98de8..386581e 100644
+--- a/src/include/ui.h
++++ b/src/include/ui.h
+@@ -185,6 +185,12 @@ void     meta_ui_set_current_theme (const char *name,
+                                     gboolean    force_reload);
+ gboolean meta_ui_have_a_theme      (void);
+ 
++/* Not a real key symbol but means "key above the tab key"; this is
++ * used as the default keybinding for cycle_group.
++ * 0x2xxxxxxx is a range not used by GDK or X. the remaining digits are
++ * randomly chosen */
++#define META_KEY_ABOVE_TAB 0x2f7259c9
++
+ gboolean meta_ui_parse_accelerator (const char          *accel,
+                                     unsigned int        *keysym,
+                                     unsigned int        *keycode,
+diff --git a/src/ui/ui.c b/src/ui/ui.c
+index 960e702..5ef4f52 100644
+--- a/src/ui/ui.c
++++ b/src/ui/ui.c
+@@ -896,14 +896,50 @@ meta_ui_accelerator_parse (const char      *accel,
+                            guint           *keycode,
+                            GdkModifierType *keymask)
+ {
++  const char *above_tab;
++
+   if (accel[0] == '0' && accel[1] == 'x')
+     {
+       *keysym = 0;
+       *keycode = (guint) strtoul (accel, NULL, 16);
+       *keymask = 0;
++
++      return;
+     }
+-  else
+-    gtk_accelerator_parse (accel, keysym, keymask);
++
++  /* The key name 'Above_Tab' is special - it's not an actual keysym name,
++   * but rather refers to the key above the tab key. In order to use
++   * the GDK parsing for modifiers in combination with it, we substitute
++   * it with 'Tab' temporarily before calling gtk_accelerator_parse().
++   */
++#define is_word_character(c) (g_ascii_isalnum(c) || ((c) == '_'))
++#define ABOVE_TAB "Above_Tab"
++#define ABOVE_TAB_LEN 9
++
++  above_tab = strstr (accel, ABOVE_TAB);
++  if (above_tab &&
++      (above_tab == accel || !is_word_character (above_tab[-1])) &&
++      !is_word_character (above_tab[ABOVE_TAB_LEN]))
++    {
++      char *before = g_strndup (accel, above_tab - accel);
++      char *after = g_strdup (above_tab + ABOVE_TAB_LEN);
++      char *replaced = g_strconcat (before, "Tab", after, NULL);
++
++      gtk_accelerator_parse (replaced, NULL, keymask);
++
++      g_free (before);
++      g_free (after);
++      g_free (replaced);
++
++      *keysym = META_KEY_ABOVE_TAB;
++      return;
++    }
++
++#undef is_word_character
++#undef ABOVE_TAB
++#undef ABOVE_TAB_LEN
++
++  gtk_accelerator_parse (accel, keysym, keymask);
+ }
+ 
+ gboolean

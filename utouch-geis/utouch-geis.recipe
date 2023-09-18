@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UtouchGeis(AutoPackageRecipe):
+    name = 'utouch-geis'
+    version = '2.0.1'
+ 
+    buildRequires = [ 'dbus:devel', 'libX11:devel', 'libXi:devel', 'libxcb:devel',
+                      'pkgconfig:devel', 'utouch-grail:devel', 'xcb-proto:devellib',
+                      'xcb-proto:python',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/2.x/%(version)s/+download/')
+
+    def configure(r):
+        r.Configure(' --disable-static ')

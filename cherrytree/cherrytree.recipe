@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cherrytree(PackageRecipe):
+    name = 'cherrytree'
+    version = '0.20.1'
+ 
+    buildRequires = ['pycairo:python', 'pygobject:python', 'pygtk:python', 'pygtksourceview:python', 'python:devel', 'desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://www.giuspen.com/software/%(name)s-%(version)s.tar.gz')
+        r.Install('cherrytree','%(bindir)s/')
+        r.Install('linux/cherrytree.svg','%(datadir)s/icons/hicolor/scalable/apps/')
+        r.Install('linux/cherrytree.desktop','%(datadir)s/applications/')
+        r.Install('modules/*','%(datadir)s/%(name)s/modules/')
+        r.Install('glade/svg/*','%(datadir)s/%(name)s/glade/svg/')
+        r.Install('glade/*.*','%(datadir)s/%(name)s/glade/')
+        r.Install('locale/ru/LC_MESSAGES/cherrytree.mo','%(datadir)s/locale/ru/LC_MESSAGES/')
+        r.Install('locale/de/LC_MESSAGES/cherrytree.mo','%(datadir)s/locale/de/LC_MESSAGES/')
+        r.Install('locale/it/LC_MESSAGES/cherrytree.mo','%(datadir)s/locale/it/LC_MESSAGES/')
+        r.Install('locale/es/LC_MESSAGES/cherrytree.mo','%(datadir)s/locale/es/LC_MESSAGES/')
+        r.Install('locale/pl/LC_MESSAGES/cherrytree.mo','%(datadir)s/locale/pl/LC_MESSAGES/')
+        r.Install('locale/uk/LC_MESSAGES/cherrytree.mo','%(datadir)s/locale/uk/LC_MESSAGES/')
+        r.Install('locale/fr/LC_MESSAGES/cherrytree.mo','%(datadir)s/locale/fr/LC_MESSAGES/')
+        r.Install('linux/cherrytree.xml','%(datadir)s/mime/packages/')
+        r.Install('linux/cherrytree.mime','%(datadir)s/mime-info/')
+        r.Install('linux/cherrytree.keys','%(datadir)s/mime-info/')
+        r.Install('linux/cherrytree.applications','%(datadir)s/application-registry/')
+

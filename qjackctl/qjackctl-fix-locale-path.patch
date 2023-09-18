@@ -1,0 +1,36 @@
+diff -rupN qjackctl-0.3.7.old/Makefile.in qjackctl-0.3.7/Makefile.in
+--- qjackctl-0.3.7.old/Makefile.in	2010-08-23 12:27:45.000000000 -0400
++++ qjackctl-0.3.7/Makefile.in	2010-12-10 05:36:02.000000000 -0500
+@@ -101,16 +101,16 @@ $(name).mak:	$(name).pro
+ 
+ install:	$(target) $(translations_targets) $(name).1
+ 	@make INSTALL_ROOT=$(DESTDIR) -f $(name).mak install
+-	@install -d -v -m 0755 $(DESTDIR)$(prefix)/share/locale
++	@install -d -v -m 0755 $(DESTDIR)$(prefix)/share/$(name)/locale
+ 	@install -d -v -m 0755 $(DESTDIR)$(prefix)/share/man/man1
+-	@install -v -m 0644 $(translations_targets) $(DESTDIR)$(prefix)/share/locale
++	@install -v -m 0644 $(translations_targets) $(DESTDIR)$(prefix)/share/$(name)/locale
+ 	@install -v -m 0644 $(name).1 $(DESTDIR)$(prefix)/share/man/man1/$(name).1
+ 
+ uninstall:	$(DESTDIR)$(prefix)/bin/$(name)
+ 	@make INSTALL_ROOT=$(DESTDIR) -f $(name).mak uninstall
+-	@rm -vf $(DESTDIR)$(prefix)/share/locale/$(translations_targets)
++	@rm -vf $(DESTDIR)$(prefix)/share/$(name)/locale/$(translations_targets)
+ 	@for x in $(translations_targets); do \
+-		rm -vf $(DESTDIR)$(prefix)/share/locale/`basename $$x`; done
++		rm -vf $(DESTDIR)$(prefix)/share/$(name)/locale/`basename $$x`; done
+ 	@rm -vf $(DESTDIR)$(prefix)/share/man/man1/$(name).1
+ 
+ 
+diff -rupN qjackctl-0.3.7.old/src/qjackctl.cpp qjackctl-0.3.7/src/qjackctl.cpp
+--- qjackctl-0.3.7.old/src/qjackctl.cpp	2010-05-18 05:31:34.000000000 -0400
++++ qjackctl-0.3.7/src/qjackctl.cpp	2010-12-10 05:36:36.000000000 -0500
+@@ -91,7 +91,7 @@ public:
+ 			if (m_pMyTranslator->load(sLocName, sLocPath)) {
+ 				QApplication::installTranslator(m_pMyTranslator);
+ 			} else {
+-				sLocPath = CONFIG_PREFIX "/share/locale";
++				sLocPath = CONFIG_PREFIX "/share/qjackctl/locale";
+ 				if (m_pMyTranslator->load(sLocName, sLocPath)) {
+ 					QApplication::installTranslator(m_pMyTranslator);
+ 				} else {

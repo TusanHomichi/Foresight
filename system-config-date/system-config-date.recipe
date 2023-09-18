@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class SystemConfigDate(RPMPackageRecipe, BuildPackageRecipe):
+    name = 'system-config-date'
+    version = '1.9.16'
+    rpmRelease = '1.fc8'
+    distroVersion = '8'
+
+    buildRequires = [ 'desktop-file-utils:runtime', 'intltool:runtime',
+        'gnome-python:python', 'gtk:runtime', 'newt:python', 'pygtk:python',
+        'rhpl:python', 'gettext:runtime', 'firstboot:data', ]
+
+    def setup(r):
+        r.unpack()
+
+        r.Make()
+        r.MakeInstall()
+
+        # fix up packaging error
+        r.Remove('%(bindir)s/timetool')
+        r.Symlink('system-config-date', '%(bindir)s/timetool')
+
+        # we depend on ntp, which provides this file
+        r.Remove('%(sysconfdir)s/ntp/ntpservers')
+
+        # r.DesktopFile adds a prefix on install, so remove the duplicated .desktop file
+        r.Desktopfile('system-config-date.desktop')
+        r.Remove('%(datadir)s/applications/system-config-date.desktop')
+
+        for trove in ('ntp:runtime', 'rhpl:python', 'chkconfig:runtime',
+                      'pygtk:python', 'newt:python', 'htmlview:runtime',
+                      'firstboot:data'):
+            r.Requires(trove, '%(bindir)s/system-config-date')

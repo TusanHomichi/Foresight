@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lcms2(AutoPackageRecipe):
+    name = 'lcms2'
+    version = '2.4'
+ 
+    buildRequires = ['libjpeg:devel', 'libtiff:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/sourceforge/lcms/')
+
+    def configure(r):
+        r.Configure('--disable-static --program-suffix=2')
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+    def policy(r):
+        r.Install('include/lcms2.h','%(includedir)s/', mode = 0644) 
+        r.Install('include/lcms2_plugin.h', '%(includedir)s/', mode = 0644)
+        # XXX add docs ?

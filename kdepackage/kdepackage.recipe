@@ -1,0 +1,82 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+loadSuperClass('cmakepackage')
+class kdePackageRecipe(CMakePackageRecipe):
+
+    name = 'kdepackage'
+    version = datetime.date.today().strftime("%Y%m%d")
+
+    buildRequires = [
+        'automoc:runtime', 'docbook-dtds:data', 'docbook-xsl:data',
+        'gettext:runtime', 'kdelibs:devel', 'kdepimlibs:devel',
+        'libstdc++:devel', 'libxml2:runtime', 'phonon:devel', 'pkgconfig:devel',
+        'qt4:devel', 'shared-mime-info:runtime', 'soprano:devel'
+    ]
+
+    abstractBaseClass = True
+
+    enableFinal = False
+
+    def setup(r):
+
+        if r.macros.lib == 'lib64':
+            r.cmakeArgs += ' -DLIB_SUFFIX=64 '
+
+        if r.enableFinal:
+            r.cmakeArgs += ' -DKDE4_ENABLE_FINAL=true '
+
+        # Build without RPATH
+        r.cmakeArgs += ' -DCMAKE_SKIP_RPATH=TRUE '
+
+        r.cmakeArgs += (
+            ' -DKDE4_BUILD_TESTS=false '
+            ' -DCMAKE_BUILD_TYPE=release '
+            ' -DKDE_DEFAULT_HOME=.kde4 '
+            ' -DKDE_DISTRIBUTION_TEXT="Foresight packages" '
+            ' -DCONFIG_INSTALL_DIR=%(sysconfdir)s/kde4 '
+            ' -DSYSCONF_INSTALL_DIR=%(sysconfdir)s '
+            ' -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" '
+            ' -DCMAKE_MODULE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" '
+            ' -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" '
+        )
+
+        r.macros.cflags += ' -DNDEBUG -DQT_NO_DEBUG '
+        r.macros.cxxflags += ' -DNDEBUG -DQT_NO_DEBUG '
+
+        r.unpack()
+        r.postUnpack()
+        r.build()
+        r.postInstall()
+        r.policy()
+        r.postPolicy()
+
+    def addPatches(r, *patches):
+        for patch in patches:
+            r.addPatch(patch)
+
+    def unpack(r):
+        pass
+
+    def postUnpack(r):
+        pass
+
+    def build(r):
+        r.cmake()
+        r.make()
+        r.makeinstall()
+
+    def postInstall(r):
+        pass
+
+    def postPolicy(r):
+        r.ComponentSpec('data', '%(docdir)s/HTML/')
+        r.ComponentSpec('devel', '%(datadir)s/apps/cmake/')
+        r.TagSpec('desktop-file', '%(datadir)s/applications/')
+        r.TagSpec('gtk-update-icon-cache', '%(datadir)s/icons/')
+        r.TagSpec('sound-themes', '%(datadir)s/sounds/')
+        r.DanglingSymlinks(exceptions='%(docdir)s/HTML/.*/common')
+

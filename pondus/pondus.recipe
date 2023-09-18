@@ -1,0 +1,21 @@
+#
+# Foresight Linux Template for Python packages Version 0.2 - March 31 2007
+# Feel free to delete those both lines!
+#
+# Copyright (c) 2007 Foresight Linux, [your name]
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class Pondus(PackageRecipe):
+
+    name = 'pondus'
+    version = '0.5.3'
+
+    buildRequires = ['python-setuptools:python', 'pygobject:python', 'pygtk:python', 'python:devel', 'desktop-file-utils:runtime', 'matplotlib:python', 'numpy:python']
+
+    def setup(r):
+        r.addArchive('http://www.ephys.de/software/pondus/pondus-0.5.3.tar.gz')
+	r.PythonSetup(data='--install-data=%(prefix)s')
+

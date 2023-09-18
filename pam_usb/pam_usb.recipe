@@ -1,0 +1,13 @@
+class pam_usb(AutoPackageRecipe):
+ 
+    name = 'pam_usb'
+    version = '0.4.2'
+ 
+    buildRequires = [ 'cElementTree:python', 'dbus-python:python', 'dbus:devel', 'hal:devel', 'libxml2:devel', 'pygobject:python', 'python:devel', 'zlib:devel', 'pmount', 'pkgconfig', 'pam:devel', 'python:bin']
+ 
+    def setup(r):
+        r.macros.upstreamVersion = r.macros.version.replace('_','-')
+        r.addArchive('mirror://sourceforge/pamusb/''%(name)s-%(upstreamVersion)s.tar.gz')
+	r.Make()
+	r.MakeInstall()
+	

@@ -1,0 +1,90 @@
+#
+# Copyright (c) 2009-2013 Thr Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Autofs(CPackageRecipe):
+    name = 'autofs'
+    version = '5.0.7'
+
+    buildRequires = [ 'autoconf:runtime', 'procps:runtime', 'hesiod:devel',
+                      'e2fsprogs:runtime', 'util-linux:runtime', 'flex:runtime',
+                      'libxml2:devel', 'bison:runtime', 'module-init-tools:runtime',
+                      'cyrus-sasl:devel', 'openssl:devel', 'zlib:devel', 'openldap:devel',
+                      'krb5:devel', 'chkconfig:runtime', 'nfs-client:runtime',]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.macros.majver = r.version.split('.')[0]
+        r.addArchive('https://www.kernel.org/pub/linux/daemons/%(name)s/v%(majver)s/',
+            keyid='517D0F0E')
+
+        # UPSTREAM PATCHES
+        # it is unfortunate that upstream has decided to name their patches so
+        # verbosely, as this lends to an inability to download them quickly,
+        # like in vim. however, here's a scriptlet to populate the patch list
+        # in uppatch (assuming you actually want to apply all the patches. if
+        # not, please include a comment as to which you've omitted for future
+        # editors). obviously, replace VERSION= with the correct value.
+        # VERSION="5.0.5" ; wget -O - 'http://ftp.kernel.org/pub/linux/daemons/autofs/v5/patch_order-'$VERSION 2> /dev/null | sed -e 's/.*"//' -e 's/>//g' -e 's/<.*//' -e "s/^/'/" -e "s/$/',/"
+
+        for patch in [ 'autofs-5.0.7-fix-nobind-sun-escaped-map-entries.patch',
+                         'autofs-5.0.7-fix-use-cache-entry-after-free-mistake.patch',
+                         'autofs-5.0.7-fix-ipv6-proximity-calculation.patch',
+                         'autofs-5.0.7-fix-parse-buffer-initialization.patch',
+                         'autofs-5.0.7-fix-typo-in-automount-8.patch',
+                         'autofs-5.0.7-include-usage-in-usage-message.patch',
+                         'autofs-5.0.7-dont-wait-forever-to-restart.patch',
+                         'autofs-5.0.7-add-timeout-option-description-to-man-page.patch',
+                         'autofs-5.0.7-fix-null-map-entry-order-handling.patch',
+                         'autofs-5.0.7-make-description-of-default-MOUNT_WAIT-setting-clear.patch',
+                         'autofs-5.0.7-configure-in-allow-cross-compilation.patch',
+                         'autofs-5.0.7-README-update-mailing-list-subscription-info.patch',
+                         'autofs-5.0.7-allow-non-root-user-to-check-status.patch',
+                         'autofs-5.0.7-configure-allow-cross-compilation-update.patch',
+                         'autofs-5.0.6-fix-recursive-mount-deadlock.patch',
+                         'autofs-5.0.6-increase-file-map-read-buffer-size.patch',
+                         'autofs-5.0.7-handle-new-location-of-systemd.patch',
+                         'autofs-5.0.7-fix-map-entry-duplicate-offset-detection.patch',
+                         'autofs-5.0.7-allow-nsswitch_conf-to-not-contain-automount-lines.patch',
+                         'autofs-5.0.7-fix-nobind-man-page-description.patch',
+                         'autofs-5.0.7-fix-submount-offset-delete.patch',
+                         'autofs-5.0.7-fix-init-script-status-return.patch',
+                         'autofs-5.0.7-fix-use-get_proximity-without-libtirpc.patch',
+                         'autofs-5.0.7-dont-use-dirent-d_type-to-filter-out-files-in-scandir.patch',
+                         'autofs-5.0.7-dont-schedule-new-alarms-after-readmap.patch',
+                         'autofs-5.0.7-use-numeric-protocol-ids-instead-of-protoent-structs.patch',
+                         'autofs-5.0.7-lib-defaults-use-WITH_LDAP-conditional-around-LDAP-types.patch',
+                         'autofs-5.0.7-make-yellow-pages-support-optional.patch',
+                         'autofs-5.0.7-modules-replicated-use-sin6.addr-s6_addr32.patch',
+                         'autofs-5.0.7-workaround-missing-GNU-versionsort-extension.patch',
+                         'autofs-5.0.7-dont-fail-on-master-map-self-include.patch',
+                         'autofs-5.0.7-fix-wildcard-multi-map-regression.patch',
+                         'autofs-5.0.7-fix-file-descriptor-leak-when-reloading-the-daemon.patch',
+                         'autofs-5.0.7-depricate-nosymlink-pseudo-option.patch',
+                         'autofs-5.0.7-add-symlink-pseudo-option.patch',
+                         'autofs-5.0.7-update-kernel-include-files.patch',
+                         'autofs-5.0.7-fix-requires-in-spec-file.patch',
+                         'autofs-5.0.7-fix-libtirpc-build-option.patch',
+                         'autofs-5.0.7-fix-systemd-unidir-in-spec-file.patch',
+                         'autofs-5.0.7-document-browse-option-in-man-page.patch',
+                         'autofs-5.0.7-fix-automounter-support-on-parisc.patch',
+                         'autofs-5.0.7-fix-some-automount_8-typos.patch',
+                         ]:
+            r.addPatch(patch)
+
+        r.Configure('--disable-mount-locking --enable-ignore-busy --with-libtirp')
+
+        r.Make('initdir=%(initdir)s DONTSTRIP=1')
+
+        r.MakeInstall('STRIP=: initdir=%(initdir)s', rootVar='INSTALLROOT')
+        r.Make(dir = 'redhat')
+
+        r.Install('redhat/autofs.init', '%(initdir)s/autofs', mode=0755)
+        r.Install('redhat/autofs.sysconfig', '%(sysconfdir)s/sysconfig/autofas', mode=0644)
+        
+        r.MakeDirs('%(sysconfdir)s/auto.master.d')
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/auto.master.d')
+
+        r.ComponentSpec('lib', '%(libdir)s/autofs/.*')
+

@@ -1,0 +1,8 @@
+%(localstatedir)s/log/mysqld.log {
+    missingok
+    notifempty
+    create 0640 mysql mysql
+    postrotate
+	[ -e %(localstatedir)s/lock/subsys/mysqld ] && /bin/kill -HUP `cat %(localstatedir)s/run/mysqld/mysqld.pid  2> /dev/null ` || /bin/true
+    endscript
+}

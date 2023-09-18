@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gpar2(AutoPackageRecipe):
+    name = 'gpar2'
+    version = '0.3'
+
+    packageSummary = 'GPar2 aims at integrating every functionnality of par2cmdline'
+    packageDescription = 'A simple, easy to use graphical interface for verification and repair of PAR v1.0 and PAR v2.0(PAR2) recovery sets.'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'cairomm:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'glibmm:devel', 'gtk:devel', 'gtkmm:devel', 'intltool:runtime', 'libpar2:devel', 'libsigc++:devel', 'libstdc++:devel', 'pango:devel', 'pangomm:devel', 'pkgconfig:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/parchive/files/gpar2/%(version)s/')
+	r.addSource('gpar2.desktop')
+	r.addPatch('gpar2-0.3-buildfix.patch')
+
+	r.Configure()
+	r.Make()
+	r.MakeInstall()
+
+	r.Desktopfile('gpar2.desktop')

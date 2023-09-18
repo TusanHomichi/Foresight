@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+class GnuplotPy(PackageRecipe):
+    name = 'gnuplot-py'
+    version = '1.8'
+    buildRequires = ['python-setuptools:python', 'python:devel', 'numpy:python']
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/gnuplot-py/Gnuplot-py/1.8/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()

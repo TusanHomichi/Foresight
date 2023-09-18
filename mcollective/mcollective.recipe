@@ -1,0 +1,39 @@
+
+class MCollective(AutoPackageRecipe):
+    name = 'mcollective'
+    version = '2.0.0'
+    buildRequires = [ 'chkconfig:runtime', 'ruby:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://puppetlabs.com/downloads/%(name)s/')
+
+        r.Remove('lib/mcollective/vendor/json', recursive = True)
+        r.Remove('lib/mcollective/vendor/systemu', recursive = True)
+        r.Remove('lib/mcollective/vendor/load_*.rb', recursive = True)
+        r.Run(""" sed -i -e 's/^daemonize = .*$/daemonize = 1/' etc/server.cfg.dist""")
+
+        r.Install('lib/*', '%(libdir)s/ruby/1.8/', mode = 0755)
+
+        r.Install('bin/mcollectived', '%(sbindir)s/mcollectived', mode = 0755)
+        r.Install('bin/mco', '%(sbindir)s/mco', mode = 0755)
+
+        r.Install('ext/redhat/mcollective.init', '%(initdir)s/mcollective', mode = 0755)
+
+        r.Install('plugins/*', '%(libexecdir)s/mcollective/', mode = 0755)
+
+        r.Install('etc/server.cfg.dist', '%(sysconfdir)s/%(name)s/server.cfg', mode = 0640)
+        r.Install('etc/client.cfg.dist', '%(sysconfdir)s/%(name)s/client.cfg', mode = 0640)
+        r.Install('etc/facts.yaml.dist', '%(sysconfdir)s/%(name)s/facts.yaml', mode = 0644)
+        r.Install('etc/rpc-help.erb', '%(sysconfdir)s/%(name)s/rpc-help.erb', mode = 0644)
+
+        # FIXME ...
+        r.NormalizeInterpreterPaths(exceptions = '%(libdir)s/ruby/1.8/%(name)s/vendor/json/json-java.gemspec')
+
+        r.Requires('rubygem-json:lib', '%(sbindir)s/.*')
+        r.Requires('rubygem-stomp:lib', '%(sbindir)s/.*')
+        r.Requires('rubygem-systemu:lib', '%(sbindir)s/.*')
+
+        #
+        r.PackageSpec('%(name)s-client', '(sysconfdir)s/%(name)s/client.cfg',
+                      '(sysconfdir)s/%(name)s/rpc-help.erb',
+                      '%(sbindir)s/mco')

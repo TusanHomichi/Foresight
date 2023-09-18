@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Silly(AutoPackageRecipe):
+    name = 'SILLY'
+    version = '0.1.0'
+ 
+    buildRequires = ['libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 
+        'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/crayzedsgui/%(name)s-%(version)s.tar.gz')

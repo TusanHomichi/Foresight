@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class RackCache(RubygemPackageRecipe):
+
+    name = 'rubygem-rack-cache'
+    version = '1.1'
+

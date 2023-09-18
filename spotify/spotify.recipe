@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class Spotify(BinaryPackageRecipe):
+    name = 'spotify'
+    version = '0.9.1.55.gbdd3b79.203_1'
+ 
+    buildRequires = [ 'binutils:runtime', 'desktop-file-utils:runtime', 
+                      'nss:devel', 'nspr:devel' ]
+ 
+    def unpack(r):
+        # very hugly hack loosely based in http://leamas.fedorapeople.org/spotify/0.8.8/
+        # a canonical example on how _not_ to do things, ever. 
+        # FIXME FIXME FIXME
+
+        r.macros.site = 'http://repository.spotify.com/pool/non-free/s/spotify/'
+        r.macros.hacks_site = 'http://leamas.fedorapeople.org/spotify/0.8.8/'
+
+        r.macros.version = r.version.replace('_', '-')
+
+        dist = [
+            ('spotify-client_%(version)s_i386.deb', Arch.x86),
+            ('spotify-client_%(version)s_amd64.deb', Arch.x86_64),
+        ]
+
+        arches =  [ ('.i386', Arch.x86),
+                    ('.x86_64', Arch.x86_64),]
+
+        for (deb, arch) in dist:
+            r.addArchive('%(site)s/'+deb, dir='.', use=(arch==True))
+
+
+        for f in [ 'libssl.so.0.9.8', 'libcrypto.so.0.9.8']:
+            for suffix, arch in arches:
+                r.addSource('%%(hacks_site)s/%s%s' % (f,suffix), 
+                            dest = '%%(libdir)s/spotify-client/%s' % f, use=(arch==True))
+
+        r.addSource('%(hacks_site)s/spotify.desktop')
+        r.addSource('%(hacks_site)s/spotify.1')
+
+        r.addSource('spotify.sh', macros = True)
+ 
+        r.Install('../opt/spotify/spotify-client/*', '%(datadir)s/spotify-client/')
+        r.Install('spotify.1', '%(mandir)s/man1/')
+
+        r.Move('%(datadir)s/spotify-client/libcef.so', '%(libdir)s/spotify-client/')
+
+        # keep cheating
+        r.Symlink('../libnspr4.so', '%(libdir)s/spotify-client/libnspr4.so.0d')
+        r.Symlink('../libplc4.so', '%(libdir)s/spotify-client/libplc4.so.0d')
+        r.Symlink('../libsmime3.so', '%(libdir)s/spotify-client/libsmime3.so.1d')
+        r.Symlink('../libnssutil3.so', '%(libdir)s/spotify-client/libnssutil3.so.1d')
+        r.Symlink('../libnss3.so', '%(libdir)s/spotify-client/libnss3.so.1d')
+
+        for it in [ 'devtools_resources.pak',
+                    'chrome.pak',
+                    'locales',
+                    'Data',]:
+            r.Symlink('%%(datadir)s/spotify-client/%s' %it,
+                      '%(libdir)s/spotify-client')
+
+        for size in [ '24', '32', '48', '64', '128', '256',]:
+            r.Move('%%(datadir)s/spotify-client/Icons/spotify-linux-%s.png' % size,
+                   '%%(datadir)s/icons/hicolor/%sx%s/apps/spotify-client.png' % (size,size))
+
+        r.Remove('%(datadir)s/spotify-client/spotify.desktop')
+        
+        r.Replace('^Categories=.*',
+                  'Categories=Audio;Music;Player;AudioVideo;',
+                  'spotify.desktop')
+        r.Install('spotify.desktop', '%(datadir)s/applications/spotify.desktop')
+
+        r.Install('spotify.sh', '%(bindir)s/spotify', mode = 0755)
+        # needed for KDE, need to be in /usr/share/kde4/services
+        # Needs to be fixed though, to only get installed when using kde.
+        # r.addSource('spotify.protocol')
+        r.ImproperlyShared(exceptions='%(datadir)s/spotify-client/.*')
+
+        # to avoid massive polution due to he blobs we inject :/ ...
+        r.Provides(exceptions = '.*')
+
+        for exception in [ 'libcrypto', 'libssl', 'libnspr4', 
+                           'libnss3', 'libnssutil3', 'libplc4', 
+                           'libsmime3', 'libcef.so', ]: 
+            r.Requires(exceptDeps=r'soname\:\ ELF.*\/%s.*' % exception)
+
+        r.Doc('../usr/share/doc/spotify-client/copyright')
+        r.Doc('../opt/spotify/spotify-client/licenses.xhtml')
+        r.Doc('../opt/spotify/spotify-client/changelog')

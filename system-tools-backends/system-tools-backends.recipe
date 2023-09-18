@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class SystemToolsBackends(GnomePackageRecipe):
+    name = 'system-tools-backends'
+    version = '2.10.1'
+
+    buildRequires = [ 'intltool:runtime', 'gettext:runtime',
+                      'perl-Net-DBus:perl', 'chkconfig:runtime','glib:devel',
+                      'perl-XML-Twig:perl', 'polkit:devel', 'perl:devel' ]
+
+
+    if Arch.x86:
+        extraConfig = '--with-net-dbus=%(libdir)s/perl5/vendor_perl/5.8.8/i686-linux-thread-multi/Net'
+    else:
+        extraConfig = '--with-net-dbus=%(libdir)s/perl5/vendor_perl/5.8.8/x86_64-linux-thread-multi/Net'
+
+    extraConfig += ' --with-stb-group=wheel'
+    patches = [ 'foresight.patch', 'foresight-passwd.patch' ]
+
+    def policy(r):
+        # we don't need the initscript anymore.
+        # we go thru the dbus services way
+
+        r.Requires('perl-Time-HiRes:perl', '%(sbindir)s/system-tools-backends')
+        r.Requires('perl-XML-Parser:perl', '%(sbindir)s/system-tools-backends')
+
+        r.Requires('distro-release:config', '%(sbindir)s/system-tools-backends')

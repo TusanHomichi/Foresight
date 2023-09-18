@@ -1,0 +1,19 @@
+--- kdebindings-4.6.0/perl/qtcore/src/util.cpp.orig	2011-02-15 20:23:14.007485406 +0300
++++ kdebindings-4.6.0/perl/qtcore/src/util.cpp	2011-02-15 20:25:26.714273396 +0300
+@@ -66,7 +66,6 @@
+ STATIC I32
+ S_dopoptosub_at(const PERL_CONTEXT *cxstk, I32 startingblock)
+ {
+-    dVAR;
+     I32 i;
+ 
+     for (i = startingblock; i >= 0; i--) {
+@@ -888,7 +887,7 @@
+     if( arrayTypes.contains( className ) ) {
+         obj = (SV*)newAV();
+         var = newRV_noinc((SV*)obj);
+-        hv_magic((AV*)obj, var, PERL_MAGIC_tied);
++//        hv_magic((HV*)obj, (GV*)var, PERL_MAGIC_tied);
+     }
+     else {
+         obj = (SV*)newHV();

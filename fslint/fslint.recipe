@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class Fslint(BinaryPackageRecipe):
+    name = 'fslint'
+    version = '2.42'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'pygtk:python', 'python:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.pixelbeat.org/fslint/fslint-%(version)s-1.noarch.rpm', dir='/')
+

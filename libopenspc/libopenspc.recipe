@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libopenspc(CPackageRecipe):
+    name = 'libopenspc'
+    version = '0.3.99a'
+ 
+    buildRequires = ['nasm:runtime', 'zlib:devel']
+ 
+    def setup(r):
+        r.addArchive('http://ftp.de.debian.org/debian/pool/main/libo/libopenspc/libopenspc_0.3.99a.orig.tar.gz')
+        r.addPatch('libopenspc_0.3.99a-2.patch')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

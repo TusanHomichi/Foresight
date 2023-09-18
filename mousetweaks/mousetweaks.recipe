@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Mousetweaks(GnomePackageRecipe):
+
+    name = 'mousetweaks'
+    version = '2.32.1'
+
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'at-spi:devel', 'esound:devel',  'libgnome-keyring:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'libXfixes:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'popt:devel', 'dbus-glib:devel', 'dbus:devel', 'expat:devel', 'gettext:runtime', 'libXcursor:devel', 'libXtst:devel', 'rarian:runtime', 'dbus-glib:devel', 'dbus-glib:runtime']
+
+    extraConfig = ' --disable-scrollkeeper '

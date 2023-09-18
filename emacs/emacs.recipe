@@ -1,0 +1,171 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Portions (c) 2006 Antonio Meireles
+# Copyright (c) 2006-2008 the Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Emacs(CPackageRecipe):
+    name = 'emacs'
+    # you must run "cvc refresh" when updating versions
+    #version = '23.0.92+20090402'
+    version = '24.3'
+    versionsitelisp = ''.join(('%(datadir)s/emacs/', version, '/site-lisp/'))
+
+    buildRequires = [
+        'GConf:devel',
+        'ImageMagick:devel',
+        'alsa-lib:devel',
+        'atk:devel',
+        'autoconf:runtime',
+        'automake:runtime',
+        'cairo:devel',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'e2fsprogs:devel',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'giflib:devel',
+        'glib:devel',
+        'gnutls:devel',
+        'gpm:devel',
+        'gtk:devel',
+        'install-info:runtime',
+        'krb5:devel',
+        'libICE:devel',
+        'libSM:devel',
+        'libX11:devel',
+        'libXau:devel',
+        'libXdmcp:devel',
+        'libXext:devel',
+        'libXft:devel',
+        'libXmu:devel',
+        'libXpm:devel',
+        'libXrender:devel',
+        'libXt:devel',
+        'libjpeg:devel',
+        'libpng:devel',
+        'librsvg:devel',
+        'libtermcap:devel',
+        'libtiff:devel',
+        'libxml2:devel',
+        'ncurses:devel',
+        'openssl:devel',
+        'pango:devel',
+        'perl:devel',
+        'perl:lib',
+        'pkgconfig:devel',
+        'python:devel',
+        'texinfo:runtime',
+        'zlib:devel',
+        ]
+
+    if Arch.x86:
+        buildRequires.append('setarch:runtime')
+
+    def setup(r):
+        #r.addCvsSnapshot(':pserver:anonymous@cvs.savannah.gnu.org:/sources/emacs', 'emacs')
+        r.addArchive('mirror://gnu/emacs/', '%(name)s-%(version)s.tar.bz2')
+        r.addSource('site-start.el', dest='%(datadir)s/%(name)s/site-lisp/', macros=True)
+        r.addSource('default.el', dest='%(datadir)s/%(name)s/site-lisp/')
+        # r.addSource('emacs.desktop')
+        # r.disableParallelMake()
+        r.Configure(' --with-x-toolkit=gtk2 --enable-font-backend '
+                    ' --with-xft  --with-xpm --with-rsvg'
+                    ' --with-gif  --with-png'
+                    ' --with-jpeg  --with-tiff'
+                    ' --with-pop --with-sound'
+                    ' --with-gif  --with-png --with-gpm '
+                    ' --with-dbus  --with-freetype --with-libotf'
+                    ' --with-gconf --with-xml2 --with-wide-int'
+                    ' --enable-link-time-optimization'
+                    )
+
+        r.macros.cflags += ' -DMAIL_USE_LOCKF'
+        r.macros.mflags = ''
+
+        r.Make('bootstrap')
+        r.Make()
+
+        r.macros.emacsbatch = '%(builddir)s/src/emacs -batch --no-init-file --no-site-file'
+
+        # servicedir for mail
+        # r.Replace('/var/spool/mail', '%(servicedir)s/spool/mail',
+        #     'lisp/paths.el', 'lisp/eshell/esh-var.el',)
+
+        r.Run('%(emacsbatch)s -f batch-byte-recompile-directory lisp')
+
+        r.Make('-C lisp updates')
+        r.MakePathsInstall()
+
+        # make sure movemail isn't setgid
+        r.SetModes('%(libexecdir)s/emacs/%(version)s/*/movemail', 0755)
+
+        r.Remove('%(infodir)s/dir')
+
+        r.macros.site_lisp = '%(datadir)s/emacs/site-lisp'
+        r.macros.version_site_lisp = r.versionsitelisp
+
+        r.Move('%(bindir)s/etags', '%(bindir)s/etags.emacs')
+        r.Move('%(bindir)s/ctags', '%(bindir)s/ctags.emacs')
+        r.Move('%(mandir)s/man1/ctags.1.gz', '%(mandir)s/man1/gctags.1.gz')
+        r.Symlink('ctags.emacs', '%(bindir)s/gctags')
+        r.Remove('%(destdir)s/%(infodir)s/info.info.gz')
+
+        r.NonBinariesInBindirs(exceptions='.*')
+
+        r.PackageSpec('emacs',
+                      '%(bindir)s/(emacs|emacs-%(version)s)',
+                      '%(datadir)s/emacs/%(version)s/etc/DOC-%(version)s.1',
+                      '%(libexecdir)s/emacs/%(version)s/.*/fns-%(version)s.1.el')
+
+        # not everyone wants the input method
+        r.PackageSpec('emacs-leim',
+                      '%(datadir)s/emacs/%(version)s/leim/leim-list.el',
+                      '%(datadir)s/emacs/%(version)s/leim/.*\.elc')
+
+
+	# may be empty... and we really want it
+	r.MakeDirs('%(datadir)s/emacs/site-lisp/site-start.d')
+	r.ExcludeDirectories(exceptions='%(datadir)s/emacs/site-lisp/site-start.d')
+        
+        # el files that go in :runtime instead of :elisp for some reason
+        # FIXME find out if this is really necessary by deleting these
+        # .el files from a running system and see if emacs breaks
+        for file in (
+            '(cus-load|cus-start|finder-inf|forms-d2|forms-pass|generic-x|loaddefs|loadup|patcomp|paths|subdirs|version)',
+            'emacs-lisp/cl-specs',
+            'eshell/(esh-groups|esh-maint)',
+            'international/(latin-.*|mule-conf)',
+            'mail/blessmail',
+            'play/bruce',
+            'term/(AT386|apollo|bobcat|internal|iris-ansi|keyswap|linux|lk201|news|vt[234-].*|vt102.*|vt12.*|vt-control|wyse50|xterm)'):
+            r.ComponentSpec('runtime',
+                            '%(datadir)s/emacs/%(version)s/lisp/' + file + '\.el')
+
+        for file in (
+            '(default|site-start|subdirs)',
+            'Mule-UCS/un-trbase',
+            'site-start.d/.*'):
+            r.ComponentSpec('runtime',
+                            '%(datadir)s/emacs/site-lisp/' + file + '\.el')
+
+        r.ComponentSpec('runtime', '%(version_site_lisp)s/subdirs\.el')
+
+        # all the rest of the elisp files go in the elisp component
+        r.ComponentSpec('elisp', '%(datadir)s/emacs/.*\.el')
+
+        # override default :emacs component, which we do not want in emacs:
+        r.ComponentSpec('runtime', '%(datadir)s/emacs/site-lisp/.*')
+
+        # install desktop file launcher
+        #r.Desktopfile('emacs.desktop')
+
+        # install icons for launchers
+        r.addSource('emacs_16.png', dest = '%(prefix)s/icons/hicolor/16x16/apps/emacs.png')
+        r.addSource('emacs_24.png', dest = '%(prefix)s/icons/hicolor/24x24/apps/emacs.png')
+        r.addSource('emacs_32.png', dest = '%(prefix)s/icons/hicolor/32x32/apps/emacs.png')
+        r.addSource('emacs_48.png', dest = '%(prefix)s/icons/hicolor/48x48/apps/emacs.png')
+

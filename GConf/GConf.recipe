@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GConf(GnomePackageRecipe):
+    buildRequires = [ 'libxml2:devel', 'ORBit2:devel', 'glib:devel',
+                      'gtk:devel', 'pkgconfig:devel', 'gettext:runtime',
+                      'atk:devel', 'cairo:devel', 'fontconfig:devel', 
+                      'freetype:devel', 'glibc:devel', 'libpng:devel', 
+                      'openldap:devel', 'pango:devel', 'popt:devel', 'expat:devel',
+                      'glib:runtime', 'indent:runtime', 'perl:runtime',
+                      'polkit:devel', 'polkit:runtime',
+                      'dbus-glib:runtime', 'gobject-introspection:devel',
+                      'cElementTree:python', 'lxml:python', 'python:devel']
+
+    name = 'GConf'
+    version = '2.32.0'
+    extraConfig = '--disable-static --enable-defaults-service --with-gtk=2.0'
+    
+    patches = [ 'GConf-2.18.0.1-reload.patch', 'GConf-gettext.patch' ]
+
+    docs = ['COPYING', 'ChangeLog', 'NEWS', 'README']
+    potFileName = 'GConf2'
+
+    def policy(r):
+        r.ComponentSpec('runtime', '%(libdir)s/GConf/2/.*\\.so')
+        r.MakeDirs('%(sysconfdir)s/gconf/gconf.xml.system')
+        r.MakeDirs('%(sysconfdir)s/gconf/gconf.xml.mandatory')
+        r.MakeDirs('%(sysconfdir)s/gconf/gconf.xml.defaults')
+        r.MakeDirs('%(sysconfdir)s/gconf/schemas')
+        r.MakeDirs('%(datadir)s/GConf/gsettings')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/gconf/.*')
+        r.ExcludeDirectories(exceptions='%(datadir)s/GConf/gsettings')
+        r.addSource('gconf2schema.tagdescription', macros=True)
+        r.addSource('gconf2schema.taghandler', macros=True)
+        r.Install('gconf2schema.tagdescription',
+            '%(tagdescriptiondir)s/gconf2schema')
+        r.Install('gconf2schema.taghandler',
+            '%(taghandlerdir)s/gconf2schema', mode=0755)
+
+        r.addSource('GConf.tagdescription', macros=True)
+        r.addSource('GConf.taghandler', macros=True)
+        r.Install('GConf.tagdescription',
+            '%(tagdescriptiondir)s/GConf')
+        r.Install('GConf.taghandler',
+            '%(taghandlerdir)s/GConf', mode=0755)
+        r.TagSpec('GConf', '%(bindir)s/gconftool-2')
+
+        # allow for a smooth gsettings migration
+        r.Requires('dconf:runtime', '%(name)s:runtime')
+
+

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Blastbits(PackageRecipe):
+    name = 'blastbits'
+    version = '0.4'
+ 
+    buildRequires = ['python:devel']
+ 
+    def setup(r):
+        r.addArchive('blastbits-0.4.tar.bz2')
+        r.Install('blastimage', '%(bindir)s/')

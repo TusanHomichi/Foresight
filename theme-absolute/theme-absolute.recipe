@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ThemeAbsolute(PackageRecipe):
+    name = 'theme-absolute'
+    version = '0.7.7'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('http://gnome-look.org/CONTENT/content-files/126326-absolute-themes.tar.bz2')
+        r.Install('absolute', '%(datadir)s/themes/')

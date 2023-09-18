@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGtk2Mozembed(CPANPackageRecipe,CPackageRecipe):
+    name = 'perl-Gtk2-MozEmbed'
+    version = '0.08'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gcc:runtime', 'glib:devel', 'gtk:devel', 'pango:devel', 'perl-Cairo:perl', 'perl-Gtk2:perl', 'perl:devel', 'perl-ExtUtils-Depends:perl', 'perl-ExtUtils-PkgConfig:perl', 'pkgconfig:devel', 'xulrunner:devel']
+
+    def policy(r):
+	r.Requires(exceptDeps=r'soname\:\ ELF64\/usr\/lib64\/xulrunner\-sdk\-1\.9\.2\/lib\/libxpcom\.so\(SysV\ x86\_64\)')
+	r.Requires(exceptDeps=r'soname\:\ ELF64\/usr\/lib64\/xulrunner\-sdk\-1\.9\.2\/lib\/libxul\.so\(SysV\ x86\_64\)')
+	r.Requires(exceptDeps=r'soname\:\ ELF32\/usr\/lib\/xulrunner\-sdk\-1\.9\.2\/lib\/libxpcom\.so\(SysV\ x86\)')
+	r.Requires(exceptDeps=r'soname\:\ ELF32\/usr\/lib\/xulrunner\-sdk\-1\.9\.2\/lib\/libxul\.so\(SysV\ x86\)')
+
+    def setup(r):
+	r.unpack()
+	r.build()
+	r.install()
+	r.installDocs()
+	r.post()
+	r.policy()

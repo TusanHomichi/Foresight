@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Trytond(TrytonPackage):
+    name = 'trytond'
+    packageDescription = """Tryton is a three-tiers high-level general purpose application platform under the license GPL-3 written in Python and using PostgreSQL as database engine.
+    It is the core base of a complete business solution providing modularity, scalability and security."""
+    packageSummary = """ Tryton ERP """
+
+    prebuild = ['MySQL-python:python', 'lxml:python', 'pyOpenSSL:python', 'python-dateutil:python', 'python:devel', 'python-simplejson:python','Genshi:python', 'relatorio:python','psycopg2:python', 'python-sqlite:python','PyWebDAV:python', 'chkconfig:runtime', 'pytz:python']
+
+    deps = ["python-vatnumber:python","python-dateutil:python","relatorio:python"]
+    def setup(r):
+        TrytonPackage.setup(r)
+        #backends
+        r.PackageSpec("trytond-backend-mysql","%(sitepkgs)s/trytond/backend/mysql/.*") 
+        r.Requires("MySQL-python:python","trytond-backend-mysql:python")
+
+        r.PackageSpec("trytond-backend-sqlite","%(sitepkgs)s/trytond/backend/sqlite/.*") 
+        r.Requires("python-sqlite:python", "trytond-backend-sqlite:python")
+
+        r.PackageSpec("trytond-backend-postgresql","%(sitepkgs)s/trytond/backend/postgresql/.*") 
+        r.Requires("psycopg2:python","trytond-backend-postgresql:python")
+        # remove backends deps
+        r.Requires(exceptions="%(sitepkgs)s/trytond/backend/__init__.py")
+
+
+
+        # Init files
+        r.addSource("trytond-init")
+        r.Copy('trytond-init', '%(initdir)s/trytond', mode=0755)
+        # Config files
+        r.Install("etc/trytond.conf","%(sysconfdir)s/trytond.conf")
+        r.Config("%(sysconfdir)s/trytond.conf")
+        # Create dirs for pid and logs
+        r.MakeDirs("%(localstatedir)s/log/trytond")
+        r.MakeDirs("%(localstatedir)s/lib/trytond")
+        r.ExcludeDirectories(exceptions="%(localstatedir)s/log/trytond|%(localstatedir)s/lib/trytond")

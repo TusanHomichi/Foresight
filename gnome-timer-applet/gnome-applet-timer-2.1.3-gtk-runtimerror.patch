@@ -1,0 +1,15 @@
+--- src/timer-applet.orig	2010-07-10 10:29:03.000000000 +0200
++++ src/timer-applet	2010-07-10 10:16:24.000000000 +0200
+@@ -20,7 +20,11 @@
+ import gettext
+ import locale
+ import sys
+-import gtk
++try:
++    import gtk
++except RuntimeError:
++    print sys.stderr, "Couldn't import gtk. Do you have a running X session?"
++    sys.exit(1)
+ import gnomeapplet
+ from timerapplet import config
+ from timerapplet.controllers import GlobalController, TimerApplet, TimerService, TimerManagerService

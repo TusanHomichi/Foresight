@@ -1,0 +1,35 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009-2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Synapse(AutoPackageRecipe):
+
+    name = 'synapse'
+    version = '0.2.10'
+    
+    buildRequires = ['atk:devel', 'cairo:devel',
+                    'dbus-glib:devel', 'dbus:devel',
+                    'desktop-file-utils:runtime', 'fontconfig:devel',
+                    'freetype:devel', 'gdk-pixbuf:devel',
+                    'gettext:runtime', 'gnome-common:runtime',
+                    'gtk:devel', 'libgee:devel',
+                    'libgtkhotkey:devel', 'libnotify:devel',
+                    'intltool:runtime', 'json-glib:devel', 
+                    'libpng:devel', 'libtool:runtime',
+                    'pango:devel',
+                    'pkgconfig:devel', 'unique:devel',
+                    'vala:runtime', 'which:runtime'
+     ]
+     
+    def unpack(r):
+        # r.addBzrSnapshot('lp:synapse-project')
+        r.addArchive('https://launchpad.net/%(name)s-project/0.2/%(version)s/+download/')
+        r.Remove('src/Synapse.Services/synapse-services.pc.in')
+        r.Replace('zeitgeist-1.0 --pkg ', '','src/ui/Makefile.in')
+        r.addPatch('synapse-glib.patch') 
+        
+    def configure(r):
+        r.Configure('--libdir=%(prefix)s/lib --prefix=%(prefix)s  --disable-zeitgeist')

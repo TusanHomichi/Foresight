@@ -1,0 +1,49 @@
+From 4c26824dd4ea7b2e9b0301fba8541e4d849bcb83 Mon Sep 17 00:00:00 2001
+From: Sam Thursfield <ssssam@gmail.com>
+Date: Mon, 26 Sep 2011 17:55:59 +0100
+Subject: [PATCH 1/2] gst-thumbnailer: Don't crash on pipeline timeouts
+
+---
+ plugins/gst-thumbnailer/gst-helper.c      |    8 +++++++-
+ plugins/gst-thumbnailer/gst-thumbnailer.c |    6 ++++++
+ 2 files changed, 13 insertions(+), 1 deletions(-)
+
+diff --git a/plugins/gst-thumbnailer/gst-helper.c b/plugins/gst-thumbnailer/gst-helper.c
+index b8a29ab..53e0b91 100644
+--- a/plugins/gst-thumbnailer/gst-helper.c
++++ b/plugins/gst-thumbnailer/gst-helper.c
+@@ -163,7 +163,13 @@ gst_helper_convert_buffer_to_pixbuf (GstBuffer    *buffer,
+       i++;
+     }
+ 
+-  /* FIXME: Notify about error? */
++  if (msg == NULL)
++    {
++      g_warning ("Timed out waiting for GStreamer pipeline");
++      gst_caps_unref (pb_caps);
++      return NULL;
++    }
++
+   gst_message_unref (msg);
+ 
+   gst_caps_unref (pb_caps);
+diff --git a/plugins/gst-thumbnailer/gst-thumbnailer.c b/plugins/gst-thumbnailer/gst-thumbnailer.c
+index 5dcef19..42b5428 100644
+--- a/plugins/gst-thumbnailer/gst-thumbnailer.c
++++ b/plugins/gst-thumbnailer/gst-thumbnailer.c
+@@ -356,6 +356,12 @@ gst_thumbnailer_create (TumblerAbstractThumbnailer *thumbnailer,
+       shot = gst_helper_convert_buffer_to_pixbuf (frame, cancellable, flavour);
+       g_object_unref (flavour);
+ 
++      /* Don't crash on timeouts etc */
++      if (shot == NULL)
++        {
++          return;
++        }
++
+       /* If it's not interesting, throw it away and try again */
+       if (is_interesting (shot))
+         {
+-- 
+1.7.4.1
+

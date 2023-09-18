@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ledger(AutoPackageRecipe):
+    name = 'ledger'
+    version = '2.6.0.90'
+ 
+    buildRequires = ['expat:devel', 'gmp:devel', 'install-info:runtime', 'libstdc++:devel', 'pcre:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/ledger/')
+        r.Run('touch AUTHORS')
+        r.Run('touch COPYING')
+
+    def configure(r):
+        r.Configure('CPPFLAGS="-I/usr/include/pcre"')

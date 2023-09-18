@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Eeze(AutoPackageRecipe):
+    name = 'eeze'
+    version = '1.7.5'
+ 
+    buildRequires = ['ecore:devel', 'eina:devel', 'pkgconfig:devel', 'udev:devel', 'doxygen:runtime', 'eject:runtime', 'util-linux:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://download.enlightenment.org/releases/eeze-%(version)s.tar.gz')

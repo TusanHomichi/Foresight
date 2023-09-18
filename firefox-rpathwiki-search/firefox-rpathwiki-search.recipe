@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008 rpath, Inc.
+# All rights reserved
+#
+
+loadRecipe('firefox')
+class FirefoxRpathWikiSearch(PackageRecipe):
+    name = 'firefox-rpathwiki-search'
+    version = '1.1'
+
+    def setup(r):
+        r.macros.ff_version = '.'.join(FireFox.version.split('.')[:2])
+        r.macros.searchplugin_dir = '%(libdir)s/firefox-%(ff_version)s/searchplugins/'
+
+        r.addSource('%(name)s.src', dest='%(searchplugin_dir)s')
+        r.addSource('%(name)s.png', dest='%(searchplugin_dir)s')
+        r.Requires('firefox:runtime', '%(searchplugin_dir)s/%(name)s.src')

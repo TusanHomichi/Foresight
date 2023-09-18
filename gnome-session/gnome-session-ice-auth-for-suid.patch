@@ -1,0 +1,13 @@
+diff -aur gnome-session-2.23.5.orig/gnome-session/gsm-xsmp-server.c gnome-session-2.23.5/gnome-session/gsm-xsmp-server.c
+--- gnome-session-2.23.5.orig/gnome-session/gsm-xsmp-server.c	2008-07-29 20:02:33.000000000 +0200
++++ gnome-session-2.23.5/gnome-session/gsm-xsmp-server.c	2008-07-29 20:24:58.000000000 +0200
+@@ -421,6 +421,9 @@
+         fclose (fp);
+         ok = TRUE;
+ 
++        /* Lets programs auth with the session even if running as another user ID */
++        putenv (g_strconcat ("ICEAUTHORITY=", filename, NULL));
++
+  cleanup:
+         IceUnlockAuthFile (filename);
+         for (i = 0; i < server->priv->num_local_xsmp_sockets; i++) {

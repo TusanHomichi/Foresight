@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Trytond_account_invoice_history(TrytonPackage):
+    name = 'trytond_account_invoice_history'
+    version = "2.2.X"
+    prebuild = ["mx:python"]
+    deps = ["trytond_account_invoice:python","trytond_party:python"]
+
+    def setup(r):
+        TrytonPackage.setup(r)
+

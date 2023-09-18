@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FirstBoot(CPackageRecipe):
+    name = "firstboot"
+    version = "1.92"
+    buildRequires = [ 'intltool:runtime', 'chkconfig:runtime', 'gettext:runtime', 'kudzu:python', 'libuser:python', 'newt:python', 'pygtk:python', 'pyxf86config:python', 'rhpl:python', 'python:devel', 'rhpxl:python', 'cracklib:python' ]
+
+
+    def setup(r):
+        r.addArchive('%(name)s-%(version)s.tar.gz')
+        r.Make()
+        r.MakeInstall()
+
+        for requirement in (
+            'libglade:devellib',  'metacity:runtime',
+            'system-config-display:runtime',
+        ):
+            r.Requires(requirement, '%(sbindir)s/firstboot')

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ClawsMailThemeTango(PackageRecipe):
+    name = 'claws-mail-theme-tango'
+    version = '1.2.1'
+
+    def setup(r):
+        r.addArchive('http://www.claws-mail.org//themes/png/'
+                     'claws-mail-theme_Tango_%(version)s.tar.gz')
+        r.Install('*.png','%(datadir)s/claws-mail/themes/Tango/')
+        r.Install('.claws_themeinfo','%(datadir)s/claws-mail/themes/Tango/')
+        r.Install('*.txt','%(datadir)s/doc/%(name)s/')
+#        r.Requires('claws-mail:runtime', '%(datadir)s/claws-mail/themes'
+#                                         '/Tango_v1.2.1/mail.png')

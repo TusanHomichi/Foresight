@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2007-2008 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# Original versions by Gil Hamlin and Alex Bucur
+#
+
+loadSuperClass('gnomepackage')
+class gnomebuild(GnomePackageRecipe):
+    name = "gnome-build"
+    version = "2.24.1"
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gdl:devel', 'gettext:runtime', 'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devellib', 'libxml2:devel', 'pango:devel', 'perl:lib', 'popt:devel', 'perl-Locale-gettext:perl', 'perl:devel' ]
+
+
+    def policy(r):
+        # provided now by anjuta... 
+        # FIXME. make sure that these ones and not the anjuta's are the ones to delete
+        r.Remove('%(bindir)s/gbf-am-parse')
+        r.Remove('%(bindir)s/gbf-mkfile-parse')

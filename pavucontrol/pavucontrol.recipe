@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class PAvucontrol(AutoPackageRecipe):
+    name = 'pavucontrol'
+    version  = '1.0'
+    buildRequires = ['gst-plugins-base:devel', 'gstreamer:runtime', 'gstreamer:devel', 
+    'lynx:runtime', 'pulseaudio:devel', 'cairomm:devel', 
+    'desktop-file-utils:runtime', 'glibmm:devel', 'gtkmm:devel', 
+    'libglade:devel', 'libglademm:devel', 'libsigc++:devel', 'libcanberra:devel', 
+    'gettext:runtime', 'intltool:runtime', 'libstdc++:devel', 'xz:runtime']
+
+    def setup(r):
+    	r.addArchive('http://freedesktop.org/software/pulseaudio/pavucontrol/pavucontrol-%(version)s.tar.xz')
+	r.Configure('--disable-gtk3')
+	r.Make()
+	r.MakeInstall()

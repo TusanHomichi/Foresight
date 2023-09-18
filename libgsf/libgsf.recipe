@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Libgsf(GnomePackageRecipe):
+    name = 'libgsf'
+    version = '1.14.24'
+    extraConfig = '--disable-gtk-doc --disable-static --with-python '
+
+    buildRequires = [
+        'GConf:devel', 'GConf:runtime', 'ORBit2:devel',
+        'bzip2:devel',
+        'gettext:runtime', 'glib:devel', 'gnome-vfs:devel',
+        'libxml2:devel', 'libbonobo:devel', 'pygobject:runtime',
+        'perl:runtime', 'popt:devel', 'pygobject:python', 'pygtk:devel',
+        'python:devel',
+    ]
+    patches = [ 'gnome689706.gsf_input_dup.patch',
+                'libgsf-gnome-695907-selinux-use-tmpdir-for-tmpfile.patch' ]
+
+    def postConfigure(r):
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+    def policy(r):
+        if Arch.x86_64:
+            r.Move("/usr/lib/python2.6/site-packages/gsf/*", 
+                   "%(libdir)s/python2.6/site-packages/gsf/")
+

@@ -1,0 +1,12 @@
+--- LVM2.2.02.86.old/tools/dmsetup.c	2011-07-08 19:08:19.000000000 +0200
++++ LVM2.2.02.86/tools/dmsetup.c	2012-01-26 21:15:18.807295520 +0100
+@@ -3476,7 +3476,8 @@ int main(int argc, char **argv)
+ 	#endif
+ 
+       doit:
+-	multiple_devices = (argc != 2 && cmd->repeatable_cmd);
++	multiple_devices = (cmd->repeatable_cmd && argc != 2 &&
++			    (argc != 1 || (!_switches[UUID_ARG] && !_switches[MAJOR_ARG])));
+ 	do {
+ 		if (!cmd->fn(cmd, argc--, argv++, NULL, multiple_devices)) {
+ 			fprintf(stderr, "Command failed\n");

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Minitube(PackageRecipe):
+    name = 'minitube'
+    version = '0.9'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'gtk:runtime', 'libgcc:devellib', 'libstdc++:devel', 'make:runtime', 'qt4-core:devellib', 'qt4-gui:devellib', 'qt4:devel', 'gcc:runtime', 'qt:devel', 'syslinux:devel', 'userspace-kernel-headers:devel']
+ 
+    def setup(r):
+        r.addArchive('http://flavio.tordini.org/files/minitube/')
+	r.Make('PREFIX=%(destdir)s/%(prefix)s', makeName='qmake-qt4')
+	r.MakeInstall()

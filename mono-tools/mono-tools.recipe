@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class MonoTools(RPMPackageRecipe,AutoPackageRecipe):
+    buildRequires = [ 'mono:devel','mono:runtime','mono:cil',
+                      'gnome-sharp:devellib', 'gnome-sharp:cil', 'gnome-sharp:runtime',
+                      'gnome-desktop-sharp:devellib', 'gnome-desktop-sharp:cil' , 
+                      'gtk-sharp:devellib', 'gtk-sharp:cil', 'gtk-sharp:runtime',
+                      'gecko-sharp:devellib', 'gecko-sharp:cil',
+                      'libgdiplus:devellib', 
+                      'desktop-file-utils:runtime', 'pkgconfig:devel',
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime',
+                      'gettext:runtime', 'intltool:runtime', 'webkit-sharp:cil'
+                      ]
+
+    name = 'mono-tools'
+    version = '2.6.1'
+    rpmRelease = '1.fc13'
+    rpmPatches =[]
+    def unpack(r):
+        r.addArchive('http://go-mono.com/sources/%(name)s/')
+        r.Run("""
+find . -name Makefile.in -or -name Makefile.am -or -name \*.pc.in \
+       -or -name \*.make -or -name \*.in \
+       | while read f ;
+         do
+
+   sed -i -e 's!@prefix@/lib!%(libdir)s!' "$f"
+           sed -i -e 's!$(prefix)/lib!%(libdir)s!' "$f" 
+   sed -i -e 's!$prefix/lib!%(libdir)s!' "$f"
+           sed -i -e 's!${exec_prefix}/lib!%(libdir)s!' "$f" 
+   sed -i -e 's!$libdir!%(libdir)s!' "$f" ;
+         done
+""")
+        
+
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Run('autoreconf -f -i -s')
+        r.Environment('MONO_CAIRO_LIBS',"-r:%(libdir)s/mono/1.0/Mono.Cairo.dll")
+        # no smp flags - breaks the build
+        r.disableParallelMake()
+
+    def policy(r):
+        r.Remove('%(datadir)s/applications/gsharp.desktop')

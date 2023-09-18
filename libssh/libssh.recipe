@@ -1,0 +1,19 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Libssh(CMakePackageRecipe):
+
+    name = 'libssh'
+    version = '0.5.4'
+
+    buildRequires = [ 'openssl:devel', 'zlib:devel',
+                      'doxygen:runtime', 'gcc-c++:runtime',
+                  ]
+
+    def unpack(r):
+        r.addArchive('https://red.libssh.org/attachments/download/41/')
+        r.Replace('macro_ensure_out_of_source_build.*', '', 'CMakeLists.txt')
+

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Pysmell(PackageRecipe):
+
+    name = 'pysmell'
+    version = '0.7.2.' +datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = ['python-setuptools:python','python:devel']
+    url = "http://code.google.com/p/pysmell/"
+    shortDesc =  "PySmell is a python IDE completion helper"
+    longDesc = """It tries to statically analyze Python source code, without executing it, and generates information about a project's structure that IDE tools can use.There is currently support for Vim, Emacs and TextMate. Feel free to contribute your own favourite editor bindings, or to improve the existing ones. """
+
+    categories = ["Internet","Development","ConsoleOnly"]
+    licenses = ["XXX"]
+
+    def setup(r):
+        r.addGitSnapshot('git://github.com/orestis/pysmell.git')
+        r.PythonSetup()

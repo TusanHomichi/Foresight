@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 -2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class xfce4Settings(XfcePackageRecipe):
+
+    name = 'xfce4-settings'
+    version = '4.10.1'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'libxfce4util:devel', 'libexo:devel', 'desktop-file-utils:runtime',
+        'libXcursor:devel', 'libXfixes:devel', 'libXrandr:devel',
+        'libnotify:devel', 'libxfce4ui:devel', 
+        'xfconf:devel', 'libexo:runtime', 'libwnck:devel', 'libcanberra:devel',
+        'libxklavier:devel', 'garcon:devel'
+    ])
+    extraConfig = ' --enable-pluggable-dialogs --enable-sound-settings'
+    def setup(r):
+        XfcePackageRecipe.setup(r)
+        r.addSource('xsettings.xml', dir='xfsettingsd/')
+
+    def policy(r):
+        r.Requires('xfce-foresight-theme:data', '%(sysconfdir)s/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml')

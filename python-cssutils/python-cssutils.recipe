@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonCssUtils(PackageRecipe):
+    name = 'python-cssutils'
+    version = '0.9.7a4'
+
+    buildRequires = ['python-setuptools:python', 'python:devel', 'unzip:runtime',
+                     ]
+
+    def setup(r):
+        r.addArchive('http://cssutils.googlecode.com/files/cssutils-%(version)s.zip')
+        r.PythonSetup()
+        r.Move('%(libdir)s/python2.6/site-packages/tests', 
+               '%(libdir)s/python2.6/site-packages/%(name)s/')

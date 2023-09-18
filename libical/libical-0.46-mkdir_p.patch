@@ -1,0 +1,18 @@
+Patch by Robert Scheck <robert@fedoraproject.org> for libical >= 0.46, which removes the unused
+AC_PROG_MKDIR_P macro, because Red Hat Enterprise Linux 4 and 5 (including derivates/downstreams)
+have autoconf < 2.60, which don't support AC_PROG_MKDIR_P. Unfortunately, libical upstream ships
+in libical 0.46 broken configure and Makefile files, thus autoreconf needs to be run downstream.
+The somehow funny thing is, AC_PROG_MKDIR_P doesn't seem to be used anywhere in the source?!
+
+Upstream link: https://sourceforge.net/tracker/?func=detail&aid=3140412&group_id=16077&atid=316077
+
+--- libical-0.46/configure.in					2010-08-30 22:06:25.000000000 +0200
++++ libical-0.46/configure.in.mkdir_p				2010-12-19 22:48:00.000000000 +0100
+@@ -17,7 +17,6 @@
+ AM_PROG_LEX
+ AC_PROG_LN_S
+ AC_PROG_INSTALL
+-AC_PROG_MKDIR_P
+ 
+ dnl Initialize libtool
+ AM_PROG_LIBTOOL

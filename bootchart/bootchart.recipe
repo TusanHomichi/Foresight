@@ -1,0 +1,26 @@
+
+loadSuperClass('rpmpackage')
+class Bootchart(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'bootchart'
+    version = '0.9'
+    rpmRelease = '9.fc9'
+    rpmPatches = ['bootchart-0.9-readonly-root.patch']
+    buildRequires = ['ant:runtime', 'ant:java', 'icedtea-jre:runtime']
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.macros.antcmd = 'ant'
+        r.Ant()
+        # jar
+        r.Install('%(name)s.jar', '%(javadir)s/%(name)s-%(version)s.jar', mode = 0644)
+        r.Symlink('%(javadir)s/%(name)s-%(version)s.jar', '%(javadir)s/%(name)s.jar')
+        # script
+        r.Install('script/%(name)s', '%(bindir)s/%(name)s', mode = 0755)
+        # javadoc
+        r.Install('javadoc/*', '%(javadocdir)s/%(name)s-%(version)s/', mode = 0644)
+        # logger
+        r.Install('script/bootchartd', '%(essentialsbindir)s/bootchartd', mode = 0755)
+        r.Install('script/bootchartd.conf', '%(sysconfdir)s/bootchartd.conf', mode = 0644)
+
+        r.Create('%(sysconfdir)s/bootloader.d/bootchart.conf', contents='add_options init=/sbin/bootchartd')
+        r.TagSpec('bootman-config', '%(sysconfdir)s/bootloader.d/bootchart.conf')
+

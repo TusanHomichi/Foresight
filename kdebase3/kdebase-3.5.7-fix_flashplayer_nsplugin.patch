@@ -1,0 +1,85 @@
+--- kdebase-3.5.7/nsplugins/configure.in.in.gtk	2007-07-27 12:37:20.000000000 -0400
++++ kdebase-3.5.7/nsplugins/configure.in.in	2007-07-27 12:37:26.000000000 -0400
+@@ -0,0 +1,40 @@
++dnl Check for pkg-config
++AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
++
++if test "$PKG_CONFIG" = "no"; then
++  AC_MSG_ERROR([
++This package requires pkg-config.
++])
++fi
++
++dnl Check for Gtk+-2.0
++# GTK_CFLAGS:  cflags for compiling glib dependant sources
++# GTK_LIBADD:  glib libraries (-l options)
++# GTK_LDFLAGS: flags containing path to glib libraries (-L options)
++
++GTK_PACKAGES="gtk+-2.0"
++GTK_VERSION="0.21"
++AC_MSG_CHECKING(for GTK+-2.0 (at least $GTK_VERSION))
++
++if $PKG_CONFIG --atleast-pkgconfig-version 0.15 ; then
++   if $PKG_CONFIG --atleast-version $GTK_VERSION $GTK_PACKAGES >/dev/null 2>&1 ; then
++       GTK_CFLAGS="`$PKG_CONFIG --cflags $GTK_PACKAGES`"
++       GTK_LIBADD="`$PKG_CONFIG --libs-only-l --libs-only-other $GTK_PACKAGES`"
++       GTK_LDFLAGS="`$PKG_CONFIG --libs-only-L $GTK_PACKAGES`"
++       AC_MSG_RESULT(yes)
++   fi
++else
++   if $PKG_CONFIG --atleast-version $GTK_VERSION $GTK_PACKAGES >/dev/null 2>&1 ; then
++       GTK_CFLAGS="`$PKG_CONFIG --cflags $GTK_PACKAGES`"
++       GTK_LIBADD="`$PKG_CONFIG --libs-only-l $GTK_PACKAGES`"
++       GTK_LDFLAGS="`$PKG_CONFIG --libs-only-L $GTK_PACKAGES`"
++       AC_MSG_RESULT(yes)
++       AC_MSG_WARN([you may need to run make LDFLAGS=-pthread to compile arts])
++   fi
++fi
++
++AC_SUBST(GTK_CFLAGS)
++AC_SUBST(GTK_LIBADD)
++AC_SUBST(GTK_LDFLAGS)
++
++
+--- kdebase-3.5.7/nsplugins/viewer/Makefile.am.gtk	2007-07-27 12:40:05.000000000 -0400
++++ kdebase-3.5.7/nsplugins/viewer/Makefile.am	2007-07-27 12:40:07.000000000 -0400
+@@ -1,12 +1,12 @@
+-INCLUDES = -I$(top_srcdir)/nsplugins -I$(top_builddir)/nsplugins $(all_includes)
++INCLUDES = -I$(top_srcdir)/nsplugins -I$(top_builddir)/nsplugins $(all_includes) $(GTK_CFLAGS)
+ METASOURCES = AUTO
+ 
+ bin_PROGRAMS = nspluginviewer 
+ 
+ nspluginviewer_SOURCES = NSPluginCallbackIface.stub NSPluginClassIface.skel \
+ 	nsplugin.cpp viewer.cpp kxt.cpp qxteventloop.cpp
+-nspluginviewer_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
+-nspluginviewer_LDADD = $(LIB_KIO) $(LIB_KPARTS) -lXt
++nspluginviewer_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic $(GTK_LDFLAGS)
++nspluginviewer_LDADD = $(LIB_KIO) $(LIB_KPARTS) -lXt $(GTK_LIBADD)
+ 
+ NSPluginCallbackIface_DIR = $(srcdir)/..
+ 
+--- kdebase-3.5.7/nsplugins/viewer/viewer.cpp.gtk	2007-07-27 12:40:38.000000000 -0400
++++ kdebase-3.5.7/nsplugins/viewer/viewer.cpp	2007-07-27 12:42:41.000000000 -0400
+@@ -54,6 +54,10 @@
+ #include "qxteventloop.h"
+ #endif
+ 
++// FIXME: this is just for calling gtk_init and fix the buggy flash player
++// initialization
++#include <gtk/gtkmain.h>
++
+ /**
+  *  Use RLIMIT_DATA on systems that don't define RLIMIT_AS,
+  *  such as FreeBSD 4.
+@@ -215,6 +219,10 @@ bool qt_set_socket_handler( int sockfd, 
+ 
+ int main(int argc, char** argv)
+ {
++   // FIXME: the gtk_init() call is here to fix a bug in flash player that does
++   // not call it properly, or call it in a wrong place
++   gtk_init(&argc, &argv);
++
+     // nspluginviewer is a helper app, it shouldn't do session management at all
+    setenv( "SESSION_MANAGER", "", 1 );
+ 

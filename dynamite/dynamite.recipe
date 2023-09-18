@@ -1,0 +1,18 @@
+class Dynamite(AutoPackageRecipe):
+    name = 'dynamite'
+    version = '0.1.1'
+ 
+    buildRequires = [ 'libtool:runtime', ]
+ 
+    def unpack(r):
+        r.macros.name = 'libdynamite'
+        r.addArchive('http://download.sourceforge.net/synce/')
+
+    def configure(r):
+        r.Configure('--disable-static --disable-rpath')
+
+    def make(r):
+        r.Make('LIBTOOL=%(bindir)s/libtool')
+
+    def policy(r):
+        r.Remove('%(libdir)s/libdynamite.a')

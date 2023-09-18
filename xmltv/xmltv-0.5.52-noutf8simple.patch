@@ -1,0 +1,42 @@
+diff -up xmltv-0.5.51/grab/pt/tv_grab_pt.noutf8simple xmltv-0.5.51/grab/pt/tv_grab_pt
+--- xmltv-0.5.51/grab/pt/tv_grab_pt.noutf8simple	2007-09-04 11:42:49.000000000 +0200
++++ xmltv-0.5.51/grab/pt/tv_grab_pt	2008-05-27 16:24:51.000000000 +0200
+@@ -85,7 +85,8 @@ use IO::File;
+ use File::Path;
+ use File::Basename;
+ use LWP::UserAgent;
+-use Unicode::UTF8simple;
++use utf8;
++use Encode qw(from_to); # This is deprecated to use Unicode::UTF8simple;
+ 
+ use XMLTV;
+ use XMLTV::Memoize;
+@@ -660,7 +661,7 @@ sub get_channels {
+ 
+     my $tree  = get_nice_tree $url;
+     my @menus = $tree->find_by_tag_name( "_tag" => "select" );
+-    my $uref  = new Unicode::UTF8simple;
++    #my $uref  = from_to Encode; #Unicode::UTF8simple;
+ 
+     foreach my $elem (@menus) {
+         my $cname = $elem->attr('name');
+@@ -678,7 +679,7 @@ sub get_channels {
+             next if $channel_id eq 'ALL';
+ 
+             my $channel_name = trim( $opt->content->[0] );
+-            $channel_name = $uref->toUTF8( "iso-8859-1", $channel_name );
++            from_to( $channel_name, "iso-8859-1", "utf8");
+             $channels{$channel_id} = $channel_name;
+             push @ch_all,
+               {
+diff -up xmltv-0.5.51/Makefile.PL.noutf8simple xmltv-0.5.51/Makefile.PL
+--- xmltv-0.5.51/Makefile.PL.noutf8simple	2008-05-27 16:24:51.000000000 +0200
++++ xmltv-0.5.51/Makefile.PL	2008-05-27 16:24:51.000000000 +0200
+@@ -557,7 +556,6 @@ my @opt_components
+        blurb => 'Grabber for Portugal',
+        exes => [ 'grab/pt/tv_grab_pt' ],
+        prereqs => { 'HTML::TreeBuilder' => 0,
+-		    'Unicode::UTF8simple' => 0,
+ 		  }
+      },
+ 

@@ -1,0 +1,11 @@
+diff -pruN imsettings-0.108.1.orig/imsettings/imsettings-utils.h imsettings-0.108.1/imsettings/imsettings-utils.h
+--- imsettings-0.108.1.orig/imsettings/imsettings-utils.h	2010-08-02 18:24:45.000000000 +0900
++++ imsettings-0.108.1/imsettings/imsettings-utils.h	2010-11-04 19:23:52.000000000 +0900
+@@ -25,7 +25,6 @@
+ #define __IMSETTINGS_IMSETTINGS_UTILS_H__
+ 
+ #include <glib.h>
+-#include <dbus/dbus.h>
+ 
+ G_BEGIN_DECLS
+ 

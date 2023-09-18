@@ -1,0 +1,42 @@
+--- ../imageshack-uploader/ffmpeg_fas.c	2011-11-07 17:36:10.000000000 -0600
++++ ffmpeg_fas.c	2011-11-07 17:07:54.000000000 -0600
+@@ -111,6 +111,7 @@
+ 
+ void fas_set_logging (fas_boolean_type logging)
+ {
++  int av_log_level;
+   if (logging == FAS_TRUE)
+     {
+       SHOW_ERROR_MESSAGES = 1;
+@@ -226,7 +227,7 @@
+   int stream_idx;
+   for (stream_idx = 0; stream_idx < fas_context->format_context->nb_streams; stream_idx++) 
+     {
+-      if (fas_context->format_context->streams[stream_idx]->codec->codec_type == CODEC_TYPE_VIDEO)
++      if (fas_context->format_context->streams[stream_idx]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+ 	{
+ 	  fas_context->stream_idx = stream_idx;
+ 	  fas_context->codec_context  = fas_context->format_context->streams[stream_idx]->codec;
+@@ -380,7 +381,7 @@
+ 	  /* note this -1 approach to setting the packet is a workaround for a common failure. setting 
+ 	     to 0 would work just incur a huge penalty in videos that needed -1. Might be worth testing.
+ 	  */
+-	  if (packet.flags & PKT_FLAG_KEY)
++	  if (packet.flags & AV_PKT_FLAG_KEY)
+ 	    {
+ 	      //fprintf(stderr, "Packet: (F:%d %lld %lld)\n", context->current_frame_index, packet.pts, packet.dts);
+ 	      
+@@ -389,9 +390,10 @@
+ 	      else
+ 		context->keyframe_packet_dts = context->previous_dts;
+ 	    }
+-	  
+-	  avcodec_decode_video(context->codec_context, context->frame_buffer, &frameFinished,
+-			       packet.data, packet.size);	
++	
++	  // avcodec_decode_video has been deprecated, replaced with avcodec_decode_video2  
++	
++	  avcodec_decode_video2(context->codec_context, context->frame_buffer, &frameFinished, &packet);
+ 	  
+ 	  if (frameFinished)
+ 	    {

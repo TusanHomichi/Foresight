@@ -1,0 +1,69 @@
+#
+# Copyright (c) 2010-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Imsettings(AutoPackageRecipe):
+    name = 'imsettings'
+    version = '0.108.1'
+ 
+    packageSummary = 'Delivery framework for general Input Method configuration'
+
+    buildRequires = [
+        'GConf:devel',
+        'GConf:runtime',
+        'atk:devel',
+        'cairo:devel',
+        'dbus-glib:devel',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gtk:devel',
+        'intltool:runtime',
+        'libX11:devel',
+        'libnotify:devel',
+        'libstdc++:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        'gtk-doc:runtime', 
+        'xfconf:devel',
+        ]
+
+    patches = [
+        # all from fedora devel; e1820179432a5dc29fe507c364e207c332955953
+        'imsettings-constraint-of-language.patch',
+        'imsettings-disable-xim.patch',
+        'imsettings-xinput-xcompose.patch',
+        'imsettings-fix-build.patch',
+        # work with libnotify 0.7.0
+        # https://bugzilla.redhat.com/show_bug.cgi?id=649063
+        'https://bugzilla.redhat.com/attachment.cgi?id=457282'
+        ]
+
+    def unpack(r):
+        r.addArchive('http://imsettings.googlecode.com/files/')
+        for patch in r.patches:
+            r.addPatch(patch)
+
+    def configure(r):
+        r.Configure('--with-xinputsh=50-xinput.sh '
+                    '--disable-static '
+                    '--disable-schemas-install')
+
+    def policy(r):
+        r.SetModes('%(libexecdir)s/xinputinfo.sh', 0755)
+
+        # disable running applet by default 
+        r.Remove('%(sysconfdir)s/xdg/autostart/imsettings-applet.desktop')
+
+        # lxde package
+        r.PackageSpec('%(name)s-lxde', '%(sysconfdir)s/xdg/autostart/imsettings-lxde-helper.desktop')
+        r.PackageSpec('%(name)s-lxde', '%(bindir)s/imsettings-lxde-helper')
+
+        # xfce package
+        r.PackageSpec('%(name)s-xfce', '%(sysconfdir)s/xdg/autostart/imsettings-xfce-helper.desktop')
+        r.PackageSpec('%(name)s-xfce', '%(bindir)s/imsettings-xfce-helper')

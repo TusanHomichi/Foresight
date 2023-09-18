@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Flaw(AutoPackageRecipe):
+    name = 'flaw'
+    version = '1.2'
+
+    packageSummary = 'The Fantastic League of Almighty Wizards'
+    packageDescription = 'F.L.A.W. is a free cross-platform action game. It can be played by up to 5 players simultaneously. The goal of the game is to survive as long as possible while more and more fireballs appear in the arena. Gameplay is simple and self-explanatory. It basically consists of evading the fireballs and knocking your opponents down. In addition there are collectable magic gems that provide special abilities.'
+ 
+    buildRequires = ['SDL:devel', 'SDL_gfx:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'SDL_ttf:devel', 'desktop-file-utils:runtime', 'libICE:devel', 'libstdc++:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/flaw/flaw/%(version)s/')

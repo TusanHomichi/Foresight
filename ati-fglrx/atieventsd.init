@@ -1,0 +1,55 @@
+#/bin/bash
+#
+# Copyright (c) 2006 rPath, Inc.
+#
+# chkconfig: 5 99 19
+# description: Starts the ATI Event Daemon
+
+# Source function library.
+. /etc/init.d/functions
+
+start() {
+    echo -n $"Starting ATI Events Daemon:"
+    /usr/sbin/atieventsd
+    RETVAL=$?
+    [ $RETVAL = 0 ] && touch /var/lock/subsys/atieventsd && success || failure
+    echo
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping ATI Events Daemon: "
+    killproc atieventsd
+    RETVAL=$?
+    [ $RETVAL = 0 ] && rm -f /var/lock/subsys/atieventsd && success || failure
+    echo
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+RETVAL=0
+
+# See how we were called.
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status atieventsd
+        ;;
+    restart|reload)
+        restart
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart}"
+        exit 1
+esac
+
+exit $?

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('kdecorepackage')
+class Kgeography(kdeCorePackageRecipe):
+    name = 'kgeography'
+    version = '4.8.4'
+ 
+    buildRequires = [
+        'dbus:devel', 
+        'libXScrnSaver:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXpm:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'libxkbfile:devel', 
+        'xz:runtime'
+            ]
+

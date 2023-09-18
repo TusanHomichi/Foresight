@@ -1,0 +1,20 @@
+diff -r 0797d947d16e scripts/mk-images
+--- a/scripts/mk-images	Thu Aug 12 09:23:33 2010 -0400
++++ b/scripts/mk-images	Thu Aug 12 10:50:11 2010 -0400
+@@ -741,7 +741,7 @@
+ 	  install -m 644 $IMGPATH/usr/share/terminfo/$i $MBD_DIR/etc/terminfo/$i
+     done
+ 
+-    cp $IMGPATH/lib/firmware/* $MBD_DIR/modules/firmware
++    cp -r $IMGPATH/lib/firmware/* $MBD_DIR/modules/firmware
+ 
+     makeproductfile $MBD_DIR
+ 
+@@ -753,6 +753,7 @@
+     ln -s /sbin/init $MBD_DIR/init
+     ln -s /proc/mounts $MBD_DIR/etc/mtab
+     ln -s sbin $MBD_DIR/bin
++    mkdir $MBD_DIR/lib
+     ln -s /modules/firmware $MBD_DIR/lib/firmware
+     mkdir -p $MBD_DIR/var/lib
+     ln -s ../../tmp $MBD_DIR/var/lib/xkb

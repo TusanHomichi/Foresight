@@ -1,0 +1,12 @@
+--- openssl-0.9.8a/apps/ca.c
++++ openssl-0.9.8a/apps/ca.c
+@@ -1515,7 +1515,8 @@
+ 	if (free_key && key)
+ 		OPENSSL_free(key);
+ 	BN_free(serial);
+-	free_index(db);
++	if (db)
++		free_index(db);
+ 	EVP_PKEY_free(pkey);
+ 	if (x509) X509_free(x509);
+ 	X509_CRL_free(crl);

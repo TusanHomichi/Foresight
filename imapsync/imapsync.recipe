@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Imapsync(AutoPackageRecipe):
+    name = 'imapsync'
+    version = '1.404'
+
+    packageSummary = 'IMAP synchronization, copy or migration tool'
+    packageDescription = 'imapsync - IMAP synchronization, copy or migration tool. Synchronize mailboxes between two imap servers. Good at IMAP migration'
+ 
+    buildRequires = [ 'perl:devel',
+                      'perl:runtime',
+                      'perl-Mail-IMAPClient:perl',
+                      'perl-Digest-HMAC:perl',
+                      'perl-IO-Socket-SSL:perl',
+                      'perl-Term-ReadKey:perl'
+                      ]
+ 
+    def setup(r):
+        r.addArchive('http://fedorahosted.org/releases/i/m/%(name)s/')
+	r.Run('perl -c imapsync')
+	r.Copy('imapsync', '%(bindir)s/')
+	r.SetModes('%(bindir)s/imapsync', 0755)

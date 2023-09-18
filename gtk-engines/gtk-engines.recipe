@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GtkEngines(GnomePackageRecipe):
+
+    buildRequires = [ 'gtk:devel', 'atk:devel', 'cairo:devel',
+        'fontconfig:devel', 'freetype:devel', 'glib:devel',
+        'libpng:devel', 'pango:devel' ]
+
+    name = 'gtk-engines'
+    version = '2.20.2'
+
+    docs = ['COPYING', 'README', 'ChangeLog']
+    extraConfig = '--enable-animation'
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        r.Provides(exceptions='%(libdir)s/gtk.*')
+        r.Remove('%(libdir)s/gtk-2.0/2.10.0/engines/libpixmap.so')

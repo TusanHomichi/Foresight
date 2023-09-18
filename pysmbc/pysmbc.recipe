@@ -1,0 +1,18 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PySmBC(CPackageRecipe):
+
+    name = 'pysmbc'
+    version = '1.0.0'
+    # FIXME later versions require samba-3.2.x (rPL is stuck in 3.0.x)
+    buildRequires = [
+        'cups:devel', 'make:runtime', 'python:devel', 'samba-client:lib',
+        'python-setuptools:python', 'samba:devel'
+    ]
+
+    def setup(r):
+        r.addArchive('http://cyberelk.net/tim/data/%(name)s/')
+        r.PythonSetup()

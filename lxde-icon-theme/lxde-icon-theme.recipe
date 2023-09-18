@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LxdeIconTheme(AutoPackageRecipe):
+    name = 'lxde-icon-theme'
+    version = '0.5.0'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addArchive('http://l10n.bsnet.se/~brother/lxde_releases/%(name)s-%(version)s.tar.bz2')

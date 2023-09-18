@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class ForesightContexts(PackageRecipe):
+    name = 'foresight-contexts'
+    version = datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        for f in [ 'rmake', 'conary']: 
+            r.addSource('%s.conf' % f, dest='%(sysconfdir)s/foresight/development/', mode=0644)
+
+        # here are the stock contexts we provide; we want them to be always updated
+        # if ppl want custom contexts there are ways other than touching these files
+        r.ComponentSpec('data', '%(sysconfdir)s/')

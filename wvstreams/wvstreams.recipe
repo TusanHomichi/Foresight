@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Wvstreams(RPMPackageRecipe,CPackageRecipe):
+    name = 'wvstreams'
+    version = '4.6.1'
+    rpmName = 'lib%(name)s'
+    rpmRelease = '2.fc13'
+
+    buildRequires = [   'pkgconfig:devel', 'openssl:devel', 'xplc:devel',
+                        'perl:runtime', 'zlib:devel', 'libstdc++:devel',
+                        'net-tools:runtime', 'dbus:devel', 'pam:devel', 
+                        'perl:devel', 'readline:devel' ]
+
+    rpmPatches = [  'wvstreams-4.5-noxplctarget.patch',
+                    'wvstreams-4.2.2-multilib.patch',
+                    'wvstreams-4.6.1-gcc.patch',
+                    'wvstreams-4.6.1-make.patch',
+                    'wvstreams-4.6.1-statinclude.patch',  ]
+
+    def setup(r):
+        r.unpack()
+
+        r.macros.cppflags += " $(pkg-config --cflags-only-I openssl) -fPIC"
+        r.macros.cflags += " $(pkg-config --cflags-only-I openssl) -fPIC"
+        r.macros.ldflags += " -lcrypt $(pkg-config --libs-only-L openssl)"
+
+        # Required for build on systems with both x86 and x86_64 glibc
+        #r.Replace('-lz -lcrypt', 'LDLIBS += -lz -lcrypt', 'vars.mk')
+
+        # we disable some bits we don't use to remove build requirements
+        # the only thing we build that requires wvstreams is wvdial.
+        # might as well keep this library small for our purposes.
+        r.Configure(' --without-swig --without-ogg --without-vorbis'
+                    ' --without-fftw --without-fam --without-tcl'
+                    ' --with-xplc --with-openssl' # xplc, openssl not optional
+                    ' --with-dbus=yes --with-pam --without-qt --without-openslp')
+
+        r.Make('COPTS="%(cflags)s" CXXOPTS="%(cppflags)s" PREFIX=%(prefix)s LIBDIR=%(libdir)s')
+
+        r.MakeInstall('PREFIX=%(destdir)s/%(prefix)s'
+                      ' LIBDIR=%(destdir)s/%(libdir)s')

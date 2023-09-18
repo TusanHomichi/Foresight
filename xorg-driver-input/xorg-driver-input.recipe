@@ -1,0 +1,138 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgDriverInput(RPMPackageRecipe, CPackageRecipe):
+    name = 'xorg-driver-input'
+    version = '7.6'
+    rpmRelease = '117.1'
+    rpmName = 'xorg-x11-driver-input'
+    isOPENsuse = True
+    isXOrgFactory = True
+
+    buildRequires = [ 'pkgconfig:devel', 'ghostscript:runtime', 'linuxdoc-tools:runtime',
+                      'xorg-server:devel', 'xproto:devel', 'fontsproto:devel',
+                      'autoconf:runtime', 'automake:runtime', 'makedepend:runtime',
+                      'randrproto:devel', 'inputproto:devel', 'kbproto:devel',
+                      'pixman:devel', 'libtool:runtime', 'libtool:devel',
+                      'pkgconfig:devel' , 'm4:runtime', 'expat:devel', 'xextproto:devel',
+                      'util-macros:devel', 'renderproto:devel', 'sysfsutils:devel',
+                      'xorg-sgml-doctools:data', 'sysfsutils:devel', 'xorg-sgml-doctools:data', 
+                      'libpciaccess:devel', 'libxkbfile:devel', 'libXi:devel', 'libX11:devel',
+                      'imake:runtime', 'xorg-cf-files:data', 'gccmakedep:runtime',
+                      'texinfo:runtime', 'which:runtime', 'libXtst:devel',
+                      ]
+
+
+    rpmSources = [ '11-mouse.conf',
+                   '65-xorg-wacom.rules' ]
+
+    def setup(r):
+        r.addArchive(r.srpm)
+
+        # unpack all
+        r.addAction(""" for p in $(fgrep Source ../xorg-x11-driver-input.spec); do  ARGN=`echo $p | grep  xf86  | grep -c tar.bz2`;  if [ "$ARGN" = 1 ]; then  (cd ../; ARG=`echo $p | grep xf86  ` ; mv $ARG %(name)s-%(version)s/; cd %(name)s-%(version)s; tar xjf "$ARG"; rm -rf "$ARG"  );   fi  done """)
+
+        # normalize dir names
+        r.addAction(""" ls | grep X11  | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.1//2'| /bin/sh """)
+
+        r.addAction(""" ls  |  awk '{print("mv "$1" "$1)}' | sed 's/-[.0-9]*$//' | /bin/sh """)
+
+        patches = [
+            # srpm patchnumber (for reference), patch, level, package (dir)
+            ['Patch2', 'xf86-input-jamstudio.diff', -1 ,'xf86-input-jamstudio'],
+
+            ['Patch23', 'xf86-input-synaptics-wait.diff', 0 ,'xf86-input-synaptics'],
+            ['Patch24', 'xf86-input-synaptics-settings.diff', 0 ,'xf86-input-synaptics'],
+            ['Patch39', 'xf86-input-fpit.diff', 1 ,'xf86-input-fpit'],
+            ['Patch40', 'xf86-input-hyperpen.diff', 1 ,'xf86-input-hyperpen'],
+            ['Patch41', 'xf86-input-mutouch.diff', 1 ,'xf86-input-mutouch'],
+            ['Patch47', 'xf86-input-vmmouse-iopl.diff', 1 ,'xf86-input-vmmouse'],
+            ['Patch48', 'xf86-input-synaptics-xorg.conf.d_snippet.diff', 0 ,'xf86-input-synaptics'],
+            ['Patch49', 'xf86-input-synaptics-add-clickpad-support.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch50', 'xf86-input-synaptics-clickpad-doc-update.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch51', 'xf86-input-synaptics-add-led-support.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch52', 'xf86-input-synaptics-led-double-tap.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch53', 'xf86-input-synaptics-64bit-fix.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch54', 'xf86-input-synaptics-fix-clickpad-capabilities.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch55', 'xf86-input-synaptics-clickpad-threshold.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch56', 'xf86-input-synaptics-move-threshold.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch57', 'xf86-input-synaptics-filter-bogus-coord.diff', 1 ,'xf86-input-synaptics'],
+            ['Patch58', 'xf86-input-wacom-no-n-trig.diff', 1 ,'xf86-input-wacom'],
+            ]
+        for n, p, l, d in patches:
+            if l <> -1:
+                r.addPatch(p, dir = d, level = l, rpm= r.srpm )
+            else:
+                r.addPatch(p, dir = d, rpm= r.srpm )
+
+        # https://bugzilla.redhat.com/show_bug.cgi?id=604660
+        # FL-2721
+        r.addPatch('https://bugzilla.redhat.com/attachment.cgi?id=425197', 
+                   dir = 'xf86-input-vmmouse')
+
+        inputDrivers = [ 'xf86-input-acecad',
+                         'xf86-input-aiptek',
+                         'xf86-input-elographics',
+                         'xf86-input-evdev',
+                         'xf86-input-fpit',
+                         'xf86-input-hyperpen',
+                         'xf86-input-jamstudio',
+                         'xf86-input-joystick',
+                         'xf86-input-keyboard',
+                         'xf86-input-mouse',
+                         'xf86-input-mutouch',
+                         'xf86-input-penmount',
+                         'xf86-input-synaptics',
+                         'xf86-input-vmmouse',
+                         'xf86-input-void',
+                         'xf86-input-wacom',  ]
+
+        r.macros.optflags += ' -fno-strict-aliasing  '
+
+        for d in inputDrivers:
+            if d in ['xf86-input-evdev']:
+                r.Configure('--with-xorg-conf-dir=%(sysconfdir)s/X11/xorg.conf.d/', dir = d)
+            else:
+                r.Configure(dir = d)
+
+            r.Make(dir = d, package = d)
+            r.MakeInstall('DESTDIR=%(destdir)s', dir = d, 
+                          package = d)
+
+            # FIXME: workaround for CNP-87
+            r.PackageSpec(d, '%(thisdocdir)s/'+d+'/')
+
+
+        # # uncomment when we get udev/evdep support behaving properly
+        # # 
+        # r.Remove('%(datadir)s/hal/fdi/policy/20thirdparty/wacom.fdi')
+        # r.Remove('%(datadir)s/hal/fdi/policy/20thirdparty/11-x11-vmmouse.fdi')
+        # r.Remove('%(libdir)s/hal/hal-probe-vmmouse')
+
+        # r.Install('../11-mouse.conf', '%(sysconfdir)s/X11/xorg.conf.d/', mode = 0644, package = 'xf86-input-mouse')
+        # r.Install('../20-synaptics.conf', '%(sysconfdir)s/X11/xorg.conf.d/', mode = 0644, package = 'xf86-input-synaptics')
+        # r.Install('../20-wacom.conf', '%(sysconfdir)s/X11/xorg.conf.d/', mode = 0644, package = 'xf86-input-wacom')
+        
+        # # machinery to re-plug the input devices
+        # # attaching those to 'xf86-input-evdev' pkg
+        # r.addSource('xorg-driver-input.tagdescription', macros=True,
+        #             dest='%(tagdescriptiondir)s/xorg-driver-input',
+        #             package = 'xf86-input-evdev' )
+        # r.addSource('xorg-driver-input.taghandler', macros=True,
+        #             dest='%(taghandlerdir)s/xorg-driver-input', mode=0755,
+        #             package = 'xf86-input-evdev' )
+        #
+        # r.Requires('udev:runtime', '%(taghandlerdir)s/xorg-driver-input')
+        #
+        # r.TagSpec('xorg-driver-input', '.*')
+
+        # # drop bellow when above gotten right
+
+        r.addSource('11-x11-synaptics.fdi')
+        r.addSource('11-mouse.fdi')
+        r.Install('11-x11-synaptics.fdi', '/usr/share/hal/fdi/policy/10osvendor/', package = 'xf86-input-synaptics')
+        r.Install('11-mouse.fdi', '/usr/share/hal/fdi/policy/20thirdparty/', package = 'xf86-input-mouse')

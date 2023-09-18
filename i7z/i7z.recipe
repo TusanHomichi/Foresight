@@ -1,0 +1,53 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class I7z(CPackageRecipe):
+    name = 'i7z'
+    changeset = '109'
+    version = '0.27+r' + changeset
+    revision = version.split('+')[-1][1:]
+
+    buildRequires = [ 'ncurses:devel',
+                      'qt4:devel',
+                      'libstdc++:devel',
+                      'ruby:runtime',
+                      ]
+
+    def setup(r):
+        # r.addArchive('http://i7z.googlecode.com/files/')
+        r.addSvnSnapshot('http://i7z.googlecode.com/svn/trunk/',
+                         revision = r.changeset)
+        # from future
+        # http://code.google.com/p/i7z/issues/detail?id=70
+        r.addPatch('vcore_support.diff')
+
+        r.addPatch('rb.patch')
+
+        # gui build fixes...
+        r.Replace(('/usr/bin/qmake', '/usr/bin/qmake-qt4'),
+                  ('/usr/lib', '%(libdir)s'),
+                  'GUI/Makefile')
+        if Arch.x86:
+            r.Replace(('linux\-g\+\+\-64',
+                      'linux-g++-32'),
+                      ('m64',
+                       'm32'),
+                      'GUI/Makefile')
+
+        # anything above -O0 breaks curses ui ... 
+        r.macros.cflags = re.sub('-O[0-9]', '-O0', r.macros.cflags)
+
+        r.Make()
+        r.MakeInstall()
+
+        r.Install('i7z_rw_registers.rb', '%(sbindir)s/', mode = 0755)
+        r.Requires('msr-tools:runtime', '%(sbindir)s/i7z')
+
+        #   UI bits
+        r.Make(dir='GUI')
+        r.MakeInstall(dir='GUI')
+        r.Install('GUI/i7z_GUI', '%(bindir)s/', mode = 0755)
+        r.PackageSpec('%(name)s-gui', '.*GUI.*' )
+        r.Requires('%(sbindir)s/i7z', '%(bindir)s/i7z_GUI')

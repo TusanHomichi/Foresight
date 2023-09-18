@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2010 Foresight Linux 
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class PyLint(PackageRecipe):
+    name = 'pylint'
+    version = '0.21.0'
+
+    buildRequires = [ 'python-setuptools:python', 'logilab-astng:python',
+        'logilab-common:python', 'pygtk:python', 'python:devel', 'python:tk' ]
+
+    def setup(r):
+        r.addArchive('http://ftp.logilab.org/pub/%(name)s/')
+
+        r.PythonSetup()
+
+        r.Doc('doc/*')
+        r.Install('man/*.1', '%(mandir)s/man1/', mode = 0644)
+
+    

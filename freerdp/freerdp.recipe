@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Freerdp(AutoPackageRecipe):
+    name = 'freerdp'
+    version = '0.8.2'
+ 
+    buildRequires = [
+			'alsa-lib:devel', 
+			'cups:devel', 
+			'libICE:devel', 
+			'libX11:devel', 
+			'libXcursor:devel', 
+			'openssl:devel', 
+			'pkgconfig:devel',
+			'zlib:devel'
+	]
+    packageSummary = "FreeRDP is a fork of the rdesktop project that intends to rapidly start moving forward and implement features that rdesktop lacks the most."
+    packageDescription =""
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/freerdp/')

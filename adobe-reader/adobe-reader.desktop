@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Adobe Reader
+GenericName=Adobe Reader
+Comment=View PDF documents
+Exec=acroread
+Icon=/opt/Adobe/Reader9/Resource/Icons/48x48/AdobeReader9.png
+Terminal=false
+Type=Application
+Categories=Office;GNOME;
+MimeType=application/pdf;application/vnd.fdf;application/vnd.adobe.pdx;application/vnd.adobe.xdp+xml;application/vnd.adobe.xfdf;
+GenericName[en_US]=Adobe Reader

@@ -1,0 +1,13 @@
+class GOCR(AutoPackageRecipe):
+    name = 'gocr'
+    version = '0.46'
+    summary = 'open-source character recognition'
+    packageDescription = """
+open-source character recognition, be able to make srt files for video editing tools
+"""
+
+    buildRequires = ['netpbm:devel']
+
+    def unpack(r):
+        r.addArchive('http://prdownloads.sourceforge.net/jocr/gocr-0.46.tar.gz')
+

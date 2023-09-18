@@ -1,0 +1,4 @@
+file         /usr/libexec/conary/tags/openoffice-extension
+implements   files update
+implements   files remove
+include      %(basedir)s/share/extension/install/

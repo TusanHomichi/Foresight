@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class transcode(CPackageRecipe):
+    buildRequires = [
+        'ImageMagick:devel', 'SDL:devel', 'alsa-lib:devel', 'faac:devel',
+        'ffmpeg:devel', 'lame:devel', 'libICE:devel', 'libSM:devel',
+        'libX11:devel', 'libXaw:devel', 'libXext:devel', 'libXpm:devel',
+        'libXv:devel', 'libdv:devel', 'libdvdread:devel', 'libjpeg:devel',
+        'libogg:devel', 'libquicktime:devel', 'libtheora:devel',
+        'libv4l:devel', 'libvorbis:devel', 'libxml2:devel', 'lzo:devel',
+        'libmpeg2:devel', 'pkgconfig:devel', 'x264:devel', 'xvidcore:devel',
+        'zlib:devel',
+	'a52dec:devel'
+    ]
+
+    name = "transcode"
+    version = "1.1.7"
+
+    def setup(r):
+        r.addArchive('https://bitbucket.org/france/transcode-tcforge/downloads/')
+        r.addPatch('ffmpeg-0.11.patch')
+        r.Configure('--enable-lame --enable-ogg --enable-vorbis --enable-libdv --enable-libquicktime --enable-a52 --enable-sdl --enable-imagemagick --enable-x264 --enable-theora --enable-lzo --enable-faac --enable-v4l --enable-alsa')
+        r.Make()
+        r.MakeInstall()

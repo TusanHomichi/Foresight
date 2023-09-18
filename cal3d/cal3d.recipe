@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cal3d(AutoPackageRecipe):
+    name = 'cal3d'
+    version = '0.11.0'
+ 
+    buildRequires = ['docbook-utils:runtime', 'doxygen:runtime', 'libstdc++:devel', 'valgrind:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://download.gna.org/cal3d/sources/cal3d-0.11.0.tar.gz')

@@ -1,0 +1,39 @@
+#!/bin/bash
+# Copyright 2006 rPath Inc
+# 
+# chkconfig: 2345 70 40
+# description: starts and stops tor without ever running it as root
+
+source /etc/sysconfig/network
+source /etc/init.d/functions
+
+do_start() {
+    daemon --user=tor tor &> /dev/null &
+}
+
+do_stop() {
+    killproc tor
+}
+
+case "$1" in
+  start)
+	do_start
+        RETVAL=$?
+	;;
+  stop)
+	do_stop
+	;;
+  status)
+        status tor
+        ;;
+  restart|reload|condrestart)
+        do_stop
+        do_start
+	RETVAL=$?
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|status}"
+	exit 1
+esac
+
+exit $RETVAL

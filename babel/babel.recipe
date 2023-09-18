@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Babel(PackageRecipe):
+
+    name = 'babel'
+    version = '20100926'
+
+    buildRequires = ['python-setuptools:python','python:devel', 'pytz:python']
+
+    def setup(r):
+        r.addSvnSnapshot('http://svn.edgewall.org/repos/babel/trunk')
+        r.PythonSetup()

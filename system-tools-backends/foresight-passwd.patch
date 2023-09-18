@@ -1,0 +1,15 @@
+diff -r 9e6264a58114 Users/Users.pm
+--- a/Users/Users.pm	Sat Apr 10 17:29:22 2010 +0200
++++ b/Users/Users.pm	Sat Apr 10 17:34:51 2010 +0200
+@@ -388,7 +388,10 @@
+     @passwd_status = split ' ', <$fd>;
+     &Utils::File::close_file ($fd);
+ 
+-    if ($passwd_status[1] eq "P")
++    # FL: We use passwd from RH, which has different status codes
++    #     to the Debian shadow package. P is PS and L is LK.
++    #if ($passwd_status[1] eq "P")
++    if ($passwd_status[1] eq "PS")
+     {
+       $users_hash{$login}[$PASSWD_STATUS] = 0;
+     }

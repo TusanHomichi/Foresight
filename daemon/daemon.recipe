@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+class Daemon(AutoPackageRecipe):
+    name = 'daemon'
+    version = '0.6.4'
+    buildRequires = ['perl:runtime']
+
+    def unpack(r):
+        r.addArchive('http://libslack.org/%(name)s/download/%(name)s-%(version)s.tar.gz')

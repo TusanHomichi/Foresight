@@ -1,0 +1,28 @@
+# Copyright (c) 2010 Foresight Linux                                                                                                                                                         
+# This file is distributed under the terms of the MIT License.                                                                                                                               
+# A copy is available at http://www.rpath.com/permanent/mit-license.html                                                                                                                     
+#                                                                                                                                                                                            
+
+loadSuperClass('rpmpackage')
+class Gxine(RPMPackageRecipe,AutoPackageRecipe):
+
+    name = 'gxine'
+    version = '0.5.905'
+    rpmRelease = '6.fc16'
+
+    buildRequires = [ ]
+
+    rpmPatches = [
+        'gxine-0.5.902-non-separate-toolbar.patch',
+        'gxine-0.5.905-desktop.patch',
+        'gxine-0.5.905-lirc.patch',
+        ]
+
+
+    def configure(r):
+        r.Configure('--with-dbus --with-hal --with-logo-format=image --with-browser-plugin=yes '
+                    '--with-spidermonkey=%(libdir)s --disable-integration-wizard --enable-watchdog  --disable-own-playlist-parsers --disable-deprecated')
+
+    def policy(r):
+        r.MakeDirs('%(libdir)s/mozilla/plugins/')
+        r.Move('%(libdir)s/gxine/gxineplugin.so', '%(libdir)s/mozilla/plugins/')

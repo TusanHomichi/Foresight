@@ -1,0 +1,24 @@
+diff -Naur libgnome-2.20.1.orig/schemas/Makefile.am libgnome-2.20.1/schemas/Makefile.am
+--- libgnome-2.20.1.orig/schemas/Makefile.am	2007-10-15 04:42:42.000000000 -0400
++++ libgnome-2.20.1/schemas/Makefile.am	2007-10-18 16:59:14.000000000 -0400
+@@ -3,6 +3,8 @@
+ schema_in_files = \
+ 	desktop_gnome_accessibility_keyboard.schemas.in		\
+ 	desktop_gnome_accessibility_startup.schemas.in		\
++	desktop_gnome_interface.schemas.in			\
++	desktop_gnome_background.schemas.in			\
+ 	desktop_gnome_applications_at_visual.schemas.in		\
+ 	desktop_gnome_applications_at_mobility.schemas.in	\
+ 	desktop_gnome_applications_browser.schemas.in		\
+diff -Naur libgnome-2.20.1.orig/schemas/Makefile.in libgnome-2.20.1/schemas/Makefile.in
+--- libgnome-2.20.1.orig/schemas/Makefile.in	2007-10-15 05:33:51.000000000 -0400
++++ libgnome-2.20.1/schemas/Makefile.in	2007-10-18 16:59:14.000000000 -0400
+@@ -229,6 +229,8 @@
+ schema_in_files = \
+ 	desktop_gnome_accessibility_keyboard.schemas.in		\
+ 	desktop_gnome_accessibility_startup.schemas.in		\
++	desktop_gnome_interface.schemas.in			\
++	desktop_gnome_background.schemas.in			\
+ 	desktop_gnome_applications_at_visual.schemas.in		\
+ 	desktop_gnome_applications_at_mobility.schemas.in	\
+ 	desktop_gnome_applications_browser.schemas.in		\

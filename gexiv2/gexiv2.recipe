@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gexiv2(CPackageRecipe):
+    name = 'gexiv2'
+    version = '0.1.0' 
+
+    buildRequires = [ 'exiv2:devel', 'glib:devel', 'pkgconfig:devel', 'libtool:runtime', 'gcc-c++:runtime', 'm4:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://yorba.org/download/gexiv2/0.1/libgexiv2-0.1.0.tar.bz2')
+        r.ManualConfigure('--release --prefix=%(prefix)s')
+        r.Replace('libtool ', 'libtool --tag=CC ', 'Makefile')
+
+        r.Make()
+        r.MakeInstall()

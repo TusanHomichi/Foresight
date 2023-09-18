@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Physfs(CPackageRecipe):
+    name = 'physfs'
+    version = '2.0.0'
+ 
+    buildRequires = ['cmake:runtime', 'doxygen:runtime', 'gcc-c++:runtime', 'graphviz:runtime', 'zlib:devel']
+ 
+    def setup(r):
+        r.addArchive('http://icculus.org/physfs/downloads/%(name)s-%(version)s.tar.gz')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

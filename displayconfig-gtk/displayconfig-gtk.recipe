@@ -1,0 +1,79 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DisplayconfigGtk(CPackageRecipe):
+    name = 'displayconfig-gtk'
+    version = '0.3.7'
+ 
+    buildRequires = [ 'python-setuptools:python', 'pygobject:python', 'pygtk:python', 'glibc:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXext:devel', 'libXrandr:devel', 'libXrender:devel', 'libXxf86vm:devel', 'desktop-file-utils:runtime', 'intltool:runtime', 'python:devel', 'xf86vidmodeproto:devel', 'libXrandr:devel', 'scrnsaverproto:devel' ]
+ 
+    def setup(r):
+        r.addArchive('http://launchpadlibrarian.net/9952289/%(name)s_%(version)s.tar.gz')
+        r.addPatch('setup.patch')
+        r.Replace('Ubuntu','Foresight','xfailsafedialog')
+        r.Replace('Ubuntu','Foresight','po/*.po')
+        r.Replace('\/usr\/share\/apps\/guidance', '%(datadir)s/displayconfig-gtk/', 'displayconfig-gtk')
+        r.Replace('\/usr\/share\/apps\/guidance', '%(datadir)s/displayconfig-gtk/', 'displayconfiggtk/DisplayConfig.py')
+        r.Replace('gksu', 'gksudo', 'data/displayconfig-gtk.desktop.in')
+        #r.PythonSetup()
+        r.Run('python setup.py  install --prefix=/usr  --install-platlib=%(libdir)s/python2.6/site-packages/  --install-data=%(prefix)s --root=%(destdir)s')
+        r.Install('modules/xf86misc.py', '%(libdir)s/python2.6/site-packages/displayconfiggtk/')
+        r.Install('modules/xrandr.py', '%(libdir)s/python2.6/site-packages/displayconfiggtk/')
+        r.Run('intltool-merge -d po/ data/displayconfig-gtk.desktop.in  data/displayconfig-gtk.desktop')
+        r.Install('data/displayconfig-gtk.desktop','%(datadir)s/applications/')
+        r.Copy('%(datadir)s/displayconfig-gtk/xorg.conf.fallback','%(sysconfdir)s/X11/xorg.conf.failsafe')
+
+        r.macros.gversion = '0.8.0svn20070928'
+        #r.addArchive('http://www.simonzone.com/software/guidance/guidance-%(gversion)s.tar.bz2')
+        r.addArchive('http://archive.ubuntu.com/ubuntu/pool/main/k/kde-guidance/kde-guidance_%(gversion)s.orig.tar.gz')
+        r.addPatch('http://archive.ubuntu.com/ubuntu/pool/main/k/kde-guidance/kde-guidance_%(gversion)s-0ubuntu7.diff.gz',
+            dir='../kde-guidance-%(gversion)s/', level=1)
+
+        ubuntuGuidancePatches = [
+            'kubuntu_03_displayconfig_updates.diff',
+            'kubuntu_05_displayconfig_fix.diff',
+            'kubuntu_06_displayconfig_fix_intel_dpi.diff',
+            ]
+        for p in ubuntuGuidancePatches:
+            r.Run(""" cd ../kde-guidance-*/ && patch -p1  < debian/patches/%s && cd - """ % p )
+
+           
+        r.Replace('\/var\/lib\/guidance\/','%(localstatedir)s/lib/displayconfig-gtk/'
+            ,'../kde-guidance-%(gversion)s/displayconfig/displayconfig-hwprobe.py')
+        r.Replace('\/usr\/share\/apps\/guidance\/','%(datadir)s/displayconfig-gtk/',
+            '../kde-guidance-%(gversion)s/displayconfig/displayconfig-hwprobe.py')
+
+        for file in [
+            'vesamodes',
+            'extramodes',
+            'widescreenmodes',
+            ]:
+            r.Install('../kde-guidance-%(gversion)s/displayconfig/' + file, '%(datadir)s/displayconfig-gtk/')
+
+        for file in [
+            'Cards+',
+            'MonitorsDB',
+            'pcitable',
+            ]:
+            r.Install('../kde-guidance-%(gversion)s/displayconfig/ldetect-lst/' + file, '%(datadir)s/displayconfig-gtk/')
+
+        for file in [
+            'displayconfig-hwprobe.py',
+            'ScanPCI.py',
+            'displayconfigabstraction.py',
+            'displayconfig-restore.py',
+            'execwithcapture.py',
+            'xorgconfig.py',
+            ]:
+            r.Install('../kde-guidance-%(gversion)s/displayconfig/' + file, '%(libdir)s/python2.6/site-packages/displayconfiggtk/')
+        
+        r.Install('../kde-guidance-%(gversion)s/displayconfig/40guidance-displayconfig_restore',
+            '%(sysconfdir)s/X11/xinit/xinitrc.d/40displayconfig_restore.sh', mode=0755)
+
+        r.Requires('laptop-detect:runtime', '%(bindir)s/displayconfig-gtk')
+        r.Requires('gksu:runtime', '%(bindir)s/displayconfig-gtk')
+        r.MakeDirs('%(localstatedir)s/lib/displayconfig-gtk/locations')
+        r.ExcludeDirectories(exceptions=['%(localstatedir)s/lib/displayconfig-gtk/locations'])

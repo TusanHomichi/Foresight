@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gtkimageview(AutoPackageRecipe):
+    name = 'gtkimageview'
+    version = '1.6.4'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk-doc:runtime', 'gtk:devel', 'pango:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://trac.bjourne.webfactional.com/chrome/common/releases/')

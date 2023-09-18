@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class irssi(CPackageRecipe):
+    name = 'irssi'
+    version = '0.8.15'
+
+    buildRequires = ['glib:devel', 'glibc:devel', 'ncurses:devel',
+        'openssl:devel', 'zlib:devel', 'binutils:runtime', 'gawk:runtime',
+        'perl:runtime', 'pkgconfig:devel', 'sed:runtime', 'krb5:devel',
+        'perl-URI:perl', 'perl:devel', 'perl:lib', 'gcc-fortran:runtime', 'perl-HTTP-Cookies:perl']
+
+    def setup(r):
+        r.addArchive('http://www.irssi.org/files/')
+
+        r.Configure('--with-plugins --enable-ipv6 --with-textui --with-imlib '
+                '--with-bot --with-socks --with-proxy --with-perl="yes" '
+                '--with-ncurses')
+        r.Make()
+        r.MakeInstall('DESTDIR=%(destdir)s')
+        r.ExcludeDirectories(exceptions=['/usr/lib/irssi/modules'])
+

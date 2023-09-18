@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Stuffkeeper(AutoPackageRecipe):
+    name = 'stuffkeeper'
+    version = '0.12.0'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gob2:runtime', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libXrender:devel', 'libglade:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'sqlite:devel', 'zlib:devel', 'gpgme:devel', 'libgpg-error:devel', 'vala:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://download.sarine.nl/Programs/StuffKeeper/')

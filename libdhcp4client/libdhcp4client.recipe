@@ -1,0 +1,6 @@
+class libdhcp4client(RedirectRecipe):
+     name = 'libdhcp4client'
+     version = '0'
+ 
+     def setup(r):
+          r.addRemoveRedirect()

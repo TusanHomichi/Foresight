@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bareftp(AutoPackageRecipe):
+    name = 'bareftp'
+    version = '0.3.9'
+ 
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'gettext:runtime', 
+        'gnome-keyring-sharp:cil', 
+        'gnome-keyring-sharp:devellib', 
+        'gnome-sharp:cil',
+        'gnome-sharp:devellib', 
+        'gtk-sharp:cil', 
+        'gtk-sharp:devellib',
+        'intltool:runtime',
+        'mono:cil', 
+        'mono:devel', 
+        'mono:runtime',
+        'perl:runtime', 
+        'pkgconfig:devel'
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.bareftp.org/release/%(name)s-%(version)s.tar.gz')

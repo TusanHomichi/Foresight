@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class aMule(AutoPackageRecipe):
+    name = 'aMule'
+    version = '2.1.3'
+    buildRequires = [ 'bison:runtime', 'desktop-file-utils:runtime', 'libstdc++:devel', 'perl:runtime', 'wxGTK:devel', 'zlib:devel', 'binutils:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://superb-east.dl.sourceforge.net/sourceforge/amule/aMule-2.1.3.tar.bz2')
+        #Fixes build with wxWidgets 2.8
+        r.addPatch('http://cvs.pld-linux.org/cgi-bin/cvsweb/SOURCES/aMule-wx.patch?rev=1.2')
+
+    def configure(r):
+        #Officially recommended configure arguments
+        r.Configure('--disable-debug --enable-optimize')

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonGdm2setup(PackageRecipe):
+    name = 'python-gdm2setup'
+    version = '0.5.0'
+ 
+    buildRequires = ['python-setuptools:python', 'PIL:python', 'desktop-file-utils:runtime', 'pygtk:python', 'python:devel', 'gdm:data', 'xdg-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/gdm2setup/0.2/0.5.0/+download/gdm2setup.tar.gz')
+        r.PythonSetup()

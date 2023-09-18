@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2010-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Deadbeef(AutoPackageRecipe):
+    name = 'deadbeef'
+    version = '0.5.6'
+ 
+    buildRequires = [
+        'alsa-lib:devel', 
+        'atk:devel', 
+        'cairo:devel', 
+        'curl:devel', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'libX11:devel', 
+        'libpng:devel', 
+        'libsamplerate:devel', 
+        'libstdc++:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'zlib:devel', 
+        'libmad:devel', 
+        'ffmpeg:devel', 
+        'faad2:devel', 
+        'flac:devel', 
+        'libcdio:devel', 
+        'libjpeg:devel', 
+        'pulseaudio:devel', 
+        'wavpack:devel', 
+        'imlib2:devel', 
+        'libcddb:devel', 
+        'libsndfile:devel',
+        'gtk3:devel', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libzip:devel', 
+        'yasm:runtime',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/deadbeef/files/deadbeef-%(version)s.tar.bz2')
+
+    def policy(r):
+        r.Requires('alsa-lib:runtime','%(bindir)s/deadbeef')
+        r.Requires('libmad:lib','%(bindir)s/deadbeef')
+        r.Requires('ffmpeg:runtime','%(bindir)s/deadbeef')

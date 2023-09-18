@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class rPathCommon(BuildPackageRecipe):
+    name = 'rpath-common'
+    version = '1.0'
+
+    buildRequires = [
+        'python:devel',
+        'util-linux:runtime',
+      ]
+
+    def setup(r):
+        r.addArchive('ftp://download.rpath.com/rpath-common/')
+        r.addPatch('rpath-common-py26.patch')
+        r.Make()
+        r.MakeInstall()

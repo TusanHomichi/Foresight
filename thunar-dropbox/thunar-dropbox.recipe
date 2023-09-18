@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ThunarDropbox(AutoPackageRecipe):
+    name = 'thunar-dropbox'
+    version = '0.2.0'
+ 
+    buildRequires = ['Thunar:devel', 'atk:devel', 'cairo:devel',
+                     'fontconfig:devel', 'freetype:devel',
+                     'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel',
+                     'libpng:devel', 'pango:devel']
+ 
+    def setup(r):
+        r.addArchive('http://softwarebakery.com/maato/files/%(name)s/')
+        r.Configure(configureName='waf configure')
+        r.Make(makeName='./waf')
+        r.Run('./waf --destdir=%(destdir)s install')
+        r.Requires('file: %(bindir)s/dropboxd', '%(libdir)s/thunarx-2/thunar-dropbox.so') 
+        r.Requires('dropbox:runtime', 'thunar-dropbox:lib')

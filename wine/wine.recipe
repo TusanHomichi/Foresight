@@ -1,0 +1,156 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Wine(AutoPackageRecipe):
+    name = 'wine'
+    version = '1.7.19'
+
+    buildRequires = [
+            'alsa-lib:devel',
+            'audiofile:devel',
+            'autoconf:runtime',
+            'automake:runtime',
+            'bison:runtime',
+            'cups:devel',
+            'dbus:devel',
+            'desktop-file-utils:runtime',
+            'esound:devel',
+            'flex:runtime',
+            'fontconfig:devel',
+            'fontconfig:runtime',
+            'fontforge:runtime',
+            'freeglut:devel',
+            'freetype:devel',
+            'gcc-c++:runtime',
+            'gettext:devel', 
+            'gettext:runtime',
+            'giflib:devel',
+            'glib:devel',
+            'gnutls:devel',
+            'gsm:devel', 
+            'gst-plugins-base:devel', 
+            'gstreamer:devel', 
+            'hal:devel', 
+            'icoutils:runtime',
+            'ImageMagick:runtime', 
+            'jack:devel',
+            'lcms:devel',
+            'libgphoto2:devel',
+            'libICE:devel',
+            'libieee1284:devel',
+            'libjpeg:devel',
+            'libmpg123:devel',
+            'libpng:devel',
+            'librsvg:runtime',
+            'libSM:devel',
+            'libtiff:devel', 
+            'libtool:devel',
+            'libtool:runtime',
+            'libusb:devel',
+            'libv4l:devel',
+            'libX11:devel',
+            'libXcomposite:devel',
+            'libXcursor:devel',
+            'libXext:devel',
+            'libXi:devel',
+            'libXinerama:devel',
+            'libxml2:devel',
+            'libXrandr:devel',
+            'libXrender:devel',
+            'libxslt:devel',
+            'libXt:devel',
+            'libXxf86vm:devel',
+            'Mesa:devel',
+            'ncurses:devel',
+            'openal:devel', 
+            'openldap:devel',
+            'openssl:devel',
+            'perl:devel',
+            'perl:lib',
+            'perl:runtime',
+            'perl-XML-LibXML:perl',
+            'perl-XML-Simple:perl',
+            'pkgconfig:devel',
+            'prelink:runtime',
+            'sane-backends:devel',
+            'util-linux:devel',
+            'util-macros:devel',
+            'zlib:devel',
+                      ]
+    # XXX: don t put nas:devel as a buildReq!!
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://prdownloads.sourceforge.net/wine/')
+
+        r.addSource('http://winetricks.org/winetricks', dir = '%(bindir)s/', mode = 0755)
+        r.addSource('http://downloads.sourceforge.net/wine/wine_gecko-2.24-x86.msi', dir = '%(datadir)s/wine/gecko/', mode = 0755)
+        r.addSource('http://sourceforge.net/projects/wine/files/Wine Mono/4.5.2/wine-mono-4.5.2.msi', dir = '%(datadir)s/wine/mono/', mode = 0755)
+        r.addSource('wine-uninstaller.desktop', dir = '%(datadir)s/applications', mode = 0644)
+        r.addSource('wine-winecfg.desktop', dir = '%(datadir)s/applications', mode = 0644)
+        r.addSource('wine-mime-msi.desktop', dir = '%(datadir)s/applications', mode = 0644)
+        r.addSource('wine-wineboot.desktop', dir = '%(datadir)s/applications', mode = 0644)
+        r.addSource('wine-winefile.desktop', dir = '%(datadir)s/applications', mode = 0644)
+        r.addSource('wine.init', dir = '%(initdir)s/wine', mode = 0755)
+        r.addSource('wine.menu', dir = '%(sysconfdir)s/xdg/menus/applications-merged', mode = 0644)
+        r.addSource('wine.systemd', dir = '%(sysconfdir)s/binfmt.d', mode = 0644)
+        r.addSource('wine.directory', dir = '%(sysconfdir)s/desktop-directories/Wine.directory', mode = 0644)
+        r.addSource('wine-32.conf', dir = '%(sysconfdir)s/ld.so.conf.d', mode = 0644)
+        # Keeping it out, no need to have it activated when we chip 32bit only.
+        # r.addSource('wine-64.conf', dir = '%(sysconfdir)s/ld.so.conf.d', mode = 0644, use=Arch.x86_64)
+        # r.addSource('http://downloads.sourceforge.net/wine/wine_gecko-2.24-x86_64.msi', dir = '%(datadir)s/wine/gecko/', mode = 0755, use=Arch.x86_64)
+
+        r.addSource('wine.png', dir = '%(datadir)s/icons', mode = 0644)
+        r.addSource('msiexec.png', dir = '%(datadir)s/icons', mode = 0644)
+        r.addSource('winecfg.png', dir = '%(datadir)s/icons', mode = 0644)
+
+
+    def configure(r):
+        r.macros.cflags += ' -Wno-error '
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d '
+        
+        # http://bugs.winehq.org/show_bug.cgi?id=24606
+        r.macros.cflags = re.sub('-D_FORTIFY_SOURCE=2', ' ', r.macros.cflags)
+        r.macros.cxxflags = re.sub('-D_FORTIFY_SOURCE=2', ' ', r.macros.cflags)
+        
+        # http://bugs.winehq.org/show_bug.cgi?id=22316
+        r.macros.cxxflags += ' -mstackrealign'
+        r.macros.cflags += ' -mstackrealign'
+        
+        r.Environment('LDFLAGS','%(ldflags)s')
+        r.Remove('config.cache')
+        r.Run('autoconf')
+
+        cfgArgs = (' --sysconfdir=%(sysconfdir)s/wine'
+                   ' --x-includes=%(includedir)s'
+                   ' --x-libraries=%(libdir)s'
+                   ' --disable-tests'
+                   ' --with-x'
+                   ' --libdir=%(libdir)s')
+
+        if Arch.x86_64: 
+            cfgArgs += ' --enable-win64'
+        
+        r.Configure(cfgArgs)
+
+    def makeinstall(r):
+        r.MakePathsInstall('includedir=%(destdir)s%(includedir)s/wine '
+                           'sysconfdir=%(destdir)s%(sysconfdir)s/wine '
+                           'dlldir=%(destdir)s%(libdir)s/wine '
+                           'LDCONFIG=/bin/true UPDATE_DESKTOP_DATABASE=/bin/true')
+
+    def policy(r):
+        r.CheckSonames(exceptions='%(libdir)s/libwine.*')
+        r.TagSpec('desktop-file', '%(datadir)s/applications/wine.desktop')
+        # r.Requires('soname: libuuid.so.1(SysV UUID_1.0 x86)', '%(bindir)s/wine')
+        # UUID_1.0 isn't available in old libuuid from e2fsprogs and we want this 
+        # to behave when is rebuilt against it
+        r.Requires('soname: libuuid.so.1(SysV x86)', '%(bindir)s/wine')
+        r.Requires('cabextract:runtime', '%(bindir)s/wine')
+        r.Requires('zenity:runtime', '%(bindir)s/wine')
+
+        r.PackageSpec('wine-mono', '%(datadir)s/wine/mono/wine-mono-4.5.2.msi')
+        r.PackageSpec('wine-gecko', '%(datadir)s/wine/gecko/wine_gecko-2.24-x86.msi')

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pywebdav(PackageRecipe):
+
+    name = 'PyWebDAV'
+    version = '0.9.4'
+
+    buildRequires = ['python-setuptools:python','MySQL-python:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://pywebdav.googlecode.com/files/')
+        r.PythonSetup()

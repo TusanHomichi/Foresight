@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2009-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Homebank(AutoPackageRecipe):
+    name = 'homebank'
+    version = '4.5.6'
+
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gtk:devel',
+        'gtk:runtime',
+        'intltool:runtime',
+        'libX11:devel',
+        'libXrender:devel',
+        'libpng:devel',
+        'libxcb:devel',
+        'pango:devel',
+        'perl:runtime',
+        'pixman:devel',
+        'pkgconfig:devel',
+        'xcb-util:devel',
+        'zlib:devel',
+	'libofx:devel',
+	'shared-mime-info:runtime'
+    ]
+
+    def unpack(r):
+       r.addArchive('http://homebank.free.fr/public/%(name)s-%(version)s.tar.gz')

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ecore(AutoPackageRecipe):
+    name = 'ecore'
+    version = "1.7.5"
+
+    buildRequires = ['SDL:devel', 'curl:devel', 'eet:devel', 'eina:devel', 'evas:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gnutls:devel', 'libICE:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXext:devel', 'libXfixes:devel', 'libXinerama:devel', 'libXp:devel', 'libXrandr:devel', 'libXrender:devel', 'libXtst:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libjpeg:devel', 'openssl:devel', 'pkgconfig:devel', 'printproto:devel', 'scrnsaverproto:devel', 'xextproto:devel', 'xineramaproto:devel', 'xproto:devel', 'zlib:devel', 'automake:runtime', 'autoconf:runtime', 'libtool:runtime','gettext:runtime', 'glib:devel', 'intltool:runtime', 'libXi:devel', 'doxygen:runtime']
+
+    def unpack(r):
+        r.addArchive("http://download.enlightenment.org/releases/ecore-%(version)s.tar.gz")

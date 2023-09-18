@@ -1,0 +1,5 @@
+file         %(taghandlerdir)s/desktop-file
+implements   files update
+implements   files remove
+implements   handler update
+include      %(datadir)s/applications/

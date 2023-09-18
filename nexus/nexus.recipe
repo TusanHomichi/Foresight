@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nexus(CPackageRecipe):
+    name = 'nexus'
+    version = '4.19.1.11663'
+ 
+    buildRequires = ['atk:devel', 'desktop-file-utils:runtime', 'expat:devel', 'glib:devel', 'gtk:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXinerama:devel', 'libgcc:devellib', 'libgcrypt:devel', 'libidn:devel', 'libpng:devel', 'pango:devel', 'zlib:devel']
+
+
+    def setup(r):
+        if Arch.x86:
+            r.addArchive('http://install.bankid.com/Repository/BISP-4.19.1.11663.tar.gz')
+            r.addSource('nexus.desktop')
+            r.macros.personal = '%(prefix)s/local/lib/personal/'
+            r.macros.name = 'BISP'
+
+            r.MakeDirs('%(personal)s/config')
+            r.MakeDirs('%(personal)s/icons')
+            r.MakeDirs('%(personal)s/lang/sv_SE')
+
+            r.Install('../BISP-4.19.1.11663/libai.so', '%(libdir)s/')
+            r.Install('../BISP-4.19.1.11663/libP11.so', '%(libdir)s/')
+            r.Install('../BISP-4.19.1.11663/libplugins.so', '%(libdir)s/')
+            r.Install('../BISP-4.19.1.11663/libCardSiemens.so', '%(libdir)s/')
+            r.Install('../BISP-4.19.1.11663/libCardSetec.so', '%(libdir)s/')
+            r.Install('../BISP-4.19.1.11663/libCardPrisma.so', '%(libdir)s/')
+            r.Install('../BISP-4.19.1.11663/libtokenapi.so', '%(libdir)s/')
+            r.Symlink('%(libdir)s/libai.so', '%(personal)s/')
+            r.Symlink('%(libdir)s/libP11.so', '%(personal)s/')
+            r.Symlink('%(libdir)s/libplugins.so', '%(personal)s/')
+            r.Symlink('%(libdir)s/libCardSiemens.so', '%(personal)s/')
+            r.Symlink('%(libdir)s/libCardSetec.so', '%(personal)s/')
+            r.Symlink('%(libdir)s/libCardPrisma.so', '%(personal)s/')
+            r.Symlink('%(libdir)s/libtokenapi.so', '%(personal)s/')
+            
+            r.Install('../BISP-4.19.1.11663/personal.bin', '%(personal)s', mode = 0755)
+            r.Install('../BISP-4.19.1.11663/personal.sh', '%(personal)s', mode = 0755)
+            r.Install('../BISP-4.19.1.11663/persadm', '%(personal)s', mode = 0755)
+            r.Install('../BISP-4.19.1.11663/persadm.sh', '%(personal)s', mode = 0755)
+            r.Install('../BISP-4.19.1.11663/install.*.sh', '%(personal)s', mode = 0755)
+            r.Install('../BISP-4.19.1.11663/libBranding.so', '%(personal)s')
+            r.Install('../BISP-4.19.1.11663/Personal.cfg', '%(personal)s/config/')
+            r.Install('../BISP-4.19.1.11663/nexus_logo_32x32.png', '%(personal)s/icons/')
+            
+            # r.Symlink('%(personal)s/libai.so', '%(libdir)s/libai.so')
+            r.Symlink('%(personal)s/libtokenapi.so', '%(prefix)s/local/lib/libtokenapi.so')
+            r.Symlink('%(personal)s/personal.sh', '%(personal)s/personal')
+            r.Symlink('%(personal)s/persadm.sh', '%(personal)s/persadm')
+            
+            # install plugin for FF3
+            r.Symlink('%(personal)s/libplugins.so', '%(libdir)s/mozilla/plugins/libplugins.so')
+            r.Requires('nspluginwrapper:runtime', '%(libdir)s/mozilla/plugins/libplugins.so')
+            r.Desktopfile('nexus.desktop')
+
+
+            r.addSource('libstdc++.so.6.0.12', dir='%(personal)s/')
+            r.addSource('libgcc_s-4.4.1-20090729.so.1', dir='%(personal)s/')
+            r.Symlink('%(personal)s/libstdc++.so.6.0.12', '%(personal)s/libstdc++.so.6')
+            r.Symlink('%(personal)s/libgcc_s-4.4.1-20090729.so.1', '%(personal)s/libgcc_s.so.1')
+
+            for x in [ 'libgcc', 'libstdc\+\+']:
+                r.Requires(exceptDeps='soname:\ ELF32.*%s.*' % x )
+                r.Provides(exceptDeps='soname:\ ELF32.*%s.*' % x)
+
+            r.Move('%(personal)s/personal.bin', '%(personal)s/personal.bin.wrapped')
+            r.Create('%(personal)s/personal.bin', mode = 0755, 
+                     contents = """
+#!/bin/bash
+LD_PRELOAD=%(personal)s/libgcc_s.so.1:%(personal)s/libstdc++.so.6 %(personal)s/personal.bin.wrapped $@
+                               """)
+
+
+            r.NonLSBPaths(exceptions='.*')

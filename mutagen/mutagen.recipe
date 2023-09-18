@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mutagen(PackageRecipe):
+    name = 'mutagen'
+    version = '1.20'
+
+    buildRequires = [ 'python-setuptools:python', 'python:devel'] 
+
+    def setup(r):
+        r.addArchive('http://mutagen.googlecode.com/files/')
+        r.PythonSetup(data = '--install-data=%(prefix)s')
+
+        r.Remove('/usr/lib*/python*/site-packages/*egg-info', recursive = True)

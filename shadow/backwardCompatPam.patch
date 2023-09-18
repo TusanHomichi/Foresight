@@ -1,0 +1,12 @@
+--- shadow-utils.login.defs	2009-11-18 13:51:58.000000000 +0000
++++ shadow-utils.login.defs	2006-12-06 16:00:06.000000000 +0000
+@@ -53,6 +53,7 @@
+ #
+ USERGROUPS_ENAB yes
+ 
+-# Use SHA512 to encrypt password.
+-ENCRYPT_METHOD SHA512 
++# Use MD5 or DES to encrypt password? Red Hat use MD5 by default.
++ENCRYPT_METHOD MD5
++MD5_CRYPT_ENAB yes
+ 

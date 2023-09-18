@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2008 - 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class PTlib(GnomePackageRecipe):
+    buildRequires = [
+                'SDL:devel', 
+                'alsa-lib:devel', 
+                'cyrus-sasl:devel', 
+                'flex:runtime',
+                'openldap:devel', 
+                'openssl:devel', 
+                'bison:devel', 
+                'bison:runtime', 
+                'libv4l:devel', 
+                'libraw1394:devel', 
+                'lua:devel', 
+                'pulseaudio:devel', 
+                'unixODBC:devel'
+                     ]
+    name = 'ptlib'
+    version = '2.10.2'
+
+
+
+    def configure(r):
+        r.macros.cflags += ' -DLDAP_DEPRECATED'
+        r.Configure(' --disable-static --enable-plugins --disable-oss --enable-v4l2 --disable-avc --disable-v4l')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Replace('PTLIBDIR.*=.*', 'PTLIBDIR = %(datadir)s/ptlib', '%(datadir)s/ptlib/make/ptbuildopts.mak')
+        r.Remove('%(libdir)s/libpt_s.a')

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2006 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tightvnc(CPackageRecipe):
+    name = 'tightvnc'
+    version = '1.3.9'
+
+    buildRequires = [ 'imake:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXaw:devel', 'libXext:devel', 'libXmu:devel', 'libXp:devel', 'libXpm:devel', 'libXt:devel', 'libjpeg:devel', 'perl:lib', 'zlib:devel', 'imake:runtime', 'xorg-cf-files:data', 'gccmakedep:runtime' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/vnc-tight/'
+                     '%(name)s-%(version)s_unixsrc.tar.bz2')
+
+        #Build tools
+        r.Run('xmkmf')
+        r.Make('World')
+        #Install tools and server
+        r.MakeDirs('%(destdir)s%(bindir)s', '%(destdir)s%(mandir)s/man1')
+        r.Run('./vncinstall %(destdir)s%(bindir)s %(destdir)s%(mandir)s')

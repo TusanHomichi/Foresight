@@ -1,0 +1,2702 @@
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ar.po xfce4-quicklauncher-plugin-1.9.4/po/ar.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ar.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/ar.po	2010-12-19 21:01:56.298818125 +0100
+@@ -0,0 +1,80 @@
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2008-07-15 22:30+0200\n"
++"Last-Translator: Mohamed Magdy <mohamedmk@gmail.com>\n"
++"Language-Team: Arabeyes <doc@arabeyes.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Arabic\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr ""
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr ""
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr ""
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr ""
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr ""
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr ""
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr ""
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr ""
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr ""
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ast.po xfce4-quicklauncher-plugin-1.9.4/po/ast.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ast.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/ast.po	2010-12-19 21:01:56.298818125 +0100
+@@ -0,0 +1,86 @@
++# Asturian translations for xfce4-quicklauncher-plugin package
++# Copyright (C) 2009 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++#  <malditoastur@gmail.com>, 2009.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-07-13 19:55+0100\n"
++"Last-Translator: Marcos Antonio Alvarez Costales <marcoscostales@gmail.com>\n"
++"Language-Team: Asturian <alministradores@softastur.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Configurar Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Llinies:"
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Espaciu ente los llanzadores:"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "Amosar conseyos"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "Amosar etiquetes"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "iconu"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "comandu"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nome"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Abrir iconu"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Quicklauncher"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr ""
++"Permíte-y amestar llanzadores cenciellamente y amosalos en delles llinies."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Otros complementos disponibles equí"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Bloquiar"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parámetros"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Aplicaciones"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Aida"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Programa con dellos llanzadores"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ca.po xfce4-quicklauncher-plugin-1.9.4/po/ca.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ca.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/ca.po	2010-12-19 21:01:56.298818125 +0100
+@@ -0,0 +1,87 @@
++# Catalan translation of xfce4-quicklauncher-plugin.
++# Copyright (C) 2005, 2006 Masse Nicolas.
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Pau Ruŀlan Ferragut <paurullan@bulma.net>, 2006.
++# Carles Muñoz Gorriz <carlesmu@internautas.org>, 2008.
++#
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.2\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2008-11-16 13:51+0100\n"
++"Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
++"Language-Team: Catalan\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Configura Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Línies: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Espai entre els llançadors:"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "mostra els indicadors de funcions"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "mostra les etiquetes"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "icona"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "ordre"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nom"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Obre icona"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Quicklauncher"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr ""
++"Vos permet afegir fàcilment llançadores i mostrar-les en vàries línees."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Altres connnectors disponibles"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Bloca"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Paràmetres"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Aplicacions"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Ajuda"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Un programa amb vàries llançadores"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ChangeLog xfce4-quicklauncher-plugin-1.9.4/po/ChangeLog
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ChangeLog	2007-03-31 09:25:12.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/ChangeLog	2010-12-19 21:01:56.298818125 +0100
+@@ -1,16 +1,148 @@
+-2007-03-31  Pau Rul-lan Ferragut <paurullan@bulma.net>
++2009-08-08  Mike Massonnet <mmassonnet@xfce.org>
+ 
+-  * gb.po: British translation by Jeff Bailes <thepizzaking@gmail.com>
++	* ast.po: Asturian translation added (Marcos Alvarez Costales)
+ 
+-2007-02-20  Maximilian Schleiss <maxschleiss@bluewin.ch>
++2009-07-24  Gabor Kelemen  <kelemeng@gnome.hu>
+ 
+-	* sq.po: Modified the headers for the Albanian translation by
+-	Besnik Bleta <besnik@programeshqip.org>
++	* hu.po: Translation reworked.
+ 
+-2007-02-02  Maximilian Schleiss <maxschleiss@bluewin.ch>
++2009-05-29  Mike Massonnet <mmassonnet@xfce.org>
+ 
+-	* fr.po: Added the Albanian translation by
+-	Besnik Bleta <besnik@programeshqip.org>
++	* ur_PK.po: Urdu Pakistan translation update (Muhammad Ali Makki)
++	* ur.po: Urdu translation update (Muhammad Ali Makki)
++
++2009-05-11  Mike Massonnet <mmassonnet@xfce.org>
++
++	* zh_CN.po: Simplified Chinese translation update (Hunt Xu)
++
++2009-04-16  Mike Massonnet <mmassonnet@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++
++2009-03-14  Maximilian Schleiss <maximilian@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++	* it.po, LINGUAS: Italian translation added (Cristian Marchi)
++
++2009-03-05  Mike Massonnet <mmassonnet@xfce.org>
++
++	* pt.po: Renamed pt_PT.po to pt.po (bug #4574)
++
++2009-02-22  Mike Massonnet <mmassonnet@xfce.org>
++
++	* es.po: Add Spanish translation (Abel Martín)
++
++2009-02-20  Maximilian Schleiss <maximilian@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++
++2009-01-13  Alexander Toresson <eulex@xfce.org>
++
++	* sv.po, LINGUAS: Swedish translation added (Daniel Nylander)
++
++2008-12-25  Maximilian Schleiss <maximilian@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++
++2008-12-13  Maximilian Schleiss <maximilian@xfce.org>
++
++	* zh_CN.po: Simplified Chinese translation added (Hunt Xu)
++
++2008-11-17  Eren Türkay <erenturkay@xfce.org>
++
++        * tr.po: Turkish translation update (Turkish translation team: Gökmen Görgen, Samed Beyribey, Özgür Kuru, Utku Aydın)
++
++2008-11-16  Maximilian Schleiss <maximilian@xfce.org>
++
++	* ca.po: Catalan translation update (Carles Muñoz Gorriz)
++
++2008-11-09  Maximilian Schleiss <maximilian@xfce.org>
++
++	* sq.po: Albanian translation update (Besnik Bleta)
++
++2008-11-02  Michal Várady <miko.vaji@gmail.com>
++
++	* cs.po: Czech translation updated
++
++2008-10-28 Lars Nielsen <lars@mit-web.dk>
++
++	* da.po: Update danish translation
++
++2008-10-27  Piarres Beobide <pi@beobide.net>
++
++	* eu.po: BAsque translation update
++
++2008-10-11  Maximilian Schleiss <maximilian@xfce.org>
++
++	* ja.po: Japanese translation update (Masato Hashimoto)
++
++2008-07-15 Mohamed Magdy <alnokta@xfce.org>
++
++        * ar.po: Add Arabic translation
++
++2008-06-26  Maximilian Schleiss <maximilian@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++
++2008-06-25  Maximilian Schleiss <maximilian@xfce.org>
++
++	* id.po, LINGUAS: Indonesian translation added (Andhika Padmawan)
++
++2008-05-27  Mike Massonnet <mmassonnet@xfce.org>
++
++	* da.po, LINGUAS: Add Danish translation (Jens Hyllegaard)
++
++2008-05-10	Stavros Giannouris <stavrosg@hellug.gr>
++
++	* el.po: Greek translation update by Evaggelos Balaskas
++	 
++2008-03-18	Mike Massonnet <mmassonnet@xfce.org>
++
++	* pt_PT.po: Update Portuguese translation by Nuno Miguel
++
++2007-11-18	Maximilian Schleiss <maximilian@xfce.org>
++
++	* lv.po: Latvian translation added
++	by Rihards Priedītis <rprieditis@inbox.lv>
++
++2007-11-15	Mike Massonnet <mmassonnet@xfce.org>
++
++	* ur.po: Update translation by Muhammad Ali Makki <makki.ma@gmail.com>
++	* pk.po, ur.po: Rename pk.po to ur.po.
++
++2007-10-28	Mike Massonnet <mmassonnet@xfce.org>
++
++	* pk.po: Add new translation by محمد علي المكي <makki.ma@gmail.com>
++
++2007-09-12  Mike Massonnet <mmassonnet@xfce.org>
++
++	* eu.po: Update Basque translations
++	by <piarres@gmail.com>
++
++2007-09-07  Og Maciel <ogmaciel@gnome.org>
++
++	* pt_BR.po: Brazilian Protuguese translation added
++	by Vladimir Melo <vladimirmelo@foresightlinux.org>
++
++2007-07-08	Maximilian Schleiss <maximilian@xfce.org>
++
++	* pt_PT.po: European Protuguese translation added
++	by Nuno Miguel <nunis@netcabo.pt>
++
++2007-03-31	Pau Rul-lan Ferragut <paurullan@bulma.net>
++
++	* gb.po: British translation
++	by Jeff Bailes <thepizzaking@gmail.com>
++
++2007-02-20	Maximilian Schleiss <maximilian@xfce.org>
++
++	* sq.po: Modified the headers for the Albanian translation
++	by Besnik Bleta <besnik@programeshqip.org>
++
++2007-02-02	Maximilian Schleiss <maximilian@xfce.org>
++
++	* fr.po: Added the Albanian translation
++	by Besnik Bleta <besnik@programeshqip.org>
+ 
+ 2006-09-18  Pau Rul-lan Ferragut <paurullan@bulma.net>
+ 
+@@ -31,7 +163,7 @@
+ 2006-07-27  Jean-François Wauthy <pollux@xfce.org>
+ 
+ 	* fr.po: Updated French translations by Maximilian Schleiss
+-	<maxschleiss@bluewin.ch>
++	<maximilian@xfce.org>
+ 
+ 2006-04-09  Daichi Kawahata <daichi@xfce.org>
+ 
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/cs.po xfce4-quicklauncher-plugin-1.9.4/po/cs.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/cs.po	2007-06-08 22:31:08.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/cs.po	2010-12-19 21:01:56.299818017 +0100
+@@ -1,14 +1,14 @@
+ # Czech translations for xfce4-quicklauncher-plugin package.
+ # Copyright (C) 2006 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
+ # This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
+-# Michal Várady <miko.vaji@gmail.com>, 2006.
++# Michal Várady <miko.vaji@gmail.com>, 2006-2008.
+ #
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: xfce4-quicklauncher-plugin 1.9.2\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2007-05-17 21:37+0200\n"
+-"PO-Revision-Date: 2006-08-27 01:36+0100\n"
++"PO-Revision-Date: 2008-11-02 18:53+0100\n"
+ "Last-Translator: Michal Várady <miko.vaji@gmail.com>\n"
+ "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
+ "MIME-Version: 1.0\n"
+@@ -26,39 +26,40 @@
+ 
+ #: ../panel-plugin/callbacks.c:123
+ msgid "Espace entre les lanceurs :"
+-msgstr ""
++msgstr "Vzdálenosti mezi tlačítky:"
+ 
+ #: ../panel-plugin/callbacks.c:131
+ msgid "afficher les tooltips"
+-msgstr ""
++msgstr "Zobrazovat tipy"
+ 
+ #: ../panel-plugin/callbacks.c:135
+ msgid "afficher les labels"
+-msgstr ""
++msgstr "Zobrazovat popisky"
+ 
+ #: ../panel-plugin/callbacks.c:216
+ msgid "icone"
+-msgstr "ikona"
++msgstr "Ikona"
+ 
+ #: ../panel-plugin/callbacks.c:222
+ msgid "commande"
+-msgstr "p59kay"
++msgstr "Příkaz"
+ 
+ #: ../panel-plugin/callbacks.c:228
+ msgid "nom"
+-msgstr ""
++msgstr "Název"
+ 
+ #: ../panel-plugin/callbacks.c:327
+ msgid "Open icon"
+ msgstr "Otevřít ikonu"
+ 
+-#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
+ msgid "Quicklauncher"
+ msgstr "Rychlé spuštění"
+ 
+ #: ../panel-plugin/main.c:166
+ msgid "Allows you to add launchers easily and display them on many lines."
+-msgstr "Umožňuje Vám jednoduše přidat spouštěče a zobrazit je v mnoha řádcích."
++msgstr "Umožňuje vám jednoduše přidat spouštěče a zobrazit je na několika řádcích."
+ 
+ #: ../panel-plugin/main.c:168
+ msgid "Other plugins available here"
+@@ -66,20 +67,21 @@
+ 
+ #: ../panel-plugin/main.c:320
+ msgid "Lock"
+-msgstr ""
++msgstr "Uzamčeno"
+ 
+ #: ../panel-plugin/main.c:323
+ msgid "Parameters"
+-msgstr ""
++msgstr "Parametry"
+ 
+ #: ../panel-plugin/main.c:326
+ msgid "Applications"
+-msgstr ""
++msgstr "Aplikace"
+ 
+ #: ../panel-plugin/main.c:329
+ msgid "Help"
+-msgstr ""
++msgstr "Nápověda"
+ 
+ #: ../panel-plugin/quicklauncher.desktop.in.in.h:1
+ msgid "Program with several launchers"
+-msgstr "Mnoho spouštěč; v jednom"
++msgstr "Více spouštěčů na jednom tlačítku"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/da.po xfce4-quicklauncher-plugin-1.9.4/po/da.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/da.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/da.po	2010-12-19 21:01:56.299818017 +0100
+@@ -0,0 +1,89 @@
++# translation of xfce4-quicklauncher-plugin to Danish
++# Copyright (C) 2007 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Jens Hyllegaard <jens.hyllegaard@gmail.com>, 2007.
++# Per Kongstad <p_kongstad@op.pl>, 2008.
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.4\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2008-10-23 23:14+0100\n"
++"Last-Translator: Per Kongstad <p_kongstad@op.pl>\n"
++"Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Danish\n"
++"X-Poedit-Country: DENMARK\n"
++"X-Poedit-SourceCharset: utf-8\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Konfigurér Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Linjer: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Mellemrum mellem startere :"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "vis værktøjstips"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "vis mærkater"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ikon"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "kommando"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "navn"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Åben ikon"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Hurtigstarter"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Lader dig tilføje startere nemt og vise dem på mange linjer."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Andre udvidelsesmoduler som er tilgængelige her"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Lås"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parametre"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Programmer"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Hjælp"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Programmer med flere startere"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/de.po xfce4-quicklauncher-plugin-1.9.4/po/de.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/de.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/de.po	2010-12-19 21:31:23.196663752 +0100
+@@ -0,0 +1,86 @@
++# German translations for xfce4-quicklauncher-plugin package
++# German messages for xfce4-quicklauncher-plugin.
++# Copyright (C) 2009 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Simon Schneider <simon@schneiderimtal.de>, 2009.
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-03-13 13:42+0000\n"
++"Last-Translator: Simon Schneider <simon@schneiderimtal.de>\n"
++"Language-Team: German <xfce-i18n-de@xfce.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Schnellstarter konfigurieren"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Zeilen:"
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Platz zwischen den Startern:"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "Kurzhilfen anzeigen"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "Beschriftungen anzeigen"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "Symbol"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "Befehl"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "Name"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Symbol wählen"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Schnellstarter"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Starter einfach erstellen und in mehreren Zeilen anzeigen"
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Andere Erweiterungen siehe: "
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Bildschirm sperren"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Einstellungen"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Anwendungsfinder"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Hilfe"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Starter einfach erstellen und in mehreren Zeilen anzeigen"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/el.po xfce4-quicklauncher-plugin-1.9.4/po/el.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/el.po	2007-06-08 22:31:08.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/el.po	2010-12-19 21:01:56.299818017 +0100
+@@ -1,20 +1,23 @@
++# translation of el.po to Greek
+ # Greek translations for xfce4-quicklauncher-plugin package.
+ # Copyright (C) 2005-2006 Masse Nicolas.
+ # This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
+-# Stavros Giannouris <stavrosg@serverhive.com>, 2006.
+ #
++# Stavros Giannouris <stavrosg@serverhive.com>, 2006.
++# Evaggelos Balaskas <ebalaskas@ebalaskas.gr>, 2008.
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
++"Project-Id-Version: el\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2007-05-17 21:37+0200\n"
+-"PO-Revision-Date: 2006-08-04 22:19+0200\n"
+-"Last-Translator: Stavros Giannouris <stavrosg@serverhive.com>\n"
++"PO-Revision-Date: 2008-04-28 19:00+0300\n"
++"Last-Translator: Evaggelos Balaskas <ebalaskas@ebalaskas.gr>\n"
+ "Language-Team: Greek <nls@tux.hellug.gr>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=2; plural=(n != 1);\n"
++"X-Generator: KBabel 1.11.4\n"
+ 
+ #: ../panel-plugin/callbacks.c:79
+ msgid "Configure Quicklauncher"
+@@ -58,7 +61,8 @@
+ 
+ #: ../panel-plugin/main.c:166
+ msgid "Allows you to add launchers easily and display them on many lines."
+-msgstr "Επιτρέπει την γρήγορη προσθήκη εκκινητών και την εμφάνισή τους σε πολλές "
++msgstr ""
++"Επιτρέπει την γρήγορη προσθήκη εκκινητών και την εμφάνισή τους σε πολλές "
+ "γραμμές."
+ 
+ #: ../panel-plugin/main.c:168
+@@ -67,20 +71,21 @@
+ 
+ #: ../panel-plugin/main.c:320
+ msgid "Lock"
+-msgstr ""
++msgstr "Κλείδωμα"
+ 
+ #: ../panel-plugin/main.c:323
+ msgid "Parameters"
+-msgstr ""
++msgstr "Παραμέτρους"
+ 
+ #: ../panel-plugin/main.c:326
+ msgid "Applications"
+-msgstr ""
++msgstr "Εφαρμογές"
+ 
+ #: ../panel-plugin/main.c:329
+ msgid "Help"
+-msgstr ""
++msgstr "Βοήθεια"
+ 
+ #: ../panel-plugin/quicklauncher.desktop.in.in.h:1
+ msgid "Program with several launchers"
+ msgstr "Πρόγραμμα με πολλούς εκκινητές"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/en_GB.po xfce4-quicklauncher-plugin-1.9.4/po/en_GB.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/en_GB.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/en_GB.po	2010-12-19 21:01:56.299818017 +0100
+@@ -0,0 +1,87 @@
++# English/GB translation of xfce4-quicklauncher-plugin.
++# Copyright (C) 2007 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Jeff Bailes <thepizzaking@gmail.com>, 2007.
++# , fuzzy
++# 
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2007-03-31 10:17+1000\n"
++"Last-Translator: Jeff Bailes <thepizzaking@gmail.com>\n"
++"Language-Team: English/GB\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Configure Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Lines: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Space between launchers"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "Show tooltips"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "Show labels"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "icon"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "command"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "name"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Open icon"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Quicklauncher"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Allows you to add launchers easily and display them on many lines."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Other plugins available here"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Lock"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parameters"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Applications"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Help"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Program with several launchers"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/es.po xfce4-quicklauncher-plugin-1.9.4/po/es.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/es.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/es.po	2010-12-19 21:01:56.299818017 +0100
+@@ -0,0 +1,87 @@
++# Spanish translations for xfce4-quicklauncher-plugin package
++# Copyright (C) 2009 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++#  <abel.martin.ruiz@gmail.com>, 2009.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-02-11 20:04+0100\n"
++"Last-Translator: Abel Martín <abel.martin.ruiz@gmail.com>\n"
++"Language-Team: Spanish\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Configurar Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Líneas:"
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Espacio entre los lanzadores:"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "Mostrar consejos"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "Mostrar etiquetas"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "icono"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "comando"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nombre"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Abrir icono"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Quicklauncher"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Le permite añadir lanzadores fácilmente y mostrarlos en varias líneas."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Otros complementos disponibles aquí"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Bloquear"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parámetros"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Aplicaciones"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Ayuda"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Programa con varios lanzadores"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/eu.po xfce4-quicklauncher-plugin-1.9.4/po/eu.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/eu.po	2007-06-08 22:31:08.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/eu.po	2010-12-19 21:01:56.300817908 +0100
+@@ -26,15 +26,15 @@
+ 
+ #: ../panel-plugin/callbacks.c:123
+ msgid "Espace entre les lanceurs :"
+-msgstr ""
++msgstr "Abiarazleen arteko tartea :"
+ 
+ #: ../panel-plugin/callbacks.c:131
+ msgid "afficher les tooltips"
+-msgstr ""
++msgstr "Ikusi argibideak"
+ 
+ #: ../panel-plugin/callbacks.c:135
+ msgid "afficher les labels"
+-msgstr ""
++msgstr "ikusi etiketak"
+ 
+ #: ../panel-plugin/callbacks.c:216
+ msgid "icone"
+@@ -46,7 +46,7 @@
+ 
+ #: ../panel-plugin/callbacks.c:228
+ msgid "nom"
+-msgstr ""
++msgstr "izena"
+ 
+ #: ../panel-plugin/callbacks.c:327
+ msgid "Open icon"
+@@ -66,19 +66,19 @@
+ 
+ #: ../panel-plugin/main.c:320
+ msgid "Lock"
+-msgstr ""
++msgstr "Bloketu"
+ 
+ #: ../panel-plugin/main.c:323
+ msgid "Parameters"
+-msgstr ""
++msgstr "Parametroak"
+ 
+ #: ../panel-plugin/main.c:326
+ msgid "Applications"
+-msgstr ""
++msgstr "Aplikazioak"
+ 
+ #: ../panel-plugin/main.c:329
+ msgid "Help"
+-msgstr ""
++msgstr "Laguntza"
+ 
+ #: ../panel-plugin/quicklauncher.desktop.in.in.h:1
+ msgid "Program with several launchers"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/fr.po xfce4-quicklauncher-plugin-1.9.4/po/fr.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/fr.po	2007-06-08 22:31:08.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/fr.po	2010-12-19 21:01:56.300817908 +0100
+@@ -10,7 +10,7 @@
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2007-05-17 21:37+0200\n"
+ "PO-Revision-Date: 2006-07-26 18:48+0100\n"
+-"Last-Translator: Maximilian Schleiss <maxschleiss@bluewin.ch>\n"
++"Last-Translator: Maximilian Schleiss <maximilian@xfce.org>\n"
+ "Language-Team: French <xfce-i18n@xfce.org>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/gl.po xfce4-quicklauncher-plugin-1.9.4/po/gl.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/gl.po	2007-06-08 22:31:08.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/gl.po	2010-12-19 21:01:56.300817908 +0100
+@@ -1,20 +1,24 @@
+-# Galician translation for xfce4-quicklauncher-plugin
+-# Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
++# Galician translation of xfce4-quicklauncher-plugin
++# Copyright (C) 2008-2009 Leandro Regueiro
+ # This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
+-# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+ #
+-#, fuzzy
++# Leandro Regueiro <leandro.regueiro@gmail.com>, 2008, 2009.
++#
++# Proxecto Trasno - Adaptación do software libre á lingua galega:  Se desexas
++# colaborar connosco, podes atopar máis información en <http://trasno.net>
++#
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: xfce4-quicklauncher-plugin\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2007-05-17 21:37+0200\n"
+-"PO-Revision-Date: 2006-06-17 01:07+0000\n"
+-"Last-Translator: Mentor <mentor.es@gmail.com>\n"
+-"Language-Team: Galician <gl@li.org>\n"
++"PO-Revision-Date: 2009-07-15 18:06+0100\n"
++"Last-Translator: Leandro Regueiro <leandro.regueiro@gmail.com>\n"
++"Language-Team: Galician <proxecto@trasno.net>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+ 
+ #: ../panel-plugin/callbacks.c:79
+ msgid "Configure Quicklauncher"
+@@ -24,62 +28,70 @@
+ msgid "Lines: "
+ msgstr "Liñas: "
+ 
++# FRANCÉS
+ #: ../panel-plugin/callbacks.c:123
+ msgid "Espace entre les lanceurs :"
+-msgstr ""
++msgstr "Espazo entra os lanzadores:"
+ 
++# FRANCÉS
+ #: ../panel-plugin/callbacks.c:131
+ msgid "afficher les tooltips"
+-msgstr ""
++msgstr "mostrar as notificacións"
+ 
++# FRANCÉS
+ #: ../panel-plugin/callbacks.c:135
+ msgid "afficher les labels"
+-msgstr ""
++msgstr "mostrar as etiquetas"
+ 
++# FRANCÉS
+ #: ../panel-plugin/callbacks.c:216
+ msgid "icone"
+-msgstr "icono"
++msgstr "icona"
+ 
++# FRANCÉS
+ #: ../panel-plugin/callbacks.c:222
+ msgid "commande"
+-msgstr "Orde"
++msgstr "comando"
+ 
++# FRANCÉS
+ #: ../panel-plugin/callbacks.c:228
+ msgid "nom"
+-msgstr ""
++msgstr "nome"
+ 
+ #: ../panel-plugin/callbacks.c:327
+ msgid "Open icon"
+-msgstr "Abrir icono"
++msgstr "Abrir icona"
+ 
+-#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
+ msgid "Quicklauncher"
+ msgstr "Quicklauncher"
+ 
+ #: ../panel-plugin/main.c:166
+ msgid "Allows you to add launchers easily and display them on many lines."
+-msgstr "Permite engadir lanzadores facilmente e desplegalos en varias liñas."
++msgstr "Permite engadir lanzadores facilmente e mostralos en varias liñas."
+ 
+ #: ../panel-plugin/main.c:168
+ msgid "Other plugins available here"
+-msgstr "Outros plugins estan dispoñibles eiquí"
++msgstr "Outros engadidos dispoñibles aquí"
+ 
+ #: ../panel-plugin/main.c:320
+ msgid "Lock"
+-msgstr ""
++msgstr "Bloquear"
+ 
+ #: ../panel-plugin/main.c:323
+ msgid "Parameters"
+-msgstr ""
++msgstr "Parámetros"
+ 
+ #: ../panel-plugin/main.c:326
+ msgid "Applications"
+-msgstr ""
++msgstr "Aplicacións"
+ 
+ #: ../panel-plugin/main.c:329
+ msgid "Help"
+-msgstr ""
++msgstr "Axuda"
+ 
+ #: ../panel-plugin/quicklauncher.desktop.in.in.h:1
+ msgid "Program with several launchers"
+ msgstr "Programa con varios lanzadores"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/hu.po xfce4-quicklauncher-plugin-1.9.4/po/hu.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/hu.po	2007-05-18 08:38:57.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/hu.po	2010-12-19 21:01:56.300817908 +0100
+@@ -1,88 +1,88 @@
+-# Hungarian translations for xfce4-quicklauncher-plugin package.
+-# Copyright (C) 2005-2006 Masse Nicolas.
+-# This file is distributed under the same license as
+-#   the xfce4-quicklauncher-plugin package.
+-# SZERVÁC Attila <sas@321.hu>, 2006.
++# Hungarian translation of xfce4-quicklauncher-plugin
++# Copyright 2009. Free Software Foundation, Inc.
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
+ #
++# SZERVÁC Attila <sas@321.hu>, 2006.
++# Gabor Kelemen <kelemeng at gnome dot hu>, 2009.
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
++"Project-Id-Version:  xfce4-quicklauncher-plugin\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2007-05-17 21:37+0200\n"
+-"PO-Revision-Date: 2007-05-18 08:30+0100\n"
+-"Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
+-"Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
++"POT-Creation-Date: 2009-07-24 09:57+0200\n"
++"PO-Revision-Date: 2009-07-24 13:57+0200\n"
++"Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
++"Language-Team: Hungarian <gnome at gnome dot hu>\n"
+ "MIME-Version: 1.0\n"
+-"Content-Type: text/plain; charset=utf-8\n"
++"Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+-"X-Poedit-Country: HUNGARY\n"
++"X-Generator: KBabel 1.11.4\n"
++"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+ 
+ #: ../panel-plugin/callbacks.c:79
+ msgid "Configure Quicklauncher"
+ msgstr "Gyorsindító beállítása"
+ 
+-#: ../panel-plugin/callbacks.c:93
++#: ../panel-plugin/callbacks.c:111
+ msgid "Lines: "
+ msgstr "Sorok: "
+ 
+-#: ../panel-plugin/callbacks.c:123
++#: ../panel-plugin/callbacks.c:124
+ msgid "Espace entre les lanceurs :"
+-msgstr ""
++msgstr "Hely az indítóikonok között:"
+ 
+-#: ../panel-plugin/callbacks.c:131
++#: ../panel-plugin/callbacks.c:132
+ msgid "afficher les tooltips"
+-msgstr ""
++msgstr "Buboréksúgók megjelenítése"
+ 
+-#: ../panel-plugin/callbacks.c:135
++#: ../panel-plugin/callbacks.c:136
+ msgid "afficher les labels"
+-msgstr ""
++msgstr "Címkék megjelenítése"
+ 
+-#: ../panel-plugin/callbacks.c:216
++#: ../panel-plugin/callbacks.c:220
+ msgid "icone"
+-msgstr "ikon"
++msgstr "ikonok"
+ 
+-#: ../panel-plugin/callbacks.c:222
++#: ../panel-plugin/callbacks.c:226
+ msgid "commande"
+ msgstr "parancs"
+ 
+-#: ../panel-plugin/callbacks.c:228
++#: ../panel-plugin/callbacks.c:232
+ msgid "nom"
+-msgstr ""
++msgstr "név"
+ 
+-#: ../panel-plugin/callbacks.c:327
++#: ../panel-plugin/callbacks.c:331
+ msgid "Open icon"
+ msgstr "Ikon megnyitása"
+ 
+-#: ../panel-plugin/main.c:163
+-#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++#: ../panel-plugin/main.c:164 ../panel-plugin/quicklauncher.desktop.in.in.h:2
+ msgid "Quicklauncher"
+ msgstr "Gyorsindító"
+ 
+-#: ../panel-plugin/main.c:166
++#: ../panel-plugin/main.c:167
+ msgid "Allows you to add launchers easily and display them on many lines."
+-msgstr "Lehetővé teszi indítók könnyű hozzáadását és többsoros kijelzését"
++msgstr "Lehetővé teszi indítóikonok felvételét és megjelenítését több sorban."
+ 
+-#: ../panel-plugin/main.c:168
++#: ../panel-plugin/main.c:169
+ msgid "Other plugins available here"
+-msgstr "Más itt elérhető beillesztések"
++msgstr "További elérhető bővítmények"
+ 
+-#: ../panel-plugin/main.c:320
++#: ../panel-plugin/main.c:321
+ msgid "Lock"
+-msgstr "Lezár"
++msgstr "Zárolás"
+ 
+-#: ../panel-plugin/main.c:323
++#: ../panel-plugin/main.c:324
+ msgid "Parameters"
+ msgstr "Paraméterek"
+ 
+-#: ../panel-plugin/main.c:326
++#: ../panel-plugin/main.c:327
+ msgid "Applications"
+ msgstr "Alkalmazások"
+ 
+-#: ../panel-plugin/main.c:329
++#: ../panel-plugin/main.c:330
+ msgid "Help"
+ msgstr "Súgó"
+ 
+ #: ../panel-plugin/quicklauncher.desktop.in.in.h:1
+ msgid "Program with several launchers"
+-msgstr "Program különböző indítókkal"
++msgstr "Program több indítóikonnal"
+ 
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/id.po xfce4-quicklauncher-plugin-1.9.4/po/id.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/id.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/id.po	2010-12-19 21:01:56.300817908 +0100
+@@ -0,0 +1,86 @@
++# Indonesian translations for xfce4-quicklauncher-plugin package.
++# Copyright (C) 2005-2006 Masse Nicolas.
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Andhika Padmawan <andhika.padmawan@gmail.com>, 2008.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2008-06-21 12:05+0700\n"
++"Last-Translator: Andhika Padmawan <andhika.padmawan@gmail.com>\n"
++"Language-Team: Indonesian <id@li.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Konfigurasi Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Baris: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Spasi di antara peluncur :"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "tampilkan tip alat"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "tampilkan label"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ikon"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "perintah"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nama"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Buka ikon"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Quicklauncher"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr ""
++"Memungkinkan anda untuk menambah peluncur dengan mudah dan menampilkannya "
++"pada banyak baris."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Plugin lainnya tersedia di sini"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Kunci"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parameter"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Aplikasi"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Bantuan"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Program dengan beberapa peluncur"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/it.po xfce4-quicklauncher-plugin-1.9.4/po/it.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/it.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/it.po	2010-12-19 21:01:56.300817908 +0100
+@@ -0,0 +1,85 @@
++# Italian translation of xfce4-quicklauncher-plugin.
++# Copyright (C) 2007 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Cristian Marchi <cri.penta@gmail.com>, 2009.
++msgid ""
++msgstr ""
++"Project-Id-Version: # Cristian Marchi <cri.penta@gmail.com>, 2009.\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-02-13 09:15+0100\n"
++"Last-Translator: Cristian Marchi <cri.penta@gmail.com>\n"
++"Language-Team: Italian Translation Team <xfce-it-translators@googlegroups.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Configura l'avviatore rapido"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Righe:"
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Spazio tra gli avviatori:"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "Mostra le descrizioni"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "Mostra le etichette"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "icona"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "comando"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nome"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Apri icona"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Avviatore rapido"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Permette di aggiungere degli avviatori e di visualizzarli su più righe."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Altri plugin disponibili qui"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Blocca"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parametri"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Applicazioni"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Aiuto"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Programma con diversi avviatori"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ja.po xfce4-quicklauncher-plugin-1.9.4/po/ja.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ja.po	2007-06-08 22:31:08.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/ja.po	2010-12-19 21:01:56.301817800 +0100
+@@ -9,8 +9,8 @@
+ "Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2007-05-17 21:37+0200\n"
+-"PO-Revision-Date: 2006-02-12 16:07+0900\n"
+-"Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
++"PO-Revision-Date: 2008-10-08 20:07+0900\n"
++"Last-Translator: Masato Hashiomto <cabezon.hashimoto@gmail.com>\n"
+ "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+@@ -26,15 +26,15 @@
+ 
+ #: ../panel-plugin/callbacks.c:123
+ msgid "Espace entre les lanceurs :"
+-msgstr ""
++msgstr "ランチャー間の間隔:"
+ 
+ #: ../panel-plugin/callbacks.c:131
+ msgid "afficher les tooltips"
+-msgstr ""
++msgstr "ツールチップを表示する"
+ 
+ #: ../panel-plugin/callbacks.c:135
+ msgid "afficher les labels"
+-msgstr ""
++msgstr "ラベルを表示する"
+ 
+ #: ../panel-plugin/callbacks.c:216
+ msgid "icone"
+@@ -46,7 +46,7 @@
+ 
+ #: ../panel-plugin/callbacks.c:228
+ msgid "nom"
+-msgstr ""
++msgstr "名前"
+ 
+ #: ../panel-plugin/callbacks.c:327
+ msgid "Open icon"
+@@ -66,19 +66,19 @@
+ 
+ #: ../panel-plugin/main.c:320
+ msgid "Lock"
+-msgstr ""
++msgstr "ロック"
+ 
+ #: ../panel-plugin/main.c:323
+ msgid "Parameters"
+-msgstr ""
++msgstr "パラメタ"
+ 
+ #: ../panel-plugin/main.c:326
+ msgid "Applications"
+-msgstr ""
++msgstr "アプリケーション"
+ 
+ #: ../panel-plugin/main.c:329
+ msgid "Help"
+-msgstr ""
++msgstr "ヘルプ"
+ 
+ #: ../panel-plugin/quicklauncher.desktop.in.in.h:1
+ msgid "Program with several launchers"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/LINGUAS xfce4-quicklauncher-plugin-1.9.4/po/LINGUAS
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/LINGUAS	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/LINGUAS	2010-12-19 21:04:02.989124848 +0100
+@@ -0,0 +1,2 @@
++# set of available languages (in alphabetic order)
++ast ca cs da de el en_GB es eu fr gl hu id it ja lv pa pl pt_BR pt ru sq sv tr ug uk ur_PK ur vi zh_CN 
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/lv.po xfce4-quicklauncher-plugin-1.9.4/po/lv.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/lv.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/lv.po	2010-12-19 21:01:56.301817800 +0100
+@@ -0,0 +1,88 @@
++# Latvian translation of xfce4-quicklauncher-plugin.
++# CCopyright (C) 2005-2006 Masse Nicolas.
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Rihards Prieditis <rprieditis@inbox.lv>, 2007.
++# Rihards Prieditis <rprieditis@gmail.com>, 2009.
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-09-18 22:47+0100\n"
++"Last-Translator: Rihards Prieditis <rprieditis@gmail.com>\n"
++"Language-Team: Latvian <translation-team-lv@lists.sourceforge.net>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: Lokalize 1.0\n"
++"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 "
++": 2);\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Konfigurēt ātro palaidēju"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Rindas: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Atstarpe starp palaidējiem:"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "Rādīt paskaidres"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "Rādīt etiķetes"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ikona"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "komanda"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nosaukums"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Atvērt ikonu"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Ātrais palaidējs"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Ļauj viegli pievienot palaidēju un attēlot vairākās līnijās."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Citi spraudņi pieejami"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Slēgt"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parametri"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Lietotnes"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Palīdzība"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Programma ar dažiem palaidējiem"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/pa.po xfce4-quicklauncher-plugin-1.9.4/po/pa.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/pa.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/pa.po	2010-12-19 21:01:56.301817800 +0100
+@@ -0,0 +1,87 @@
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++#
++# A S Alam <aalam@users.sf.net>, 2010.
++msgid ""
++msgstr ""
++"Project-Id-Version: \n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2010-04-04 10:32+0530\n"
++"Last-Translator: A S Alam <aalam@users.sf.net>\n"
++"Language-Team: Punjabi/Panjabi <kde-i18n-doc@kde.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: Lokalize 1.0\n"
++"Plural-Forms: nplurals=2; plural=n != 1;\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "ਤੁਰੰਤ-ਲਾਂਚਰ ਸੰਰਚਨਾ"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "ਲਾਈਨਾਂ: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ਆਈਕਾਨ"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "ਕਮਾਂਡ"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "ਆਈਕਾਨ ਖੋਲ੍ਹੋ"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "ਤੁਰੰਤ-ਲਾਂਚਰ"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr ""
++"ਤੁਹਾਨੂੰ ਲਾਂਚਰ ਜੋੜਨ ਲਈ ਅਤੇ ਉਹਨਾਂ ਨੂੰ ਕਈ ਲਾਈਨਾਂ ਵਿੱਚ ਵੇਖਾਉਣ ਲਈ ਸਹਾਇਕ ਹੈ।"
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "ਹੋਰ ਪਲੱਗਇਨ ਇੱਥੇ ਉਪਲੱਬਧ ਹਨ"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "ਲਾਕ"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "ਪੈਰਾਮੀਟਰ"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "ਐਪਲੀਕੇਸ਼ਨ"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "ਮੱਦਦ"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "ਕਈ ਲਾਂਚਰ ਨਾਲ ਪਰੋਗਰਾਮ"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/pt_BR.po xfce4-quicklauncher-plugin-1.9.4/po/pt_BR.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/pt_BR.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/pt_BR.po	2010-12-19 21:01:56.302817693 +0100
+@@ -0,0 +1,86 @@
++# European Portuguese translation of the xfce4-quicklauncher-plugin.
++# Copyright (C) xfce4-quicklauncher-plugin COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Vladimir Melo <vladimirmelo@foresightlinux.org>, 2007.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2007-09-05 15:59+0100\n"
++"Last-Translator: Vladimir Melo <vladimirmelo@foresightlinux.org>\n"
++"Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Configurar Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Linhas: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Espaço entre os lançadores :"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "fixar as dicas de ferramentas"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "Fixar os rótulos"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ícone"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "comando"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nome"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Abrir ícone"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Quicklauncher"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Permite adicionar lançadores facilmente e exibi-los em muitas linhas."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Outros plug-ins disponíveis aqui"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Bloquear"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parâmetros"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Aplicações"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Ajuda"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Programa com diversos lançadores"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/pt.po xfce4-quicklauncher-plugin-1.9.4/po/pt.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/pt.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/pt.po	2010-12-19 21:01:56.302817693 +0100
+@@ -0,0 +1,84 @@
++# European Portuguese translation of the xfce4-quicklauncher-plugin.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# Nuno MIguel <nunis@netcabo.pt>, 2007.
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2007-11-30 23:54+0100\n"
++"Last-Translator: Nuno Miguel <nunis@netcabo.pt>\n"
++"Language-Team: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Configurar início rápido"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Linhas:"
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Espaço entre os lançadores :"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "afixar as dicas"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "afixar as etiquetas"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ícone"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "comando"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nome"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Abrir ícone"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Início rápido"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Permite adicionar lançadores e mostrá-los em diversas linhas."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Outros \"plug-ins\" disponíveis aqui"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Bloquear"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parâmetros"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Aplicações"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Ajuda"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Programa com diversos lançadores"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ru.po xfce4-quicklauncher-plugin-1.9.4/po/ru.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ru.po	2007-06-08 22:31:08.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/po/ru.po	2010-12-19 21:01:56.302817693 +0100
+@@ -9,8 +9,8 @@
+ "Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2007-05-17 21:37+0200\n"
+-"PO-Revision-Date: 2006-03-24 21:48+0500\n"
+-"Last-Translator: Andrey Fedoseev <andrey.fedoseev@gmail.com>\n"
++"PO-Revision-Date: 2010-03-01 10:52+0200\n"
++"Last-Translator: Dima Smirnov <arch@cnc-parts.info>\n"
+ "Language-Team: Russian <ru@li.org>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+@@ -26,15 +26,15 @@
+ 
+ #: ../panel-plugin/callbacks.c:123
+ msgid "Espace entre les lanceurs :"
+-msgstr ""
++msgstr "Расстояние между lanceurs :"
+ 
+ #: ../panel-plugin/callbacks.c:131
+ msgid "afficher les tooltips"
+-msgstr ""
++msgstr "Показывать подсказки"
+ 
+ #: ../panel-plugin/callbacks.c:135
+ msgid "afficher les labels"
+-msgstr ""
++msgstr "Показывать лейблы"
+ 
+ #: ../panel-plugin/callbacks.c:216
+ msgid "icone"
+@@ -46,20 +46,20 @@
+ 
+ #: ../panel-plugin/callbacks.c:228
+ msgid "nom"
+-msgstr ""
++msgstr "nom"
+ 
+ #: ../panel-plugin/callbacks.c:327
+ msgid "Open icon"
+ msgstr "Открыть файл значка"
+ 
+-#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
+ msgid "Quicklauncher"
+ msgstr "Быстрый запуск"
+ 
+ #: ../panel-plugin/main.c:166
+ msgid "Allows you to add launchers easily and display them on many lines."
+-msgstr "Позволяет вам с легкостью добавлять кнопки запуска и отображает их в "
+-"несколько строк."
++msgstr "Позволяет вам с легкостью добавлять кнопки запуска и отображает их в несколько строк."
+ 
+ #: ../panel-plugin/main.c:168
+ msgid "Other plugins available here"
+@@ -67,20 +67,21 @@
+ 
+ #: ../panel-plugin/main.c:320
+ msgid "Lock"
+-msgstr ""
++msgstr "Блокировать"
+ 
+ #: ../panel-plugin/main.c:323
+ msgid "Parameters"
+-msgstr ""
++msgstr "Параметры"
+ 
+ #: ../panel-plugin/main.c:326
+ msgid "Applications"
+-msgstr ""
++msgstr "Приложения"
+ 
+ #: ../panel-plugin/main.c:329
+ msgid "Help"
+-msgstr ""
++msgstr "Помощь"
+ 
+ #: ../panel-plugin/quicklauncher.desktop.in.in.h:1
+ msgid "Program with several launchers"
+ msgstr "Несколько кнопок запуска"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/sq.po xfce4-quicklauncher-plugin-1.9.4/po/sq.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/sq.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/sq.po	2010-12-19 21:01:56.302817693 +0100
+@@ -0,0 +1,86 @@
++# Albanian translation for xfce4-quicklauncher-plugin package.
++# Copyright (C) 2005-2006 Masse Nicolas.
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Besnik Bleta <besnik@programeshqip.org>, 2007.
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2008-11-04 23:27+0200\n"
++"Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
++"Language-Team: Albanian <translation-team-sq@lists.sourceforge.net>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: KBabel 1.11.1\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Formësoni Nisësin e Shpejtë"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Rreshta: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Hapësirë ndërmjet nisësash :"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "shfaq ndihmëzat"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "shfaq etiketat"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ikonë"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "Formësoni Nisësin e Shpejtë"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "emër"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Hap ikonë"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Nisës i shpejtës"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Ju lejon të shtoni lehtë nisësa dhe t'i shfaqni ata në mjaft rreshta."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Shtojca të tjera të passhme prej këtu"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Kyç"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parametra"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Zbatime"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Ndihmë"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Program me disa nisësa"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/sv.po xfce4-quicklauncher-plugin-1.9.4/po/sv.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/sv.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/sv.po	2010-12-19 21:01:56.302817693 +0100
+@@ -0,0 +1,86 @@
++# Swedish translation for xfce4-quicklauncher-plugin.
++# Copyright (C) 2008 Free Software Foundation, Inc.
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Daniel Nylander <po@danielnylander.se>, 2008.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-12-16 18:02+0100\n"
++"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
++"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Konfigurera Quicklauncher"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Rader: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr ""
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "ikon"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "kommando"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "namn"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Öppna ikon"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Quicklauncher"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Låter dig enkelt lägga till programstartare och visa dem på många rader."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Andra insticksmoduler tillgängliga här"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Lås"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parametrar"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Program"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Hjälp"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Program med flera programstartare"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/tr.po xfce4-quicklauncher-plugin-1.9.4/po/tr.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/tr.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/tr.po	2010-12-19 21:01:56.303817585 +0100
+@@ -0,0 +1,87 @@
++# translation of en_GB.po to Türkçe
++# English/GB translation of xfce4-quicklauncher-plugin.
++# Copyright (C) 2007 THE xfce4-quicklauncher-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++# Jeff Bailes <thepizzaking@gmail.com>, 2007.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: en_GB\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2008-11-04 20:36+0200\n"
++"Last-Translator: Ertuğrul\n"
++"Language-Team: Türkçe <tr@li.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: KBabel 1.11.4\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Hızlı başlat'ı yapılandır"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "Sıra: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Space between launchers"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "Araç bilgisini göster"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "İsimleri göster"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "simge"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "komut"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "isim"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "Simge seç"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Hızlı başlat"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "Allows you to add launchers easily and display them on many lines."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "Other plugins available here"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "Kilit"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "Parametre"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "Uygulamalar"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "Yardım"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Kısayollar oluşturmanızı sağlar"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ug.po xfce4-quicklauncher-plugin-1.9.4/po/ug.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ug.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/ug.po	2010-12-19 21:01:56.303817585 +0100
+@@ -0,0 +1,85 @@
++# Uyghur translations for xfce4-quicklauncher-plugin package.
++# Copyright (C) 2005-2006 Masse Nicolas.
++# This file is distributed under the same license as
++#   the xfce4-quicklauncher-plugin package.
++# Gheyret T.Kenji <gheyret@gmail.com>, 2010.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin 1.9.1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2008-10-08 20:07+0900\n"
++"Last-Translator: Gheyret T.Kenji <gheyret@gmail.com>\n"
++"Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Quicklauncher نى سەپلە"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "قۇر سانى: "
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "ランチャー間の間隔:"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "ツールチップを表示する"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "ラベルを表示する"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "سىنبەلگە"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "بۇيرۇق"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "ئاتى"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "سىنبەلگە ئاچ"
++
++#: ../panel-plugin/main.c:163 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "クイックランチャー"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "ランチャーを追加して複数行に表示します。"
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "باشقا قىستۇرمىلارمۇ بار."
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "قۇلۇپلا"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "پارامېتىر"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "پروگرامما"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "ياردەم"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "複数のランチャーを一まとめに表示します。"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/uk.po xfce4-quicklauncher-plugin-1.9.4/po/uk.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/uk.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/uk.po	2010-12-19 21:01:56.303817585 +0100
+@@ -0,0 +1,86 @@
++# Ukrainian translation of xfce4-quicklauncher-plugin.
++# Copyright (C) 2005-2006 Masse Nicolas.
++# This file is distributed under the same license as the xfce4-quicklauncher-plugin package.
++#
++# Dmitry Nikitin <luckas_fb@mail.ru>, 2008.
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-14 09:34+0000\n"
++"PO-Revision-Date: 2008-07-09 11:09+0300\n"
++"Last-Translator: Dmitry Nikitin <luckas_fb@mail.ru>\n"
++"Language-Team: Ukrainian <xfce4-dev@xfce.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: KBabel 1.11.4\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "Налаштувати швидкий запуск"
++
++#: ../panel-plugin/callbacks.c:111
++msgid "Lines: "
++msgstr "Рядки: "
++
++#: ../panel-plugin/callbacks.c:124
++msgid "Espace entre les lanceurs :"
++msgstr "Проміжок між рядками :"
++
++#: ../panel-plugin/callbacks.c:132
++msgid "afficher les tooltips"
++msgstr "відображати спливаючі"
++
++#: ../panel-plugin/callbacks.c:136
++msgid "afficher les labels"
++msgstr "відображати мітки"
++
++#: ../panel-plugin/callbacks.c:220
++msgid "icone"
++msgstr "значок"
++
++#: ../panel-plugin/callbacks.c:226
++msgid "commande"
++msgstr "команда"
++
++#: ../panel-plugin/callbacks.c:232
++msgid "nom"
++msgstr "нічого"
++
++#: ../panel-plugin/callbacks.c:331
++msgid "Open icon"
++msgstr "Відкрити файл значка"
++
++#: ../panel-plugin/main.c:164 ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "Швидкий запуск"
++
++#: ../panel-plugin/main.c:167
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr ""
++"Дозволяє Вам легко додавати швидкі запуски і відображати їх в кількох рядках."
++
++#: ../panel-plugin/main.c:169
++msgid "Other plugins available here"
++msgstr "Інші плагіни доступні тут"
++
++#: ../panel-plugin/main.c:321
++msgid "Lock"
++msgstr "Замкнути"
++
++#: ../panel-plugin/main.c:324
++msgid "Parameters"
++msgstr "Параметри"
++
++#: ../panel-plugin/main.c:327
++msgid "Applications"
++msgstr "Програми"
++
++#: ../panel-plugin/main.c:330
++msgid "Help"
++msgstr "Довідка"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "Програма з кількома кнопками запуску"
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ur_PK.po xfce4-quicklauncher-plugin-1.9.4/po/ur_PK.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ur_PK.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/ur_PK.po	2010-12-19 21:01:56.304817476 +0100
+@@ -0,0 +1,90 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-05-05 17:32+0500\n"
++"Last-Translator: Muhammad Ali Makki <makki.ma@gmail.com>\n"
++"Language-Team: Urdu <makki.ma@gmail.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Urdu\n"
++"X-Poedit-Country: PAKISTAN\n"
++"X-Poedit-SourceCharset: utf-8\n"
++"Plural-Forms: Plural-Forms: nplurals=2; plural=n != 1;\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "کوئیک لاؤنچر کو وضع کریں"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "لائنیں:"
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Espace entre les lanceurs :"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "afficher les tooltips"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "afficher les labels"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "آئکن"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "کمانڈ"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nom"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "آئکن کھولیں"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "کوئیک لاؤنچر"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "آسانی سے آپ کو لاؤنچر شامل کرنے اور انہیں مختلف لائنوں میں ظاہر کرنے کی سہولت دیتا ہے."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "دیگر پلگ ان یہاں دستیاب ہیں"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "قفل"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "پیرامیٹرز"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "اطلاقیے"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "ہدایات"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "پروگرام بمع متعدد لاؤنچرز"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/ur.po xfce4-quicklauncher-plugin-1.9.4/po/ur.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/ur.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/ur.po	2010-12-19 21:01:56.304817476 +0100
+@@ -0,0 +1,90 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-05-05 17:32+0500\n"
++"Last-Translator: Muhammad Ali Makki <makki.ma@gmail.com>\n"
++"Language-Team: Urdu <makki.ma@gmail.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Urdu\n"
++"X-Poedit-Country: PAKISTAN\n"
++"X-Poedit-SourceCharset: utf-8\n"
++"Plural-Forms: Plural-Forms: nplurals=2; plural=n != 1;\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "کوئیک لاؤنچر کو وضع کریں"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "لائنیں:"
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "Espace entre les lanceurs :"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "afficher les tooltips"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "afficher les labels"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "آئکن"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "کمانڈ"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "nom"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "آئکن کھولیں"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "کوئیک لاؤنچر"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "آسانی سے آپ کو لاؤنچر شامل کرنے اور انہیں مختلف لائنوں میں ظاہر کرنے کی سہولت دیتا ہے."
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "دیگر پلگ ان یہاں دستیاب ہیں"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "قفل"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "پیرامیٹرز"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "اطلاقیے"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "ہدایات"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "پروگرام بمع متعدد لاؤنچرز"
++
+diff -Nur xfce4-quicklauncher-plugin-1.9.4.orig/po/zh_CN.po xfce4-quicklauncher-plugin-1.9.4/po/zh_CN.po
+--- xfce4-quicklauncher-plugin-1.9.4.orig/po/zh_CN.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-quicklauncher-plugin-1.9.4/po/zh_CN.po	2010-12-19 21:01:56.305817368 +0100
+@@ -0,0 +1,86 @@
++# Chinese translations for xfce package.
++# Copyright (C) 2008 THE xfce'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce package.
++# Hunt Xu <huntxu@live.cn>, 2008, 2009.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce 4-quicklauncher-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2007-05-17 21:37+0200\n"
++"PO-Revision-Date: 2009-05-08 02:29+0800\n"
++"Last-Translator: Hunt Xu <huntxu@live.cn>\n"
++"Language-Team: Chinese (simplified)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../panel-plugin/callbacks.c:79
++msgid "Configure Quicklauncher"
++msgstr "快速启动器设置"
++
++#: ../panel-plugin/callbacks.c:93
++msgid "Lines: "
++msgstr "行数："
++
++#: ../panel-plugin/callbacks.c:123
++msgid "Espace entre les lanceurs :"
++msgstr "启动器之间留有间隔"
++
++#: ../panel-plugin/callbacks.c:131
++msgid "afficher les tooltips"
++msgstr "显示工具提示"
++
++#: ../panel-plugin/callbacks.c:135
++msgid "afficher les labels"
++msgstr "显示标签"
++
++#: ../panel-plugin/callbacks.c:216
++msgid "icone"
++msgstr "图标"
++
++#: ../panel-plugin/callbacks.c:222
++msgid "commande"
++msgstr "命令"
++
++#: ../panel-plugin/callbacks.c:228
++msgid "nom"
++msgstr "名称"
++
++#: ../panel-plugin/callbacks.c:327
++msgid "Open icon"
++msgstr "打开图标"
++
++#: ../panel-plugin/main.c:163
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:2
++msgid "Quicklauncher"
++msgstr "快速启动器"
++
++#: ../panel-plugin/main.c:166
++msgid "Allows you to add launchers easily and display them on many lines."
++msgstr "允许您方便地添加启动器并且在多行显示它们"
++
++#: ../panel-plugin/main.c:168
++msgid "Other plugins available here"
++msgstr "这里的其他可用插件"
++
++#: ../panel-plugin/main.c:320
++msgid "Lock"
++msgstr "锁定"
++
++#: ../panel-plugin/main.c:323
++msgid "Parameters"
++msgstr "参数"
++
++#: ../panel-plugin/main.c:326
++msgid "Applications"
++msgstr "应用程序"
++
++#: ../panel-plugin/main.c:329
++msgid "Help"
++msgstr "帮助"
++
++#: ../panel-plugin/quicklauncher.desktop.in.in.h:1
++msgid "Program with several launchers"
++msgstr "启动器程序"
++

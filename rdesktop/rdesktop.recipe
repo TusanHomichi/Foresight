@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2005-2011 Foresight, rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class rDesktop(AutoPackageRecipe):
+
+    name = 'rdesktop'
+    version = '1.8.1'
+
+    buildRequires = [
+        'libao:devel', 'libX11:devel', 'openssl:devel', 'libICE:devel',
+        'libsamplerate:devel', 'pkgconfig:devel', 'libXrandr:devel',
+        'libgssglue:devel', 'pcsc-lite:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/rdesktop/rdesktop/%(version)s/')
+
+    def configure(r):
+        r.Configure('--with-ipv6 --enable-smartcard --with-sound=libao')
+
+    def policy(r):
+        r.AutoDoc(exceptions='doc/')
+        r.Doc('doc/*')

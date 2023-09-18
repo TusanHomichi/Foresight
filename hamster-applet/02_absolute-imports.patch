@@ -1,0 +1,101 @@
+Description: Remove incorrect relative import syntax and replace with absolute
+ imports.
+Author: Stefano Rivera <stefano@rivera.za.net>
+Last-Update: 2010-06-23
+Bug-Debian: http://bugs.debian.org/586464
+diff -Nur -x '*.orig' -x '*~' hamster-applet-2.30.1//src/hamster/widgets/activityentry.py hamster-applet-2.30.1.new//src/hamster/widgets/activityentry.py
+--- hamster-applet-2.30.1//src/hamster/widgets/activityentry.py	2010-06-23 17:15:09.000000000 +0200
++++ hamster-applet-2.30.1.new//src/hamster/widgets/activityentry.py	2010-06-23 17:16:33.000000000 +0200
+@@ -20,10 +20,10 @@
+ import gtk, gobject
+ import datetime as dt
+ 
+-from .hamster.configuration import runtime
++from hamster.configuration import runtime
+ 
+-from .hamster import stuff
+-from .hamster.stuff import format_duration
++from hamster import stuff
++from hamster.stuff import format_duration
+ 
+ class ActivityEntry(gtk.Entry):
+     __gsignals__ = {
+diff -Nur -x '*.orig' -x '*~' hamster-applet-2.30.1//src/hamster/widgets/dateinput.py hamster-applet-2.30.1.new//src/hamster/widgets/dateinput.py
+--- hamster-applet-2.30.1//src/hamster/widgets/dateinput.py	2010-06-23 17:15:09.000000000 +0200
++++ hamster-applet-2.30.1.new//src/hamster/widgets/dateinput.py	2010-06-23 17:16:33.000000000 +0200
+@@ -17,7 +17,7 @@
+ # You should have received a copy of the GNU General Public License
+ # along with Project Hamster.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-from .hamster.stuff import format_duration
++from hamster.stuff import format_duration
+ import gtk
+ import datetime as dt
+ import calendar
+diff -Nur -x '*.orig' -x '*~' hamster-applet-2.30.1//src/hamster/widgets/dayline.py hamster-applet-2.30.1.new//src/hamster/widgets/dayline.py
+--- hamster-applet-2.30.1//src/hamster/widgets/dayline.py	2010-06-23 17:15:09.000000000 +0200
++++ hamster-applet-2.30.1.new//src/hamster/widgets/dayline.py	2010-06-23 17:16:33.000000000 +0200
+@@ -20,8 +20,8 @@
+ import gtk
+ import gobject
+ 
+-from .hamster import stuff
+-from .hamster import graphics
++from hamster import stuff
++from hamster import graphics
+ 
+ import time
+ import datetime as dt
+diff -Nur -x '*.orig' -x '*~' hamster-applet-2.30.1//src/hamster/widgets/facttree.py hamster-applet-2.30.1.new//src/hamster/widgets/facttree.py
+--- hamster-applet-2.30.1//src/hamster/widgets/facttree.py	2010-06-23 17:15:09.000000000 +0200
++++ hamster-applet-2.30.1.new//src/hamster/widgets/facttree.py	2010-06-23 17:16:33.000000000 +0200
+@@ -20,8 +20,8 @@
+ import gtk, gobject
+ import datetime as dt
+ 
+-from .hamster import stuff
+-from .hamster.stuff import format_duration, format_activity
++from hamster import stuff
++from hamster.stuff import format_duration, format_activity
+ from tags import Tag
+ 
+ import pango
+diff -Nur -x '*.orig' -x '*~' hamster-applet-2.30.1//src/hamster/widgets/tags.py hamster-applet-2.30.1.new//src/hamster/widgets/tags.py
+--- hamster-applet-2.30.1//src/hamster/widgets/tags.py	2010-06-23 17:15:09.000000000 +0200
++++ hamster-applet-2.30.1.new//src/hamster/widgets/tags.py	2010-06-23 17:16:33.000000000 +0200
+@@ -21,9 +21,9 @@
+ import pango, cairo
+ from math import pi
+ 
+-from .hamster import graphics
++from hamster import graphics
+ 
+-from .hamster.configuration import runtime
++from hamster.configuration import runtime
+ 
+ class TagsEntry(gtk.Entry):
+     __gsignals__ = {
+diff -Nur -x '*.orig' -x '*~' hamster-applet-2.30.1//src/hamster/widgets/timechart.py hamster-applet-2.30.1.new//src/hamster/widgets/timechart.py
+--- hamster-applet-2.30.1//src/hamster/widgets/timechart.py	2010-06-23 17:15:09.000000000 +0200
++++ hamster-applet-2.30.1.new//src/hamster/widgets/timechart.py	2010-06-23 17:16:33.000000000 +0200
+@@ -20,7 +20,7 @@
+ import os  # for locale
+ import gtk, pango
+ 
+-from .hamster import graphics
++from hamster import graphics
+ 
+ import time, datetime as dt
+ import calendar
+diff -Nur -x '*.orig' -x '*~' hamster-applet-2.30.1//src/hamster/widgets/timeinput.py hamster-applet-2.30.1.new//src/hamster/widgets/timeinput.py
+--- hamster-applet-2.30.1//src/hamster/widgets/timeinput.py	2010-06-23 17:15:09.000000000 +0200
++++ hamster-applet-2.30.1.new//src/hamster/widgets/timeinput.py	2010-06-23 17:16:33.000000000 +0200
+@@ -17,7 +17,7 @@
+ # You should have received a copy of the GNU General Public License
+ # along with Project Hamster.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-from .hamster.stuff import format_duration
++from hamster.stuff import format_duration
+ import gtk
+ import datetime as dt
+ import calendar

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UbuntuLightThemes(AutoPackageRecipe):
+    name = 'ubuntu-light-themes'
+    version = '0.1.8.13.1'
+ 
+    buildRequires = [
+                      ]
+ 
+    def setup(r):
+        r.addArchive('https://launchpad.net/ubuntu/+archive/primary/+files/light-themes_%(version)s.tar.gz')
+
+        r.Install('Ambiance', '%(datadir)s/themes/Ambiance')
+        r.Install('Radiance', '%(datadir)s/themes/Radiance')
+        r.Install('Ambiance-CSD', '%(datadir)s/themes/Ambiance-CSD')

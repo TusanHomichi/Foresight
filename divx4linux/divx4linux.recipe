@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Divx4linux(CPackageRecipe):
+    name = 'divx4linux'
+    version = '20030428'
+ 
+    buildRequires = ['compat-libstdc++-296:lib']
+ 
+    def setup(r):
+        r.addArchive('http://svatej.homelinux.net/public/system/linux/inst/soft/media/divx/divx4linux-std-20030428.tar.gz')
+	r.Install('libdivxdecore.so', '%(libdir)s/')
+	r.Install('libdivxencore.so', '%(libdir)s/')
+	r.Install('decore.h', '%(includedir)s/')
+	r.Install('encore2.h', '%(includedir)s/')
+
+
+        #r.Move('%(libdir)s/libdivxdecore.so.0', '%(libdir)s/libdivxdecore.so')
+        #r.Symlink('%(libdir)s/libx264.so.%(soversion)s.%(commit)s', '%(libdir)s/libx264.so.%(soversion)s')
+        r.Symlink('%(libdir)s/libdivxdecore.so', '%(libdir)s/libdivxdecore.so.0')
+        r.Symlink('%(libdir)s/libdivxencore.so', '%(libdir)s/libdivxencore.so.0')
+	#r.Requires(exceptDeps=r'soname\:\ ELF32\/libstdc\+\+\-libc6\.2\-2\.so\.3\(SysV\ x86\)')
+

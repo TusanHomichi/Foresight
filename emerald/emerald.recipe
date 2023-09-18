@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Emerald(AutoPackageRecipe):
+    name = 'emerald'
+    version = '0.8.4'
+    buildRequires = [
+         'atk:devel', 'cairo:devel',
+         'compiz:devel', 'desktop-file-utils:runtime',
+         'expat:devel', 'fontconfig:devel',
+         'freetype:devel', 'gettext:runtime',
+         'glib:devel', 'gnome-common:runtime',
+         'gtk:devel', 'gtk:runtime',
+         'libX11:devel', 'libXau:devel',
+         'libXdmcp:devel', 'libXrender:devel',
+         'libpng:devel', 'libwnck:devel',
+         'libxcb:devel', 'pango:devel',
+         'perl:runtime', 'pkgconfig:devel',
+         'shared-mime-info:runtime', 'startup-notification:devel',
+         'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/')
+        r.addPatch('emerald-fix-gtk-compatibility.patch')

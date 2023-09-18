@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Trytond_sale(TrytonPackage):
+    name = 'trytond_sale'
+
+    packageSummary = "Define sale order"
+    packageDescription = '''Define sale order.
+Add to product sale informations.
+Define the sale price as the list price.
+
+With the possibilities:
+    - to follow invoice and shipment states from the sale order.
+    - to define invoice method:
+        - Manual
+        - On Order Confirmed
+        - On shipment Sent
+    - to define shipment method:
+        - Manual
+        - On Order Confirmed
+        - On Invoice Paid
+'''
+    packageUrl = "http://www.tryton.org"
+    packageCategories = ["Finance"]
+
+    prebuild = ["trytond_company:python"]
+    deps = ["trytond_company:python","trytond_party:python","trytond_stock:python",
+        "trytond_account:python","trytond_product:python",
+        "trytond_account_invoice:python","trytond_currency:python","trytond_account_product:python"
+    ]
+
+    def setup(r):
+        TrytonPackage.setup(r)
+

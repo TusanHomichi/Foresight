@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FusionIcon(PackageRecipe):
+    name = 'fusion-icon'
+    version = '82ce5861'
+    buildRequires = [ 'compizconfig-python:python', 'desktop-file-utils:runtime', 'pygtk:python', 'python-setuptools:python', 'python:devel' ]
+
+    def setup(r):
+        r.addGitSnapshot('git://anongit.compiz-fusion.org/users/crdlb/fusion-icon', tag='%(version)s')
+        r.addPatch('disable-bydefault.patch')
+        r.PythonSetup(data='--install-data %(prefix)s')
+
+        r.Install('fusion-icon.desktop', '%(datadir)s/gnome/autostart/')
+        r.Requires('glx-utils:runtime', '%(bindir)s/fusion-icon')

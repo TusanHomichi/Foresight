@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux. 2004-2010 rPath, Inc. 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class ParamsValidate(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Params-Validate'
+    version = '0.94'
+    buildRequires = ['perl-ExtUtils-CBuilder:perl']
+
+    def setup(r):
+        r.addArchive('http://search.cpan.org/CPAN/authors/id/D/DR/DROLSKY/Params-Validate-%(version)s.tar.gz')
+        r.mainDir('Params-Validate-%(version)s')
+        r.addAction('perl Build.PL --destdir=%(destdir)s')
+        r.addAction('perl Build')
+        r.addAction('perl Build install')

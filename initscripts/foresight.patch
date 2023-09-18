@@ -1,0 +1,586 @@
+Only in initscripts--rpl-8.56.9/: .hg_archival.txt
+Only in initscripts--rpl-8.56.9/: .hgignore
+Only in initscripts--rpl-8.56.9/: .hgtags
+diff -r -u initscripts-8.56/inittab initscripts--rpl-8.56.9/inittab
+--- initscripts-8.56/inittab	2006-10-12 18:51:04.000000000 +0100
++++ initscripts--rpl-8.56.9/inittab	2008-03-19 14:46:23.000000000 +0000
+@@ -15,7 +15,7 @@
+ #   5 - X11
+ #   6 - reboot (Do NOT set initdefault to this)
+ # 
+-id:3:initdefault:
++id:5:initdefault:
+ 
+ # System initialization.
+ si::sysinit:/etc/rc.d/rc.sysinit
+@@ -25,7 +25,7 @@
+ l2:2:wait:/etc/rc.d/rc 2
+ l3:3:wait:/etc/rc.d/rc 3
+ l4:4:wait:/etc/rc.d/rc 4
+-l5:5:wait:/etc/rc.d/rc 5
++l5:5:once:/etc/rc.d/rc 5
+ l6:6:wait:/etc/rc.d/rc 6
+ 
+ # Trap CTRL-ALT-DELETE
+Only in initscripts--rpl-8.56.9/: lsb-initfunctions
+diff -r -u initscripts-8.56/po/Makefile initscripts--rpl-8.56.9/po/Makefile
+--- initscripts-8.56/po/Makefile	2007-08-30 02:47:33.000000000 +0100
++++ initscripts--rpl-8.56.9/po/Makefile	2008-03-19 14:46:23.000000000 +0000
+@@ -14,7 +14,7 @@
+ 	$(shell ls /etc/sysconfig/network-scripts/* | grep -v ifcfg-) \
+ 	/sbin/service /usr/sbin/sys-unconfig
+ 
+-all: $(NLSPACKAGE).pot $(FMTCATALOGS)
++all:  $(FMTCATALOGS)
+ 
+ $(NLSPACKAGE).pot:
+ 	@echo "Please don't run 'make initscripts.pot unless you have a *FULL*, current install."
+diff -r -u initscripts-8.56/rc.d/init.d/functions initscripts--rpl-8.56.9/rc.d/init.d/functions
+--- initscripts-8.56/rc.d/init.d/functions	2007-08-29 19:46:34.000000000 +0100
++++ initscripts--rpl-8.56.9/rc.d/init.d/functions	2008-03-19 14:46:23.000000000 +0000
+@@ -50,11 +50,11 @@
+   fi
+ fi
+ 
+-if [ "${BOOTUP:-}" != "verbose" ]; then
+-   INITLOG_ARGS="-q"
+-else
++# if [ "${BOOTUP:-}" != "verbose" ]; then
++#    INITLOG_ARGS="-q"
++# else
+    INITLOG_ARGS=
+-fi
++# fi
+ 
+ # Interpret escape sequences in an fstab entry
+ fstab_decode_str() {
+@@ -461,19 +461,19 @@
+ 
+ # Log that something succeeded
+ success() {
+-  #if [ -z "${IN_INITLOG:-}" ]; then
+-  #   initlog $INITLOG_ARGS -n $0 -s "$1" -e 1
+-  #fi
+-  [ "$BOOTUP" != "verbose" -a -z "${LSB:-}" ] && echo_success
++  if [ -z "${IN_INITLOG:-}" ]; then
++     initlog $INITLOG_ARGS -n $0 -s "$1" -e 1
++  fi
++  [ "$BOOTUP" != "verbose" ] && echo_success
+   return 0
+ }
+ 
+ # Log that something failed
+ failure() {
+   local rc=$?
+-  #if [ -z "${IN_INITLOG:-}" ]; then
+-  #   initlog $INITLOG_ARGS -n $0 -s "$1" -e 2
+-  #fi
++  if [ -z "${IN_INITLOG:-}" ]; then
++     initlog $INITLOG_ARGS -n $0 -s "$1" -e 2
++  fi
+   [ "$BOOTUP" != "verbose" -a -z "${LSB:-}" ] && echo_failure
+   [ -x /usr/bin/rhgb-client ] && /usr/bin/rhgb-client --details=yes
+   return $rc
+@@ -482,9 +482,9 @@
+ # Log that something passed, but may have had errors. Useful for fsck
+ passed() {
+   local rc=$?
+-  #if [ -z "${IN_INITLOG:-}" ]; then
+-  #   initlog $INITLOG_ARGS -n $0 -s "$1" -e 1
+-  #fi
++  if [ -z "${IN_INITLOG:-}" ]; then
++     initlog $INITLOG_ARGS -n $0 -s "$1" -e 1
++  fi
+   [ "$BOOTUP" != "verbose" -a -z "${LSB:-}" ] && echo_passed
+   return $rc
+ }  
+@@ -492,9 +492,9 @@
+ # Log a warning
+ warning() {
+   local rc=$?
+-  #if [ -z "${IN_INITLOG:-}" ]; then
+-  #   initlog $INITLOG_ARGS -n $0 -s "$1" -e 1
+-  #fi
++  if [ -z "${IN_INITLOG:-}" ]; then
++     initlog $INITLOG_ARGS -n $0 -s "$1" -e 1
++  fi
+   [ "$BOOTUP" != "verbose" -a -z "${LSB:-}" ] && echo_warning
+   return $rc
+ }  
+@@ -593,3 +593,117 @@
+ }
+ # A sed expression to filter out the files that is_ignored_file recognizes
+ __sed_discard_ignored_files='/\(~\|\.bak\|\.orig\|\.rpmnew\|\.rpmorig\|\.rpmsave\)$/d'
++
++# Functions to support splash integration.
++
++splash_add() {
++    echo $1 $2 | awk '{print $1 + $2}'
++    return $?
++}
++
++splash_div() {
++    echo $1 $2 | awk '{print $1/$2}'
++    return $?
++}
++
++splash_enabled() {
++    cmdline=$(cat /proc/cmdline)
++    strstr "$cmdline" "splash"
++    return $?
++}
++
++splash_log() {
++    splash_enabled || return 0
++    local log_dir="/dev/.initramfs"
++    local log_file="$log_dir/splash.log"
++    [ ! -d $log_dir ] && mkdir -p $log_dir
++    echo -n `date` >> $log_file
++    echo ": $*" >> $log_file
++    return 0
++}
++
++splash_running() {
++    running=$(ps aux | grep splashy | grep -v grep)
++    if [ "$running" != "" ] ; then
++        return 0
++    else
++        splash_log "Splash Failed: $*"
++        return 1
++    fi
++}
++
++splash_get_slice_size() {
++    local runlevel=$(runlevel | cut -d ' ' -f 2)
++    if [ "$runlevel" = "0" ] || [ "$runlevel" = "6" ] ; then
++        total=100
++    else
++        total=82
++    fi
++    rc_count=$(ls -l /etc/rc$runlevel.d/{K,S}* | wc -l)
++    splash_div $total $rc_count
++    return $?
++}
++
++splash_update() {
++    ret=0
++    if [ -x /usr/sbin/splashy_update ] && splash_running "$*" ; then
++        /usr/sbin/splashy_update "$*"
++        ret=$?
++        splash_log "running splashy_update $*"
++    fi
++    return $ret
++}
++
++splash_ping() {
++    splash_update repaint
++    return $?
++}
++
++splash_timeout() {
++    splash_update timeout $1
++    return $?
++}
++
++splash_progress() {
++    splash_update progress $1
++    return $?
++}
++
++splash_boot() {
++    splash_enabled || return 0
++    splash_running && return 0
++    splash_log "starting splashy(boot)"
++    if [ -x /usr/sbin/splashy ] ; then
++        if [ ! -e /dev/fb0 ] ; then
++            mknod /dev/fb0 c 29 0
++        fi
++        /usr/sbin/splashy boot
++        sleep .5
++    fi
++    return $?
++}
++
++splash_shutdown() {
++    splash_enabled || return 0
++    splash_running && return 0
++    splash_log "starting splashy(shutdown)"
++    if [ -x /usr/sbin/splashy ] ; then
++        /usr/sbin/splashy shutdown
++        sleep .5
++    fi
++    return $?
++}
++
++splash_quit() {
++    splash_running || return 0
++    splash_progress 100
++    sleep .5
++    splash_update QUIT
++    sleep .5
++    if [ $(runlevel | cut -d ' ' -f 2) = "5" ] && [ -e /var/lock/subsys/xdm ] ; then
++        splashy_chvt 7
++    else
++        splashy_chvt 1
++    fi
++    return $?
++}
+diff -r -u initscripts-8.56/rc.d/init.d/halt initscripts--rpl-8.56.9/rc.d/init.d/halt
+--- initscripts-8.56/rc.d/init.d/halt	2007-08-29 18:22:03.000000000 +0100
++++ initscripts--rpl-8.56.9/rc.d/init.d/halt	2008-03-19 14:46:23.000000000 +0000
+@@ -65,6 +65,8 @@
+ # Kill all processes.
+ [ "${BASH+bash}" = bash ] && enable kill
+ 
++splash_quit
++
+ action $"Sending all processes the TERM signal..." /sbin/killall5 -15
+ sleep 5
+ action $"Sending all processes the KILL signal..."  /sbin/killall5 -9
+@@ -162,7 +164,7 @@
+     $"Unmounting pipe file systems (retry): " \
+     -f
+ 
+-LANG=C __umount_loop '$2 ~ /^\/$|^\/proc|^\/dev/{next}
++LANG=C __umount_loop '$2 ~ /^\/$|^\/etc|^\/proc|^\/dev/{next}
+ 	$3 == "tmpfs" || $3 == "proc" {print $2 ; next}
+ 	/(loopfs|autofs|nfs|cifs|smbfs|ncpfs|sysfs|^none|^\/dev\/ram|^\/dev\/root$)/ {next}
+ 	{print $2}' /proc/mounts \
+diff -r -u initscripts-8.56/rc.d/init.d/netfs initscripts--rpl-8.56.9/rc.d/init.d/netfs
+--- initscripts-8.56/rc.d/init.d/netfs	2007-06-25 17:41:27.000000000 +0100
++++ initscripts--rpl-8.56.9/rc.d/init.d/netfs	2008-03-19 14:46:23.000000000 +0000
+@@ -6,7 +6,7 @@
+ #		AJ Lewis <alewis@redhat.com>
+ # 		Miquel van Smoorenburg, <miquels@drinkel.nl.mugnet.org>
+ #
+-# chkconfig: 345 25 75
++# chkconfig: 345 11 75
+ # description: Mounts and unmounts all Network File System (NFS), \
+ #	       SMB/CIFS (Lan Manager/Windows), and NCP (NetWare) mount points.
+ ### BEGIN INIT INFO
+diff -r -u initscripts-8.56/rc.d/rc initscripts--rpl-8.56.9/rc.d/rc
+--- initscripts-8.56/rc.d/rc	2007-07-17 16:14:37.000000000 +0100
++++ initscripts--rpl-8.56.9/rc.d/rc	2008-03-19 14:46:23.000000000 +0000
+@@ -42,6 +42,10 @@
+ # Is there an rc directory for this new runlevel?
+ [ -d /etc/rc$runlevel.d ] || exit 0
++if [ X"${HARD_LIMIT_NOFILE}" != X ] ; then
++  ulimit -Hn "${HARD_LIMIT_NOFILE}"
++fi
++
+ 
+ # Set language, vc settings once to avoid doing it for every init script
+ # through functions
+ if [ -f /etc/sysconfig/i18n -a -z "${NOLOCALE:-}" ] ; then
+@@ -49,5 +53,21 @@
+   export LANGSH_SOURCED=1
+ fi
++# Only start splash on shutdown or reboot.
++if [ "$runlevel" = "0" ] || [ "$runlevel" = "6" ] ; then
++    splash_shutdown
++fi
++
++slice_size=$(splash_get_slice_size)
++# Assume that rc.sysinit is around 5% of boot time.
++if [ "$runlevel" != "0" ] && [ "$runlevel" != "6" ] ; then
++    percent_complete=15
++else
++    percent_complete=0
++fi
++
+ # First, run the KILL scripts.
+ for i in /etc/rc$runlevel.d/K* ; do
++	percent_complete=$(splash_add $percent_complete $slice_size)
++	splash_progress $percent_complete
++
+ 	# Check if the subsystem is already up.
+@@ -68,5 +88,8 @@
+ 
+ # Now run the START scripts.
+ for i in /etc/rc$runlevel.d/S* ; do
++	percent_complete=$(splash_add $percent_complete $slice_size)
++	splash_progress $percent_complete
++
+ 
+ 	# Check if the subsystem is already up.
+@@ -98,3 +121,5 @@
+ if [ -x /usr/bin/rhgb-client ] && /usr/bin/rhgb-client --ping ; then
+   /usr/bin/rhgb-client --quit
+ fi
++
++splash_quit "rc exiting"
+diff -r -u initscripts-8.56/rc.d/rc.sysinit initscripts--rpl-8.56.9/rc.d/rc.sysinit
+--- initscripts-8.56/rc.d/rc.sysinit	2007-08-29 19:46:34.000000000 +0100
++++ initscripts--rpl-8.56.9/rc.d/rc.sysinit	2008-03-19 14:46:23.000000000 +0000
+@@ -18,6 +18,16 @@
+     HOSTNAME=localhost
+ fi
+ 
++# remount /proc and /sys because they may have incorrect mountpoints
++# when mounted in initrd
++if [ -e /proc/mounts ]; then 
++  umount /proc
++fi
++mount /proc
++if [ -d /sys/kernel ]; then 
++  umount /sys
++fi
++mount /sys
+ if [ ! -e /proc/mounts ]; then 
+ 	mount -n -t proc /proc /proc
+ 	mount -n -t sysfs /sys /sys >/dev/null 2>&1
+@@ -30,6 +40,13 @@
+  
+ . /etc/init.d/functions
+ 
++# Start splash if it wasn't started in the initramfs.
++splash_boot
++splash_progress 3
++
++# set timeout to 2 minutes
++splash_timeout 120
++splash_log "starting rc.sysinit"
+ # Check SELinux status
+ selinuxfs="$(fstab_decode_str `LC_ALL=C awk '/ selinuxfs / { print $2 }' /proc/mounts`)"
+ SELINUX_STATE=
+@@ -65,6 +83,7 @@
+     if [ "$AUTORELABEL" = "0" ]; then
+  	rm -f  /.autorelabel 
+ 
++	splash_quit
+  	echo
+ 	echo $"*** Warning -- SELinux ${SELINUXTYPE} policy relabel is required. "
+  	echo $"*** /etc/selinux/config indicates you want to manually fix labeling"
+@@ -242,21 +261,14 @@
+ 
+ # Print a text banner.
+ echo -en $"\t\tWelcome to "
+-read -r redhat_release < /etc/redhat-release
+-if [[ "$redhat_release" =~ "Red Hat" ]]; then
+- [ "$BOOTUP" = "color" ] && echo -en "\\033[0;31m"
+- echo -en "Red Hat"
+- [ "$BOOTUP" = "color" ] && echo -en "\\033[0;39m"
+- PRODUCT=`sed "s/Red Hat \(.*\) release.*/\1/" /etc/redhat-release`
+- echo " $PRODUCT"
+-elif [[ "$redhat_release" =~ "Fedora" ]]; then
++if [ -r /etc/distro-release ]; then
+  [ "$BOOTUP" = "color" ] && echo -en "\\033[0;34m"
+- echo -en "Fedora"
++ echo `sed "s/ release.*//g" /etc/distro-release`
+  [ "$BOOTUP" = "color" ] && echo -en "\\033[0;39m"
+- PRODUCT=`sed "s/Fedora \(.*\) \?release.*/\1/" /etc/redhat-release`
++ PRODUCT=`cat /etc/distro-release`
+  echo " $PRODUCT"
+ else
+- PRODUCT=`sed "s/ release.*//g" /etc/redhat-release`
++ PRODUCT=`sed "s/ release.*//g" /etc/distro-release`
+  echo "$PRODUCT"
+ fi
+ if [ "$PROMPT" != "no" ]; then
+@@ -344,6 +357,10 @@
+ for file in /etc/sysconfig/modules/*.modules ; do
+   [ -x $file ] && $file
+ done
++# Do kernel-version-specific module loading as well
++for file in /lib/modules/$unamer/modules.d/*.modules ; do
++  [ -x $file ] && $file
++done
+ 
+ # Load modules (for backward compatibility with VARs)
+ if [ -f /etc/rc.modules ]; then
+@@ -363,6 +380,7 @@
+ 
+ # Configure kernel parameters
+ update_boot_stage RCkernelparam
++splash_progress 6
+ sysctl -e -p /etc/sysctl.conf >/dev/null 2>&1
+ 
+ if [ -x /bin/loadkeys ]; then
+@@ -396,6 +414,7 @@
+ 
+ # Set the hostname.
+ update_boot_stage RChostname
++splash_progress 7
+ action $"Setting hostname ${HOSTNAME}: " hostname ${HOSTNAME}
+ 
+ # Initialize ACPI bits
+@@ -473,6 +493,7 @@
+ 		AUTOFSCK_OPT="$AUTOFSCK_OPT -f"
+ 	fi
+ 	if [ -n "$AUTOFSCK_SINGLEUSER" ]; then
++		splash_quit
+ 		echo
+ 		echo $"*** Warning -- the system did not shut down cleanly. "
+ 		echo $"*** Dropping you to a shell; the system will continue"
+@@ -490,6 +511,8 @@
+ 	fsckoptions="-V $fsckoptions"
+ fi
+ 
++splash_progress 10
++
+ READONLY=
+ if [ -f /etc/sysconfig/readonly-root ]; then
+ 	. /etc/sysconfig/readonly-root
+@@ -638,6 +661,8 @@
+     	fsckoptions="-a $fsckoptions"
+ fi
+ 
++splash_progress 13
++
+ _RUN_QUOTACHECK=0
+ if [ -f /forcequotacheck ] || strstr "$cmdline" forcequotacheck ; then
+ 	_RUN_QUOTACHECK=1
+@@ -646,6 +671,9 @@
+ 
+	STRING=$"Checking filesystems"
+ 	echo $STRING
++	# set timeout to something a bit longer for fsck (5 minutes)
++	splash_timeout 300
++    
+	if [ -n "${RHGB_STARTED}" -a -w /etc/rhgb/temp/rhgb-console ]; then
+     	     	fsck -T -t noopts=_netdev -A $fsckoptions > /etc/rhgb/temp/rhgb-console
+ 	else
+@@ -673,6 +701,8 @@
+ 		    chvt 1
+ 		fi
+ 
++		splash_quit
++
+ 		failure "$STRING"
+ 		echo
+ 		echo
+@@ -701,10 +731,77 @@
+ 
+ # Remount the root filesystem read-write.
+ update_boot_stage RCmountfs
++splash_progress 15
++state="$(LC_ALL=C awk '/ \/ / && ($3 !~ /rootfs/) { print $4 }' /proc/mounts | sed -e 's/,.*//')"
++  
+ if remount_needed ; then
+   action $"Remounting root filesystem in read-write mode: " mount -n -o remount,rw /
+ fi
++ 
++# check again to see if the / fs is read-write
++state="$(LC_ALL=C awk '/ \/ / && ($3 !~ /rootfs/) { print $4 }' /proc/mounts | sed -e 's/,.*//')"
++if [ "$state" == "ro" ]; then
++    READONLY=yes
++fi
++
++# if still not read-write, try unionfs-fuse
++if [ "$READONLY" == "yes" ]; then
++    modprobe fuse
++    # for some reason, we need to restart udev after modprobing fuse
++    start_udev
++    unionfs="/usr/sbin/unionfs"
++    # unionfs-fuse has to be installed. if it isn't, just give up
++    if ! [ -x "$unionfs" -a -x /usr/bin/fusermount ] ; then
++	splash_quit
++        echo -n "you don't appear to have fuse and unionfs-fuse, yet your"
++        echo " filesystem is read-only. dropping you to a shell."
++        bash
++    fi
++
++    # ensure the fuse device exists. if not, unionfs-fuse can't work
++    if ! [ -c /dev/fuse ]; then
++	splash_quit
++        echo -n "you don't appear to have /dev/fuse. perhaps your udev can't"
++        echo " be started? Dropping you to a shell to debug"
++        bash
++    fi
++
++    # /etc/mtab needs to be a symlink for fusermount to work correctly
++    if ! [ -h /etc/mtab ] ; then
++	splash_quit
++        echo -n "/etc/mtab must be a symlink for fusermount to work correctly."
++        echo -n " Please package /etc/mtab as a symlink to /proc/mounts and"
++        echo "regenerate your image. Dropping you to a shell"
++        bash
++    fi
++
++    # check to ensure we can mount to the right places
++    if ! [ -d /readwriteroot -a -d /ramdisk ] ; then
++	splash_quit
++        echo -n "you don't have /readwriteroot or /ramdisk, and thus we can't "
++        echo "mount your read-write root. dropping you to a shell"
++        bash
++    fi
++
++    # fuse falls over when you try to bind-mount the target filesystem on top
++    # of one of the sources. the kernel doesn't normally have this problem, so
++    # "move" the origionals out of the way first with bind-mounts, then use
++    # *those* with a tmpfs to create a read-write merge and put that back on
++    # top of the originals
++    mount -t tmpfs none /ramdisk
++    mount -o bind / /rr_moved
++    $unionfs /ramdisk:/rr_moved /readwriteroot
++    echo -n "mounting your read-write filesystem: "
++    for x in bin etc home lib media misc mnt net opt root sbin srv usr var tmp; do
++        echo -n "$x "
++        if [ -d /$x -a -d /readwriteroot/$x ] ; then
++            mount -o bind /readwriteroot/$x /$x
++        fi
++    done
++    echo
++fi
++ 
+ 
+ # Clean up SELinux labels
+ if [ -n "$SELINUX_STATE" ]; then
+    restorecon /etc/mtab /etc/ld.so.cache /etc/blkid/blkid.tab /etc/resolv.conf >/dev/null 2>&1
+@@ -887,6 +983,7 @@
+ 
+ # Start up swapping.
+ update_boot_stage RCswap
++splash_progress 18
+ action $"Enabling /etc/fstab swaps: " swapon -a -e
+ if [ "$AUTOSWAP" = "yes" ]; then
+ 	curswap=$(awk '/^\/dev/ { print $1 }' /proc/swaps | while read x; do get_numeric_dev dec $x ; echo -n " "; done)
+@@ -956,3 +1053,4 @@
+     /usr/bin/rhgb-client --sysinit
+ fi
+ 
++splash_ping "exit rc.sysinit"
+diff -r -u initscripts-8.56/src/initlog.c initscripts--rpl-8.56.9/src/initlog.c
+--- initscripts-8.56/src/initlog.c	2007-08-03 21:08:11.000000000 +0100
++++ initscripts--rpl-8.56.9/src/initlog.c	2008-03-19 14:46:23.000000000 +0000
+@@ -448,6 +448,6 @@
+     setlocale(LC_ALL,"");
+     bindtextdomain("initlog","/etc/locale");
+     textdomain("initlog");
+-    fprintf(stderr, _("WARNING: initlog is deprecated and will be removed in a future release\n"));
++/*     fprintf(stderr, _("WARNING: initlog is deprecated and will be removed in a future release\n")); */
+     exit(processArgs(argc,argv,0));
+ }
+diff -r -u initscripts-8.56/sysconfig/init initscripts--rpl-8.56.9/sysconfig/init
+--- initscripts-8.56/sysconfig/init	2006-07-21 16:33:36.000000000 +0100
++++ initscripts--rpl-8.56.9/sysconfig/init	2008-03-19 14:46:23.000000000 +0000
+@@ -23,3 +23,9 @@
+ PROMPT=yes
+ # Set to 'yes' to allow probing for devices with swap signatures
+ AUTOSWAP=no
++# Hard limit on number of file descriptors
++# For applications, please use soft limit, like:
++# [ $(ulimit -Sn) -lt 4096 ] && { 
++#   [ $(ulimit -Hn) -lt 4096 ] && ulimit -Sn $(ulimit -Hn) || ulimit -Sn 4096
++# }
++HARD_LIMIT_NOFILE=65536
+--- initscripts-8.56/sysconfig.txt	2007-08-09 16:10:46.000000000 +0100
++++ initscripts--rpl-8.56.9/sysconfig.txt	2008-03-19 14:46:23.000000000 +0000
+@@ -125,6 +125,8 @@
+      Set to 'yes' to enable automatic swapon of all partitions with
+      the proper swap magic. This allows setting up swap without editing
+      /etc/fstab.
++  HARD_LIMIT_NOFILE=<a number>
++     Set hard limit on number of file descriptors
+ 
+   obsoleted values from earlier releases:
+ 
+diff -r -u initscripts-8.56/sysctl.conf initscripts--rpl-8.56.9/sysctl.conf
+--- initscripts-8.56/sysctl.conf	2005-01-17 18:58:44.000000000 +0000
++++ initscripts--rpl-8.56.9/sysctl.conf	2008-03-19 14:46:23.000000000 +0000
+@@ -1,4 +1,4 @@
+-# Kernel sysctl configuration file for Red Hat Linux
++# Kernel sysctl configuration file
+ #
+ # For binary values, 0 is disabled, 1 is enabled.  See sysctl(8) and
+ # sysctl.conf(5) for more details.

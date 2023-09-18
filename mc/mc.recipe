@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# Copyright (c) 2005-2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+
+class MC(AutoPackageRecipe):
+
+    name = 'mc'
+    version = '4.8.11'
+
+    buildRequires = [
+        'acl:devel',
+        'autoconf:runtime',
+        'doxygen:runtime',
+        'e2fsprogs:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gpm:devel',
+        'graphviz:runtime',
+        'groff:runtime',
+        'intltool:runtime',
+        'libssh2:devel', 
+        'pam:devel',
+        'perl:devel',
+        'perl:lib',
+        'pkgconfig:devel',
+        'python-argparse:python',
+        'python:devel',
+        'ruby:runtime',
+        'slang:devel',
+        'unzip:runtime',
+        'xz:runtime',
+        'zip:runtime',
+    ]
+
+
+
+    def unpack(r):
+
+        r.addArchive('http://ftp.midnight-commander.org/mc-%(version)s.tar.xz')
+        r.addSource('mc.ini', dir='%(datadir)s/mc/')
+        # r.addPatch('mc-extensions.patch')
+        # r.addPatch('mc-mcviewsegfault.patch')
+
+    def configure(r):
+
+        r.macros.cflags += (
+            ' -DUTF8=1'
+            ' -D_FILE_OFFSET_BITS=64'
+            ' -D_LARGEFILE_SOURCE')
+
+        r.Configure('--with-screen=slang --enable-charset --without-x --with-gpm-mouse --disable-rpath --enable-vfs-smb --enable-vfs-mcfs')
+
+    def policy(r):
+
+        r.AutoDoc(exceptions='/.*/')
+
+        r.Ownership('vcsa', 'root', '%(libexecdir)s/mc/cons.saver')
+        r.SetModes('%(libexecdir)s/mc/cons.saver', 04711)
+
+        r.Move('%(libexecdir)s/mc/{mc.sh,mc.csh}',
+               '%(sysconfdir)s/profile.d/', mode=0755)
+
+        r.Move('%(datadir)s/mc/*.ini', '%(sysconfdir)s/mc/extfs/', mode = 0644)
+        r.Move('%(datadir)s/mc/syntax/Syntax', '%(sysconfdir)s/mc/syntax/', mode = 0644)
+        r.Remove('%(libexecdir)s/mc/extfs.d/README', '%(libexecdir)s/mc/fish/README.fish', '%(libexecdir)s/mc/extfs.d/README.extfs')
+

@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nini(PackageRecipe):
+    name = 'nini'
+    version = '1.1.0'
+ 
+    buildRequires = [ 'mono:cil', 'mono:devel', 'mono:runtime', 'unzip:runtime' ]
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/nini/Nini-%(version)s.zip')
+        r.addSource('nini.snk', dir='Source')
+
+        r.Create('%(libdir)s/pkgconfig/nini-1.1.pc', contents = """\
+prefix=%(prefix)s
+exec_prefix=%(prefix)s
+libdir=%(libdir)s
+
+Name: nini
+Description: Nini - CLI library for managing config files
+Version: %(version)s
+Libs: -r:${libdir}/mono/nini/nini.dll
+""")
+
+        r.Run('mcs -out:nini.dll -keyfile:nini.snk -target:library -r:System.Xml AssemblyInfo.cs Config/*.cs Ini/*.cs Util/*.cs', dir='Source')
+        r.Run('gacutil -package nini -i nini.dll -root %(destdir)s%(libdir)s', dir='Source')

@@ -1,0 +1,98 @@
+#
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Avidemux(CPackageRecipe):
+    name = 'avidemux'
+    version = '2.6.2'
+
+    packageSummary = 'Avidemux is a free video editor'
+    packageDescription = 'Avidemux is a free video editor designed for simple cutting, filtering and encoding tasks. It supports many file types, including AVI, DVD compatible MPEG files, MP4 and ASF, using a variety of codecs. Tasks can be automated using projects, job queue and powerful scripting capabilities'
+ 
+    buildRequires = [
+        'a52dec:devel', 
+        'alsa-lib:devel', 
+        'atk:devel', 
+        'autoconf:runtime', 
+        'automake:runtime', 
+        'cairo:devel', 
+        'cmake:runtime', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'esound:devel', 
+        'expat:devel', 
+        'faac:devel', 
+        'faad2:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'fribidi:devel',
+        'gettext:devel', 
+        'gettext:runtime', 
+        'glibc:devel',
+        'glib:devel', 
+        'gtk:devel',
+        'gtk3:devel', 
+        'intltool:runtime', 
+        'jack:devel',
+        'lame:devel', 
+        'libdca:devel', 
+        'libICE:devel', 
+        'libpng:devel', 
+        'libSM:devel', 
+        'libstdc++:devel', 
+        'libva:devel', 
+        'libvdpau:devel',
+        'libvorbis:devel', 
+        'libvpx:devel', 
+        'libX11:devel', 
+        'libXcomposite:devel', 
+        'libXext:devel', 
+        'libXinerama:devel', 
+        'libxml2:devel', 
+        'libxml2:runtime', 
+        'libXpm:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libXScrnSaver:devel', 
+        'libxslt:runtime', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'openssl:devel', 
+        'pango:devel', 
+        'phonon:devel',
+        'pkgconfig:devel', 
+        'pulseaudio:devel',
+        'qt4-core:devellib', 
+        'qt4:devel', 
+        'qt4-gui:devellib', 
+        'qt:devel', 
+        'SDL:devel', 
+        'twolame:devel',
+        'x264:devel', 
+        'xvidcore:devel', 
+        'yasm:runtime', 
+        'zlib:devel', 
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/avidemux/avidemux_%(version)s.tar.gz')
+        r.addSource('avidemux.desktop')
+
+        r.disableParallelMake()
+        r.Run('bash bootStrap.bash --tgz --without-qt4 --with-gtk')
+    	r.Make(dir='buildCore')
+    	r.Make(dir='buildGtk')
+    	r.Make(dir='buildPluginsCommon')
+    	r.Make(dir='buildPluginsGtk')
+
+    	r.MakeInstall(dir='buildCore')
+    	r.MakeInstall(dir='buildGtk')
+    	r.MakeInstall(dir='buildPluginsCommon')
+    	r.MakeInstall(dir='buildPluginsGtk')
+
+        r.Install('avidemux_icon.png', '%(datadir)s/pixmaps/')
+        r.Desktopfile('avidemux.desktop')
+        r.NonBinariesInBindirs(exceptions='%(bindir)s/i18n/')

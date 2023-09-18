@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cracklib(CPackageRecipe):
+    name = 'cracklib'
+    version = '2.8.10'
+
+    buildRequires = [ 'gzip:runtime', 'words:data', 'python:devel', ]
+
+    def setup(r):
+        r.macros.dictpath = '%(datadir)s/%(name)s/pw_dict'
+        r.addArchive('mirror://sourceforge/cracklib/')
+        r.addSource('crack.h', dir='cracklib')
+        for list in ('computer/Domains.gz', 'computer/Dosref.gz',
+            'computer/Ftpsites.gz', 'computer/Jargon.gz',
+            'computer/common-passwords.txt.gz',
+            'movieTV/Movies.gz', 'movieTV/Python.gz', 'movieTV/Trek.gz',
+            'literature/LCarrol.gz', 'literature/Paradise.Lost.gz',
+            'literature/cartoon.gz', 'literature/myths-legends.gz',
+            'literature/sf.gz', 'literature/shakespeare.gz',
+            'names/ASSurnames.gz', 'names/Congress.gz', 'names/Family-Names.gz',
+            'names/Given-Names.gz', 'names/famous.gz', 'names/fast-names.gz',
+            'names/female-names.gz', 'names/male-names.gz',
+            'names/names.french.gz', 'names/names.hp.gz',
+            'names/other-names.gz', 'names/surnames.finnish.gz'):
+            r.addSource('ftp://ftp.cerias.purdue.edu/pub/dict/wordlists/%s'
+                            %list, dir='cracklib-dicts')
+
+        r.Run('gunzip cracklib-dicts/*')
+        r.Configure()
+        r.Make('all DICTPATH=%(dictpath)s'
+                  ' libdir=%(libdir)s')
+
+        r.MakeInstall('DICTPATH=%(dictpath)s')
+
+        # Version 2.8.10 introduced a bug, removing the x bits from this
+        # (RPL-1576):
+        r.Run('sh ./util/cracklib-format cracklib-dicts/* | ./util/cracklib-packer %(destdir)s/%(dictpath)s')
+        r.AutoDoc('MANIFEST', 'POSTER')

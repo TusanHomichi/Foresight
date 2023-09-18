@@ -1,0 +1,66 @@
+#!/bin/bash
+#===============================================================================
+#
+#          FILE:  bake
+#
+#         USAGE:  bake <context> recipe
+#
+#   DESCRIPTION:  Wrapper script for the conary rmake commands
+#
+#        AUTHOR:  Eric Lake <ericlake@foresightlinux.org>
+#       VERSION:  0.1.2
+#       CREATED:  5/31/08
+#       MODIFIED: 9/9/08
+#===============================================================================
+
+# Find the arch of the machine
+arch=$(uname -m)
+
+# Make sure that the user has supplied some args to use
+if [[ "$#" < 2 ]]
+then
+    echo "You did not supply enough arguments. You need a context and at least one recipe."
+    echo "Usage: bake <context> <recipe1> <recipe2>"
+    exit 1
+fi
+
+
+# Test to see if the script is being run as root or with sudo. If so the exit and warn the user.
+if [[ $EUID -eq 0 ]]
+then
+    echo "You should not run the rmake command as root or using sudo. Please try again as a normal user."
+    exit 1
+fi
+
+# See if the rmake service is running. If not tell the user how to start it.
+if pgrep rmake-server > /dev/null
+then
+    # The rmake service is running so keep going.
+
+    recipes=''
+        
+    # Set the context and then drop it off of the arg list.
+    context="$1"
+    shift
+
+    while (( "$#" > 0 ))
+    do
+        if [[ "$arch" -ne "x86_64" ]]
+        then
+            recipes="${recipes} $1{x86}"
+            shift
+        else
+            recipes="${recipes} $1{x86} $1{x86_64}"
+            shift
+        fi
+    done
+            
+
+    # Now that you have the context and the list of recipes ready run it.
+    time rmake build --context "$context" $recipes
+else
+    # rmake is not running so tell the user how to start it.
+    echo "The rmake service is not running. To start it run:"
+    echo "sudo service rmake start"
+    exit 1
+fi

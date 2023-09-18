@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonDaap(CPackageRecipe):
+    name = 'python-daap'
+    version = '0.7.1'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://jerakeen.org/files/PythonDaap-%(version)s.tar.gz')
+        r.PythonSetup()

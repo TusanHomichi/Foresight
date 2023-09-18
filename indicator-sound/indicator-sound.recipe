@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IndicatorSound(AutoPackageRecipe):
+    name = 'indicator-sound'
+    version = '0.6.6.1'
+ 
+    buildRequires = [ 'GConf:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime',
+                      'glib:devel', 'gtk:devel', 'ido:devel', 'intltool:runtime',
+                      'libdbusmenu-glib:devel', 'libdbusmenu-gtk:devel', 'libgee:devel',
+                      'libindicator:devel', 'libnotify:devel', 'libpng:devel',
+                      'libxml2:devel', 'pango:devel', 'pulseaudio:devel',
+                      'GConf:runtime', 'pkgconfig:devel', 'vala:runtime',
+                      'libdbusmenu:devel', 'dbus-glib:runtime',  'dbus-glib:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/third/0.6.6/+download/')
+
+    def configure(r):
+        r.Configure(' --disable-static ')
+

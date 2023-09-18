@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pytube(PackageRecipe):
+    name = 'pytube'
+    version = '0.0.11.5'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'gdata-python:python', 'pygobject:python', 'pygtk:python', 'python:devel']
+ 
+    def setup(r):
+        #r.addArchive('http://www.bashterritory.com/%(name)s/releases/%(name)s-%(version)s.tar.bz2')
+	r.addArchive('ftp://ftp.archlinux.org/other/pytube/pytube-%(version)s.tar.gz')
+        r.Replace('from xml.etree import cElementTree', 'import cElementTree as ElementTree', 'pytube.py')
+        r.Copy('*','/usr/share/%(name)s/')
+        r.Copy('pytube.desktop','/usr/share/applications/')
+        r.Copy('pytube.png','/usr/share/pixmaps/')
+        r.Copy('pytube','%(bindir)s/')
+        r.Requires('mplayer:runtime', '/usr/bin/pytube')
+        r.Requires('ffmpeg:runtime', '/usr/bin/pytube')
+        r.Requires('youtube-dl:runtime', '/usr/bin/pytube')
+        r.Requires('vorbis-tools:runtime', '/usr/bin/pytube')
+        r.Requires('sox:runtime', '/usr/bin/pytube')
+        r.Requires('ffmpeg2theora:runtime', '/usr/bin/pytube')

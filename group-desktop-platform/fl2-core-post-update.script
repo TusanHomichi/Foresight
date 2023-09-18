@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Make sure mention of running this script shows up in output
+echo
+
+if [ -h /etc/pam.d/system-auth -o ! -e /etc/pam.d/system-auth ] ; then
+    # work around previously broken pam/authconfig
+    rm -f /etc/pam.d/system-auth
+    if [ -e /etc/pam.d/system-auth.gsbackup ] ; then
+        # pre-script gave us the right thing
+        mv /etc/pam.d/system-auth.gsbackup /etc/pam.d/system-auth
+    elif [ -s /etc/pam.d/system-auth-ac ] ; then
+        mv /etc/pam.d/system-auth-ac /etc/pam.d/system-auth
+    else
+        # bootstrap fixed auth
+        cat > /etc/pam.d/system-auth <<EOF
+auth     required pam_unix.so
+session  required pam_unix.so
+account  required pam_permit.so
+password required pam_deny.so
+EOF
+        authconfig --updateall
+    fi
+fi
+
+# migrations from fl:1 or rpl:1 can end up with mismatches for chkconfig,
+# so deal with the critical ordering issues
+if [ ! -h /etc/rc5.d/S16messagebus ] ; then
+    chkconfig messagebus reset
+fi
+
+# it is very important to return success; failure stops the operation
+exit 0

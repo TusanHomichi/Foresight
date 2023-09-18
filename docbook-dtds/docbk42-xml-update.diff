@@ -1,0 +1,338 @@
+diff -ruN 4.2.orig/catalog.xml 4.2/catalog.xml
+--- 4.2.orig/catalog.xml	2002-07-17 11:14:41.000000000 -0500
++++ 4.2/catalog.xml	2005-09-18 17:24:06.000000000 -0500
+@@ -1,4 +1,7 @@
+ <?xml version='1.0'?>
++<!DOCTYPE catalog PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN" 
++    "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
++
+ <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+ 
+ <!-- ...................................................................... -->
+@@ -24,6 +27,10 @@
+ 
+ <public publicId="-//OASIS//DTD DocBook XML V4.2//EN"
+         uri="docbookx.dtd"/>
++<system systemId="http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
++        uri="docbookx.dtd"/>
++<system systemId="http://docbook.org/xml/4.2/docbookx.dtd"
++        uri="docbookx.dtd"/>
+ 
+ <!-- ...................................................................... -->
+ <!-- DocBook modules ...................................................... -->
+@@ -31,6 +38,7 @@
+ <public publicId="-//OASIS//DTD DocBook CALS Table Model V4.2//EN"
+         uri="calstblx.dtd"/>
+ 
++  <!-- note: this is referenced by other versions of the DocBook DTD -->
+ <public publicId="-//OASIS//DTD XML Exchange Table Model 19990315//EN"
+         uri="soextblx.dtd"/>
+ 
+@@ -49,65 +57,6 @@
+ <public publicId="-//OASIS//ENTITIES DocBook Character Entities V4.2//EN"
+         uri="dbcentx.mod"/>
+ 
+-<!-- ...................................................................... -->
+-<!-- ISO entity sets ...................................................... -->
+-
+-<public publicId="ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+-        uri="ent/iso-dia.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+-        uri="ent/iso-num.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Publishing//EN//XML"
+-        uri="ent/iso-pub.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES General Technical//EN//XML"
+-        uri="ent/iso-tech.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+-        uri="ent/iso-lat1.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Latin 2//EN//XML"
+-        uri="ent/iso-lat2.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Greek Letters//EN//XML"
+-        uri="ent/iso-grk1.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Monotoniko Greek//EN//XML"
+-        uri="ent/iso-grk2.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Greek Symbols//EN//XML"
+-        uri="ent/iso-grk3.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN//XML"
+-        uri="ent/iso-grk4.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN//XML"
+-        uri="ent/iso-amsa.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN//XML"
+-        uri="ent/iso-amsb.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN//XML"
+-        uri="ent/iso-amsc.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN//XML"
+-        uri="ent/iso-amsn.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN//XML"
+-        uri="ent/iso-amso.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN//XML"
+-        uri="ent/iso-amsr.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Box and Line Drawing//EN//XML"
+-        uri="ent/iso-box.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Russian Cyrillic//EN//XML"
+-        uri="ent/iso-cyr1.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN//XML"
+-        uri="ent/iso-cyr2.ent"/>
+ 
+ <!-- End of catalog data for DocBook XML V4.2 ............................. -->
+ <!-- ...................................................................... -->
+diff -ruN 4.2.orig/dbcentx.mod 4.2/dbcentx.mod
+--- 4.2.orig/dbcentx.mod	2002-07-17 11:14:41.000000000 -0500
++++ 4.2/dbcentx.mod	2005-09-18 17:24:06.000000000 -0500
+@@ -173,133 +173,133 @@
+ <![%ISOamsa.module;[
+ <!ENTITY % ISOamsa PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN//XML"
+-"ent/iso-amsa.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsa.ent">
+ <!--end of ISOamsa.module-->]]>
+ 
+ <!ENTITY % ISOamsb.module "INCLUDE">
+ <![%ISOamsb.module;[
+ <!ENTITY % ISOamsb PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN//XML"
+-"ent/iso-amsb.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsb.ent">
+ <!--end of ISOamsb.module-->]]>
+ 
+ <!ENTITY % ISOamsc.module "INCLUDE">
+ <![%ISOamsc.module;[
+ <!ENTITY % ISOamsc PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN//XML"
+-"ent/iso-amsc.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsc.ent">
+ <!--end of ISOamsc.module-->]]>
+ 
+ <!ENTITY % ISOamsn.module "INCLUDE">
+ <![%ISOamsn.module;[
+ <!ENTITY % ISOamsn PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN//XML"
+-"ent/iso-amsn.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsn.ent">
+ <!--end of ISOamsn.module-->]]>
+ 
+ <!ENTITY % ISOamso.module "INCLUDE">
+ <![%ISOamso.module;[
+ <!ENTITY % ISOamso PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN//XML"
+-"ent/iso-amso.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamso.ent">
+ <!--end of ISOamso.module-->]]>
+ 
+ <!ENTITY % ISOamsr.module "INCLUDE">
+ <![%ISOamsr.module;[
+ <!ENTITY % ISOamsr PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN//XML"
+-"ent/iso-amsr.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsr.ent">
+ <!--end of ISOamsr.module-->]]>
+ 
+ <!ENTITY % ISObox.module "INCLUDE">
+ <![%ISObox.module;[
+ <!ENTITY % ISObox PUBLIC
+ "ISO 8879:1986//ENTITIES Box and Line Drawing//EN//XML"
+-"ent/iso-box.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISObox.ent">
+ <!--end of ISObox.module-->]]>
+ 
+ <!ENTITY % ISOcyr1.module "INCLUDE">
+ <![%ISOcyr1.module;[
+ <!ENTITY % ISOcyr1 PUBLIC
+ "ISO 8879:1986//ENTITIES Russian Cyrillic//EN//XML"
+-"ent/iso-cyr1.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOcyr1.ent">
+ <!--end of ISOcyr1.module-->]]>
+ 
+ <!ENTITY % ISOcyr2.module "INCLUDE">
+ <![%ISOcyr2.module;[
+ <!ENTITY % ISOcyr2 PUBLIC
+ "ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN//XML"
+-"ent/iso-cyr2.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOcyr2.ent">
+ <!--end of ISOcyr2.module-->]]>
+ 
+ <!ENTITY % ISOdia.module "INCLUDE">
+ <![%ISOdia.module;[
+ <!ENTITY % ISOdia PUBLIC
+ "ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+-"ent/iso-dia.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOdia.ent">
+ <!--end of ISOdia.module-->]]>
+ 
+ <!ENTITY % ISOgrk1.module "INCLUDE">
+ <![%ISOgrk1.module;[
+ <!ENTITY % ISOgrk1 PUBLIC
+ "ISO 8879:1986//ENTITIES Greek Letters//EN//XML"
+-"ent/iso-grk1.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk1.ent">
+ <!--end of ISOgrk1.module-->]]>
+ 
+ <!ENTITY % ISOgrk2.module "INCLUDE">
+ <![%ISOgrk2.module;[
+ <!ENTITY % ISOgrk2 PUBLIC
+ "ISO 8879:1986//ENTITIES Monotoniko Greek//EN//XML"
+-"ent/iso-grk2.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk2.ent">
+ <!--end of ISOgrk2.module-->]]>
+ 
+ <!ENTITY % ISOgrk3.module "INCLUDE">
+ <![%ISOgrk3.module;[
+ <!ENTITY % ISOgrk3 PUBLIC
+ "ISO 8879:1986//ENTITIES Greek Symbols//EN//XML"
+-"ent/iso-grk3.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk3.ent">
+ <!--end of ISOgrk3.module-->]]>
+ 
+ <!ENTITY % ISOgrk4.module "INCLUDE">
+ <![%ISOgrk4.module;[
+ <!ENTITY % ISOgrk4 PUBLIC
+ "ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN//XML"
+-"ent/iso-grk4.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk4.ent">
+ <!--end of ISOgrk4.module-->]]>
+ 
+ <!ENTITY % ISOlat1.module "INCLUDE">
+ <![%ISOlat1.module;[
+ <!ENTITY % ISOlat1 PUBLIC
+ "ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+-"ent/iso-lat1.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOlat1.ent">
+ <!--end of ISOlat1.module-->]]>
+ 
+ <!ENTITY % ISOlat2.module "INCLUDE">
+ <![%ISOlat2.module;[
+ <!ENTITY % ISOlat2 PUBLIC
+ "ISO 8879:1986//ENTITIES Added Latin 2//EN//XML"
+-"ent/iso-lat2.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOlat2.ent">
+ <!--end of ISOlat2.module-->]]>
+ 
+ <!ENTITY % ISOnum.module "INCLUDE">
+ <![%ISOnum.module;[
+ <!ENTITY % ISOnum PUBLIC
+ "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+-"ent/iso-num.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOnum.ent">
+ <!--end of ISOnum.module-->]]>
+ 
+ <!ENTITY % ISOpub.module "INCLUDE">
+ <![%ISOpub.module;[
+ <!ENTITY % ISOpub PUBLIC
+ "ISO 8879:1986//ENTITIES Publishing//EN//XML"
+-"ent/iso-pub.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOpub.ent">
+ <!--end of ISOpub.module-->]]>
+ 
+ <!ENTITY % ISOtech.module "INCLUDE">
+ <![%ISOtech.module;[
+ <!ENTITY % ISOtech PUBLIC
+ "ISO 8879:1986//ENTITIES General Technical//EN//XML"
+-"ent/iso-tech.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOtech.ent">
+ <!--end of ISOtech.module-->]]>
+ 
+ <!--end of xml.features-->]]>
+diff -ruN 4.2.orig/docbook.cat 4.2/docbook.cat
+--- 4.2.orig/docbook.cat	2002-07-17 11:14:41.000000000 -0500
++++ 4.2/docbook.cat	2005-09-18 17:24:06.000000000 -0500
+@@ -16,11 +16,16 @@
+      on supplying and using catalog data.
+   --
+ 
++  -- public identifiers override system identifiers, if both are supplied   --
++OVERRIDE YES
++
+   -- ...................................................................... --
+   -- DocBook driver file .................................................. --
+ 
+ PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+        "docbookx.dtd"
++DTDDECL "-//OASIS//DTD DocBook XML V4.2//EN"
++       "/usr/share/xml/declaration/xml.dcl"
+ 
+   -- ...................................................................... --
+   -- DocBook modules ...................................................... --
+@@ -46,65 +51,5 @@
+ PUBLIC "-//OASIS//ENTITIES DocBook Character Entities V4.2//EN"
+        "dbcentx.mod"
+ 
+-  -- ...................................................................... --
+-  -- ISO entity sets ...................................................... --
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+-       "ent/iso-dia.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+-       "ent/iso-num.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN//XML"
+-       "ent/iso-pub.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES General Technical//EN//XML"
+-       "ent/iso-tech.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+-       "ent/iso-lat1.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Latin 2//EN//XML"
+-       "ent/iso-lat2.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Greek Letters//EN//XML"
+-       "ent/iso-grk1.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Monotoniko Greek//EN//XML"
+-       "ent/iso-grk2.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Greek Symbols//EN//XML"
+-       "ent/iso-grk3.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN//XML"
+-       "ent/iso-grk4.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN//XML"
+-       "ent/iso-amsa.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN//XML"
+-       "ent/iso-amsb.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN//XML"
+-       "ent/iso-amsc.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN//XML"
+-       "ent/iso-amsn.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN//XML"
+-       "ent/iso-amso.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN//XML"
+-       "ent/iso-amsr.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Box and Line Drawing//EN//XML"
+-       "ent/iso-box.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Russian Cyrillic//EN//XML"
+-       "ent/iso-cyr1.ent"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN//XML"
+-       "ent/iso-cyr2.ent"
+-
+   -- End of catalog data for DocBook XML V4.2 ............................. --
+   -- ...................................................................... --

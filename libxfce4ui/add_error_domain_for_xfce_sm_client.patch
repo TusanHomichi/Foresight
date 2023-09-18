@@ -1,0 +1,128 @@
+Updating branch refs/heads/master
+         to 22c52a0dcce54a2b76ea39945a8783e78a45e3ef (commit)
+       from 8edf5a0a59ef054c9b9e71953ea0f3c5a64988cc (commit)
+
+commit 22c52a0dcce54a2b76ea39945a8783e78a45e3ef
+Author: Nick Schermer <nick@xfce.org>
+Date:   Sun Jun 9 11:44:13 2013 +0200
+
+    Add error domain for XfceSmClient.
+
+ docs/libxfce4ui-sections.txt |    3 +++
+ libxfce4ui/xfce-sm-client.c  |   27 +++++++++++++++++++++++----
+ libxfce4ui/xfce-sm-client.h  |   22 ++++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 4 deletions(-)
+
+diff --git a/docs/libxfce4ui-sections.txt b/docs/libxfce4ui-sections.txt
+index 12fc10c..7df732f 100644
+--- a/docs/libxfce4ui-sections.txt
++++ b/docs/libxfce4ui-sections.txt
+@@ -94,6 +94,8 @@ xfce_sm_client_get_restart_command
+ xfce_sm_client_set_restart_command
+ xfce_sm_client_get_restart_style
+ xfce_sm_client_set_restart_style
++XFCE_SM_CLIENT_ERROR
++XfceSmCLientErrorEnum
+ <SUBSECTION Standard>
+ XFCE_IS_SM_CLIENT
+ XFCE_IS_SM_CLIENT_CLASS
+@@ -107,4 +109,5 @@ XFCE_TYPE_SM_CLIENT_SHUTDOWN_HINT
+ xfce_sm_client_get_type
+ xfce_sm_client_restart_style_get_type
+ xfce_sm_client_shutdown_hint_get_type
++xfce_sm_client_error_quark
+ </SECTION>
+diff --git a/libxfce4ui/xfce-sm-client.c b/libxfce4ui/xfce-sm-client.c
+index 509406b..76a1b70 100644
+--- a/libxfce4ui/xfce-sm-client.c
++++ b/libxfce4ui/xfce-sm-client.c
+@@ -1367,6 +1367,27 @@ xfce_sm_client_set_clone_restart_commands(XfceSMClient *sm_client)
+ #endif
+ 
+ 
++
++/**
++ * xfce_sm_client_error_quark:
++ *
++ * Gets the XfceSmClient Error Quark.
++ *
++ * Return value: a #GQuark.
++ **/
++GQuark
++xfce_sm_client_error_quark (void)
++{
++  static GQuark q;
++
++  if G_UNLIKELY (q == 0)
++    q = g_quark_from_static_string ("xfce-sm-client-error-quark");
++
++  return q;
++}
++
++
++
+ /**
+  * xfce_sm_client_get_option_group:
+  * @argc: The application's argument count
+@@ -1586,15 +1607,13 @@ xfce_sm_client_connect(XfceSMClient *sm_client,
+ 
+     if(!sm_client->session_connection) {
+         if(error) {
+-            /* FIXME: error domain/code */
+-            g_set_error(error, 0, 1,
++            g_set_error(error, XFCE_SM_CLIENT_ERROR, XFCE_SM_CLIENT_ERROR_FAILED,
+                         _("Failed to connect to the session manager: %s"), buf);
+         }
+         return FALSE;
+     } else if(!given_client_id) {
+         if(error) {
+-            /* FIXME: error domain/code */
+-            g_set_error(error, 0, 1,
++            g_set_error(error, XFCE_SM_CLIENT_ERROR, XFCE_SM_CLIENT_ERROR_INVALID_CLIENT,
+                         _("Session manager did not return a valid client id"));
+         }
+         return FALSE;
+diff --git a/libxfce4ui/xfce-sm-client.h b/libxfce4ui/xfce-sm-client.h
+index cbc8a98..3158333 100644
+--- a/libxfce4ui/xfce-sm-client.h
++++ b/libxfce4ui/xfce-sm-client.h
+@@ -34,6 +34,26 @@
+ #define XFCE_IS_SM_CLIENT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), XFCE_TYPE_SM_CLIENT))
+ #define XFCE_SM_CLIENT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), XFCE_TYPE_SM_CLIENT, XfceSMClientClass))
+ 
++/**
++ * XFCE_SM_CLIENT_ERROR:
++ *
++ * Error domain for XfceSmCLient. Errors in this domain will be from the #XfceSmCLientErrorEnum enumeration.
++ * See #GError for more information on error domains.
++ **/
++#define XFCE_SM_CLIENT_ERROR xfce_sm_client_error_quark()
++
++/**
++ * XfceSmCLientErrorEnum:
++ * @G_IO_ERROR_FAILED: Failed to connect to the session manager.
++ * @XFCE_SM_CLIENT_ERROR_INVALID_CLIENT: Session does not have a valid client id.
++ *
++ * Error codes returned by XfceSmCLient functions.
++ **/
++typedef enum {
++  XFCE_SM_CLIENT_ERROR_FAILED,
++  XFCE_SM_CLIENT_ERROR_INVALID_CLIENT
++} XfceSmCLientErrorEnum;
++
+ G_BEGIN_DECLS
+ 
+ typedef enum
+@@ -64,6 +84,8 @@ typedef struct _XfceSMClient  XfceSMClient;
+ 
+ GType xfce_sm_client_get_type(void) G_GNUC_CONST;
+ 
++GQuark xfce_sm_client_error_quark (void);
++
+ GOptionGroup *xfce_sm_client_get_option_group(gint argc,
+                                               gchar **argv);
+ 
+_______________________________________________
+Xfce4-commits mailing list
+Xfce4-commits@xfce.org
+https://mail.xfce.org/mailman/listinfo/xfce4-commits

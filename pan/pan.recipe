@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class pan(AutoPackageRecipe,GnomePackageRecipe):
+    name = 'pan'
+    version = '0.133'
+
+    buildRequires = ['aspell:devel', 'desktop-file-utils:runtime', 'gmime:devel', 'gtkspell:devel', 'pcre:devel']
+
+    def unpack(r):
+        r.addArchive('http://pan.rebelbase.com/download/releases/%(version)s/source/%(name)s-%(version)s.tar.bz2')
+        # gmime-2.4 support
+        # https://bugzilla.gnome.org/show_bug.cgi?id=541676
+        r.addPatch('https://bugzilla.gnome.org/attachment.cgi?id=143086')
+        r.Replace('StartupNotify=false','StartupNotify=true', '%(name)s.desktop.in')
+

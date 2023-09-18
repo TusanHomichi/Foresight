@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EclipseEmf(CPackageRecipe):
+    name = 'eclipse-emf'
+    version = '2.6.0'
+    pkg_date = '201006141136'
+
+    buildRequires = [
+        'unzip:runtime',
+        'eclipse-sdk:java',
+        ]
+
+    shortDesc  = 'EMF plugin for Eclipse'
+    longDesc   = 'EMF and XSD frameworks for the Eclipse platform'
+    url        = 'http://www.eclipse.org/modeling/emf/'
+    licenses   = [ 'EPL-1.0' ]
+    categories = [ 'Development/Utilities' ]
+
+    def setup(r):
+        r.macros.pkg_date = r.pkg_date
+        r.addArchive('http://download.eclipse.org/modeling/emf/emf/downloads/drops/'
+                     '%(version)s/R%(pkg_date)s/emf-xsd-SDK-%(version)s.zip')
+
+        r.macros.installdir = r.name.replace('eclipse-', '')
+        r.macros.dropindir = '%(libdir)s/eclipse/dropins/%(installdir)s/eclipse'
+
+        # Features
+        r.Run("""
+find features -type f | while read _feature
+do
+  if [[ ${_feature} =~ (.*\.jar$) ]]
+  then
+    install -dm755 %(destdir)s/%(dropindir)s/${_feature%%*.jar}
+    cd %(destdir)s/%(dropindir)s/${_feature/.jar}
+    jar xf %(builddir)s/${_feature} || return 1
+    cd - > /dev/null 2>&1
+  else
+    install -Dm644 ${_feature} %(destdir)s/%(dropindir)s/${_feature}
+  fi
+done""")
+
+        # Plugins
+        r.Run("""
+find plugins -type f | while read _plugin
+do
+  install -Dm644 ${_plugin} %(destdir)s/%(dropindir)s/${_plugin}
+done""")
+
+        r.Requires('eclipse-sdk:runtime', '%(dropindir)s/')
+        r.Requires('eclipse-sdk:java', '%(dropindir)s/')

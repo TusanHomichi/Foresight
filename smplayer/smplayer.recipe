@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class SMPlayer(CPackageRecipe):
+
+    name = 'smplayer'
+    version = '0.8.5'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 
+        'gtk:runtime', 
+        'libstdc++:devel',
+        'qt4:devel'
+    ]
+
+    def setup(r):
+
+        r.addArchive('http://downloads.sourceforge.net/smplayer/')
+
+        r.macros.themes_version = '20120919'
+        r.addArchive(
+            'http://downloads.sourceforge.net/smplayer/smplayer-themes-20120919.tar.bz2', dir='%(maindir)s/'
+        )
+
+        r.Replace('^DOC_PATH=.*', 'DOC_PATH=%(thisdocdir)s/', 'Makefile')
+
+        r.Make('PREFIX=%(prefix)s/ QMAKE=qmake-qt4 LRELEASE=lrelease-qt4')
+
+        r.MakeInstall('PREFIX=%(prefix)s/')
+
+        # Install themes
+        r.MakeInstall(
+            'PREFIX=%(prefix)s/', dir='smplayer-themes-%(themes_version)s'
+        )
+
+        r.Requires('mplayer:runtime', '%(bindir)s/smplayer')

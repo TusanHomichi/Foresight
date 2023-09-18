@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class kino(AutoPackageRecipe):
+    name = 'kino'
+    version = '1.3.4'
+
+    buildRequires = ['a52dec:devel','alsa-lib:devel', 'atk:devel', 'cairo:devel',
+                     'expat:devel', 'desktop-file-utils:runtime', 'fontconfig:devel',
+                     'faac:devel', 'faad2:devel', 'freetype:devel', 'ffmpeg:devel',
+                     'glib:devel', 'gettext:runtime', 'Mesa:devel', 'Mesa:devellib',
+                     'gtk:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 
+                     'libogg:devel', 'libquicktime:devel', 'libtheora:devel', 'libvorbis:devel',
+                     'libXrender:devel', 'libXv:devel', 'libavc1394:devel', 'libdv:devel',
+                     'libglade:devel', 'libiec61883:devel', 'libpng:devellib', 'libraw1394:devel',
+                     'libsamplerate:devel', 'libstdc++:devel', 'libxml2:devel', 'pango:devel', 
+                     'perl:devel', 'perl:lib', 'pkgconfig:devel', 'shared-mime-info:runtime', 
+                     'x264:devel', 'xvidcore:devel', 'zlib:devel', 'intltool:runtime', 'intltool:devel',
+                     'automake:runtime', 'autoconf:runtime', 'libtool:runtime', 'libtool:devel',
+                     'libv4l:devel',]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+        # taken from http://svnweb.mageia.org/packages/cauldron/kino/current/
+        for patch in [ 'kino-1.3.4-fix-desktop-file.patch',
+                       'kino-1.3.2-fix-str-fmt.patch',
+                       'kino-1.3.4-use-soundwrapper.patch',
+                       'kino-1.3.4-videodev.h.patch',
+                       'kino-1.3.4-ffmpeg0.8.patch',
+                       'kino-1.3.4-libav-0.8.patch',
+                       'kino-1.3.4-automake-1.13.patch',
+                       'kino-1.3.4-link.patch',                       
+                       ]:
+            r.addPatch(patch)
+        r.Run('autoreconf -fi')
+
+    def configure(r):
+        r.Replace('vcodec h264', 'vcodec libx264', 'scripts/exports/*', allowNoChange = True)
+        r.Replace('acodec mp3', 'acodec libmp3lame', 'scripts/exports/ffmpeg_mp3.sh', allowNoChange = True)
+
+        r.macros.cppflags += ' -I%(includedir)s/libavcodec -I%(includedir)s/libavdevice -I%(includedir)s/libavformat -I%(includedir)s/libavcodec -I%(includedir)s/libpostproc -I%(includedir)s/libswscale'
+
+        r.Configure(' --with-quicktime --disable-local-ffmpeg --mandir=%(mandir)s')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+    def policy(r):
+        r.Remove('%(sysconfdir)s/hotplug/', recursive = True)
+        r.Remove('%(libdir)s/hotplug')
+
+        r.Remove('%(bindir)s/kino2raw')
+        r.Symlink('%(bindir)s/kino', '%(bindir)s/kino2raw')
+        r.Requires('ffmpeg:runtime','%(bindir)s/kino')
+        r.Requires('dvgrab:runtime','%(bindir)s/kino')
+    # consider these optional programs as missing runtime reqs:
+    # /usr/share/kino/scripts/dvdauthor/.*
+    # /usr/share/kino/scripts/exports/ffmpeg_dvd.*
+    # -> dvdauthor
+    # /usr/share/kino/scripts/dvdauthor/qdvdauthor.sh
+    # -> qdvdauthor
+    # /usr/share/kino/scripts/exports/ffmpeg_3gp.sh
+    # -> MP4Box
+    # /usr/share/kino/scripts/exports/rawplay.sh
+    # -> rawplay
+    # /usr/share/kino/scripts/exports/ffmpeg2theora.sh
+    # -> ffmpeg2theora

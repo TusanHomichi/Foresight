@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class Groovewalrus(BinaryPackageRecipe):
+    name = 'groovewalrus'
+    version = '0.380'
+ 
+    buildRequires = [
+            'binutils:runtime', 
+            'desktop-file-utils:runtime', 
+            'numpy:python', 
+            'python:devel', 
+            'python-simplejson:python', 
+            'wxPython:python', 
+            'chardet:python'
+                    ]
+ 
+    def unpack(r):
+        r.macros.site = 'http://turnip-town.googlecode.com/files'
+
+        dist = [
+            ('groovewalrus-%(version)s_all.deb'),
+        ]
+        for (deb) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/')
+
+        r.Requires('pymedia:python', 'groovewalrus:runtime')

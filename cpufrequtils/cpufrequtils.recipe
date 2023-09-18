@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2005-2006 rPath Inc.
+#               2006-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class cpufrequtils(AutoPackageRecipe):
+    name = 'cpufrequtils'
+    version = '008'
+    buildRequires = ['sysfsutils:devel', 'gettext:runtime']
+
+    def setup(r):
+        r.addArchive('http://www.kernel.org/pub/linux/utils/kernel/cpufreq/')
+        r.addPatch('cpufrequtils-008-aperf-32bit.patch')
+        r.addPatch('disable-gsic.patch')
+
+        r.Make('DEBUG=true')
+
+        if Arch.x86:
+            r.Make(dir = 'debug/i386')
+        else:
+            r.Make(dir = 'debug/x86_64')
+
+        r.MakeInstall()
+
+        if Arch.x86:
+            r.Install('debug/i386/dump_psb',
+                      '%(bindir)s/', mode = 0755)
+            r.Install('debug/i386/{centrino,powernow-k8}-decode',
+                      '%(bindir)s/', mode = 0755)
+        else:
+            r.Install('debug/x86_64/powernow-k8-decode',
+                      '%(bindir)s/', mode = 0755)
+

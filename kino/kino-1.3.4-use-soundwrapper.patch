@@ -1,0 +1,11 @@
+--- kino-1.3.4/Kino.desktop.orig	2009-11-06 08:37:15.000000000 +0000
++++ kino-1.3.4/Kino.desktop	2009-11-06 08:37:30.000000000 +0000
+@@ -40,7 +40,7 @@
+ Comment[uk]=Редагування DV відео
+ Encoding=UTF-8
+ TryExec=kino
+-Exec=kino %F
++Exec=soundwrapper kino %F
+ Icon=kino
+ Terminal=false
+ StartupNotify=true

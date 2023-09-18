@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at 
+# http://www.opensource.org/licenses/bsd-license.php
+#
+
+loadSuperClass('cpanpackage')
+class PerlXMLDOM(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-XML-DOM'
+    version = '1.44'
+    buildRequires = [ 'perl-HTTP-Cookies:perl', 'perl-URI:perl',
+                      'perl-XML-Parser:perl', 'perl:devel', ]
+
+    def post(r):
+        # hack to make sure perl-libxml-enno (from rPL) is always 
+        # properly migrated while not having to worry to muchy about
+        # groups, nor availability of redirects...
+        
+        obsoleted = 'perl-libxml-enno'
+        for component in ['runtime', 'perl', 'devel']:
+            obsolete = '%(datadir)s/%(name)s/obsoletes/' + obsoleted + '/' + component
+            r.Create( obsolete,
+                  mode = 0644)
+            overrided = '%s:%s' % (obsoleted,component)
+            
+            r.ComponentSpec(overrided, obsolete)
+            r.Requires('%(name)s:perl', obsolete)

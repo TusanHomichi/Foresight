@@ -1,0 +1,65 @@
+diff -r 834bb13e94ee src/MainWindow.cs
+--- a/src/MainWindow.cs	Sun Jun 01 21:04:01 2008 -0400
++++ b/src/MainWindow.cs	Sun Jun 01 21:05:21 2008 -0400
+@@ -2089,7 +2089,26 @@
+ 			ColorDialog.SwitchViews (photo_view.View);
+ 		}
+ 	}
+-	
++
++	void HandleViewFullscreenBrowser (object sender, EventArgs args)
++	{
++		int width = 0;
++		int height = 0;
++		Gdk.Screen screen = main_window.Screen;
++		
++		main_window.GetSize(out width, out height);
++		
++		if (screen.Width == width && screen.Height == height)
++			/* FIXME: After quiting the application while in Fullscreen mode,
++			 *        Unfullscreen does not restore the window dimentions to
++			 *        the previous dimentions. It restores the window borders,
++			 *        but the window is still the size of the screen. 
++			 */
++			main_window.Unfullscreen ();
++		else
++			main_window.Fullscreen ();
++	}
++
+ 	void HandleZoomScaleValueChanged (object sender, System.EventArgs args)
+ 	{
+ 		switch (view_mode) {
+diff -r 834bb13e94ee src/f-spot.glade
+--- a/src/f-spot.glade	Sun Jun 01 21:04:01 2008 -0400
++++ b/src/f-spot.glade	Sun Jun 01 21:05:22 2008 -0400
+@@ -3408,7 +3408,6 @@
+                         <property name="label" translatable="yes">_Fullscreen</property>
+                         <property name="use_underline">True</property>
+                         <signal name="activate" handler="HandleViewFullscreen"/>
+-                        <accelerator key="F11" modifiers="" signal="activate"/>
+                         <child internal-child="image">
+                           <widget class="GtkImage" id="image50">
+                             <property name="visible">True</property>
+@@ -3425,6 +3424,22 @@
+                         <property name="use_underline">True</property>
+                         <signal name="activate" handler="HandleViewFullExif"/>
+                         <accelerator key="i" modifiers="GDK_CONTROL_MASK" signal="activate"/>
++                      </widget>
++                    </child>
++                    <child>
++                      <widget class="GtkImageMenuItem" id="fullscreen_browser">
++                        <property name="visible">True</property>
++                        <property name="label" translatable="yes">Fullscreen _Browser</property>
++                        <property name="use_underline">True</property>
++                        <signal name="activate" handler="HandleViewFullscreenBrowser"/>
++                        <accelerator key="F11" modifiers="" signal="activate"/>
++                        <child internal-child="image">
++                          <widget class="GtkImage" id="menu-item-image29">
++                            <property name="visible">True</property>
++                            <property name="icon_size">1</property>
++                            <property name="icon_name">view-fullscreen</property>
++                          </widget>
++                        </child>
+                       </widget>
+                     </child>
+                     <child>

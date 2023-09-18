@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DebugEdit(CPackageRecipe):
+    name = 'debugedit'
+    version = '4.4.1'
+
+    # please do not update this package unless you absolutely know something is
+    # wrong (IE: do not do "version bumps")
+
+    buildRequires = [ 'popt:devel', 'libelf:devel', 'elfutils:devel' ]
+
+    def setup(r):
+        # these come from the tools subdirectory in RPM, but I (mkj) do not
+        # want to force an 11MB and growing download for three files. The
+        # version number is the RPM version number.
+        r.addSource('debugedit.c')
+        r.addSource('hashtab.c')
+        r.addSource('hashtab.h')
+        r.addSource('Makefile')
+        # backported 
+        # https://partner-bugzilla.redhat.com/show_bug.cgi?id=505774
+        r.addPatch('rh#505774-debugedit-dwarf3.patch')
+
+        # maintained separately to make it easier to update debugedit
+        r.addPatch('debugedit.stdout.patch')
+        r.addPatch('O0.patch')
+
+        r.Make()
+        r.Install('debugedit', '%(bindir)s/')

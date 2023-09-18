@@ -1,0 +1,61 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdePIM(kdeCorePackageRecipe):
+
+    name = 'kdepim'
+    version = '4.4.10'
+
+    buildRequires = [
+        'akonadi:devel', 'boost:devel', 'gnokii:devel', 'gpgme:devel',
+        'libassuan:devel', 'libgpg-error:devel',
+        'libmal:devel', 'libxml2:devel', 'libXScrnSaver:devel',
+        'libxslt:runtime', 'perl:devel', 'pilot-link:devel', 'qca2:devel',
+        'shared-mime-info:runtime', 'strigi:devel',
+        'shared-desktop-ontologies:devellib', 'kdelibs:runtime',
+    ]
+
+    modules = [
+        'akonadiconsole',
+        'akregator',
+        'blogilo',
+        'kalarm',
+        'kjots',
+        ('kleopatra',
+            'kleopatra', 'doc/kwatchgnupg'),
+        'knode',
+        'knotes',
+        ('kontact',
+            'kontact', 'doc/kontact-admin'),
+        'korganizer',
+        'kresources',
+        'ktimetracker',
+        ('libkdepim',
+            'libkdepim', 'akonadi', 'doc/kioslave', 'icons', 'messagecore',
+            'messagelist',  'messageviewer', 'mimelib', 'kresources', 'wizards'),
+        'libkleo',
+        'libkpgp',
+        'libksieve',
+        ('kaddressbook',
+            'kaddressbook', 'console/kabcclient', 'plugins/ktexteditor',
+            'plugins/kaddressbook'),
+        ('kmail',
+            'kmail', 'kmailcvt', 'ksendemail'),
+        ('kmail-plugins-pim', 'plugins/kmail'),
+        ('kabcclient',
+            'console/kabcclient', 'doc/kabcclient'),
+        ('konsolekalendar',
+            'console/konsolekalendar', 'doc/konsolekalendar'),
+        ('strigi-analyzer-pim', 'strigi-analyzer'),
+    ]
+
+    def unpack(r):
+
+        # parallel make seems to lead to random build failures...
+        r.disableParallelMake()
+
+        r.addArchive('mirror://kde/stable/kdepim-%(version)s/src/')
+

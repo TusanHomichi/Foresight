@@ -1,0 +1,78 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Changed 2007 by Foresight Linux (Thilo Pfennig)
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+ 
+loadRecipe('gnomepackage')
+class GnomeGames(GnomePackageRecipe):
+    
+    name = 'gnome-games'
+    version = '2.91.5'
+
+    buildRequires =  [
+        'GConf:devel',
+        'GConf:runtime',
+        'PIL:python',
+        'clutter-gtk:devel',
+        'clutter:devellib',
+        'desktop-file-utils:runtime',
+        'gnome-python-desktop:python',
+        'gnome-python:python',
+        'gtk:runtime',
+        'guile:devel',
+        'libcanberra:devellib',
+        'librsvg:devel',
+        'perl:runtime',
+        'pycairo:python',
+        'pygtk:devel',
+        'pygtk:python',
+        'python:devel',
+        'rarian:runtime',
+        'sqlite:devel', 
+        'vala:runtime',
+        ]
+
+    extraConfig = (
+        ' --disable-scrollkeeper'
+        ' --disable-introspection'
+        ' --enable-omitgames=lightsoff,swell-foop'
+        )
+
+    def install(r):
+        r.Run('echo >> libgames-support/libgnomegames.schemas')
+        GnomePackageRecipe.install(r)
+
+    def policy(r):
+        r.InitialContents('%(localstatedir)s/games/.*scores')
+
+        r.set_setgid()
+#        r.manual_requires()
+
+    def set_setgid(r):
+        # Process binaries
+        for game in [
+            'glines',
+            'gnibbles',
+            'gnobots2',
+            'gnomine',
+            'gnotravex',
+            'gnotski',
+            'gtali',
+            'mahjongg',
+            'quadrapassel',
+            # 'swell-foop',
+            ]:
+            binary = '%(bindir)s/' + game
+            r.Ownership('root', 'games', binary) # chgrp
+            r.SetModes(binary, 02755) # setgid
+
+        # Process score files
+        r.Ownership('root', 'games', '%(localstatedir)s/games/.*scores')
+        # set modes explicitly to avoid WarnWriteable
+        r.SetModes('%(localstatedir)s/games/.*scores', 0664)
+
+#    def manual_requires(r):
+#        r.Requires('seed:runtime', '%(bindir)s/lightsoff')

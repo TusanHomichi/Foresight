@@ -1,0 +1,22 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Keepnote(PackageRecipe):
+
+    name = 'keepnote'
+    version = '0.7.5'
+
+    packageSummary = 'KeepNote is a note taking application'
+    packageDescription = 'KeepNote is a note taking application that works on Windows, Linux, and MacOS X. With KeepNote, you can store your class notes, TODO lists, research notes, journal entries, paper outlines, etc in a simple notebook hierarchy with rich-text formatting, images, and more. Using full-text search, you can retrieve any note for later reference.'
+
+    buildRequires = ['chardet:python', 'desktop-file-utils:runtime', 'gnome-python-extras:python', 'pygobject:python', 'pygtk:python', 'pygtksourceview:python', 'python-sqlite:python', 'python:devel', 'python-setuptools:python']
+
+    def setup(r):
+        r.addArchive('http://keepnote.org/keepnote/download/')
+        r.PythonSetup()
+        r.Install('desktop/%(name)s.png', '%(datadir)s/pixmaps/')
+        r.Desktopfile('desktop/%(name)s.desktop')

@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gtg(PackageRecipe):
+
+    name = 'gtg'
+    version = '0.2.4'
+
+    buildRequires = [
+        'ConfigObj:python',
+        'desktop-file-utils:runtime',
+        'gnome-python:python',
+        'pycairo:python',
+        'pygtk:python',
+        'python-setuptools:python',
+        'python:devel',
+        'pyxdg:python',
+	    'dbus-python:python', 
+	    'gnome-python-desktop:python', 
+	    'hamster-applet:python', 
+	    'python-simplejson:python',
+        'pybugz:python',
+        'Cheetah:python', 
+    ]
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/gtg/0.2/%(version)s/+download/')
+        r.PythonSetup(data='--install-data=%(prefix)s')

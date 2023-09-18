@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jgraphx(PackageRecipe):
+    name = 'jgraphx'
+    version = '1.4.1.0'
+ 
+    buildRequires = ['ant:runtime', 'unzip:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.jgraph.com/downloads/jgraphx/archive/jgraphx-1_4_1_0.zip')
+        r.Run('ant')
+        r.Install('lib/jgraphx.jar', '%(datadir)s/java/')

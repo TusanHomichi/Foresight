@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libvpx(CPackageRecipe):
+    name = 'libvpx'
+    version = '1.0.0'
+ 
+    buildRequires = ['yasm:runtime', 'which:runtime', 'perl:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://webm.googlecode.com/files/libvpx-v%(version)s.tar.bz2')
+        r.addSource('%(name)s.pc', macros=True)
+
+        if Arch.x86:
+            r.macros.vpxtarget = 'x86-linux-gcc'
+        else: 
+            r.macros.vpxtarget = 'x86_64-linux-gcc'
+
+        r.ManualConfigure( ' --enable-vp8'
+                           ' --target=%(vpxtarget)s' 
+                           ' --enable-shared'
+                           ' --enable-pic'
+                           ' --enable-runtime-cpu-detect '
+                           ' --enable-postproc '
+                           ' --enable-multithread'
+                           ' --disable-install-srcs'
+                           ' --prefix=%(prefix)s'
+                           ' --libdir=%(libdir)s')
+
+        for f in ['libs', 'examples', 'docs']:
+            r.Replace('\-O3', '%(cflags)s', '%s-%%(vpxtarget)s.mk' % f)
+
+        r.Make('target=libs')
+        r.MakeInstall('DESTDIR=%(destdir)s')
+        r.Install('%(name)s.pc', '%(libdir)s/pkgconfig/',
+                  mode = 0644)
+
+        r.SetModes('%(includedir)s/vpx/*.h', 0644)

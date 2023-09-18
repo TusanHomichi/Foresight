@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2005-2012 rPath, Inc.
+# Copyright (c) 2013 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+class Xiphos(AutoPackageRecipe):
+    name = 'xiphos'
+    version = '3.2.0'
+
+    buildRequires = [
+        'GConf:devel',
+        'ImageMagick:devel',
+        'ORBit2:devel',
+        'atk:devel',
+        'bzip2:devel',
+        'cairo:devel', 
+        'dbus-glib:devel', 'dbus-glib:runtime', 'desktop-file-utils:runtime',
+        'expat:devel',
+        'fontconfig:devel', 'freetype:devel',
+        'gettext:runtime', 'gtkhtml:devel', 'glib:devel',
+        'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+        'gnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel',
+        'intltool:runtime',
+        'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 
+        'libXrender:devel', 'libXt:devel', 'libart_lgpl:devel',
+        'libglade:devel',
+        'libgsf:devel',
+        'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'libtiff:devel',
+        'libtool:devel', 'libxcb:devel', 'libxml2:devel', 'libxslt:runtime',
+        'nspr:devel',
+        'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'popt:devel',
+        'rarian:devel', 'rarian:runtime',
+        'sword:devel',
+        'util-linux:devel',
+        'which:runtime',
+        'WebKit:devel', 'libsoup:devel',
+        'xcb-util:devel',
+    ]
+
+    def setup(r):
+        if "+r" in r.version:
+            r.macros.rev = r.version[-4:]
+            r.addSvnSnapshot('http://svn.code.sf.net/p/gnomesword/code/trunk', revision='%(rev)s')
+        else:
+            r.addArchive('http://downloads.sourceforge.net/project/gnomesword/Xiphos/%(version)s/')
+
+        r.ManualConfigure(' --prefix=%(prefix)s --gtk=2', configureName='waf configure')
+        r.Make(makeName='./waf')
+        r.Run('./waf --destdir=%(destdir)s install')

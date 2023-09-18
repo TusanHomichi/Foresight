@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Hike(RubygemPackageRecipe):
+
+    name = 'rubygem-hike'
+    version = '1.2.1'
+

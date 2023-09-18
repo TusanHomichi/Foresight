@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonDulwich(AutoPackageRecipe):
+    name = 'python-dulwich'
+    version = '0.7.1'
+    buildRequires = [ 'python:devel',
+                      'python-setuptools:python',
+                      ]
+    def setup(r):
+        r.addArchive('http://samba.org/~jelmer/dulwich/dulwich-%(version)s.tar.gz')
+        r.PythonSetup()

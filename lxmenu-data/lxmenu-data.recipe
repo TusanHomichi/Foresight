@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LxmenuData(AutoPackageRecipe):
+    name = 'lxmenu-data'
+    version = '0.1.2'
+ 
+    buildRequires = ['gettext:runtime', 'intltool:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/lxde/%(name)s-%(version)s.tar.gz')
+        r.addPatch('lxmenu-data-0.1.1-menu.patch')

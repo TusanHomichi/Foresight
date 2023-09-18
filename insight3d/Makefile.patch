@@ -1,0 +1,11 @@
+--- insight3d/insight3d/Makefile	2009-07-24 17:24:41.000000000 +0200
++++ insight3d/insight3d/Makefile	2011-12-14 20:41:25.330979488 +0100
+@@ -6,7 +6,7 @@
+ all: insight3d
+ 
+ insight3d: $(OBJECTS) sift_detector
+-	g++ $(DEBUG) -o insight3d *.o `pkg-config --libs opencv libxml-2.0 sdl gtk+-2.0` ./sift/lib/libfeat.a $(AGARLIB) -llapack -lblas -lGL -lGLU ./sba/libsba.a ./ann_1.1.1/lib/libANN.a
++	g++ $(DEBUG) -o insight3d *.o `pkg-config --libs opencv libxml-2.0 sdl gtk+-2.0 gl glu` ./sift/lib/libfeat.a $(AGARLIB) -llapack -lblas ./sba/libsba.a ./ann_1.1.1/lib/libANN.a
+ 
+ sift_detector:
+ 	make -C ./sift

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IpodSharp(AutoPackageRecipe):
+    name = "ipod-sharp"
+    version = "0.8.5"
+    buildRequires = [ 'dbus:devel', 'dbus-glib:devel', 'gawk:runtime', 'gtk-sharp:devellib', 'gtk-sharp:cil', 'mono:devel', 'mono:runtime', 'ndesk-dbus:cil', 'ndesk-dbus:devellib', 'ndesk-dbus-glib:cil', 'ndesk-dbus-glib:devellib', 'pkgconfig:devel', 'podsleuth:devellib', 'podsleuth:lib', 'podsleuth:runtime']
+
+    def unpack(r):
+        r.addArchive('http://banshee-project.org/files/%(name)s/%(version)s/')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/ipod-sharp/ipod-sharp-0.8.0-libdir.patch')
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure('--prefix=%(prefix)s --disable-docs')
+
+    def makeinstall(r):
+        r.MakeInstall('GACUTIL_FLAGS="/package %(name)s /gacdir %(libdir)s /root %(destdir)s%(libdir)s"')

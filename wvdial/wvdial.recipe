@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Wvdial(CPackageRecipe):
+    name = 'wvdial'
+    version = '1.61'
+ 
+    buildRequires = [ 'wvstreams:devel', 'lockdev:devel', 'pkgconfig:devel',
+                      'libstdc++:devel', 'perl:runtime', 'gettext:runtime', 'intltool:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://wvstreams.googlecode.com/files/')
+        r.addPatch('wvdial-1.60-remotename.patch')
+        #r.macros.cflags += ' -DUSE_LOCKDEV=1'
+
+        r.Configure()
+
+        r.Make('LOCKDEV=-llockdev XX_LIBS="-lcrypt -llockdev"'
+               ' PREFIX=%(prefix)s BINDIR=%(bindir)s MANDIR=%(mandir)s'
+               ' PPPDIR=%(sysconfdir)s/ppp/peers')
+
+        r.MakeInstall('PREFIX=%(destdir)s/%(prefix)s '
+                      'BINDIR=%(destdir)s/%(bindir)s '
+                      'MANDIR=%(destdir)s/%(mandir)s '
+                      'PPPDIR=%(destdir)s/%(sysconfdir)s/ppp/peers')
+
+        r.Remove('%(sysconfdir)s/ppp/peers/wvdial-pipe')

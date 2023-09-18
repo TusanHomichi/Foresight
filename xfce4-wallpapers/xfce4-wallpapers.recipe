@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xfce4Wallpapers(PackageRecipe):
+    name = 'xfce4-wallpapers'
+    version = '0.0.1'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('http://git.xfce.org/xfce/xfdesktop/snapshot/xfdesktop-6caa4c.tar.bz2')
+        r.Install('backdrops/*.png', '%(datadir)s/backgrounds/xfce/', mode=0644)

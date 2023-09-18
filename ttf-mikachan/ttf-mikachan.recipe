@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TtfMikachan(PackageRecipe):
+    name = 'ttf-mikachan'
+    version = '8.9'
+ 
+    packageSummary = 'Handwritten Japanese Truetype font'
+
+    buildRequires = [
+        'mkfontdir:runtime',
+        ]
+ 
+    def setup(r):
+        r.addArchive('http://dl.sourceforge.jp/mikachan/5513/mikachanfont-%(version)s.tar.bz2')
+        r.addArchive('http://dl.sourceforge.jp/mikachan/5514/mikachanfontP-%(version)s.tar.bz2')
+        r.addArchive('http://dl.sourceforge.jp/mikachan/5515/mikachanfontPB-%(version)s.tar.bz2')
+        r.addArchive('http://dl.sourceforge.jp/mikachan/5516/mikachanfontPS-%(version)s.tar.bz2')
+
+        r.Install('fonts/mikachan.ttf', '%(datadir)s/fonts/%(name)s/')
+        r.Install('../mikachanfontP-%(version)s/fonts/mikachan-P.ttf', '%(datadir)s/fonts/%(name)s/')
+        r.Install('../mikachanfontPB-%(version)s/fonts/mikachan-PB.ttf', '%(datadir)s/fonts/%(name)s/')
+        r.Install('../mikachanfontPS-%(version)s/fonts/mikachan-PS.ttf', '%(datadir)s/fonts/%(name)s/')

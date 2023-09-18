@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pyinotify(PackageRecipe):
+
+    name = 'pyinotify'
+    version = '0.8.8'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://seb.dbzteam.org/pub/pyinotify/releases/')
+        r.PythonSetup(data='--install-data=%(prefix)s')

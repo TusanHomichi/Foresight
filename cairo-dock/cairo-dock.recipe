@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CairoDock(AutoPackageRecipe):
+    name = 'cairo-dock'
+    version = '2.3.0rc1'
+
+    buildRequires = [ 'Mesa:devel', 'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'gtkglext:devel', 'intltool:runtime', 'inputproto:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXcomposite:devel', 'libXfixes:devel', 'libXinerama:devel', 'libXmu:devel', 'libXrender:devel', 'libXt:devel', 'libXtst:devel', 'librsvg:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'cmake:runtime', 'curl:devel', 'gcc-c++:runtime', 'openssl:devel', 'libXi:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://launchpad.net/cairo-dock-core/2.3/2.3.0-0rc1/+download/cairo-dock-2.3.0~0rc1.tar.gz')
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+
+	r.Requires('cairo-dock-plugins:lib', '%(bindir)s/cairo-dock')
+
+    def configure(r):
+        if Arch.x86_64:
+            r.CMake('-DCMAKE_SKIP_BUILD_RPATH=TRUE -DFORCE_LIB64=yes')
+        else:
+            r.CMake('-DCMAKE_SKIP_BUILD_RPATH=TRUE')

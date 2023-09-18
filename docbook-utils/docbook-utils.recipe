@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DocbookUtils(AutoPackageRecipe):
+    name = 'docbook-utils'
+    version = '0.6.14'
+
+    buildRequires = [ 'perl-SGMLS:runtime', 'perl-SGMLS:perl',
+                      'perl:lib', 'openjade:runtime', 'docbook-dtds:data',
+                      'docbook-dsssl:runtime', 'docbook-dsssl:data',
+                      'automake:runtime', 'autoconf:runtime',
+                      'sgml-common:config', 'opensp:lib', ]
+    def unpack(r):
+        r.addArchive('http://ftp.debian.org/debian/pool/main/d/docbook-utils/docbook-utils_%(version)s.orig.tar.gz')
+        r.addPatch('docbook-utils-debian.patch')
+        r.addSource('db2html')
+
+    def configure(r):
+        r.Automake(autoMakeArgs = '--add-missing')
+        r.Configure()
+
+    def policy(r):
+        for util in ('dvi', 'html', 'pdf', 'ps', 'rtf'):
+            r.Symlink('docbook2%s' % util, '%(bindir)s/db2' + util)
+            r.Symlink('jw.1.gz', '%(mandir)s/man1/db2' + util + '.1')
+
+        # Install special db2html
+        r.Remove('%(bindir)s/db2html')
+        r.Install('db2html', '%(bindir)s/', mode=0755)
+
+        r.Move('%(prefix)s/doc/html/docbook-utils-%(version)s',
+                '%(thisdocdir)s/')
+        r.Remove('/usr/doc', recursive=True)
+        r.Requires('perl-SGMLS:perl', '%(bindir)s/jw')
+        r.Requires('perl-SGMLS:runtime', '%(bindir)s/jw')
+        r.Requires('which:runtime', '%(bindir)s/jw')
+        r.Requires('docbook-dtds:data', '%(bindir)s/jw')
+        r.Requires('openjade:runtime', '%(bindir)s/jw')
+        r.Requires('coreutils:runtime', '%(bindir)s/jw')
+        r.Requires('which:runtime', '%(bindir)s/jw')
+        # not listing %(datadir)s/docbook-utils/backends requirements mirroring jw's
+        r.Requires('tetex-dvips:runtime', '%(datadir)s/docbook-utils/backends/ps')
+
+        # Break build req loop
+        # elinks -> docbook-utils -> elinks
+        #r.Requires('elinks:runtime', '%(datadir)s/docbook-utils/backends/txt')
+
+        r.PackageSpec('%(name)s-pdf',
+                      '%(bindir)s/db2dvi',
+                      '%(bindir)s/db2pdf',
+                      '%(bindir)s/db2ps',
+                      '%(bindir)s/docbook2dvi',
+                      '%(bindir)s/docbook2pdf',
+                      '%(bindir)s/docbook2ps',
+                      '%(mandir)s/man1/db2dvi.*',
+                      '%(mandir)s/man1/db2pdf.*',
+                      '%(mandir)s/man1/db2ps.*',
+                      '%(mandir)s/man1/docbook2dvi.*',
+                      '%(mandir)s/man1/docbook2pdf.*',
+                      '%(mandir)s/man1/docbook2ps.*')
+        r.Requires('jadetex:runtime', '%(bindir)s/docbook2dvi',
+                                      '%(bindir)s/docbook2pdf',
+                                      '%(bindir)s/docbook2ps')

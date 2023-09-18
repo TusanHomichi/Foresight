@@ -1,0 +1,23 @@
+
+class Cachefilesd(CPackageRecipe):
+    name = 'cachefilesd'
+    version = '0.10.5'
+    buildRequires = [ 'chkconfig:runtime' ]
+
+    def setup(r):
+        # r.addArchive('http://people.redhat.com/dhowells/fscache/')
+        # upstream has a false compressed tar ... mv cachefilesd-0.10.5.tar.bz2 cachefilesd-0.10.5.tar
+        r.addArchive('cachefilesd-0.10.5.tar')
+        r.macros.cflags += ' -fpie'
+
+        # init file has unconditional selinux use ...
+        r.Replace('/sbin/restorecon', '# /sbin/restorecon', 'cachefilesd.initd')
+
+        r.Make('all')
+        r.MakeInstall()
+
+        r.Install('cachefilesd.conf', '%(sysconfdir)s', mode = 0644)
+        r.Install('cachefilesd.initd', '%(initdir)s/cachefilesd', mode = 0755)
+
+        r.MakeDirs('%(localstatedir)s/cache/fscache')
+        r.ExcludeDirectories(exceptions = '%(localstatedir)s/cache/fscache')

@@ -1,0 +1,14 @@
+loadSuperClass('gnomepackage')
+class Ekiga(GnomePackageRecipe):
+
+    name = 'ekiga'
+    version = '3.3.2'
+
+    buildRequires = ['GConf:runtime', 'desktop-file-utils:runtime', 'SDL:devel', 'gettext:runtime', 'perl:runtime', 'pkgconfig:devel', 'rarian:runtime', 'opal:devel', 'ptlib:devel','GConf:devel', 'ORBit2:devel', 'atk:devel', 'audiofile:devel', 'avahi:devel', 'cairo:devel', 'esound:devel', 'evolution-data-server:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'libstdc++:devel', 'libxml2:devel', 'pango:devel', 'popt:devel', 'avahi-glib:devel', 'expat:devel', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'rarian:devel', 'gvfs:devel', 'libXv:devel', 'libsigc++:devel', 'libnotify:devel', 'dbus-glib:runtime', 'sound-theme-freedesktop:runtime', 'boost:devel']
+
+    extraConfig = GnomePackageRecipe.extraConfig
+    extraConfig += ' --disable-scrollkeeper --enable-dbus'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.macros.cxxflags += ' -DLDAP_DEPRECATED=1 -fPIC '

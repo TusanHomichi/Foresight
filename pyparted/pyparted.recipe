@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyParted(AutoPackageRecipe):
+    name = 'pyparted'
+    version = '3.9'
+    buildRequires = [ 'parted:devel', 'python:runtime', 'python:devel',
+                      'autoconf:runtime', 'automake:runtime',
+                      'libtool:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://fedorahosted.org/releases/p/y/%(name)s/')
+
+    def configure(r):
+        pass

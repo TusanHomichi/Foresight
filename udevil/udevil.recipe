@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Udevil(AutoPackageRecipe):
+    name = 'udevil'
+    version = '0.2.8'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addArchive('https://github.com/IgnorantGuru/udevil/blob/b0e84cb09735f9d9017a9ada69a08e3e9e90b7d7/packages/0.2.8/udevil-0.2.8.tar.xz?raw=true')
+        r.addPatch('sys-apps_udevil_files_udevil-0.2.8-flags.patch')
+
+    def make(r):
+        r.Replace('-o root -g root -m 4755 -D', '-m 755 -D', 'src/Makefile')
+
+    def policy(r):
+        r.Ownership('root', 'root', '%(bindir)s/udevil')

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Orca(GnomePackageRecipe):
+
+    buildRequires = [ 'gnome-python:python', 'pygtk:python', 
+                      'pyorbit:python', 'glib:devel', 'python:devel',
+                      'desktop-file-utils:runtime', 'gettext:runtime', 
+                      'gtk:runtime', 'pygobject:python','perl:runtime',
+                      'at-spi:devel', 'at-spi:python', 'pycairo:devel',
+                      'pycairo:python', 'at-spi:python', 'pyatspi:python',
+                      'dbus-python:python', 'gnome-python-desktop:python',
+                      'pyxdg:python',]
+
+    name = 'orca'
+    version = '2.32.1'

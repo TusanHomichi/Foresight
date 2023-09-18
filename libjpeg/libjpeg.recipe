@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libjpeg(AutoPackageRecipe):
+    name = 'libjpeg'
+    # version = '6b'
+
+    buildRequires = [ 'libtool:runtime',
+                      'autoconf:runtime',
+                      'automake:runtime',
+                      'gcc-c++:runtime', 
+                      'nasm:runtime']
+
+    # def setup(r):
+    #     r.mainDir('jpeg-%(version)s')
+    #     r.addArchive(
+    #         'http://www.ijg.org/files/jpegsrc.v%(version)s.tar.gz')
+    #     r.addPatch('libjpeg-6b-arm.patch')
+    #     r.addPatch('jpeg-c++.patch')
+    #     r.addPatch('libjpeg-shared.patch')
+    #     r.addPatch('libjpeg-rpath.patch')
+
+    #     r.Configure('--enable-shared --enable-static')
+    #     r.Replace('./libtool', 'libtool', 'Makefile')
+    #     r.Make('libdir=%(libdir)s')
+
+    #     # Odd Makefile wants mandir to include the section
+    #     r.MakeDirs('%(includedir)s', '%(libdir)s', '%(bindir)s',
+    #                   '%(mandir)s/man1')
+    #     r.MakePathsInstall('mandir=%(destdir)s/%(mandir)s/man1')
+    #     r.Doc('usage.doc', 'libjpeg.doc', 'coderules.doc', 'structure.doc',
+    #                      'wizard.doc', 'example.c')
+    version = '1.0.1'
+
+    # FIXME 
+    # this should be a separate pkg, but since this is backwards compatible and
+    # we do not have OBSOLETES it goes here for now. avoids a ton of rebuilds
+
+    def unpack(r):
+        r.macros.name='%(name)s-turbo'
+        r.addArchive('http://sourceforge.net/projects/%(name)s/files/%(version)s/%(name)s-%(version)s.tar.gz')
+        r.Run('autoreconf -fiv')
+
+    def policy(r):
+        # Remove unwanted files
+        # Don't distribute libjpegturbo because it is unversioned
+        for f in ['%(libdir)s/lib{,turbo}jpeg.la',
+                  '%(includedir)s/turbojpeg.h',
+                  '%(libdir)s/libturbojpeg.{so,a}']:
+            r.Remove(f)
+

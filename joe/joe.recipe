@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Joe(AutoPackageRecipe):
+    name = 'joe'
+    version = '3.7'
+ 
+    buildRequires = ['aspell:runtime', 'libbsd:devel', 'ncurses:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/joe-editor/')

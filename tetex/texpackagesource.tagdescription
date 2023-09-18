@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/texpackagesource
+include		%(datadir)s/texmf/tex/.*\.(ini|xmt)$
+implements 	files update
+implements 	files remove
+datasource	stdin

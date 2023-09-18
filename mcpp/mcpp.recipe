@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+class Mcpp(AutoPackageRecipe):
+    name='mcpp'
+    version='2.7.2'
+    buildRequires = ['glibc:runtime'] # for iconv
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.Replace('charset=EUC-JP"', 'charset=UTF-8"',
+                  'doc-jp/mcpp-manual.html')
+        r.Run('iconv -f euc-jp -t utf-8 doc-jp/mcpp-manual.html > doc-jp/mcpp-manual-jp.html')
+
+    def configure(r):
+        r.Configure('--enable-mcpplib')
+

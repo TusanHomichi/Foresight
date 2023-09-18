@@ -1,0 +1,33 @@
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadRecipe('gnomepackage')
+class Vala(GnomePackageRecipe):
+    name = 'vala'
+    version = '0.20.1'
+    clearBuildRequires ('dbus-glib:devel', 'dbus-glib:devellib', 'gnome-common:devel',
+                        'gnome-doc-utils:devel', 'gtk-doc:devel', 'libICE:devel',
+                        'libSM:devel', 'libXext:devel', 'libXi:devel', 'libXinerama:devellib',
+                        'libXt:devel', 'libdmx:devel')
+
+    buildRequires = ['flex:runtime', 'glib:devel', 'pkgconfig:devel',
+                     'bison:runtime', 'xz:runtime']
+
+    extraConfig = ' --enable-vapigen  '
+
+
+    def build(r):
+        r.Configure(r.extraConfig,
+                    configureName = r.configureName,
+                    preConfigure = r.preConfigure)
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+        r.Make(r.makeArgs, preMake=r.preMake)
+        # FIXME - consider to add/pkgSpec emacs modes (as RH)
+        # will add reliance on emacs

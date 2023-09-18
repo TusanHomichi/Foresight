@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2004 Specifix, Inc.
+# All rights reserved
+#
+
+class SLIB(PackageRecipe):
+    name = 'slib'
+    version = '3b1'
+
+    buildRequires = [
+        'make:runtime',
+        'texinfo:runtime',
+        'unzip:runtime',
+        'install-info:runtime',
+    ]
+    
+    def setup(r):
+        r.mainDir('%(name)s')
+        r.addArchive('http://swiss.csail.mit.edu/ftpdir/scm/')
+        r.addPatch('slib-3b1-guile.patch')
+        r.Replace("/usr/local/lib/slib", "%(datadir)s/slib", "*.init", allowNoChange=True)
+        r.Replace("/usr/lib/slib", "%(datadir)s/slib", "*.init", allowNoChange=True)
+        # The makefile will cat paths in /usr/bin/slib but add DESTDIR too
+        r.Replace(r'SCHEME_LIBRARY_PATH=\$\(DESTDIR\)', 'SCHEME_LIBRARY_PATH=',
+            'Makefile')
+        r.Replace(r'S48_VICINITY=\$\(DESTDIR\)', 'S48_VICINITY=',
+            'Makefile')
+        r.Doc('ANNOUNCE')
+        r.MakeInstall("infoz"
+                      " prefix=%(prefix)s/"
+                      " libslibdir=%(datadir)s/slib/"
+                      " man1dir=%(mandir)s/man1/"
+                      " infodir=%(infodir)s/")
+#        for ext in ['scm', 'init', 'xyz', 'txt', 'dat', 'ps']:
+#            r.Install('*.' + ext, '%(datadir)s/slib/')
+#        r.Install('slib.info', '%(infodir)s/')
+
+        # Creating the catalog won't work unless mklibcat exists
+        r.Symlink('mklibcat.scm', '%(datadir)s/slib/mklibcat')
+        r.TagSpec('guile-slib', '%(datadir)s/slib/.*\.scm$')

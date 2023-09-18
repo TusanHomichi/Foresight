@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sonata(CPackageRecipe):
+    name = 'sonata'
+    version = '1.6.2.1'
+
+    buildRequires = ['atk:devel',
+                     'cairo:devel',
+                     'dbus-python:python',
+                     'expat:devel',
+                     'fontconfig:devel',
+                     'freetype:devel',
+                     'gettext:runtime',
+                     'glib:devel',
+                     'glibc:devel',
+                     'gnome-python-extras:python',
+                     'gnome-python:python',
+                     'gtk:devel',
+                     'libX11:devel',
+                     'libXrender:devel',
+                     'libpng:devel',
+                     'pkgconfig:devel',
+                     'pango:devel',
+                     'pygobject:python',
+                     'pygobject:devel',
+                     'pygtk:python',
+                     'pygtk:devel',
+                     'python:devel',
+                     'python-setuptools:python',
+		     'desktop-file-utils:runtime',
+		     'python-mpd:python',
+                     'zlib:devel',
+		     'intltool:runtime']
+
+    def setup(r):
+        r.addArchive("http://download.berlios.de/sonata/")
+        r.PythonSetup(data='--install-data=%(prefix)s')
+
+    def policy(r):
+	r.Requires('python-mpd:python')

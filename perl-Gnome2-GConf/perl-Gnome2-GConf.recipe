@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGnome2GConf(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Gnome2-GConf'
+    version = '1.044'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['GConf:devel', 'glib:devel', 'perl-Glib:perl', 'perl:devel', 'perl-ExtUtils-Depends', 'perl-ExtUtils-PkgConfig', 'pkgconfig:runtime', 'pkgconfig:devel']
+

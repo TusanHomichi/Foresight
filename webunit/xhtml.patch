@@ -1,0 +1,10 @@
+--- webunit-1.3.8/webunit/webunittest.py.orig	2005-12-20 10:29:14.000000000 -0500
++++ webunit-1.3.8/webunit/webunittest.py	2005-12-20 10:29:49.000000000 -0500
+@@ -384,6 +384,7 @@
+         if self.authinfo:
+             h.putheader('Authorization', "Basic %s"%self.authinfo)
+         h.putheader('Host', host_header)
++        h.putheader('Accept', 'application/xhtml+xml')
+ 
+         # Send cookies
+         #  - check the domain, max-age (seconds), path and secure

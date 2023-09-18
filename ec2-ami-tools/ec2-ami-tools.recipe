@@ -1,0 +1,35 @@
+class ec2AmiTools(PackageRecipe):
+    name = 'ec2-ami-tools'
+    # version number only inside rpm, cvc refresh to update, then run
+    # rpm -qip
+    # on the downloaded archive to see the new version number
+    version = '1.4_0.7'
+
+    buildRequires = [
+        'ruby:runtime',
+    ]
+
+    def setup(r):
+        r.addArchive('http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.noarch.rpm',
+                     keyid='0349E66A', dir='/')
+        r.Move('/usr/local/share/doc/ec2-ami-tools/*', '%(thisdocdir)s/')
+        r.Move('/usr/local/ec2/amitools/*', '%(bindir)s/')
+        r.Run('''for i in %(destdir)s//usr/local/bin/ec2* ; do
+                    link=$(basename $i);
+                    tgt=$(basename $(readlink $i));
+                    ln -s $tgt %(destdir)s%(bindir)s/$link;
+                 done
+              ''')
+        r.Remove('/usr/local', recursive=True)
+        r.Remove('%(libdir)s/ruby/site_ruby/ec2/platform/solaris*',
+                 recursive = True)
+
+        if not Arch.x86_64:
+            # avoid 64-bit dependencies on 32-bit systems
+            r.Remove('/usr/lib64', recursive=True)
+        else:
+            r.Remove('/usr/lib/ruby/site_ruby/ec2/platform/solaris*',
+                     recursive = True)
+
+        r.Requires('ec2-ami-tools:ruby', '%(bindir)s/')
+

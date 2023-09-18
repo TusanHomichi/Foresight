@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('svnpackage')
+class PythonEcore(CPackageRecipe):
+    url = 'http://svn.enlightenment.org/svn/e/trunk/BINDINGS/python/python-ecore'
+    name = 'python-ecore'
+    version = SvnPackageRecipe.getRevision(url)
+
+    buildRequires = ['ecore:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXext:devel', 'libXfixes:devel', 'libXinerama:devel', 'libXp:devel', 'libXrandr:devel', 'libXrender:devel', 'python:devel', 'subversion:runtime', 'cython:runtime', 'Pyrex:runtime', 'python-setuptools:python', 'pkgconfig:devel', 'python-evas:python', 'python-evas:devel']
+
+    def setup(r):
+        r.addSvnSnapshot(r.url)
+        r.PythonSetup()

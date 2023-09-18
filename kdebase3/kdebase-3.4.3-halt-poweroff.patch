@@ -1,0 +1,11 @@
+--- kdebase-3.4.3/kdm/config.def	2005-10-31 17:02:16.354633750 -0500
++++ kdebase-3.4.3/kdm/config.def	2005-10-31 17:03:14.554271000 -0500
+@@ -35,7 +35,7 @@
+ #ifdef _AIX
+ # define HALT_CMD	"/usr/sbin/shutdown -h now"
+ # define REBOOT_CMD	"/usr/sbin/shutdown -r now"
+-#elif defined(BSD)
++#elif defined(BSD) || defined(__linux__)
+ # define HALT_CMD	"/sbin/shutdown -h now"
+ # define REBOOT_CMD	"/sbin/shutdown -r now"
+ #elif defined(__SVR4)

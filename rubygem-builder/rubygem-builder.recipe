@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Builder(RubygemPackageRecipe):
+
+    name = 'rubygem-builder'
+    version = '3.0.0'
+

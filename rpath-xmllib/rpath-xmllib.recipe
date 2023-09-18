@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class rPathXMLLib(BuildPackageRecipe):
+    name = 'rpath-xmllib'
+    version = '1.2'
+
+    buildRequires = [
+        'lxml:python',
+        'python:devel',
+        'rpath-common:python',
+        'util-linux:runtime',
+    ]
+
+    def setup(r):
+        r.addArchive('ftp://download.rpath.com/rpath-xmllib/')
+        r.Make()
+        r.MakeInstall()

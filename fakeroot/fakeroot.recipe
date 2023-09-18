@@ -1,0 +1,10 @@
+class Fakeroot(CPackageRecipe):
+    name = 'fakeroot'
+    version = '1.18.1'
+    def setup(r):
+        r.addArchive('mirror://debian/pool/main/f/%(name)s/%(name)s_%(version)s.orig.tar.bz2')
+        r.Configure('--program-transform-name=s@fakeroot@fakeroot-0@')
+        r.Make()
+        r.MakeInstall()
+        r.Symlink('/usr/bin/fakeroot-0', '/usr/bin/fakeroot')
+        r.ComponentSpec('%(name)s:bin', '/usr/bin/fakeroot')

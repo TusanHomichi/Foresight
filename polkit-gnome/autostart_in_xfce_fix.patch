@@ -1,0 +1,9 @@
+diff --git a/src/polkit-gnome-authentication-agent-1.desktop.in.in b/src/polkit-gnome-authentication-agent-1.desktop.in.in
+--- a/src/polkit-gnome-authentication-agent-1.desktop.in.in
++++ b/src/polkit-gnome-authentication-agent-1.desktop.in.in
+@@ -5,4 +5,4 @@
+ Type=Application
+ Categories=
+ NoDisplay=true
+-OnlyShowIn=GNOME;
++OnlyShowIn=GNOME;XFCE;LXDE;

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in
+    files)
+        case $action in
+	    update)
+		if ! fgrep -q gconf.xml.system %(sysconfdir)s/gconf/2/path; then
+		    sed -i -e 's@xml:readwrite:$(HOME)/.gconf@&\n\n# Location for system-wide settings.\nxml:readonly:/etc/gconf/gconf.xml.system@' %(sysconfdir)s/gconf/2/path
+		fi
+		;;
+    esac
+esac
+
+exit 0

@@ -1,0 +1,136 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Shadow(RPMPackageRecipe, CPackageRecipe):
+    name = 'shadow'
+    version = '4.1.4.2'
+    rpmName = 'shadow-utils'
+    rpmRelease = '8.fc14'
+
+    buildRequires = [ 'bison:runtime', 'gettext:runtime', 'pam:devel',
+                      'audit:devel',
+                      'intltool:runtime', 'util-linux:runtime']
+
+    # Multiple tools included in the distribution, and possibly
+    # third-party scripts, depend on the behavior provided in
+    # this patch.
+    rpmPatches = [ 'shadow-4.1.4.2-redhat.patch',
+                   'shadow-4.1.4.1-goodname.patch',
+                   'shadow-4.1.4.2-leak.patch',
+                   'shadow-4.1.4.2-fixes.patch',
+                   'shadow-4.1.4.2-infoParentDir.patch',
+                   # broken for non selinux it seems
+                   # 'shadow-4.1.4.2-acl.patch',
+                   'shadow-4.1.4.2-underflow.patch',
+                   'shadow-4.1.4.2-uflg.patch'
+                 ]
+
+    def setup(r):
+        r.unpack()
+        r.addSource('shadow-utils.login.defs', rpm=r.srpm)
+        # to preserve compat with the legacy rPL stuff
+        # we still ship
+        # fixes FL-2707
+        r.addPatch('backwardCompatPam.patch')
+
+        r.addSource('defaults.useradd')
+
+        r.addSource('usergroup-info.taghandler', mode=0755,
+                    dest='%(taghandlerdir)s/usergroup-info')
+        r.addSource('group-info.tagdescription',
+                    dest='%(tagdescriptiondir)s/group-info')
+        r.addSource('user-info.tagdescription',
+                    dest='%(tagdescriptiondir)s/user-info')
+
+        r.Configure(' --enable-shadowgrp'
+                    ' --with-audit'
+                    ' --with-sha-crypt'
+                    ' --with-selinux=no'
+                    ' --without-libcrack'
+                    ' --disable-shared'
+                    ' --without-libpam' 
+                    ' --with-group-name-max-length=32')
+
+        r.Make()
+        r.MakeInstall('gnulocaledir=%(destdir)s/%(datadir)s/locale'
+                      ' MKINSTALLDIRS=%(builddir)s/mkinstalldirs')
+
+        # These can not be installed as part of the source action, otherwise
+        # they will get overwitten by MakeInstall.
+        r.Install('shadow-utils.login.defs',
+                  '%(sysconfdir)s/login.defs', mode=0644)
+        r.Install('defaults.useradd', '%(sysconfdir)s/default/useradd',
+                  mode=0600)
+
+        r.Symlink('useradd', '%(sbindir)s/adduser')
+
+        # Do not install /usr/lib/libshadow.a
+        r.Remove('%(libdir)s/libshadow.a')
+
+        # we explicitly intend chage to be setuid root so that users can
+        # check their own expiry information, and gpasswd for setting
+        # group password information, although that is rarely used.
+        r.SetModes('%(bindir)s/{chage,gpasswd}', 04755)
+
+        # Setup manpages to point to the right places
+        r.Symlink('%(mandir)s/man8/useradd.8', '%(mandir)s/man8/adduser.8')
+
+        # Files below are packaged in util-linux
+        for x in [ '%(bindir)s/chfn',
+                   '%(bindir)s/chsh',
+                   '%(bindir)s/expiry',
+                   '%(bindir)s/groups',
+                   '%(bindir)s/login',
+                   '%(bindir)s/passwd',
+                   '%(bindir)s/su',
+                   '%(sysconfdir)s/login.access',
+                   '%(sysconfdir)s/limits',
+                   '%(sbindir)s/logoutd',
+                   '%(sbindir)s/nologin',
+                   '%(sbindir)s/chgpasswd',
+                   '%(mandir)s/man1/chfn.*',
+                   '%(mandir)s/*/man1/chfn.*',
+                   '%(mandir)s/man1/chsh.*',
+                   '%(mandir)s/*/man1/chsh.*',
+                   '%(mandir)s/man1/expiry.*',
+                   '%(mandir)s/*/man1/expiry.*',
+                   '%(mandir)s/man1/groups.*',
+                   '%(mandir)s/*/man1/groups.*',
+                   '%(mandir)s/man1/login.*',
+                   '%(mandir)s/*/man1/login.*',
+                   '%(mandir)s/man1/passwd.*',
+                   '%(mandir)s/*/man1/passwd.*',
+                   '%(mandir)s/man1/su.*',
+                   '%(mandir)s/*/man1/su.*',
+                   '%(mandir)s/man5/limits.*',
+                   '%(mandir)s/*/man5/limits.*',
+                   '%(mandir)s/man5/login.access.*',
+                   '%(mandir)s/*/man5/login.access.*',
+                   '%(mandir)s/man5/passwd.*',
+                   '%(mandir)s/*/man5/passwd.*',
+                   '%(mandir)s/man5/porttime.*',
+                   '%(mandir)s/*/man5/porttime.*',
+                   '%(mandir)s/man5/suauth.*',
+                   '%(mandir)s/*/man5/suauth.*',
+                   '%(mandir)s/man8/logoutd.*',
+                   '%(mandir)s/*/man8/logoutd.*',
+                   '%(mandir)s/man8/nologin.*',
+                   '%(mandir)s/*/man8/nologin.*',
+                   '%(mandir)s/man8/chgpasswd.*',
+                   '%(mandir)s/*/man8/chgpasswd.*',
+                   '%(mandir)s/man3/getspnam.*',
+                   '%(mandir)s/*/man3/getspnam.*']:
+            r.Remove(x)
+
+        r.UtilizeGroup('users', '%(sysconfdir)s/default/useradd')
+
+        r.SetModes('%(sbindir)s/user*', 0750)
+        r.SetModes('%(sbindir)s/group*', 0750)
+
+        for req in ('%(bindir)s/id', '%(essentialbindir)s/basename',
+            '/dev/null'):
+            r.Requires(req, '%(taghandlerdir)s/usergroup-info')

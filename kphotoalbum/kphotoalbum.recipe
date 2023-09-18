@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class KPhotoAlbum(kdePackageRecipe):
+
+    name = 'kphotoalbum'
+    version = '4.4'
+
+    buildRequires = [
+        'exiv2:devel', 'libjpeg:devel', 'libkdcraw:devel', 'libkipi:devel',
+        'marble:devel', 'kdelibs:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/%(name)s/%(version)s/src/')
+
+        #r.Replace('add_subdirectory\( doc-translations \)', '', 'CMakeLists.txt')
+

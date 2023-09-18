@@ -1,0 +1,89 @@
+#
+# Copyright (c) 2006-2011 rPath, Inc.
+#                    2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ruby(CPackageRecipe):
+    name = 'ruby'
+    version = '1.8.7_p334'
+
+    buildRequires = [ 'db:devel', 'ncurses:devel', 'openssl:devel',
+                      'readline:devel', 'zlib:devel',
+                      'bison:runtime', 'gdbm:devel', 'groff:runtime',
+                      'libX11:devel', 'libtermcap:devel',
+                      'tcl:devel', 'tk:devel', 'libtool:runtime',
+                      'autoconf:runtime', 'automake:runtime',
+                      ]
+    def setup(r):
+        r.macros.myver = r.version.replace('_', '-')
+        r.addArchive('ftp://ftp.ruby-lang.org/pub/ruby/%(major_version)s/%(name)s-%(myver)s.tar.bz2')
+
+        # Patches 23, 29, and 33 brought over from ruby 1.8.6
+        #  (updated to apply against 1.8.7 source)
+        # If building against a 64bit arch, use 64bit libdir
+        r.addPatch('ruby-1.8.7-p330-multilib.patch')
+        # Mark all i.86 arch's (eg i586, i686, etc) as i386
+        r.addPatch('ruby-1.8.7-always-use-i386.patch')
+        # Use shared libs as opposed to static for mkmf
+        # See bug RH 428384
+        r.addPatch('ruby-1.8.7-p249-mkmf-use-shared.patch')
+        # Change ruby load path to conform to Foresight/ruby
+        # library placement (various 1.8.6 patches consolidated into this)
+        r.addPatch('ruby-1.8.7-lib-paths.patch')
+        
+        # system-wide macros
+        # we are placing invariant stuff under %(libdir)s
+        # and not %(prefix)s/lib to reduce flavor mismatches
+        # r.macros.ruby_vendorlibbase = '%(prefix)s/lib/%(name)s'
+        r.macros.ruby_vendorlibbase = '%(libdir)s/%(name)s'
+        r.macros.ruby_vendorarchbase = '%(libdir)s/%(name)s'
+        r.macros.ruby_sitelibbase = '%(ruby_vendorlibbase)s/site_ruby'
+        r.macros.ruby_sitearchbase = '%(ruby_vendorarchbase)s/site_ruby'
+
+        configOpts = (' --enable-shared --enable-install-doc'
+                      ' --with-default-kcode=none '
+                      ' --enable-pthread '
+                      ' --disable-rpath '
+                      ' --with-sitedir=%(ruby_sitelibbase)s' 
+                      ' --with-sitearchdir=%(ruby_sitearchbase)s'
+                      ' --with-vendordir=%(ruby_vendorlibbase)s' 
+                      ' --with-vendorarchdir=%(ruby_vendorarchbase)s')
+
+        r.macros.cflags += ' -fno-strict-aliasing'
+
+        r.macros.cppflags += ' -I%(krbprefix)s/include'
+        r.macros.ldflags  += ' -L%(krbprefix)s/lib'
+
+        r.Run('autoreconf -fi')
+
+        r.Environment('rb_cv_func_strtod', 'no')
+
+        # If we are on a x86-64 machine, make sure to include the
+        # default 'non-flavored' directories to ruby's LOAD_PATH.
+        # Note: we don't actually create these directories, we just want
+        # to search them if they exist.
+        if Arch.x86_64:
+            extraLoadPath = ':'.join([ '/usr/lib/ruby/site_ruby/%(major_version)s', '/usr/lib/ruby/site_ruby'])
+            configOpts += ' --with-search-path="%s"' % extraLoadPath
+
+        r.Configure(configOpts)
+	# For example ext/socket/extconf.rb uses try_run (for getaddrinfo test),
+	# which executes conftest and setting LD_LIBRARY_PATH for libruby.so is
+	# needed.
+        r.Make(preMake = 'LD_LIBRARY_PATH=%(builddir)s ')
+
+        r.Make('test')
+        r.MakeInstall()
+
+        # Don't whack the site_ruby directories
+        r.ExcludeDirectories(exceptions='site_ruby/')
+        r.ComponentSpec('runtime', 'site_ruby/')
+
+        # Make sure all docs are put in the right component
+        r.ComponentSpec('doc', '%(datadir)s/ri/')
+
+        # Attempting to calculate ruby dependencies on some files is
+        # problematic
+        r.Requires(exceptions='.*/(debug|rdoc2latex|cgi_runner).rb')

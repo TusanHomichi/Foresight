@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2006 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class LibNotify(GnomePackageRecipe):
+    name = 'libnotify'
+    version = '0.7.3'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'dbus-glib:devel',
+                      'dbus:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel',
+                      'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel',
+                      'libpng:devel', 'pango:devel', 'pkgconfig:devel', 'zlib:devel',
+                      'gtk-doc:runtime', 'xmlto:runtime', 'automake:runtime',
+                      'autoconf:runtime', 'gtk3:devel']
+
+    GnomePackageRecipe.extraConfig += ' --disable-static '

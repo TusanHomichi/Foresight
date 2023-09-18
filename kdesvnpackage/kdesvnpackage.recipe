@@ -1,0 +1,114 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+shutil=__import__('shutil')                                                                                                       
+tempfile=__import__('tempfile')
+
+from conary.lib import log, util
+from conary.build.source import _RevisionControl
+
+class addKDESnapshotCommand(_RevisionControl):
+
+    name = 'svn'
+
+    def getFilename(self):
+
+        prefix_len = len(self.svn_prefix)
+        if self.svn_prefix == self.url[:prefix_len]:
+            dirPath = self.url[prefix_len:]
+        else:
+            dirPath = self.url.split('//', 1)[1]
+
+        dirPath = dirPath.replace('/', '|')
+
+        return '/%s/%s.tar.bz2' % (dirPath, self.project)
+
+    def createArchive(self, lookasideDir):
+
+        os.mkdir(lookasideDir)
+
+        log.info('Checking out module %s', self.module)
+        util.execute("svn -N -q checkout '%s' '%s'" % (self.module_url, lookasideDir))
+
+        log.info('Checking out admin/')
+        util.execute("svn -q checkout '%s' '%s/admin'" % (self.admin, lookasideDir))
+
+        log.info('Checking out project %s', self.project)
+        util.execute("svn -q checkout '%s' '%s/%s'" % (self.url, lookasideDir, self.project))
+
+    def updateArchive(self, lookasideDir):
+
+        log.info('Updating module %s', self.module)
+        util.execute("cd '%s'; svn -q -N update" % lookasideDir)
+
+        log.info('Updating admin/')
+        util.execute("cd '%s/admin'; svn -q update" % lookasideDir)
+
+        log.info('Updating project %s', self.project)
+        util.execute("cd '%s/%s'; svn -q update" % (lookasideDir, self.project))
+
+    def createSnapshot(self, lookasideDir, target):
+
+        log.info('Creating repository snapshot for %s', self.project)
+
+        tmpPath = self.recipe.cfg.tmpDir = tempfile.mkdtemp()
+        stagePath = '%s/%s' % (tmpPath, self.project)
+
+        util.execute(
+            "cd '%s' && "
+            "svn2dist --no-i18n -o -n '%s' '%s' '%s' && "
+            "tar cjf '%s' '%s'" % (
+                tmpPath,
+                self.project, lookasideDir, self.project,
+                target, self.project
+            )
+        )
+
+        shutil.rmtree(stagePath)
+
+    def __init__(self, recipe, url, admin=None, prefix=None, **kwargs):
+
+        if prefix is None:
+            self.svn_prefix = 'svn://anonsvn.kde.org/home/kde/'
+        else:
+            self.svn_prefix = prefix % recipe.macros
+
+        self.url = url % recipe.macros
+        if '//' not in self.url:
+            self.url = self.svn_prefix + self.url
+
+        self.url = self.url.rstrip('/')
+        self.project = self.url.split('/')[-1]
+
+        self.module_url = self.url[:self.url.rindex('/')]
+        self.module = self.module_url.split('/')[-1]
+
+        self.module_project = '%s-%s' % (self.module, self.project)
+
+        if admin is None:
+            self.admin = self.svn_prefix + 'branches/KDE/3.5/kde-common/admin'
+        else:
+            self.admin = admin % recipe.macros
+            if '//' not in self.admin:
+                self.admin = self.svn_prefix + self.admin
+
+        sourceName = self.getFilename()
+
+        _RevisionControl.__init__(self, recipe, sourceName, **kwargs)
+
+class kdeSVNPackageRecipe(PackageRecipe):
+
+    name = 'kdesvnpackage'
+    version = '1'
+
+    buildRequires = [
+        'autoconf:runtime', 'automake:runtime', 'kdesdk-scripts:runtime'
+    ]
+
+    abstractBaseClass = True
+
+    def addKDESnapshot(r, *args, **keywords):
+        r.extraSource(addKDESnapshotCommand(r, *args, **keywords))
+

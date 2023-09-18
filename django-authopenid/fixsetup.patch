@@ -1,0 +1,12 @@
+diff -Naur django-authopenid-0.9.6.orig/setup.py django-authopenid-0.9.6/setup.py
+--- django-authopenid-0.9.6.orig/setup.py	2009-05-02 14:43:11.000000000 -0400
++++ django-authopenid-0.9.6/setup.py	2009-05-02 14:44:09.000000000 -0400
+@@ -32,8 +32,6 @@
+     ],
+     packages = ['django_authopenid'],
+     package_data = { 'django_authopenid': [ 'templates/*.*', 'templates/authopenid/*'] },
+-    
+-    zip_safe = False,
+ 
+     setup_requires = [
+         'setuptools>=0.6b1',

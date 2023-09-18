@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GstPluginsGood(GnomePackageRecipe):
+
+    name = 'gst-plugins-good'
+    version = '0.10.31'
+
+    buildRequires = [ 'GConf:devel', 'cairo:devel',
+        'esound:devel', 'flac:devel', 'fontconfig:devel',
+        'freetype:devel', 'glib:devel', 'gst-plugins-base:devel',
+        'gstreamer:devel', 'libdv:devel', 'libjpeg:devel', 'liboil:devel',
+        'libpng:devel', 'libxml2:devel', 'speex:devel', 'atk:devel',
+        'dbus:devel', 'hal:devel', 'pango:devel', 'GConf:runtime',
+        'gcc-c++:runtime', 'gstreamer:runtime', 'libavc1394:devel',
+        'libraw1394:devel', 'libstdc++:devel', 'taglib:devel',
+        'libXdamage:devel', 'libXfixes:devel', 'glib:devel', 'glib:runtime',
+        'bzip2:devel', 'libXv:devel', 'libsoup:devel', 'libv4l:devel', 'pulseaudio:devel',
+        'aalib:devel', 'gpm:devel', 'slang:devel', 'libcaca:devel', 'libiec61883',
+        'libshout:devel', 'udev:devel', 'valgrind:runtime', 'wavpack:devel', 
+        'gudev:devel', 'jack:devel', 'orc:devel', 'orc:runtime', 'xz:runtime']
+
+    extraConfig = ' --with-package-name="GStreamer Good Plugins (Foresight)" --with-package-origin=http://www.foresightlinux.org/ '
+
+    def policy (r):
+        r.Requires('flac:lib', '%(libdir)s/gstreamer-0.10/libgstflac.so')
+        r.Requires('taglib:lib', '%(libdir)s/gstreamer-0.10/libgsttaglib.so')

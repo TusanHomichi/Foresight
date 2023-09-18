@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ocaml(CPackageRecipe):
+    name = 'ocaml'
+    version = '3.12.1'
+ 
+    buildRequires = ['gdbm:devel', 'libX11:devel', 'ncurses:devel']
+ 
+    def setup(r):
+        r.addArchive('http://caml.inria.fr/pub/distrib/%(name)s-%(major_version)s/')
+        r.disableParallelMake()
+        r.ManualConfigure('-prefix %(prefix)s')
+        r.Make('world.opt')
+        r.MakeInstall('PREFIX=%(destdir)s%(prefix)s')
+        r.Remove('*.h', allowNoMatch=True)
+        #r.Remove('*.o', allowNoMatch=True)
+        #r.Remove('*.ml', allowNoMatch=True)

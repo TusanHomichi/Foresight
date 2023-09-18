@@ -1,0 +1,113 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class JVMPackageRecipe(PackageRecipe):
+
+    name = 'jvmpackage'
+    version = '1'
+
+    def JVMInit(r):
+
+        r.macros.jvmvendor = r.vendor
+        r.macros.jvmrelease = r.release
+
+        r.macros.jrename = '%(jvmvendor)s-jre'
+        r.macros.jdkname = '%(jvmvendor)s-jdk'
+
+        r.macros.jvmdir = '%(libdir)s/jvm'
+        r.macros.jrearch = ('amd64', 'i386')[Arch.x86==True]
+
+        r.macros.jvmname = 'java-%(jvmrelease)s-%(jvmvendor)s'
+        r.macros.jdkhome = '%(jvmdir)s/%(jvmname)s'
+        r.macros.jrehome = '%(jdkhome)s/jre'
+
+        r.macros.jrelibdir = '%(jrehome)s/lib/%(jrearch)s'
+
+    def JVMPolicy(r):
+
+        del(r.AutoDoc)
+        del(r.RemoveNonPackageFiles)
+
+        r.ComponentSpec('%(jrename)s:runtime', '%(jrehome)s/')
+        r.ComponentSpec('%(jdkname)s:runtime', '%(jdkhome)s/')
+
+        r.TagSpec('desktop-file', '%(datadir)s/applications/')
+
+
+    def JVMProfile(r):
+
+        r.macros.jsuffix = ('-64','')[Arch.x86==True]
+        r.Create('%(sysconfdir)s/profile.d/%(jvmname)s%(jsuffix)s.csh', contents = """
+set JAVA=''
+
+set CONF='/etc/sysconfig/java.csh'
+
+if ( -f "$CONF" ) then
+    source "$CONF"
+endif
+
+if ( $JAVA != '' ) then
+    if ( "$JAVA" != "%(jvmname)s.%(targetarch)s" ) then
+        goto finish
+    endif
+endif
+
+setenv JAVA_HOME "%(jdkhome)s"
+
+setenv JAVA "%(jvmname)s.%(targetarch)s"
+
+if ( `echo "$PATH" | fgrep '%(jdkhome)s/jre/bin' | wc -l` == "0" ) then
+    setenv PATH "%(jdkhome)s/jre/bin:$PATH"
+endif
+
+if ( -d "%(jdkhome)s/bin" ) then
+
+    if ( `echo "$PATH" | fgrep '%(jdkhome)s/bin' | wc -l` == "0" ) then
+        setenv PATH "%(jdkhome)s/bin:$PATH"
+    endif
+
+    if ( ${?LD_LIBRARY_PATH} == 0 ) then
+        setenv LD_LIBRARY_PATH "%(jrelibdir)s"
+    else
+        if ( `echo "$LD_LIBRARY_PATH" | fgrep '%(jrelibdir)s' | wc -l` == "0" ) then
+            setenv LD_LIBRARY_PATH "%(jrelibdir)s:%(jrelibdir)s/server:$LD_LIBRARY_PATH"
+        endif
+    endif
+
+endif
+
+finish:
+""", package=r.macros.jrename, mode=0755)
+
+        r.Create('%(sysconfdir)s/profile.d/%(jvmname)s%(jsuffix)s.sh', contents = """
+CONF='/etc/sysconfig/java'
+
+[ -f "$CONF" ] && source "$CONF"
+
+[ ! -z "$JAVA" -a "$JAVA" != "%(jvmname)s.%(targetarch)s" ] && {
+    return
+}
+
+export JAVA_HOME="%(jdkhome)s"
+
+export JAVA="%(jvmname)s.%(targetarch)s"
+
+echo "$PATH" | fgrep -q '%(jdkhome)s/jre/bin' || \\
+    export PATH="%(jdkhome)s/jre/bin:$PATH"
+
+[ -d "%(jdkhome)s/bin" ] || return
+
+echo "$PATH" | fgrep -q '%(jdkhome)s/bin' || \\
+    export PATH="%(jdkhome)s/bin:$PATH"
+
+if [ "$LD_LIBRARY_PATH" = "" ]
+then
+    export LD_LIBRARY_PATH="%(jrelibdir)s"
+else
+    echo "$LD_LIBRARY_PATH" | fgrep -q '%(jrelibdir)s' || \\
+        export LD_LIBRARY_PATH="%(jrelibdir)s:%(jrelibdir)s/server:$LD_LIBRARY_PATH"
+fi
+""", package=r.macros.jrename, mode=0755)
+

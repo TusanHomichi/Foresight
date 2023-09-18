@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Kdei18nptBR(AutoPackageRecipe):
+    name = 'kde-i18n-pt_BR'
+    version = '3.5.8'
+
+    buildRequires = []
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.kde.org/pub/kde/snapshots/kde-l10n/kde-l10n-pt_BR.tar.bz2')

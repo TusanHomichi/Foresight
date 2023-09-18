@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=com.redhat.PrinterSpooler
+Exec=/usr/sbin/cupsd -f
+User=root

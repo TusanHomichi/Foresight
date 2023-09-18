@@ -1,0 +1,14 @@
+class SynCEConnector(CPackageRecipe):
+    name = 'synce-connector'
+    version = '0.15.2'
+    buildRequires = ['dbus-glib:devel', 'dbus-python:python', 'dbus:devel',
+                     'net-tools:runtime', 'pkgconfig:devel', 'ppp:runtime',
+                     'python:devel', 'dhclient:runtime', 'udev:devel',
+                     'glib:devel', 'gnet:devel', 'libsynce:devel',
+                     'udev:runtime' ]
+    def setup(r):
+        r.addArchive('mirror://sourceforge/synce/SynCE/%(version)s/')
+        r.Environment('DHCLIENTPATH', '/sbin/dhclient')
+        r.Configure('--enable-udev')
+        r.Make()
+        r.MakeInstall()

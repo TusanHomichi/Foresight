@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class NetworkManagerVpnc(GnomePackageRecipe):
+    name = 'NetworkManager-vpnc'
+    version = '0.8.6.0'
+
+    buildRequires = [
+        'GConf:devel',
+        'NetworkManager:devel',
+        'cairo:devel',
+        'dbus-glib:devel',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'gnome-keyring:devel',
+        'gtk:runtime',
+        'intltool:runtime',
+        'libglade:devel',
+        'libgnome-keyring:devellib',
+        'perl:runtime',
+        'popt:devel',
+        ]
+
+    def policy(r):
+        r.Requires('vpnc:runtime', '%(libexecdir)s/nm-vpnc-service')
+         # NetworkManager has been known to change protocol in a
+        # minor version update (0.8.2 -> 0.8.4, for instance).
+        r.macros.protver = '.'.join(r.version.split('.')[0:3])
+        r.Requires('NetworkManager:runtime(%(protver)s)',
+                   '%(libexecdir)s/')

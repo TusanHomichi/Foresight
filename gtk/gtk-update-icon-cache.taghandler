@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in 
+    files)
+	case $action in
+            update|remove)
+                for path in $(cat); do
+                    cut=$(echo "$path" | cut -d'/' -f%(fieldnum)s)
+                    echo $cut
+                done | sort -u | 
+                while read dirname; do
+                    if [ -d "%(datadir)s/icons/$dirname" ]; then
+                        gtk-update-icon-cache -f "%(datadir)s/icons/$dirname" 2> /dev/null
+                    fi
+                done
+                ;;
+             *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

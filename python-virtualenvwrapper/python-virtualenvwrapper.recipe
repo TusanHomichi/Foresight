@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2011 Foresigth Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python=foresight.rpath.org@fl:2-devel')
+class PythonVirtualenvWrapper(PackageRecipe):
+    name = 'python-virtualenvwrapper'
+    version = '2.10.1'
+
+    buildRequires = ['python-setuptools:python', 'python-virtualenv:python', 'python:devel']
+
+    def setup(r):
+        r.macros.pyver = Python.majversion
+        r.macros.pydir = Python.sitepkgs
+
+        r.addArchive('http://pypi.python.org/packages/source/v/virtualenvwrapper/virtualenvwrapper-%(version)s.tar.gz')
+        r.PythonSetup()
+
+        #r.PythonEggs(exceptions='%(pydir)s/virtualenv_support/')

@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+#               2007-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('python')
+class PythonSetupTools(PackageRecipe, Python.VersionMixIn):
+    name = 'python-setuptools'
+    version = '0.6.14'
+
+    if Use.bootstrap:
+        clearBuildReqs()
+        buildRequires = [ 'python:runtime', 'setup:runtime',
+                          'gzip:runtime', 'tar:runtime', ]
+    else:
+        buildRequires = [ 'python:devel', ]
+
+    def setup(r):
+        r.setDefaultPython()
+        r.macros.archive_name = 'distribute'
+        r.addArchive('http://pypi.python.org/packages/source/%s/%s/' % (r.macros.archive_name[0], r.macros.archive_name) )
+        r.PythonSetup(bootstrap=True, pythonVersion='2.6')
+        # Pyrex deps are in try/except; python-setuptools works without it
+        r.Requires(exceptDeps='python: Pyrex.*')
+        r.RemoveNonPackageFiles(r'.*\.exe')
+
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/setuptools/tests',
+                 recursive = True)

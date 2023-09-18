@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Remmina(AutoPackageRecipe):
+    name = 'remmina'
+    version = '0.9.2'
+ 
+    buildRequires =  [
+		'atk:devel', 
+		'avahi-glib:devel', 
+		'avahi:devel', 
+		'cairo:devel',
+		'desktop-file-utils:runtime', 
+		'fontconfig:devel', 
+		'freetype:devel', 
+		'gdk-pixbuf:devel',
+		'gettext:runtime', 
+		'glib:devel', 
+		'gtk:devel',
+		'intltool:runtime', 
+		'libX11:devel', 
+		'libgcrypt:devel', 
+		'libgpg-error:devel', 
+		'libpng:devel', 
+		'pango:devel', 
+		'pkgconfig:devel',
+		'unique:devel',
+		'libssh:devel',
+		'vte:devel'
+		]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/remmina/')
+        r.Requires("remmina-plugins:lib", "remmina:runtime")

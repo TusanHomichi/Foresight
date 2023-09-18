@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Csync2(AutoPackageRecipe):
+    name = 'csync2'
+    tag = '4c8bf2e2'
+    version = 'git_' + tag
+ 
+    buildRequires = [
+        'autoconf:runtime',
+        'automake:runtime',
+        'byacc:runtime',
+        'flex:runtime',
+        'gnutls:devel',
+        'librsync:devel',
+        'pkgconfig:devel',
+        'sqlite:devel',
+    ]
+
+    packageSummary = 'Filesystem synchronization'
+    packageDescription = '''\
+Csync2 is a cluster synchronization tool. It can be used to keep files on 
+multiple hosts in a cluster in sync. Csync2 can handle complex setups with 
+much more than just 2 hosts, handle file deletions and can detect conflicts.
+It is expedient for HA-clusters, HPC-clusters, COWs and server farms.
+'''
+ 
+    def unpack(r):
+        r.addGitSnapshot('http://git.linbit.com/csync2.git', tag=r.tag)
+        r.Replace('disable		= no',
+                  'disable		= yes',
+                  'csync2.xinetd')
+        r.Run('./autogen.sh')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('csync2.xinetd', '%(sysconfdir)s/xinetd.d/csync2')
+
+    def policy(r):
+        r.ExcludeDirectories(exceptions='/var/lib/csync2')

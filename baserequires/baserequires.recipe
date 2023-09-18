@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+from conary.build.packagerecipe import AbstractPackageRecipe
+
+class BaseRequiresRecipe(AbstractPackageRecipe):
+    name = 'baserequires'
+    version = '1'
+    abstractBaseClass = 1
+    buildRequires = [
+        'bash:runtime',
+        'conary-build:lib',
+        'conary-build:python',
+        'conary-build:runtime',
+        'conary:python',
+        'conary:runtime',
+        'coreutils:runtime',
+        'dev:runtime',
+        'filesystem:runtime',
+        'findutils:runtime',
+        'gawk:runtime',
+        'grep:runtime',
+        'python:bin',
+        'python:lib',
+        'python:runtime',
+        'sed:runtime',
+        'setup:runtime',
+        'sqlite:lib',
+    ]

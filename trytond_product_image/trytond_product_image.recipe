@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Trytond_product_image(PackageRecipe):
+    name = 'trytond_product_image'
+    version = '1.6.0'
+
+    buildRequires = ["python-setuptools:python","python:devel","trytond:python"]
+
+    def setup(r):
+        r.addMercurialSnapshot("http://hg.pemas.es/tryton/product_image")
+        r.PythonSetup()
+

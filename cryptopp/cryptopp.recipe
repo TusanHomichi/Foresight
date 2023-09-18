@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+#               
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CryptoPP(CPackageRecipe):
+    name = 'cryptopp'
+    version = '5.6.1'
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime',
+                      'libstdc++:devel', 'unzip:runtime',
+                      'libtool:runtime',
+                      ]
+
+    def setup(r):
+        r.addArchive('http://www.cryptopp.com/cryptopp561.zip',
+                     dir = '%(name)s-%(version)s')
+        r.addAction('rm -f GNUmakefile')
+
+        for patch in [ 'cryptopp-5.6.1-autotools.patch',
+                       'cryptopp-x86-disable-sse2.patch',
+                       'cryptopp-data-files-location.patch',
+                   ]:
+            r.addPatch(patch)
+        r.addSource('cryptopp.pc', macros = True)
+
+        r.Run('autoreconf -fi')
+        
+        r.Configure('--disable-static')
+
+        r.Make()
+        r.MakeInstall()
+
+        r.Install('cryptopp.pc',
+                  '%(libdir)s/pkgconfig/cryptopp.pc',
+                  mode = 0644)
+        r.MakeDirs('%(datadir)s/%(name)s/Test{Vectors,Data}')
+        r.Install('TestVectors/*', '%(datadir)s/%(name)s/TestVectors/', 
+                  mode = 0644)
+        r.Install('TestData/*', '%(datadir)s/%(name)s/TestData/',
+                  mode = 0644)

@@ -1,0 +1,52 @@
+#!/bin/bash -xe
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+# This script acts as the driver for anaconda template generation.  It
+# will read the config options in template.conf for customization.  This
+# script should not need to be modified
+
+if [ -f ./template.conf ]
+	then . template.conf
+	else
+	    echo "Config file templates.conf is missing"
+	    exit 1
+fi
+
+if [ -f '/tmp/conaryrc' ] ; then
+    CONARYCFGFILE='/tmp/conaryrc'
+fi
+
+mkdir -p $topdir/$subdir/changesets/
+mkdir -p $topdir/$subdir/base/
+
+conary ${CONARYCFGFILE:+--config-file ${CONARYCFGFILE}} --install-label $kernellabel changeset kernel[$kernelflavor] $topdir/$subdir/changesets/kernel-2.6-$arch.ccs
+
+treedir=$destdir
+instroot=$treedir/instroot
+instrootgr=$treedir/instrootgr
+
+mkdir -p $instroot $instrootgr
+
+export USE_CLEAN_PKGS=0
+sh -x $scriptdir/upd-instroot --install-label "$installLabelPath" --search-path "$searchPath" --arch "$arch" $topdir/$subdir/changesets $instroot $instrootgr
+
+sh -x $scriptdir/mk-images --install-label "$kernellabel" $topdir/$subdir/changesets $topdir $instroot $instrootgr $arch "$distroname" $distroversion $subdir $treedir $bugurl
+
+$scriptdir/makestamp.py --releasestr="$distroname" --arch="$arch" --discNum="1" --baseDir=$subdir/base --packagesDir=$subdir/changesets --pixmapsDir=$subdir/pixmaps --outfile=$topdir/.discinfo
+
+sed -i s,$destdir,,g $destdir/MANIFEST
+sed -i 's;,/;,;g' $destdir/MANIFEST
+
+# Fix up font caches
+/usr/bin/fc-cache -v $instrootgr/usr/share/fonts/
+/usr/bin/fc-cache -v $instrootgr/usr/share/X11/fonts/
+
+# Remove the kernel changeset, we dont need to package it
+rm -f $topdir/$subdir/changesets/kernel-2.6-$arch.ccs
+
+# Get client version
+echo $(PYTHONPATH=$instrootgr/usr/%(lib)s/python?.?/site-packages python -c 'from conary.repository import netclient ; print netclient.CLIENT_VERSIONS[-1]') > $destdir/CLIENT_VERSION

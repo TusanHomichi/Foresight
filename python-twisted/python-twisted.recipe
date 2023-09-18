@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonTwsted(CPackageRecipe):
+
+    name = 'python-twisted'
+    version = '10.1.0'
+
+    buildRequires = [
+        'pyOpenSSL:python',
+        'python:devel',
+        'python-setuptools:python',
+        'python-zopeinterface:python',
+    ]
+
+    def setup(r):
+        r.macros.major = r.version[:r.version.rfind('.')]
+        r.macros.sitepkg = '%(libdir)s/python%(pyver)s/site-packages'
+        r.addArchive('http://tmrc.mit.edu/mirror/twisted/'
+                'Twisted/%(major)s/Twisted-%(version)s.tar.bz2')
+        r.PythonSetup()
+        r.Install('doc/*/man/*.1', '%(mandir)s/man1/')
+
+        # Plugin cache file management
+        r.addSource('taghandler.cfg', dest='%(tagdescriptiondir)s/twisted-plugin')
+        r.addSource('taghandler.sh', dest='%(taghandlerdir)s/twisted-plugin', mode=0755, macros=True)
+        r.Create('%(sitepkg)s/twisted/plugins/dropin.cache')
+        r.InitialContents('%(sitepkg)s/twisted/plugins/dropin.cache')
+        r.ComponentSpec('python', '%(tagdescriptiondir)s/', '%(taghandlerdir)s/')
+
+        r.ComponentSpec('test', '%(sitepkg)s/twisted/([^/]+/)?test/')

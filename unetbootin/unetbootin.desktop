@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=UNetbootin
+Comment=Tool for creating Live USB drives
+Categories=System;
+Icon=usb.png
+Exec=gksudo unetbootin
+Terminal=false
+Type=Application

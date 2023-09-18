@@ -1,0 +1,363 @@
+#!/bin/bash
+# Derived from knoppix-autoconfig
+# /KNOPPIX/etc/init.d/knoppix-autoconfig
+# Basic system configuration and hardware setup
+# (C) Klaus Knopper <knopper@knopper.net> 2005
+
+PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin"
+export PATH
+
+umask 022
+
+# Ignore these signals: INT, TERM, SEGV
+trap "" 2 3 11
+
+# ANSI COLORS
+CRE="[K"
+NORMAL="[0;39m"
+# RED: Failure or error message
+RED="[1;31m"
+# GREEN: Success message
+GREEN="[1;32m"
+# YELLOW: Descriptions
+YELLOW="[1;33m"
+# BLUE: System messages
+BLUE="[1;34m"
+# MAGENTA: Found devices or drivers
+MAGENTA="[1;35m"
+# CYAN: Questions
+CYAN="[1;36m"
+# BOLD WHITE: Hint
+WHITE="[1;37m"
+
+### Utility Function(s)
+
+# Simple shell grep
+stringinfile(){
+case "$(cat $2)" in *$1*) return 0;; esac
+return 1
+}
+
+# same for strings
+stringinstring(){
+case "$2" in *$1*) return 0;; esac
+return 1
+}
+
+# Try to mount this filesystem read-only, without or with encryption
+# trymount device|file mountpoint
+trymount(){
+# Check if already mounted
+case "$(cat /proc/mounts)" in *\ $2\ *) return 0;; esac
+# Create target directory if it doesn't exist yet
+[ -d "$2" ] || mkdir -p "$2"
+RC=""
+# Apparently, mount-aes DOES autodetect AES loopback files.
+[ -b "$1" ] && { mount -t auto -o ro "$1" "$2" 2>/dev/null; RC="$?"; }
+# We need to mount crypto-loop files with initial rw support
+[ -f "$1" ] && { mount -t auto -o loop,rw "$1" "$2" 2>/dev/null; RC="$?"; }
+# Mount succeeded?
+[ "$RC" = "0" ] && return 0
+echo ""
+echo "${CYAN}Filesystem not autodetected, trying to mount $1 with AES256 encryption${NORMAL}"
+sleep 2
+a="y"
+while [ "$a" != "n" -a "$a" != "N" ]; do
+# We need to mount crypto-loop files with initial rw support
+ PW="$(dialog --title "Encrypted Partition?" --stdout --insecure --passwordbox "Please enter decryption password:" 8 40)"
+ [ "$?" != "0" ] && break
+ mount -p0 -t auto -o loop,rw,encryption=AES256 "$1" "$2" <<EOT
+$PW
+EOT
+ [ "$?" = "0" ] && { unset PW; return 0; }
+ unset PW
+ echo -n "${RED}Mount failed, retry? [Y/n] ${NORMAL}"
+ read a
+done
+return 1
+}
+
+### EOF utility functions
+
+# We need /proc here, so mount it in case we skipped the bootfloppy
+[ -f /proc/version ] || mount -t proc /proc /proc 2>/dev/null
+
+# No kernel messages while probing modules
+echo "0" > /proc/sys/kernel/printk
+
+# Kernel 2.6
+[ -d /sys/devices ] || mount -t sysfs /sys /sys 2>/dev/null
+
+# Read in boot parameters
+# This should work, but doesn't with Kernel 2.4.19-rc1
+# CMDLINE="$(</proc/cmdline)" This should work, but doesn't with Kernel 2.4.19-rc1
+# This works.
+CMDLINE="$(cat /proc/cmdline)"
+
+
+# Check if we are in interactive startup mode
+INTERACTIVE=""
+stringinstring "BOOT_IMAGE=expert " "$CMDLINE" && INTERACTIVE="yes"
+
+KERNEL="$(uname -r)"
+echo "Running Linux Kernel $KERNEL"
+
+# Print CPU info
+echo -n "${GREEN}"
+awk -F: '/^processor/{printf "Processor"$2" is "};/^model name/{printf $2};/^vendor_id/{printf vendor};/^cpu MHz/{printf " %dMHz",int($2)};/^cache size/{printf ","$2" Cache"};/^$/{print ""}' /proc/cpuinfo 2>/dev/null
+echo -n "${NORMAL}"
+
+# Foresight autoconfig
+
+if [ -d /proc/acpi ]; then
+ # ACPI
+ echo -n "${GREEN}ACPI Bios found, activating modules:"
+ found=""
+ for a in /lib/modules/$KERNEL/kernel/drivers/acpi/*; do
+   basename="${a##*/}"
+   basename="${basename%%.*}"
+   case "$basename" in *_acpi)
+    egrep -qi "${basename%%_acpi}" /proc/acpi/dsdt 2>/dev/null || continue ;;
+   esac
+   modprobe $basename >/dev/null 2>&1 && echo -n " ${YELLOW}$basename${GREEN}" && found="yes"
+  done
+  test -z "$found" && echo -n "${BLUE}(none)"
+  echo "${NORMAL}"
+else
+ # APM
+  modprobe apm power_off=1 >/dev/null 2>&1
+  if stringinfile "apm " /proc/modules && test -x /etc/init.d/apmd; then
+   [ -c /dev/apm_bios ] || mknod -m 660 /dev/apm_bios c 10 134
+   /etc/init.d/apmd start >/dev/null 2>&1 && echo "${GREEN}APM Bios found, power management functions enabled.${NORMAL}"
+  fi
+fi
+
+# First: PCMCIA Check/Setup
+# This needs to be done before other modules are being loaded by hwsetup
+
+modprobe pcmcia_core >/dev/null 2>&1
+# Try Cardbus or normal PCMCIA socket drivers
+modprobe yenta_socket >/dev/null 2>&1 || modprobe i82365 >/dev/null 2>&1 || modprobe pd6729 >/dev/null 2>&1 || modprobe tcic >/dev/null 2>&1
+if [ "$?" = "0" ]; then
+ modprobe ds >/dev/null 2>&1
+ if [ -d /sys/class/pcmcia_socket/pcmcia_socket0 ]; then
+  echo "${GREEN}PCMCIA found, starting cardmgr.${NORMAL}"
+  cardmgr >/dev/null 2>&1 && sleep 4
+ fi
+fi
+
+# USB enable
+# USB/Mouse Check/Setup
+# This needs to be done before other modules are being loaded by hwsetup
+modprobe usbcore >/dev/null 2>&1
+# We now try to load both USB modules, in case someone has 2 different
+# controllers
+FOUNDUSB=""
+USB2="usb-ehci"
+USBMODULES="usb-uhci usb-ohci"
+case "$KERNEL" in 2.6.*) USBMODULES="uhci-hcd ohci-hcd";; esac
+ for u in $USB2 $USBMODULES; do 
+  if stringinfile "$u" /proc/modules; then
+   FOUNDUSB="yes"
+  elif modprobe "$u" >/dev/null 2>&1; then
+   FOUNDUSB="yes"
+  fi
+ done
+ if [ -n "$FOUNDUSB" ]; then
+  echo -n "${GREEN}USB found, managed by ${MAGENTA}udev${GREEN}"
+  # We have to do this here, because /proc/bus/usb does not seem to exist before
+  # the lowlevel controller module(s) are loaded.
+  case "$KERNEL" in 2.6.*) USBFS="usbfs";; *) USBFS="usbdevfs";; esac
+  mount -o devmode=0666 -t $USBFS /proc/bus/usb /proc/bus/usb >/dev/null 2>&1
+  echo "${NORMAL}"
+ else
+  # For an unknown reason, unloading the usbcore module seems to hang sometimes.
+  # umount /proc/bus/usb >/dev/null 2>&1
+  # rmmod usbcore 2>/dev/null
+  true
+ fi
+# Load USB mouse module, if not already present. This seems to be done automatically SOMETIMES,
+# but for some boards, it just never happens and the mouse goes undetected.
+stringinfile "usbhid" /proc/modules || modprobe usbhid >/dev/null 2>&1
+
+# Firewire enable
+# We now try to load the firewire module
+modprobe ieee1394 >/dev/null 2>&1
+FOUNDFIREWIRE=""
+if stringinfile ohci1394 /proc/modules; then
+ FOUNDFIREWIRE="yes"
+else
+ modprobe ohci1394 >/dev/null 2>&1
+ stringinfile "ohci1394" /proc/modules && FOUNDFIREWIRE="yes"
+fi
+if [ -n "$FOUNDFIREWIRE" ]; then
+ echo "${GREEN}Firewire found, managed by ${MAGENTA}udev${GREEN}${NORMAL}"
+else
+ # For an unknown reason, unloading the ieee1394 module seems to hang sometimes.
+ # rmmod ieee1394 2>/dev/null
+  true
+fi
+
+# Activate input driver for char event devices (mice)
+stringinfile "evdev" /proc/modules || modprobe evdev >/dev/null 2>&1
+
+# Use udev for SOME of the "hotpluggable" stuff.
+echo -n "${BLUE}Starting ${MAGENTA}udev${GREEN} hot-plug hardware detection... ${NORMAL}"
+mkdir -p /media
+RUNLEVEL=S /etc/init.d/udev start >/dev/null 2>&1
+RC="$?"
+# udev postconfig
+# /etc/init.d/udev uses /etc/udev/links.conf to create persistent links,
+# but I just don't trust a config file with an inline comment that says
+# "this file doesn't exist"... -KK
+[ -c /dev/null ] || mknod -m 666 /dev/null c 1 3
+[ -c /dev/zero ] || mknod -m 666 /dev/zero c 1 5  >/dev/null 2>&1
+[ -c /dev/console ] || mknod -m 660 /dev/console c 5 1 >/dev/null 2>&1
+[ -d /dev/input ] || mkdir -p /dev/input >/dev/null 2>&1
+[ -d /dev/pts ] || mkdir -p /dev/pts >/dev/null 2>&1
+[ -d /dev/shm ] || mkdir -p /dev/shm >/dev/null 2>&1
+[ -c /dev/input/mice ] || mknod -m 660 /dev/input/mice c 13 63 >/dev/null 2>&1
+[ -L /dev/fd ] || ln -sf /proc/self/fd /dev/fd >/dev/null 2>&1
+[ -L /dev/stdin ] || ln -sf /proc/self/fd/0 /dev/stdin >/dev/null 2>&1
+[ -L /dev/stdout ] || ln -sf /proc/self/fd/1 /dev/stdout >/dev/null 2>&1
+[ -L /dev/stderr ] || ln -sf /proc/self/fd/2 /dev/stderr >/dev/null 2>&1
+[ -c /dev/ppp ] || mknod -m 660 /dev/ppp c 108 0 >/dev/null 2>&1
+for i in 0 1 2 3 4 5 6 7; do
+ [ -b /dev/loop$i ] || mknod -m 660 /dev/loop$i b 7 $i >/dev/null 2>&1
+done
+modprobe capability >/dev/null 2>&1
+if [ -x /etc/init.d/dbus-1 ]; then
+ /etc/init.d/dbus-1 start >/dev/null 2>&1
+elif [ -x /etc/init.d/dbus ]; then
+ /etc/init.d/dbus start >/dev/null 2>&1
+fi
+[ "$?" = "0" -a "$RC" = "0" ] && echo "${BLUE}Started.${NORMAL}" || echo "${RED}Failed.${NORMAL}"
+
+# devpts
+stringinfile "/dev/pts" /proc/mounts || mount -t devpts /dev/pts /dev/pts 2>/dev/null
+
+# Second: Search & configure supported hardware
+
+# Load fuse module, we may need it for libntfs-mounts later
+modprobe fuse >/dev/null 2>&1
+
+# Mouse
+if [ -n "$MOUSE_DEVICE" ]
+then
+echo "${GREEN}Mouse is ${YELLOW}${MOUSE_FULLNAME}${GREEN} at ${MAGENTA}${MOUSE_DEVICE}${NORMAL}"
+fi
+
+# Soundcard
+if [ -n "$SOUND_FULLNAME" -o -n "$SOUND_DRIVER" ]; then
+ if stringinfile snd_ /proc/modules 2>/dev/null; then
+  # ALSA detected, load the OSS adapters
+  for i in pcm mixer; do
+   stringinfile "snd_${i}_oss" /proc/modules 2>/dev/null || modprobe snd-"$i"-oss >/dev/null 2>&1
+  done
+ fi
+ # Setting micro input to zero to avoid subsonic disaster
+ # PCM and Volume set to 67 are default in most OSS drivers.
+ ( exec aumix -m 0 -w 67 -v 67 >/dev/null 2>&1 & )
+ SOUNDCARD="$SOUND_DRIVER"
+ echo -n "${GREEN}Soundcard:"
+ [ -n "$SOUND_FULLNAME" ] && echo -n " ${YELLOW}$SOUND_FULLNAME${GREEN}"
+ [ -n "$SOUNDCARD" ] && echo -n " driver=${MAGENTA}$SOUNDCARD"
+ echo "${NORMAL}"
+fi
+
+if [ -n "$INTERACTIVE" ]; then
+ # Interactive configuration
+ echo "${BLUE}Entering interactive configuration second stage.${NORMAL}"
+
+ echo "${GREEN}Your console keyboard defaults to: ${MAGENTA}${KEYTABLE}"
+ echo -n "${CYAN}Do you want to (re)configure your console keyboard?${NORMAL} [Y/n] "
+ read a
+ [ "$a" != "n" ] && /usr/sbin/kbdconfig
+ # kbdconfig already loads the keyboard if modified.
+
+ echo -n "${CYAN}Do you want to (re)configure your soundcard?${NORMAL} [Y/n] "
+ read a
+ [ "$a" != "n" ] && sndconfig && ( exec aumix -m 0 >/dev/null 2>&1 & )
+
+ if [ -n "$MOUSE_FULLNAME" -o -n "$MOUSE_DEVICE" ]; then
+  echo -n "${GREEN}Your mouse has been autodetected as: ${MAGENTA}"
+  ls -l /dev/mouse | awk '{print $9 " " $10 " " $11}'
+  echo -n "${NORMAL}"
+ fi
+
+ echo -n "${CYAN}Do you want to (re)configure your mouse?${NORMAL} [Y/n] "
+ read a
+ [ -f /etc/sysconfig/mouse ] && . /etc/sysconfig/mouse
+ [ "$a" != "n" ] && mouseconfig
+fi
+
+# Probe for AGP. Hope this can fail safely
+modprobe agpgart >/dev/null 2>&1
+stringinfile "agpgart" /proc/modules || modprobe agpgart agp_try_unsupported=1 >/dev/null 2>&1
+stringinfile "agpgart" /proc/modules && echo "${YELLOW}AGP bridge${GREEN} detected."
+
+# Foresight automatic Xserver Setup
+[ -x /usr/sbin/mkxorgconfig ] && /usr/sbin/mkxorgconfig
+
+if [ -n "$INTERACTIVE" ]
+then
+ echo -n "${CYAN}Do you want to (re)configure your graphics (X11) subsystem?${NORMAL} [Y/n] "
+ read a
+ if [ "$a" != "n" ]; then
+  type -a xf86cfg >/dev/null 2>&1 && xf86cfg -textmode -xf86config /etc/X11/XF86Config-4 >/dev/console 2>&1 </dev/console
+  [ -x /usr/bin/xorgcfg ] && /usr/bin/xorgcfg -textmode -config /etc/X11/xorg.conf >/dev/console 2>&1 </dev/console
+ fi
+ echo "${GREEN}Interactive configuration finished. Everything else should be fine for now.${NORMAL}"
+fi
+
+RUNLEVEL="$(runlevel)"
+
+# Collect partitions from /proc/partitions
+partitions=""
+while read major minor blocks partition relax; do
+ partition="${partition##*/}"
+ [ -z "$partition" -o ! -e "/dev/$partition" ] && continue
+ case "$partition" in
+  hd?) ;;                                               # IDE Harddisk, entire disk
+  sd?) ;;                                               # SCSI Harddisk, entire disk
+  ub?) ;;                                               # USB Harddisk, entire disk
+  ub?) ;;                                               # USB Harddisk, entire disk
+  [hs]d*|ub*) partitions="$partitions /dev/$partition";;    # IDE, USB or SCSI disk partition
+ esac
+done <<EOT
+$(awk 'BEGIN{old="__start"}{if($0==old){exit}else{old=$0;if($4&&$4!="name"){print $0}}}' /proc/partitions)
+EOT
+
+# Enable DMA for all IDE drives if requested only
+# This is also done by linuxrc now.
+# However, for a harddisk-installed version, we are doing it again here.
+DMA=""
+if [ -n "$DMA" ]; then
+ for d in $(cd /proc/ide 2>/dev/null && echo hd[a-z]); do
+  if test -d /proc/ide/$d; then
+   if egrep -q 'using_dma[ \t]+0' /proc/ide/$d/settings 2>/dev/null; then
+    MODEL="$(cat /proc/ide/$d/model 2>/dev/null)"
+    test -z "$MODEL" && MODEL="[GENERIC IDE DEVICE]"
+    echo "${BLUE}Enabling DMA acceleration for: ${MAGENTA}$d 	${YELLOW}[${MODEL}]${NORMAL}"
+    echo "using_dma:1" >/proc/ide/$d/settings
+   fi
+  fi
+ done
+fi
+
+findfreeloop(){
+ # udev again... We have to load loop to get the device nodes in /dev.
+ modprobe loop >/dev/null 2>&1
+ i=0
+ for i in 0 1 2 3 4 5 6 7; do
+  LOOP="/dev/loop$i"
+  losetup "$LOOP" >/dev/null 2>&1 || { echo "$LOOP"; return 0; }
+ done
+ return 1
+}
+
+
+# Re-enable signals
+trap 2 3 11
+
+exit 0

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RbuildPluginsForesight(PackageRecipe):
+    name = 'rbuild-plugins-foresight'
+    version = '0.1'
+ 
+    buildRequires = ['rbuild:python']
+ 
+    def setup(r):
+        r.addMercurialSnapshot('http://hg.foresightlinux.org/hg/rbuild-plugins-foresight/')
+        r.Install('forebase.py', '%(datadir)s/rbuild/plugins/')

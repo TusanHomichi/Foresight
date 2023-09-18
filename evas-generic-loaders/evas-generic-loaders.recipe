@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EvasGenericLoaders(AutoPackageRecipe):
+    name = 'evas-generic-loaders'
+    version = '1.7.5'
+ 
+    buildRequires = [
+        'cairo:devel', 
+        'eina:devel', 
+        'gdk-pixbuf:devel', 
+        'glib:devel', 
+        'libpng:devel', 
+        'librsvg:devel', 
+        'libstdc++:devel', 
+        'pkgconfig:devel', 
+        'poppler:devel', 
+        'zlib:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive("http://download.enlightenment.org/releases/evas_generic_loaders-%(version)s.tar.gz")

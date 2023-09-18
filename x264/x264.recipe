@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2007-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class x264(CPackageRecipe):
+
+    name = 'x264'
+    version = '0.130.c832fe995bf3d41cae1d3d22e10cb2288e8a650a'
+
+    buildRequires = [
+        'yasm:runtime',
+        'libX11:devel',
+      ]
+
+    def setup(r):
+        _, r.macros.soversion, r.macros.commit = r.version.split('.')
+        # http://repo.or.cz/w/x264.git/shortlog/refs/heads/stable
+        # r.addArchive('http://repo.or.cz/w/x264.git/snapshot/%(commit)s.tar.gz')
+        r.addGitSnapshot('git://git.videolan.org/x264.git/', tag='%(commit)s')
+
+        # don't remove config.h and don't re-run version.sh
+        # r.addPatch('x264-nover.patch')
+        # link with shared libx264
+        #r.addPatch('x264-shared.patch')
+
+        config = (' --enable-visualize --enable-shared '
+                  ' --enable-pic ')
+        config += ' --extra-cflags=\"%(cflags)s\" ' 
+        if Arch.x86:
+            config += ' --disable-asm ' 
+            r.MakeDirs('simd')
+            r.Run('cp -a `ls -1|grep -v simd` simd/')
+
+        r.Configure(config)
+        r.Make()
+        r.MakeInstall()
+
+        if Arch.x86:
+            r.Configure('--libdir=%(libdir)s/sse2', dir = 'simd')
+            r.Make(dir = 'simd')
+            r.MakeInstall(dir = 'simd')
+
+        r.Move('%(libdir)s/libx264.so.%(soversion)s', '%(libdir)s/libx264.so.%(soversion)s.%(commit)s')
+        r.Symlink('%(libdir)s/libx264.so.%(soversion)s.%(commit)s', '%(libdir)s/libx264.so.%(soversion)s')
+        r.Symlink('%(libdir)s/libx264.so.%(soversion)s.%(commit)s', '%(libdir)s/libx264.so')
+
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+cd %(datadir)s/%(name)s
+./heldenviewer

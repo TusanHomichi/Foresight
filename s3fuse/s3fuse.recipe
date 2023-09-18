@@ -1,0 +1,28 @@
+class S3Fuse(AutoPackageRecipe):
+    name = 's3fuse'
+    version = '0.15'
+
+    packageSummary = 's3fuse is a FUSE (Filesystem in Userspace) driver for Amazon S3 and Google Storage.'
+    packageDescription = "s3fuse allows a Linux host to mount an S3 bucket or Google Drive as a (mostly) POSIX" \
+        "compliant file system.  The stated goals are to be thread safe, compatible with other S3 applications, "\
+        "and supportive of extended file attributes.  Performance and consistency is also improved by caching, " \
+        "multi-part transfers, and S3's MD5-testing features." \
+        "For more informataion:  http://code.google.com/p/s3fuse/" \
+        "License: Apache 2.0"
+
+    buildRequires = [
+        'autoconf:runtime', 'automake:runtime', 'boost:devel',
+        'libxml2:devel', 'curl:devel', 'fuse:devel', 'openssl:devel',
+        'gcc-c++:runtime', 'pkgconfig:devel'
+    ]
+
+
+    def unpack(r):
+        r.addSvnSnapshot(url='http://s3fuse.googlecode.com/svn/tags/release-%(version)s')
+        r.Run('aclocal')
+        r.Run('autoreconf --force --install')
+
+    def makeinstall(r):
+        AutoPackageRecipe.makeinstall(r)
+        for file in ['ChangeLog', 'COPYING', 'INSTALL', 'README' ]:
+            r.Install(file, '%(thisdocdir)s/')

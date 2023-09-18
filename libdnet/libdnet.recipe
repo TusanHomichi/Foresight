@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibDnet(AutoPackageRecipe):
+    name = "libdnet"
+    version = "1.12"
+
+
+    def unpack(r):
+        r.addArchive('http://%(name)s.googlecode.com/files/')
+        r.addPatch('%(name)s-shrext.patch')
+
+    def configure(r):
+        r.Configure('--disable-static')

@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class LxkbConfig(AutoPackageRecipe):
+    name = 'lxkb-config'
+    tag = '2ab967bb'
+    version = '0.9' + '+' + tag + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = [
+        'atk:devel', 
+        'automake:runtime',
+        'bash:runtime', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'intltool:runtime',
+        'libpng:devel', 
+        'libxml2:devel', 
+        'pango:devel',
+        'xkeyboard-config:devellib',
+            ]
+ 
+    def unpack(r):
+        r.macros.ldflags += ' -L%(datadir)s/X11/xkb/'
+        r.addGitSnapshot('https://github.com/azubieta/lxkb_config.git',
+                         tag = r.tag)
+
+        # Affects the issue: https://github.com/azubieta/lxkb_config/issues/5
+        # r.Run('./bootstrap')
+
+    def policy(r):
+        r.Move('%(datadir)s/applications/keyboard.desktop', '%(datadir)s/applications/lxkb-config.desktop')

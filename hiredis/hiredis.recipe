@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2012 - the Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# 
+
+class HiRedis(CPackageRecipe):
+    name = 'hiredis'
+    version = '857b2690af'
+
+    def setup(r):
+        r.addGitSnapshot('http://github.com/antirez/hiredis.git/', 
+                     tag = r.version) 
+
+        r.Make('OPTIMIZATION="%(cflags)s"')
+        r.MakeInstall(' PREFIX=%(destdir)s%(prefix)s '
+                      ' INSTALL_LIBRARY_PATH=%(destdir)s%(libdir)s')
+
+        r.Install('hiredis-example', '%(bindir)s/', mode = 0755)
+        r.Install('hiredis-test', '%(bindir)s/', mode = 0755)

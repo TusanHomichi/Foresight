@@ -1,0 +1,81 @@
+#
+# (C) 2009-2011 The Foresight Linux Project 
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LLVM(AutoPackageRecipe):
+    name = 'llvm'
+    version = '3.0'
+
+    buildRequires = [
+        'bison:runtime', 'byacc:runtime', 'cmake:runtime',
+        'dejagnu:runtime', 'doxygen:runtime',  'libstdc++:devel',
+        'groff:runtime', 'graphviz:runtime', 'libelf:devel',
+        'perl:runtime', 'perl:devel', 'pkgconfig:devel', 'python:devel',
+        'subversion:runtime', 'tcl:runtime', 'zip:runtime'
+    ]
+
+    def unpack(r):
+        r.macros.url = 'http://llvm.org/releases/%(version)s'
+        r.addArchive('%(url)s/')
+        r.addArchive('%(url)s/clang-%(version)s.tar.gz')
+        r.Move('../clang-%(version)s.src/', 'tools/clang')
+
+    def configure(r):
+        extraConfig = (
+            ' -DCMAKE_BUILD_TYPE=Release'
+            ' -DLLVM_ENABLE_ASSERTIONS=OFF'
+            )
+
+        if Arch.x86_64:
+            extraConfig += ' -DLLVM_LIBDIR_SUFFIX=64 -DBUILD_SHARED_LIBS=ON'
+
+        r.CMake(extraConfig,
+                objDir='build')
+
+    def make(r):
+        r.Make(' LD_LIBRARY_PATH=%(builddir)s/build/lib'
+               ' VERBOSE=1 DEBUG_SYMBOLS=1 KEEP_SYMBOLS=1 DISABLE_ASSERTIONS=1',
+               dir='build')
+
+    def makeinstall(r):
+        r.MakeInstall('KEEP_SYMBOLS=1',
+                      dir='build')
+
+        # Fix llvm-config if libs are not in /usr/lib
+        if r.macros.lib != 'lib':
+            r.Replace('ABS_RUN_DIR/lib',
+                      'ABS_RUN_DIR/%(lib)s',
+                      '%(bindir)s/llvm-config')
+
+        # Static analyzer not installed by default:
+        # http://clang-analyzer.llvm.org/installation#OtherPlatforms
+        r.MakeDirs('%(libdir)s/clang-analyzer')
+        # create launchers
+        for f in ['scan-build', 'scan-view']:
+            r.Symlink('%%(libdir)s/clang-analyzer/%s/%s' % (f,f), '%%(bindir)s/%s' % f)
+
+        r.Copy('tools/clang/tools/scan-{build,view}',
+               '%(libdir)s/clang-analyzer/')
+
+        # cruft
+        r.Remove('%(libdir)s/*LLVMHello.*')
+
+    def policy(r):
+        r.PackageSpec('clang-analyzer',
+                      '%(bindir)s/clang-analyzer',
+                      '%(bindir)s/scan-build',
+                      '%(bindir)s/scan-view',
+                      '%(libdir)s/clang-analyzer/',
+                      )
+        r.PackageSpec('clang',
+                      '.*clang.*',
+                      '%(bindir)s/tblgen',
+                      )
+        # :devel reqs :runtime byDefault
+        r.Requires('llvm:runtime', 'llvm:devel')
+        r.Requires('clang:runtime', 'clang:devel')
+        # 
+        r.Requires('clang:runtime', 'clang-analyzer:runtime')

@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2005 Specifix, Inc.
+# All rights reserved
+#
+
+loadRecipe('cpanpackage.recipe')
+class XMLWriter(CPANPackageRecipe):
+    name = "perl-XML-Writer"
+    version = "0.606"
+    module = 'XML'

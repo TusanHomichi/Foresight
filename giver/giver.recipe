@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Giver(AutoPackageRecipe):
+    name = 'giver'
+    version = '0.1.8'
+ 
+    buildRequires = ['GConf:runtime', 'avahi-sharp:cil', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-sharp:cil', 'gnome-sharp:devellib', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'gtk:runtime', 'intltool:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'notify-sharp:cil', 'notify-sharp:devellib', 'perl:runtime', 'pkgconfig:devel', 'avahi-sharp:cil', 'avahi-sharp:devellib']
+ 
+    def unpack(r):
+        r.addArchive('http://giver.googlecode.com/files/')

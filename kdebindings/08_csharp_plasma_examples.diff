@@ -1,0 +1,9 @@
+Index: b/csharp/plasma/examples/applets/CMakeLists.txt
+===================================================================
+--- a/csharp/plasma/examples/applets/CMakeLists.txt
++++ b/csharp/plasma/examples/applets/CMakeLists.txt
+@@ -1,2 +1,3 @@
+ add_subdirectory( extendertutorial )
+-add_subdirectory( tiger )
++#add_subdirectory( tiger )
++

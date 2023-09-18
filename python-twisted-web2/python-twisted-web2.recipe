@@ -1,0 +1,7 @@
+class PythonTwstedWeb2(RedirectRecipe):
+
+    name = 'python-twisted-web2'
+
+    version = '0'
+    def setup(r):
+        r.addRemoveRedirect()

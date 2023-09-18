@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class RpcBind(RPMPackageRecipe, CPackageRecipe):
+    name = 'rpcbind'
+    version = '0.2.0'
+
+    buildRequires = [ 'e2fsprogs:devel', 'libtermcap:devel', 'ncurses:devel','libtirpc:devel', 'tcp_wrappers:devel',
+                      'bison:runtime', 'e2fsprogs:devel', 'flex:runtime','quota:devel',
+                      'libtermcap:devel', 'rsh:runtime', 'texinfo:runtime',
+                      'libtool:runtime', 'autoconf:runtime', 'install-info:runtime',
+                      'dejagnu:runtime', 'expect:runtime', 'ncurses:devel', 'perl:runtime',
+                      'chkconfig:runtime', 'e2fsprogs:runtime', ]
+    isRHEL = True
+    rhel_url = 'ftp://ftp.redhat.com/redhat/linux/enterprise/6Server/en/os/SRPMS/rpcbind-0.2.0-8.el6.src.rpm'
+    # the only reason we use rpmpackage is for these files:
+    rpmRelease = '8.el6'
+    rpmSources = ['rpcbind.init']
+    rpmPatches = ['rpcbind-0.2.0-tpi-cots-reuseaddr.patch','rpcbind-0.2.0-usage-fix.patch']
+
+
+    def setup(r):
+        r.macros.cflags += ' -fpie '
+        r.unpack()
+        r.Configure(' --with-ccopts="%(cflags)s" --enable-warmstarts --enable-libwrap --enable-debug --with-rpcuser="rpc" --with-statedir="/var/cache/rpcbind"')
+        r.Make()
+        r.MakeDirs('%(localstatedir)s/cache/rpcbind')
+        r.Install('rpcbind.init', '%(initdir)s/rpcbind', mode=0755)
+        r.MakeInstall() 
+        r.Ownership('rpc','rpc', '%(localstatedir)s/cache/rpcbind')
+        r.Move('%(bindir)s/rpcbind', '%(essentialsbindir)s/rpcbind')
+        for dep in ['lib','config']:
+            r.Requires('libtirpc:'+dep, '%(essentialsbindir)s/rpcbind')

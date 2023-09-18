@@ -1,0 +1,33 @@
+#known issues:
+#-when you exit game main window dissaper , but the game process stays iddle
+#for several minutes.
+#-when you start game it opens in a window mode , no settings are saved
+
+class skeleton(PackageRecipe):
+	name='VDrift'
+	version='20050802'
+	buildRequires=['desktop-file-utils:runtime']
+	def setup(r):
+		r.addArchive('http://kent.dl.sourceforge.net/sourceforge/vdrift/VDrift-2005-08-02.tar.bz2')
+
+		r.addSource('vdrift.sh')
+		r.addSource('vdrift.png')
+		r.addSource('vdrift.desktop')
+
+		#r.Run('NOCONFIGURE=1 ./autogen.sh')
+		r.Configure()
+		r.Make()
+		r.Run('cp -f src/vdrift runtime/')
+		r.Run('chmod +x vdrift.sh')
+		#deleting dll files
+		r.Run('rm -rf runtime/*.dll')
+
+		r.Install('runtime/*','%(libdir)s/vdrift/')
+		r.Install('vdrift.sh','%(bindir)s/vdrift')
+
+		r.Install('vdrift.png','%(datadir)s/pixmaps/')
+
+		r.Desktopfile('vdrift.desktop')
+
+		r.Doc('README','INSTALL','NEWS','AUTHORS','ChangeLog','NEWS','TODO')
+		#r.MakeInstall()

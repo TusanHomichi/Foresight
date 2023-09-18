@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UnityAssetPool(AutoPackageRecipe):
+    name = 'unity-asset-pool'
+    version = '0.8.20'
+ 
+    buildRequires = [
+                      ]
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/%(name)s/0.8/%(version)s/+download/')
+
+        r.Install('{panel,launcher}/*', '%(datadir)s/unity/themes/')
+        r.Install('unity-icon-theme/*', '%(datadir)s/icons/unity-icon-theme/')
+        # 
+        r.Remove('/usr/share/icons/unity-icon-theme/places/2*/distributor-logo.png')

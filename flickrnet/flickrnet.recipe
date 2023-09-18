@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Flickrnet(AutoPackageRecipe):
+    name = 'flickrnet'
+    version = '2.2'
+ 
+    packageDescription = 'The Flickr.Net API is a .NET Library for interacting with the Flickr API. It can be accessed from with any .NET language.'
+
+    buildRequires = ['mono:cil', 'mono:devel', 'mono:runtime', 'unzip:runtime']
+ 
+    def unpack(r):
+        r.addArchive('FlickrNet%(version)s-Src-48055.zip')
+	r.addPatch('assemblyinfo.patch', dir='../FlickrNet')
+	r.addSource('flickrnet.pc', dir='../FlickrNet')
+
+	r.Run("""sed -i 's|@LIBDIR@|%(libdir)s|g' flickrnet.pc""", dir='../FlickrNet')
+
+    def make(r):
+	r.Run('gmcs -debug -target:library -out:FlickrNet.dll -r:System.Web.dll -r:System.Drawing.dll *.cs', dir='../FlickrNet')
+
+    def makeinstall(r):
+	r.Run('gacutil -i FlickrNet.dll -package %(name)s -root %(destdir)s%(libdir)s', dir='../FlickrNet')
+	r.Install('../FlickrNet/flickrnet.pc', '%(libdir)s/pkgconfig/', mode=0644)
+
+    def setup(r):
+	r.unpack()
+	r.make()
+	r.makeinstall()
+	r.policy()

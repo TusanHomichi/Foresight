@@ -1,0 +1,30 @@
+# Original by Gil Hamlin
+# Modified by Cesar Cardoso
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libmtp(AutoPackageRecipe):
+    name = "libmtp"
+    version = "1.1.5"
+    buildRequires = [ 'libgcrypt:devel',
+                      'libgpg-error:devel',
+                      'libusbx:devel',
+                      'pkgconfig:devel', ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s/%(version)s/')
+
+    def configure(r):
+        r.Configure(' --disable-static --with-udev-rules=69-libmtp.rules')
+
+    def policy(r):
+        for f in [ 'mtp-delfile',
+                   'mtp-getfile',
+                   'mtp-newfolder',
+                   'mtp-sendfile',
+                   'mtp-sendtr', ]:
+            r.Remove('%(bindir)s/' + f)
+            r.Symlink('%(bindir)s/mtp-connect',
+                      '%(bindir)s/' + f)

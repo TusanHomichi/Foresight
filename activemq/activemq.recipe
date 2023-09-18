@@ -1,0 +1,19 @@
+class activeMQ(PackageRecipe):
+    name = 'activemq'
+    version = '5.4.2'
+
+    def setup(r):
+        r.macros.appdir = '%(libdir)s/%(name)s'
+        r.addArchive('http://apache.sunsite.ualberta.ca/%(name)s/apache-%(name)s/%(version)s/apache-%(name)s-%(version)s-bin.tar.gz',
+        dir='%(localstatedir)s')
+
+        r.Move('%(localstatedir)s/apache-%(name)s-%(version)s', '%(appdir)s')
+        r.addSource('activemq.init', dest='%(initdir)s/activemq', macros=True, mode=0755)
+
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.ComponentSpec('runtime', '%(libdir)s/tomcat/')
+
+        r.EnforceSonameBuildRequirements(exceptions='glibc')
+
+        r.Requires(exceptDeps='java:.*')
+        r.Requires('sun-jre:runtime', '%(libdir)s/')

@@ -1,0 +1,88 @@
+#!/bin/sh
+#
+# nginx        Startup script for the nginx HTTP server
+#
+# chkconfig: - 85 15
+# description: Really freaking fast HTTP server
+#
+# processname: nginx
+# config: %(sysconfdir)s/nginx/nginx.conf
+#
+
+# Source function library
+. %(initdir)s/functions
+
+if [ -z "$NGINX_CONF_PATH" ]; then
+	NGINX_CONF_PATH="%(sysconfdir)s/nginx/nginx.conf"
+fi
+
+prog="nginx"
+nginx="%(sbindir)s/nginx"
+RETVAL=0
+
+start() {
+	echo -n $"Starting $prog: "
+	daemon $nginx -c $NGINX_CONF_PATH
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+stop() {
+	echo -n $"Stopping $prog: "
+	killproc $nginx
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+reload() {
+	echo -n $"Reloading $prog: "
+	killproc $nginx -HUP
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+
+postrotate() {
+	echo -n $"Reopening $prog log files: "
+	killproc $nginx -USR1
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+	condrestart)
+		if [ -f /var/lock/subsys/$prog ]; then
+			stop
+			start
+		fi
+		;;
+	reload)
+		reload
+		;;
+        postrotate)
+                postrotate
+                ;;
+	status)
+		status $nginx
+		RETVAL=$?
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|condrestart|reload|postrotate|status}"
+		RETVAL=1
+esac
+
+exit $RETVAL

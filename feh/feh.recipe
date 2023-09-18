@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class feh(CPackageRecipe):
+	name = 'feh'
+	version = '2.8'
+
+	buildRequires = [
+        'freetype:devel', 
+        'imlib2:devel', 
+        'libX11:devel', 
+        'libXt:devel', 
+        'libXext:devel', 
+        'libXinerama:devellib', 
+        'libjpeg:devel', 
+        'libpng:devel', 
+        'zlib:devel', 
+        'perl:lib', 
+        'perl:runtime', 
+        'giblib:devel',
+        'curl:devel', 
+        'perl:devel',
+            ]
+
+        def setup(r):
+            r.addArchive('http://feh.finalrewind.org/')
+            r.Make()
+            r.MakeInstall('PREFIX=%(prefix)s DESTDIR=%(destdir)s')

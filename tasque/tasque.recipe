@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2007 Paul Cutler <pcutler>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class Tasque(GnomePackageRecipe):
+    name = 'tasque'
+    version = '0.1.9'
+
+    packageSummary = 'Tasque is a simple task management app (TODO list) for the Linux Desktop.'
+
+    buildRequires = ['GConf:runtime', 'banshee:lib', 'desktop-file-utils:runtime', 'evolution-sharp:devellib',
+                     'f-spot:lib', 'gettext:runtime', 'gnome-sharp:devellib', 'gtk-sharp:cil', 'gtk-sharp:devellib', 
+                     'evolution-sharp:cil',
+                     'gtk:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'ndesk-dbus:cil', 'notify-sharp:devellib', 'ndesk-dbus:devellib', 'ndesk-dbus-glib:devellib',
+                     'perl:runtime', 'pkgconfig:devel', 'intltool:runtime', 'ndesk-dbus-glib:cil', 'notify-sharp:cil']
+    
+    def unpack(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/tasque/0.1/')
+#        r.Replace('tasquelibdir = \$\(prefix\)/lib/tasque', 'tasquelibdir = %(libdir)s/tasque', 'RtmNet/Makefile.*')
+ #       r.Replace('tasquelibdir = \$\(prefix\)/lib/tasque', 'tasquelibdir = %(libdir)s/tasque', 'src/Makefile.*')
+  #      r.Replace('libdir="\$\{prefix\}/lib/tasque"', 'libdir=%(libdir)s/tasque', 'src/tasque.in')
+
+   # def policy(r):
+    #    r.Replace('/usr/lib/tasque/', '%(libdir)s/tasque/', '%(libdir)s/pkgconfig/*.pc')
+
+
+

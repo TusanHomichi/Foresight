@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+
+Name=Nexus Personal
+Exec=/usr/local/lib/personal/personal.bin
+Type=Application
+Comment=Nexus Personal
+Icon=/usr/local/lib/personal/icons/nexus_logo_32x32.png
+
+

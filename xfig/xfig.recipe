@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class xfig(CPackageRecipe):
+    name = 'xfig'
+    version = '3.2.5b'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'imake:runtime',
+        'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXi:devel',
+        'libXmu:devel', 'libXp:devel', 'libXpm:devel', 'libXt:devel',
+        'libjpeg:devel', 'libpng:devel', 'Xaw3d:devel', 'xorg-cf-files:data',
+        'zlib:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/mcj/xfig.%(version)s.full.tar.gz')
+
+        r.addPatch('http://cvs.fedoraproject.org/viewvc/devel/xfig/'
+                   'xfig-3.2.5-urwfonts.patch?revision=1.1')
+
+        r.addSource('http://cvs.fedoraproject.org/viewvc/devel/xfig/'
+                    'xfig.desktop?revision=1.5',
+                    dest='xfig.desktop')
+        r.addSource('http://cvs.fedoraproject.org/viewvc/devel/xfig/'
+                    'xfig.png?revision=1.5',
+                    dest='%(datadir)s/pixmaps/xfig.png')
+
+        # Not %(thisdocdir)s to avoid change from version to version
+        # and because :supdoc is often not installed
+        r.Replace(('XFIGDOCDIR = /usr/local/xfig/doc',
+                   'XFIGDOCDIR = %(datadir)s/xfig/doc'),
+                  ('XCOMM #define XAW3D1_5E',
+                   '#define XAW3D1_5E'),
+                  'Imakefile')
+        r.Run('xmkmf')
+        r.Make('DOCDIR=%(docdir)s')
+        # mostly 600/700 permissions give trouble, especially non-exec dir
+        r.Run('chmod +x Libraries')
+        r.Run('chmod -R a+rX .')
+        r.MakeInstall('DOCDIR=%(docdir)s', installtarget='install.all')
+        r.Desktopfile('xfig.desktop')
+        # remove developer-only files that pull in csh
+        r.Remove('/usr/lib/X11/xfig/Libraries/Maps/{USA,Canada}/assemble')

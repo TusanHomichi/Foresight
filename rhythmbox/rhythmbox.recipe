@@ -1,0 +1,97 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class RhythmBox(GnomePackageRecipe):
+
+    name = 'rhythmbox'
+    version = '0.13.3'
+
+    buildRequires = [
+        'GConf:devel',
+        'GConf:runtime',
+        'ORBit2:devel',
+        'avahi-glib:devel',
+        'avahi:devel',
+        'dbus-glib:devel',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'gettext:runtime',
+        'libgpod:devel',
+        'libmtp:devel',
+        'libgnome-keyring:devel',
+        'gnome-media:devel',
+        'gnome-python:python',
+        'gnome-vfs:devel',
+        'gst-plugins-base:devel',
+        'gst-python:devellib',
+        'gstreamer:devel',
+        'hal:devel',
+        'libart_lgpl:devel',
+        'libbonobo:devel',
+        'libbonoboui:devel',
+        'libdmapsharing:devel',
+        'libglade:devel',
+        'libgnome:devel',
+        'libgnomecanvas:devel',
+        'libgnomeui:devel',
+        'libmtp:devel',
+        'libmusicbrainz:devel',
+        'gudev:devel', 
+        'libnotify:devel',
+        'libsexy:devel',
+        'libsoup:devel',
+        'libusb:devel',
+        'libxml2:devel',
+        'brasero:devel',
+        'popt:devel',
+        'pygobject:python',
+        'pygtk:devel',
+        'pygtk:python',
+        'python:devel',
+        'rarian:devel',
+        'rarian:runtime',
+        'totem:devellib',
+        'lirc:devel',
+        'gnome-doc-utils:runtime',
+        'gnome-doc-utils:devel',
+        # glitz is dead upstream
+        # and it is generally a bad idea to rely on 
+        # as it is unmaintained and unoptimized for 
+        # recent Xorg/OpenGL combos
+        # 'glitz:devel',
+        'totem-pl-parser:devel',
+        'xcb-util:devel',
+        'WebKit:devel', 
+        'python-mako:python', 
+        'pywebkitgtk:python', 
+        'udev:devel',
+        'json-glib:devel', 
+        'zeitgeist:python',
+        'lirc:devel',
+    ]
+
+    docs = ['AUTHORS', 'DOCUMENTERS', 'INTERNALS', 'THANKS' ]
+
+    extraConfig = ('--with-ipod ' 
+                    ' --with-mdns=avahi ' 
+                    ' --disable-scrollkeeper ' 
+                    ' --enable-daap ' 
+                    ' --enable-libnotify ' 
+                    ' --enable-python ' 
+                    ' --with-libbrasero-media ' 
+                    ' --enable-browser-plugin' 
+                    ' --with-help-formats ' 
+                    ' --with-mtp ' 
+                    ' --enable-lirc '
+                    ' --with-gnome-keyring ')
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        #r.Replace('libdmapsharing-1.9 >= 1.9.0.21', 'libdmapsharing-2.0 >= 2.0.0', 'configure')
+        #r.Run('automake || autoconf')

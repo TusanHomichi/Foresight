@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Enki(AutoPackageRecipe):
+    name = 'enki'
+    version = 'fa097887' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = [
+        'automake:runtime',
+        'autoconf:runtime', 
+        'libtool:runtime', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'ecore:devel', 
+        'e-dbus:devel', 
+        'edje:devel', 
+        'edje:runtime', 
+        'eet:devel', 
+        'efreet:devel', 
+        'eina:devel', 
+        'eio:devel', 
+        'elementary:devel', 
+        'emotion:devel', 
+        'embryo:devel',
+        'embryo:runtime',
+        'enlil:devel', 
+        'ethumb:devel', 
+        'evas:devel', 
+        'gettext:runtime', 
+        'libexif:devel', 
+        'pkgconfig:devel',
+            ]
+ 
+    def setup(r):
+        r.addGitSnapshot('git://git.enlightenment.fr/vcs/svn/enki.git')
+        r.Run('./autogen.sh --prefix=/usr')
+        r.Make()
+        r.MakeInstall()

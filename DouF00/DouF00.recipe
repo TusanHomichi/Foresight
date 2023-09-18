@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Douf00(PackageRecipe):
+
+    name = 'DouF00'
+    version = '2.0.1'
+
+    buildRequires = ['python-setuptools:python', 'pycairo:python', 'python:devel', 'wxPython:python']
+
+    def setup(r):
+        r.addArchive('http://data.nicenamecrew.com/tools/DouF00/')
+        r.PythonSetup()
+	r.Requires('pypoppler:python', '%(bindir)s/douf00')

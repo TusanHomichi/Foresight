@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WineDoors(PackageRecipe):
+    name = 'wine-doors'
+    version = '0.1.3.999'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'gnome-python-desktop:python', 'gnome-python:python', 'pycairo:python', 'pygobject:python', 'pygtk:python', 'python:devel']
+ 
+    def setup(r):
+#        r.addArchive('http://www.wine-doors.org/releases/%(name)s-%(version)s.tar.gz')
+ 	r.addSvnSnapshot('http://www.wine-doors.org/svn/wine-doors/trunk')
+#        r.PythonSetup()
+   	
+        r.addSource('preferences.xml')
+        r.MakeDirs('/usr/share/wine-doors/dtd')
+	r.Run('cp %(builddir)s/dtd/* %(destdir)s/usr/share/wine-doors/dtd/')
+        r.MakeDirs('/usr/share/wine-doors/pixmaps')
+	r.Run('cp %(builddir)s/pixmaps/* %(destdir)s/usr/share/wine-doors/pixmaps/')
+        r.MakeDirs('/usr/share/wine-doors/registry')
+	r.Run('cp %(builddir)s/registry/* %(destdir)s/usr/share/wine-doors/registry/')
+        r.MakeDirs('/usr/share/wine-doors/src')
+	r.Run('cp %(builddir)s/src/* %(destdir)s/usr/share/wine-doors/src/')
+	r.SetModes('/usr/share/wine-doors/src/winedoors.py', 0755)
+        r.MakeDirs('/usr/share/applications')
+	r.Run('cp %(builddir)s/dist/debian/wine-doors.desktop %(destdir)s/usr/share/applications/')
+        r.MakeDirs('/usr/bin')
+	r.Symlink('/usr/share/wine-doors/src/winedoors.py', '/usr/bin/wine-doors')
+        r.MakeDirs('/etc/wine-doors')
+	r.Copy('preferences.xml', '/etc/wine-doors/')
+
+

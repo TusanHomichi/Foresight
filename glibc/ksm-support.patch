@@ -1,0 +1,205 @@
+Index: libc/sysdeps/unix/sysv/linux/s390/bits/mman.h
+===================================================================
+--- libc/sysdeps/unix/sysv/linux/s390/bits/mman.h	(revision 9161)
++++ libc/sysdeps/unix/sysv/linux/s390/bits/mman.h	(working copy)
+@@ -84,14 +84,16 @@
+ 
+ /* Advice to `madvise'.  */
+ #ifdef __USE_BSD
+-# define MADV_NORMAL	 0	/* No further special treatment.  */
+-# define MADV_RANDOM	 1	/* Expect random page references.  */
+-# define MADV_SEQUENTIAL 2	/* Expect sequential page references.  */
+-# define MADV_WILLNEED	 3	/* Will need these pages.  */
+-# define MADV_DONTNEED	 4	/* Don't need these pages.  */
+-# define MADV_REMOVE	 9	/* Remove these pages and resources.  */
+-# define MADV_DONTFORK	 10	/* Do not inherit across fork.  */
+-# define MADV_DOFORK	 11	/* Do inherit across fork.  */
++# define MADV_NORMAL	  0	/* No further special treatment.  */
++# define MADV_RANDOM	  1	/* Expect random page references.  */
++# define MADV_SEQUENTIAL  2	/* Expect sequential page references.  */
++# define MADV_WILLNEED	  3	/* Will need these pages.  */
++# define MADV_DONTNEED	  4	/* Don't need these pages.  */
++# define MADV_REMOVE	  9	/* Remove these pages and resources.  */
++# define MADV_DONTFORK	  10	/* Do not inherit across fork.  */
++# define MADV_DOFORK	  11	/* Do inherit across fork.  */
++# define MADV_MERGEABLE   12	/* KSM may merge identical pages */
++# define MADV_UNMERGEABLE 13	/* KSM may not merge identical pages */
+ #endif
+ 
+ /* The POSIX people had to invent similar names for the same things.  */
+Index: libc/sysdeps/unix/sysv/linux/sparc/bits/mman.h
+===================================================================
+--- libc/sysdeps/unix/sysv/linux/sparc/bits/mman.h	(revision 9161)
++++ libc/sysdeps/unix/sysv/linux/sparc/bits/mman.h	(working copy)
+@@ -85,15 +85,17 @@
+ 
+ /* Advice to `madvise'.  */
+ #ifdef __USE_BSD
+-# define MADV_NORMAL	 0	/* No further special treatment.  */
+-# define MADV_RANDOM	 1	/* Expect random page references.  */
+-# define MADV_SEQUENTIAL 2	/* Expect sequential page references.  */
+-# define MADV_WILLNEED	 3	/* Will need these pages.  */
+-# define MADV_DONTNEED	 4	/* Don't need these pages.  */
+-# define MADV_FREE	 5	/* Content can be freed (Solaris).  */
+-# define MADV_REMOVE	 9	/* Remove these pages and resources.  */
+-# define MADV_DONTFORK	 10	/* Do not inherit across fork.  */
+-# define MADV_DOFORK	 11	/* Do inherit across fork.  */
++# define MADV_NORMAL	  0	/* No further special treatment.  */
++# define MADV_RANDOM	  1	/* Expect random page references.  */
++# define MADV_SEQUENTIAL  2	/* Expect sequential page references.  */
++# define MADV_WILLNEED	  3	/* Will need these pages.  */
++# define MADV_DONTNEED	  4	/* Don't need these pages.  */
++# define MADV_FREE	  5	/* Content can be freed (Solaris).  */
++# define MADV_REMOVE	  9	/* Remove these pages and resources.  */
++# define MADV_DONTFORK	  10	/* Do not inherit across fork.  */
++# define MADV_DOFORK	  11	/* Do inherit across fork.  */
++# define MADV_MERGEABLE   12	/* KSM may merge identical pages */
++# define MADV_UNMERGEABLE 13	/* KSM may not merge identical pages */
+ #endif
+ 
+ /* The POSIX people had to invent similar names for the same things.  */
+Index: libc/sysdeps/unix/sysv/linux/i386/bits/mman.h
+===================================================================
+--- libc/sysdeps/unix/sysv/linux/i386/bits/mman.h	(revision 9161)
++++ libc/sysdeps/unix/sysv/linux/i386/bits/mman.h	(working copy)
+@@ -84,14 +84,16 @@
+ 
+ /* Advice to `madvise'.  */
+ #ifdef __USE_BSD
+-# define MADV_NORMAL	 0	/* No further special treatment.  */
+-# define MADV_RANDOM	 1	/* Expect random page references.  */
+-# define MADV_SEQUENTIAL 2	/* Expect sequential page references.  */
+-# define MADV_WILLNEED	 3	/* Will need these pages.  */
+-# define MADV_DONTNEED	 4	/* Don't need these pages.  */
+-# define MADV_REMOVE	 9	/* Remove these pages and resources.  */
+-# define MADV_DONTFORK	 10	/* Do not inherit across fork.  */
+-# define MADV_DOFORK	 11	/* Do inherit across fork.  */
++# define MADV_NORMAL	  0	/* No further special treatment.  */
++# define MADV_RANDOM	  1	/* Expect random page references.  */
++# define MADV_SEQUENTIAL  2	/* Expect sequential page references.  */
++# define MADV_WILLNEED	  3	/* Will need these pages.  */
++# define MADV_DONTNEED	  4	/* Don't need these pages.  */
++# define MADV_REMOVE	  9	/* Remove these pages and resources.  */
++# define MADV_DONTFORK	  10	/* Do not inherit across fork.  */
++# define MADV_DOFORK	  11	/* Do inherit across fork.  */
++# define MADV_MERGEABLE   12	/* KSM may merge identical pages */
++# define MADV_UNMERGEABLE 13	/* KSM may not merge identical pages */
+ #endif
+ 
+ /* The POSIX people had to invent similar names for the same things.  */
+Index: libc/sysdeps/unix/sysv/linux/powerpc/bits/mman.h
+===================================================================
+--- libc/sysdeps/unix/sysv/linux/powerpc/bits/mman.h	(revision 9161)
++++ libc/sysdeps/unix/sysv/linux/powerpc/bits/mman.h	(working copy)
+@@ -85,14 +85,16 @@
+ 
+ /* Advice to `madvise'.  */
+ #ifdef __USE_BSD
+-# define MADV_NORMAL	 0	/* No further special treatment.  */
+-# define MADV_RANDOM	 1	/* Expect random page references.  */
+-# define MADV_SEQUENTIAL 2	/* Expect sequential page references.  */
+-# define MADV_WILLNEED	 3	/* Will need these pages.  */
+-# define MADV_DONTNEED	 4	/* Don't need these pages.  */
+-# define MADV_REMOVE	 9	/* Remove these pages and resources.  */
+-# define MADV_DONTFORK	 10	/* Do not inherit across fork.  */
+-# define MADV_DOFORK	 11	/* Do inherit across fork.  */
++# define MADV_NORMAL	  0	/* No further special treatment.  */
++# define MADV_RANDOM	  1	/* Expect random page references.  */
++# define MADV_SEQUENTIAL  2	/* Expect sequential page references.  */
++# define MADV_WILLNEED	  3	/* Will need these pages.  */
++# define MADV_DONTNEED	  4	/* Don't need these pages.  */
++# define MADV_REMOVE	  9	/* Remove these pages and resources.  */
++# define MADV_DONTFORK	  10	/* Do not inherit across fork.  */
++# define MADV_DOFORK	  11	/* Do inherit across fork.  */
++# define MADV_MERGEABLE   12	/* KSM may merge identical pages */
++# define MADV_UNMERGEABLE 13	/* KSM may not merge identical pages */
+ #endif
+ 
+ /* The POSIX people had to invent similar names for the same things.  */
+Index: libc/sysdeps/unix/sysv/linux/sh/bits/mman.h
+===================================================================
+--- libc/sysdeps/unix/sysv/linux/sh/bits/mman.h	(revision 9161)
++++ libc/sysdeps/unix/sysv/linux/sh/bits/mman.h	(working copy)
+@@ -83,14 +83,16 @@
+ 
+ /* Advice to `madvise'.  */
+ #ifdef __USE_BSD
+-# define MADV_NORMAL	 0	/* No further special treatment.  */
+-# define MADV_RANDOM	 1	/* Expect random page references.  */
+-# define MADV_SEQUENTIAL 2	/* Expect sequential page references.  */
+-# define MADV_WILLNEED	 3	/* Will need these pages.  */
+-# define MADV_DONTNEED	 4	/* Don't need these pages.  */
+-# define MADV_REMOVE	 9	/* Remove these pages and resources.  */
+-# define MADV_DONTFORK	 10	/* Do not inherit across fork.  */
+-# define MADV_DOFORK	 11	/* Do inherit across fork.  */
++# define MADV_NORMAL	  0	/* No further special treatment.  */
++# define MADV_RANDOM	  1	/* Expect random page references.  */
++# define MADV_SEQUENTIAL  2	/* Expect sequential page references.  */
++# define MADV_WILLNEED	  3	/* Will need these pages.  */
++# define MADV_DONTNEED	  4	/* Don't need these pages.  */
++# define MADV_REMOVE	  9	/* Remove these pages and resources.  */
++# define MADV_DONTFORK	  10	/* Do not inherit across fork.  */
++# define MADV_DOFORK	  11	/* Do inherit across fork.  */
++# define MADV_MERGEABLE   12	/* KSM may merge identical pages */
++# define MADV_UNMERGEABLE 13	/* KSM may not merge identical pages */
+ #endif
+ 
+ /* The POSIX people had to invent similar names for the same things.  */
+Index: libc/sysdeps/unix/sysv/linux/x86_64/bits/mman.h
+===================================================================
+--- libc/sysdeps/unix/sysv/linux/x86_64/bits/mman.h	(revision 9161)
++++ libc/sysdeps/unix/sysv/linux/x86_64/bits/mman.h	(working copy)
+@@ -85,14 +85,16 @@
+ 
+ /* Advice to `madvise'.  */
+ #ifdef __USE_BSD
+-# define MADV_NORMAL	 0	/* No further special treatment.  */
+-# define MADV_RANDOM	 1	/* Expect random page references.  */
+-# define MADV_SEQUENTIAL 2	/* Expect sequential page references.  */
+-# define MADV_WILLNEED	 3	/* Will need these pages.  */
+-# define MADV_DONTNEED	 4	/* Don't need these pages.  */
+-# define MADV_REMOVE	 9	/* Remove these pages and resources.  */
+-# define MADV_DONTFORK	 10	/* Do not inherit across fork.  */
+-# define MADV_DOFORK	 11	/* Do inherit across fork.  */
++# define MADV_NORMAL	  0	/* No further special treatment.  */
++# define MADV_RANDOM	  1	/* Expect random page references.  */
++# define MADV_SEQUENTIAL  2	/* Expect sequential page references.  */
++# define MADV_WILLNEED	  3	/* Will need these pages.  */
++# define MADV_DONTNEED	  4	/* Don't need these pages.  */
++# define MADV_REMOVE	  9	/* Remove these pages and resources.  */
++# define MADV_DONTFORK	  10	/* Do not inherit across fork.  */
++# define MADV_DOFORK	  11	/* Do inherit across fork.  */
++# define MADV_MERGEABLE   12	/* KSM may merge identical pages */
++# define MADV_UNMERGEABLE 13	/* KSM may not merge identical pages */
+ #endif
+ 
+ /* The POSIX people had to invent similar names for the same things.  */
+Index: libc/sysdeps/unix/sysv/linux/ia64/bits/mman.h
+===================================================================
+--- libc/sysdeps/unix/sysv/linux/ia64/bits/mman.h	(revision 9161)
++++ libc/sysdeps/unix/sysv/linux/ia64/bits/mman.h	(working copy)
+@@ -84,14 +84,16 @@
+ 
+ /* Advice to `madvise'.  */
+ #ifdef __USE_BSD
+-# define MADV_NORMAL	 0	/* No further special treatment.  */
+-# define MADV_RANDOM	 1	/* Expect random page references.  */
+-# define MADV_SEQUENTIAL 2	/* Expect sequential page references.  */
+-# define MADV_WILLNEED	 3	/* Will need these pages.  */
+-# define MADV_DONTNEED	 4	/* Don't need these pages.  */
+-# define MADV_REMOVE	 9	/* Remove these pages and resources.  */
+-# define MADV_DONTFORK	 10	/* Do not inherit across fork.  */
+-# define MADV_DOFORK	 11	/* Do inherit across fork.  */
++# define MADV_NORMAL	  0	/* No further special treatment.  */
++# define MADV_RANDOM	  1	/* Expect random page references.  */
++# define MADV_SEQUENTIAL  2	/* Expect sequential page references.  */
++# define MADV_WILLNEED	  3	/* Will need these pages.  */
++# define MADV_DONTNEED	  4	/* Don't need these pages.  */
++# define MADV_REMOVE	  9	/* Remove these pages and resources.  */
++# define MADV_DONTFORK	  10	/* Do not inherit across fork.  */
++# define MADV_DOFORK	  11	/* Do inherit across fork.  */
++# define MADV_MERGEABLE   12	/* KSM may merge identical pages */
++# define MADV_UNMERGEABLE 13	/* KSM may not merge identical pages */
+ #endif
+ 
+ /* The POSIX people had to invent similar names for the same things.  */

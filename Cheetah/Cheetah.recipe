@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License
+#
+
+class Cheetah(CPackageRecipe):
+    name = 'Cheetah'
+    version = '1.0'
+
+    buildRequires = [ 'python-setuptools:python', 'PIL:python', 'python:devel',  ]
+
+    def setup(r):
+        r.addArchive('http://www.turbogears.org/download/eggs/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()

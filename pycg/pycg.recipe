@@ -1,0 +1,25 @@
+loadInstalled('python')      
+class PyCg(AutoPackageRecipe):
+    name = 'pycg'
+    version = '0.14.1'
+    buildRequires = [ 'python-setuptools:python', 'python:devel', 'Cg:devel', 'Mesa:devel', 'make:runtime',
+                      'swig:runtime', 'python-numeric:devel']
+            
+    def setup(r):
+        r.macros.pyver = Python.majversion
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'        
+        r.addArchive('https://launchpad.net/ubuntu/karmic/+source/%(name)s/%(version)s-2/+files/%(name)s_%(version)s.orig.tar.gz')
+
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+
+        # upstream makefile busted
+        r.addSource('fixedMakefile.txt', macros=True, dest='Makefile', mode = 0755)
+
+        # make recipe python version agnostic
+        for f in ('Linux.conf', 'setup.py'):
+            r.Replace('python2.5', 'python%(pyver)s', f, allowNoChange = True)
+        r.Replace('lib/python2.6/site-packages/', '', 'setup.py')
+        r.Make()
+        r.MakeDirs('Cg')
+        r.Copy('Cg.py', 'Cg/__init__.py')
+        r.PythonSetup()

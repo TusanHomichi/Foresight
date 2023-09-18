@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BroadcomWl(AutoPackageRecipe):
+    name = 'broadcom-wl'
+    version =  '6.30.223.30'
+    buildRequires = ['b43-fwcutter:runtime']
+
+    def setup(r):
+        # driver fw for in-kernel b43
+        r.addArchive('http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2')
+        r.MakeDirs('/lib/firmware/')
+        r.Run("b43-fwcutter -w %(destdir)s/lib/firmware/ linux/wl_apsta.o")
+        r.PackageSpec('b43-firmware', '/lib/firmware/')
+        r.SetModes('/lib/firmware/b43', 0755)
+        r.Doc('README', package='b43-firmware')
+        #
+        r.Create('%(sysconfdir)s/modprobe.d/%(name)s-blacklist.conf', 
+                 contents = """
+# modules blacklisted for broadcom-wl
+blacklist b43
+blacklist b43legacy
+blacklist ssb
+blacklist bcm43xx
+blacklist brcm80211
+blacklist brcmfmac
+blacklist brcmsmac
+blacklist bcma
+""", mode = 0644, component = 'broadcom-wl:runtime')
+
+        # We want to make sure that the userspace code can require the
+        # matching kernel-space code
+        r.ComponentProvides('%(version)s')
+
+        # The kernel side is in %(name)s-kernel,
+        r.Requires('%(name)s-kmod:runtime', 
+                   '%(sysconfdir)s/')

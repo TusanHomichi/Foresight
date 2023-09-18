@@ -1,0 +1,20 @@
+--- insight3d/insight3d/sift/include/utils.h	2009-07-24 01:13:48.000000000 +0200
++++ insight3d/insight3d/sift/include/utils.h	2011-12-13 20:35:57.429711225 +0100
+@@ -149,17 +149,6 @@
+ 
+ 
+ /**
+-   A function that removes the path from a filename.  Similar to the Unix
+-   basename command.
+-
+-   @param pathname a (full) path name
+-
+-   @return Returns the basename of \a pathname.
+-*/
+-extern char* basename( const char* pathname );
+-
+-
+-/**
+    Displays progress in the console with a spinning pinwheel.  Every time this
+    function is called, the state of the pinwheel is incremented.  The pinwheel
+    has four states that loop indefinitely: '|', '/', '-', '\'.

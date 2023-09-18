@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libmodman(AutoPackageRecipe):
+    name = 'libmodman'
+    version = '2.0.1'
+ 
+    buildRequires = [  'cmake:runtime', 'bzr:runtime',
+                       'cvs:runtime', 'gcc-c++:runtime',
+                       'git:runtime', 'libstdc++:devel',
+                       'mercurial:runtime', 'openssh:runtime',
+                       'subversion:runtime', 'zlib:devel' ]
+ 
+    def setup(r):
+        r.addArchive('http://libmodman.googlecode.com/files/')
+
+        r.CMake(objDir='build')
+        r.Make(dir='build')
+        r.MakeInstall(dir='build')
+
+        # XXX this shouldn't be needed...
+        r.Move('%(datadir)s/cmake/Modules/*', 
+               '%(datadir)s/apps/cmake/modules/', )

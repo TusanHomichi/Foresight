@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SDLttfRecipe(AutoPackageRecipe):
+    name = 'SDL_ttf'
+    version = '2.0.9'
+
+    buildRequires = [ 'freetype:devel', 'pkgconfig:devel', 'zlib:devel', 'SDL:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://www.libsdl.org/projects/SDL_ttf/release/')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '

@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('binarypackage')
+class AndroidSdk(BinaryPackageRecipe):
+    name = 'android-sdk'
+    version = 'r15'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'Mesa:devel', 'libX11:devel', 'libstdc++:devel', 'zlib:devel', 'libgcc:devellib', 'sun-jre:java', 'sun-jre:runtime', 'eclipse-sdk:java']
+ 
+    def setup(r):
+        r.addArchive('http://dl.google.com/android/android-sdk_r15-linux.tgz', dir='/opt/')
+        r.addSource('%(name)s.sh')
+        r.addSource('%(name)s.csh')
+        r.addSource('%(name)s.png')
+        r.addSource('%(name)s.desktop')
+        r.Install('%(name)s.sh', '%(sysconfdir)s/profile.d/', mode=0755)
+        r.Install('%(name)s.csh', '%(sysconfdir)s/profile.d/', mode=0755)
+        r.Install('%(name)s.png', '%(datadir)s/pixmaps/')
+        r.Desktopfile('%(name)s.desktop')
+        r.ExcludeDirectories(exceptions='.*')
+        # r.Run('chmod -R o=g /opt/%(name)s-linux/*/*')
+        # r.Run('chmod -R a+rX %(destdir)s/opt/%(name)s-linux/*.*')
+        r.SetModes('%(destdir)s/opt/%(name)s-linux/tools/proguard/bin/*', 0755)
+        r.SetModes('%(destdir)s/opt/%(name)s-linux/tools/*/*', 0755)
+        r.SetModes('%(destdir)s/opt/%(name)s-linux/tools/*', 0755)
+        r.SetModes('%(destdir)s/opt/%(name)s-linux/tools/android', 0755)

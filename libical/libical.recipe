@@ -1,0 +1,26 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibICal(AutoPackageRecipe):
+
+    name = 'libical'
+    version = '0.46'
+
+    buildRequires = [
+        'bison:runtime', 'flex:runtime', 'perl:runtime',
+        'automake:runtime', 'autoconf:runtime', 'libtool:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/freeassociation/')
+        for p in [ 'libical-0.46-errors-are-fatal.patch',
+                   'libical-0.46-icaltimezone.patch',
+                   'libical-0.46-mkdir_p.patch']:
+            r.addPatch(p)
+
+        r.Run('autoreconf -fi')
+
+    def configure(r):
+        r.Configure('--disable-static --enable-reentrant --with-backtrace')

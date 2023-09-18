@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2007 rpath, Inc.
+# All rights reserved
+#
+
+class GnomeCommon(AutoPackageRecipe):
+    name = 'gnome-common'
+    version = '2.28.0'
+
+    def unpack(r):
+        r.macros.majversion = '.'.join(r.version.split('.')[0:2])
+        r.addArchive('mirror://gnome/%(name)s/%(majversion)s/')
+
+    def policy(r):
+
+        for trove in [
+            'which:runtime',
+            'gnome-common:runtime',
+            'intltool:devel',
+            'intltool:runtime',
+            'pkgconfig:devel',
+            'glib:devel',
+            'autoconf:runtime',
+            'automake:runtime' ]:
+            r.Requires(trove, '%(bindir)s/gnome-autogen.sh')

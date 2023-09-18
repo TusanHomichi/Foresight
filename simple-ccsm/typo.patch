@@ -1,0 +1,65 @@
+diff -r accfc10d9e07 po/de.po
+--- a/po/de.po	Wed Apr 02 08:51:50 2008 -0400
++++ b/po/de.po	Wed Apr 02 08:53:51 2008 -0400
+@@ -31,7 +31,7 @@
+ msgstr "Flip"
+ 
+ msgid "Profile"
+-msgstr "Profil"
++msgstr "Profile"
+ 
+ msgid "Animations"
+ msgstr "Animationen"
+@@ -93,8 +93,8 @@
+ msgid "Open Animation"
+ msgstr "Öffnen Animation"
+ 
+-msgid "Profil:"
+-msgstr "Profil:"
++msgid "Profile:"
++msgstr "Profile:"
+ 
+ msgid "Simple Compiz Config Settings Manager"
+ msgstr "Einfacher Compiz Config Einstellungs-Manager"
+diff -r accfc10d9e07 po/simple-ccsm.pot
+--- a/po/simple-ccsm.pot	Wed Apr 02 08:51:50 2008 -0400
++++ b/po/simple-ccsm.pot	Wed Apr 02 08:53:51 2008 -0400
+@@ -93,7 +93,7 @@
+ msgid "Open Animation"
+ msgstr ""
+ 
+-msgid "Profil:"
++msgid "Profile:"
+ msgstr ""
+ 
+ msgid "Simple Compiz Config Settings Manager"
+diff -r accfc10d9e07 po/tr.po
+--- a/po/tr.po	Wed Apr 02 08:51:50 2008 -0400
++++ b/po/tr.po	Wed Apr 02 08:53:51 2008 -0400
+@@ -90,11 +90,11 @@
+ msgstr "Açma Canlandırması"
+ 
+ #, fuzzy
+-msgid "Profil:"
+-msgstr "Profil"
++msgid "Profile:"
++msgstr "Profile"
+ 
+ msgid "Profile"
+-msgstr "Profil"
++msgstr "Profile"
+ 
+ msgid "Simple Compiz Config Settings Manager"
+ msgstr "Basit Compiz Yapılandırma Ayarları Yöneticisi"
+diff -r accfc10d9e07 simple-ccsm.glade
+--- a/simple-ccsm.glade	Wed Apr 02 08:51:50 2008 -0400
++++ b/simple-ccsm.glade	Wed Apr 02 08:53:51 2008 -0400
+@@ -21,7 +21,7 @@
+               <widget class="GtkLabel" id="label11">
+                 <property name="visible">True</property>
+                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+-                <property name="label" translatable="yes">Profil:</property>
++                <property name="label" translatable="yes">Profile:</property>
+               </widget>
+               <packing>
+                 <property name="expand">False</property>

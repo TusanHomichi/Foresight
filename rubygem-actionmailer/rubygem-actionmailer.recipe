@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Actionmailer(RubygemPackageRecipe):
+
+    name = 'rubygem-actionmailer'
+    version = '3.1.1'
+

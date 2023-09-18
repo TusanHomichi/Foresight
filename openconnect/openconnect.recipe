@@ -1,0 +1,9 @@
+class OpenConnect(AutoPackageRecipe):
+    name = 'openconnect'
+    version = '3.12'
+    buildRequires = [ 'libxml2:devel', 'openssl:devel', 'zlib:devel',
+                      'gcc-c++:runtime', 'libproxy:devel', 'pkgconfig:devel' ]
+    def unpack(r):
+        r.addArchive('ftp://ftp.infradead.org/pub/openconnect/')
+        # remove patch on next update
+        r.addPatch('http://git.infradead.org/users/dwmw2/openconnect.git/commitdiff_plain/269a2e16a2686b0d416e4b78f6ecd4b44b6b3e1e')

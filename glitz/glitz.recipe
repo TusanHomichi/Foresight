@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Glitz(AutoPackageRecipe):
+    name = 'glitz'
+    version = '0.5.6'
+ 
+    buildRequires = ['libX11:devel', 'Mesa:devel', 'xproto:devel', 'libXt:devel']
+    
+    def unpack(r):
+        r.addArchive('http://cairographics.org/snapshots/')

@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Winpdb(PackageRecipe):
+
+    name = 'winpdb'
+    version = '1.4.6'
+
+    buildRequires = ['python-setuptools:python','python:devel', 'python:tk', 'wxPython:python']
+    packageSummary = "GUI python debugger"
+    packageDescription = """ 
+Winpdb is a platform independent GPL Python debugger with support for multiple threads, namespace modification, embedded debugging, encrypted communication and is up to 20 times faster than pdb.
+"""
+
+
+    def setup(r):
+        r.addArchive('http://winpdb.googlecode.com/files/')
+        r.PythonSetup()

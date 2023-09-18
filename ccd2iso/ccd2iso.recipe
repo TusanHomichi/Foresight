@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ccd2iso(AutoPackageRecipe):
+    name = 'ccd2iso'
+    version = '0.3'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/ccd2iso/%(name)s-%(version)s.tar.gz')

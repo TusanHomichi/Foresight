@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libircclient(AutoPackageRecipe):
+    name = 'libircclient'
+    version = '1.6'
+ 
+    buildRequires = ['gcc-c++:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/libircclient/files/libircclient/%(version)s/libircclient-%(version)s.tar.gz')
+        
+        r.Run('''   sed -e "/install/s/lib/all/" \
+      -e "/DESTDIR/s/\.a/\.so/g" \
+      -e "s/@\/include/&\/$pkgname/" \
+      -i src/Makefile.in ''')
+        
+    def configure(r):
+        r.Configure('--enable-shared --prefix=%(prefix)s')

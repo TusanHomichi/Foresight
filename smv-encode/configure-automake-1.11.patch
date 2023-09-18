@@ -1,0 +1,46 @@
+*** configure.old	2009-12-27 14:13:15.000000000 +0100
+--- configure	2010-03-14 13:55:11.882749185 +0100
+***************
+*** 5463,5470 ****
+    prefix="$acl_save_prefix"
+  
+  # Make sure we can run config.sub.
+! $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+!   as_fn_error "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
+  
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+  $as_echo_n "checking build system type... " >&6; }
+--- 5463,5470 ----
+    prefix="$acl_save_prefix"
+  
+  # Make sure we can run config.sub.
+! $SHELL "/usr/share/automake-1.11/config.sub" sun4 >/dev/null 2>&1 ||
+!   as_fn_error "cannot run $SHELL /usr/share/automake-1.11/config.sub" "$LINENO" 5
+  
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+  $as_echo_n "checking build system type... " >&6; }
+***************
+*** 5473,5483 ****
+  else
+    ac_build_alias=$build_alias
+  test "x$ac_build_alias" = x &&
+!   ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+  test "x$ac_build_alias" = x &&
+    as_fn_error "cannot guess build type; you must specify one" "$LINENO" 5
+! ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+!   as_fn_error "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
+  
+  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+--- 5473,5483 ----
+  else
+    ac_build_alias=$build_alias
+  test "x$ac_build_alias" = x &&
+!   ac_build_alias=`$SHELL "/usr/share/automake-1.11/config.guess"`
+  test "x$ac_build_alias" = x &&
+    as_fn_error "cannot guess build type; you must specify one" "$LINENO" 5
+! ac_cv_build=`$SHELL "/usr/share/automake-1.11/config.sub" $ac_build_alias` ||
+!   as_fn_error "$SHELL /usr/share/automake-1.11/config.sub $ac_build_alias failed" "$LINENO" 5
+  
+  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5

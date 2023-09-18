@@ -1,0 +1,25 @@
+diff -Naur banter-0.1.8.orig/Banter/banter.in banter-0.1.8/Banter/banter.in
+--- banter-0.1.8.orig/Banter/banter.in	2007-07-17 14:06:06.000000000 -0400
++++ banter-0.1.8/Banter/banter.in	2007-08-02 13:30:05.000000000 -0400
+@@ -4,6 +4,9 @@
+ exec_prefix="@exec_prefix@"
+ libdir="@pkglibdir@"
+ 
++MONO_PATH=/usr/lib
++export MONO_PATH
++
+ #Taken from the monodevelop startup script which works to run Banter
+ if test -n "$MOZILLA_FIVE_HOME"; then
+ 	MOZILLA_HOME=$MOZILLA_FIVE_HOME
+@@ -15,8 +18,10 @@
+ 	MOZILLA_HOME=$(grep MOZILLA_FIVE_HOME= $(which mozilla) | cut -d '"' -f 2 | cut -d '=' -f 2 )
+ elif [ $(which firefox 2>/dev/null) ] && grep MOZILLA_FIVE_HOME= "$(which firefox)" > /dev/null ; then
+ 	MOZILLA_HOME=$(grep MOZILLA_FIVE_HOME= $(which firefox) | cut -d '"' -f 2 | cut -d '=' -f 2 )
+-	elif [ $(which firefox 2>/dev/null) ] && grep MOZILLA_LIBDIR= "$(which firefox)" > /dev/null ; then
++elif [ $(which firefox 2>/dev/null) ] && grep MOZILLA_LIBDIR= "$(which firefox)" > /dev/null ; then
+ 	MOZILLA_HOME=$(grep MOZILLA_LIBDIR= $(which firefox) | cut -d '"' -f 2 | cut -d '=' -f 2)
++elif [ -d /usr/lib/firefox ]; then
++        MOZILLA_HOME=/usr/lib/firefox
+ else
+ 	echo "Cannot find mozilla installation directory. Please set MOZILLA_FIVE_HOME to your mozilla directory"
+ 	exit 1

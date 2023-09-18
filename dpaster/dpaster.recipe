@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Dpaster(PackageRecipe):
+    name = 'dpaster'
+    version = '0.2'
+ 
+    buildRequires = ['twill:python','python:devel',"python-argparse:python","python-setuptools:python"]
+    url = "http://github.com/zodman/dpaster"
+    shortDesc =  "a cli command for dpaste.com"
+    longDesc = "a cli command for send files to www.dpaste.com"
+    categories = ["Internet","Development","ConsoleOnly"]
+    licenses = ["XXX"]
+ 
+    def setup(r):
+        r.addGitSnapshot("git://github.com/zodman/dpaster.git")
+        r.PythonSetup()
+

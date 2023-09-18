@@ -1,0 +1,29 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeArtwork(kdeCorePackageRecipe):
+
+    name = 'kdeartwork'
+    version = '4.6.1'
+
+    buildRequires = [
+        'eigen2:devel', 'kdebase-workspace:devel', 'libX11:devel',
+        'libXt:devel', 'Mesa:devel', 'strigi:devel', 'xscreensaver:lib'
+    ]
+
+    modules = [
+        ('kdeartwork-aurorae', 'aurorae'),
+        ('kdeartwork-emoticons', 'emoticons'),
+        ('kdeartwork-desktopthemes', 'desktopthemes'),
+        ('kdeartwork-icon-themes', 'IconThemes'),
+        ('kdeartwork-color-schemes', 'ColorSchemes'),
+        ('kscreensaver-extra', 'kscreensaver'),
+        ('kdeartwork-sounds', 'sounds'),
+        ('kdeartwork-styles', 'styles'),
+        ('kdeartwork-kwin-styles', 'kwin-styles'),
+        ('kdeartwork-wallpapers', 'wallpapers', 'HighResolutionWallpapers', 'WeatherWallpapers')
+    ]
+

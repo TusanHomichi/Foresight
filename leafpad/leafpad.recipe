@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Leafpad(AutoPackageRecipe):
+    name = 'leafpad'
+    version = '0.8.18.1'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libpng:devel', 'pango:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://download.savannah.gnu.org/releases/%(name)s/')

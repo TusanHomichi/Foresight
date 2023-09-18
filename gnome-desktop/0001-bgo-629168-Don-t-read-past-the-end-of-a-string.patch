@@ -1,0 +1,26 @@
+From 3fa03455aa799ce882767c94152ce4d9d4e70377 Mon Sep 17 00:00:00 2001
+From: Federico Mena Quintero <federico@novell.com>
+Date: Tue, 26 Oct 2010 18:18:03 -0500
+Subject: [PATCH] bgo#629168 - Don't read past the end of a string
+
+Signed-off-by: Federico Mena Quintero <federico@novell.com>
+---
+ libgnome-desktop/display-name.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/libgnome-desktop/display-name.c b/libgnome-desktop/display-name.c
+index e596da0..9c99d86 100644
+--- a/libgnome-desktop/display-name.c
++++ b/libgnome-desktop/display-name.c
+@@ -209,7 +209,7 @@ read_pnp_ids (void)
+         for (i = 0; lines[i]; i++)
+         {
+              line = lines[i];
+-             if (line[3] == '\t')
++             if (line[0] && line[1] && line[2] && line[3] == '\t' && line[4])
+              {
+                  code = line;
+                  line[3] = '\0';
+-- 
+1.7.3.2
+

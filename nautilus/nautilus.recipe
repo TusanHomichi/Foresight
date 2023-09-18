@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class Nautilus(RPMPackageRecipe,GnomePackageRecipe):
+
+    buildRequires = [ 'glib:devel', 'gtk:devel', 'pango:devel',
+                      'libgnomeui:devel', 'gnome-vfs:devel',
+                      'gnome-desktop:devel', 'gamin:devel', 'desktop-file-utils:runtime',
+                      'startup-notification:devel', 'libexif:devel', 'librsvg:devel',
+                      'fontconfig:runtime', 'libxml2:devel', 'gobject-introspection:devel',
+                      'intltool:runtime', 'GConf:devel', 'ORBit2:devel', 'atk:devel',
+                      'audiofile:devel', 'beagle:devel', 'cairo:devel', 'esound:devel',
+                      'fontconfig:devel', 'freetype:devel', 'libgnome-keyring:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+                      'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                      'libpng:devel', 'popt:devel', 'GConf:runtime',
+                      'docbook-utils:runtime', 'gettext:runtime', 'glib:runtime',
+                      'perl:runtime', 'shared-mime-info:runtime', 'gvfs:devel',
+                      'libbeagle:devel', 'exempi:devel', 'unique:devel' ]
+
+    name = 'nautilus'
+    version = '2.32.2.1'
+    rpmRelease = '2.fc14'
+    rpmPatches = [ 'nautilus-config.patch',
+                   'rtl-fix.patch',
+                   'nautilus-gvfs-desktop-key-2.patch',
+                   # http://bugzilla.gnome.org/show_bug.cgi?id=519743
+                   'nautilus-filetype-symlink-fix.patch',
+                   'nautilus-578086-po.patch',
+                   # Crash in nautilus_file_peek_display_name at nautilus-file.c line 3692
+                   # https://bugzilla.gnome.org/show_bug.cgi?id=602500
+                   'nautilus-2.32.2.1-peek_display_name-crash.patch', 
+                  ]
+
+    extraConfig = '--disable-update-mimedb --disable-more-warnings'
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('hide_icons.patch')
+        r.addPatch('font.patch')
+
+        r.addAction('gtkdocize; autoreconf -fi')
+        r.macros.cflags += ' -DUGLY_HACK_TO_DETECT_KDE -DNAUTILUS_OMIT_SELF_CHECK -fno-tree-vrp  '
+
+    def policy(r):
+        r.MakeDirs('%(libdir)s/nautilus/extensions-2.0')
+        r.ExcludeDirectories(exceptions = '%(libdir)s/nautilus/extensions-2.0')
+        r.Remove('%(datadir)s/icons/hicolor/icon-theme.cache')
+        r.Remove('%(datadir)s/icons/hicolor/.icon-theme.cache')
+        # http://issues.foresightlinux.org/browse/FL-2572
+        r.Remove('%(datadir)s/applications/nautilus-browser.desktop')

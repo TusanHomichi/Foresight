@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Newt(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'newt'
+    version = '0.52.6'
+    rpmRelease = '3.fc7'
+
+    buildRequires = [ 'python:devel', 'python:runtime', 'slang:devel',
+        'popt:devel', ]
+
+    # Do not configure with --with-gpm-support; bugs affect anaconda
+    def configure(r):
+        r.Configure(" --without-tcl")
+
+    def makeinstall(r):
+        r.MakeInstall('libdir=%(libdir)s', rootVar='instroot')
+        r.CompilePython('%(libdir)s/python*')
+        r.Doc('tutorial.sgml', 'peanuts.py', 'popcorn.py')
+        r.Requires('slang:devel', '%(includedir)s/newt.h')
+        #r.ComponentSpec('tcl', '%(libdir)s/whiptcl.so')

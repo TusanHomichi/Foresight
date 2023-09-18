@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+loadSuperClass('rpmpackage')
+class GPointingDevicesSettings(RPMPackageRecipe,GnomePackageRecipe):
+
+    name = 'gpointing-device-settings'
+    version = '1.5.1'
+    rpmRelease = '2.fc13'
+    rpmSources = [ 
+        'gpointing-device-settings.desktop',
+        'touchpad.png',
+        ]
+    rpmPatches = [  # Upstream patch from https://bugzilla.gnome.org/show_bug.cgi?id=613022
+        'gpds-1.5.1-set_tapping_time_from_preference.patch' ]
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime',
+                      'desktop-file-utils:runtime',
+                      'gnome-settings-daemon:devel' ]
+
+    extraConfig = ' --disable-static --disable-schemas-install --disable-dependency-tracking'
+
+    def build(r):
+        r.Configure('%s %s' % (r.gnomeExtraConfig, r.extraConfig),
+                    configureName = r.configureName,
+                    preConfigure = r.preConfigure)
+
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'libtool')
+
+
+        r.Make(r.makeArgs, preMake=r.preMake)
+
+
+    def policy(r):
+        r.Install('gpointing-device-settings.desktop', '%(datadir)s/applications/')
+        r.Install('touchpad.png', '%(datadir)s/pixmaps/touchpad.png')

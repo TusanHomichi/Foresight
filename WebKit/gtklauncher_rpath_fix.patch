@@ -1,0 +1,13 @@
+--- GNUmakefile.in.old	2009-06-08 17:29:13.467119661 +0200
++++ GNUmakefile.in	2009-06-08 17:30:11.727016725 +0200
+@@ -7987,10 +7987,6 @@
+ 	$(GTK_LIBS) \
+ 	$(GLIB_LIBS)
+ 
+-Programs_GtkLauncher_LDFLAGS = \
+-	-no-fast-install \
+-	-no-install
+-
+ 
+ # DumpRenderTree
+ dumprendertree_cppflags := -I$(srcdir)/WebKitTools/DumpRenderTree \

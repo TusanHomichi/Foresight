@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4XkbPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-xkb-plugin'
+    version = '0.5.5'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'librsvg:devel', 'libwnck:devel',
+        'libxfce4util:devel', 'libxfce4ui:devel', 'libxklavier:devel',
+        'libxml2:devel', 'xfce4-panel:devel'
+    ] 

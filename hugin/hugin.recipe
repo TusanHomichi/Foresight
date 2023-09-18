@@ -1,0 +1,46 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010, 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hugin(AutoPackageRecipe):
+    name = 'hugin'
+    version = '2011.4.0'
+
+    packageSummary = 'Panorama stitching and more. A powerful software package for creation and processing of panoramic images.'
+    packageDescription = 'hugin can be used to stitch multiple images together. The resulting image can span 360 degrees. Another common use is the creation of very high resolution pictures by combining multiple images. It uses the Panorama Tools as backend to create high quality images.'
+ 
+    buildRequires = [
+        'Mesa:devel', 'OpenEXR:devel', 'boost:devel',
+        'cmake:runtime', 'desktop-file-utils:runtime',
+        'exiv2:devel', 'freeglut:devel', 'gcc-c++:runtime',
+        'gettext:runtime', 'glew:devel', 'gtk:runtime',
+        'ilmbase:devel', 'intltool:runtime', 'libICE:devel',
+        'libSM:devel', 'libX11:devel', 'libXScrnSaver:devel',
+        'libXau:devel', 'libXcomposite:devel', 'libXcursor:devel',
+        'libXdamage:devel', 'libXdmcp:devel', 'libXext:devel',
+        'libXfixes:devel', 'libXft:devel', 'libXi:devel',
+        'libXinerama:devel', 'libXmu:devel', 'libXpm:devel',
+        'libXrandr:devel', 'libXrender:devel', 'libXt:devel',
+        'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel',
+        'libjpeg:devel', 'libpano13:devel', 'libpng:devel',
+        'libstdc++:devel', 'libtiff:devel', 'pkgconfig:devel',
+        'shared-mime-info:runtime', 'tclap:devel',
+        'wxWidgets:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+        r.macros.majversion = '.'.join(r.version.split('.')[:2])
+        r.addArchive('http://launchpad.net/hugin/'
+                     '%(majversion)s/%(version)s/+download/')
+        #r.addPatch('matchpoint_lpthread_new.patch')
+
+    def configure(r):
+        r.Run('cmake -DCMAKE_INSTALL_PREFIX=%(prefix)s')
+
+    def policy(r):
+        if Arch.bits64:
+            r.Move('%(prefix)s/lib/hugin', '%(libdir)s/hugin')
+        r.SharedLibrary(subtrees='%(libdir)s/hugin')

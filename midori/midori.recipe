@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2009 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('cmakepackage.recipe')
+class midori(CMakePackageRecipe):
+    name = 'midori'
+    version = '0.5.8'
+
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'expat:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gettext:runtime',
+        'glib:devel',
+        'gtk:devel', 
+        'gtksourceview:devel', 
+        'icu:devel', 
+        'intltool:devel', 
+        'intltool:runtime', 
+        'libidn:devel',
+        'libnotify:devel',
+        'libpng:devel', 
+        'librsvg:runtime',
+        'libsoup:devel',
+        'libtool:runtime', 
+        'libX11:devel', 
+        'libxcb:devel', 
+        'libxml2:devel', 
+        'libXrender:devel', 
+        'libXScrnSaver:devel',
+        'libxslt:devel', 
+        'pango:devel',
+        'pixman:devel', 
+        'pkgconfig:devel', 
+        'sqlite:devel', 
+        'unique:devel', 
+        'vala:devel', 
+        'vala:runtime', 
+        'WebKit:devel', 
+        'xcb-util:devel',
+        'zlib:devel', 
+    ] 
+
+    def unpack(r):
+        r.addArchive('http://www.midori-browser.org/downloads/%(name)s_%(version)s_all_.tar.bz2', dir='%(name)s-%(version)s')
+        r.cmakeArgs = ' -DUSE_ZEITGEIST=OFF'
+

@@ -1,0 +1,58 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MysqlEmbedded(CPackageRecipe):
+
+    name = 'mysql-embedded'
+    version = '5.1.30'
+
+    buildRequires = [
+        'libstdc++:devel', 'ncurses:devel', 'procps:runtime', 'zlib:devel'
+    ]
+
+    def setup(r):
+
+        r.macros.archive_name = 'mysql'
+        r.addArchive('ftp://mirror.services.wisc.edu/mirrors/mysql/Downloads/MySQL-%(major_version)s/')
+
+        r.macros.cflags += ' -fPIC -O2 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -fwrapv'
+        r.macros.cxxflags += ' -fno-rtti -fno-exceptions -felide-constructors'
+        r.macros.mysqldir = '%(servicedir)s/mysql'
+
+        # copy from rpl2
+        r.Configure(
+            '--enable-assembler '
+            '--with-extra-charsets=all '
+            '--localstatedir=%(mysqldir)s '
+            '--libexecdir=%(sbindir)s '
+            '--with-mysqld-user="mysql" '
+            '--with-unix-socket-path=%(mysqldir)s/mysql.sock '
+
+            '--with-query-cache '
+            '--with-big-tables '
+
+            '--without-server '
+            '--with-embedded-server '
+
+            '--with-readline '
+            '--with-ssl '
+            '--enable-local-infile '
+            '--enable-shared '
+            '--enable-largefile '
+            '--enable-thread-safe-client '
+            '--with-gnu-ld '
+
+            '--without-debug '
+            )
+
+        # mysql forces a lib/mysql path in mysql config and that is wrong on 64bit
+        r.Replace('^fix_path pkglibdir \$pkglibdir_rel lib/mysql lib$', '', 'scripts/mysql_config.sh')
+
+        r.Make()
+
+        r.MakeInstall(dir='libmysqld')
+
+        r.AutoDoc(exceptions='/.*/')
+

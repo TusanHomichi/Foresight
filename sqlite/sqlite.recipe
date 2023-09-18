@@ -1,0 +1,96 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2013 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sqlite(CPackageRecipe):
+    name = 'sqlite'
+    version = '3.7.17'
+
+    extraConfig = ' --enable-threadsafe  --enable-threads-override-locks --enable-load-extension '
+
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime', 'unzip:runtime']
+    if Use.bootstrap:
+        keepBuildReqs = 'glibc:devel', 'userspace-kernel-headers:devel'
+        buildRequires += ['binutils[!cross]', 'gcc[!cross]', 'tcl:runtime']
+        crossRequires = 'glibc:devel', 'userspace-kernel-headers:devel'
+        extraConfig += ' --disable-tcl'
+    else:
+        buildRequires += [ 'ncurses:devel', 'readline:devel',
+                           'tcl:runtime', 'tcl:devel',
+                           'net-tools:runtime' ]
+        extraConfig += ' --enable-tcl'
+
+    patches = ( # Avoid insecure sprintf(), use a system path for lempar.c, patch from Debian
+                'sqlite-3.6.23-lemon-system-template.patch',
+                'sqlite-3.7.11-no-malloc-usable-size.patch',
+                )
+    baseUrl = 'http://sqlite.org/2013/'
+
+    def setup(r):
+        r.macros.realver = '3071700'
+        r.addArchive(r.baseUrl + 'sqlite-src-%(realver)s.zip')
+        r.addArchive(r.baseUrl + 'sqlite-doc-%(realver)s.zip')
+
+        # Remove cgi-script erroneously included in sqlite-doc-3070500
+        r.Remove('%(name)s-doc-%(realver)s/search')
+
+        for p in r.patches:
+            r.addPatch(p)
+            
+        r.ComponentProvides('addcolumn')
+        r.ComponentProvides('threadsafe')
+
+        r.macros.cflags += (' -DSQLITE_ENABLE_COLUMN_METADATA=1 '
+                            ' -DSQLITE_DISABLE_DIRSYNC=1 '
+                            ' -DSQLITE_ENABLE_FTS3=3 '
+                            ' -DSQLITE_ENABLE_RTREE=1 '
+                            ' -DSQLITE_SECURE_DELETE=1 '
+                            ' -DSQLITE_ENABLE_UNLOCK_NOTIFY=1 '
+                            ' -Wall -fno-strict-aliasing ')
+        if Use.bootstrap:
+            # add hints for autoconf -- otherwise it can't figure
+            # out which compilers to use for builing files to be run
+            # during the build process vs. files to be installed
+            r.Environment('config_BUILD_CC', '%(buildcc)s')
+            r.Environment('config_TARGET_CC', '%(cc)s')
+            r.Environment('config_TARGET_CXX', '%(cxx)s')
+            # this skips past a test that fails when cross compiling
+            r.Environment('config_TARGET_READLINE_INC',
+                          '%(sysroot)s%(includedir)s')
+        
+        r.Run('autoconf')
+        r.Configure(r.extraConfig)
+        # rpath / libtool mess
+        # rpath removal
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'), 
+                  ('^runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+        if Use.bootstrap:
+            mflags = 'READLINE_FLAGS= ' # Suppress readline.
+        else:
+            mflags = ''
+
+        r.Make(mflags)
+
+        if not Use.bootstrap:
+            # docs require tcl to build
+            r.Make('doc')
+
+        r.MakeInstall('prefix=%(prefix)s')
+
+        r.Doc('%(name)s-doc-%(realver)s/*')
+        
+        r.Install('sqlite3.1', '%(mandir)s/man1/sqlite3.1',  mode = 0644)
+        r.Install('lemon', '%(bindir)s/lemon', mode = 0755)
+        r.Install('tool/lempar.c', '%(datadir)s/lemon/lempar.c', mode = 0644)
+
+        r.PackageSpec('lemon', '.*lemon.*')
+        
+        if not Use.bootstrap:
+            r.ImproperlyShared(exceptions='%(datadir)s/tcl.*')
+            r.PackageSpec('sqlite-tcl', '%(datadir)s/tcl*')

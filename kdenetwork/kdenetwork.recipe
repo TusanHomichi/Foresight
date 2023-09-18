@@ -1,0 +1,36 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeNetwork(kdeCorePackageRecipe):
+
+    name = 'kdenetwork'
+    version = '4.6.1'
+
+    buildRequires = [
+        'boost:devel', 'gmp:devel', 'gpgme:devel', 'inputproto:devel',
+        'jasper:devel', 'kdebase-workspace:devel', 'konqueror:devel',
+        'libidn:devel', 'libjpeg:devel', 'libktorrent:devel', 'libotr:devel',
+        'libv4l:devel', 'libvncserver:devel', 'libXdamage:devel', 'libXi:devel',
+        'libxml2:devel', 'libXScrnSaver:devel', 'libxslt:devel',
+        'libXtst:devel', 'PyQt4:python', 'python:devel', 'qca2:devel',
+        'qimageblitz:devel', 'shared-desktop-ontologies:devellib',
+        'strigi:devel'
+    ]
+
+    modules = [
+        'kdnssd',
+        'kget',
+        'kopete',
+        'kppp',
+        'krdc',
+        'krfb',
+        ('kdenetwork-filesharing', 'filesharing'),
+    ]
+
+    def policy(r):
+
+        r.SetModes('%(bindir)s/kppp', 04755)
+

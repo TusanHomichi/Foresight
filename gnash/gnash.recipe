@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Gnash(CPackageRecipe):
+    name = 'gnash'
+    version = '0.8.10'
+    buildRequires = ['SDL:devel', 'gst-plugins-base:devel', 'doxygen:runtime',
+                     'gtk:devel', 'gst-plugins-ffmpeg:lib', 'openldap:devel',
+                     'gst-plugins-bad:lib', 'gtkglext:devel', 'libpng:devel',
+                     'libxml2:devel', 'pkgconfig:devel', 'gstreamer:devel',
+                     'gtk:devel', 'expat:devel', 'glib:devel', 'agg:devel',
+                     'gst-plugins-ugly:lib', 'desktop-file-utils:runtime',
+                     'bzip2:devel', 'gstreamer:runtime', 'dejagnu:devel',
+                     'libXv:devel', 'libtool:devel', 'fontconfig:devel',
+                     'gettext:runtime', 'Mesa:devel', 'libstdc++:devel',
+                     'zip:runtime', 'dejagnu:runtime', 'libX11:devel',
+                     'freetype:devel', 'giflib:devel', 'speex:devel',
+                     'xulrunner:devel', 'zlib:devel', 'boost:devel',
+                     'wget:runtime', 'libXext:devel', 'nc:runtime',
+                     'libjpeg:devel', 'perl:runtime', 'curl:devel',
+                     'GConf:runtime', 'GConf:devel', 'csound:runtime', 'git:runtime']
+    def setup(r):
+        r.addArchive('http://ftp.gnu.org/pub/gnu/gnash/%(version)s/%(name)s-%(version)s.tar.gz')
+        #r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+	r.Configure(' --with-plugins-install=prefix'
+                    ' --with-npapi-plugindir=%(libdir)s/mozilla/plugins/ '
+                    ' --with-npapi-install=prefix --enable-gui=gtk'
+                    ' --enable-media=gst'
+	)
+        r.Make()
+        r.MakeInstall()
+        r.MakeInstall(installtarget='install-plugins')

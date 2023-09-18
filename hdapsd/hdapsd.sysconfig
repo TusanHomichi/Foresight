@@ -1,0 +1,2 @@
+# default sensivity is 15; bump it a little and enable adaptive tuning
+HDAPSD_OPTIONS="-s 22 -a"

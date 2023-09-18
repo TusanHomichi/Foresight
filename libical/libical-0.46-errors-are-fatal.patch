@@ -1,0 +1,72 @@
+Patch by Debarshi Ray <rishi@fedoraproject.org> for libical >= 0.46, which replaces the broken
+overlefts regarding ICAL_ERRORS_ARE_FATAL preprocessor conditions by correct ones. Since libical
+0.43, errors are set to be non-fatal by default. Configure has "#define ICAL_ERRORS_ARE_FATAL 0"
+which simply invalidates "#ifndef" and thus breaks applications like e.g. Zarafa Groupware. More
+details can be found at: https://bugzilla.redhat.com/show_bug.cgi?id=575715
+
+Upstream link: https://sourceforge.net/tracker/?func=detail&aid=3140405&group_id=16077&atid=316077
+
+--- libical-0.46/src/libical/autogenex/ical.h			2010-08-30 22:05:05.000000000 +0200
++++ libical-0.46/src/libical/autogenex/ical.h.errors-are-fatal	2010-12-19 21:39:10.000000000 +0100
+@@ -3272,7 +3272,7 @@
+ void icalerror_set_errno(icalerrorenum x);
+ #endif
+ 
+-#ifdef ICAL_ERRORS_ARE_FATAL
++#if ICAL_ERRORS_ARE_FATAL == 1
+ #undef NDEBUG
+ #endif
+ 
+@@ -3282,7 +3282,7 @@
+ #define icalerror_check_component_type(value,type);
+ 
+ /* Assert with a message */
+-#ifdef ICAL_ERRORS_ARE_FATAL
++#if ICAL_ERRORS_ARE_FATAL == 1
+ 
+ #ifdef __GNUC__
+ #define icalerror_assert(test,message) if(!(test)){fprintf(stderr,"%s(), %s:%d: %s\n",__FUNCTION__,__FILE__,__LINE__,message);icalerror_stop_here(); abort();}
+--- libical-0.46/src/libical/icalerror.h			2010-08-30 22:05:06.000000000 +0200
++++ libical-0.46/src/libical/icalerror.h.errors-are-fatal	2010-12-19 21:40:12.000000000 +0100
+@@ -121,7 +121,7 @@
+ void icalerror_set_errno(icalerrorenum x); 
+ #endif
+ 
+-#ifdef ICAL_ERRORS_ARE_FATAL
++#if ICAL_ERRORS_ARE_FATAL == 1
+ #undef NDEBUG
+ #endif
+ 
+@@ -131,7 +131,7 @@
+ #define icalerror_check_component_type(value,type);
+ 
+ /* Assert with a message */
+-#ifdef ICAL_ERRORS_ARE_FATAL
++#if ICAL_ERRORS_ARE_FATAL == 1
+ 
+ #ifdef __GNUC__
+ #define icalerror_assert(test,message) if(!(test)){fprintf(stderr,"%s(), %s:%d: %s\n",__FUNCTION__,__FILE__,__LINE__,message);icalerror_stop_here(); abort();}
+--- libical-0.46/src/libical/icalparser.c			2010-08-30 22:05:06.000000000 +0200
++++ libical-0.46/src/libical/icalparser.c.errors-are-fatal	2010-12-19 21:41:18.000000000 +0100
+@@ -930,10 +930,7 @@
+ 
+                 /* Change for mozilla */
+                 /* have the option of being flexible towards unsupported parameters */
+-                #ifndef ICAL_ERRORS_ARE_FATAL
+-                continue;
+-                #endif
+-
++		#if ICAL_ERRORS_ARE_FATAL == 1
+ 		insert_error(tail, str, "Cant parse parameter name",
+ 			     ICAL_XLICERRORTYPE_PARAMETERNAMEPARSEERROR);
+ 		tail = 0;
+@@ -947,6 +944,9 @@
+ 			name = 0;
+ 		}
+ 		return 0;
++		#else
++		continue;
++		#endif
+ 	    }
+ 
+ 	    /* if (pvalue) {

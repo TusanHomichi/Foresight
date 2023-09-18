@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Name=last.fm
+Exec=/opt/last.fm/bin/last.fm.sh
+Icon=/opt/last.fm/res/app_55.bmp

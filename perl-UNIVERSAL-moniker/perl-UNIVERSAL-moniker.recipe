@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+loadSuperClass('cpanpackage')
+class PerlUNIVERSALMoniker(CPANPackageRecipe):
+    name = 'perl-UNIVERSAL-moniker'
+    version = '0.08'
+    server = 'http://search.cpan.org/CPAN/'
+    buildRequires = [ 'gcc', 'glibc:devel' ]

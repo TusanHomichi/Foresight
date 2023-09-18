@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Sublime Text
+GenericName=Text Editor
+Comment=Edit source code
+Exec="/usr/bin/subl" %F
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=text/plain;
+Icon=/usr/share/pixmaps/sublime.png
+Categories=TextEditor;Development;Utility;

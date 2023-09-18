@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class DarkTable(CPackageRecipe):
+    name = 'darktable'
+    version = '1.2'
+
+    buildRequires = [ 'Mesa:devel', 'OpenEXR:devel', 'SDL:devel', 'atk:devel',
+                      'cairo:devel', 'cmake:runtime', 'curl:devel',
+                      'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime',
+                      'exiv2:devel', 'freetype:devel', 'gdk-pixbuf:devel',
+                      'gettext:runtime', 'glib:devel', 'gtk:devel',
+                      'ilmbase:devel', 'intltool:runtime', 'json-glib:devel',
+                      'lcms2:devel', 'lensfun:devel', 'libICE:devel', 'libSM:devel',
+                      'libX11:devel', 'libXext:devel', 'libgnome-keyring:devel',
+                      'libgomp:devellib', 'libgphoto2:devel', 'libjpeg:devel',
+                      'libpng:devel', 'librsvg:devel', 'libsoup:devel',
+                      'libstdc++:devel', 'libtiff:devel', 'libxml2:devel',
+                      'pango:devel', 'pkgconfig:devel', 'sqlite:devel',
+                      'zlib:devel', 'flickcurl:devel', 'libxslt:runtime', ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/')
+        r.CMake(' -DCMAKE_LIBRARY_PATH:PATH=%(libdir)s '
+                ' -DDONT_INSTALL_GCONF_SCHEMAS:BOOLEAN=ON '
+                ' -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo '
+                ' -DBINARY_PACKAGE_BUILD=1 '
+                ' -DPROJECT_VERSION:STRING="%(name)s-%(version)s"', objDir = 'build')
+
+        r.Make(dir = 'build')
+        r.MakeInstall(dir = 'build')
+        r.Remove('%(datadir)s/doc/darktable', recursive = True)
+        r.SharedLibrary(subtrees='%(libdir)s/%(name)s/')

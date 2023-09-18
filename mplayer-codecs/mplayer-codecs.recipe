@@ -1,0 +1,29 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MPLayerCodecs(PackageRecipe):
+
+    name = 'mplayer-codecs'
+    version = '20071007'
+
+    buildRequires = [
+        'glibc:devel', 'libstdc++:devel'
+    ]
+
+    def setup(r):
+
+        r.macros.codecsdir = '%(libdir)s/mplayer-codecs'
+        r.macros.site = 'http://www2.mplayerhq.hu/MPlayer/releases/codecs'
+
+        r.addArchive('%(site)s/essential-%(version)s.tar.bz2', use=Arch.x86)
+        r.addArchive('%(site)s/essential-amd64-%(version)s.tar.bz2', use=Arch.x86_64)
+
+        r.Install('*', '%(codecsdir)s/')
+
+        r.Provides(exceptions='%(codecsdir)s/')
+        r.Requires(exceptions='%(codecsdir)s/')
+
+        r.Strip(exceptions='.*')
+

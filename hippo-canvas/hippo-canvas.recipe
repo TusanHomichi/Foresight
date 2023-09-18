@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class HippoCanvas(GnomePackageRecipe):
+
+    name = 'hippo-canvas'
+    version = '0.3.1'
+
+    buildRequires = ['libcroco:devel', 'pygtk:devel', 'librsvg:devel']

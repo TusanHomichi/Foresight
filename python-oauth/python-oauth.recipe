@@ -1,0 +1,11 @@
+class PyOAUTH(AutoPackageRecipe):
+    name = 'python-oauth'
+    version = '1.0.1'
+
+    buildRequires = [ 'python:devel',
+                      'python-setuptools:python'
+                    ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/o/oauth/oauth-%(version)s.tar.gz')
+        r.PythonSetup()

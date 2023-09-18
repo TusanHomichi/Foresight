@@ -1,0 +1,590 @@
+From 65e7bc18a9a7b89e55b87a74ae47d45269b51847 Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Fri, 30 Oct 2009 03:32:38 +0100
+Subject: [PATCH] use cloexec wrappers wherever applicable
+
+---
+ src/daemon/cpulimit.c             |    4 +---
+ src/modules/module-mmkbd-evdev.c  |    2 +-
+ src/modules/module-pipe-sink.c    |    3 +--
+ src/modules/module-pipe-source.c  |    3 +--
+ src/modules/module-solaris.c      |    2 +-
+ src/modules/oss/oss-util.c        |   12 +++++-------
+ src/modules/rtp/module-rtp-recv.c |    2 +-
+ src/modules/rtp/module-rtp-send.c |    6 ++----
+ src/pulse/mainloop-signal.c       |    4 +---
+ src/pulse/mainloop.c              |    4 +---
+ src/pulsecore/authkey.c           |   10 +++-------
+ src/pulsecore/core-util.c         |    5 +----
+ src/pulsecore/cpu-arm.c           |    2 +-
+ src/pulsecore/fdsem.c             |   13 ++++---------
+ src/pulsecore/lock-autospawn.c    |    5 +----
+ src/pulsecore/pid.c               |    5 +----
+ src/pulsecore/random.c            |    6 +-----
+ src/pulsecore/sink.c              |    4 ++--
+ src/pulsecore/socket-client.c     |    4 +---
+ src/pulsecore/socket-server.c     |   16 ++++------------
+ src/pulsecore/socket-util.c       |    2 +-
+ src/pulsecore/sound-file-stream.c |    6 +-----
+ src/pulsecore/sound-file.c        |    6 +-----
+ src/utils/pacat.c                 |    2 +-
+ src/utils/pacmd.c                 |    2 +-
+ 25 files changed, 39 insertions(+), 91 deletions(-)
+
+diff --git a/src/daemon/cpulimit.c b/src/daemon/cpulimit.c
+index c2877ec..f5042a7 100644
+--- a/src/daemon/cpulimit.c
++++ b/src/daemon/cpulimit.c
+@@ -188,15 +188,13 @@ int pa_cpu_limit_init(pa_mainloop_api *m) {
+     last_time = pa_rtclock_now();
+ 
+     /* Prepare the main loop pipe */
+-    if (pipe(the_pipe) < 0) {
++    if (pa_pipe_cloexec(the_pipe) < 0) {
+         pa_log("pipe() failed: %s", pa_cstrerror(errno));
+         return -1;
+     }
+ 
+     pa_make_fd_nonblock(the_pipe[0]);
+     pa_make_fd_nonblock(the_pipe[1]);
+-    pa_make_fd_cloexec(the_pipe[0]);
+-    pa_make_fd_cloexec(the_pipe[1]);
+ 
+     api = m;
+     io_event = api->io_new(m, the_pipe[0], PA_IO_EVENT_INPUT, callback, NULL);
+diff --git a/src/modules/module-mmkbd-evdev.c b/src/modules/module-mmkbd-evdev.c
+index 516bf41..14a9dd3 100644
+--- a/src/modules/module-mmkbd-evdev.c
++++ b/src/modules/module-mmkbd-evdev.c
+@@ -175,7 +175,7 @@ int pa__init(pa_module*m) {
+     u->fd = -1;
+     u->fd_type = 0;
+ 
+-    if ((u->fd = open(pa_modargs_get_value(ma, "device", DEFAULT_DEVICE), O_RDONLY|O_NOCTTY)) < 0) {
++    if ((u->fd = pa_open_cloexec(pa_modargs_get_value(ma, "device", DEFAULT_DEVICE), O_RDONLY, 0)) < 0) {
+         pa_log("Failed to open evdev device: %s", pa_cstrerror(errno));
+         goto fail;
+     }
+diff --git a/src/modules/module-pipe-sink.c b/src/modules/module-pipe-sink.c
+index 9c16932..10cc341 100644
+--- a/src/modules/module-pipe-sink.c
++++ b/src/modules/module-pipe-sink.c
+@@ -253,12 +253,11 @@ int pa__init(pa_module*m) {
+     u->filename = pa_runtime_path(pa_modargs_get_value(ma, "file", DEFAULT_FILE_NAME));
+ 
+     mkfifo(u->filename, 0666);
+-    if ((u->fd = open(u->filename, O_RDWR|O_NOCTTY)) < 0) {
++    if ((u->fd = pa_open_cloexec(u->filename, O_RDWR, 0)) < 0) {
+         pa_log("open('%s'): %s", u->filename, pa_cstrerror(errno));
+         goto fail;
+     }
+ 
+-    pa_make_fd_cloexec(u->fd);
+     pa_make_fd_nonblock(u->fd);
+ 
+     if (fstat(u->fd, &st) < 0) {
+diff --git a/src/modules/module-pipe-source.c b/src/modules/module-pipe-source.c
+index 49104f8..de68093 100644
+--- a/src/modules/module-pipe-source.c
++++ b/src/modules/module-pipe-source.c
+@@ -238,12 +238,11 @@ int pa__init(pa_module*m) {
+     u->filename = pa_runtime_path(pa_modargs_get_value(ma, "file", DEFAULT_FILE_NAME));
+ 
+     mkfifo(u->filename, 0666);
+-    if ((u->fd = open(u->filename, O_RDWR|O_NOCTTY)) < 0) {
++    if ((u->fd = pa_open_cloexec(u->filename, O_RDWR, 0)) < 0) {
+         pa_log("open('%s'): %s", u->filename, pa_cstrerror(errno));
+         goto fail;
+     }
+ 
+-    pa_make_fd_cloexec(u->fd);
+     pa_make_fd_nonblock(u->fd);
+ 
+     if (fstat(u->fd, &st) < 0) {
+diff --git a/src/modules/module-solaris.c b/src/modules/module-solaris.c
+index b0d4db4..955997b 100644
+--- a/src/modules/module-solaris.c
++++ b/src/modules/module-solaris.c
+@@ -327,7 +327,7 @@ static int open_audio_device(struct userdata *u, pa_sample_spec *ss) {
+     pa_assert(u);
+     pa_assert(ss);
+ 
+-    if ((u->fd = open(u->device_name, u->mode | O_NONBLOCK)) < 0) {
++    if ((u->fd = pa_open_cloexec(u->device_name, u->mode | O_NONBLOCK)) < 0) {
+         pa_log_warn("open %s failed (%s)", u->device_name, pa_cstrerror(errno));
+         return -1;
+     }
+diff --git a/src/modules/oss/oss-util.c b/src/modules/oss/oss-util.c
+index 5a109ae..41af3ba 100644
+--- a/src/modules/oss/oss-util.c
++++ b/src/modules/oss/oss-util.c
+@@ -55,7 +55,7 @@ int pa_oss_open(const char *device, int *mode, int* pcaps) {
+         pcaps = &caps;
+ 
+     if (*mode == O_RDWR) {
+-        if ((fd = open(device, O_RDWR|O_NDELAY|O_NOCTTY)) >= 0) {
++        if ((fd = pa_open_cloexec(device, O_RDWR|O_NDELAY, 0)) >= 0) {
+             ioctl(fd, SNDCTL_DSP_SETDUPLEX, 0);
+ 
+             if (ioctl(fd, SNDCTL_DSP_GETCAPS, pcaps) < 0) {
+@@ -71,14 +71,14 @@ int pa_oss_open(const char *device, int *mode, int* pcaps) {
+             pa_close(fd);
+         }
+ 
+-        if ((fd = open(device, (*mode = O_WRONLY)|O_NDELAY|O_NOCTTY)) < 0) {
+-            if ((fd = open(device, (*mode = O_RDONLY)|O_NDELAY|O_NOCTTY)) < 0) {
++        if ((fd = pa_open_cloexec(device, (*mode = O_WRONLY)|O_NDELAY, 0)) < 0) {
++            if ((fd = pa_open_cloexec(device, (*mode = O_RDONLY)|O_NDELAY, 0)) < 0) {
+                 pa_log("open('%s'): %s", device, pa_cstrerror(errno));
+                 goto fail;
+             }
+         }
+     } else {
+-        if ((fd = open(device, *mode|O_NDELAY|O_NOCTTY)) < 0) {
++        if ((fd = pa_open_cloexec(device, *mode|O_NDELAY, 0)) < 0) {
+             pa_log("open('%s'): %s", device, pa_cstrerror(errno));
+             goto fail;
+         }
+@@ -145,8 +145,6 @@ success:
+     pa_log_debug("capabilities:%s", t);
+     pa_xfree(t);
+ 
+-    pa_make_fd_cloexec(fd);
+-
+     return fd;
+ 
+ fail:
+@@ -403,7 +401,7 @@ int pa_oss_get_hw_description(const char *dev, char *name, size_t l) {
+ static int open_mixer(const char *mixer) {
+     int fd;
+ 
+-    if ((fd = open(mixer, O_RDWR|O_NDELAY|O_NOCTTY)) >= 0)
++    if ((fd = pa_open_cloexec(mixer, O_RDWR|O_NDELAY, 0)) >= 0)
+         return fd;
+ 
+     return -1;
+diff --git a/src/modules/rtp/module-rtp-recv.c b/src/modules/rtp/module-rtp-recv.c
+index 1a05f57..7dbb1ef 100644
+--- a/src/modules/rtp/module-rtp-recv.c
++++ b/src/modules/rtp/module-rtp-recv.c
+@@ -390,7 +390,7 @@ static int mcast_socket(const struct sockaddr* sa, socklen_t salen) {
+     pa_assert(salen > 0);
+ 
+     af = sa->sa_family;
+-    if ((fd = socket(af, SOCK_DGRAM, 0)) < 0) {
++    if ((fd = pa_socket_cloexec(af, SOCK_DGRAM, 0)) < 0) {
+         pa_log("Failed to create socket: %s", pa_cstrerror(errno));
+         goto fail;
+     }
+diff --git a/src/modules/rtp/module-rtp-send.c b/src/modules/rtp/module-rtp-send.c
+index 8e1cfe3..ab81522 100644
+--- a/src/modules/rtp/module-rtp-send.c
++++ b/src/modules/rtp/module-rtp-send.c
+@@ -262,7 +262,7 @@ int pa__init(pa_module*m) {
+         goto fail;
+     }
+ 
+-    if ((fd = socket(af, SOCK_DGRAM, 0)) < 0) {
++    if ((fd = pa_socket_cloexec(af, SOCK_DGRAM, 0)) < 0) {
+         pa_log("socket() failed: %s", pa_cstrerror(errno));
+         goto fail;
+     }
+@@ -277,7 +277,7 @@ int pa__init(pa_module*m) {
+ #endif
+     }
+ 
+-    if ((sap_fd = socket(af, SOCK_DGRAM, 0)) < 0) {
++    if ((sap_fd = pa_socket_cloexec(af, SOCK_DGRAM, 0)) < 0) {
+         pa_log("socket() failed: %s", pa_cstrerror(errno));
+         goto fail;
+     }
+@@ -316,8 +316,6 @@ int pa__init(pa_module*m) {
+     /* If the socket queue is full, let's drop packets */
+     pa_make_fd_nonblock(fd);
+     pa_make_udp_socket_low_delay(fd);
+-    pa_make_fd_cloexec(fd);
+-    pa_make_fd_cloexec(sap_fd);
+ 
+     pa_source_output_new_data_init(&data);
+     pa_proplist_sets(data.proplist, PA_PROP_MEDIA_NAME, "RTP Monitor Stream");
+diff --git a/src/pulse/mainloop-signal.c b/src/pulse/mainloop-signal.c
+index 3dc7439..70c0122 100644
+--- a/src/pulse/mainloop-signal.c
++++ b/src/pulse/mainloop-signal.c
+@@ -124,15 +124,13 @@ int pa_signal_init(pa_mainloop_api *a) {
+     pa_assert(signal_pipe[1] == -1);
+     pa_assert(!io_event);
+ 
+-    if (pipe(signal_pipe) < 0) {
++    if (pa_pipe_cloexec(signal_pipe) < 0) {
+         pa_log("pipe(): %s", pa_cstrerror(errno));
+         return -1;
+     }
+ 
+     pa_make_fd_nonblock(signal_pipe[0]);
+     pa_make_fd_nonblock(signal_pipe[1]);
+-    pa_make_fd_cloexec(signal_pipe[0]);
+-    pa_make_fd_cloexec(signal_pipe[1]);
+ 
+     api = a;
+ 
+diff --git a/src/pulse/mainloop.c b/src/pulse/mainloop.c
+index 090ac8c..6cd089e 100644
+--- a/src/pulse/mainloop.c
++++ b/src/pulse/mainloop.c
+@@ -482,7 +482,7 @@ pa_mainloop *pa_mainloop_new(void) {
+ 
+     m = pa_xnew0(pa_mainloop, 1);
+ 
+-    if (pipe(m->wakeup_pipe) < 0) {
++    if (pa_pipe_cloexec(m->wakeup_pipe) < 0) {
+         pa_log_error("ERROR: cannot create wakeup pipe");
+         pa_xfree(m);
+         return NULL;
+@@ -490,8 +490,6 @@ pa_mainloop *pa_mainloop_new(void) {
+ 
+     pa_make_fd_nonblock(m->wakeup_pipe[0]);
+     pa_make_fd_nonblock(m->wakeup_pipe[1]);
+-    pa_make_fd_cloexec(m->wakeup_pipe[0]);
+-    pa_make_fd_cloexec(m->wakeup_pipe[1]);
+ 
+     m->rebuild_pollfds = TRUE;
+ 
+diff --git a/src/pulsecore/authkey.c b/src/pulsecore/authkey.c
+index 15613e2..d671e36 100644
+--- a/src/pulsecore/authkey.c
++++ b/src/pulsecore/authkey.c
+@@ -70,10 +70,6 @@ static int generate(int fd, void *ret_data, size_t length) {
+ #define O_BINARY 0
+ #endif
+ 
+-#ifndef O_NOCTTY
+-#define O_NOCTTY 0
+-#endif
+-
+ /* Load an euthorization cookie from file fn and store it in data. If
+  * the cookie file doesn't exist, create it */
+ static int load(const char *fn, void *data, size_t length) {
+@@ -86,9 +82,9 @@ static int load(const char *fn, void *data, size_t length) {
+     pa_assert(data);
+     pa_assert(length > 0);
+ 
+-    if ((fd = open(fn, O_RDWR|O_CREAT|O_BINARY|O_NOCTTY, S_IRUSR|S_IWUSR)) < 0) {
++    if ((fd = pa_open_cloexec(fn, O_RDWR|O_CREAT|O_BINARY, S_IRUSR|S_IWUSR)) < 0) {
+ 
+-        if (errno != EACCES || (fd = open(fn, O_RDONLY|O_BINARY|O_NOCTTY)) < 0) {
++        if (errno != EACCES || (fd = open(fn, O_RDONLY|O_BINARY)) < 0) {
+             pa_log_warn("Failed to open cookie file '%s': %s", fn, pa_cstrerror(errno));
+             goto finish;
+         } else
+@@ -204,7 +200,7 @@ int pa_authkey_save(const char *fn, const void *data, size_t length) {
+     if (!(p = normalize_path(fn)))
+         return -2;
+ 
+-    if ((fd = open(p, O_RDWR|O_CREAT|O_NOCTTY, S_IRUSR|S_IWUSR)) < 0) {
++    if ((fd = pa_open_cloexec(p, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR)) < 0) {
+         pa_log_warn("Failed to open cookie file '%s': %s", fn, pa_cstrerror(errno));
+         goto finish;
+     }
+diff --git a/src/pulsecore/core-util.c b/src/pulsecore/core-util.c
+index 34516ee..19e1296 100644
+--- a/src/pulsecore/core-util.c
++++ b/src/pulsecore/core-util.c
+@@ -1200,10 +1200,7 @@ int pa_lock_lockfile(const char *fn) {
+     for (;;) {
+         struct stat st;
+ 
+-        if ((fd = open(fn, O_CREAT|O_RDWR
+-#ifdef O_NOCTTY
+-                       |O_NOCTTY
+-#endif
++        if ((fd = pa_open_cloexec(fn, O_CREAT|O_RDWR
+ #ifdef O_NOFOLLOW
+                        |O_NOFOLLOW
+ #endif
+diff --git a/src/pulsecore/cpu-arm.c b/src/pulsecore/cpu-arm.c
+index 453b784..6bb2ead 100644
+--- a/src/pulsecore/cpu-arm.c
++++ b/src/pulsecore/cpu-arm.c
+@@ -62,7 +62,7 @@ static char *get_cpuinfo(void) {
+ 
+     cpuinfo = pa_xmalloc(MAX_BUFFER);
+ 
+-    if ((fd = open("/proc/cpuinfo", O_RDONLY)) < 0) {
++    if ((fd = pa_open_cloexec("/proc/cpuinfo", O_RDONLY, 0)) < 0) {
+         pa_xfree(cpuinfo);
+         return NULL;
+     }
+diff --git a/src/pulsecore/fdsem.c b/src/pulsecore/fdsem.c
+index 380f34f..ea14e8a 100644
+--- a/src/pulsecore/fdsem.c
++++ b/src/pulsecore/fdsem.c
+@@ -62,19 +62,15 @@ pa_fdsem *pa_fdsem_new(void) {
+     f = pa_xmalloc(PA_ALIGN(sizeof(pa_fdsem)) + PA_ALIGN(sizeof(pa_fdsem_data)));
+ 
+ #ifdef HAVE_SYS_EVENTFD_H
+-    if ((f->efd = eventfd(0, 0)) >= 0) {
+-        pa_make_fd_cloexec(f->efd);
++    if ((f->efd = eventfd(0, EFD_CLOEXEC)) >= 0)
+         f->fds[0] = f->fds[1] = -1;
+-    } else
++    else
+ #endif
+     {
+-        if (pipe(f->fds) < 0) {
++        if (pa_pipe_cloexec(f->fds) < 0) {
+             pa_xfree(f);
+             return NULL;
+         }
+-
+-        pa_make_fd_cloexec(f->fds[0]);
+-        pa_make_fd_cloexec(f->fds[1]);
+     }
+ 
+     f->data = (pa_fdsem_data*) ((uint8_t*) f + PA_ALIGN(sizeof(pa_fdsem)));
+@@ -114,12 +110,11 @@ pa_fdsem *pa_fdsem_new_shm(pa_fdsem_data *data, int* event_fd) {
+ 
+     f = pa_xnew(pa_fdsem, 1);
+ 
+-    if ((f->efd = eventfd(0, 0)) < 0) {
++    if ((f->efd = eventfd(0, EFD_CLOEXEC)) < 0) {
+         pa_xfree(f);
+         return NULL;
+     }
+ 
+-    pa_make_fd_cloexec(f->efd);
+     f->fds[0] = f->fds[1] = -1;
+     f->data = data;
+ 
+diff --git a/src/pulsecore/lock-autospawn.c b/src/pulsecore/lock-autospawn.c
+index c0df793..65e3563 100644
+--- a/src/pulsecore/lock-autospawn.c
++++ b/src/pulsecore/lock-autospawn.c
+@@ -87,12 +87,9 @@ static int ref(void) {
+     pa_assert(pipe_fd[0] < 0);
+     pa_assert(pipe_fd[1] < 0);
+ 
+-    if (pipe(pipe_fd) < 0)
++    if (pa_pipe_cloexec(pipe_fd) < 0)
+         return -1;
+ 
+-    pa_make_fd_cloexec(pipe_fd[0]);
+-    pa_make_fd_cloexec(pipe_fd[1]);
+-
+     pa_make_fd_nonblock(pipe_fd[1]);
+     pa_make_fd_nonblock(pipe_fd[0]);
+ 
+diff --git a/src/pulsecore/pid.c b/src/pulsecore/pid.c
+index 996946c..c92e831 100644
+--- a/src/pulsecore/pid.c
++++ b/src/pulsecore/pid.c
+@@ -88,10 +88,7 @@ static int open_pid_file(const char *fn, int mode) {
+     for (;;) {
+         struct stat st;
+ 
+-        if ((fd = open(fn, mode
+-#ifdef O_NOCTTY
+-                       |O_NOCTTY
+-#endif
++        if ((fd = pa_open_cloexec(fn, mode
+ #ifdef O_NOFOLLOW
+                        |O_NOFOLLOW
+ #endif
+diff --git a/src/pulsecore/random.c b/src/pulsecore/random.c
+index 518c281..a87d24e 100644
+--- a/src/pulsecore/random.c
++++ b/src/pulsecore/random.c
+@@ -62,11 +62,7 @@ static int random_proper(void *ret_data, size_t length) {
+     while (*device) {
+         ret = 0;
+ 
+-        if ((fd = open(*device, O_RDONLY
+-#ifdef O_NOCTTY
+-                       | O_NOCTTY
+-#endif
+-             )) >= 0) {
++        if ((fd = pa_open_cloexec(*device, O_RDONLY, 0)) >= 0) {
+ 
+             if ((r = pa_loop_read(fd, ret_data, length, NULL)) < 0 || (size_t) r != length)
+                 ret = -1;
+diff --git a/src/pulsecore/sink.c b/src/pulsecore/sink.c
+index bda92fc..221b569 100644
+--- a/src/pulsecore/sink.c
++++ b/src/pulsecore/sink.c
+@@ -1342,7 +1342,7 @@ static void propagate_reference_volume(pa_sink *s) {
+ void pa_sink_set_volume(
+         pa_sink *s,
+         const pa_cvolume *volume,
+-        pa_bool_t sendmsg,
++        pa_bool_t send_msg,
+         pa_bool_t save) {
+ 
+     pa_cvolume old_reference_volume;
+@@ -1411,7 +1411,7 @@ void pa_sink_set_volume(
+         s->soft_volume = s->real_volume;
+ 
+     /* This tells the sink that soft and/or virtual volume changed */
+-    if (sendmsg)
++    if (send_msg)
+         pa_assert_se(pa_asyncmsgq_send(s->asyncmsgq, PA_MSGOBJECT(s), PA_SINK_MESSAGE_SET_VOLUME, NULL, 0, NULL) == 0);
+ 
+     if (reference_changed)
+diff --git a/src/pulsecore/socket-client.c b/src/pulsecore/socket-client.c
+index b9d6950..ef3c29e 100644
+--- a/src/pulsecore/socket-client.c
++++ b/src/pulsecore/socket-client.c
+@@ -257,13 +257,11 @@ static int sockaddr_prepare(pa_socket_client *c, const struct sockaddr *sa, size
+ 
+     c->local = pa_socket_address_is_local(sa);
+ 
+-    if ((c->fd = socket(sa->sa_family, SOCK_STREAM, 0)) < 0) {
++    if ((c->fd = pa_socket_cloexec(sa->sa_family, SOCK_STREAM, 0)) < 0) {
+         pa_log("socket(): %s", pa_cstrerror(errno));
+         return -1;
+     }
+ 
+-    pa_make_fd_cloexec(c->fd);
+-
+ #ifdef HAVE_IPV6
+     if (sa->sa_family == AF_INET || sa->sa_family == AF_INET6)
+ #else
+diff --git a/src/pulsecore/socket-server.c b/src/pulsecore/socket-server.c
+index e660700..5d55de3 100644
+--- a/src/pulsecore/socket-server.c
++++ b/src/pulsecore/socket-server.c
+@@ -104,13 +104,11 @@ static void callback(pa_mainloop_api *mainloop, pa_io_event *e, int fd, pa_io_ev
+ 
+     pa_socket_server_ref(s);
+ 
+-    if ((nfd = accept(fd, NULL, NULL)) < 0) {
++    if ((nfd = pa_accept_cloexec(fd, NULL, NULL)) < 0) {
+         pa_log("accept(): %s", pa_cstrerror(errno));
+         goto finish;
+     }
+ 
+-    pa_make_fd_cloexec(nfd);
+-
+     if (!s->on_connection) {
+         pa_close(nfd);
+         goto finish;
+@@ -186,13 +184,11 @@ pa_socket_server* pa_socket_server_new_unix(pa_mainloop_api *m, const char *file
+     pa_assert(m);
+     pa_assert(filename);
+ 
+-    if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) < 0) {
++    if ((fd = pa_socket_cloexec(PF_UNIX, SOCK_STREAM, 0)) < 0) {
+         pa_log("socket(): %s", pa_cstrerror(errno));
+         goto fail;
+     }
+ 
+-    pa_make_fd_cloexec(fd);
+-
+     memset(&sa, 0, sizeof(sa));
+     sa.sun_family = AF_UNIX;
+     pa_strlcpy(sa.sun_path, filename, sizeof(sa.sun_path));
+@@ -246,13 +242,11 @@ pa_socket_server* pa_socket_server_new_ipv4(pa_mainloop_api *m, uint32_t address
+     pa_assert(m);
+     pa_assert(port);
+ 
+-    if ((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
++    if ((fd = pa_socket_cloexec(PF_INET, SOCK_STREAM, 0)) < 0) {
+         pa_log("socket(PF_INET): %s", pa_cstrerror(errno));
+         goto fail;
+     }
+ 
+-    pa_make_fd_cloexec(fd);
+-
+ #ifdef SO_REUSEADDR
+     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
+         pa_log("setsockopt(): %s", pa_cstrerror(errno));
+@@ -299,13 +293,11 @@ pa_socket_server* pa_socket_server_new_ipv6(pa_mainloop_api *m, const uint8_t ad
+     pa_assert(m);
+     pa_assert(port > 0);
+ 
+-    if ((fd = socket(PF_INET6, SOCK_STREAM, 0)) < 0) {
++    if ((fd = pa_socket_cloexec(PF_INET6, SOCK_STREAM, 0)) < 0) {
+         pa_log("socket(PF_INET6): %s", pa_cstrerror(errno));
+         goto fail;
+     }
+ 
+-    pa_make_fd_cloexec(fd);
+-
+ #ifdef IPV6_V6ONLY
+     on = 1;
+     if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) < 0)
+diff --git a/src/pulsecore/socket-util.c b/src/pulsecore/socket-util.c
+index 5fd5dd6..651779f 100644
+--- a/src/pulsecore/socket-util.c
++++ b/src/pulsecore/socket-util.c
+@@ -239,7 +239,7 @@ int pa_unix_socket_is_stale(const char *fn) {
+ 
+     pa_assert(fn);
+ 
+-    if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) < 0) {
++    if ((fd = pa_socket_cloexec(PF_UNIX, SOCK_STREAM, 0)) < 0) {
+         pa_log("socket(): %s", pa_cstrerror(errno));
+         goto finish;
+     }
+diff --git a/src/pulsecore/sound-file-stream.c b/src/pulsecore/sound-file-stream.c
+index 16de492..53674ba 100644
+--- a/src/pulsecore/sound-file-stream.c
++++ b/src/pulsecore/sound-file-stream.c
+@@ -252,11 +252,7 @@ int pa_play_file(
+     u->readf_function = NULL;
+     u->memblockq = NULL;
+ 
+-    if ((fd = open(fname, O_RDONLY
+-#ifdef O_NOCTTY
+-                   |O_NOCTTY
+-#endif
+-                   )) < 0) {
++    if ((fd = pa_open_cloexec(fname, O_RDONLY, 0)) < 0) {
+         pa_log("Failed to open file %s: %s", fname, pa_cstrerror(errno));
+         goto fail;
+     }
+diff --git a/src/pulsecore/sound-file.c b/src/pulsecore/sound-file.c
+index 2d9b76a..d8c10b1 100644
+--- a/src/pulsecore/sound-file.c
++++ b/src/pulsecore/sound-file.c
+@@ -62,11 +62,7 @@ int pa_sound_file_load(
+ 
+     pa_memchunk_reset(chunk);
+ 
+-    if ((fd = open(fname, O_RDONLY
+-#ifdef O_NOCTTY
+-                   |O_NOCTTY
+-#endif
+-                   )) < 0) {
++    if ((fd = pa_open_cloexec(fname, O_RDONLY, 0)) < 0) {
+         pa_log("Failed to open file %s: %s", fname, pa_cstrerror(errno));
+         goto finish;
+     }
+diff --git a/src/utils/pacat.c b/src/utils/pacat.c
+index 5f29ba3..d348c16 100644
+--- a/src/utils/pacat.c
++++ b/src/utils/pacat.c
+@@ -906,7 +906,7 @@ int main(int argc, char *argv[]) {
+ 
+         filename = argv[optind];
+ 
+-        if ((fd = open(argv[optind], mode == PLAYBACK ? O_RDONLY : O_WRONLY|O_TRUNC|O_CREAT, 0666)) < 0) {
++        if ((fd = pa_open_cloexec(argv[optind], mode == PLAYBACK ? O_RDONLY : O_WRONLY|O_TRUNC|O_CREAT, 0666)) < 0) {
+             pa_log(_("open(): %s"), strerror(errno));
+             goto quit;
+         }
+diff --git a/src/utils/pacmd.c b/src/utils/pacmd.c
+index 5ef57e3..ef58e9c 100644
+--- a/src/utils/pacmd.c
++++ b/src/utils/pacmd.c
+@@ -70,7 +70,7 @@ int main(int argc, char*argv[]) {
+         goto fail;
+     }
+ 
+-    if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) < 0) {
++    if ((fd = pa_socket_cloexec(PF_UNIX, SOCK_STREAM, 0)) < 0) {
+         pa_log(_("socket(PF_UNIX, SOCK_STREAM, 0): %s"), strerror(errno));
+         goto fail;
+     }
+-- 
+1.6.3.3
+

@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Eject(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'eject'
+    version = '2.1.5'
+    rpmRelease = '15.fc12'
+    rpmPatches = [ 'eject-2.1.1-verbose.patch',
+                   'eject-timeout.patch',
+                   'eject-2.1.5-opendevice.patch',
+                   'eject-2.1.5-spaces.patch',
+                   'eject-2.1.5-lock.patch',
+                   'eject-2.1.5-umount.patch']
+    rpmSources = [ 'eject.pam' ]
+
+    buildRequires = [ 'gettext:runtime', 'texinfo:runtime', 
+                      'intltool:runtime', 'usermode:runtime' ]
+
+    def policy(r):
+        r.Install('eject.pam', '%(sysconfdir)s/pam.d/%(name)s', mode = 0644)
+        r.Create('%(sysconfdir)s/security/console.apps/%(name)s',
+                 contents = 'FALLBACK=true')
+        r.Move('%(bindir)s/%(name)s', '%(sbindir)s/')
+        r.ConsoleHelper('%(bindir)s/%(name)s', '%(sbindir)s/%(name)s')
+        

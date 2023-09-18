@@ -1,0 +1,17 @@
+class UbuntuFontFamilyRecipe(PackageRecipe):
+
+    name = 'ubuntu-font-family'
+    version = '0.70.1'
+
+    buildRequires = [
+         'fontconfig:runtime',
+         'mkfontdir:runtime',
+         'unzip:runtime'
+    ]
+
+    def setup(r):
+        r.addArchive('http://font.ubuntu.com/download/')
+        r.MakeDirs('%(datadir)s/fonts/truetype')
+        r.Copy('*.ttf', '%(datadir)s/fonts/truetype')
+        r.Doc('*.txt')
+

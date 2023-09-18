@@ -1,0 +1,30 @@
+--- libxcb-1.0/src/Makefile.in.usesource	2006-12-06 15:22:10.000000000 -0500
++++ libxcb-1.0/src/Makefile.in	2006-12-06 15:23:45.000000000 -0500
+@@ -860,19 +860,17 @@
+ 
+ $(EXTHEADERS) $(EXTSOURCES): c-client.xsl
+ 
++# this hack works because we know that all the files have been
++# pregenerated, but make might try to rebuild them with buggy
++# xsltproc because system files in /usr/share/xcb (say) are
++# newer
+ .xml.h:
+-	@n=`dirname $*`; test -d $$n || (echo mkdir $$n; mkdir $$n)
+-	$(XSLTPROC) --stringparam mode header \
+-	            --stringparam base-path $(XCBPROTO_XCBINCLUDEDIR)/ \
+-	            --stringparam extension-path $(XCBPROTO_XCBINCLUDEDIR)/ \
+-	            -o $@ $(srcdir)/c-client.xsl $< 
++	test -f $@
++	touch $@
+ 
+ .xml.c:
+-	@n=`dirname $*`; test -d $$n || (echo mkdir $$n; mkdir $$n)
+-	$(XSLTPROC) --stringparam mode source \
+-	            --stringparam base-path $(XCBPROTO_XCBINCLUDEDIR)/ \
+-	            --stringparam extension-path $(XCBPROTO_XCBINCLUDEDIR)/ \
+-	            -o $@ $(srcdir)/c-client.xsl $< 
++	test -f $@
++	touch $@
+ 
+ $(EXTENSION_XML):
+ 	$(LN_S) -f $(XCBPROTO_XCBINCLUDEDIR)/$@ $@

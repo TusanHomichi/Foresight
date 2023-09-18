@@ -1,0 +1,38 @@
+From dfcf01f73b66209201604ba53042b57ebda36b44 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Cl=C3=A9ment=20DAVID?= <c.david86@gmail.com>
+Date: Fri, 15 Jul 2011 09:11:50 +0200
+Subject: [PATCH 4/7] remove writable prefix check
+
+---
+ configure.in |    8 --------
+ 1 files changed, 0 insertions(+), 8 deletions(-)
+
+diff --git a/configure.in b/configure.in
+index a74a54b..ab21e6b 100755
+--- a/configure.in
++++ b/configure.in
+@@ -635,10 +635,6 @@ if test $JH45INST_FOUND -eq 1; then
+ 	if test \( ! -d "$JH45INST" \); then
+ 		JH45INST_FOUND=0
+ 	fi
+-	if test \( ! -w "$JH45INST" \); then
+-		AC_MSG_ERROR( [ $JAVINST : not writable ])
+-		JH45INST_FOUND=0
+-	fi
+ fi
+ until test $JH45INST_FOUND -eq 1; do
+ 	echo "Please type the directory in which to install the JH45"
+@@ -647,10 +643,6 @@ until test $JH45INST_FOUND -eq 1; do
+ 	if test \( ! -d "$JH45INST" \); then
+ 		JH45INST_FOUND=0
+ 	fi
+-	if test \( ! -w "$JH45INST" \); then
+-		AC_MSG_ERROR( [ $JAVINST : not writable ])
+-		JH45INST_FOUND=0
+-	fi
+ done
+ 
+ ac_cv_lib_JH45INST=$JH45INST
+-- 
+1.7.7
+

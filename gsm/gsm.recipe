@@ -1,0 +1,45 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gsm(AutoPackageRecipe):
+
+    name = 'gsm'
+    version = '1.0.13'
+
+    def unpack(r):
+
+        # r.addArchive('http://kbs.cs.tu-berlin.de/~jutta/gsm/')
+        # canonic source looks missing
+        r.addArchive('gsm-1.0.13.tar.gz')
+        r.addPatch('gsm-makefile.patch', macros = True)
+        r.addPatch('gsm-warnings.patch')
+        r.addPatch('gsm-64bit.patch')
+
+    def configure(r):
+        r.macros.optflags +=  ' -fPIC'
+        r.MakeDirs((
+                '%(mandir)s/man1',
+                '%(mandir)s/man3',
+                '%(bindir)s',
+                '%(libdir)s',
+                '%(includedir)s/gsm'
+                ))
+
+    def make(r):
+        r.Make('all')
+
+    def makeinstall(r):
+        r.MakeInstall(' INSTALL_ROOT=%(destdir)s%(prefix)s'
+                      ' GSM_INSTALL_INC=%(destdir)s%(includedir)s/gsm'
+                      ' GSM_INSTALL_LIB=%(destdir)s%(libdir)s')
+        r.macros.soname = '1.0.12'
+        r.Copy('lib/libgsm.so.%(soname)s', '%(libdir)s/')
+        r.Symlink('libgsm.so.%(soname)s', '%(libdir)s/libgsm.so.1')
+        r.Symlink('libgsm.so.%(soname)s', '%(libdir)s/libgsm.so')
+
+        # some apps look for this in /usr/include
+        r.Symlink('gsm/gsm.h', '%(includedir)s/')
+
+        r.Remove('%(libdir)s/lib*.a')

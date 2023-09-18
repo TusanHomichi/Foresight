@@ -1,0 +1,10 @@
+class Libdv(AutoPackageRecipe):
+	buildRequires = [ 'popt:devel' ]
+
+	name = 'libdv'
+	version = '1.0.0'
+
+	def unpack(r):
+		r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+	def configure(r):
+		r.Configure('--disable-gtk')

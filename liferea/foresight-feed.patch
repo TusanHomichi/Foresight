@@ -1,0 +1,10 @@
+--- liferea/liferea-1.7.5/opml/feedlist_en.opml	2011-03-22 22:08:37.000000000 +0100
++++ liferea/liferea-1.7.5/opml/feedlist_en-2.opml	2011-06-17 22:12:41.000000000 +0200
+@@ -7,6 +7,7 @@
+ 	<!-- lets keep this default English block in sync over all feed lists! -->
+ 	<outline text="Example Feeds">		<!-- translate this title for localized feed list -->
+ 		<outline text="News">
++		        <outline text="Planet Foresight" htmlUrl="http://planet.foresightlinux.org" xmlUrl="http://planet.foresightlinux.org/atom.xml" />
+ 			<outline text="Ars Technica" htmlUrl="http://arstechnica.com" xmlUrl="http://feeds.arstechnica.com/arstechnica/index"/>
+ 			<outline text="Slashdot" htmlUrl="http://slashdot.org"  xmlUrl="http://slashdot.org/slashdot.rss" />
+ 			<outline text="BBC" htmlUrl="http://newsrss.bbc.co.uk/" xmlUrl="http://newsrss.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml"/>

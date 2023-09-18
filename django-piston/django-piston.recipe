@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('pypipackage')
+class DjangoPiston(PyPiPackage, PackageRecipe):
+
+    name = 'django-piston'
+    version = '0.2.3'
+    pyname = 'django-piston'
+
+    buildRequires = [] 

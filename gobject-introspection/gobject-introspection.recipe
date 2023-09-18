@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class GobjectIntrospection(AutoPackageRecipe):
+
+    name = 'gobject-introspection'
+    version = '1.34.2'
+
+    buildRequires = [ 'flex:devel', 'libffi:devel', 'libXfixes:devel',
+                      'flex:runtime', 'python:devel', 'bison:runtime',
+                      'Mesa:devel', 'cairo:devel', 'glib:devel',
+                      'gtk-doc:runtime', 'pkgconfig:devel', ]
+    makeArgs = 'V=1'
+    loadInstalled('python')
+
+    def unpack(r):
+        r.macros.majversion = '.'.join(r.version.split('.')[0:2])
+        r.addArchive('mirror://gnome/%(name)s/%(majversion)s/')
+
+    def policy(r):
+        # Move the python modules to the correct location
+        r.macros.pyver = Python.majversion
+        r.Move('%(libdir)s/%(name)s/giscanner', 
+               '%(libdir)s/python%(pyver)s/site-packages/')
+
+        # bah! we do not want :runtime to fetch :devel... fattens groups
+        for f in ['%(libdir)s/lib.*.so',
+                  '%(bindir)s/g-ir-.*',
+                  '%(datadir)s/gir.*',
+                  '%(libdir)s/python%(pyver)s/site-packages/giscanner']:
+            r.ComponentSpec('devellib', f)
+            r.Requires('%(name)s:python', f)
+
+        # overrides and obsoletes gir-repository...
+        obsolete = '%(datadir)s/%(name)s/obsoletes/' + 'gir-repository'
+        r.Create(obsolete, mode = 0644)
+        r.PackageSpec('gir-repository', obsolete)
+        r.Requires('%(name)s:lib', obsolete)

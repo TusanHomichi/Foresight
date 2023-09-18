@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Stjerm(AutoPackageRecipe):
+    name = 'stjerm'
+    version = '0.16.3'
+ 
+    buildRequires = [
+            'atk:devel', 
+            'cairo:devel', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gdk-pixbuf:devel', 
+            'glib:devel', 
+            'gtk:devel', 
+            'libX11:devel', 
+            'libpng:devel', 
+            'pango:devel', 
+            'pkgconfig:devel', 
+            'vte:devel', 
+            'xz:runtime',
+            'autoconf:runtime', 
+            'automake:runtime', 
+            'libtool:runtime',
+                ]
+ 
+    def unpack(r):
+        r.addArchive('https://github.com/stjerm/stjerm/archive/v%(version)s.tar.gz')
+        r.Create('README')
+        r.Run('chmod +x autogen.sh')
+        r.Run('./autogen.sh')

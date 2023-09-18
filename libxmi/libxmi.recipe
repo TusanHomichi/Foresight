@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007,2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibXMI(AutoPackageRecipe):
+    name = 'libxmi'
+    version = '1.2'
+    buildRequires = ['glib:devel']
+
+    def unpack(r):
+        r.addArchive('ftp://mirrors.kernel.org/gnu/libxmi/')
+
+
+    def configure(r):
+	r.Configure('--host=%(host)s --build=%(build)s --target=%(target)s')

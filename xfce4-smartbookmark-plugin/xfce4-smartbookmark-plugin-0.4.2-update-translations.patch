@@ -1,0 +1,2150 @@
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ar.po xfce4-smartbookmark-plugin-0.4.2/po/ar.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ar.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ar.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,49 @@
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:19-0400\n"
++"PO-Revision-Date: 2008-07-15 23:41+0200\n"
++"Last-Translator: Mohamed Magdy <mohamedmk@gmail.com>\n"
++"Language-Team: Arabeyes <doc@arabeyes.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Arabic\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr ""
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr ""
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr ""
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr ""
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr ""
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr ""
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr ""
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr ""
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ast.po xfce4-smartbookmark-plugin-0.4.2/po/ast.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ast.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ast.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,55 @@
++# Asturian translations for xfce4-smartbookmark-plugin package
++# Tornes al asturianu pal paquete xfce4-smartbookmark-plugin.
++# Copyright (C) 2009 THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++#  <malditoastur@gmail.com>, 2009.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-07-13 19:55+0100\n"
++"Last-Translator: Marcos Antonio Alvarez Costales <marcoscostales@gmail.com>\n"
++"Language-Team: Asturian <alministradores@softastur.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Preferencies"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Marcador intelixente"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiqueta:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Tamañu:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Anubrir etiqueta"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:"
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Consulte sitios web dende'l panel de Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ca.po xfce4-smartbookmark-plugin-0.4.2/po/ca.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ca.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ca.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,56 @@
++# Catalan translation of xfce4-smartbookmark-plugin.
++# Copyright (C) 2006
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Pau Ruŀlan Ferragut <paurullan@bulma.net>, 2006.
++# Carles Muñoz Gorriz <carlesmu@internautas.org>, 2008.
++#
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin 0.4.1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2008-11-16 13:39+0100\n"
++"Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
++"Language-Team: Catalan\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Preferències"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiqueta:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Mida:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Amaga etiqueta"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Accedeix a llocs web des de el quadre de Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ChangeLog xfce4-smartbookmark-plugin-0.4.2/po/ChangeLog
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ChangeLog	2006-08-12 19:41:44.000000000 +0200
++++ xfce4-smartbookmark-plugin-0.4.2/po/ChangeLog	2011-06-12 01:29:47.409246756 +0200
+@@ -1,3 +1,188 @@
++2009-08-08  Mike Massonnet <mmassonnet@xfce.org>
++
++	* ast.po: Asturian translation added (Marcos Alvarez Costales)
++
++2009-07-24  Gabor Kelemen  <kelemeng@gnome.hu>
++
++	* hu.po: Translation reworked.
++
++2009-05-29  Mike Massonnet <mmassonnet@xfce.org>
++
++	* ur_PK.po: Urdu Pakistan translation update (Muhammad Ali Makki)
++	* ur.po: Urdu translation update (Muhammad Ali Makki)
++	* zh_CN.po: Simplified Chinese translation update (Hunt Xu)
++
++2009-04-16  Mike Massonnet <mmassonnet@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++
++2009-03-14  Maximilian Schleiss <maximilian@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++
++2009-03-05  Mike Massonnet <mmassonnet@xfce.org>
++
++	* pt.po: Renamed pt_PT.po to pt.po (bug #4574)
++
++2009-02-22  Mike Massonnet <mmassonnet@xfce.org>
++
++	* es.po: Add Spanish translation (Abel Martín)
++
++2009-02-20  Maximilian Schleiss <maximilian@xfce.org>
++
++	* gl.po: Galician translation update (Leandro Regueiro)
++
++2008-12-20  Alexander Toresson <eulex@xfce.org>
++
++	* sv.po, LINGUAS: Swedish translation added (Daniel Nylander)
++
++2008-11-17  Eren Türkay <erenturkay@xfce.org>
++
++        * tr.po: Turkish translation update (Turkish translation team: Gökmen Görgen, Samed Beyribey, Özgür Kuru, Utku Aydın)
++
++2008-11-16  Maximilian Schleiss <maximilian@xfce.org>
++
++	* ca.po: Catalan translation update (Carles Muñoz Gorriz)
++
++2008-11-13 Og Maciel <ogmaciel@gnome.org>
++
++	* pt_BR.po: Updated Brazilian Portuguese translation by
++	Vladimir Melo.
++
++2008-11-12  Piarres Beobide <pi@beobide.net>
++
++        * eu.po: Basque translation update
++
++2008-11-09  Maximilian Schleiss <maximilian@xfce.org>
++
++	* sq.po: Albanian translation update (Besnik Bleta)
++
++2008-11-01  Michal Várady <miko.vaji@gmail.com>
++
++	* cs.po: Czech translation updated
++
++2008-10-10  Maximilian Schleiss <maximilian@xfce.org>
++
++	* ja.po: Japanese translation update (Nobuhiro Iwamatsu)
++
++2008-10-05  Maximilian Schleiss <maximilian@xfce.org>
++
++	* pt_PT.po: European Portuguese translation update (Nuno Miguel)
++
++2008-10-02  Lars Nielsen <lars@mit-web.dk>
++
++	* da.po: Danish translation update
++
++2008-09-15  Piarres Beobide <pi@beobide.net>
++
++        * eu.po: Basque translation update
++
++2008-09-11  Piarres Beobide <pi@beobide.net>
++
++	* eu.po: Basque translation update
++
++2008-09-08  Maximilian Schleiss <maximilian@xfce.org>
++
++	* id.po: Indonesian translation update (Andhika Padmawan)
++
++2008-07-27 Og Maciel <ogmaciel@gnome.org>
++
++    * *.po, *.pot: Update message catalogs and template
++    * pt_BR.po: Updated Brazilian Portuguese translation
++
++2008-07-15 Mohamed Magdy <alnokta@xfce.org>
++
++        * ar.po: Add Arabic translation
++
++2008-06-26  Maximilian Schleiss <maximilian@xfce.org>
++
++	* gl.po, LINGUAS: Galician translation added (Leandro Regueiro)
++
++2008-06-25  Maximilian Schleiss <maximilian@xfce.org>
++
++	* id.po, LINGUAS: Indonesian translation added (Andhika Padmawan)
++
++2008-05-27  Mike Massonnet <mmassonnet@xfce.org>
++
++	* da.po, LINGUAS: Add Danish translation (Jens Hyllegaard)
++
++2008-05-14	Mike Massonnet <mmassonnet@xfce.org>
++
++	* ja.po: Update Japanese translation (Nobuhiro Iwamatsu)
++
++2007-11-18	Maximilian Schleiss <maximilian@xfce.org>
++
++	* lv.po: Latvian translation added
++	by Rihards Priedītis <rprieditis@inbox.lv>
++
++2007-11-15	Mike Massonnet <mmassonnet@xfce.org>
++
++	* ur.po: Update translation by Muhammad Ali Makki <makki.ma@gmail.com>
++	* pk.po, ur.po: Rename pk.po to ur.po.
++
++2007-11-03  Maximilian Schleiss <maximilian@xfce.org>
++
++	* it.po:  Italian translation update
++	by Fabio Riga <usul@aruba.it>
++
++2007-10-28	Mike Massonnet <mmassonnet@xfce.org>
++
++	* pk.po: Add new translation by محمد علي المكي <makki.ma@gmail.com>
++
++2007-09-07  Og Maciel <ogmaciel@gnome.org>
++
++	* pt_BR.po: Brazilian Protuguese translation added
++	by Vladimir Melo <vladimirmelo@foresightlinux.org>
++
++2007-07-08	Maximilian Schleiss <maximilian@xfce.org>
++
++	* pt_PT.po: European Protuguese translation added
++	by Nuno Miguel <nunis@netcabo.pt>
++
++2007-04-01	Maximilian Schleiss <maximilian@xfce.org>
++
++	* pl.po: Small fixes to the Polish translation
++	by Piotr Maliński <riklaunim@gmail.com>
++
++2007-03-31	Pau Rul-lan Ferragut <paurullan@bulma.net>
++
++	* gb.po: British translation
++	by Jeff Bailes <thepizzaking@gmail.com>
++
++2007-02-20	 Maximilian Schleiss <maximilian@xfce.org>
++
++	* sq.po: Modified the headers for the Albanian translation
++	by Besnik Bleta <besnik@programeshqip.org>
++
++2007-02-02	 Maximilian Schleiss <maximilian@xfce.org>
++
++	* fr.po: Added the Albanian translation
++	by Besnik Bleta <besnik@programeshqip.org>
++
++2006-10-26	Piarres Beobide <pi@beobide.net>
++
++	* eu.po: Add Basque translation.
++
++2006-09-18	Pau Rul-lan Ferragut <paurullan@bulma.net>
++
++	* ca.po: Add Catalan translation.
++
++2006-09-06	Hydonsingore Cia <hydonsingore@educities.edu.tw>
++
++	* zh_TW.po: Updated traditional Chinese translations.
++
++2006-09-03	Jean-François Wauthy <pollux@xfce.org>
++
++	* pl.po: Add Polish translations
++
++2006-08-27  Jean-François Wauthy <pollux@xfce.org>
++
++	* cs.po: Add Czech translations
++
++2006-08-19  Jean-François Wauthy <pollux@xfce.org>
++
++	* fr.po: Updated French translations by Max Schleiss
++
+ 2006-07-28  Hydonsingore Cia <hydonsingore@educities.edu.tw>
+ 
+ 	* zh_TW.po: Added traditional Chinese translations by
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/cs.po xfce4-smartbookmark-plugin-0.4.2/po/cs.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/cs.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/cs.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,55 @@
++# Czech translations for xfce4-smartbookmark-plugin package.
++# Copyright (C) 2006 THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Michal Várady <miko.vaji@gmail.com>, 2006-2008.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin 0.4.2\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:19-0400\n"
++"PO-Revision-Date: 2008-11-01 23:35+0100\n"
++"Last-Translator: Michal Várady <miko.vaji@gmail.com>\n"
++"Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Předvolby"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Chytré záložky"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Popisek:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Velikost:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Skrýt popisek"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "Adresa URL:"
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Zasílá dotazy na webové stránky z panelu Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Chytré záložky"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/da.po xfce4-smartbookmark-plugin-0.4.2/po/da.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/da.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/da.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,57 @@
++# translation of xfce4-smartbookmark-plugin to Danish
++# Copyright (C) 2007 THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Jens Hyllegaard <jens.hyllegaard@gmail.com>, 2007.
++# Per Kongstad <p_kongstad@op.pl>, 2008.
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin 0.4.2\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:20-0400\n"
++"PO-Revision-Date: 2008-09-30 12:22+0100\n"
++"Last-Translator: Per Kongstad <p_kongstad@op.pl>\n"
++"Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Danish\n"
++"X-Poedit-Country: DENMARK\n"
++"X-Poedit-SourceCharset: utf-8\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Indstillinger"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smart-bogmærke"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Mærkat:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Størrelse:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Skjul mærkat"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Spørg netsteder fra Xfce-panelet"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Smart-bogmærke"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/de.po xfce4-smartbookmark-plugin-0.4.2/po/de.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/de.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/de.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,56 @@
++# German translations for xfce4-smartbookmark-plugin package
++# German messages for xfce4-smartbookmark-plugin.
++# Copyright (C) 2009 THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Simon Schneider <simon@schneiderimtal.de>, 2009.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-03-13 13:51+0000\n"
++"Last-Translator: Simon Schneider <simon@schneiderimtal.de>\n"
++"Language-Team: German <xfce-i18n-de@xfce.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Einstellungen"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Intelligente Lesezeichen"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Bezeichnung:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Größe:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Bezeichnung verstecken"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Rufen Sie Internetseiten aus der Leiste heraus auf"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Intelligente Lesezeichen"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/el.po xfce4-smartbookmark-plugin-0.4.2/po/el.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/el.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/el.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,52 @@
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: \n"
++"Last-Translator: George Vasilakos <forfolias@linuxteam.cs.teilar.gr>\n"
++"Language-Team: Greek <nls@tux.hellug.gr>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++"X-Poedit-Language: Greek\n"
++"X-Poedit-Country: GREECE\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Προτιμήσεις"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Ετικέτα:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Μέγεθος:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Απόκρυψη ετικετας"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:"
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Ερώτημα ιστοσελίδων από το ταμπλό του Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/en_GB.po xfce4-smartbookmark-plugin-0.4.2/po/en_GB.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/en_GB.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/en_GB.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,55 @@
++# English/GB translation of xfce4-smartbookmark-plugin.
++# Copyright (C) 2007 THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Jeff Bailes <thepizzaking@gmail.com>, 2007.
++# , fuzzy
++# 
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-08-18 19:45+1000\n"
++"Last-Translator: Jeff Bailes <thepizzaking@gmail.com>\n"
++"Language-Team: English/GB\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Preferences"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Label:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Size:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Hide label"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Query websites from the Xfce panel"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/es.po xfce4-smartbookmark-plugin-0.4.2/po/es.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/es.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/es.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,56 @@
++# Spanish translations for xfce4-smartbookmark-plugin package
++# Traducciones al español para el paquete xfce4-smartbookmark-plugin.
++# Copyright (C) 2009 THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++#  <abel.martin.ruiz@gmail.com>, 2009.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-02-11 22:01+0100\n"
++"Last-Translator: Abel Martín <abel.martin.ruiz@gmail.com>\n"
++"Language-Team: Spanish\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Preferencias"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Marcador inteligente"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiqueta:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Tamaño:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Ocultar etiqueta"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:"
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Consulte sitios web desde el panel de Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/eu.po xfce4-smartbookmark-plugin-0.4.2/po/eu.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/eu.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/eu.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,58 @@
++# translation of eu.po to Euskara
++# Basque translations for xfce package.
++# Copyright (C) 2006 THE xfce'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce package.
++#
++# pi <pi@beobide.net>, 2006.
++# Piarres Beobide <pi@beobide.net>, 2008.
++msgid ""
++msgstr ""
++"Project-Id-Version: eu\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:20-0400\n"
++"PO-Revision-Date: 2008-11-09 15:42+0200\n"
++"Last-Translator: Piarres Beobide <pi@beobide.net>\n"
++"Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
++"Language: eu\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++"X-Generator: Pootle 1.2.0\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Hobespenak"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Lastermarka-azkarrak"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiketa:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Tamaina:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Ezkutatu etiketa"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL-a:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Galdetu webguneak Xfce paneletik"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Lastermarka-azkarrak"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/fr.po xfce4-smartbookmark-plugin-0.4.2/po/fr.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/fr.po	2006-08-12 19:41:44.000000000 +0200
++++ xfce4-smartbookmark-plugin-0.4.2/po/fr.po	2011-06-12 01:29:47.410246761 +0200
+@@ -2,17 +2,17 @@
+ # Copyright (C) 2006
+ # This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
+ # Yves-Alexis Perez <corsac@corsac.net>, 2006.
+-#
++# 
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: 0.4.1\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2006-08-12 15:15+0200\n"
+-"PO-Revision-Date: 2006-06-01 13:00+0200\n"
+-"Last-Translator:  Yves-Alexis Perez <corsac@corsac.net>\n"
+-"Language-Team: French <traduc@traduc.org>\n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2006-08-19 18:41+0100\n"
++"Last-Translator: Maximilian Schleiss <maximilian@xfce.org>\n"
++"Language-Team: French <xfce-i18n@xfce.org>\n"
+ "MIME-Version: 1.0\n"
+-"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Type: text/plain; charset=utf-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ 
+ #: ../src/smartbookmark.c:310
+@@ -22,24 +22,32 @@
+ #. header
+ #: ../src/smartbookmark.c:318
+ msgid "Smartbookmark"
+-msgstr ""
++msgstr "Smartbookmark"
+ 
+ #. text label
+ #: ../src/smartbookmark.c:335
+ msgid "Label:"
+-msgstr "Nom:"
++msgstr "Nom :"
+ 
+ #. size label
+ #: ../src/smartbookmark.c:350
+ msgid "Size:"
+-msgstr "Taille:"
++msgstr "Taille :"
+ 
+ #. Hide label option
+ #: ../src/smartbookmark.c:361
+ msgid "Hide label"
+-msgstr ""
++msgstr "Cacher le label"
+ 
+ #. url label
+-#: ../src/smartbookmark.c:371
++#: ../src/smartbookmark.c:372
+ msgid "URL:  "
+-msgstr "URL:  "
++msgstr "URL :  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Questionner des sites internet depuis le panneau Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/gl.po xfce4-smartbookmark-plugin-0.4.2/po/gl.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/gl.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/gl.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,58 @@
++# Galician translation of xfce4-smartbookmark-plugin
++# Copyright (C) 2008-2009 Leandro Regueiro
++# This file is distributed under the same license as the xfce package.
++# 
++# Leandro Regueiro <leandro.regueiro@gmail.com>, 2008, 2009.
++# 
++# Proxecto Trasno - Adaptación do software libre á lingua galega:  Se desexas
++# colaborar connosco, podes atopar máis información en <http://trasno.net>
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-07-15 18:05+0100\n"
++"Last-Translator: Leandro Regueiro <leandro.regueiro@gmail.com>\n"
++"Language-Team: Galician <proxecto@trasno.net>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n!=1);\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Preferencias"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiqueta:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Tamaño:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Ocultar a etiqueta"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Visitar sitios web dende o panel de Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/hr.po xfce4-smartbookmark-plugin-0.4.2/po/hr.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/hr.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/hr.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,57 @@
++#
++# Ivica Kolić <ikoli@yahoo.com>, 2011.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smart-bookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2011-01-15 07:22+0100\n"
++"Last-Translator: Ivica Kolić <ikoli@yahoo.com>\n"
++"Language-Team: Croatian <ikoli@yahoo.com>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
++"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
++"X-Poedit-Language: Croatian\n"
++"X-Poedit-Country: CROATIA\n"
++"X-Poedit-SourceCharset: utf-8\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Osobitosti"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Pametna zabilješka"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Natpis:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Veličina:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Sakrij natpis"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr ""
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Pametna zabilješka"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/hu.po xfce4-smartbookmark-plugin-0.4.2/po/hu.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/hu.po	2006-08-12 19:41:44.000000000 +0200
++++ xfce4-smartbookmark-plugin-0.4.2/po/hu.po	2011-06-12 01:29:47.410246761 +0200
+@@ -1,26 +1,31 @@
++# Hungarian translation of xfce4-smartbookmark-plugin
++# Copyright 2009. Free Software Foundation, Inc.
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++#
++# SZERVÁC Attila <sas@321.hu>, 2008.
++# Gabor Kelemen <kelemeng at gnome dot hu>, 2009.
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: \n"
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2006-08-12 15:15+0200\n"
+-"PO-Revision-Date: 2006-08-12 15:56+0100\n"
+-"Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
+-"Language-Team: hu\n"
++"POT-Creation-Date: 2009-07-24 09:57+0200\n"
++"PO-Revision-Date: 2009-07-24 18:13+0200\n"
++"Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
++"Language-Team: Hungarian <gnome at gnome dot hu>\n"
+ "MIME-Version: 1.0\n"
+-"Content-Type: text/plain; charset=utf-8\n"
++"Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+-"Plural-Forms: nplurals=1; plural=0;\n"
+-"X-Poedit-Language: Hungarian\n"
+-"X-Poedit-Country: HUNGARY\n"
++"X-Generator: KBabel 1.11.4\n"
++"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+ 
+ #: ../src/smartbookmark.c:310
+ msgid "Preferences"
+-msgstr "Tulajdonságok"
++msgstr "Beállítások"
+ 
+ #. header
+ #: ../src/smartbookmark.c:318
+ msgid "Smartbookmark"
+-msgstr "Okos könyvjelző"
++msgstr "Intelligens könyvjelző"
+ 
+ #. text label
+ #: ../src/smartbookmark.c:335
+@@ -35,10 +40,18 @@
+ #. Hide label option
+ #: ../src/smartbookmark.c:361
+ msgid "Hide label"
+-msgstr "Címke rejtése"
++msgstr "Címke elrejtése"
+ 
+ #. url label
+-#: ../src/smartbookmark.c:371
++#: ../src/smartbookmark.c:372
+ msgid "URL:  "
+ msgstr "URL:  "
+ 
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Weboldalak lekérdezése az Xfce panelről"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Intelligens könyvjelző"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/id.po xfce4-smartbookmark-plugin-0.4.2/po/id.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/id.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/id.po	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,53 @@
++# Indonesian translations for xfce4-smartbookmark-plugin package.
++# Copyright (C) 2008 THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Andhika Padmawan <andhika.padmawan@gmail.com>, 2008.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:20-0400\n"
++"PO-Revision-Date: 2008-09-02 22:15+0700\n"
++"Last-Translator: Andhika Padmawan <andhika.padmawan@gmail.com>\n"
++"Language-Team: Indonesian <id@li.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Pengaturan"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Bookmarkcerdas"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Label:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Ukuran:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Sembunyikan label"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Kueri situs web dari panel Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "BookmarkCerdas"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/it.po xfce4-smartbookmark-plugin-0.4.2/po/it.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/it.po	2006-08-12 19:41:44.000000000 +0200
++++ xfce4-smartbookmark-plugin-0.4.2/po/it.po	2011-06-12 01:29:47.410246761 +0200
+@@ -2,15 +2,18 @@
+ # Copyright (C) 2006
+ # This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
+ # Emanuele Rocca <ema@debian.org>, 2006.
++# Fabio Riga <usul@aruba.it>, 2007.
++# Cristian Marchi <cri.penta@gmail.com>, 2009.
++#
+ #
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: 0.4.1\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2006-08-12 15:15+0200\n"
+-"PO-Revision-Date: 2006-06-01 13:00+0200\n"
+-"Last-Translator:  Emanuele Rocca <ema@debian.org>\n"
+-"Language-Team: Italian Translation Project <tp@lists.linux.it>\n"
++"POT-Creation-Date: 2008-07-27 21:20-0400\n"
++"PO-Revision-Date: 2009-12-29 08:18+0100\n"
++"Last-Translator: Cristian Marchi <cri.penta@gmail.com>\n"
++"Language-Team: Italian Translation Team <xfce-it-translators@googlegroups>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -22,12 +25,12 @@
+ #. header
+ #: ../src/smartbookmark.c:318
+ msgid "Smartbookmark"
+-msgstr ""
++msgstr "SmartBookmark"
+ 
+ #. text label
+ #: ../src/smartbookmark.c:335
+ msgid "Label:"
+-msgstr "Testo:"
++msgstr "Etichetta:"
+ 
+ #. size label
+ #: ../src/smartbookmark.c:350
+@@ -37,9 +40,18 @@
+ #. Hide label option
+ #: ../src/smartbookmark.c:361
+ msgid "Hide label"
+-msgstr "Nascondi testo"
++msgstr "Nascondi etichetta"
+ 
+ #. url label
+-#: ../src/smartbookmark.c:371
++#: ../src/smartbookmark.c:372
+ msgid "URL:  "
+ msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Interroga i siti web dal pannello di Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ja.po xfce4-smartbookmark-plugin-0.4.2/po/ja.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ja.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ja.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,56 @@
++# xfce4-smaartboookmark-plugin Japanese translration file.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, 2007,2008.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmart-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:20-0400\n"
++"PO-Revision-Date: 2008-10-10 03:42+0900\n"
++"Last-Translator: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>\n"
++"Language-Team: Japanese <xfce-i18n@xfce.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Japanese\n"
++"X-Poedit-Country: JAPAN\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "設定"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "ラベル:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "サイズ:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "ラベルを隠す"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Xfce パネルから ウェブサイトに質問する"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/LINGUAS xfce4-smartbookmark-plugin-0.4.2/po/LINGUAS
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/LINGUAS	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/LINGUAS	2011-06-12 01:29:47.410246761 +0200
+@@ -0,0 +1,2 @@
++# set of available languages (in alphabetic order)
++ar ast ca cs da de en_GB es eu fr gl hu id it ja lv pl pt_BR pt sq sv tr uk ur ur_PK zh_CN zh_TW 
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/lv.po xfce4-smartbookmark-plugin-0.4.2/po/lv.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/lv.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/lv.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,58 @@
++# Latvian translation of xfce4-smartbookmark-plugin package
++# Copyright (C) 2006
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin
++#
++# Rihards Prieditis <rprieditis@inbox.lv>, 2007.
++# Rihards Prieditis <rprieditis@gmail.com>, 2009.
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin 0.4.1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-09-18 23:14+0100\n"
++"Last-Translator: Rihards Prieditis <rprieditis@gmail.com>\n"
++"Language-Team: Latvian <translation-team-lv@lists.sourceforge.net>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: Lokalize 1.0\n"
++"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
++"2);\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Uzstādījumi"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Viedās grāmatzīmes"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiķete:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Izmērs:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Slēpt etiķeti"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Vaicāt tīmekļa vietni no Xfce paneļa"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Viedās grāmatzīmes"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/nl.po xfce4-smartbookmark-plugin-0.4.2/po/nl.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/nl.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/nl.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,56 @@
++# Dutch translation of the xfce4-smartbookmark-plugin package.
++# Copyright (C) The Xfce development team.
++# This file is distributed under the same license as the 
++# xfce4-smartbookmark-plugin package.
++# Pjotr, 2011.
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2011-05-27 04:04+0000\n"
++"PO-Revision-Date: 2011-05-25 11:34+0200\n"
++"Last-Translator: Pjotr\n"
++"Language-Team: Dutch (Flemish)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Language: nl\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Voorkeuren"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "SlimmeBladwijzer"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiket:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Grootte:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Verberg etiket"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Doorzoek websites vanaf de Xfce-werkbalk"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SlimmeBladwijzer"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/pl.po xfce4-smartbookmark-plugin-0.4.2/po/pl.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/pl.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/pl.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,54 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smarbookmar-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2006-04-08 12:19+0900\n"
++"Last-Translator: Piotr Maliński <admin@rk.edu.pl>\n"
++"Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Ustawienia"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Zakładki"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etykieta:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Rozmiar:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Ukryj etykietę"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr ""
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++#, fuzzy
++msgid "SmartBookmark"
++msgstr "Zakładki"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/POTFILES.in xfce4-smartbookmark-plugin-0.4.2/po/POTFILES.in
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/POTFILES.in	2006-08-12 19:41:44.000000000 +0200
++++ xfce4-smartbookmark-plugin-0.4.2/po/POTFILES.in	2011-06-12 01:29:47.410246761 +0200
+@@ -1 +1,3 @@
+ src/smartbookmark.c
++
++src/smartbookmark.desktop.in.in
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/pt_BR.po xfce4-smartbookmark-plugin-0.4.2/po/pt_BR.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/pt_BR.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/pt_BR.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,55 @@
++# Brazilian Portuguese translations for xfce4-smartbookmark-plugin package.
++# Copyright (C) THE xfce4-smartbookmark-plugin'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Vladimir Melo <vmelo@gnome.org>, 2007-2008.
++# Og Maciel <ogmaciel@gnome.org>, 2008.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbook-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2008-11-13 21:25-0500\n"
++"Last-Translator: Og Maciel <ogmaciel@gnome.org>\n"
++"Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Preferências"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Marcador Inteligente"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Rótulo:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Tamanho:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Ocultar rótulo"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Consulte sites pelo painel do Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Marcador Inteligente"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/pt.po xfce4-smartbookmark-plugin-0.4.2/po/pt.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/pt.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/pt.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,53 @@
++# European Portuguese translation of thexfce4-smartbookmark-plugin package.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# Nuno Miguel <nunis@netcabo.pt>, 2007.
++# 
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2008-09-13 19:13+0100\n"
++"Last-Translator: Nuno Miguel <nunis@netcabo.pt>\n"
++"Language-Team: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Preferências"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiqueta:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Tamanho:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Ocultar etiqueta"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:"
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Consulte páginas web a partir do painel do Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ru.po xfce4-smartbookmark-plugin-0.4.2/po/ru.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ru.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ru.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,51 @@
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: \n"
++"Last-Translator: Andriy Kovtun <kovtunos@yandex.ru>\n"
++"Language-Team: Russian <xfce4-dev@xfce.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Russian\n"
++"X-Poedit-Country: Russian Federation\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Параметры"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Умные закладки"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Метка:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Размер:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Спрятать метку"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "Ссылка URL:"
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Переход к сайтам с панели Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Умные закладки"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/sq.po xfce4-smartbookmark-plugin-0.4.2/po/sq.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/sq.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/sq.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,55 @@
++# Albanian translation of xfce4-smartbookmark-plugin package
++# Copyright (C) 2006
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Besnik Bleta <besnik@programeshqip.org>, 2007.
++msgid ""
++msgstr ""
++"Project-Id-Version: 0.4.1\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2008-11-04 23:28+0200\n"
++"Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
++"Language-Team: Albanian <translation-team-sq@lists.sourceforge.net>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: KBabel 1.11.1\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Parapëlqime"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Faqerojtës të mençur"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiketë:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Madhësi:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Fshih etiketë"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Kërkoni nëpër site-e web që prej panelit Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++#, fuzzy
++msgid "SmartBookmark"
++msgstr "Faqerojtës të mençur"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/sv.po xfce4-smartbookmark-plugin-0.4.2/po/sv.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/sv.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/sv.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,54 @@
++# Swedish translation for xfce4-smartbookmark-plugin.
++# Copyright (C) 2008 Free Software Foundation, Inc.
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++# Daniel Nylander <po@danielnylander.se>, 2008.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-12-14 16:09+0100\n"
++"PO-Revision-Date: 2008-12-14 21:23+0100\n"
++"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
++"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Inställningar"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etikett:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Storlek:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Dölj etikett"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Fråga webbplatser från Xfce-panelen"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/tr.po xfce4-smartbookmark-plugin-0.4.2/po/tr.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/tr.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/tr.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,50 @@
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4 smartbookmark plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: \n"
++"Last-Translator: Samed Beyribey <ras0ir@eventualis.org>\n"
++"Language-Team: Xfce-TR <xfce-tr@googlegroups.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Country: TURKEY\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Tercihler"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark "
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Etiket:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Boyut:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Etiketi gizle"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "Adres:"
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Web sitelerini Xfce panelinden sorgulayın"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ug.po xfce4-smartbookmark-plugin-0.4.2/po/ug.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ug.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ug.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,54 @@
++# xfce4-smaartboookmark-plugin Japanese translration file.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# Gheyret T.Kenji <gheyret@gmail.com>, 2010.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmart-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:20-0400\n"
++"PO-Revision-Date: 2008-10-10 03:42+0900\n"
++"Last-Translator: Gheyret T.Kenji <gheyret@gmail.com>\n"
++"Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "تەڭشەكلەر"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "ئەن:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "چوڭلۇقى:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "ئەننى يوشۇرىدۇ"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Xfce パネルから ウェブサイトに質問する"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/uk.po xfce4-smartbookmark-plugin-0.4.2/po/uk.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/uk.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/uk.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,54 @@
++# Ukrainian translation of xfce4-smartbookmark-plugin.
++# Copyright (C) 2008 Dmitry Nikitin
++# This file is distributed under the same license as the xfce4-smartbookmark-plugin package.
++#
++# Dmitry Nikitin <luckas_fb@mail.ru>, 2008.
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2008-07-09 14:18+0300\n"
++"Last-Translator: Dmitry Nikitin <luckas_fb@mail.ru>\n"
++"Language-Team: Ukrainian <xfce4-dev@xfce.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Generator: KBabel 1.11.4\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "Властивості"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Кмітливі закладки"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "Мітка:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "Розмір:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "Ховати мітку"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "Посилання URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "Звернення до веб-сайтів з панелі Xfce"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "Кмітливі закладки"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ur_PK.po xfce4-smartbookmark-plugin-0.4.2/po/ur_PK.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ur_PK.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ur_PK.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,58 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-05-06 01:55+0500\n"
++"Last-Translator: Muhammad Ali Makki <makki.ma@gmail.com>\n"
++"Language-Team: Urdu <makki.ma@gmail.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Urdu\n"
++"X-Poedit-Country: PAKISTAN\n"
++"X-Poedit-SourceCharset: utf-8\n"
++"Plural-Forms: Plural-Forms: nplurals=2; plural=n != 1;\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "ترجیحات"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "سمارٹ بُک مارک"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "لیبل:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "حجم:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "لیبل چھپائیں"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "ربط:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "ایکسفس پینل کے لیے ویب سائٹ سے استفسار کریں"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "سمارٹ بُک مارک"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/ur.po xfce4-smartbookmark-plugin-0.4.2/po/ur.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/ur.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/ur.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,58 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-05-06 01:55+0500\n"
++"Last-Translator: Muhammad Ali Makki <makki.ma@gmail.com>\n"
++"Language-Team: Urdu <makki.ma@gmail.com>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=utf-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"X-Poedit-Language: Urdu\n"
++"X-Poedit-Country: PAKISTAN\n"
++"X-Poedit-SourceCharset: utf-8\n"
++"Plural-Forms: Plural-Forms: nplurals=2; plural=n != 1;\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "ترجیحات"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "سمارٹ بُک مارک"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "لیبل:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "حجم:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "لیبل چھپائیں"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "ربط:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "ایکسفس پینل کے لیے ویب سائٹ سے استفسار کریں"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "سمارٹ بُک مارک"
++
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/xfce4-smartbookmark-plugin.pot xfce4-smartbookmark-plugin-0.4.2/po/xfce4-smartbookmark-plugin.pot
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/xfce4-smartbookmark-plugin.pot	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/xfce4-smartbookmark-plugin.pot	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,54 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=CHARSET\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr ""
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr ""
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr ""
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr ""
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr ""
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr ""
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr ""
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr ""
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/zh_CN.po xfce4-smartbookmark-plugin-0.4.2/po/zh_CN.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/zh_CN.po	1970-01-01 01:00:00.000000000 +0100
++++ xfce4-smartbookmark-plugin-0.4.2/po/zh_CN.po	2011-06-12 01:29:47.411246768 +0200
+@@ -0,0 +1,53 @@
++# Chinese translations for xfce package.
++# Copyright (C) 2009 THE xfce'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the xfce package.
++# Hunt Xu <huntxu@live.cn>, 2009.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: xfce 4-smartbookmark-plugin\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2009-05-13 10:24+0800\n"
++"Last-Translator: Hunt Xu <huntxu@live.cn>\n"
++"Language-Team: Chinese (simplified)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: ../src/smartbookmark.c:310
++msgid "Preferences"
++msgstr "首选项"
++
++#. header
++#: ../src/smartbookmark.c:318
++msgid "Smartbookmark"
++msgstr "Smartbookmark"
++
++#. text label
++#: ../src/smartbookmark.c:335
++msgid "Label:"
++msgstr "标签:"
++
++#. size label
++#: ../src/smartbookmark.c:350
++msgid "Size:"
++msgstr "大小:"
++
++#. Hide label option
++#: ../src/smartbookmark.c:361
++msgid "Hide label"
++msgstr "隐藏标签"
++
++#. url label
++#: ../src/smartbookmark.c:372
++msgid "URL:  "
++msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr "从 Xfce 面板上查询网址"
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++msgid "SmartBookmark"
++msgstr "SmartBookmark"
+diff -Nur xfce4-smartbookmark-plugin-0.4.2.orig/po/zh_TW.po xfce4-smartbookmark-plugin-0.4.2/po/zh_TW.po
+--- xfce4-smartbookmark-plugin-0.4.2.orig/po/zh_TW.po	2006-08-12 19:41:44.000000000 +0200
++++ xfce4-smartbookmark-plugin-0.4.2/po/zh_TW.po	2011-06-12 01:29:47.411246768 +0200
+@@ -8,8 +8,8 @@
+ msgstr ""
+ "Project-Id-Version: xfce4-smartbookmark-plugin 0.4.1\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2006-08-12 15:15+0200\n"
+-"PO-Revision-Date: 2006-07-28 23:27+0800\n"
++"POT-Creation-Date: 2008-07-27 21:21-0400\n"
++"PO-Revision-Date: 2006-09-06 18:42+0800\n"
+ "Last-Translator: Hydonsingore Cia <hydonsingore@educities.edu.tw>\n"
+ "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
+ "MIME-Version: 1.0\n"
+@@ -23,7 +23,7 @@
+ #. header
+ #: ../src/smartbookmark.c:318
+ msgid "Smartbookmark"
+-msgstr ""
++msgstr "Smartbookmark"
+ 
+ #. text label
+ #: ../src/smartbookmark.c:335
+@@ -38,9 +38,18 @@
+ #. Hide label option
+ #: ../src/smartbookmark.c:361
+ msgid "Hide label"
+-msgstr ""
++msgstr "隱藏標籤"
+ 
+ #. url label
+-#: ../src/smartbookmark.c:371
++#: ../src/smartbookmark.c:372
+ msgid "URL:  "
+ msgstr "URL:  "
++
++#: ../src/smartbookmark.desktop.in.in.h:1
++msgid "Query websites from the Xfce panel"
++msgstr ""
++
++#: ../src/smartbookmark.desktop.in.in.h:2
++#, fuzzy
++msgid "SmartBookmark"
++msgstr "Smartbookmark"

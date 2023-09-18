@@ -1,0 +1,26 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class QGtkStyle(AutoPackageRecipe):
+
+    name = 'QGtkStyle'
+    version = 'r895'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'gtk:devel', 'libX11:devel', 'libXext:devel',
+                      'libXrender:devel', 'libpng:devel', 'libstdc++:devel',
+                      'libxcb:devel', 'pango:devel', 'pkgconfig:devel', 'pixman:devel',
+                      'qt4:devel', 'qt4-core:lib', 'qt4-gui:lib',
+                      'xcb-util:devel', 'zlib:devel']
+
+    def unpack(r):
+        # http://labs.trolltech.com/page/Projects/Styles/GtkStyle
+        r.addSvnSnapshot('svn://labs.trolltech.com/svn/styles/gtkstyle')
+
+    def configure(r):
+        r.Run("qmake-qt4")
+        r.Environment('INSTALL_ROOT', '%(destdir)s')
+

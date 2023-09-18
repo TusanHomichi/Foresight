@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=LinuxDC++
+GenericName=Direct Connect client
+Comment=Linux port of the DC++ client for the Direct Connect network
+Exec=linuxdcpp
+Icon=linuxdcpp
+Terminal=false
+Type=Application
+Categories=Network;FileTransfer;P2P;GTK;

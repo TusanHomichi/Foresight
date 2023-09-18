@@ -1,0 +1,13 @@
+class Psiconv(AutoPackageRecipe):
+
+    buildRequires = [ 'binutils:runtime', 'gawk:runtime', 'glibc:devel',
+    'ImageMagick:devel', 'bzip2:devel', 'freetype:devel',
+    'lcms:devel', 'libICE:devel', 'libSM:devel',
+    'libX11:devel', 'libXext:devel', 'libXt:devel',
+    'libjpeg:devel', 'libpng:devel', 'libtiff:devel',
+    'libxml2:devel', 'zlib:devel', 'bc:runtime' ]
+    name = 'psiconv'
+    version = '0.9.8'
+
+    def unpack(r):
+        r.addArchive('http://software.frodo.looijaard.name/psiconv/files/psiconv-%(version)s.tar.gz')

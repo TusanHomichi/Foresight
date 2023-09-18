@@ -1,0 +1,27 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class OpenGTL(CMakePackageRecipe):
+
+    name = 'OpenGTL'
+    version = '0.9.9'
+
+    buildRequires = [
+        'libelf:devel', 'libopenraw:devel', 'libpng:devel', 'libstdc++:devel',
+        'llvm:devel', 'which:runtime', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://www.opengtl.org/download/')
+        r.Replace('{SHARE_INSTALL_DIR}', '{LIB_INSTALL_DIR}/OpenGTL', 'CMakeLists.txt')
+        r.Replace('-Werror', '', 'OpenCTL/CMakeLists.txt')
+
+    def cmake(r):
+
+        r.macros.lib_suffix = ('', '64')[Arch.x86_64==True]
+        r.CMake('-DLIB_SUFFIX=%(lib_suffix)s')
+

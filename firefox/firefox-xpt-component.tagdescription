@@ -1,0 +1,4 @@
+file	%(taghandlerdir)s/firefox
+include %(fflib)scomponents/.*
+datasource      multitag
+implements      files update

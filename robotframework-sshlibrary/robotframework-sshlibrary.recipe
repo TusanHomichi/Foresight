@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux. 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RobotFrameworkSSHLibrary(AutoPackageRecipe):
+    name = 'robotframework-sshlibrary'
+    version = '1.0'
+    buildRequires = [ 'paramiko:python', 'python:devel', 'robotframework:python' ]
+
+    def setup(r):
+        r.addArchive('http://robotframework-sshlibrary.googlecode.com/files/SSHLibrary-%(version)s.tar.gz')
+        r.PythonSetup()

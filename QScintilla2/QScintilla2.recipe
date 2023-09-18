@@ -1,0 +1,59 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class QScintilla2(CPackageRecipe):
+
+    name = 'QScintilla2'
+    version = '2.4.5'
+
+    buildRequires = [
+        'fontconfig:devel', 'freetype:devel', 'glib:devel', 'libICE:devel',
+        'libpng:devel', 'libSM:devel', 'libstdc++:devel', 'libX11:devel',
+        'libXcursor:devel', 'libXext:devel', 'libXfixes:devel', 'libXi:devel',
+        'libXinerama:devel', 'libXrandr:devel', 'libXrender:devel',
+        'PyQt4:data', 'PyQt4:python', 'python:devel', 'qt4:devel', 'sip:devel',
+        'sip:python', 'sip:runtime', 'zlib:devel'
+    ]
+
+    def setup(r):
+
+        r.macros.archive_name = 'QScintilla-gpl'
+        r.macros.archive_version = r.version.replace('+', '-snapshot-')
+        r.addArchive(
+            'http://www.riverbankcomputing.com/static/Downloads/QScintilla2/'
+        )
+        r.addPatch('QScintilla-gpl-2.4-qt4_designer_incpath.patch')
+        r.addPatch('http://repos.archlinux.org/wsvn/packages/qscintilla/trunk/configure.py-objdir-support.diff?op=dl&')
+        # qmake breaks on -jN
+        r.disableParallelMake()
+
+        r.Environment('INSTALL_ROOT', '%(destdir)s')
+
+        # build QScintilla
+        r.Make('qscintilla.pro', makeName='qmake-qt4', dir='Qt4/')
+        r.Build('Qt4/')
+
+        # build python bindings
+        r.ManualConfigure(
+            '-n ../Qt4/ -o ../Qt4/',
+            preConfigure='python', configureName='configure.py', dir='Python/'
+        )
+        # fix RPATH
+        r.Replace('-Wl,-rpath,%(builddir)s/Qt4', '', 'Python/Makefile') 
+        r.Build('Python/')
+
+        # build designer
+        r.Make(
+            ('designer.pro '
+             'INCLUDEPATH+=../Qt4 '
+             'QMAKE_LIBDIR+=../Qt4 '),
+            makeName='qmake-qt4', dir='designer-Qt4/'
+        )
+        r.Build('designer-Qt4/')
+
+    def Build(r, runDir):
+        r.Make(dir=runDir)
+        r.MakeInstall(dir=runDir)
+

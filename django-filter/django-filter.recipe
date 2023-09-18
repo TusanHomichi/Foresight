@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoFilter(PackageRecipe):
+
+    name = 'django-filter'
+    version = '0.5.0'
+
+    buildRequires = [
+        'django:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://github.com/alex/%(name)s/tarball/%(version)s')
+        r.PythonSetup()
+

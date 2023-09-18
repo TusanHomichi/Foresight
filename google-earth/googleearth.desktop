@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Google Earth
+GenericName=3D planet viewer
+Comment=Explore, search and discover the planet
+Exec=/usr/bin/google-earth %f
+Terminal=false
+Type=Application
+Icon=googleearth-icon.png
+Categories=GNOME;3DGraphics;Network;
+MimeType=application/vnd.google-earth.kml+xml;application/vnd.google-earth.kmz;application/earthviewer;application/keyhole;

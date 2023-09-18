@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class FuseGoogleDrive(AutoPackageRecipe):
+    name = 'fuse-google-drive'
+    tag = '1e1bfa00b6'
+    version = tag + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = [
+            'curl:devel', 
+            'fuse:devel', 
+            'json-c:devel', 
+            'libxml2:devel', 
+            'pkgconfig:devel',
+            'autoconf:runtime', 
+            'automake:runtime', 
+            'libtool:devel', 
+            'libtool:runtime', 
+            'intltool:devel', 
+                ]
+ 
+    def unpack(r):
+        r.addGitSnapshot('https://github.com/jcline/fuse-google-drive.git',
+                         tag = r.tag)
+        r.Run('./autogen.sh')

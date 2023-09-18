@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:1')
+class Flock(BinaryPackageRecipe):
+    name = 'flock'
+    version = '2.0'
+ 
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.osuosl.org/pub/flock/releases/2.0/bundle/flock-afc0600546A2B78/flock_afc0600546A2B78-2.0.en-US.linux-i686.tar.bz2', dir='/opt/flock')
+        r.addSource('flock.desktop')
+        r.Desktopfile('flock.desktop')
+
+

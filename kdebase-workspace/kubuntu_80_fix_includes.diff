@@ -1,0 +1,14 @@
+Index: kdebase-workspace-4.5.80/plasma/desktop/applets/tasks/abstracttaskitem.cpp
+===================================================================
+--- kdebase-workspace-4.5.80.orig/plasma/desktop/applets/tasks/abstracttaskitem.cpp	2010-11-19 10:51:20.000000000 +0000
++++ kdebase-workspace-4.5.80/plasma/desktop/applets/tasks/abstracttaskitem.cpp	2010-11-24 11:53:29.560641004 +0000
+@@ -62,6 +62,9 @@
+ #include "tasks.h"
+ #include "taskgroupitem.h"
+ 
++#include <X11/Xlib.h>
++#include <X11/Xatom.h>
++
+ static const int HOVER_EFFECT_TIMEOUT = 900;
+ 
+ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)

@@ -1,0 +1,127 @@
+#
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class GNUCash(GnomePackageRecipe):
+    name = 'gnucash'
+    version = '2.4.11'
+    docsVer = '2.4.1'
+
+    buildRequires = [ 'WebKit:devel',
+                      'aqbanking:devel',
+                      'desktop-file-utils:runtime',
+                      'doxygen:runtime',
+                      'GConf:devel',
+                      'GConf:runtime',
+                      'gmp:devel',
+                      'gnome-keyring:devel',
+                      'gnome-vfs:devel',
+                      'compat-goffice:devel',
+                      'graphviz:runtime',
+                      'gtkhtml:devel',
+                      'guile:devel',
+                      'gwenhywfar:devel',
+                      'install-info:runtime',
+		      'ktoblzcheck:devel',
+                      'libart_lgpl:devel',
+                      'libbonobo:devel',
+                      'libbonoboui:devel',
+		      'libdbi:devel',
+                      'libglade:devel', 
+                      'libgnomecanvas:devel',
+                      'libgnome:devel',
+                      'libgnomeui:devel',
+                      'libgsf:devel',
+                      'libofx:devel',
+		      'libsoup:devel',
+                      'libtermcap:devel',
+                      'libtool:runtime',
+                      'libtool:devel',
+                      'ORBit2:devel',
+                      'perl-DateManip:perl',
+                      'perl:devel',
+                      'perl-Finance-Quote:perl',
+                      'perl:lib',
+                      'perl-XML-Parser:perl',
+                      'popt:devel',
+                      'rarian:devel',
+                      'rarian:runtime',
+                      'readline:devel',
+                      'slib:data',
+                      'automake:runtime',
+                      'autoconf:runtime',
+    ]
+
+    def unpack(r):
+        r.macros.docsVer = GNUCash.docsVer
+        r.macros.docsDir= '%(name)s-docs-%(docsVer)s'
+        r.addArchive('http://downloads.sourceforge.net/sourceforge/gnucash/')
+        r.addArchive("http://sourceforge.net/projects/gnucash/files/gnucash-docs/%(docsVer)s/%(name)s-docs-%(docsVer)s.tar.gz",
+                     dir="%(name)s-%(version)s/")
+        r.addPatch("gnucash-quiet.patch")
+        r.addSource('gnc-svninfo.h', dir='src/core-utils')
+        r.addSource('swig-runtime.h', dir='src')
+
+        # CONFIGURE
+    def build(r):
+        # r.Run('autoreconf -fi')
+        # r.Replace('goffice=1', 'goffice=0', 'configure')
+        r.Configure(' --enable-gui'
+                    ' --enable-ofx'
+                    ' --enable-aqbanking'
+                    ' --enable-error-on-warning=no '
+                    ' --enable-locale-specific-tax'
+                    ' --disable-static'
+                    ' --with-html-engine=webkit'
+                    ' --enable-dbi')
+
+        r.Configure(dir='%(docsDir)s')
+
+        # MAKE
+        # r.disableParallelMake()
+        r.Make()
+        r.Make(dir='%(docsDir)s')
+
+        # make INSTALL
+    def install(r):
+        r.MakeInstall()
+        r.MakeInstall(dir='%(docsDir)s')
+
+        # gnucash uses libtool's libltdl, so the la files must be included
+        r.RemoveNonPackageFiles(exceptions='.*\.la')
+
+        # Perl dependencies. Not detected automatically because of the dynamic
+        # imports.
+        r.Requires('perl-HTTP-Cookies:perl', '%(bindir)s/gnc-fq-check')
+        r.Requires('perl-Crypt-SSLeay:perl', '%(bindir)s/gnc-fq-check')
+        r.Requires('perl-Finance-Quote:perl', '%(bindir)s/gnc-fq-check')
+        r.Requires('perl-Finance-QuoteHist:perl', '%(bindir)s/gnc-fq-check')
+        r.Requires('perl-HTML-Parser:perl', '%(bindir)s/gnc-fq-check')
+        r.Requires('perl-HTML-TableExtract:perl', '%(bindir)s/gnc-fq-check')
+
+        r.Requires('perl-HTTP-Cookies:perl', '%(bindir)s/gnc-fq-dump')
+        r.Requires('perl-Crypt-SSLeay:perl', '%(bindir)s/gnc-fq-dump')
+        r.Requires('perl-Finance-Quote:perl', '%(bindir)s/gnc-fq-dump')
+        r.Requires('perl-HTML-TableExtract:perl', '%(bindir)s/gnc-fq-dump')
+
+        r.Requires('perl-HTTP-Cookies:perl', '%(bindir)s/gnc-fq-helper')
+        r.Requires('perl-Crypt-SSLeay:perl', '%(bindir)s/gnc-fq-helper')
+        r.Requires('perl-Finance-Quote:perl', '%(bindir)s/gnc-fq-helper')
+        r.Requires('perl-HTML-TableExtract:perl', '%(bindir)s/gnc-fq-helper')
+
+        # Explicitly require slib
+        r.Requires('slib:data', '%(bindir)s/gnucash-bin')
+        # Explicitly require guile:runtime
+        r.Requires('guile:runtime', '%(bindir)s/gnucash-bin')
+
+        # Unfortunately, guile:devellib seems to be needed for some kind of
+        # runtime library loader
+        r.Requires('guile:devellib', '%(bindir)s/gnucash-bin')
+
+        # Everything hbci related goes into its own package, to isolate
+        # aqbanking (which used requires qt/kde, but is also less
+        # useful for people who don't do online banking from gnucash)
+        r.PackageSpec('%(name)s-hbci', '.*hbci.*')

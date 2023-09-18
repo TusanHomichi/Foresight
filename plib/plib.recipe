@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class plib(AutoPackageRecipe):
+    name = "plib"
+    version = "1.8.5"
+   
+    buildRequires = [
+        'Mesa:devel', 
+        'autoconf:data', 'autoconf:runtime', 'automake:runtime',
+        'gcc-c++:runtime',
+        'libICE:devel', 'libSM:devel', 'libXext:devel', 'libXi:devel',
+        'libXmu:devel', 'libtool:runtime'
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://plib.sourceforge.net/dist/%(name)s-%(version)s.tar.gz')
+        # patch from 'http://git.brad-smith.co.uk/?p=debian/pkg-plib.git
+        r.addPatch('plib_shared.patch')
+        if Arch.x86_64: 
+            r.macros.cflags += ' -fPIC'
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+        r.Doc('README', 'NOTICE', 'COPYING')
+    def configure(r):
+        r.Run('autoreconf -i')
+        r.Configure()

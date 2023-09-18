@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Usbmuxd(CPackageRecipe):
+    name = 'usbmuxd'
+    version = '1.0.7'
+ 
+    buildRequires = ['cmake:runtime', 'libplist:devel', 'libusbx:devel', 'pkgconfig:devel', 'gcc-c++:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://marcansoft.com/uploads/usbmuxd/')
+
+        r.Replace('ATTR{idVendor}=="05ac"', 'OWNER="usbmuxd", ATTR{idVendor}=="05ac"', 'udev/85-usbmuxd.rules.in')
+        r.Replace('\-U\ usbmux', '-U usbmuxd', 'udev/85-usbmuxd.rules.in')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()
+
+        r.UtilizeUser("usbmuxd", "/lib/udev/.*")

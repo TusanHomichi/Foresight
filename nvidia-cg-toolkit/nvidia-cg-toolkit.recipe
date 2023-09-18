@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NvidiaCgToolkit(PackageRecipe):
+    name = 'nvidia-cg-toolkit'
+    version = '3.0'
+ 
+    buildRequires = ['Mesa:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXi:devel', 'libXmu:devel', 'libXt:devel']
+ 
+    def setup(r):
+        r.macros.month = 'February2011'
+        r.addArchive('http://developer.download.nvidia.com/cg/Cg_%(version)s/Cg-%(version)s_%(month)s_x86.tgz', use=Arch.x86)
+        r.addArchive('http://developer.download.nvidia.com/cg/Cg_%(version)s/Cg-%(version)s_%(month)s_x86_64.tgz', use=Arch.x86_64)
+        r.Install('bin/cgc','%(bindir)s/')
+        r.Install('include/Cg/*','%(includedir)s/Cg/')
+        if Arch.x86:
+                r.Install('lib/*', '%(libdir)s/')
+        else:
+                r.Install('lib64/*', '%(libdir)s/')
+        r.Install('share/man/man3/*','%(mandir)s/man3/')
+        r.Install('share/man/manCg/*','%(mandir)s/manCg/')
+        r.Install('local/Cg','%(datadir)s/')
+        r.ImproperlyShared('%(datadir)s/Cg/*')

@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class cdrdao(AutoPackageRecipe):
+    buildRequires = [ 'glibc:devel', 
+            'libao:devel', 
+            'libgcc:devellib',
+            'lame:devel', 
+            'libmad:devel', 
+            'libogg:devel', 
+            'libstdc++:devel', 
+            'libvorbis:devel', 
+            'pkgconfig:devel', 
+            'GConf:devel', 
+            'GConf:runtime', 
+            'ORBit2:devel', 
+            'atk:devel', 
+            'cairo:devel', 
+            'cairomm:devel', 
+            'desktop-file-utils:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gconfmm:devel', 
+            'glib:devel', 
+            'glibmm:devel', 
+            'gnome-vfs:devel', 
+            'gnome-vfsmm:devel', 
+            'gtk:devel', 
+            'gtkmm:devel', 
+            'libICE:devel', 
+            'libSM:devel', 
+            'libart_lgpl:devel', 
+            'libbonobo:devel', 
+            'libbonoboui:devel', 
+            'libglade:devel', 
+            'libglademm:devel', 
+            'libgnome:devel', 
+            'libgnomecanvas:devel', 
+            'libgnomecanvasmm:devel', 
+            'libgnomemm:devel', 
+            'libgnomeui:devel', 
+            'libgnomeuimm:devel', 
+            'libsigc++:devel', 
+            'libxml2:devel', 
+            'pango:devel', 
+            'pangomm:devel', 
+            'popt:devel', 
+            'shared-mime-info:runtime' ]
+    name = "cdrdao"
+    version = "1.2.3"
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.addPatch('cdrdao.patch')
+    def configure(r):
+        r.Configure(' --with-lame --with-ogg-support'
+                    ' --with-mp3-support')

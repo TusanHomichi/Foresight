@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadRecipe('firefox')
+class FirefoxDuckduckdoSearch(AutoPackageRecipe):
+    name = 'firefox-duckduckdo-search'
+    version = '20110219'
+ 
+    def setup(r):
+        r.macros.fileid = '161972'
+        r.macros.filename = 'duck_duck_go_ssl_search_plugin'
+        r.macros.ff_version = '.'.join(FireFox.version.split('.')[:2])
+        r.addSource(
+            'http://releases.mozilla.org/pub/mozilla.org/addons/%(fileid)s/%(filename)s-%(version)s.xml',
+            dest='%(libdir)s/firefox-%(ff_version)s/searchplugins/%(filename)s.xml')

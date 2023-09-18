@@ -1,0 +1,217 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2006-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonVersionMixInClass(object):
+    def setDefaultPython(r, version=None):
+        r.buildRequires.append('python:bin')
+        if version is None:
+            version = Python.majversion
+        r.macros.pyver = version
+        r.macros.sitepkgs = Python.sitepkgs
+        pybin = '%(bindir)s/python%(pyver)s'
+        r.NormalizePythonInterpreterVersion(versionMap=(
+                ('%(bindir)s/python2.4', pybin),
+                ('/usr/local/bin/python2.4', pybin),
+                ('%(bindir)s/python2.5', pybin),
+                ('/usr/local/bin/python2.5', pybin),
+                ('%(bindir)s/python', pybin),
+                ('/usr/local/bin/python', pybin),
+        ))
+
+loadInstalled('db')
+class Python(CPackageRecipe):
+    name = 'python'
+    version = '2.6.7'
+
+    # Stuff a reference here so that recipes that load this recipe can have
+    # access to the mixin.
+    VersionMixIn = PythonVersionMixInClass
+
+    buildRequires = [ ]
+    if Use.bootstrap:
+        clearBuildReqs()
+        buildRequires.extend(['cross-gcc', 'glibc'])
+    else:
+        if Use.readline:
+            buildRequires.append('readline:devel')
+        if Use.tk:
+            buildRequires.append('tk:devel')
+        if Use.tcl:
+            buildRequires.append('tcl:devel')
+
+        buildRequires.extend(['bluez:devel',
+                              'db:devel', 'gdbm:devel', 'ncurses:devel',
+                              'libtermcap:devel', 'gcc:devel',
+                              'libstdc++:devel', 'sqlite:devel',
+                              'expat:devel', 'subversion:runtime',
+                              ])
+    if Use.ssl:
+        buildRequires.append('openssl:devel')
+
+    buildRequires.extend(['zlib:devel', 'bzip2:devel'])
+
+    # the following two are for other python recipes to use with
+    # loadInstalled('python.recipe') to have a consistent system
+    majversion = '.'.join(version.split('.')[0:2])
+    sitepkgs = ''.join(('%(libdir)s/python', majversion, '/site-packages'))
+
+    def applyUse(r, path):
+        """build a sed command to uncomment the appropriate use lines in
+        a file like Setup.dist"""
+        substs = []
+        s = "sed -i"
+        for flag in ('readline', 'ssl', 'tcl', 'tk', 'bootstrap'):
+            if Use[flag]:
+                substs.append(('#\(use %s\)' % flag, ''))
+            else:
+                substs.append(('#\(not use %s\)' % flag, ''))
+        substs.append(path)
+        # it's possible that applying these substitutions does nothing,
+        # if all the Use flags are set to false
+        kw = {'allowNoChange' : True}
+        r.Replace(*substs, **kw)
+
+    def setup(r):
+        r.macros.cflags += ' -D_GNU_SOURCE -fPIC -fwrapv '
+        r.macros.cppflags += ' -D_GNU_SOURCE -fPIC -fwrapv '
+
+        r.Environment('LINKCC', 'gcc')
+        r.mainDir('Python-%(version)s')
+        r.addArchive("http://www.python.org/ftp/python/%(version)s/Python-%(version)s.tar.bz2")
+        r.addArchive("http://www.python.org/ftp/python/doc/%(version)s/python-docs-html.tar.bz2",
+                     dir = r.macros.maindir)
+        # maintained distribution packages really shouldn't be using /usr/local
+        # for anything -- don't include /usr/local/include or search
+        # /usr/local/lib when linking
+        r.Replace('/usr/local', '%(prefix)s', 'setup.py')
+        #        r.applyUse('Modules/Setup.dist')
+
+        # get the version of libdb from the db recipe
+        dbversion = '.'.join(Db.version.split('.')[0:2])
+        #r.Replace('@dbversion@', dbversion, 'Modules/Setup.dist')
+
+        # setup.py got smarter these days. You no longer have to patch
+        # Setup.dist to enable some of the modules, setup.py will detect them
+        # automatically for you. Some things like pyexpat do have to be
+        # overriten (see below).
+        r.addPatch('python-2.6-config.patch')
+        r.addPatch('python-2.6-lib64.patch', use=Arch.x86_64)
+        r.addPatch('python-2.6-setup-lib64.patch', use=Arch.x86_64)
+
+        # Build shared modules
+        r.Replace(r'^#\*shared\*.*$',
+                  r'*shared*',
+                  'Modules/Setup.dist')
+        # Enable expat
+        r.Replace(r'^#pyexpat.*$',
+                  r'pyexpat pyexpat.c -DHAVE_EXPAT_H -lexpat',
+                  'Modules/Setup.dist')
+        # Enable curses
+        r.Replace(r'^#_curses',
+                  r'_curses',
+                  'Modules/Setup.dist')
+        # setup.py disables dl on 64-bit systems; re-enable it
+        r.Replace(r'^#dl.*$',
+                  r'dl dlmodule.c',
+                  'Modules/Setup.dist', use=Arch.x86_64)
+        # Do not link against ncurses/ncursesw, when importing readline a
+        # terminal escape sequence is produced, witnessed by running:
+        # python -c "import readline" | less
+        # setup.py will fall back to -ltermcap
+        r.Replace(r"'ncursesw'\):$", "'ncursesw-disabled'):",
+                  "setup.py")
+        r.Replace(r"'ncurses'\):$", "'ncurses-disabled'):",
+                  "setup.py")
+        r.Replace(r"find_library_file\(lib_dirs, 'curses'\):$",
+                  r"find_library_file(lib_dirs, 'curses-disabled'):",
+                  "setup.py")
+
+        # Ensure that we're using the system copy of various libraries, rather than
+        # copies shipped by upstream in the tarball
+        for x in ['expat', 'zlib',
+                  # '_ctypes/{darwin,libffi_}*'
+                  ]:
+            r.Remove('Modules/' + x, recursive = True)
+
+        # arguments to pass to r.Make() and r.MakeInstall()
+        makeargs = ''
+        conf = '--enable-unicode=ucs4 --enable-shared'
+        if Use.ipv6:
+            conf += ' --enable-ipv6'
+        if Use.bootstrap:
+            # first build a python for the $HOST platform
+            buildconf = conf
+            buildconf += ' --with-cxx=%(buildcxx)s'
+            r.Configure(buildconf, bootstrapFlags='',
+                        preConfigure='CC=%(buildcc)s CXX=%(buildcxx)s')
+            r.Make('"OPT=%(cflags)s" sysroot=%(sysroot)s python Parser/pgen')
+            r.Run('mv python hostpython')
+            r.Run('mv Parser/pgen Parser/hostpgen')
+            r.Make('distclean')
+            # set up the environment for cross compiling
+            r.Environment('RANLIB', '%(target)s-ranlib' %r.macros)
+            r.Environment('AR', '%(target)s-ar' %r.macros)
+            r.Environment('CROSS_COMPILING', 'yes')
+            # make sure that we don't look in the native environment
+            # for header files
+            r.Replace('/usr/include', '%(headerpath)s', 'setup.py')
+            r.Environment('INCDIR', '%(headerpath)s')
+            r.Environment('LIBDIR', '%(sysroot)s/%(libdir)s')
+            conf += ' --with-cxx=%(target)s-g++'
+            # set up the native python -- need to be able to run
+            # python during the build
+            makeargs = 'sysroot=%(sysroot)s HOSTPYTHON=./hostpython HOSTPGEN=./Parser/hostpgen'
+        r.Configure(conf)
+        # r.Make(makeargs + 'OPT=\"%(cflags)s\"')
+        r.Make(makeargs)
+        r.MakeInstall(makeargs)
+
+        # Place tk support in :tk so we don't end up bringing in all
+        # tk requirements with python.
+        r.ComponentSpec('tk', '%(libdir)s/python.*/lib-dynload/_tkinter.so')
+        r.ComponentSpec('tk', '%(libdir)s/python.*/lib-tk/.*')
+        # everything else goes in :lib
+        r.ComponentSpec('lib', '%(libdir)s/python.*/.*')
+        r.PackageSpec('idle', '%(bindir)s/idle')
+        r.PackageSpec('idle', '%(libdir)s/python.*/idlelib/.*')
+        r.Requires('python:tk', '%(bindir)s/idle')
+        r.Requires('python:tk', '%(libdir)s/python.*/idlelib/idle.py')
+        r.Requires(exceptDeps=('.*/(test/test_tcl.pyc?|config/(Setup|Makefile))', 'python: _tkinter'))
+        r.Requires(exceptDeps=('.*/(test/test_tcl.pyc?|pydoc.pyc?)', 'python: Tkinter'))
+
+        r.Provides('file', '%(bindir)s/python.*')
+
+        r.Run("mv python-docs-html html")
+        r.Doc("html/")
+
+        # Make sure python2.6 and python are hardlinks, otherwise Conary will
+        # not properly normalize interpreter paths
+        r.Remove('%(bindir)s/python')
+        r.Link('python', '%(bindir)s/python2.6')
+        r.ComponentSpec('bin', '%(bindir)s/python')
+
+        # These can be symlinks, but we still need to move them.
+        # e.g. pydoc -> pydoc2.6, then put the symlink in :bin
+        for bin in ('pydoc', 'smtpd.py'):
+            newBin = bin + r.majversion
+            r.Move('%(bindir)s/' + bin, '%(bindir)s/' + newBin)
+            r.Symlink(newBin, '%(bindir)s/' + bin)
+            r.ComponentSpec('bin', '%(bindir)s/' + bin)
+        r.ComponentSpec('bin', '%(bindir)s/2to3')
+
+        r.Remove('%(bindir)s/smtpd')
+        r.Move('%(mandir)s/man1/python.1', '%(mandir)s/man1/python2.6.1')
+        r.Requires(bootstrapPythonFlags=('%(lib)s', '2.6'))
+
+
+        # cross-grade flavor migrations are not supported, but sometimes
+        # we do them and work around the issues.  Make such cross-grade
+        # migrations slightly more likely to function, even if they
+        # are not really supported. (RPL-2977)
+        r.ComponentProvides('%(targetarch)s')
+        r.Requires('python:lib(%(targetarch)s)', '%(bindir)s/python')
+

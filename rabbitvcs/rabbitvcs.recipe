@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rabbitvcs(PackageRecipe):
+
+    name = 'rabbitvcs'
+    version = '0.15.2'
+
+    buildRequires = [
+    'python-setuptools:python',
+    'ConfigObj:python', 'dbus-python:python', 
+    'gettext:runtime', 'gnome-python-extras:python',
+    'gnome-python:python', 'intltool:runtime', 
+    'ipython:python', 'pygobject:python', 'pygtk:python', 
+    'python:devel', 'mercurial:python', 'python-dulwich:python',
+    'python-simplejson:python', 'pysvn:python', ]
+
+
+    def setup(r):
+        r.addArchive('http://rabbitvcs.googlecode.com/files/')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+
+        r.Install("clients/cli/rabbitvcs","%(bindir)s/")
+        r.Install("clients/nautilus/RabbitVCS.py","%(libdir)s/nautilus/extensions-2.0/python/")
+        
+        # Installing Thunar Extension
+        r.Install('clients/thunar/RabbitVCS.py', '%(libdir)s/thunarx-2/python/')
+
+        # Installing Gedit Extension
+        r.Install('clients/gedit/%(name)s-plugin.py', '%(libdir)s/gedit/plugins/%(name)s-plugin.py')
+        r.Install('clients/gedit/rabbitvcs-gedit2.gedit-plugin', '%(libdir)s/gedit/plugins/')
+
+        r.Requires("pysvn:python","%(bindir)s/rabbitvcs")
+        r.Requires("nautilus-python:lib","%(bindir)s/rabbitvcs")

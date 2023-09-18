@@ -1,0 +1,13 @@
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class AuthenNTLM(CPANPackageRecipe):
+    name='perl-Authen-NTLM'
+    version='1.05'
+
+    #In your recipe if you get an IO error, you may need to discover one or
+    #both of the following
+    #author='CPANAUTHORNAME'
+    upstreamname='NTLM'
+
+    buildRequires = ['perl-Digest-HMAC:perl', 'perl:devel']
+

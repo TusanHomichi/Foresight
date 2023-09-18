@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=VDrift
+Comment=Cross-platform, open source driving simulation
+Exec=vdrift
+Icon=vdrift.png
+Terminal=false
+Type=Application
+Categories=Application;Game;Simulation;

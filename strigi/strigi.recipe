@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Strigi(CMakePackageRecipe):
+
+    name='strigi'
+    version = '0.7.7'
+
+    buildRequires = [
+                    'boost:devel',
+                    'bzip2:devel',
+                    'clucene:devel',
+                    'dbus:devel',
+                    'dbus-x11:runtime',
+                    'exiv2:devel',
+                    'expat:devel',
+                    'gamin:devel',
+                    'icedtea-jdk:runtime',
+                    'libstdc++:devel',
+                    'libX11:devel',
+                    'libXext:devel',
+                    'libxml2:devel',
+                    'libxml2:runtime',
+                    'perl:runtime',
+                    'phonon:devel',
+                    'qt4:devel',
+                    'qt4-sql:mysql',
+                    'qt4-sql:odbc',
+                    'qt4-sql:psql',
+                    'qt4-sql:sqlite',
+                    'xz:runtime',
+                    'zlib:devel',
+                    ]
+
+    def unpack(r):
+
+        if Arch.x86_64:
+            r.cmakeArgs += ' -DLIB_SUFFIX=64 '
+
+        r.cmakeArgs += (
+            ' -DENABLE_EXPAT:BOOL=ON '
+            ' -DENABLE_FAM:BOOL=ON '
+            ' -DENABLE_INOTIFY:BOOL=ON '
+            ' -DENABLE_SQLITE:BOOL=OFF '
+        )
+
+        r.addArchive('http://rdieter.fedorapeople.org/strigi/strigi-%(version)s.tar.xz')
+        #r.addArchive('http://www.vandenoever.info/software/strigi/')
+        #r.addPatch('foo.patch')
+
+        # Use system one
+        r.Remove('cmake/FindQt4.cmake')
+

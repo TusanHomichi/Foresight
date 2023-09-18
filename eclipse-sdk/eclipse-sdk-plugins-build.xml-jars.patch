@@ -1,0 +1,507 @@
+diff -ur plugins.orig/org.eclipse.ant.core/build.xml plugins/org.eclipse.ant.core/build.xml
+--- plugins.orig/org.eclipse.ant.core/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.ant.core/build.xml	2011-08-31 03:35:52.485544058 +0400
+@@ -116,7 +116,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-launcher.jar"/>
+ 		</path>
+@@ -192,7 +192,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="${build.result.folder}/@dot"/>
+ 			<pathelement path="${build.result.folder}/../org.eclipse.ant.core_3.2.300.v20110511/@dot"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant.jar"/>
+diff -ur plugins.orig/org.eclipse.core.expressions/build.xml plugins/org.eclipse.core.expressions/build.xml
+--- plugins.orig/org.eclipse.core.expressions/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.core.expressions/build.xml	2011-08-31 03:35:52.048544080 +0400
+@@ -142,7 +142,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 		</path>
+ 		<!-- compile the source code -->
+ 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" errorProperty="compilation.error.occured"		>
+diff -ur plugins.orig/org.eclipse.core.runtime/build.xml plugins/org.eclipse.core.runtime/build.xml
+--- plugins.orig/org.eclipse.core.runtime/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.core.runtime/build.xml	2011-08-31 03:35:51.825544093 +0400
+@@ -123,7 +123,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 		</path>
+ 		<!-- compile the source code -->
+ 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" errorProperty="compilation.error.occured"		>
+diff -ur plugins.orig/org.eclipse.core.runtime.compatibility/build.xml plugins/org.eclipse.core.runtime.compatibility/build.xml
+--- plugins.orig/org.eclipse.core.runtime.compatibility/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.core.runtime.compatibility/build.xml	2011-08-31 03:35:52.471544059 +0400
+@@ -142,7 +142,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.update.configurator/@dot"/>
+ 		</path>
+ 		<!-- compile the source code -->
+diff -ur plugins.orig/org.eclipse.core.variables/build.xml plugins/org.eclipse.core.variables/build.xml
+--- plugins.orig/org.eclipse.core.variables/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.core.variables/build.xml	2011-08-31 03:35:51.872544091 +0400
+@@ -115,7 +115,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 		</path>
+ 		<!-- compile the source code -->
+ 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" errorProperty="compilation.error.occured"		>
+diff -ur plugins.orig/org.eclipse.ecf.provider.filetransfer.httpclient/build.xml plugins/org.eclipse.ecf.provider.filetransfer.httpclient/build.xml
+--- plugins.orig/org.eclipse.ecf.provider.filetransfer.httpclient/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.ecf.provider.filetransfer.httpclient/build.xml	2011-08-31 03:35:52.339544067 +0400
+@@ -105,9 +105,9 @@
+ 		<delete dir="${build.result.folder}/@dot"/>
+ 		<mkdir dir="${build.result.folder}/@dot"/>
+ 		<path id="@dot.classpath">
+-			<pathelement path="/usr/share/java/jakarta-commons-httpclient-3.1.jar"/>
+-			<pathelement path="/usr/share/java/commons-codec.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-logging.jar"/>
++			<pathelement path="../org.apache.commons.httpclient_3.1.0.v201005080502.jar"/>
++			<pathelement path="../org.apache.commons.codec_1.3.0.v201101211617.jar"/>
++			<pathelement path="../org.apache.commons.logging_1.0.4.v201101211617.jar"/>
+ 			<pathelement path="../org.eclipse.core.jobs/bin/"/>
+ 			<pathelement path="../org.eclipse.core.jobs/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi/bin/"/>
+diff -ur plugins.orig/org.eclipse.ecf.provider.filetransfer.httpclient.ssl/build.xml plugins/org.eclipse.ecf.provider.filetransfer.httpclient.ssl/build.xml
+--- plugins.orig/org.eclipse.ecf.provider.filetransfer.httpclient.ssl/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.ecf.provider.filetransfer.httpclient.ssl/build.xml	2011-08-31 03:35:52.541544055 +0400
+@@ -107,9 +107,9 @@
+ 		<path id="@dot.classpath">
+ 			<pathelement path="../org.eclipse.ecf.provider.filetransfer.httpclient/bin/"/>
+ 			<pathelement path="../org.eclipse.ecf.provider.filetransfer.httpclient/@dot"/>
+-			<pathelement path="/usr/share/java/jakarta-commons-httpclient-3.1.jar"/>
+-			<pathelement path="/usr/share/java/commons-codec.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-logging.jar"/>
++			<pathelement path="../org.apache.commons.httpclient_3.1.0.v201005080502.jar"/>
++			<pathelement path="../org.apache.commons.codec_1.3.0.v201101211617.jar"/>
++			<pathelement path="../org.apache.commons.logging_1.0.4.v201101211617.jar"/>
+ 			<pathelement path="../org.eclipse.core.jobs/bin/"/>
+ 			<pathelement path="../org.eclipse.core.jobs/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi/bin/"/>
+diff -ur plugins.orig/org.eclipse.equinox.app/build.xml plugins/org.eclipse.equinox.app/build.xml
+--- plugins.orig/org.eclipse.equinox.app/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.app/build.xml	2011-08-31 03:35:52.205544073 +0400
+@@ -114,7 +114,7 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+diff -ur plugins.orig/org.eclipse.equinox.http.jetty_2.0.0/build.xml plugins/org.eclipse.equinox.http.jetty_2.0.0/build.xml
+--- plugins.orig/org.eclipse.equinox.http.jetty_2.0.0/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.http.jetty_2.0.0/build.xml	2011-08-31 03:35:51.695544101 +0400
+@@ -87,7 +87,7 @@
+ 		<delete dir="${build.result.folder}/@dot"/>
+ 		<mkdir dir="${build.result.folder}/@dot"/>
+ 		<path id="@dot.classpath">
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.http.servlet/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.http.servlet/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi/bin/"/>
+@@ -99,12 +99,12 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/jetty/lib/jetty-util-6.1.26.jar"/>
+-			<pathelement path="/usr/share/jetty/lib/jetty-6.1.26.jar"/>
++			<pathelement path="../org.mortbay.jetty.util_6.1.23.v201004211559.jar"/>
++			<pathelement path="../org.mortbay.jetty.server_6.1.23.v201004211559.jar"/>
+ 			<pathelement path="../org.apache.jasper_5.5.17.v200706111724.jar"/>
+-			<pathelement path="/usr/share/java/tomcat6-jsp-2.1-api.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-el-1.0.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-logging.jar"/>
++			<pathelement path="../javax.servlet.jsp_2.0.0.v201101211617.jar"/>
++			<pathelement path="../org.apache.commons.el_1.0.0.v200806031608.jar"/>
++			<pathelement path="../org.apache.commons.logging_1.0.4.v201101211617.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-antlr.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-apache-bcel.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-apache-bsf.jar"/>
+diff -ur plugins.orig/org.eclipse.equinox.http.servlet/build.xml plugins/org.eclipse.equinox.http.servlet/build.xml
+--- plugins.orig/org.eclipse.equinox.http.servlet/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.http.servlet/build.xml	2011-08-31 03:35:52.306544069 +0400
+@@ -96,7 +96,7 @@
+ 		<delete dir="${build.result.folder}/@dot"/>
+ 		<mkdir dir="${build.result.folder}/@dot"/>
+ 		<path id="@dot.classpath">
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.osgi/bin/"/>
+ 			<pathelement path="../org.eclipse.osgi/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.transforms.hook/bin/"/>
+diff -ur plugins.orig/org.eclipse.equinox.p2.console/build.xml plugins/org.eclipse.equinox.p2.console/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.console/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.console/build.xml	2011-08-31 03:35:51.886544091 +0400
+@@ -126,8 +126,8 @@
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 		</path>
+ 		<!-- compile the source code -->
+ 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" errorProperty="compilation.error.occured"		>
+diff -ur plugins.orig/org.eclipse.equinox.p2.director/build.xml plugins/org.eclipse.equinox.p2.director/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.director/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.director/build.xml	2011-08-31 03:35:51.672544103 +0400
+@@ -124,8 +124,8 @@
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 		</path>
+ 		<!-- compile the source code -->
+ 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" errorProperty="compilation.error.occured"		>
+diff -ur plugins.orig/org.eclipse.equinox.p2.director.app/build.xml plugins/org.eclipse.equinox.p2.director.app/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.director.app/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.director.app/build.xml	2011-08-31 03:35:52.236544071 +0400
+@@ -96,7 +96,7 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+@@ -131,8 +131,8 @@
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant.jar"/>
+ 		</path>
+ 		<!-- compile the source code -->
+@@ -189,7 +189,7 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+@@ -224,8 +224,8 @@
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.security.win32.x86_64/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 			<pathelement path="bin/"/>
+ 			<pathelement path="${build.result.folder}/../org.eclipse.equinox.p2.director.app_1.0.300.v20110505/bin/"/>
+ 			<pathelement path="${build.result.folder}/@dot"/>
+diff -ur plugins.orig/org.eclipse.equinox.p2.garbagecollector/build.xml plugins/org.eclipse.equinox.p2.garbagecollector/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.garbagecollector/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.garbagecollector/build.xml	2011-08-31 03:35:52.323544068 +0400
+@@ -108,7 +108,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.core/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.core/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.metadata/bin/"/>
+diff -ur plugins.orig/org.eclipse.equinox.p2.publisher/build.xml plugins/org.eclipse.equinox.p2.publisher/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.publisher/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.publisher/build.xml	2011-08-31 03:35:51.902544089 +0400
+@@ -128,7 +128,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 		</path>
+ 		<!-- compile the source code -->
+ 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" errorProperty="compilation.error.occured"		>
+diff -ur plugins.orig/org.eclipse.equinox.p2.publisher.eclipse/build.xml plugins/org.eclipse.equinox.p2.publisher.eclipse/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.publisher.eclipse/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.publisher.eclipse/build.xml	2011-08-31 03:35:51.738544100 +0400
+@@ -90,7 +90,7 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+@@ -192,7 +192,7 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+diff -ur plugins.orig/org.eclipse.equinox.p2.repository.tools/build.xml plugins/org.eclipse.equinox.p2.repository.tools/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.repository.tools/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.repository.tools/build.xml	2011-08-31 03:35:52.159544075 +0400
+@@ -96,7 +96,7 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+@@ -135,8 +135,8 @@
+ 			<pathelement path="../org.eclipse.equinox.p2.engine/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.metadata.repository/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.metadata.repository/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.publisher.eclipse/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.publisher.eclipse/pdepublishing.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.frameworkadmin/bin/"/>
+@@ -204,7 +204,7 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+@@ -243,8 +243,8 @@
+ 			<pathelement path="../org.eclipse.equinox.p2.engine/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.metadata.repository/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.metadata.repository/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.publisher.eclipse/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.publisher.eclipse/pdepublishing.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.frameworkadmin/bin/"/>
+diff -ur plugins.orig/org.eclipse.equinox.p2.touchpoint.eclipse/build.xml plugins/org.eclipse.equinox.p2.touchpoint.eclipse/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.touchpoint.eclipse/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.touchpoint.eclipse/build.xml	2011-08-31 03:35:51.962544086 +0400
+@@ -130,7 +130,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.simpleconfigurator.manipulator/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.simpleconfigurator.manipulator/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.frameworkadmin.equinox/bin/"/>
+@@ -139,8 +139,8 @@
+ 			<pathelement path="../org.eclipse.equinox.simpleconfigurator/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.publisher.eclipse/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.publisher.eclipse/pdepublishing.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.artifact.repository/bin/"/>
+diff -ur plugins.orig/org.eclipse.equinox.p2.updatesite/build.xml plugins/org.eclipse.equinox.p2.updatesite/build.xml
+--- plugins.orig/org.eclipse.equinox.p2.updatesite/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.equinox.p2.updatesite/build.xml	2011-08-31 03:35:52.179544075 +0400
+@@ -96,7 +96,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/runtime_registry_compatibility.jar"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime.compatibility.registry/bin/"/>
+diff -ur plugins.orig/org.eclipse.help/build.xml plugins/org.eclipse.help/build.xml
+--- plugins.orig/org.eclipse.help/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.help/build.xml	2011-08-31 03:35:52.407544061 +0400
+@@ -140,7 +140,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.core.expressions/@dot"/>
+ 		</path>
+ 		<!-- compile the source code -->
+diff -ur plugins.orig/org.eclipse.help.base/build.xml plugins/org.eclipse.help.base/build.xml
+--- plugins.orig/org.eclipse.help.base/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.help.base/build.xml	2011-08-31 03:35:52.364544064 +0400
+@@ -95,7 +95,7 @@
+ 			<pathelement path="../com.ibm.icu_4.4.2.v20110208.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.http.jetty_2.0.0/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.http.jetty_2.0.0/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.http.servlet/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.http.servlet/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi/bin/"/>
+@@ -107,12 +107,12 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/jetty/lib/jetty-util-6.1.26.jar"/>
+-			<pathelement path="/usr/share/jetty/lib/jetty-6.1.26.jar"/>
++			<pathelement path="../org.mortbay.jetty.util_6.1.23.v201004211559.jar"/>
++			<pathelement path="../org.mortbay.jetty.server_6.1.23.v201004211559.jar"/>
+ 			<pathelement path="../org.apache.jasper_5.5.17.v200706111724.jar"/>
+-			<pathelement path="/usr/share/java/tomcat6-jsp-2.1-api.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-el-1.0.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-logging.jar"/>
++			<pathelement path="../javax.servlet.jsp_2.0.0.v201101211617.jar"/>
++			<pathelement path="../org.apache.commons.el_1.0.0.v200806031608.jar"/>
++			<pathelement path="../org.apache.commons.logging_1.0.4.v201101211617.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-antlr.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-apache-bcel.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-apache-bsf.jar"/>
+@@ -137,8 +137,8 @@
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant.jar"/>
+ 			<pathelement path="../org.apache.lucene"/>
+ 			<pathelement path="../org.apache.lucene/@dot"/>
+-			<pathelement path="/usr/share/java/lucene.jar"/>
+-			<pathelement path="/usr/share/java/lucene-contrib/lucene-analyzers.jar"/>
++			<pathelement path="../org.apache.lucene.core_2.9.1.v201101211721.jar"/>
++			<pathelement path="../org.apache.lucene.analysis_2.9.1.v201101211721.jar"/>
+ 			<pathelement path="../org.eclipse.ant.core/@dot"/>
+ 			<pathelement path="../org.eclipse.core.variables/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime/@dot"/>
+@@ -226,7 +226,7 @@
+ 			<pathelement path="../com.ibm.icu_4.4.2.v20110208.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.http.jetty_2.0.0/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.http.jetty_2.0.0/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.http.servlet/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.http.servlet/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi/bin/"/>
+@@ -238,12 +238,12 @@
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/jetty/lib/jetty-util-6.1.26.jar"/>
+-			<pathelement path="/usr/share/jetty/lib/jetty-6.1.26.jar"/>
++			<pathelement path="../org.mortbay.jetty.util_6.1.23.v201004211559.jar"/>
++			<pathelement path="../org.mortbay.jetty.server_6.1.23.v201004211559.jar"/>
+ 			<pathelement path="../org.apache.jasper_5.5.17.v200706111724.jar"/>
+-			<pathelement path="/usr/share/java/tomcat6-jsp-2.1-api.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-el-1.0.jar"/>
+-			<pathelement path="/usr/share/java/apache-commons-logging.jar"/>
++			<pathelement path="../javax.servlet.jsp_2.0.0.v201101211617.jar"/>
++			<pathelement path="../org.apache.commons.el_1.0.0.v200806031608.jar"/>
++			<pathelement path="../org.apache.commons.logging_1.0.4.v201101211617.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-antlr.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-apache-bcel.jar"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant-apache-bsf.jar"/>
+@@ -268,8 +268,8 @@
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant.jar"/>
+ 			<pathelement path="../org.apache.lucene"/>
+ 			<pathelement path="../org.apache.lucene/@dot"/>
+-			<pathelement path="/usr/share/java/lucene.jar"/>
+-			<pathelement path="/usr/share/java/lucene-contrib/lucene-analyzers.jar"/>
++			<pathelement path="../org.apache.lucene.core_2.9.1.v201101211721.jar"/>
++			<pathelement path="../org.apache.lucene.analysis_2.9.1.v201101211721.jar"/>
+ 			<pathelement path="../org.eclipse.ant.core/@dot"/>
+ 			<pathelement path="../org.eclipse.core.variables/@dot"/>
+ 			<pathelement path="../org.eclipse.core.runtime/@dot"/>
+diff -ur plugins.orig/org.eclipse.osgi.services/build.xml plugins/org.eclipse.osgi.services/build.xml
+--- plugins.orig/org.eclipse.osgi.services/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.osgi.services/build.xml	2011-08-31 03:35:52.426544060 +0400
+@@ -114,7 +114,7 @@
+ 			<pathelement path="../org.eclipse.equinox.servletbridge.extensionbundle/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.weaving.hook/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 		</path>
+ 		<subant antfile="${customBuildCallbacks}" target="pre.@dot" failonerror="false" buildpath=".">
+ 			<property name="source.folder1" value="."/>
+diff -ur plugins.orig/org.eclipse.pde.build/build.xml plugins/org.eclipse.pde.build/build.xml
+--- plugins.orig/org.eclipse.pde.build/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.pde.build/build.xml	2011-08-31 03:35:51.658544099 +0400
+@@ -144,7 +144,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.artifact.repository/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.artifact.repository/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.jarprocessor/bin/"/>
+@@ -166,8 +166,8 @@
+ 			<pathelement path="../org.eclipse.equinox.p2.repository.tools/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director.app/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director.app/@dot"/>
+ 			<pathelement path="../org.apache.ant_1.8.2.v20110505-1300/lib/ant.jar"/>
+@@ -276,7 +276,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.artifact.repository/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.artifact.repository/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.jarprocessor/bin/"/>
+@@ -298,8 +298,8 @@
+ 			<pathelement path="../org.eclipse.equinox.p2.repository.tools/@dot"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director/@dot"/>
+-			<pathelement path="/usr/share/java/org.sat4j.core.jar"/>
+-			<pathelement path="/usr/share/java/org.sat4j.pb.jar"/>
++			<pathelement path="../org.sat4j.core_2.3.0.v20110329.jar"/>
++			<pathelement path="../org.sat4j.pb_2.3.0.v20110329.jar"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director.app/bin/"/>
+ 			<pathelement path="../org.eclipse.equinox.p2.director.app/@dot"/>
+ 			<pathelement path="bin/"/>
+diff -ur plugins.orig/org.eclipse.update.core/build.xml plugins/org.eclipse.update.core/build.xml
+--- plugins.orig/org.eclipse.update.core/build.xml	2011-06-15 20:10:28.000000000 +0400
++++ plugins/org.eclipse.update.core/build.xml	2011-08-31 03:35:51.862544092 +0400
+@@ -126,7 +126,7 @@
+ 			<pathelement path="../org.eclipse.equinox.app/@dot"/>
+ 			<pathelement path="../org.eclipse.osgi.services"/>
+ 			<pathelement path="../org.eclipse.osgi.services/@dot"/>
+-			<pathelement path="/usr/share/java/tomcat6-servlet-2.5-api.jar"/>
++			<pathelement path="../javax.servlet_2.5.0.v201103041518.jar"/>
+ 			<pathelement path="../org.eclipse.update.configurator/@dot"/>
+ 			<pathelement path="../org.eclipse.core.net/bin/"/>
+ 			<pathelement path="../org.eclipse.core.net/@dot"/>

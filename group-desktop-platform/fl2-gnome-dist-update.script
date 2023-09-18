@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Make sure mention of running this script shows up in output
+echo
+
+#if [ -e /var/run/sync_lm_sensors ] ; then
+#    echo 'Replacing previously-removed lm_sensors package...' >&2
+#    ((i=0;
+#      while [ $i -lt 30 ] ; do
+#          sleep 1;
+#          conary sync lm_sensors --no-interactive && rm -f /var/run/sync_lm_sensors
+#          i=$(($i+1));
+#      done >/dev/null 2>&1)&)&
+#fi
+
+exit 0

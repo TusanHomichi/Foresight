@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class libgnomekbd(GnomePackageRecipe):
+
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libxklavier:devel', 'libxml2:devel', 'pango:devel', 'popt:devel', 'libpng:devel']
+
+    name = 'libgnomekbd'
+    version = '2.32.0'
+
+    extraConfig = '--disable-update-mimedb'

@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#loadSuperClass('firefox-addon')
+class Mozvoikko(AutoPackageRecipe):
+    name = 'mozvoikko'
+    version = '1.0.1'
+ 
+    buildRequires = ['libstdc++:devel', 'libvoikko:devel', 'pkgconfig:devel', 'xulrunner:devel']
+ 
+    def setup(r):
+	r.unpack()
+	r.make()
+	r.makeinstall()
+	r.policy()
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/voikko/')
+
+    def make(r):
+	r.Run('make -f Makefile.xulrunner extension-files')
+
+    def makeinstall(r):
+	r.Make('-f Makefile.xulrunner install-unpacked DESTDIR=%(destdir)s%(libdir)s/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}')
+	r.SetModes('%(libdir)s/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/{b676e3ff-cda7-4e0c-b2b8-74e4bb40a67a}/components/*.so', 0755)

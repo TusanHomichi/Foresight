@@ -1,0 +1,31 @@
+loadInstalled("python")
+class TrytonPackage(PackageRecipe):
+
+    abstractBaseClass = True
+    name = 'trytonpackage'
+    version = '2.2.X'
+    url = "http://www.tryton.org"
+    prebuild = []
+    deps = []
+    buildRequires = ['python-setuptools:python',"mercurial:runtime"]
+
+    def setup(r):
+        if r.__class__.__name__ == 'TrytonPackage':
+            return
+        r.macros.pyver =  Python.majversion
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+        r.macros.tryver = r.version[:3]
+        r.macros.trytonname = r.name[8:]
+
+        r.buildRequires.extend(r.prebuild)
+        if "trytond_" in r.name:
+            r.buildRequires.extend(['python:devel', 'trytond:python'])
+            r.addMercurialSnapshot("http://hg2.tryton.org/%(tryver)s/modules/%(trytonname)s")
+        else:
+            r.addMercurialSnapshot("http://hg2.tryton.org/%(tryver)s/%(name)s")
+
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        if "trytond_" in r.name and r.deps:
+            for dep in r.deps:
+                r.Requires(dep,"%(sitepkgs)s/trytond/modules/%(trytonname)s/__tryton__.py")
+

@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class LibCaca(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libcaca'
+    version = '0.99'
+    rpmRelease = '0.9.beta16.fc12'
+    tarballName = '%(name)s-%(version)s.beta16.tar.gz'
+    rpMPatches = [ 'libcaca-0.99.beta16-multilib.patch',
+                   'libcaca-0.99.beta16-libGLU.patch']
+
+    buildRequires = ['Mesa:devel', 'doxygen:runtime', 'fontconfig:devel', 'freetype:devel', 'libX11:devel', 'libstdc++:devel', 'mono:cil', 'mono:devel', 'mono:runtime', 'ncurses:devel', 'pkgconfig:devel', 'ruby:devellib', 'ruby:runtime', 'slang:devel', 'tetex-dvips:runtime', 'tetex:runtime', 'zlib:devel', 
+                     'freeglut:devel' ]
+
+    def configure(r):
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.Configure('--disable-rpath')
+        # Remove useless rpath
+        r.Run("""
+        sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+        sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+""")
+
+    def policy(r):
+        # FIXME find out _why_ conary-policy not doing is job here
+        # as it should
+        r.ComponentSpec('cil', '%(libdir)s/caca-sharp/.*')

@@ -1,0 +1,8 @@
+--- bus/system.conf.in.orig	2013-01-09 16:53:44.417828713 +0000
++++ bus/system.conf.in	2013-01-09 16:54:57.960830764 +0000
+@@ -80,4 +80,5 @@
+ 
+   <include if_selinux_enabled="yes" selinux_root_relative="yes">contexts/dbus_contexts</include>
+ 
++   <limit name="max_match_rules_per_connection">50000</limit> 
+ </busconfig>

@@ -1,0 +1,23 @@
+class fftw3(CPackageRecipe):
+    name='fftw'
+    version='3.2.2'
+
+    buildRequires = ['gcc-fortran:runtime', 'install-info:runtime']
+
+    def setup(r):
+        r.addArchive('http://www.fftw.org/')
+        commonCfg = '--enable-shared --disable-dependency-tracking --enable-threads '
+
+
+        for d , extraArgs  in [
+            ('double', ''),
+            ('single', '--enable-single'),
+            ('long', '--enable-long-double')]:
+
+            r.Configure(commonCfg + extraArgs, objDir = d)
+            r.Make(dir=d)
+            r.MakeInstall(dir=d)
+
+        r.Doc('AUTHORS', 'COPYING', 'COPYRIGHT', 'ChangeLog', 'NEWS', 'README*', 'TODO')
+
+

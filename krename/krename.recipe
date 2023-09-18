@@ -1,0 +1,12 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class Krename(kdePackageRecipe):
+    name = 'krename'
+    version = '3.0.14'
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/krename/')

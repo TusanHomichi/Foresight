@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gimmix(AutoPackageRecipe):
+    name = 'gimmix'
+    version = '0.5.7'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'curl:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libglade:devel', 'libmpd:devel', 'libnxml:devel', 'libxml2:devel', 'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'taglib:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://download2.berlios.de/gimmix/gimmix-0.5.7.tar.bz2')
+	r.Requires('mpd:runtime', '%(bindir)s/gimmix')

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+class Metacam(CPackageRecipe):
+    name = 'metacam'
+    version = '1.2'
+    buildRequires = ['gcc-c++:runtime']
+
+    def setup(r):
+        r.addArchive('http://www.cheeseplant.org/%(name)s/downloads/%(name)s-%(version)s.tar.gz')
+        r.addPatch('metacam-1.2-includes.patch')
+        r.Make()
+        r.Install('metacam', '%(bindir)s/', mode = 0755)

@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:devel')
+class DataDump(CPANPackageRecipe):
+    name='perl-Data-Dump'
+    version='1.08'
+
+    buildRequires = ['perl:devel']

@@ -1,0 +1,156 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MPlayer(AutoPackageRecipe):
+
+    name = 'mplayer'
+    version = '1.1+36170'
+
+    buildRequires = [
+        'a52dec:devel', 
+        'aalib:devel', 
+        'alsa-lib:devel', 
+        'atk:devel', 
+        'audiofile:devel', 
+        'bitstream-vera-fonts:data',
+        'bzip2:devel', 
+        'cairo:devel',
+        'dirac:devel', 
+        'DirectFB:devel', 
+        'DirectFB:lib-core',
+        'enca:devel', 
+        'esound:devel', 
+        'expat:devel', 
+        'faac:devel', 
+        'faad2:devel', 
+        'fontconfig:devel',
+        'freetype:devel', 
+        'fribidi:devel', 
+        'giflib:devel', 
+        'git:runtime',
+        'glib:devel',
+        'gsm:devel', 
+        'gtk:devel', 
+        'jack:devel', 
+        'lame:devel', 
+        'libass:devel',
+        'libbluray:devel', 
+        'libcaca:devel', 
+        'libcdio:devel', 
+        'libdca:devel',
+        'libdv:devel',
+        'libdvdnav:devel', 
+        'libjpeg:devel', 
+        'libmad:devel', 
+        'libmng:devel', 
+        'libmpcdec:devel',
+        'libogg:devel', 
+        'liboil:devel', 
+        'libpng:devel', 
+        'libstdc++:devel', 
+        'libtermcap:devel', 
+        'libtheora:devel',
+        'libvdpau:devel', 
+        'libvorbis:devel', 
+        'libvpx:devel', 
+        'libX11:devel', 
+        'libXext:devel', 
+        'libXinerama:devel',
+        'libXrender:devel', 
+        'libXScrnSaver:devel', 
+        'libXt:devel', 
+        'libXv:devel',
+        'libXvMC:devel', 
+        'libXxf86dga:devel', 
+        'libXxf86vm:devel', 
+        'lirc:devel',
+        'lzo:devel',
+        'Mesa:devel', 
+        'ncurses:devel', 
+        'openjpeg:devel', 
+        'pango:devel', 
+        'pcre:devel',
+        'pkgconfig:devel', 
+        'pulseaudio:devel', 
+        'rtmpdump:devel', 
+        'samba-client:lib', 
+        'samba:devel', 
+        'schroedinger:devel', 
+        'SDL:devel',
+        'twolame:devel',
+        'x264:devel', 
+        'xvidcore:devel', 
+        'yasm:runtime',
+        'zlib:devel', 
+        'libmpg123:devel', 
+        'libopus:devel', 
+        'live555:devel',
+    ]
+
+
+    Flags.generic = True
+    Flags.generic.setShortDoc('build a version to run everywhere')
+
+    def unpack(r):
+
+        mytag = r.version.split('+')[1].lstrip('r')
+        r.addSvnSnapshot('svn://svn.mplayerhq.hu/mplayer/trunk', revision=mytag)
+        r.Replace('svn_revision=.*$', 'svn_revision='+mytag, 'version.sh')
+
+
+    def configure(r):
+
+        r.macros.codecsdir = '%(libdir)s/mplayer-codecs'
+        if Arch.x86_64:
+            r.macros.archenv = 'host_arch=x86_64  proc=x86_64  iproc=x86_64'
+        else:
+            r.macros.archenv = 'host_arch=i386  proc=i686  iproc=686'
+
+        if Arch.x86:
+            r.macros.cflags += ' -fomit-frame-pointer'
+            
+        # mplayer's configure script does not accept a number of standard
+        # configure arguments...
+        r.ManualConfigure(
+            ' --enable-runtime-cpudetection'
+            ' --disable-gui'
+            ' --enable-joystick'
+            ' --enable-menu'
+            ' --disable-arts'
+            ' --disable-liblzo'
+            ' --disable-speex'
+            ' --disable-openal'
+            ' --disable-libdv'
+            ' --disable-musepack'
+            ' --disable-esd'
+            ' --disable-mga'
+            ' --disable-ass-internal'
+            ' --disable-libdvdcss-internal'
+            ' --disable-dvdread-internal'
+            ' --disable-cdparanoia'
+            ' --language=all'
+            ' --prefix=%(prefix)s'
+            ' --confdir=%(sysconfdir)s/mplayer '
+            ' --libdir=%(libdir)s'
+            ' --codecsdir=%(codecsdir)s'
+            ' --with-xvmclib=XvMCW'
+            ' --extra-cflags=\'%(cflags)s\'',
+            preConfigure='%(archenv)s'
+        )
+
+    def policy(r):
+        r.Install('etc/codecs.conf', '%(sysconfdir)s/mplayer/')
+        r.Requires('mplayer-codecs:lib', '%(bindir)s/mplayer')
+
+        # Default font for OSD
+        r.Requires('bitstream-vera-fonts:data', '%(bindir)s/mplayer')
+        r.DanglingSymlinks(exceptions='%(datadir)s/mplayer/subfont.ttf')
+        r.Symlink('%(datadir)s/fonts/bitstream-vera/Vera.ttf',
+                  '%(datadir)s/mplayer/subfont.ttf')
+
+        r.Create('%(sysconfdir)s/mplayer/mplayer.conf', 
+                 contents='ao=pulse,alsa,oss,sdl:aalib')
+

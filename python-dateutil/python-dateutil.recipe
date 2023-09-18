@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007-2009 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonDateutil(PackageRecipe):
+
+    name = 'python-dateutil'
+    version = '1.5'
+
+    buildRequires = [ 'python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://labix.org/download/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()
+

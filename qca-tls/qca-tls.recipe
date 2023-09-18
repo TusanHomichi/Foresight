@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2005 rPath Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('qtpackage')
+class qca_tls(QtPackageRecipe):
+    name = 'qca-tls'
+    version = '1.0'
+
+    buildRequires = [ 'openssl:devel', 'libXext:devel', 'libX11:devel']
+
+
+    def setup(r):
+        r.addArchive('http://delta.affinix.com/download/qca/')
+        r.addPatch('http://zzz.fisek.com.tr/seyir-defteri/dosyalar/qca-tls-1.0-openssl-0.9.8a-fix.patch')
+        r.Run('./configure')
+        r.Make()
+        r.MakeInstall(rootVar='INSTALL_ROOT')

@@ -1,0 +1,10 @@
+loadSuperClass('rubygempackage')
+class Mocha(RubygemPackageRecipe):
+
+    name = 'rubygem-mocha'
+    version = '0.9.8'
+    buildRequires = ['rubygem-rake:runtime']
+
+
+    def policy(r):
+        r.Requires('rubygem-rake:runtime', '%(name)s:lib')

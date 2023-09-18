@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xmoto(AutoPackageRecipe):
+    name = 'xmoto'
+    version = '0.5.2'
+
+    packageSummary = 'X-Moto is a challenging 2D motocross platform game'
+    packageDescription = 'X-Moto is a challenging 2D motocross platform game, where physics play an all important role in the gameplay. You need to control your bike to its limit, if you want to have a chance finishing the more difficult of the challenges.'
+
+    buildRequires = ['desktop-file-utils:runtime', 'Mesa:devel', 'SDL:devel', 
+            'SDL_mixer:devel', 'SDL_net:devel', 'SDL_ttf:devel', 'bzip2:devel', 'curl:devel', 
+            'gettext:runtime', 'intltool:runtime', 'libX11:devel', 'libjpeg:devel', 
+            'libpng:devel', 'libstdc++:devel', 'lua:devel', 'ode:devel', 'sqlite:devel', 
+            'zlib:devel']
+ 
+    def setup(r):
+        r.addArchive('http://download.tuxfamily.org/%(name)s/%(name)s/%(version)s/%(name)s-%(version)s-src.tar.gz')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+	r.addPatch('xmoto-amd64.diff')
+	r.Configure('--disable-rpath --disable-dependency-tracking')
+	r.Make()
+	r.MakeInstall()
+
+        r.Copy('extra/xmoto.xpm', '%(datadir)s/pixmaps/')
+        r.addSource('xmoto.desktop')
+        r.Desktopfile('xmoto.desktop')

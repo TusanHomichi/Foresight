@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Wxglade(PackageRecipe):
+    name = 'wxGlade'
+    version = '0.6.3'
+ 
+    buildRequires = ['python:devel', 'wxPython:python']
+ 
+    def setup(r):
+        # Setup a var to hold the current python version
+        r.macros.pyver = '2.6'
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+        
+        # Download the archive and unpack it in the %(sitepkgs)s dir
+        r.addArchive('mirror://sourceforge/wxglade/%(name)s-%(version)s.tar.gz', dir='%(sitepkgs)s')
+        
+        # Rename the folder to the correct name
+        r.Move('%(sitepkgs)s/wxGlade-0.6.3', '%(sitepkgs)s/wxglade')
+        
+        # Compile the python files to .pyc and .pyo
+        r.CompilePython('%(sitepkgs)s')
+        
+        # Fix the included shell script to call the correct python version and lib dir
+        r.Replace('pv="2.3"', 'pv="%(pyver)s"', '%(sitepkgs)s/wxglade/wxglade')
+        r.Run('sed -i -e s#/usr/lib#%(libdir)s# %(destdir)s%(sitepkgs)s/wxglade/wxglade')
+
+        # Copy the shell script to the /usr/bin dir
+        r.Copy('%(sitepkgs)s/wxglade/wxglade', '%(bindir)s/wxglade')

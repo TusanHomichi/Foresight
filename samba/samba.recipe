@@ -1,0 +1,214 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Samba(CPackageRecipe):
+    name = 'samba'
+    version = '3.0.33'
+
+    buildRequires = [ 'readline:devel', 'ncurses:devel', 'openssl:devel',
+                      'coreutils:runtime', 'acl:devel', 'krb5:devel',
+                      'libtool:runtime', 'automake:runtime',
+                      'autoconf:runtime', 'zlib:devel', 'pam:devel',
+                      'desktop-file-utils:runtime', 'attr:devel', 'cups:devel',
+                      'popt:devel', 'openldap:devel', 'libcap:devel',
+                      'perl:lib', 'perl:runtime', 'initscripts:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://samba.org/samba/ftp/stable/')
+
+        #srpm = 'http://download.fedora.redhat.com/pub/fedora/linux/core/development/source/SRPMS/samba-3.0.23c-2.src.rpm'
+        srpm = 'ftp://ftp.redhat.com/redhat/linux/enterprise/5Server/en/os/SRPMS/samba-3.0.33-3.29.el5_5.1.src.rpm'
+
+        r.addSource('smb.conf', dest='%(sysconfdir)s/samba/', mode=0644)
+        r.addSource('smbusers', dest='%(sysconfdir)s/samba/', mode=0644)
+        r.addSource('samba.pamd.stack', dest='%(sysconfdir)s/pam.d/samba', mode=0644)
+        r.addSource('samba.log', rpm=srpm,
+                    dest='%(sysconfdir)s/logrotate.d/samba')
+        r.addSource('samba.xinetd', rpm=srpm,
+                    dest='%(sysconfdir)s/xinetd.d/swat')
+        r.addSource('swat.desktop', rpm=srpm)
+        r.addSource('samba.sysconfig', rpm=srpm,
+                    dest='%(sysconfdir)s/sysconfig/samba')
+        r.addSource('smb.init', rpm=srpm, dest='%(initdir)s/smb', mode=0755)
+        r.addSource('smbprint', rpm=srpm, dest='%(bindir)s/', mode=0755)
+        r.addSource('winbind.init', rpm=srpm, dest='%(initdir)s/winbind',
+                    mode=0755)
+
+        r.addPatch('samba-3.0.0beta1-pipedir.patch', rpm=srpm)
+        r.addPatch('samba-3.0.0rc3-nmbd-netbiosname.patch', rpm=srpm)
+        r.addPatch('samba-3.0.21pre1-smbspool.patch', rpm=srpm)
+        r.addPatch('samba-3.0.13-smbclient.patch', rpm=srpm)
+        r.addPatch('http://www.samba.org/samba/ftp/patches/security/samba-3.0.34-CVE-2009-1888.patch')
+        r.addPatch('samba-CVE-2009-2906.patch')
+        r.addPatch('samba-3.0.36-CVE-2009-2813.patch')
+
+        # RPL-3237
+        # CVE-2010-2063 
+        r.addPatch('samba-3.0.37-CVE-2010-2063.patch',rpm=srpm)
+
+        # RPL-3237
+        # CVE-2010-3069
+        r.addPatch('samba-3.0.37-CVE-2010-3069.patch',rpm=srpm)
+
+        # CVE-2012-1182
+        r.addPatch('http://www.samba.org/samba/ftp/patches/security/samba-3.0.37-CVE-2012-1182.patch')
+
+        r.Run('script/mkversion.sh', dir='source')
+
+        extraConfig = ('--with-acl-support --with-automount --with-libsmbclient '
+                       '--with-mmap --with-quotas --with-smbmount --with-syslog '
+                       '--with-utmp --with-vfs --without-smbwrapper '
+                       '--with-lockdir=%(localstatedir)s/cache/samba '
+                       '--with-piddir=%(localstatedir)s/run '
+                       '--with-mandir=%(mandir)s '
+                       '--with-privatedir=%(sysconfdir)s/samba '
+                       '--with-logfilebase=%(localstatedir)s/log/samba '
+                       '--with-libdir=%(libdir)s/samba '
+                       '--with-configdir=%(sysconfdir)s/samba '
+                       '--with-swatdir=%(datadir)s/swat --with-ldapsam '
+                       '--with-pam --with-pam_smbpass ')
+
+        r.Configure( extraConfig, dir='source/')
+
+        r.Make('proto', dir='source/')
+        r.Make('all nsswitch/libnss_wins.so nsswitch modules', dir='source/')
+        r.Make('pam_smbpass', dir='source/')
+        r.Make('debug2html', dir='source/')
+        r.Make('smbfilter', dir='source/')
+
+        r.Run('%(cc)s -o mount.cifs %(cflags)s -Wall -D_GNU_SOURCE -D_LARGEFILE64_SOURCE mount.cifs.c', dir='source/client')
+        r.Install('source/client/mount.cifs', '%(essentialsbindir)s/')
+
+        r.MakePathsInstall('BINDIR=%(destdir)s/%(bindir)s '
+                      'BASEDIR=%(destdir)s/%(prefix)s '
+                      'SBINDIR=%(destdir)s/%(sbindir)s '
+                      'DATADIR=%(destdir)s/%(datadir)s '
+                      'LOCKDIR=%(destdir)s/%(localstatedir)s/cache/samba '
+                      'PRIVATEDIR=%(destdir)s/%(sysconfdir)s/samba '
+                      'LIBDIR=%(destdir)s/%(libdir)s/samba '
+                      'CONFIGDIR=%(destdir)s/%(sysconfdir)s/samba '
+                      'MANDIR=%(destdir)s/%(mandir)s '
+                      'VARDIR=%(destdir)s/%(datadir)s/log/samba '
+                      'CODEPAGEDIR=%(destdir)s/%(datadir)s/samba/codepages '
+                      'SWATDIR=%(destdir)s/%(datadir)s/swat '
+                      'SAMBABOOK=%(destdir)s/%(datadir)s/swat/using_samba '
+                      'PIDDIR=%(destdir)s/%(localstatedir)s/run',
+                      dir='source/')
+
+        r.Install('source/script/mksmbpasswd.sh', '%(bindir)s/', mode=0755)
+        r.Symlink('%(bindir)s/smbmount', '%(essentialsbindir)s/mount.smb')
+        r.Symlink('%(bindir)s/smbmount', '%(essentialsbindir)s/mount.smbfs')
+
+        r.Create('%(sysconfdir)s/samba/lmhosts', contents='127.0.0.1 localhost')
+        r.MakeDirs('%(localstatedir)s/log/samba', mode=0700)
+        r.MakeDirs('%(localstatedir)s/spool/samba', mode=01777)
+
+        r.Install('source/nsswitch/libnss_winbind.so', '%(essentiallibdir)s/libnss_winbind.so.2')
+        r.Symlink('%(essentiallibdir)s/libnss_winbind.so.2', '%(essentiallibdir)s/libnss_winbind.so')
+        r.Install('source/nsswitch/libnss_wins.so', '%(essentiallibdir)s/libnss_wins.so.2')
+        r.Symlink('%(essentiallibdir)s/libnss_wins.so.2', '%(essentiallibdir)s/libnss_wins.so')
+
+        r.Replace('^Categories=X-Red-Hat-Extra;Application;System;X-Red-Hat-ServerConfig;',
+                  'Categories=System;FileTransfer;Network;',
+                  'swat.desktop')
+        r.Desktopfile('swat.desktop')
+
+        # make install puts libsmbclient in the wrong place (as of 3.0.7)
+        r.Move('%(libdir)s/samba/libsmbclient.*', '%(libdir)s')
+
+        r.Move('%(libdir)s/samba/security/*', '%(essentiallibdir)s/security/')
+
+        # create all the necessary solib links now so that they are owned by
+        # conary and packaged correctly
+        r.Ldconfig('%(essentiallibdir)s/')
+        r.Ldconfig('%(libdir)s/')
+
+        r.Doc('docs/htmldocs/*')
+
+        r.ComponentSpec('runtime', '%(libdir)s/samba/')
+        r.Provides(exceptions='%(libdir)s/samba/')
+        r.PackageSpec('samba-swat',
+                      '%(datadir)s/swat/.*',
+                      r'%(datadir)s/applications/.*swat\.desktop',
+                      '%(sbindir)s/swat',
+                      r'%(sysconfdir)s/xinetd\.d/swat',
+                      r'%(mandir)s/man8/swat\.8.*')
+
+        r.PackageSpec('samba-server',
+                      '%(sysconfdir)s/logrotate.d/.*',
+                      '%(bindir)s/tdb.*',
+                      '%(bindir)s/eventlogadm',
+                      '%(bindir)s/pdbedit',
+                      '%(bindir)s/profiles',
+                      '%(bindir)s/ntlm_auth',
+                      '%(bindir)s/testparm',
+                      '%(bindir)s/smbcontrol',
+                      '%(bindir)s/wbinfo',
+                      '%(sbindir)s/nmbd',
+                      '%(sbindir)s/smbd',
+                      '%(localstatedir)s/log/samba',
+                      '%(localstatedir)s/spool/samba',
+                      '%(mandir)s/man1/log2pcap.1.gz',
+                      '%(mandir)s/man1/ntlm_auth.1.gz',
+                      '%(mandir)s/man1/profiles.1.gz',
+                      '%(mandir)s/man1/smbcontrol.1.gz',
+                      '%(mandir)s/man1/testparm.1.gz',
+                      '%(mandir)s/man1/wbinfo.1.gz',
+                      '%(mandir)s/man5/lmhosts.5.gz',
+                      '%(mandir)s/man5/smb.conf.5.gz',
+                      '%(mandir)s/man8/nmbd.8.gz',
+                      '%(mandir)s/man8/pdbedit.8.gz',
+                      '%(mandir)s/man8/smbd.8.gz',
+                      '%(mandir)s/man8/tdbbackup.8.gz',
+                      '%(mandir)s/man8/tdbdump.8.gz',
+                      '%(mandir)s/man8/winbindd.8.gz')
+
+        r.PackageSpec('samba-client',
+                      '%(sysconfdir)s/pam.d/samba',
+                      '%(sysconfdir)s/samba/.*',
+                      '%(sysconfdir)s/sysconfig/samba',
+                      '%(mandir)s/man1/.*',
+                      '%(mandir)s/man5/.*',
+                      '%(mandir)s/man7/.*',
+                      '%(mandir)s/man8/.*',
+                      '%(essentiallibdir)s/libnss_winbind.so.2',
+                      '%(essentiallibdir)s/libnss_wins.so.2',
+                      '%(essentiallibdir)s/security/.*',
+                      '%(libdir)s/libsmbclient.*',
+                      '%(essentialsbindir)s/mount.*',
+                      '%(bindir)s/findsmb',
+                      '%(bindir)s/mksmbpasswd.sh',
+                      '%(bindir)s/net',
+                      '%(bindir)s/nmblookup',
+                      '%(bindir)s/rpcclient',
+                      '%(bindir)s/smbcacls',
+                      '%(bindir)s/smbclient',
+                      '%(bindir)s/smbcquotas',
+                      '%(bindir)s/smbget',
+                      '%(bindir)s/smbmnt',
+                      '%(bindir)s/smbmount',
+                      '%(bindir)s/smbpasswd',
+                      '%(bindir)s/smbprint',
+                      '%(bindir)s/smbspool',
+                      '%(bindir)s/smbstatus',
+                      '%(bindir)s/smbtar',
+                      '%(bindir)s/smbtree',
+                      '%(bindir)s/smbumount',
+                      '%(libdir)s/samba/.*',
+                      '%(sbindir)s/mount.*',
+                      '%(sbindir)s/umount.*',
+                      '%(sbindir)s/winbindd')
+
+
+        # Tag init scripts in case the initscript tag desc. is not installed
+        r.TagSpec('initscript', '%(initdir)s/')
+
+        # Add deps so that samba requires both the server and the client
+        r.Requires('samba-client:runtime', '/etc/init.d/smb')
+        r.Requires('samba-server:runtime', '/etc/init.d/smb')
+
+        # Samba server should require the initscript
+        r.Requires('samba:runtime', '/usr/sbin/smbd')

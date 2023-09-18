@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TelepathySofiasip(AutoPackageRecipe):
+    name = 'telepathy-sofiasip'
+    version = '0.6.4'
+
+    packageSummary = 'A SIP connection manager based around the Sofia-SIP library.'
+ 
+    buildRequires = [
+        'dbus-glib:devel',
+        'dbus:devel',
+        'glib:devel',
+        'gtk-doc:runtime',
+        'libxslt:runtime',
+        'pkgconfig:devel',
+        'sofia-sip:devel',
+        'telepathy-glib:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://telepathy.freedesktop.org/releases/telepathy-sofiasip/')

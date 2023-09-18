@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeSpeech(GnomePackageRecipe):
+
+    buildRequires = [ 'libbonobo:devel', 'pkgconfig:devel',
+        'ORBit2:devel', 'glib:devel', 'popt:devel' ]
+
+    name = 'gnome-speech'
+    version = '0.4.25'
+
+
+    def unpack(r):
+
+        GnomePackageRecipe.unpack(r)
+        r.Requires(exceptDeps='java: *')
+
+
+
+
+

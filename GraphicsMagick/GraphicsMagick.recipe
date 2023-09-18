@@ -1,0 +1,27 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GraphicsMagick(AutoPackageRecipe):
+
+    name = 'GraphicsMagick'
+    version = '1.3.5'
+
+    buildRequires = [
+        'bzip2:devel', 'enscript:runtime', 'freetype:devel',
+        'ghostscript:devel', 'ghostscript:devel', 'ghostscript:runtime',
+        'jasper:devel', 'lcms:devel', 'libICE:devel', 'libjpeg:devel',
+        'libpng:devel', 'libSM:devel', 'libstdc++:devel', 'libtiff:devel',
+        'libtool:devel', 'libX11:devel', 'libXext:devel', 'libxml2:devel',
+        'perl:devel', 'perl:runtime', 'pkgconfig:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/graphicsmagick/')
+
+    def configure(r):
+
+        r.Configure('--enable-shared --disable-static --with-gslib')
+

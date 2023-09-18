@@ -1,0 +1,4 @@
+datasource stdin
+file %(taghandlerdir)s/distro-release
+include %(initdir)s/distro-release
+implements files update

@@ -1,0 +1,11 @@
+# Copyright 2007-2008 by Foresight Linux
+#
+
+class MediaTemplateXfce(PackageRecipe):
+    name = 'media-template-xfce'
+    version = '2.0.0alpha1'
+    def setup(r):
+        r.addSource('INSTALL', dest = '/usr/lib/media-template/disc1/')
+        #r.addSource('updates.img', dest = '/usr/lib/media-template/disc1/rPath/base/')
+        r.addSource('RELEASE-NOTES-en_US.html', dir='/usr/lib/media-template/disc1/')
+

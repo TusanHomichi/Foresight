@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ElementTree(PackageRecipe):
+    name = 'elementtree'
+    basever = '1.2.6'
+    date = '20050316'
+    version = basever + '.' + date
+
+    buildRequires = [ 'python:devel', 'python:runtime', 'python-setuptools:python',
+                      'sgmlop:python' ]
+
+    def setup(r):
+        r.macros.basever = r.basever
+        r.macros.date = r.date
+
+        r.addArchive('http://effbot.org/downloads/%(name)s-%(basever)s-%(date)s.tar.gz')
+        r.PythonSetup()

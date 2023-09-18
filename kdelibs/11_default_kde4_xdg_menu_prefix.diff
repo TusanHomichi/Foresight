@@ -1,0 +1,43 @@
+---
+ kded/CMakeLists.txt   |    2 +-
+ kded/vfolder_menu.cpp |    7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+Index: kde4libs-4.5.95/kded/CMakeLists.txt
+===================================================================
+--- kde4libs-4.5.95.orig/kded/CMakeLists.txt	2011-01-04 23:50:20.000000000 -0500
++++ kde4libs-4.5.95/kded/CMakeLists.txt	2011-01-04 23:50:48.000000000 -0500
+@@ -74,7 +74,7 @@
+ if (WIN32)
+ install( FILES applications.menu  DESTINATION  ${SHARE_INSTALL_PREFIX}/xdg/menus )
+ else (WIN32)
+-install( FILES applications.menu  DESTINATION  ${SYSCONF_INSTALL_DIR}/xdg/menus )
++install( FILES applications.menu  DESTINATION  ${SYSCONF_INSTALL_DIR}/xdg/menus RENAME kde4-applications.menu )
+ endif (WIN32)
+ install( FILES kdedmodule.desktop DESTINATION  ${SERVICETYPES_INSTALL_DIR} )
+ install( FILES kded.upd           DESTINATION  ${DATA_INSTALL_DIR}/kconf_update )
+Index: kde4libs-4.5.95/kded/vfolder_menu.cpp
+===================================================================
+--- kde4libs-4.5.95.orig/kded/vfolder_menu.cpp	2011-01-04 23:50:20.000000000 -0500
++++ kde4libs-4.5.95/kded/vfolder_menu.cpp	2011-01-04 23:50:48.000000000 -0500
+@@ -770,8 +770,10 @@
+    QString result;
+ 
+    QString xdgMenuPrefix = QString::fromLocal8Bit(qgetenv("XDG_MENU_PREFIX"));
+-   if (!xdgMenuPrefix.isEmpty())
+-   {
++   // enforce kde4 prefix unless XDG_MENU_PREFIX is set (LP: #297195)
++   if (xdgMenuPrefix.isEmpty())
++      xdgMenuPrefix = QString("kde4-");
++
+       QFileInfo fileInfo(fileName);
+ 
+       QString fileNameOnly = fileInfo.fileName();
+@@ -781,7 +783,6 @@
+       QString baseName = QDir::cleanPath(m_docInfo.baseDir +
+                                          fileInfo.path() + '/' + fileNameOnly);
+       result = KStandardDirs::locate("xdgconf-menu", baseName);
+-   }
+ 
+    if (result.isEmpty())
+    {

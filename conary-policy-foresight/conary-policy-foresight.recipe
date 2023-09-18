@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2007-2011 rPath, Inc.
+#               2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class ConaryPolicyForesight(BuildPackageRecipe):
+    name = 'conary-policy-foresight'
+    version = datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [ 'python:devel' ]
+
+    def setup(r):
+        ddir = '/usr/lib/conary/distro/policy'
+        for f in [ 'PackageMetadata.py',
+                   # FIXME 
+                   # we moved from old setuputils to distribute (a drop in replacement),
+                   # and some, many python packages evolved the way they handle egg-info
+                   # data. Mess is that not all did that. 
+                   # So we just can't expect that every python package will just do what
+                   # we find convenient for us, as there are still up to date py pkgs that
+                   # still create the egg-info data inside a *egg-info dir and not in a 
+                   # single *egg-info$ file/. 
+                   # 
+                   # 'NoEggInfoDirectories.py', 
+                   ]:
+            r.addSource(f, dir=ddir)
+        r.CompilePython(ddir)

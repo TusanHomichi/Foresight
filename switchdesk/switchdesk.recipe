@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Switchdesk(RPMPackageRecipe, BuildPackageRecipe):
+    name = 'switchdesk'
+    version = '4.0.8'
+    rpmRelease = '6'
+    tarballName = '%(name)s-%(version)s-%(rpmRelease)s.tar.bz2'
+
+    buildRequires = [ 'intltool:runtime', 'gettext:runtime',
+                      'desktop-file-utils:runtime', 'sed:runtime',
+                      'python:runtime', ]
+
+    def setup(r):
+        r.unpack()
+        r.Make()
+        r.MakeInstall()
+        r.Install('switchdesk.desktop', '%(datadir)s/applications/')
+
+        r.PackageSpec('switchdesk-gui',
+                      '%(datadir)s/switchdesk/pixmaps/',
+                      '%(datadir)s/switchdesk/switchdesk.glade',
+                      r'%(datadir)s/switchdesk/.*\.py.*',
+                      '%(datadir)s/applications/',
+                      '%(datadir)s/locale/')

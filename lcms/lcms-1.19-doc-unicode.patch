@@ -1,0 +1,112 @@
+diff -ur lcms-1.19.orig/doc/LCMSAPI.TXT lcms-1.19/doc/LCMSAPI.TXT
+--- lcms-1.19.orig/doc/LCMSAPI.TXT	2009-10-30 18:57:45.000000000 +0300
++++ lcms-1.19/doc/LCMSAPI.TXT	2009-10-30 18:57:45.000000000 +0300
+@@ -1222,7 +1222,7 @@
+ _________________________________________________________________________________
+ 
+   Creates a abstract devicelink operating in Lab for Bright/Contrast/Hue/Saturation
+-  and white point translation. White points are specified as temperatures ºK
++  and white point translation. White points are specified as temperatures ÂºK
+ 
+ 
+  Parameters:
+@@ -1295,11 +1295,11 @@
+ LCMSBOOL cmsWhitePointFromTemp(int TempK, LPcmsCIExyY WhitePoint);
+ _________________________________________________________________________________
+ 
+-  Obtains the chromaticity of white point based on temperature §K
++  Obtains the chromaticity of white point based on temperature Â§K
+ 
+ Parameters:
+ 
+-                TempK: Temperature in §K
++                TempK: Temperature in Â§K
+ 
+ Returns:
+                 FALSE on error, TRUE on success
+@@ -1722,7 +1722,7 @@
+   to Y = 100 for a perfect reflecting diffuser. 
+ 
+   All CIE tristimulus values are obtained using the CIE 1931 Standard 
+-  Colorimetric Observer (2°).
++  Colorimetric Observer (2Â°).
+ 
+ 
+     typedef struct {
+@@ -2149,10 +2149,10 @@
+ 
+  Let's assume we have a Named color profile holding only 4 colors:
+ 
+-    · CYAN     
+-    · MAGENTA  
+-    · YELLOW   
+-    · BLACK
++    Â· CYAN     
++    Â· MAGENTA  
++    Â· YELLOW   
++    Â· BLACK
+ 
+  We create a transform using:
+ 
+@@ -2266,10 +2266,10 @@
+  PostScript interpreter. These functions does translate input and output 
+  profiles into Color Space Arrays (CSA) and Color Rendering Dictionaries (CRD)
+ 
+-    · CRD are equivalent to output (printer) profiles. Can be 
++    Â· CRD are equivalent to output (printer) profiles. Can be 
+       loaded into printer at startup and can be stored as resources.
+ 
+-    · CSA are equivalent to input and workspace profiles, and are 
++    Â· CSA are equivalent to input and workspace profiles, and are 
+       intended to  be included in the document definition.
+ 
+  These functions does generate the PostScript equivalents. Since the lenght of 
+diff -ur lcms-1.19.orig/doc/TUTORIAL.TXT lcms-1.19/doc/TUTORIAL.TXT
+--- lcms-1.19.orig/doc/TUTORIAL.TXT	2009-10-30 18:57:45.000000000 +0300
++++ lcms-1.19/doc/TUTORIAL.TXT	2009-10-30 18:57:45.000000000 +0300
+@@ -634,7 +634,7 @@
+   match background gray, then gamma is adjusted.
+   Another trick is to use a black background with some gray rectangles.
+   The user chooses the most neutral grey, giving the white point or the
+-  temperature in °K.
++  temperature in Â°K.
+ 
+   All these visual gadgets are not part of lcms, you must implement
+   them by yourself if you like. But lcms will help you with a function for
+@@ -1398,10 +1398,10 @@
+  PostScript interpreter. These functions does translate input and output 
+  profiles into Color Space Arrays (CSA) and Color Rendering Dictionaries (CRD)
+ 
+-    · CRD are equivalent to output (printer) profiles. Can be 
++    Â· CRD are equivalent to output (printer) profiles. Can be 
+       loaded into printer at startup and can be stored as resources.
+ 
+-    · CSA are equivalent to input and workspace profiles, and are 
++    Â· CSA are equivalent to input and workspace profiles, and are 
+       intended to  be included in the document definition.
+ 
+  These functions does generate the PostScript equivalents. Since the lenght of 
+@@ -1444,7 +1444,7 @@
+   to Y = 100 for a perfect reflecting diffuser. 
+ 
+   All CIE tristimulus values are obtained using the CIE 1931 Standard 
+-  Colorimetric Observer (2°).
++  Colorimetric Observer (2Â°).
+ 
+ 
+     typedef struct {
+@@ -1538,10 +1538,10 @@
+ 
+  Let's assume we have a Named color profile holding only 4 colors:
+ 
+-    · CYAN     
+-    · MAGENTA  
+-    · YELLOW   
+-    · BLACK
++    Â· CYAN     
++    Â· MAGENTA  
++    Â· YELLOW   
++    Â· BLACK
+ 
+  We create a transform using:
+ 

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class xfce4Appfinder(XfcePackageRecipe):
+
+    name = 'xfce4-appfinder'
+    version = '4.10.1'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'libxfce4util:devel', 'garcon:devel', 'libxfce4ui:devel',
+        'xfconf:devel', 'desktop-file-utils:runtime', 'Thunar:devel'
+    ])

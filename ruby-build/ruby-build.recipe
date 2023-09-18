@@ -1,0 +1,11 @@
+class RubyBuild(PackageRecipe):
+    name = 'ruby-build'
+    revision = '8f75623449'
+    version = '0.1+' + revision 
+    buildRequires = []
+    
+    def setup(r):
+       r.addGitSnapshot('git://github.com/sstephenson/ruby-build.git', tag='8f75623449')
+       r.MakeDirs('%(datadir)s/ruby-build')
+       r.Move('bin/*', '%(bindir)s/')
+       r.Move('share/ruby-build/*', '%(datadir)s/ruby-build/')

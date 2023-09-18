@@ -1,0 +1,88 @@
+diff -r 457213d803a5 gnomedesktop/gnome-desktop-sharp-2.0.pc.in
+--- a/gnomedesktop/gnome-desktop-sharp-2.0.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/gnomedesktop/gnome-desktop-sharp-2.0.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/gnomedesktop-sharp/2.20
+ assemblies_dir=${libdir}/mono/gnomedesktop-sharp-2.20
+ 
+diff -r 457213d803a5 gnomepanel/gnome-panel-sharp-2.24.pc.in
+--- a/gnomepanel/gnome-panel-sharp-2.24.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/gnomepanel/gnome-panel-sharp-2.24.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/gnome-panel-sharp/2.24
+ assemblies_dir=${libdir}/mono/gnome-panel-sharp-2.24
+ 
+diff -r 457213d803a5 gnomeprint/gnome-print-sharp-2.18.pc.in
+--- a/gnomeprint/gnome-print-sharp-2.18.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/gnomeprint/gnome-print-sharp-2.18.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/gnome-print-sharp/2.18
+ assemblies_dir=${libdir}/mono/gnome-print-sharp-2.18
+ 
+diff -r 457213d803a5 gtkhtml/gtkhtml-sharp-3.14.pc.in
+--- a/gtkhtml/gtkhtml-sharp-3.14.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/gtkhtml/gtkhtml-sharp-3.14.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/gtkhtml-sharp/3.14
+ assemblies_dir=${libdir}/mono/gtkhtml-sharp-3.14
+ 
+diff -r 457213d803a5 nautilusburn/nautilusburn-sharp.pc.in
+--- a/nautilusburn/nautilusburn-sharp.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/nautilusburn/nautilusburn-sharp.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/nautilusburn-sharp/2.20
+ 
+ 
+diff -r 457213d803a5 rsvg/rsvg2-sharp-2.0.pc.in
+--- a/rsvg/rsvg2-sharp-2.0.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/rsvg/rsvg2-sharp-2.0.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/rsvg2-sharp/2.0
+ 
+ 
+diff -r 457213d803a5 vte/vte-sharp-0.16.pc.in
+--- a/vte/vte-sharp-0.16.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/vte/vte-sharp-0.16.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/vte-sharp/0.16
+ 
+ 
+diff -r 457213d803a5 wnck/wnck-sharp-1.0.pc.in
+--- a/wnck/wnck-sharp-1.0.pc.in	Thu Jan 29 23:28:35 2009 -0500
++++ b/wnck/wnck-sharp-1.0.pc.in	Thu Jan 29 23:34:20 2009 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ gapidir=${prefix}/share/wnck-sharp/2.20
+ assemblies_dir=${libdir}/mono/wnck-sharp-2.20
+ 

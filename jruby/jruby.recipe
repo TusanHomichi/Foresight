@@ -1,0 +1,10 @@
+class JRuby(AutoPackageRecipe):
+    name = 'jruby'
+    version = '1.6.5'
+
+    buildRequires = ['ant:runtime', 'ant:java', 'icedtea-jdk:runtime']
+
+    def setup(r):
+		r.addArchive('http://jruby.org.s3.amazonaws.com/downloads/%(version)s/jruby-src-%(version)s.tar.gz')
+		r.macros.antcmd = 'ant'
+		r.Ant()

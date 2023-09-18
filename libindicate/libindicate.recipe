@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libindicate(AutoPackageRecipe):
+    name = 'libindicate'
+    version = '0.5.0'
+    buildRequires = [
+        'atk:devel', 'gobject-introspection:devel',
+        'cairo:devel', 'libtool:runtime',
+        'dbus-glib:devel', 'dbus-glib:runtime', 'dbus:devel',
+        'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'gnome-doc-utils:devel', 'gtk-doc:runtime', 'gtk:devel',
+        'libdbusmenu-glib:devel', 'libxml2:devel',
+        'pango:devel', 'pkgconfig:devel', 'gtk-doc:devel',
+	'gtk-sharp:cil', 'gtk-sharp:devellib', 'gtk-sharp:runtime', 
+	'mono:cil', 'mono:devel', 'mono:runtime', 
+	'pygobject:devel', 'pygtk:devel','python:devel', 
+	'vala:runtime', 'libtool:runtime' , 
+        'autoconf:runtime', 'automake:runtime',
+        'libdbusmenu:devel',
+    ] 
+
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/%(major_version)s/%(version)s/+download/')
+        r.Run(''' sed -i 's/#include "glib\/gmessages.h"//' libindicate/indicator.c ''')
+        r.Replace('-Werror','','libindicate/Makefile.{in,am}')
+        r.Replace('\$\(prefix\)\/lib',
+                  '%(libdir)s',
+                  'bindings/mono/indicate{,-gtk}/Makefile.{in,am}')
+
+        # fixes python static version
+        r.Replace('pyglib-2.0-python\$PYTHON_VERSION',
+                  'pyglib-2.0-python',
+                  'configure{,.ac}')
+
+    def configure(r):
+        # parallel runs break randonmly
+        # hot spot around mono bindings
+        r.disableParallelMake()
+        r.Run('autoreconf -fi')
+        r.Configure(' --disable-static --enable-introspection=yes')

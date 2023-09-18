@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GtransLator(GnomePackageRecipe):
+
+    name = 'gtranslator'
+    version = '1.9.13'
+
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'aspell:devel', 'desktop-file-utils:runtime', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'gtkspell:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'popt:devel', 'rarian:runtime', 'gtksourceview:devel', 'gdl:devel', 'db:devel', 'apr-util:devel', 'apr:devel', 'e2fsprogs:devel', 'gnutls:devel', 'gucharmap:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libsoup:devel', 'openldap:devel', 'sqlite:devel', 'subversion:devel', 'rarian:devel', 'util-linux:devel', 'unique:devel', 'libgda:devel', 'gsettings-desktop-schemas:devel']
+
+    patches = ['gtranslator-1.9.6-fix-update-desktop-database.patch']

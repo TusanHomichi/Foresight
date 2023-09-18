@@ -1,0 +1,24 @@
+# Copyright (c) 2008-2013 The Foresight Linux Project
+#               
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class ExFatUtils(AutoPackageRecipe):
+   name = 'exfat-utils'
+   version = '1.0.1'
+   buildRequires = ['fuse:devel', 'scons:runtime', ]
+
+   def setup(r):
+      r.addArchive('http://exfat.googlecode.com/files/fuse-exfat-%(version)s.tar.gz')
+      r.addArchive('http://exfat.googlecode.com/files/%(name)s-%(version)s.tar.gz')
+      r.Make('CCFLAGS="%(cflags)s" LINKFLAGS="%(ldflags)s" install '
+             ' DESTDIR=%(destdir)s/%(sbindir)s/',
+             makeName = 'scons')
+      r.Make('CCFLAGS="%(cflags)s" LINKFLAGS="%(ldflags)s" install '
+             ' DESTDIR=%(destdir)s/%(bindir)s/',
+             makeName = 'scons',
+             dir = '../exfat-utils-%(version)s')
+
+      r.Install('../*-%(version)s/*/*.8', '%(mandir)s.man8/',
+                mode = 0444)

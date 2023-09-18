@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mixxx(CPackageRecipe):
+    name = 'mixxx'
+    version = '1.10.0'
+ 
+    buildRequires = [
+        'Mesa:devel', 
+        'bzr:runtime', 
+        'flac:devel', 
+        'desktop-file-utils:runtime',
+        'libid3tag:devel', 
+        'libmad:devel', 
+        'libogg:devel', 
+        'libshout:devel', 
+        'libsndfile:devel', 
+        'libstdc++:devel', 
+        'libvorbis:devel', 
+        'portaudio:devel', 
+        'portmidi:devel', 
+        'qt4-core:devellib', 
+        'qt4-gui:devellib', 
+        'qt4-sql:devellib', 
+        'qt4:devel', 
+        'scons:runtime', 
+        'taglib:devel',
+        'which:runtime',
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://downloads.mixxx.org/mixxx-%(version)s/mixxx-%(version)s-src.tar.gz')
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.Environment('CXXFLAGS', '%(optflags)s')
+        r.Environment('CFLAGS', '%(optflags)s')
+        r.addPatch('mixxx-1.9.2-norpath.patch')
+        r.Make('prefix=%(prefix)s install_root=%(destdir)s/%(prefix)s', makeName='scons')
+        r.Make('prefix=%(prefix)s install_root=%(destdir)s/%(prefix)s install', makeName='scons')

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MsnPecan(CPackageRecipe):
+    name = 'msn-pecan'
+    version = '0.1.0'
+ 
+    buildRequires = ['glib:devel', 'libpurple:devel', 'pkgconfig:devel']
+ 
+    def setup(r):
+        r.addArchive('http://msn-pecan.googlecode.com/files/')
+        r.Make()
+        r.MakeInstall()

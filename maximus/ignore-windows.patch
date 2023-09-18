@@ -1,0 +1,11 @@
+diff -r ebc3daf4f134 src/maximus-app.c
+--- a/src/maximus-app.c	Wed Aug 27 13:53:25 2008 -0400
++++ b/src/maximus-app.c	Wed Aug 27 13:55:03 2008 -0400
+@@ -61,6 +61,7 @@
+   "Polkit-gnome-authorization",
+   "Update-manager",
+   "Skype",
++  "Shutdown",
+   "Transmission"
+ };
+ 

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class Xfce4IndicatorPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-indicator-plugin'
+    version = '0.5.0'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'libxfce4util:devel', 
+        'xfce4-panel:devel',
+        'libindicate:devel', 
+        'libindicator:devel', 
+        'libexo:devel',
+        'xfconf:devel',
+    ]

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libsquish(PackageRecipe):
+    name = 'libsquish'
+    version = '1.10'
+ 
+    buildRequires = ['make:runtime', 'gcc-c++:runtime', 'libgcc:devellib', 'libstdc++:devel', 'gcc:runtime', 'gcc:devel', 'glibc:devel']
+ 
+    def setup(r):
+        r.addArchive('http://libsquish.googlecode.com/files/squish-%(version)s.tar.gz')
+        r.addPatch('gcc440.patch')
+        r.macros.cflags += ' -fPIC'
+        r.Make()
+        r.Install('squish.h','%(includedir)s/')
+        r.Install('libsquish.a','%(libdir)s/')
+

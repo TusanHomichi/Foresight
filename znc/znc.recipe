@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Znc(CPackageRecipe):
+    name = 'znc'
+    version = '0.096'
+ 
+    buildRequires = ['c-ares:devel', 'libstdc++:devel', 'openssl:devel', 'perl:devel', 'pkgconfig:devel', 'perl:runtime', 'cyrus-sasl:devel', 'tcl:devel', 'swig:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/znc/znc/0.096/znc-0.096.tar.gz')
+	r.Configure('--enable-extra --enable-sasl --enable-tcl --enable-perl')
+	r.Make()
+	r.MakeInstall()

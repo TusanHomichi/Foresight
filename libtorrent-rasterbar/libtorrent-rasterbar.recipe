@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibtorrentRasterbar(AutoPackageRecipe):
+    name = 'libtorrent-rasterbar'
+    version = '0.16.10'
+    buildRequires = [ 'boost:devel', 'libstdc++:devel', 'openssl:devel',
+        'python:devel', 'which:runtime', 'zlib:devel', 'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.macros.project_name = 'libtorrent'
+        r.addArchive('http://libtorrent.googlecode.com/files/')
+
+    def configure(r):
+        r.Configure('--with-boost-libdir=%(libdir)s/ --enable-python-binding')

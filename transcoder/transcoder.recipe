@@ -1,0 +1,30 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Transcoder(AutoPackageRecipe):
+    name = 'transcoder'
+    version = '0.0.6'
+
+    packageSummary = 'Transcoder is a video converter for Linux'
+    packageDescription = 'Transcoder is a video converter for Linux using GTK+ as GUI toolkit and ffmpeg as backend.'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel', 'libpng:devel', 'pango:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/transcoder84/%(version)s/Transcoder_%(version)s.tar.gz')
+
+    def makeinstall(r):
+        r.Install('Transcoder', '%(bindir)s/', mode=0755)
+        r.Install('data/%(name)s.png', '%(datadir)s/pixmaps/', mode=0644)
+        r.Desktopfile('data/%(name)s.desktop', vendor='foresight', category='AudioVideo')
+        r.Requires('ffmpeg:runtime', '%(bindir)s/Transcode')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

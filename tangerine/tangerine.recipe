@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tangerine(AutoPackageRecipe):
+    name = 'tangerine'
+    version = '0.3.0'
+ 
+    buildRequires = ['avahi-sharp:cil', 'avahi-sharp:devellib', 'desktop-file-utils:runtime', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'gtk:runtime', 'libSM:devel', 'mono:cil', 'mono:devellib', 'mono:devel', 'mono:runtime', 'pkgconfig:devel', 'beagle:devel', 'beagle:devellib', 'daap-sharp:devellib']
+ 
+    def unpack(r):
+        r.addArchive('http://www.snorp.net/files/tangerine/')

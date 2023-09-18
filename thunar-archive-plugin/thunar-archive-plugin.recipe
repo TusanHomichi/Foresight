@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+
+class ThunarArchivePlugin(CPackageRecipe):
+    name = 'thunar-archive-plugin'
+    svnVersion = '60743b52'
+    version = '0.3.0+' + svnVersion + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+ 
+    buildRequires = ['Thunar:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libexo:devel', 'libpng:devel', 'libxfce4util:devel', 'pango:devel', 'pkgconfig:devel', 'automake:runtime', 'autoconf:runtime', 'git:runtime', 'xfce4-dev-tools:runtime', 'libtool:runtime', 'intltool:devel']
+ 
+    def setup(r):
+        r.addGitSnapshot('git://git.xfce.org/thunar-plugins/thunar-archive-plugin')
+        r.Configure(configureName='autogen.sh')
+        r.Make()
+        r.MakeInstall()

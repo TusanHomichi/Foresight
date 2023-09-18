@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2009 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgDriverInputEvtouch(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'xf86-input-evtouch'
+    version = '0.8.8'
+    rpmRelease = '9.2'
+    rpmName = 'x11-input-evtouch'
+    tarballName = '%(name)s-%(version)s.tar.bz2'
+    isOPENsuse = True
+    isXOrgFactory = True
+    rpmPatches = [ 'evtouch-20080829-add_IDEACO_IDC_6680_Touchscreen_to_udev.diff',
+                   'evtouch-20080901-add_another_Panjit_touchset_device.diff',
+                   'evtouch-20081023-fix-compiler_warning.diff',
+                   '01_fix_warnings.patch',
+                   '02_calibration_1.6.patch',
+                   '03_server-1.6-ftbfs.diff',
+                   '04_server-1.7-ftbfs.diff',
+                   '05_fix_CURSORDIR.diff',
+                   '06_add_TSC-10_to_evdev_rules.diff' ]
+
+    buildRequires = [ 'pkgconfig:devel', 'ghostscript:runtime', 'linuxdoc-tools:runtime', 'xorg-server:devel', 'xproto:devel', 'fontsproto:devel', 'autoconf:runtime', 'automake:runtime', 'makedepend:runtime', 'randrproto:devel', 'inputproto:devel', 'kbproto:devel', 'pixman:devel', 'libtool:runtime', 'libtool:devel', 'pkgconfig:devel' , 'm4:runtime', 'expat:devel', 'xextproto:devel', 'util-macros:devel', 'renderproto:devel', 'sysfsutils:devel', 'xorg-sgml-doctools:data', 'sysfsutils:devel', 'xorg-sgml-doctools:data', 'libpciaccess:devel', 'libxkbfile:devel', 'libXi:devel', 'libX11:devel', 'imake:runtime', 'xorg-cf-files:data', 'gccmakedep:runtime', 'texinfo:runtime', 'which:runtime', 'desktop-file-utils:runtime', 'chkconfig:runtime' ]
+
+    def configure(r):
+        r.macros.cflags += ' -fno-strict-aliasing'
+        r.Configure(' --enable-udevinstall '
+                    ' --enable-evcalibrate')

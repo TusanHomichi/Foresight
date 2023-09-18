@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xfsprogs(CPackageRecipe):
+    name = 'xfsprogs'
+    version = '3.1.4'
+
+    buildRequires = [ 'readline:devel', 'libtermcap:devel', 'libtool:runtime',
+                      'gettext:runtime', 'e2fsprogs:devel', 'util-linux:devel',
+                      'autoconf:runtime', 'automake:runtime']
+
+    def setup(r):
+        r.addGitSnapshot('git://oss.sgi.com/xfs/cmds/xfsprogs.git', tag='v%s' % r.version)
+
+        r.Environment('tagname', 'CC')
+        r.Environment('DEBUG', '-DNDEBUG')
+
+        r.Make('configure')
+
+        r.Configure('--enable-readline=yes '
+                    '--enable-blkid=yes')
+
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+        r.Make('V=1')
+        r.MakeInstall('V=1', rootVar='DIST_ROOT')
+        r.MakeInstall('V=1', rootVar='DIST_ROOT', installtarget='install-dev')
+        r.MakeInstall('V=1', rootVar='DIST_ROOT', installtarget='install-qa')
+
+        # 
+        r.Remove('/%(lib)s/*.a')
+        r.Remove('/%(lib)s/*.so')
+
+        # fix up symlink to be correct
+        r.Remove('%(libdir)s/libhandle.so')
+        r.Symlink('../../%(lib)s/libhandle.so.1', '%(libdir)s/libhandle.so')
+
+        # remove non-versioned docs location
+        r.Remove('%(docdir)s/xfsprogs/', recursive=True)
+

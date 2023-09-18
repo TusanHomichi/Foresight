@@ -1,0 +1,6 @@
+class IDLE(RedirectRecipe):
+    name = "idle"
+    version = "0"
+
+    def setup(r):
+        r.addRemoveRedirect(fromTrove = 'python')

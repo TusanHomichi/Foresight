@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WordNet(AutoPackageRecipe):
+    name = 'WordNet'
+    version = '3.0'
+
+    buildRequires = [ 'tcl:devel', 'tk:devel', 'libX11:devel', 'libXScrnSaver:devellib', 'libXft:devellib']
+
+    def unpack(r):
+        r.addArchive('http://wordnet.princeton.edu/%(version)s/')
+        r.Replace(r'DEFAULTPATH(.*)/dict',
+                  r'DEFAULTPATH\1/share/dict/WordNet',
+                  'configure')
+        r.Replace(r'dictdir = \$\(prefix\)/dict',
+                  'dictdir = $(prefix)/share/dict/WordNet',
+                  'dict/Makefile{,.am,.in}')
+
+    def policy(r):
+        # /usr/doc contents are only variously-formatted man
+        # pages and so are duplicate
+        # r.Move('/usr/doc/*', '%(thisdocdir)s/')
+        r.Remove('/usr/doc', recursive=True)

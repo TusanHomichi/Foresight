@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ipamonafont(PackageRecipe):
+    name = 'ipamonafont'
+    version = '1.0.8'
+
+    # FIXME the package name probably can be better.
+    # FIXME the archive URL is probably elsewhere.
+
+    packageSummary = 'IPA Mona Font'
+
+    buildRequires = [
+        'fontconfig:runtime',
+        'mkfontdir:runtime',
+        ]
+
+    def setup(r):
+        r.addArchive('http://www.geocities.jp/ipa_mona/'
+            'opfc-ModuleHP-1.1.1_withIPAMonaFonts-%(version)s.tar.gz')
+        r.Install('fonts/*.ttf', '%(datadir)s/fonts/%(name)s/')

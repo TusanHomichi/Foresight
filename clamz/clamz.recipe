@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Clamz(AutoPackageRecipe):
+    name = 'clamz'
+    version = '0.2'
+ 
+    buildRequires = ['curl:devel', 'expat:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'openssl:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://clamz.googlecode.com/files/clamz-0.2.tar.gz')

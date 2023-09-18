@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sbcl(CPackageRecipe):
+    name = 'sbcl'
+    version = '1.1.14'
+ 
+    buildRequires = ['make:runtime','texinfo:runtime','graphviz:runtime','ghostscript:runtime','tetex:runtime','time:runtime','info-sys','tetex-dvips:runtime','sbcl:runtime','which:runtime']
+ 
+    def setup(r):
+
+        if Arch.x86:
+            r.macros.arch='x86'
+        if Arch.x86_64:
+            r.macros.arch='x86-64'
+
+        r.addArchive('http://prdownloads.sourceforge.net/%(name)s/%(name)s-%(version)s-source.tar.bz2')
+
+        # needed for boot-strapping the package,
+        # if we can't add sbcl or another lisp to buildRequires
+        # r.addArchive('http://prdownloads.sourceforge.net/%(name)s/%(name)s-%(version)s-x86-linux-binary.tar.bz2', use=Arch.x86)
+        # r.addArchive('http://prdownloads.sourceforge.net/%(name)s/%(name)s-%(version)s-x86-64-linux-binary.tar.bz2', use=Arch.x86_64)
+
+        # see doc/PACKAGING-SBCL.txt
+        r.Replace('%(version)s', '%(version)s-foresight', 'version.lisp-expr') 
+        
+        r.disableParallelMake()
+
+        # use the bootstrapping binary to build
+        # r.SetModes('../%(name)s-%(version)s-%(arch)s-linux/run-sbcl.sh', 0755)
+        # r.Make('--xc-host="../%(name)s-%(version)s-%(arch)s-linux/run-sbcl.sh --disable-debugger --no-userinit --no-sysinit --dynamic-space-size=800Mb" --prefix=%(prefix)s', makeName="./make.sh")
+        # this should work according to docs
+        # r.Make(' --dynamic-space-size=1000 --prefix=%(prefix)s', makeName="./make.sh")
+        # this works
+        r.Make('--xc-host="sbcl --dynamic-space-size 1000" --prefix=%(prefix)s', makeName="./make.sh")
+        # r.Make(dir='doc/manual')
+        r.Run('TEX=pdfetex sh make-doc.sh', dir='doc') # work around bug in tetex
+        r.Run('INSTALL_ROOT=%(destdir)s%(prefix)s sh install.sh')
+        r.ComponentSpec('doc', '/usr/share/doc/%(name)s/.*.html')
+        r.ComponentSpec('doc', '/usr/share/doc/%(name)s/.*.pdf')
+        r.ComponentSpec('doc', '.*\.texinfo')
+        r.ComponentSpec('supdoc', '.*/README')
+        r.ComponentSpec('supdoc', '.*/TODO')
+        r.ComponentSpec('supdoc', '.*/FAQ')
+        r.ComponentSpec('supdoc', '.*/NEWS')
+        r.Remove('Makefile', allowNoMatch=True)
+        r.Remove('*test*', allowNoMatch=True)
+        r.Remove('foo.c', allowNoMatch=True)
+        r.Remove('a.out', allowNoMatch=True)

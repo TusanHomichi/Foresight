@@ -1,0 +1,46 @@
+# HG changeset patch
+# User António Meireles, aka doniphon <antonio.meireles@reboot.sh>
+# Date 1311010569 -3600
+# Node ID 90dca5697b1d63ac3dd977ea49350d2222f89302
+# Parent  a5fc87b799c7275dec48add01da50195ec199d1a
+CMake BuildAction improvements
+
+diff -r a5fc87b799c7 -r 90dca5697b1d conary/build/build.py
+--- a/conary/build/build.py	Wed Jul 06 10:01:57 2011 -0400
++++ b/conary/build/build.py	Mon Jul 18 18:36:09 2011 +0100
+@@ -628,6 +628,18 @@
+         ' -DCMAKE_MODULE_LINKER_FLAGS:STRING="%%(ldflags)s"'
+         ' -DCMAKE_SHARED_LINKER_FLAGS:STRING="%%(ldflags)s"'
+         ' -DCMAKE_INSTALL_PREFIX:PATH="%%(prefix)s"'
++        ' -DCMAKE_INSTALL_LIBDIR:PATH=%%(libdir)s'
++        ' -DINCLUDE_INSTALL_DIR:PATH=%%(includedir)s'
++        ' -DLIBEXEC_INSTALL_DIR=%%(libexecdir)s'
++        ' -DLIB_INSTALL_DIR:PATH=%%(libdir)s'
++        ' -DSYSCONF_INSTALL_DIR:PATH=%%(sysconfdir)s'
++        ' -DSHARE_INSTALL_PREFIX:PATH=%%(datadir)s'
++        ' %%(lib_suffix)s'
++        ' -DCMAKE_VERBOSE_MAKEFILE=ON'
++        ' -DBUILD_SHARED_LIBS:BOOL=ON'
++        ' -DCMAKE_SKIP_RPATH:BOOL=ON'
++        ' -Wno-dev '
++        ' -DCMAKE_BUILD_TYPE=release '
+         ' %(args)s'
+         ' %%(actionDir)s')
+     keywords = {
+@@ -660,6 +672,16 @@
+ 
+     def do(self, macros):
+         macros = macros.copy()
++
++        buildFlavor = self.recipe.cfg.buildFlavor
++        macros.lib_suffix = ''
++        if buildFlavor.stronglySatisfies(deps.parseFlavor('is: x86_64')):
++            macros.lib_suffix = '-DLIB_SUFFIX=64'
++
++        self._addActionPathBuildRequires(['cmake'])
++        # Needed to interpret CMakeLists.txt PKGCONFIG macros
++        self._addActionPathBuildRequires(['pkg-config'])
++
+         macros.actionDir = action._expandOnePath(self.dir, macros,
+              macros.builddir, error=not self.skipMissingDir)
+         if not os.path.exists(macros.actionDir):

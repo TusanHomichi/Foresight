@@ -1,0 +1,13 @@
+--- lxde-common/lxde-common-0.5.5/desktop.conf	2011-07-29 16:04:03.000000000 +0200
++++ lxde-common/lxde-common-0.5.5/copy-desktop.conf	2012-03-24 11:56:15.000000000 +0100
+@@ -2,8 +2,8 @@
+ window_manager=openbox-lxde
+ 
+ [GTK]
+-sNet/ThemeName=Clearlooks
+-sNet/IconThemeName=nuoveXT2
++sNet/ThemeName=absolute
++sNet/IconThemeName=GNOME-Wise
+ sGtk/FontName=Sans 10
+ iGtk/ToolbarStyle=3
+ iGtk/ButtonImages=1

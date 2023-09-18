@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2006-2008 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkThemeForesight(PackageRecipe):
+    name = 'gtk-theme-foresight'
+    version = '0.17'
+
+    buildRequires = [ 'gtk:devel', ]
+
+    def setup(r):
+        # r.addMercurialSnapshot('http://hg.foresightlinux.org/gtk-theme-foresight', tag=r.version)
+        r.addArchive('%(name)s--%(version)s.tar.bz2')
+
+        uplocation = '%(datadir)s/themes'
+        #r.Copy('*', uplocation + '/')
+        r.Copy('Foresight', uplocation + '/')
+
+        for p in [ 'gtk-engines', 
+                   'gtk-engine-murrine']:
+            r.Requires(p + ':lib', '%(datadir)s/themes/Foresight/gtk-2.0/gtkrc')
+
+

@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class tracker(AutoPackageRecipe):
+    name='tracker'
+    version='0.14.4'
+
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'enca:devel', 
+        'exempi:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'giflib:devel', 
+        'glib:devel', 
+        'gst-plugins-base:devel', 
+        'gstreamer:devel', 
+        'gtk-doc:runtime', 
+        'gtk3:devel', 
+        'gtk:devel', 
+        'icu:devel', 
+        'intltool:runtime', 
+        'libexif:devel', 
+        'libgee:devel', 
+        'libgnome-keyring:devel', 
+        'libjpeg:devel', 
+        'libogg:devel', 
+        'libpng:devel', 
+        'libstdc++:devel', 
+        'libtiff:devel', 
+        'libvorbis:devel', 
+        'libxml2:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'poppler-glib:devel', 
+        'poppler:devel', 
+        'sqlite:devel', 
+        'taglib:devel', 
+        'util-linux:devel', 
+        'vala:runtime', 
+        'xz:runtime', 
+        'zlib:devel' ,
+            ]
+
+
+    def unpack(r):
+        r.addArchive('http://ftp.heanet.ie/mirrors/gnome/sources/tracker/0.14/')
+        
+    def configure(r):
+        r.Configure( ' --disable-static '
+                    ' --disable-miner-evolution '
+                    ' --disable-hal '
+                    ' --enable-gdkpixbuf'
+                    ' --enable-video-extractor=gstreamer'
+                    ' --enable-tracker-search-tool'
+                    ' --enable-tracker-preferences'
+                    ' --enable-poppler-glib'
+                    ' --enable-libvorbis'
+                    ' --enable-libexif'
+                    ' --enable-libjpeg'
+                    ' --enable-libtiff'
+                    ' --enable-exempi'
+                    ' --enable-functional-tests=no' # it uses python2.5
+                    ' --enable-unit-tests=no'
+                    )
+        r.Replace('/lib /usr/lib', '/%(lib)s %(libdir)s','configure')

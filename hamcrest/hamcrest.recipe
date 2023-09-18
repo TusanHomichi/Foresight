@@ -1,0 +1,22 @@
+#
+# Copyright © 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Hamcrest(PackageRecipe):
+    name = 'hamcrest'
+    version = '1.3'
+    packageSummary = "Hamcrest - library of matchers for building test expressions"
+    # I need this for packaging up Apache Tomcat --  /ermo
+    
+    def setup(r):
+        r.addSource('LICENSE.txt', dir='%(docdir)s/%(name)s', mode=0644)
+        for p in ['core', 'generator', 'integration', 'library']:
+            # r.addArchive will try to unpack the .jar -- r.addSource won't
+            r.addSource('https://%(name)s.googlecode.com/files/%(name)s-'+p+'-%(version)s.jar',
+                        dir='%(datadir)s/java/%(name)s', mode=0644)
+            # Arch Linux does some symlinking too, don't know if it is necessary
+            
+
+

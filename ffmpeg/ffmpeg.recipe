@@ -1,0 +1,100 @@
+#
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class FFMpeg(AutoPackageRecipe):
+    name = 'ffmpeg'
+    version = '1.2.4'
+
+    buildRequires = [
+            'a52dec:devel', 
+            'alsa-lib:devel', 
+            'bzip2:devel', 
+            'dirac:devel',
+            'faac:devel', 
+            'faad2:devel', 
+            'freetype:devel', 
+            'git:runtime', 
+            'gsm:devel', 
+            'imlib2:devel', 
+            'jack:devel',
+            'lame:devel', 
+            'libass:devel', 
+            'libcdio:devel', 
+            'libdc1394:devel', 
+            'libogg:devel', 
+            'liboil:devel', 
+            'libraw1394:devel', 
+            'libtheora:devel', 
+            'libva:devel', 
+            'libvdpau:devel', 
+            'libvorbis:devel', 
+            'libvpx:devel',
+            'libX11:devel', 
+            'libXext:devel', 
+            'libXfixes:devel', 
+            'libXv:devel',
+            'openjpeg:devel', 
+            'pkgconfig:devel', 
+            'pulseaudio:devel',
+            'rtmpdump:devel',
+            'schroedinger:devel', 
+            'SDL:devel', 
+            'speex:devel', 
+            'x264:devel',
+            'xvidcore:devel', 
+            'yasm:runtime',
+            'zlib:devel', 
+    ]
+
+    def setup(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://www.ffmpeg.org/releases/')
+
+        config = ( ' --prefix=%(prefix)s'
+                   ' --disable-stripping'
+                   ' --disable-debug'
+                   ' --disable-static'
+                   ' --enable-gpl'
+                   ' --enable-version3'
+                   ' --enable-avfilter'
+                   ' --enable-bzlib'
+                   ' --enable-swscale'
+                   ' --enable-shared'
+                   ' --enable-postproc'
+                   ' --enable-pthreads'
+                   ' --enable-libdc1394'
+                   ' --enable-libvorbis'
+                   ' --enable-libgsm'
+                   #' --enable-libamr-nb'
+                   #' --enable-libamr-wb'
+                   ' --enable-libtheora'
+                   ' --enable-libmp3lame'
+                   ' --enable-libopenjpeg'
+                   ' --enable-libspeex'
+                   ' --enable-libschroedinger'
+                   ' --enable-libx264'
+                   ' --enable-libxvid'
+                   ' --enable-libfaac'
+                   ' --enable-nonfree'
+                   ' --enable-x11grab'
+                   ' --enable-libvpx'
+                   ' --enable-vdpau'
+                   ' --enable-vaapi'
+                   ' --enable-librtmp'
+                   ' --enable-libpulse'
+                   ' --enable-libcdio'
+                   ' --enable-libass'
+                   ' --extra-cflags=\"%(cflags)s\"'
+                   )
+        if Arch.x86:
+            config += ' --cpu=%(target)s'
+        if Arch.x86 or Arch .x86_64:
+            config += ' --enable-runtime-cpudetect'
+
+        r.ManualConfigure(config, objDir = 'generic')
+
+        r.Make(dir = 'generic')
+        r.MakeInstall(dir = 'generic')

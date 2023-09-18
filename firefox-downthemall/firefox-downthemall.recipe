@@ -1,0 +1,6 @@
+loadSuperClass('firefox-addon')
+class FirefoxAddon(FirefoxAddonRecipe):
+    name = 'firefox-downthemall'
+    version = '1.1.4'
+    fileId = '56783'
+    # https://addons.mozilla.org/en-US/firefox/addons/versions/201

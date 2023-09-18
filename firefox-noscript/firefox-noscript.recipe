@@ -1,0 +1,6 @@
+loadSuperClass('firefox-addon')
+class NoScript(FirefoxAddonRecipe):
+    name = 'firefox-noscript'
+    version = '1.9.8.8'
+    fileId = '63580'
+    # https://addons.mozilla.org/en-US/firefox/addons/versions/722

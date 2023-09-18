@@ -1,0 +1,10 @@
+diff -r 4ef0fff869ee src/pavucontrol.desktop
+--- a/src/pavucontrol.desktop	Fri May 23 22:02:30 2008 -0400
++++ b/src/pavucontrol.desktop	Fri May 23 22:02:59 2008 -0400
+@@ -8,5 +8,5 @@
+ Icon=multimedia-volume-control
+ StartupNotify=true
+ Type=Application
+-Categories=Application;AudioVideo;Audio;
++Categories=Application;System;
+ GenericName[en_GB]=Volume Control

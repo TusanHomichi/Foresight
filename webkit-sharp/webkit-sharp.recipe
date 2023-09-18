@@ -1,0 +1,11 @@
+class WebKitSharp(AutoPackageRecipe):
+    name = 'webkit-sharp'
+    version = '0.2'
+ 
+    buildRequires = ['gtk-sharp:cil', 'gtk-sharp:devellib', 'gtk-sharp:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'monodoc:runtime', 'pkgconfig:devel', 'WebKit:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://mono.ximian.com/monobuild/preview/sources/webkit-sharp/%(name)s-%(version)s.tar.bz2')
+        r.addPatch('webkit-sharp-libdir.patch')
+        r.addPatch('webkit-dllmap-fix.patch')
+        r.disableParallelMake()

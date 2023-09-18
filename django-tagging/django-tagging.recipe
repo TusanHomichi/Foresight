@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoTagging(BuildPackageRecipe):
+    name = 'django-tagging'
+    version = '0.3.1'
+ 
+    buildRequires = [ 'django:python', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('http://django-tagging.googlecode.com/files/')
+        r.PythonSetup()
+

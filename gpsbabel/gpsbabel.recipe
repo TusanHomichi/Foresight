@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gpsbabel(CPackageRecipe):
+    name = 'gpsbabel'
+    version = '1.4.2'
+    buildRequires = ['expat:devel', 'libusb:devel']
+    packageSummary = 'Convert, upload, download data from GPS and Map programs'
+    packageDescription = '''GPSBabel converts waypoints, tracks, and routes between popular GPS receivers and mapping programs. It also has powerful manipulation tools for such data.
+
+By flattening the Tower of Babel that the authors of various programs for manipulating GPS data have imposed upon us, it returns to us the ability to freely move our own waypoint data between the programs and hardware we choose to use.
+
+
+It contains extensive data manipulation abilities making it a convenient for server-side processing or as the backend for other tools.
+
+It does not convert, transfer, send, or manipulate maps. We process data that may (or may not be) placed on a map, such as waypoints, tracks, and routes.'''
+    def setup(r):
+        # using NetBSD mirror, need to POST token and filename to gpsbabel.org
+        # to download tar ball
+	r.addArchive('http://ftp.netbsd.org/pub/NetBSD/packages/distfiles/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

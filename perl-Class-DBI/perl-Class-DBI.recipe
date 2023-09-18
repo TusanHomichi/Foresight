@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+loadSuperClass('cpanpackage')
+class PerlClassDBI(CPANPackageRecipe):
+    name = 'perl-Class-DBI'
+    version = '3.0.17'
+    server = 'http://search.cpan.org/CPAN/'
+    buildRequires = [ ]
+
+    def unpack(r):
+        r.addArchive('http://search.cpan.org/CPAN/authors/id/T/TM/TMTM/Class-DBI-v%(version)s.tar.gz')
+        r.mainDir('Class-DBI-v%(version)s')

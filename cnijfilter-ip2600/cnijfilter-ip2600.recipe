@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('binarypackage')
+class CnijfilterIp2600(BinaryPackageRecipe):
+    name = 'cnijfilter-ip2600'
+    version = '2.90'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        
+        r.macros.site = ''
+
+        dist = [
+            ('cnijfilter-ip2600series-2.90-1.i386.rpm'),
+        ]
+        for (rpm) in dist:
+            r.addArchive('%(site)s/'+rpm, dir='/')
+            
+        r.Requires('cnijfilter-common:runtime', 'cnijfilter-ip2600:runtime')

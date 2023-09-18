@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#                    2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tar(AutoPackageRecipe):
+    name = 'tar'
+    version = '1.25'
+
+    # needs info-file tag description from the install-info package
+    buildRequires = [ 'acl:devel', 'attr:devel', 'autoconf:runtime',
+                      'install-info:runtime', 'bison:runtime', 'flex:runtime',
+                      'texinfo:runtime',  'gawk:runtime',
+                      'gettext:runtime', 'intltool:runtime', 'rsh:runtime',
+                      'cvs:runtime', 'autoconf:runtime', 'automake:runtime',
+                      'libtool:runtime']
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/tar/')
+
+        r.addSource('tar.1')
+        for p in [ 'tar-1.14-loneZeroWarning.patch', 
+                   'tar-1.15.1-vfatTruncate.patch',
+                   'tar-1.24-xattrs.patch',
+                   'tar-1.17-wildcards.patch',
+                   'tar-1.22-atime-rofs.patch',
+                   'tar-1.23-oldarchive.patch',
+                   'tar-sigpipe.patch',
+                   'tar-1.25-listedincremental.patch',
+                   'tar-1.25-sparse-names.patch',]:
+            r.addPatch(p)
+
+    def configure(r):
+        r.Run('autoreconf')
+        r.Configure('--bindir=%(essentialbindir)s --libexecdir=%(essentialsbindir)s')
+
+    def make(r):
+        r.Make('AR=%(target)s-ar')
+
+    def makeinstall(r):
+        r.MakeInstall('bindir=%(essentialbindir)s libexecdir=%(essentialsbindir)s')
+
+    def policy(r):
+        r.Install('tar.1', '%(mandir)s/man1/', mode = 0644)
+        r.Symlink('tar', '%(essentialbindir)s/gtar')
+        r.Remove('%(essentialsbindir)s/rmt') # in rmt package

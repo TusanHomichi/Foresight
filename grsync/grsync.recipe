@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class grsync(GnomePackageRecipe):
+    name = 'grsync'
+    version = '1.2.3'
+    externalArchive = 'http://www.opbyte.it/release/'
+    extraConfig = ' --disable-unity'
+    patches = [ 'grsync-1.2.2-dsofix.patch', ]
+
+    def policy(r):
+        r.Requires('rsync:runtime', '%(bindir)s/')

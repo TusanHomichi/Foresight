@@ -1,0 +1,20 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 
+#
+
+class LibMusicBrainz3(CPackageRecipe):
+    buildRequires = [ 'expat:devel', 'glibc:devel', 'libgcc:devellib',
+        'libstdc++:devel', 'cmake:runtime', 'libdiscid:devel', 'neon:devel', 'pkgconfig:devel' ]
+
+    name = 'libmusicbrainz3'
+    version = '3.0.3'
+
+
+    def setup(r):
+        r.addArchive('ftp://ftp.musicbrainz.org/pub/musicbrainz/libmusicbrainz-%(version)s.tar.gz')
+        r.CMake('.')
+        r.Make()
+        r.MakeInstall()
+
+

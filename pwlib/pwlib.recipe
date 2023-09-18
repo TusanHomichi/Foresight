@@ -1,0 +1,7 @@
+class pwlib(RedirectRecipe):
+    name = 'pwlib'
+    version = '0'
+
+    def setup(r):
+        r.addRedirect('ptlib')
+

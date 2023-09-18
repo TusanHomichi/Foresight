@@ -1,0 +1,14 @@
+class AspellSv(PackageRecipe):
+    name = 'aspell-sv'
+    version = '0.51_0'
+ 
+    buildRequires = [ 'aspell:runtime', 'make:runtime', 'which:runtime' ]
+ 
+    def setup(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.macros.lang = r.macros.name.split('-')[1]
+        r.addArchive('mirror://gnu/aspell/dict/%(lang)s/')
+        r.ManualConfigure()
+        r.Make()
+        r.MakeInstall()
+

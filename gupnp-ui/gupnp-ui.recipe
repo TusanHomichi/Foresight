@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GupnpAv(AutoPackageRecipe):
+    name = 'gupnp-ui'
+    version = '0.1.1'
+ 
+    buildRequires = ['gupnp:devel', 'gtk-doc:runtime', 'pkgconfig:devel', 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'pango:devel', 'pixman:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.gupnp.org/sources/gupnp-ui/')

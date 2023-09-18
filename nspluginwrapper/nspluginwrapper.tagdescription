@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/nspluginwrapper
+include		/usr/lib/mozilla/plugins/.*
+implements	files update
+implements	files remove
+implements	files preremove

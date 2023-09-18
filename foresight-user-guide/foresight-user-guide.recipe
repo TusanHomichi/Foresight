@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class ForesightUserGuide(PackageRecipe):
+    name = 'foresight-user-guide'
+    version = 'a712413f' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = ['desktop-file-utils:runtime', 'make:runtime']
+
+    def setup(r):
+        r.addGitSnapshot('git://github.com/omaciel/foresight-user-guide.git')
+
+        r.MakeInstall()

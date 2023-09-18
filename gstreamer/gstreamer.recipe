@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Changes 2007 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Gstreamer(GnomePackageRecipe):
+    name = 'gstreamer'
+    version = '0.10.36'
+
+    buildRequires = [ 
+        'glib:devel', 
+        'glib:runtime', 
+        'libxml2:devel', 
+        'bison:runtime',
+        'zlib:devel', 
+        'popt:devel', 
+        'gettext:runtime',
+        'flex:runtime', 
+        'check:devel',
+        'gobject-introspection:devel' ,
+        'xz:runtime'
+			]
+
+    extraConfig  = ' --disable-tests --disable-examples --enable-introspection'
+    extraConfig += ' --with-package-name="GStreamer (Foresight)" --with-package-origin=http://www.foresightlinux.org/ '
+
+    if Use.builddocs:
+        buildRequires.extend([ 'openjade:runtime', 'python:runtime',
+                               'docbook-dsssl:runtime', 'docbook-xsl:data', 'netpbm:runtime',
+                               'docbook-dtds:data', 'docbook-utils:runtime' ])
+        extraConfig += ' --enable-docs-build'\
+                       ' --with-html-dir=%(datadir)s/gtk-doc/html'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.addSource('gstreamerplugin.tagdescription', macros=True)
+        r.addSource('gstreamerplugin.taghandler', macros=True)
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        r.Install('gstreamerplugin.tagdescription',
+                  '%(tagdescriptiondir)s/gstreamerplugin')
+        r.Install('gstreamerplugin.taghandler',
+                  '%(taghandlerdir)s/gstreamerplugin', mode=0755)
+        r.ComponentSpec('runtime', '/usr/lib/%(name)s-%(majversion)s/')
+        r.Provides(exceptions=['/usr/lib/%(name)s-%(majversion)s/'])
+        r.Remove('/usr/lib/%(name)s-%(majversion)s/*.a', allowNoMatch = True)
+        r.Requires('glib:devel', 
+                   '%(libdir)s/pkgconfig/gstreamer-%(majversion)s.pc')
+        r.Requires('libxml2:devel', 
+                   '%(libdir)s/pkgconfig/gstreamer-%(majversion)s.pc')

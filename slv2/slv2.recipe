@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Slv2(CPackageRecipe):
+    name = 'slv2'
+    version = '0.6.6'
+ 
+    buildRequires = ['doxygen:runtime', 'gcc-c++:runtime', 'jack:devel', 'lv2core:devel', 'pkgconfig:devel', 'raptor:devel', 'rasqal:devel', 'redland:devel']
+ 
+    def setup(r):
+        r.addArchive('http://download.drobilla.net/')
+
+	r.ManualConfigure('configure --prefix=%(prefix)s/ --libdir=%(libdir)s/ --build-docs', configureName='waf')
+        r.Make('build', makeName='./waf')
+        r.Make('install --destdir=%(destdir)s', makeName='./waf')

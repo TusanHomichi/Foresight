@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DejimaMincho(PackageRecipe):
+    name = 'dejima-mincho'
+    version = 'r227'
+
+    packageSummary = 'Japanese TrueType Mincho font'
+
+    buildRequires = [
+        'fontconfig:runtime',
+        'mkfontdir:runtime',
+        ]
+
+    def setup(r):
+        r.addSource('http://dejima-fonts.googlecode.com/files/%(name)s-%(version)s.ttf')
+        r.Install('%(name)s-%(version)s.ttf', '%(datadir)s/fonts/%(name)s/%(name)s.ttf')

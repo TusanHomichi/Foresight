@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class info_qemu(UserInfoRecipe):
+    name = 'info-qemu'
+    version = '1'
+
+    def setup(r):
+        r.Group('qemu', 107)
+        r.User('qemu', 107, group = 'qemu', comment='qemu user', homedir='/')
+

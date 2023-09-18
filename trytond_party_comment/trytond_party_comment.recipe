@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadRecipe("python")
+class Trytond_party_comment(PackageRecipe):
+    """ This module it not part of tryton modules"""
+    name = 'trytond_party_comment'
+    version = '2.2.X'
+
+    buildRequires = ['python-setuptools:python',"trytond:python","python:devel"]
+
+    def setup(r):
+        r.macros.pyver =  Python.majversion
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+        r.addMercurialSnapshot("http://hg.pemas.es/tryton/party_comment")
+        r.addPatch("party.diff")
+        r.PythonSetup()
+        r.Requires("trytond_party:python","%(sitepkgs)s/trytond/modules/party_comment/__tryton__.py")

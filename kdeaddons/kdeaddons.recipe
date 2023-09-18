@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage.recipe')
+class kdeAddons(kdeCorePackageRecipe):
+
+    name = 'kdeaddons'
+    version = '3.5.10'
+
+    verify = False
+    buildAPIDox = False
+
+    buildRequires = [
+        'alsa-lib:devel', 'artsbuilder:devel', 'atlantik:devel',
+        'audiofile:devel', 'avahi-qt3:devel', 'avahi:devel', 'bash:runtime',
+        'db:devel', 'esound:devel', 'glib:devel', 'jack:devel',
+        'kaddressbook:devel', 'kate:devel', 'kdegames:devel', 'kdepim:devel',
+        'kdnssd-avahi:devel', 'konqueror:devel', 'libkonq:devel',
+        'libmad:devel', 'libogg:devel', 'libvorbis:devel', 'noatun:devel',
+        'pcre:devel', 'perl-HTTP-Cookies:perl', 'perl:runtime', 'SDL:devel'
+    ]
+
+    modules = [
+        ('atlantik-designer', 'atlantikdesigner'),
+        'kaddressbook-plugins',
+        ('kate-plugins', 'kate'),
+        ('kfile-plugins-addons', 'kfile-plugins'),
+        'kicker-applets',
+        'knewsticker-scripts',
+        'konq-plugins',
+        'ksig',
+        'noatun-plugins',
+        ('renamedlg-plugins', 'renamedlgplugins'),
+    ]
+
+    def postInstall(r):
+
+        r.MakeInstall(dir='doc/kate-plugins', package='kate-plugins')
+

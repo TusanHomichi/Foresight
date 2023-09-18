@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Libquicktime(AutoPackageRecipe):
+    name = 'libquicktime'
+    version = '1.2.4'
+
+    buildRequires = [  'expat:devel', 
+                       'ffmpeg:devel', 
+                       'freetype:devel', 
+                       'lame:devel', 
+                       'libogg:devel', 
+                       'Mesa:devel', 
+                       'alsa-lib:devel', 
+                       'libXaw:devel', 
+                       'libXv:devel', 
+                       'libdv:devel', 
+                       'libjpeg:devel', 
+                       'atk:devel', 
+                       'cairo:devel', 
+                       'fontconfig:devel', 
+                       'gettext:runtime', 
+                       'glib:devel', 
+                       'gtk:devel', 
+                       'intltool:runtime', 
+                       'liboil:devel', 
+                       'libpng:devel', 
+                       'pango:devel', 
+                       'pkgconfig:devel', 
+                       'schroedinger:devel',
+                       'x264:devel',
+                       'faac:devel', 
+                       'faad2:devel',
+			]
+
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/libquicktime/files/libquicktime/%(version)s/libquicktime-%(version)s.tar.gz')
+
+    def configure(r):
+	r.Configure(' --with-libdv --enable-gpl --disable-rpath '
+                    ' --disable-dependency-tracking --disable-static '
+                    ' --with-cpuflags="%(cflags)s"'
+                    ' --enable-libswscale --without-doxygen')
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

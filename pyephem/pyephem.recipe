@@ -1,0 +1,9 @@
+class PyEphem(CPackageRecipe):
+    name = 'pyephem'
+    version = '3.7.4.1'
+    buildRequires =  ['python:devel', 'python-setuptools:python' ]
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+	r.PythonSetup()
+        r.SetModes('%(destdir)s/%(libdir)s/python2.6/site-packages/%(name)s-%(version)s-py2.6.egg-info/', 0755)
+        r.SetModes('%(destdir)s/%(libdir)s/python2.6/site-packages/%(name)s-%(version)s-py2.6.egg-info/*', 0644)

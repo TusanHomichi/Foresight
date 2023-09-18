@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Vidalia(AutoPackageRecipe):
+    name = 'vidalia'
+    version = '0.2.17'
+    packageSummary = "Vidalia is a cross-platform controller GUI for the Tor software"
+    packageDescription = "Vidalia is a cross-platform controller GUI for the Tor software, built using the Qt framework. Vidalia runs on most platforms supported by Qt 4.3 or later, including Windows, Mac OS X, and Linux or other Unix variants using the X11 window system. "
+
+    buildRequires = [
+        'cmake:runtime',
+		'dbus:devel',
+		'desktop-file-utils:runtime',
+		'doxygen:runtime',
+		'gcc-c++:runtime',
+		'gettext:runtime',
+		'graphviz:runtime',		
+		'intltool:runtime',    
+		'libstdc++:devel', 
+		'qt4:devel',
+        'qt4-sql:mysql',
+        'qt4-sql:odbc',
+        'qt4-sql:psql',
+        'qt4-sql:sqlite',
+         ]
+ 
+    def unpack(r):
+        r.addArchive('https://www.torproject.org/vidalia/dist/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+	r.CMake()
+
+    def make(r):
+	r.Make()
+
+    def makeinstall(r):
+	r.MakeInstall()

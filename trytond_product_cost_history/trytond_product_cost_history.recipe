@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Trytond_product_cost_history(TrytonPackage):
+    name = 'trytond_product_cost_history'
+
+    prebuild = []
+    deps = ["trytond_product:python"]
+
+    def setup(r):
+        TrytonPackage.setup(r)
+

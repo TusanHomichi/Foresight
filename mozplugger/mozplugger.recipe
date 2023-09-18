@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MOZplugger(AutoPackageRecipe):
+  name = 'mozplugger'
+  version = '1.14.2'
+  buildRequires = [ 'libX11:devel']
+
+  def setup(r):
+    r.addArchive('http://%(name)s.mozdev.org/files/')
+    r.addPatch('mozplugger-1.13.3-path.patch')
+    
+    r.MakeDirs('%(sysconfdir)s')
+    
+    r.Make('linux')
+    r.MakeInstall('root=%(destdir)s')
+
+    

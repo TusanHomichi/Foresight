@@ -1,0 +1,353 @@
+diff -aur gnome-session-2.23.5.orig/gnome-session/gdm.c gnome-session-2.23.5/gnome-session/gdm.c
+--- gnome-session-2.23.5.orig/gnome-session/gdm.c	2008-07-22 12:34:41.000000000 +0200
++++ gnome-session-2.23.5/gnome-session/gdm.c	2008-07-29 23:45:19.000000000 +0200
+@@ -58,6 +58,8 @@
+ #define GDM_ACTION_STR_REBOOT   "REBOOT"
+ #define GDM_ACTION_STR_SUSPEND  "SUSPEND"
+ 
++#define KDM_PROTOCOL_MSG_QUERY_ACTION "caps"
++
+ typedef struct {
+         int             fd;
+         char           *auth_cookie;
+@@ -66,6 +68,8 @@
+         GdmLogoutAction current_actions;
+ 
+         time_t          last_update;
++
++        guint           is_kdm : 1;
+ } GdmProtocolData;
+ 
+ static GdmProtocolData gdm_protocol_data = {
+@@ -73,12 +77,13 @@
+         NULL,
+         GDM_LOGOUT_ACTION_NONE,
+         GDM_LOGOUT_ACTION_NONE,
+-        0
++        0,
++        FALSE
+ };
+ 
+ static char *
+-gdm_send_protocol_msg (GdmProtocolData *data,
+-                       const char      *msg)
++dm_send_protocol_msg (GdmProtocolData *data,
++                      const char      *msg)
+ {
+         GString *retval;
+         char buf[256];
+@@ -90,7 +95,7 @@
+         if (write (data->fd, p, strlen (p)) < 0) {
+                 g_free (p);
+ 
+-                g_warning ("Failed to send message to GDM: %s",
++                g_warning ("Failed to send message to display manager: %s",
+                            g_strerror (errno));
+ 
+                 return NULL;
+@@ -169,7 +174,7 @@
+ 
+                 msg = g_strdup_printf (GDM_PROTOCOL_MSG_AUTHENTICATE " %s",
+                                        data->auth_cookie);
+-                response = gdm_send_protocol_msg (data, msg);
++                response = dm_send_protocol_msg (data, msg);
+                 g_free (msg);
+ 
+                 if (response && !strcmp (response, "OK")) {
+@@ -214,7 +219,7 @@
+                 XauDisposeAuth (xau);
+ 
+                 msg = g_strdup_printf (GDM_PROTOCOL_MSG_AUTHENTICATE " %s", buffer);
+-                response = gdm_send_protocol_msg (data, msg);
++                response = dm_send_protocol_msg (data, msg);
+                 g_free (msg);
+ 
+                 if (response && !strcmp (response, "OK")) {
+@@ -237,7 +242,7 @@
+ }
+ 
+ static void
+-gdm_shutdown_protocol_connection (GdmProtocolData *data)
++dm_shutdown_protocol_connection (GdmProtocolData *data)
+ {
+         if (data->fd) {
+                 close (data->fd);
+@@ -268,7 +273,7 @@
+                 g_warning ("Failed to create GDM socket: %s",
+                            g_strerror (errno));
+ 
+-                gdm_shutdown_protocol_connection (data);
++                dm_shutdown_protocol_connection (data);
+ 
+                 return FALSE;
+         }
+@@ -279,18 +284,18 @@
+                 g_warning ("Failed to establish a connection with GDM: %s",
+                            g_strerror (errno));
+ 
+-                gdm_shutdown_protocol_connection (data);
++                dm_shutdown_protocol_connection (data);
+ 
+                 return FALSE;
+         }
+ 
+-        response = gdm_send_protocol_msg (data, GDM_PROTOCOL_MSG_VERSION);
++        response = dm_send_protocol_msg (data, GDM_PROTOCOL_MSG_VERSION);
+ 
+         if (!response || strncmp (response, "GDM ", strlen ("GDM ") != 0)) {
+                 g_free (response);
+ 
+                 g_warning ("Failed to get protocol version from GDM");
+-                gdm_shutdown_protocol_connection (data);
++                dm_shutdown_protocol_connection (data);
+ 
+                 return FALSE;
+         }
+@@ -299,13 +304,76 @@
+ 
+         if (!gdm_authenticate_connection (data)) {
+                 g_warning ("Failed to authenticate with GDM");
+-                gdm_shutdown_protocol_connection (data);
++                dm_shutdown_protocol_connection (data);
+                 return FALSE;
+         }
+ 
+         return TRUE;
+ }
+ 
++static gboolean
++kdm_init_protocol_connection (GdmProtocolData *data)
++{
++        struct sockaddr_un  addr;
++        char               *dm_display;
++        char               *dm_control;
++        char               *p0 = NULL;
++
++        g_assert (data->fd <= 0);
++
++        data->fd = socket (AF_UNIX, SOCK_STREAM, 0);
++        if (data->fd < 0) {
++                g_warning ("Failed to create KDM socket: %s",
++                           g_strerror (errno));
++                dm_shutdown_protocol_connection (data);
++                return FALSE;
++        }
++
++        dm_display = g_strdup (g_getenv ("DISPLAY"));
++        dm_control = g_strdup (g_getenv ("DM_CONTROL"));
++
++        if (dm_display && (p0 = strchr (dm_display, ':')))
++                p0 = strchr (p0, '.');
++
++        if (!dm_control || !strlen (dm_control) ||
++            !dm_display || !strlen (dm_display)) {
++                g_free (dm_control);
++                g_free (dm_display);
++
++                g_warning ("Could not locate KDM socket.");
++                dm_shutdown_protocol_connection (data);
++                return FALSE;
++        }
++
++        snprintf (addr.sun_path, sizeof (addr.sun_path), "%s/dmctl-%.*s/socket",
++                  dm_control, p0 ? p0 - dm_display : 512, dm_display);
++        addr.sun_family = AF_UNIX;
++
++        g_free (dm_display);
++        g_free (dm_control);
++
++        if (connect (data->fd, (struct sockaddr *) &addr, sizeof (addr)) < 0) {
++                g_warning ("Failed to establish a connection with KDM: %s",
++                           g_strerror (errno));
++                dm_shutdown_protocol_connection (data);
++                return FALSE;
++        }
++
++        return TRUE;
++}
++
++static gboolean
++dm_init_protocol_connection (GdmProtocolData *data)
++{
++        if (g_getenv ("DM_CONTROL") && !g_getenv ("GDMSESSION")) {
++                data->is_kdm = TRUE;
++                return kdm_init_protocol_connection (data);
++        }
++
++        data->is_kdm = FALSE;
++        return gdm_init_protocol_connection (data);
++}
++
+ static void
+ gdm_parse_query_response (GdmProtocolData *data,
+                           const char      *response)
+@@ -360,7 +428,21 @@
+ }
+ 
+ static void
+-gdm_update_logout_actions (GdmProtocolData *data)
++kdm_parse_query_response (GdmProtocolData *data,
++                          const char      *response)
++{
++        data->available_actions = GDM_LOGOUT_ACTION_NONE;
++        data->current_actions   = GDM_LOGOUT_ACTION_NONE;
++
++        if (!response)
++                return;
++
++        if (strstr (response, "\tshutdown"))
++                data->available_actions |= GDM_LOGOUT_ACTION_SHUTDOWN | GDM_LOGOUT_ACTION_REBOOT;
++}
++
++static void
++dm_update_logout_actions (GdmProtocolData *data)
+ {
+         time_t current_time;
+         char  *response;
+@@ -373,26 +455,35 @@
+ 
+         data->last_update = current_time;
+ 
+-        if (!gdm_init_protocol_connection (data)) {
++        if (!dm_init_protocol_connection (data)) {
+                 return;
+         }
+ 
+-        if ((response = gdm_send_protocol_msg (data, GDM_PROTOCOL_MSG_QUERY_ACTION))) {
+-                gdm_parse_query_response (data, response);
+-                g_free (response);
++        if (data->is_kdm) {
++                /* KDM */
++                if ((response = dm_send_protocol_msg (data, KDM_PROTOCOL_MSG_QUERY_ACTION))) {
++                        kdm_parse_query_response (data, response);
++                        g_free (response);
++                }
++        } else {
++                /* GDM */
++                if ((response = dm_send_protocol_msg (data, GDM_PROTOCOL_MSG_QUERY_ACTION))) {
++                        gdm_parse_query_response (data, response);
++                        g_free (response);
++                }
+         }
+ 
+-        gdm_shutdown_protocol_connection (data);
++        dm_shutdown_protocol_connection (data);
+ }
+ 
+ gboolean
+ gdm_is_available (void)
+ {
+-        if (!gdm_init_protocol_connection (&gdm_protocol_data)) {
++        if (!dm_init_protocol_connection (&gdm_protocol_data)) {
+                 return FALSE;
+         }
+ 
+-        gdm_shutdown_protocol_connection (&gdm_protocol_data);
++        dm_shutdown_protocol_connection (&gdm_protocol_data);
+ 
+         return TRUE;
+ }
+@@ -400,7 +491,7 @@
+ gboolean
+ gdm_supports_logout_action (GdmLogoutAction action)
+ {
+-        gdm_update_logout_actions (&gdm_protocol_data);
++        dm_update_logout_actions (&gdm_protocol_data);
+ 
+         return (gdm_protocol_data.available_actions & action) != 0;
+ }
+@@ -408,21 +499,15 @@
+ GdmLogoutAction
+ gdm_get_logout_action (void)
+ {
+-        gdm_update_logout_actions (&gdm_protocol_data);
++        dm_update_logout_actions (&gdm_protocol_data);
+ 
+         return gdm_protocol_data.current_actions;
+ }
+ 
+-void
+-gdm_set_logout_action (GdmLogoutAction action)
++static char *
++gdm_logout_action_msg (GdmLogoutAction action)
+ {
+         char *action_str = NULL;
+-        char *msg;
+-        char *response;
+-
+-        if (!gdm_init_protocol_connection (&gdm_protocol_data)) {
+-                return;
+-        }
+ 
+         switch (action) {
+         case GDM_LOGOUT_ACTION_NONE:
+@@ -439,16 +524,45 @@
+                 break;
+         }
+ 
+-        msg = g_strdup_printf (GDM_PROTOCOL_MSG_SET_ACTION " %s", action_str);
++        return g_strdup_printf (GDM_PROTOCOL_MSG_SET_ACTION " %s", action_str);
++}
++
++static char *
++kdm_logout_action_msg (GdmLogoutAction action)
++{
++        char *msg = NULL;
++
++        if (action == GDM_LOGOUT_ACTION_SHUTDOWN)
++                msg = g_strdup ("shutdown\thalt\task");
++        else if (action == GDM_LOGOUT_ACTION_REBOOT)
++                msg = g_strdup ("shutdown\treboot\task");
++
++        return msg;
++}
++
++void
++gdm_set_logout_action (GdmLogoutAction action)
++{
++        char *msg;
++        char *response;
++
++        if (!dm_init_protocol_connection (&gdm_protocol_data)) {
++                return;
++        }
++
++        if (gdm_protocol_data.is_kdm)
++                msg = kdm_logout_action_msg (action);
++        else
++                msg = gdm_logout_action_msg (action);
+ 
+-        response = gdm_send_protocol_msg (&gdm_protocol_data, msg);
++        response = dm_send_protocol_msg (&gdm_protocol_data, msg);
+ 
+         g_free (msg);
+         g_free (response);
+ 
+         gdm_protocol_data.last_update = 0;
+ 
+-        gdm_shutdown_protocol_connection (&gdm_protocol_data);
++        dm_shutdown_protocol_connection (&gdm_protocol_data);
+ }
+ 
+ void
+@@ -456,16 +570,16 @@
+ {
+         char *response;
+ 
+-        if (!gdm_init_protocol_connection (&gdm_protocol_data)) {
++        if (!dm_init_protocol_connection (&gdm_protocol_data)) {
+                 return;
+         }
+ 
+-        response = gdm_send_protocol_msg (&gdm_protocol_data,
+-                                          GDM_PROTOCOL_MSG_FLEXI_XSERVER);
++        response = dm_send_protocol_msg (&gdm_protocol_data,
++                                         GDM_PROTOCOL_MSG_FLEXI_XSERVER);
+ 
+         g_free (response);
+ 
+         gdm_protocol_data.last_update = 0;
+ 
+-        gdm_shutdown_protocol_connection (&gdm_protocol_data);
++        dm_shutdown_protocol_connection (&gdm_protocol_data);
+ }

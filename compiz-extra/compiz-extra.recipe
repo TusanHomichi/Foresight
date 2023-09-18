@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CompizExtra(CPackageRecipe):
+    name = 'compiz-extra'
+    version = 'git_070329_12.5'
+
+    buildRequires = ['Mesa:devel', 'binutils:runtime', 'cairo:devel', 'freetype:devel', 'gcc-c++:runtime', 'gcc:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXcomposite:devel', 'libXdmcp:devel', 'libXfixes:devel', 'libXinerama:devellib', 'libXrandr:devel', 'libXrender:devel', 'libjpeg:devel', 'libxcb:devel', 'pkgconfig:devel', 'startup-notification:devel', 'zlib:devel', 'expat:devel', 'glibc:devel', 'libXdamage:devel', 'libtool:runtime', 'compiz:devel', 'dbus:devel']
+
+    def setup(r):
+        r.macros.version = r.version.replace('_','-')
+        srpm = 'http://software.opensuse.org/download/home:/cyberorg/SUSE_Fac\
+tory/src/%(name)s-%(version)s.src.rpm'
+
+        r.addArchive('compiz-extra-latest.tar.bz2', rpm=srpm)
+        r.addSource('compiz-extra-git.spec', rpm=srpm, dir='../')
+
+        r.Replace('/usr/bin/sed','/bin/sed','vignettes/libtool')
+
+        r.Run(""" for pkg in $(ls); do
+                  cd $pkg;
+                  make;
+                  make DESTDIR=%(destdir)s/%(libdir)s/compiz install;
+                  cd ..; done
+              """)
+

@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('rpmpackage')
+class MesaDemos(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'mesa-demos'
+    version = '8.0.1'
+    rpmRelease = '1.1'
+    rpmName = 'Mesa-demos'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime',
+                      'Mesa:devel', 'freeglut:devel', 'glew:devel',
+                      'pkgconfig:runtime', 'pkgconfig:devel', 
+                      'libtool:runtime']
+
+    def configure(r):
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+
+        # Hack the demos to use installed data files
+        r.Run(""" sed -i 's,../images,%(libdir)s/mesa,' src/demos/*.c
+sed -i 's,geartrain.dat,%(libdir)s/mesa/&,' src/demos/geartrain.c
+sed -i 's,isosurf.dat,%(libdir)s/mesa/&,' src/demos/isosurf.c
+sed -i 's,terrain.dat,%(libdir)s/mesa/&,' src/demos/terrain.c """)
+        r.Run('autoreconf -fi')
+        r.Configure('--bindir=%(libdir)s/mesa/')
+
+
+    def policy(r):
+        r.Install('src/xdemos/glxgears', '%(bindir)s/', mode = 0755)
+        r.Install('src/xdemos/glxinfo', '%(bindir)s/', mode = 0755)
+	r.Remove('%(libdir)s/mesa/glx{gears,info}')
+        r.Install('src/images/*.rgb', '%(libdir)s/mesa/', mode = 0644)
+        r.Install('src/images/*.rgba', '%(libdir)s/mesa/', mode = 0644)
+        r.Install('src/demos/*.dat', '%(libdir)s/mesa/', mode = 0644)
+
+        r.PackageSpec('glx-utils', '%(bindir)s/')

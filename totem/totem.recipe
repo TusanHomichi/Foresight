@@ -1,0 +1,19 @@
+
+loadSuperClass('gnomepackage')
+
+class totem(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus:devel', 'fontconfig:devel', 'gnome-icon-theme:devellib', 'freetype:devel', 'gcc:devel', 'glib:devel', 'gnome-desktop:devel', 'libgnome-keyring:devel', 'iso-codes:devellib', 'gnome-vfs:devel', 'expat:devel', 'shared-mime-info:devellib', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libmusicbrainz3:devel', 'libpng:devel', 'libxml2:devel', 'nautilus:devel', 'pango:devel', 'popt:devel', 'startup-notification:devel', 'dbus-glib:devellib', 'libstdc++:devel', 'GConf:runtime', 'dbus-glib:runtime', 'desktop-file-utils:runtime', 'gettext:runtime', 'perl:runtime', 'rarian:runtime', 'rarian:devel', 'gtk:runtime', 'hal:devel', 'nspr:devel', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'libXrandr:devel', 'libXtst:devellib', 'libXxf86vm:devellib', 'gcc-c++:runtime', 'libtool:runtime', 'gnome-control-center:devel', 'bluez:devel', 'shared-mime-info:runtime', 'totem-pl-parser:devel', 'pygobject:python', 'pygtk:devel', 'pygtk:python', 'python:devel', 'gdata-python:python', 'libgalago:devel', 'lirc:devel', 'vala:devel', 'gst-plugins-base:devel', 'gst-plugins-base:lib', 'gst-plugins-base:runtime', 'gst-plugins-good:lib', 'gstreamer:devel', 'gstreamer:runtime', 'gnome-python:python', 'gst-python:python', 'gnome-python-desktop:python', 'pyxdg:python', 'python-simplejson:python', 'unique:devel', 'BeautifulSoup:python', 'coherence:python', 'dbus-python:python', 'python-feedparser:python', 'libgdata:devel', 'libsoup:devel', 'avahi-glib:devel', 'avahi:devel', 'libepc:devel' ]
+
+    name = 'totem'
+    version = '2.32.0'
+
+    extraConfig = ' --enable-gstreamer --enable-mozilla  --enable-nautilus   --disable-scrollkeeper  --disable-nvtv --disable-vala'
+    preConfigure =  'PATH="$PATH:%(libdir)s/xulrunner-1.9.2"'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+
+        r.Environment('MOZILLA_PLUGINDIR','%(libdir)s/mozilla/plugins')
+
+        r.Run('autoreconf -fi')

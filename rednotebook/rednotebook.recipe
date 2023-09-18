@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RedNotebook(PackageRecipe):
+    version = '1.1.8'
+    name = 'rednotebook'
+
+    buildRequires = ['python:devel', 'python-setuptools:python', 'PyYAML:python', 'chardet:python', 'desktop-file-utils:runtime', 'gnome-python-extras:python', 'pygobject:python', 'pygtk:python', 'pywebkitgtk:python', 'zeitgeist:python']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/rednotebook/')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        r.Requires('PyYAML:python', '%(libdir)s/python2.6/site-packages/rednotebook/storage.py')
+        r.Requires('pywebkitgtk:python', '%(libdir)s/python2.6/site-packages/rednotebook/gui/main_window.pyc')

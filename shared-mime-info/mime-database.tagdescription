@@ -1,0 +1,4 @@
+file         %(taghandlerdir)s/mime-database
+implements   files update
+implements   files remove
+include      %(datadir)s/mime/packages/

@@ -1,0 +1,42 @@
+#
+# Copyright (c) %(year)s Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Uim(AutoPackageRecipe):
+    name = 'uim'
+    version = '1.6.1'
+    #Flags.m17n=False
+ 
+    buildRequires = ['anthy:devel','atk:devel','cairo:devel',
+                     'desktop-file-utils','expat:devel',
+                     'fontconfig:devel','freetype:devel',
+                     'gettext:runtime','libpng:devel','librsvg:runtime',
+                     'libstdc++:devel','ncurses:devel','pango:devel',
+                     'perl:runtime','pkgconfig:devel','ruby:runtime','zlib:devel',
+                     'desktop-file-utils:runtime','m17n-lib:devel',
+                     'GConf:devel', 'ORBit2:devel', 'asciidoc:runtime', 'cmake:runtime',
+                     'gnome-panel:devel', 'gnome-vfs:devel', 'intltool:runtime',
+                     'kdelibs:config', 'libart_lgpl:devel', 'libbonobo:devel',
+                     'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                     'libgnomeui:devel', 'popt:devel', 'qt4:devel'
+                ]
+
+    buildRequires.extend(['libX11:devel','libXau:devel','libXdmcp:devel',
+                            'libXext:devel','libXft:devel','libXrender:devel',
+                            'libxcb:devel','pixman:devel','xcb-util:devel'])
+    buildRequires.extend(['glib:devel','gtk:devel','gtk:runtime'])
+    buildRequires.extend(['qt:devel'])
+    buildRequires.extend(['emacs:runtime'])
+ 
+    def unpack(r):
+        r.addArchive('http://%(name)s.googlecode.com/files/'
+                    '%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.macros.extraConfig = ' --with-qt --with-qt-immodule'
+        r.macros.extraConfig += ' --without-gtk2'
+        r.macros.extraConfig += ' --enable-gnome-applet'
+
+        r.Configure('%(extraConfig)s')

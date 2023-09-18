@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tcsh(CPackageRecipe):
+    buildRequires = [ 'perl:runtime', 'autoconf:runtime',
+                      'libtool:runtime', 'groff:runtime',
+                      'coreutils:runtime', 'grep:runtime',
+                      'libtermcap:devel']
+    name = 'tcsh'
+    version = '6.17.00'
+
+    patches = [
+        'tcsh-6.15.00-ca-color.patch',
+        'tcsh-6.15.00-rs-color.patch', # actually it's about hl color
+        'tcsh-6.17.00-mh-color.patch'
+        ]
+
+    def setup(r):
+        r.mainDir('tcsh-%(version)s')
+
+        r.addArchive('ftp://ftp.astron.com/pub/tcsh/')
+        for patch in r.patches:
+            r.addPatch(patch)
+
+        r.Run('nroff -me eight-bit.me > eight-bit.txt')
+
+        catalogs = (
+            ('de', 'ISO-8859-1', 'german'),
+            ('el', 'ISO-8859-7', 'greek'),
+            ('en', 'ISO-8859-1', 'C'),
+            ('es', 'ISO-8859-1', 'spanish'),
+            ('et', 'ISO-8859-1', 'et'),
+            ('fi', 'ISO-8859-1', 'finnish'),
+            ('fr', 'ISO-8859-1', 'french'),
+            ('it', 'ISO-8859-1', 'italian'),
+            ('ja', 'eucJP', 'ja'),
+            ('pl', 'ISO-8859-2', 'pl'),
+            ('ru', 'ISO-8859-5', 'russian'),
+            ('uk', 'ISO-8859-1', 'ukrainian'))
+
+        for (lang, charset, language) in catalogs:
+            r.Run("""if ! grep -q '^$ codeset=' nls/%(language)s/set1 ; then
+                echo '$ codeset='%(charset)s        >  nls/%(language)s/set1.codeset
+                cat nls/%(language)s/set1        >> nls/%(language)s/set1.codeset
+                cat nls/%(language)s/set1.codeset >  nls/%(language)s/set1
+                rm  nls/%(language)s/set1.codeset
+            fi""" % {'lang':lang, 'charset':charset, 'language':language})
+
+        if Arch.x86_64:
+            r.macros.cflags = '-O1 -fPIC'
+
+        r.Configure('--without-hesiod')
+        r.Make()
+        r.Run('%(bindir)s/perl tcsh.man2html')
+        r.Make('-C nls catalogs')
+
+        r.MakeDirs('%(mandir)s/man1', '%(essentialbindir)s')
+        r.Install('tcsh', '%(essentialbindir)s/tcsh', mode=0755)
+        r.Install('tcsh.man', '%(mandir)s/man1/tcsh.1')
+        r.Symlink('tcsh', '%(essentialbindir)s/csh')
+        r.Symlink('tcsh.1', '%(mandir)s/man1/csh.1')
+
+        for (lang, charset, language) in catalogs:
+            r.Run("""
+            dest=%%(destdir)s%%(datadir)s/locale/%(lang)s/LC_MESSAGES
+            if test -f tcsh.%(language)s.cat ; then
+                mkdir -p $dest
+                install -m644 tcsh.%(language)s.cat $dest/tcsh
+            fi""" % {'lang': lang, 'language' : language } )
+
+        r.Doc('Fixes', 'NewThings', 'complete.tcsh',
+              'eight-bit.txt', 'tcsh.html')
+        r.TagSpec('shell', '%(essentialbindir)s/t?csh')

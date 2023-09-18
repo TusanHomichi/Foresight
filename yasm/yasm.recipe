@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# Copyright (c) 2006, 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class yasm(AutoPackageRecipe):
+    name = 'yasm'
+    version = '1.2.0'
+
+    buildRequires = [
+        'xmlto:runtime', 'gettext:runtime', 'intltool:runtime', 
+      ]
+
+    def unpack(r):
+        r.addArchive('http://www.tortall.net/projects/yasm/releases/')

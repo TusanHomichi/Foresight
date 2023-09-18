@@ -1,0 +1,8 @@
+file		%(taghandlerdir)s/x-font
+exclude		%(datadir)s/fonts/.*/fonts.alias
+include		%(datadir)s/fonts/.*
+include		%(datadir)s/fonts/.*
+datasource	stdin
+implements	files update
+implements	files remove
+implements	files preremove

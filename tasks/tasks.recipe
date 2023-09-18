@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe', label='foresight.rpath.org@fl:2-devel')
+class Tasks(GnomePackageRecipe):
+
+    name = 'tasks'
+    version = '0.19'
+
+    buildRequires = ['ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'evolution-data-server:devel', 'expat:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gnome-vfs:devel', 'gtk:devel', 'gtk:runtime', 'libXrender:devel', 'libbonobo:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'popt:devel', 'zlib:devel', 'libsexy:devel']
+
+    def unpack(r):
+        r.addArchive('http://projects.o-hand.com/sources/tasks/')

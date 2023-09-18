@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python=conary.rpath.com@rpl:2')
+class Boto(PackageRecipe):
+    name = 'boto'
+    version = '2.0b3'
+
+    buildRequires = [ 'python-setuptools:python', 'm2crypto:python',
+        'python:devel', 'PyYAML:python', ]
+
+    def setup(r):
+        r.macros.sitepkgs = Python.sitepkgs
+        r.addArchive('http://boto.googlecode.com/files/')
+
+        # bonus strip whitespace patch --sgp
+        r.addPatch('http://people.rpath.com/~scott/cabinet/boto_patches/exceptionUnmarshalling/stripWhitespace.patch')
+
+        # More details in S3CreateError
+        r.addPatch('http://people.rpath.com/~misa/boto-s3-create-exception.patch',
+            dir="boto", level=2)
+        # Retry dropped SSL proxy connections
+        r.addPatch('http://people.rpath.com/~misa/boto-ssl-reconnect.patch')
+
+        r.PythonSetup()
+
+        r.Remove('%(bindir)s/test.py')
+        r.Remove('%(sitepkgs)s/tests', recursive=True)

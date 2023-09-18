@@ -1,0 +1,16 @@
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+ 
+class Nfoview(CPackageRecipe):
+ 
+    name = 'nfoview'
+    version = '1.7'
+ 
+    buildRequires = ['python-setuptools:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'intltool:runtime', 'pygtk:python', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('http://download.gna.org/%(name)s/%(version)s/%(name)s-%(version)s.tar.bz2')
+	r.Replace('^', '#', 'setup.py', lines=37)
+        r.PythonSetup(data='--install-data=/usr')

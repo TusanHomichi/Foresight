@@ -1,0 +1,6 @@
+loadSuperClass('firefox-addon')
+class FireBug(FirefoxAddonRecipe):
+    name = 'firefox-firebug'
+    version = '1.5.4'
+    fileId = '60952'
+    # https://addons.mozilla.org/en-US/firefox/addons/versions/1843

@@ -1,0 +1,18 @@
+diff -r 94db57c56cf8 argparse.py
+--- a/argparse.py	Fri Feb 20 02:31:41 2009 -0600
++++ b/argparse.py	Fri Feb 20 02:40:22 2009 -0600
+@@ -510,8 +510,13 @@
+             self.argument_name = argument.dest
+         else:
+             self.argument_name = None
+-        self.message = message
++        self._set_message(message)
+ 
++    def _get_message(self):
++        return self._message
++    def _set_message(self,value):
++        self._message = value
++    message = property(_get_message, _set_message)
+     def __str__(self):
+         if self.argument_name is None:
+             format = '%(message)s'

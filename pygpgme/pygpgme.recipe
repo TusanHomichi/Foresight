@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pygpgme(CPackageRecipe):
+
+    name = 'pygpgme'
+    version = '0.2'
+
+    buildRequires = ['python-setuptools:python', 'gpgme:devel', 'python:devel', 'libgpg-error:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/pygpgme/')
+        r.PythonSetup()

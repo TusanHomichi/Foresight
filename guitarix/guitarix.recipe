@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Guitarix(AutoPackageRecipe):
+    name = 'guitarix'
+    version = '0.21.0'#+git_aead23'
+ 
+    buildRequires = ['atk:devel', 'atkmm:devel',
+        'boost:devel', 'cairo:devel',
+        'cairomm:devel', 'desktop-file-utils:runtime',
+        'fftw:devel', 'fontconfig:devel',
+        'freetype:devel', 'gdk-pixbuf:devel', 'gdk-pixbuf:runtime',
+        'gettext:runtime', 'glib:devel',
+        'glibmm:devel', 'gtk:devel',
+        'gtkmm:devel', 'intltool:runtime',
+        'jack:devel', 'libpng:devel',
+        'libsigc++:devel', 'libsndfile:devel',
+        'libstdc++:devel', 'pango:devel',
+        'pangomm:devel', 'ladspa_sdk:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/'
+                     '%(name)s/%(name)s/'
+                     '%(name)s2-%(version)s.tar.bz2')
+        r.addPatch('guitarix_add_sys_stat.patch')
+        #r.macros.tag=r.version[-6:]
+        #r.addGitSnapshot('http://git.code.sf.net/p/guitarix/git',
+        #                 tag='%(tag)s')
+
+    def configure(r):
+        r.ManualConfigure(' --prefix=%(prefix)s', configureName='waf configure')#,dir='trunk')
+
+    def make(r):
+        r.Make(makeName='./waf')#, dir='trunk')
+
+    def makeinstall(r):
+        r.Run('./waf --destdir=%(destdir)s install')#, dir='trunk')
+
+    def policy(r):
+        r.Requires('qjackctl:runtime', '%(bindir)s/guitarix') 
+        r.Licenses('GPLv2')
+        r.macros.homepage=r.packageHomepage
+
+        r.Description(
+            shortDesc=r.packageSummary,
+            longDesc =r.packageDescription)
+    packageHomepage = 'http://guitarix.sourceforge.net/'
+    packageSummary = 'guitarix is a virtual guitar amplifier for Linux'
+    packageDescription = \
+        """guitarix is a virtual guitar amplifier for Linux
+           running with jack (Jack Audio Connection Kit). 
+           It is free as in speech and free as in beer.
+           Homepage: %(homepage)s"""
+

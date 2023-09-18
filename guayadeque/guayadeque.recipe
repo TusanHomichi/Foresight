@@ -1,0 +1,21 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Guayadeque(CPackageRecipe):
+    name = 'guayadeque'
+    #revision = 'r1735'
+    #version = '0.3.2+' + revision
+    version = '0.3.7'
+
+    buildRequires = ['cmake:runtime', 'curl:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'flac:devel', 'gcc-c++:runtime', 'gettext:runtime', 'glib:devel', 'gstreamer:devel', 'libstdc++:devel', 'libxml2:devel', 'mp4v2:devel', 'openssl:devel', 'pkgconfig:devel', 'sqlite:devel', 'taglib:devel', 'wxWidgets:devel', 'wxWidgets:runtime', 'zlib:devel', 'gdk-pixbuf:devel', 'libgpod:devel', 'libpng:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gtk:devel', 'libdbusmenu-glib:devel', 'pango:devel']
+ 
+    def setup(r):
+        #r.addBzrSnapshot('lp:guayadeque.player')
+        r.addArchive('http://downloads.sourceforge.net/project/guayadeque/guayadeque/%(version)s/guayadeque-%(version)s.tar.bz2')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

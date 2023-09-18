@@ -1,0 +1,21 @@
+diff --git a/setup.py b/setup.py
+index 161232e..0a19b81 100644
+--- a/setup.py
++++ b/setup.py
+@@ -92,11 +92,11 @@ setup(name="turpial",
+         ],
+       },
+       cmdclass={
+-        'build': build,
+-        'compile_catalog': babel.compile_catalog,
+-        'extract_messages': babel.extract_messages,
+-        'init_catalog': babel.init_catalog,
+-        'update_catalog': babel.update_catalog,
++      #  'build': build,
++       # 'compile_catalog': babel.compile_catalog,
++       # 'extract_messages': babel.extract_messages,
++       # 'init_catalog': babel.init_catalog,
++       # 'update_catalog': babel.update_catalog,
+       },
+       data_files=data_files,
+ )

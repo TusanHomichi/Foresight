@@ -1,0 +1,46 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Portmidi(AutoPackageRecipe):
+    name = 'portmidi'
+    version = '217'
+ 
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'cmake:runtime',
+                    'gcc-c++:runtime',
+                    'icedtea-jre:runtime',
+                    'icedtea-jdk:runtime',
+                    'gcc-java:java',
+                    'pkgconfig:devel',
+                    'python:devel', 
+                    'unzip:runtime',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/portmedia/portmidi/%(version)s/portmidi-src-%(version)s.zip')
+        r.Run("""sed -i "s#/usr/local#/usr#" */CMakeLists.txt pm_python/setup.py""")
+        r.MakeDirs('pm_java/Release')
+        r.addPatch('portmidi-217-build-fix.patch')
+
+    def configure(r):
+        r.CMake('-DCMAKE_BUILD_TYPE=Release -DCMAKE_SKIP_BUILD_RPATH=1 -DVERSION=%(version)s -DCMAKE_INSTALL_PREFIX=%(destdir)s%(prefix)s -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=Release -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=Release -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=Release .')
+
+    def make(r):
+        r.disableParallelMake()
+        r.Make()
+        r.Run('gcc -pthread -fPIC -c -o _pyportmidi.o -I../../pm_common -I../../porttime -I%(includedir)s/python2.6 _pyportmidi.c', dir='pm_python/pyportmidi')
+        r.Run('gcc -shared -o _pyportmidi.so _pyportmidi.o -lpython2.6 -L../../build/Release', dir='pm_python/pyportmidi')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.MakeDirs('%(libdir)s/python2.6/site-packages/pyportmidi')
+        r.Install('pm_python/pyportmidi/_pyportmidi.so', '%(libdir)s/python2.6/site-packages/pyportmidi/', mode=0755)
+        r.Install('pm_python/pyportmidi/*.py', '%(libdir)s/python2.6/site-packages/pyportmidi/', mode=0644)
+        
+    def policy(r):
+        r.Requires(exceptDeps=r'soname: ELF.*/libjvm.so.*')

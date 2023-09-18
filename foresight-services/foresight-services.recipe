@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ForesightServices(PackageRecipe):
+    name = 'foresight-services'
+    version = '0.2'
+ 
+    buildRequires = [ 'chkconfig:runtime' ]
+ 
+    def setup(r):
+
+        r.Create('%(sysconfdir)s/chkconfig.d/atd', contents = '# chkconfig: - 95 05')
+        r.Create('%(sysconfdir)s/chkconfig.d/autofs', contents = '# chkconfig: - 28 72')
+        r.Create('%(sysconfdir)s/chkconfig.d/dhcdbd', contents = '# chkconfig: - 97 02')
+        r.Create('%(sysconfdir)s/chkconfig.d/gpm', contents = '# chkconfig: - 05 15')
+        r.Create('%(sysconfdir)s/chkconfig.d/ip6tables', contents = '# chkconfig: - 05 92')
+        r.Create('%(sysconfdir)s/chkconfig.d/netfs', contents = '# chkconfig: - 11 75')
+        r.Create('%(sysconfdir)s/chkconfig.d/nfslock', contents = '# chkconfig: - 09 86')
+        r.Create('%(sysconfdir)s/chkconfig.d/open-iscsi', contents = '# chkconfig: - 13 89')
+        r.Create('%(sysconfdir)s/chkconfig.d/nfslock', contents = '# chkconfig: - 09 86')
+        r.Create('%(sysconfdir)s/chkconfig.d/openvpn', contents = '# chkconfig: - 21 76')
+        r.Create('%(sysconfdir)s/chkconfig.d/rpcgssd', contents = '# chkconfig: - 19 69')
+        r.Create('%(sysconfdir)s/chkconfig.d/rpcidmapd', contents = '# chkconfig: - 18 68')
+        r.Create('%(sysconfdir)s/chkconfig.d/sshd', contents = '# chkconfig: - 20 25')
+        r.Create('%(sysconfdir)s/chkconfig.d/xdm', contents = '# chkconfig: - 18 82')
+        r.Create('%(sysconfdir)s/chkconfig.d/ntpd', contents = '# chkconfig: - 58 74')
+        r.TagSpec('chkconfig-override', '%(sysconfdir)s/chkconfig.d/.*')
+        services = [
+            'com.redhat.dhcp.service',
+            'com.redhat.PrinterSpooler.service',
+            'org.freedesktop.Avahi.service',
+            ]
+
+        for service in services:
+            r.addSource(service, dest='%(datadir)s/dbus-1/system-services/')

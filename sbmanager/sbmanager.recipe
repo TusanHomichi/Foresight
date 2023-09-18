@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sbmanager(CPackageRecipe):
+    name = 'sbmanager'
+    revision = '9ccc5d8b'
+    version = '2010.07.23+' + revision
+
+    buildRequires = ['Mesa:devel',
+                    'atk:devel',
+                    'autoconf:runtime',
+                    'automake:runtime',
+                    'cairo:devel',
+                    'clutter-gtk:devel',
+                    'clutter:devel',
+                    'desktop-file-utils:runtime',
+                    'fontconfig:devel',
+                    'freetype:devel',
+                    'gettext:runtime',
+                    'glib:devel',
+                    'gnutls:devel',
+                    'gtk:devel',
+                    'intltool:runtime',
+                    'intltool:devel',
+                    'libX11:devel',
+                    'libXcomposite:devel',
+                    'libXdamage:devel',
+                    'libXext:devel',
+                    'libXfixes:devel',
+                    'libimobiledevice:devel',
+                    'libplist:devel',
+                    'libtasn1:devel',
+                    'libtool:runtime',
+                    'libxml2:devel',
+                    'pango:devel',
+                    'pkgconfig:devel',
+                    'usbmuxd:devel']
+                  
+    def setup(r):
+        r.addGitSnapshot('http://cgit.sukimashita.com/sbmanager.git/')
+        r.addPatch('sbmanager_check_return_fwrite.patch')
+        r.Configure('--prefix=%(prefix)s', configureName='autogen.sh')
+        r.Make()
+        r.MakeInstall()

@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomePythonDesktop(GnomePackageRecipe):
+
+    buildRequires = [ 
+	'GConf:devel', 
+	'ORBit2:devel', 
+	'atk:devel', 
+	'cairo:devel', 
+	'fontconfig:devel', 
+	'freetype:devel', 
+	'dbus:devel', 
+	'gnome-desktop:devel', 
+	'hal:devel', 
+	'librsvg:devel', 
+	'startup-notification:devel', 
+	'glib:devel', 
+	'libgnome-keyring:devel', 
+	'gnome-media:devel', 
+	'gnome-panel:devel', 
+	'gnome-vfs:devel', 
+	'libart_lgpl:devel', 
+	'libbonobo:devel', 
+	'libbonoboui:devel', 
+	'libglade:devel', 
+	'libgnome:devel', 
+	'libgnomecanvas:devel', 
+	'libgnomeprint:devel', 
+	'libgnomeprintui:devel', 
+	'libgnomeui:devel', 
+	'libgtop:devel', 
+	'libpng:devel', 
+	'libwnck:devel', 
+	'libxml2:devel', 
+	'metacity:devel', 
+	'pango:devel', 
+	'popt:devel', 
+	'totem:devellib', 
+	'totem-pl-parser:devel', 
+	'pygtk:devel', 
+	'gcc-c++:runtime', 
+	'python:devel', 
+	'python:runtime', 
+	'gnome-python:data', 
+	'gtksourceview:devel', 
+	'pygobject:devel', 
+	'pycairo:devel', 
+	'gnome-python:devel', 
+	'pygobject:runtime', 
+		]
+
+
+    name = 'gnome-python-desktop'
+    version = '2.32.0'

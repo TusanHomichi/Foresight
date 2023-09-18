@@ -1,0 +1,13 @@
+--- main.c	2007-02-27 04:39:19.000000000 +0800
++++ newmain.c	2007-03-01 07:07:15.000000000 +0800
+@@ -338,8 +338,8 @@
+       major = atoi (versions [1]);
+       if ((major % 2) != 0)
+ 	{
+-	  putenv ("G_DEBUG=fatal_criticals");
+-	  g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
++	  /*putenv ("G_DEBUG=fatal_criticals");
++	  g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);*/
+ 	}
+     }
+   g_strfreev (versions);

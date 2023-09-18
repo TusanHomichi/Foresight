@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MultipathTools(CPackageRecipe):
+    name = 'multipath-tools'
+    version = '0.4.9'
+
+    buildRequires = ['chkconfig:runtime', 'device-mapper:devel',
+                     'libaio:devel', 'ncurses:devel', 'readline:devel',
+                     'sysfsutils:devel']
+
+    def setup(r):
+        r.addGitSnapshot('http://kernel.org/pub/scm/linux/storage/multipath-tools/.git', tag='%(version)s')
+        r.Make()
+        r.MakeInstall()
+        r.Install('multipathd/multipathd.init.redhat', '%(initdir)s/multipathd', mode=0755)

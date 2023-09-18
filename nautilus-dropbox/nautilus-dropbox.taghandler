@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Use at least enough arguments to ensure a valid type and action, or error out.
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+ 
+# Initialize type and action to leave the remaining args as the filelist.
+type="$1"
+shift
+action="$1"
+shift
+ 
+# Use case type to ensure that the taghandler is passed only types it can
+# handle.  In this case, use only handle files and error out on anything
+# else
+case "$type" in
+    files)
+        # For file type operations, case the possible actions and error
+        # for anything unsupported.
+        case "$action" in
+            update)
+                # Whack "distributions" for dropbox from user accounts
+                for ddist in $(ls -d /home/*/.dropbox-dist); do
+                    rm -rf $ddist
+                done
+                ;;
+            preremove|preupdate)
+                # Shutdown dropbox for each user running it
+                if [ -x /usr/bin/dropbox ]; then
+                    for dropbox_user in $(ps -ef | grep -v grep | grep 'dropbox-dist/dropbox' | cut -f1 -d' '); do
+                        su -c '/usr/bin/dropbox stop' $dropbox_user
+                    done
+                fi
+                ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+exit 0

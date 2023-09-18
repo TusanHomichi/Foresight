@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2006-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Stetic(AutoPackageRecipe):
+    name = 'stetic'
+    version = 'svn.r102976'
+    buildRequires = [ 'pkgconfig:devel', 'mono:devel',
+                      'gnome-sharp:cil', 'gnome-sharp:devellib',
+                      'gtk-sharp:cil',  'gtk-sharp:devellib',
+                      'mono:runtime',  'mono:cil',
+                      'which:runtime',
+                      'autoconf:runtime', 'automake:runtime',
+                      'libtool:devel', 'libtool:runtime',
+                      'intltool:runtime', 'intltool:devel',
+                      'glib:runtime', 'libXt:devel',
+                      'file:runtime', 'expat:devel',
+                      'gettext:runtime', 'gtk:devel',
+                      ]
+
+    def unpack(r):
+        r.addSvnSnapshot('http://anonsvn.mono-project.com/source/trunk/%(name)s/')
+        r.Replace('}/lib', '}/%(lib)s', 'stetic.pc.in')
+        r.Environment('MONO_PATH', '%(destdir)s/%(libdir)s/%(name)s')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+
+    def configure(r):
+        r.Configure(configureName = 'autogen.sh')
+

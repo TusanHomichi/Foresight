@@ -1,0 +1,91 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgDriverProto(RPMPackageRecipe,CPackageRecipe):
+    name = 'xorg-proto'
+    version = '7.6'
+    rpmRelease = '100.1'
+    rpmName = 'xorg-x11-proto-devel'
+    isXOrgFactory = True
+    isOPENsuse = True
+
+    buildRequires = ['autoconf:runtime','automake:runtime','pkgconfig:devel', 'libxml2:runtime',]
+
+    def setup(r):
+        r.addArchive(r.srpm)
+
+        # unpack all
+        r.addAction(""" for p in $(fgrep Source ../xorg-x11-proto-devel.spec); do  ARGN=`echo $p | grep -c tar.bz2`;  if [ "$ARGN" = 1 ]; then  (cd ../; ARG=`echo $p| sed -e 's,ftp:.*/,,' | grep bz2` ; mv $ARG %(name)s-%(version)s/; cd %(name)s-%(version)s; tar xjf "$ARG"; rm -rf "$ARG"  );   fi  done """)
+
+        # normalize dir names
+        r.addAction(""" ls | grep X11 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7//2'| /bin/sh """)
+
+        r.addAction(""" ls |  grep \.| awk '{print("mv "$1" "$1)}' |  sed 's/-[.0-9]*$//' | sed 's/.[0-9]$//' | /bin/sh """)
+
+        patches = [
+            # srpm patchnumber (for reference), patch, level, package (dir)
+            ['Patch1',  'xorg-patch5473.patch', -1, 'util-macros'],
+            ]
+        
+        for n, p, l, d in patches:
+            if l <> -1:
+                r.addPatch(p, dir = d, level = l, rpm= r.srpm )
+            else:
+                r.addPatch(p, dir = d, rpm= r.srpm )
+
+
+        for d in [ 'util-macros',
+                   # 'applewmproto',
+                   'bigreqsproto',
+                   'compositeproto',
+                   'damageproto',
+                   'dmxproto',
+                   'dri2proto',
+                   'evieext',
+                   'fixesproto',
+                   'fontcacheproto',
+                   'fontsproto',
+                   'glproto',
+                   'inputproto',
+                   'kbproto',
+                   'libpthread-stubs',
+                   'printproto',
+                   'randrproto',
+                   'recordproto',
+                   'renderproto',
+                   'resourceproto',
+                   'scrnsaverproto',
+                   'trapproto',
+                   'videoproto',
+                   'vncproto',
+                   # 'windowswmproto',
+                   'xcb-proto',
+                   'xcliplistproto',
+                   'xcmiscproto',
+                   'xextproto',
+                   'xf86bigfontproto',
+                   'xf86dgaproto',
+                   'xf86driproto',
+                   'xf86miscproto',
+                   'xf86rushproto',
+                   'xf86vidmodeproto',
+                   'xineramaproto',
+                   'xproto',
+                   'xproxymanagementprotocol',
+                   ]:
+            # order a non trivial issue. util-macros needs to be 1st
+            r.Environment('ACLOCAL', 'aclocal --force -I /usr/share/aclocal -I %(destdir)s/usr/share/aclocal')  
+            if d == 'vncproto' or d == 'xcliplistproto' or d == 'xcb-proto':
+                r.Run('autoreconf -fi', dir = d)
+
+            r.Configure(dir = d)
+            r.Make(dir = d)
+            r.MakeInstall('DESTDIR=%(destdir)s', dir = d,
+                          package = d)
+                
+            # FIXME: workaround for CNP-87
+            r.PackageSpec(d, '%(thisdocdir)s/'+ d +'/')

@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Geoclue(AutoPackageRecipe):
+    name = 'geoclue'
+    version = '0.12.0'
+ 
+    buildRequires = [
+        'GConf:devel',
+        'NetworkManager:devel',
+        'ORBit2:devel',
+        'cairo:devel',
+        'dbus-glib:devel',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:devel',
+        'gettext:runtime',
+        'gnome-common:devel',
+        'gnome-common:runtime',
+        'gnutls:devel',
+        'gtk-doc:devel',
+        'gtk-doc:runtime',
+        'gtk:devellib',
+        'libXrender:devel',
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+        'libsoup:devel',
+        'libtool:devel',
+        'libtool:runtime',
+        'libxcb:devel',
+        'libxml2:devel',
+        'libxslt:runtime',
+        'python:bin',
+        'zlib:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://folks.o-hand.com/jku/%(name)s-releases/')
+        r.Replace('NetworkManager libnm_glib', 'NetworkManager libnm-glib', 'configure')
+
+        # FL-2437
+        # http://lists.freedesktop.org/archives/geoclue/2010-April/000408.html
+        r.addPatch('http://lists.freedesktop.org/archives/geoclue/attachments/20100422/2be063a0/attachment.bin')
+
+    def configure(r):
+        extraConfig = (
+            ' --enable-gtk=yes'
+            ' --enable-conic=no'
+            ' --enable-networkmanager=yes'
+            ' --enable-gypsy=no'
+            ' --enable-gpsd=no'
+            ' --enable-skyhook=yes')
+
+	r.Configure(extraConfig)

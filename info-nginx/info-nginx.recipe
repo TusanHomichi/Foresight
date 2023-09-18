@@ -1,0 +1,8 @@
+class infoNginx(UserInfoRecipe):
+    name = 'info-nginx'
+    version = '1'
+
+    def setup(r):
+        r.User('nginx', 291, groupid=291,
+               comment='nginx isolating user',
+               shell='/sbin/nologin')

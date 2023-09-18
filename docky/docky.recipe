@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Docky(AutoPackageRecipe):
+    name = 'docky'
+    version = '2.1.4'
+ 
+    buildRequires = ['GConf:runtime', 'GConf:devel', 'dbus-python:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-desktop-sharp:cil', 'gnome-keyring-sharp:cil', 'gnome-python:python', 'gnome-sharp:cil', 'gnome-sharp:devellib', 'gtk-sharp:cil', 'gtk-sharp:runtime', 'gtk:runtime', 'intltool:runtime', 'mono-addins:cil', 'mono:cil', 'mono:devel', 'mono:runtime', 'mutagen:python', 'ndesk-dbus-glib:cil', 'ndesk-dbus:cil', 'notify-sharp:cil', 'pkgconfig:devel', 'pygobject:python', 'pygtk:python', 'python:devel', 'pyxdg:python', 'gnome-desktop-sharp:devellib', 'gnome-keyring-sharp:devellib', 'mono-addins:devellib', 'ndesk-dbus:devellib', 'ndesk-dbus-glib:devellib', 'notify-sharp:devellib', 'gtk:devellib', 'zeitgeist:python', 'dbus-sharp-glib:devellib', 'dbus-sharp-glib:cil', 'dbus-sharp:cil', 'gio-sharp:devellib', 'xz:runtime' ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/docky/%(major_version)s/%(version)s/+download/')
+
+    def policy(r):
+        r.Requires('gtk-sharp:lib', 'docky:runtime')

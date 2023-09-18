@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gkrellm(CPackageRecipe):
+
+    buildRequires = [ 'gtk:devel' ]
+    name = 'gkrellm'
+    version = '2.3.1'
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'glibc:devel', 'libpng:devel', 'pango:devel', 'zlib:devel', 'expat:devel', 'gtk:devel', 'libICE:devel', 'libSM:devel', 'openssl:devel', 'gnutls:devel', 'libgcrypt:devel', 'lm_sensors:devel', 'gettext:runtime', 'pkgconfig:devel', 'procps:runtime', 'net-tools:runtime', 'sysstat:runtime', 'util-linux:runtime']
+
+    def setup(r):
+        r.addArchive('http://members.dslextreme.com/users/billw/gkrellm/gkrellm-%(version)s.tar.bz2')
+
+        # makefile degenerates to placing its include dir in /include.
+        r.Replace('/include', '/usr/include', 'Makefile')
+
+        if r.macros.lib == 'lib64':
+            r.Run('sed -i "s^-L/usr/X11R6/lib^-L/usr/X11R6/lib64 -L/usr/X11R6/lib^g" '
+                  'src/Makefile')
+            r.Replace('/lib', '/%(lib)s', 'src/gkrellm.h')
+        r.Make()
+        r.MakeInstall()
+        r.Doc('CREDITS', 'Themes.html')

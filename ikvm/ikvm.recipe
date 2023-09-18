@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IKVM(AutoPackageRecipe):
+    name = 'ikvm'
+    version = '0.36.0.11'
+
+    buildRequires = [ 'mono:cil', 'mono:devel', 'unzip:runtime' ]
+
+
+    def setup(r):
+        # ideally we would build this...
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)sbin-%(version)s.zip')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+
+        # Create dirs
+        r.MakeDirs('%(bindir)s')
+        r.MakeDirs('%(libdir)s/ikvm')
+        r.MakeDirs('%(libdir)s/pkconfig')
+
+        #Install binaries
+        #  (do iname for JVM.DLL)
+
+        if Arch.x86_64:
+            for i in ['ikvm-native.dll', 'JVM.DLL']:
+                r.Copy('bin-x64/' + i, 'bin/')
+
+        r.Copy('bin/*.{dll,DLL,exe}', '%(libdir)s/ikvm/')
+
+        # Install some in gac 
+        r.Run("""
+for i in IKVM.AWT.WinForms.dll IKVM.OpenJDK.ClassLibrary.dll IKVM.Runtime.dll ; do
+gacutil -i %(destdir)s%(libdir)s/ikvm/$i -package ikvm -root %(destdir)s%(libdir)s
+rm -f  %(destdir)s%(libdir)s/ikvm/$i 
+done
+""")
+
+        # Generate wrapper scripts
+        r.Run("""
+for f in `find bin . -name "*\.exe"` ; do
+        script_name=%(destdir)s/usr/bin/`basename $f .exe`
+        cat <<EOF > $script_name
+#!/bin/sh
+exec `which mono` %(libdir)s/ikvm/`basename $f` "\$@"
+EOF
+        chmod 755 $script_name
+done
+""")
+        # Generate .pc file
+        r.Create('%(libdir)s/pkgconfig/ikvm.pc', contents="""
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/%(lib)s
+Name: IKVM.NET
+Description: An implementation of Java for Mono and the Microsoft .NET Framework.
+Version: %(version)s
+Libs: -r:${libdir}/ikvm/IKVM.Runtime.dll -r:${libdir}/ikvm/IKVM.GNU.Classpath.dll
+ """)

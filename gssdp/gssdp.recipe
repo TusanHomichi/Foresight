@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2009-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gssdp(AutoPackageRecipe):
+    name = 'gssdp'
+    version = '0.11.2'
+ 
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'glib:devel',
+        'gtk-doc:runtime',
+        'gtk:devel',
+        'libsoup:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.heanet.ie/mirrors/gnome/sources/gssdp/0.11/')
+
+

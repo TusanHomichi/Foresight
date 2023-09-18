@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class PangoXCompat(AutoPackageRecipe):
+    name = 'pangox-compat'
+    version = '0.0.2'
+    buildRequires = [ 'glib:devel', 'libICE:devel', 'libX11:devel',
+                      'pango:devel', 'pkgconfig:devel']
+
+    def unpack(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/%(name)s/0.0/')
+
+    def configure(r):
+        r.Configure('--disable-static')

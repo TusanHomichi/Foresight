@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Mtools(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'mtools'
+    version = '4.0.11'
+    rpmRelease = '1.fc12'
+    externalArchive = 'http://mtools.linux.lu/mtools-%(version)s.tar.bz2'
+    rpmPatches = [ 'mtools-3.9.6-config.patch', ]
+
+    buildRequires = [ 'install-info:runtime', 
+		'texinfo:runtime', 
+		'libICE:devel', 
+		'libSM:devel', 
+		'libXau:devel' ]
+
+    def makeinstall(r):
+        r.MakePathsInstall()
+        r.Install('mtools.conf', '%(sysconfdir)s/')
+        r.Run('find %(destdir)s -name "floppyd*" -print | xargs rm')
+        r.Doc('Release.notes')
+

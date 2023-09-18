@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Cheese(GnomePackageRecipe):
+
+    name = 'cheese'
+    version = '2.32.0'
+
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'desktop-file-utils:runtime', 'esound:devel', 'evolution-data-server:devel',  'libgnome-keyring:devel', 'gnome-vfs:devel', 'gst-plugins-base:devel', 'gstreamer:devel', 'hal:devel', 'libXxf86vm:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'librsvg:devel', 'popt:devel', 'rarian:runtime', 'rarian:devel', 'gnome-doc-utils:devel', 'dbus-glib:devel', 'gnome-desktop:devel', 'udev:devel', 'gudev:devel', 'libcanberra:devel']
+
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Create('data/cheese-bugreport.sh')

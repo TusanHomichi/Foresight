@@ -1,0 +1,8 @@
+--- lxde-common/lxde-common-0.5.5/autostart	2011-07-29 16:04:03.000000000 +0200
++++ lxde-common/lxde-common-0.5.5/autostart-copy	2012-07-09 07:59:30.000000000 +0200
+@@ -1,3 +1,5 @@
+ @lxpanel --profile LXDE
+ @pcmanfm --desktop --profile LXDE
+ @xscreensaver -no-splash
++@pulseaudio --start
++@volumeicon

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pspp(AutoPackageRecipe):
+    name = 'pspp'
+    version = '0.6.2'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gsl:devel', 'gtk:devel', 'install-info:runtime', 'intltool:runtime', 'libglade:devel', 'libpng:devel', 'libtermcap:devel', 'libxml2:devel', 'ncurses:devel', 'pango:devel', 'pkgconfig:devel', 'plotutils:devel', 'postgresql:devel', 'readline:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/pub/gnu/pspp/')
+        r.addPatch('http://pkgs.fedoraproject.org/gitweb/?p=pspp.git;a=blob_plain;f=pspp-0001-Remove-gtk_entry_reset_im_context-entirely.patch;h=f471a8c0e127ee03fbf7bd6a15d256a6b81a1e43;hb=refs/heads/f15/master')
+
+    def configure(r):
+        r.Configure(' --disable-static --disable-rpath')

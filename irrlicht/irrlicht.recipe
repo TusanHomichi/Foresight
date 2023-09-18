@@ -1,0 +1,38 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class irrlicht(AutoPackageRecipe):
+    name = 'irrlicht'
+    version = '1.8'
+    buildRequires = [
+        'Mesa:devel', 
+        'libXxf86vm:devel', 
+        'libstdc++:devel', 
+        'unzip:runtime',
+    ]
+
+    def unpack(r):
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.addArchive('http://downloads.sourceforge.net/irrlicht/irrlicht-1.8.zip')
+        r.Run('''sed -i "/^INSTALL_DIR/s:=.*:=%(destdir)s%(libdir)s:" source/Irrlicht/Makefile ''')
+        if Arch.x86_64:
+            r.Replace('\$\(HOSTTYPE\)', 'x86_64', 'source/Irrlicht/Makefile')
+
+    def make(r):
+        r.Make('NODEBUG=1 sharedlib', dir='source/Irrlicht')
+
+    def makeinstall(r):
+        r.MakeInstall(dir='source/Irrlicht')
+
+    def policy(r):
+        r.Symlink('%(libdir)s/libIrrlicht.so.1.8.0', '%(libdir)s/libIrrlicht.so')
+        
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

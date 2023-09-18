@@ -1,0 +1,21 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Lame(AutoPackageRecipe):
+
+    name = 'lame'
+    version = '3.99.5'
+
+    buildRequires = [
+        'ncurses:devel', 'nasm:runtime', 'dmalloc:devel', 'libtermcap:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://downloads.sourceforge.net/project/lame/lame/3.99/')
+        r.addPatch('lame-noexecstack.patch')
+
+    def configure(r):
+        r.Configure('--enable-nasm')

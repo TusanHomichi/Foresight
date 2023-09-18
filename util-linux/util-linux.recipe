@@ -1,0 +1,228 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Utillinux(RPMPackageRecipe,CPackageRecipe):
+    name = 'util-linux'
+    version = '2.19.1'
+    rpmRelease = '1.4.fc15'
+    rpmPatches = [ # add a missing header
+                   'util-linux-ng-2.13-floppy-locale.patch',
+                   # add note about ATAPI IDE floppy to fdformat.8
+                   'util-linux-ng-2.13-fdformat-man-ide.patch',
+                   # 169628 - /usr/bin/floppy doesn't work with /dev/fd0
+                   'util-linux-ng-2.13-floppy-generic.patch',
+                   # 199745 - Non-existant simpleinit(8) mentioned in ctrlaltdel(8)
+                   'util-linux-ng-2.13-ctrlaltdel-man.patch',
+                   # /etc/blkid.tab --> /etc/blkid/blkid.tab
+                   'util-linux-ng-2.16-blkid-cachefile.patch',
+                   # 151635 - makeing /var/log/lastlog
+                   'util-linux-ng-2.13-login-lastlog.patch',
+                   # 231192 - ipcs is not printing correct values on pLinux
+                   'util-linux-ng-2.15-ipcs-32bit.patch',
+                   # kernel "3.0"
+                   'util-linux-2.19-kernel-version.patch',
+                   # 709319 - 'mount -a' mounts already mounted directories
+                   'util-linux-2.19-libmount-mounted.patch',
+                   'util-linux-2.19-mount-a-bind.patch',
+                   # 709681 - failure to mount if a mount point ends with a slash in /etc/fstab
+                   'util-linux-2.19-mount-fsname.patch',
+                   # 716483 - /var/tmp --(BIND-mounted)--> /tmp disrupts/hangs bootup
+                   'util-linux-2.19-mount-mountpoint.patch',
+                   # 707035 - /bin/mount: double free glibc detected
+                   'util-linux-2.19-mount-doublefree.patch',
+                   ]
+    rpmSources = [ 'nologin.c',
+                   'nologin.8',
+                   'util-linux-60-raw.rules', 
+                   'uuidd.init',
+                   #'util-linux-ng-login.pamd',
+                   #'util-linux-ng-remote.pamd',
+                   'util-linux-chsh-chfn.pamd',
+                   ]
+    rpmArchives = ['floppy-0.16.tar.bz2']
+    buildRequires = [ 'install-info:runtime',
+                      'libtermcap:devel', 'ncurses:devel', 'slang:devel', 'gettext:devel',
+                      'texinfo:runtime', 'zlib:devel', 'audit:devel', 'perl:runtime',
+                      'perl:lib', 'automake:runtime', 'autoconf:runtime', 'pam:devel',
+                      'userspace-kernel-headers:devel', 'gettext:runtime',
+                      'e2fsprogs:runtime', 'intltool:runtime', 'udev:devel',
+                      'udev:runtime', 'chkconfig:runtime', 'libtool:devel',
+                      'libtool:runtime',  'pkgconfig:devel', 'gtk-doc:runtime',
+                      'gtk-doc:devel', 'libxslt:runtime', 'utempter:devel', 
+                      'cvs:runtime'
+                      ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.macros.upver = r.version.replace('_', '-')
+
+        r.addSource('mkinstalldirs')
+
+        # we ship our own versions over RH ones
+        # as we don 't want selinux ...
+        r.addSource('util-linux-remote.pamd')
+        r.addSource('util-linux-login.pamd')
+        
+        r.addPatch('po_Makefile.in.in.mkinstalldirs')
+
+        #r.Automake(autoMakeArgs='-a')
+        r.Run('autoreconf -fi')
+        # note: we disable tty group (USE_TTY_GROUP) in Makefiles to prevent call chgrp
+        # during the "make install". But we define -DUSE_TTY_GROUP that enable tty groups in
+        # *.c files only.
+        r.macros.cflags += ' -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 '
+        r.Environment('SUID_CFLAGS', '-fpie')
+        r.Environment('SUID_LDFLAGS', '-fpie')
+
+        r.ManualConfigure('--bindir=%(essentialbindir)s '
+                          '--sbindir=%(essentialsbindir)s '
+                          '--sysconfdir=%(sysconfdir)s '
+                          '--datadir=%(datadir)s '
+                          '--includedir=%(includedir)s '
+                          '--libdir=%(essentiallibdir)s '
+                          '--libexecdir=%(libexecdir)s '
+                          '--localstatedir=%(localstatedir)s '
+                          '--sharedstatedir=%(sharedstatedir)s '
+                          '--mandir=%(mandir)s '
+                          '--infodir=%(infodir)s '
+                          '--disable-silent-rules '
+                          '--disable-wall '
+                          '--enable-partx '
+                          '--enable-login-utils '
+                          '--enable-kill '
+                          '--enable-raw '
+                          '--enable-write '
+                          '--with-audit '
+                          '--with-utempter '
+                          # for f3
+                          # '--enable-libmount-mount '
+                          '--disable-makeinstall-chown '
+                          )
+        # note: we install to /bin and /usr/bin, so there's $bindir and $usrbindir in
+        # util-linux build system. It's better follow package build-system than recipe
+        # macros (where is prefix=/usr)
+        r.Make()
+        r.Run('%(cc)s %(cflags)s -o nologin nologin.c')
+
+        r.MakeInstall(preMake='INSTALLDIR="install -d -m 755"'
+                              ' INSTALLSUID="install -m 755"'
+                              ' INSTALLBIN="install -m 755"'
+                              ' INSTALLMAN="install -m 644"'
+                              ' MKINSTALLDIRS=%(builddir)s/mkinstalldirs')
+        r.Install('nologin', '%(essentialsbindir)s/', mode=0755)
+        r.Install('nologin.8', '%(mandir)s/man8/', mode=0644)
+        r.Symlink('raw.8', '%(mandir)s/man8/rawdevices.8')
+        r.Symlink('hwclock.8', '%(mandir)s/man8/clock.8')
+        r.Symlink('%(essentialsbindir)s/clock', '%(sbindir)s/clock'),
+        r.Symlink('hwclock', '%(essentialsbindir)s/clock'),
+        r.Symlink('%(essentialbindir)s/kill', '%(bindir)s/kill'),
+
+
+
+        for x in ['addpart', 'delpart', 'partx']:
+            r.Move('%(sbindir)s/' + x, '%(essentialsbindir)s/')
+
+        r.Move('%(bindir)s/taskset', '%(essentialbindir)s/')
+        r.Move('%(essentialsbindir)s/raw', '%(bindir)s/')
+
+        r.Install('util-linux-60-raw.rules',
+                  '%(sysconfdir)s/udev/rules.d/60-raw.rules',
+                  mode = 0644)
+
+        # f3
+        #r.Symlink('/proc/mounts', '%(sysconfdir)s/mtab')
+
+
+
+        # Our own initscript for uuidd
+        r.Install('uuidd.init', '%(initdir)s/uuidd', mode = 0755)
+        r.MakeDirs('%(localstatedir)s/run/uuidd')
+        r.MakeDirs('%(localstatedir)s/lib/libuuid')
+
+        r.SetModes('%(localstatedir)s/lib/libuuid', 02775)
+        r.SetModes('%(localstatedir)s/run/uuidd', 02775)
+
+        r.Ownership('uuidd', 'uuidd', '%(localstatedir)s/lib/libuuid')
+        r.Ownership('uuidd', 'uuidd', '%(localstatedir)s/run/uuidd')
+
+        r.MakeDirs('%(sysconfdir)s/blkid')
+        
+        r.ExcludeDirectories(exceptions=['%(localstatedir)s/run/uuidd',
+                                         '%(localstatedir)s/lib/libuuid',
+                                         '%(sysconfdir)s/blkid'])
+
+        r.Ownership('uuidd', 'uuidd', '%(sbindir)s/uuidd')
+        r.UtilizeUser('uuidd', '%(localstatedir)s/lib/libuuid')
+
+        r.Install('util-linux-login.pamd', '%(sysconfdir)s/pam.d/login',  mode = 0644)
+        r.Install('util-linux-remote.pamd', '%(sysconfdir)s/pam.d/remote',  mode = 0644)
+        r.Install('util-linux-chsh-chfn.pamd', '%(sysconfdir)s/pam.d/chsh',  mode = 0644)
+        r.Install('util-linux-chsh-chfn.pamd', '%(sysconfdir)s/pam.d/chfn', mode = 0644)
+
+        # A few su/gid programs
+        r.SetModes('%(bindir)s/ch{fn,sh}', 04711)
+        r.SetModes('%(bindir)s/write', 02755)
+        r.Ownership('root', 'tty', '%(bindir)s/write')
+        r.SetModes('%(essentialbindir)s/{mount,umount}', 04755)
+
+        # maked "deprecated"
+        r.Remove('%(bindir)s/{pg,line}', '%(mandir)s/man1/{pg,line}.1')
+
+        # conflicts with schedutils
+        r.Remove('/usr/bin/{chrt,taskset}')
+        # mkcramfs link needed for anaconda:
+        r.Symlink('%(essentialsbindir)s/mkfs.cramfs', '%(essentialbindir)s/mkcramfs')
+
+        r.Remove('%(datadir)s/getopt/', recursive = True)
+        r.TagSpec('shell', '%(essentialsbindir)s/nologin')
+
+        r.ComponentSpec('perl', '%(essentialbindir)s/scriptreplay')
+
+        # 
+        r.Remove('%(bindir)s/cytune')
+        r.Remove('%(mandir)s/man8/cytune.*')
+
+        r.PackageSpec('%(name)s', 
+                      '%(sysconfdir)s/udev/rules.d/60-raw.rules',
+                      '%(mandir)s/man3/uuid_is_.*')
+
+        # RPL-1178
+        for x in ('ddate', 'ctrlaltdel',):
+            r.RemoveNonPackageFiles('.*%s.*'%x)
+        # deprecated 
+        for x in ('%(essentialsbindir)s/fsck.minix',
+                  '%(essentialsbindir)s/mkfs.{bfs,minix}',
+                  '%(essentialsbindir)s/sln',
+                  '%(bindir)s/chkdupexe',
+                  '%(bindir)s/line',
+                  '%(bindir)s/pg', 
+                  '%(bindir)s/newgrp',
+                  '%(essentialbindir)s/shutdown',
+                  '%(sbindir)s/vipw',
+                  '%(sbindir)s/vigr'):
+            r.Remove(x)
+        for x in ('man1/chkdupexe.1',
+                  'man1/line.1',
+                  'man1/pg.1',
+                  'man1/newgrp.1',
+                  'man8/fsck.minix.8',
+                  'man8/mkfs.minix.8',
+                  'man8/mkfs.bfs.8',
+                  'man8/vipw.8',
+                  'man8/vigr.8'):
+            r.Remove('%(mandir)s/' + x)
+
+        # setarch as standalone package/recipe goes the way of the dodo...
+        for x in ('setarch', 'linux32', 'linux64', 'i386', 'x86_64'):
+            r.PackageSpec('setarch', '.*%s.*'%x)
+
+        # remove static libs
+        r.Remove('%(libdir)s/lib{uuid,blkid,mount}.a')
+
+        # HARD obsolete util-linux-extras
+        r.Create('%(datadir)s/%(name)s/obsoletes/' + 'util-linux-extras' + '/' + 'runtime',
+                 package='util-linux-extras:runtime')

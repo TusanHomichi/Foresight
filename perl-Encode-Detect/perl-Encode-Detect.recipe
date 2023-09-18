@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlEncodeDetect(CPANPackageRecipe,CPackageRecipe):
+    name = 'perl-Encode-Detect'
+    version = '1.01'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['libgcc:devellib', 'libstdc++:devel', 'perl:devel', 'perl-ExtUtils-CBuilder:perl']

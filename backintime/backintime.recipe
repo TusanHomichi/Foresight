@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Backintime(PackageRecipe):
+
+    name = 'backintime'
+    version = '0.9.99.56_rev732'
+
+    buildRequires = ['desktop-file-utils:runtime', 'file:runtime', 'gnome-python:python', 'make:runtime', 'notify-python:python', 'python:devel', 'rarian:runtime', 'diffutils:runtime', 'which:runtime', 'gettext:runtime', 'gnome-session:runtime', 'pygtk:python']
+
+    def setup(r):
+        #r.addArchive('http://backintime.le-web.org/download/backintime/backintime-0.9.26_src.tar.gz')
+        r.addBzrSnapshot('lp:backintime')
+        r.Configure(dir = 'common/')
+        r.Make(dir = 'common/')
+        r.MakeInstall(dir = 'common/')
+        r.Configure(dir = 'gnome/')
+        r.Make(dir = 'gnome/')
+        r.MakeInstall(dir = 'gnome/')

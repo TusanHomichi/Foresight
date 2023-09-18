@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libva(AutoPackageRecipe):
+    name = 'libva'
+    version = '1.0.14'
+ 
+    buildRequires = [ 'Mesa:devel', 
+                      'libX11:devel', 
+                      'libXext:devel', 
+                      'libXfixes:devel', 
+                      'libdrm:devel', 
+                      'pkgconfig:devel',
+                      'autoconf:runtime',
+                      'automake:runtime',
+                      'intltool:devel',
+                      'intltool:runtime',
+                      'libtool:devel',
+                      'libtool:runtime',
+                      'gcc-c++:runtime',
+                      'libpciaccess:devel',
+                      'udev:devel',
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://cgit.freedesktop.org/libva/snapshot/')
+
+    def configure(r):
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.Run('autoreconf -fi')
+        r.Configure(' --disable-static '
+                    ' --enable-glx',
+                    ' --enable-dummy-driver '
+                    ' --enable-dummy-backend'
+                    ' --enable-i965-driver'
+                    ' --with-drivers-path=%(libdir)s/dri')

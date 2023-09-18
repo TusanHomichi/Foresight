@@ -1,0 +1,14 @@
+class IWLwifi5150(PackageRecipe):
+
+    name = 'iwlwifi-5150-ucode'
+    version = '8.24.2.2'
+
+    def setup(r):
+        dURL = 'http://www.intellinuxwireless.org/iwlwifi/downloads/'
+
+         
+        r.addArchive( dURL )
+        r.Install('../*/*.ucode', '/lib/firmware/', mode = 0644)
+
+        r.Flavor(exceptions='/lib/firmware/.*')
+

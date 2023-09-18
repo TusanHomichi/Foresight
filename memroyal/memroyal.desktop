@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=MemRoyal
+Comment=card game
+Exec=java -jar /opt/games/memroyal/dist/memroyal.jar
+Icon=/opt/games/memroyal/dist/memroyal.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Game;

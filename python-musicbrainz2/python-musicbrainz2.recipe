@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonMusicbrainz2(PackageRecipe):
+
+    name = 'python-musicbrainz2'
+    version = '0.7.3'
+
+    buildRequires = [ 'python-ctypes:python', 'python-setuptools:python', 'python:devel' ]
+
+    def setup(r):
+
+        r.addArchive('ftp://ftp.musicbrainz.org/pub/musicbrainz/%(name)s/%(name)s-%(version)s.tar.gz')
+
+        r.PythonSetup()
+
+        #r.Install('examples/*.py', '%(bindir)s/')
+
+        r.Requires('libmusicbrainz3:lib', 'disc.py')
+

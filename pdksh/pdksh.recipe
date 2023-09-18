@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pdksh(AutoPackageRecipe):
+    name = 'pdksh'
+    version = '5.2.14'
+    patchLevel = '2'
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.cs.mun.ca/pub/pdksh/')
+        # upstream patches
+        if r.patchLevel != '0':
+            for p in range(1, int(r.patchLevel)+1):
+                r.addPatch('ftp://ftp.cs.mun.ca/pub/pdksh/pdksh-%%(version)s-patches.%s'%p)
+
+        r.addPatch('pdksh-5.2.14-manloc.patch')
+        r.addPatch('pdksh-5.2.14-sort.patch')
+
+    def makeinstall(r):
+        r.MakePathsInstall()
+
+        r.MakeDirs('%(essentialbindir)s')
+        r.Move('%(bindir)s/ksh', '%(essentialbindir)s/ksh')
+        # But some users depend on /usr/bin/ksh existing, so symlink...
+        r.Symlink('%(essentialbindir)s/ksh', '%(bindir)s/ksh')
+
+        r.TagSpec('shell', '%(essentialbindir)s/.*ksh')

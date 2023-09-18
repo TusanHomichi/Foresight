@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonSocks(PackageRecipe):
+    name = 'python-socks'
+    version = '1.00'
+ 
+    buildRequires = ['python:devel', 'python-setuptools:python']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/socksipy/socksipy/SocksiPy 1.00/SocksiPy.tar.gz')
+        r.Install('../socks.py', '%(libdir)s/python%(pyver)s/site-packages/')

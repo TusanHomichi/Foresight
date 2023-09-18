@@ -1,0 +1,45 @@
+diff -uraN webkit-sharp-0.2.orig/configure webkit-sharp-0.2/configure
+--- webkit-sharp-0.2.orig/configure	2009-02-25 00:04:00.736633894 +0100
++++ webkit-sharp-0.2/configure	2009-02-25 00:05:52.899631057 +0100
+@@ -739,7 +739,7 @@
+ dvidir='${docdir}'
+ pdfdir='${docdir}'
+ psdir='${docdir}'
+-libdir='${exec_prefix}/lib'
++libdir='${libdir}'
+ localedir='${datarootdir}/locale'
+ mandir='${datarootdir}/man'
+ 
+@@ -3120,7 +3120,7 @@
+    { (exit 1); exit 1; }; }
+ fi
+ 
+-GACUTIL_FLAGS="/package $ASSEMBLY_NAME /root "'$(DESTDIR)$(prefix)/lib'
++GACUTIL_FLAGS="/package $ASSEMBLY_NAME /root "'$(DESTDIR)$(libdir)'
+ 
+ 
+ 
+diff -uraN webkit-sharp-0.2.orig/doc/Makefile.am webkit-sharp-0.2/doc/Makefile.am
+--- webkit-sharp-0.2.orig/doc/Makefile.am	2009-02-25 00:04:00.739634718 +0100
++++ webkit-sharp-0.2/doc/Makefile.am	2009-02-25 00:06:39.538635541 +0100
+@@ -1,6 +1,6 @@
+ if ENABLE_MONODOC
+ TARGETS = $(ASSEMBLY_NAME)-docs.source $(ASSEMBLY_NAME)-docs.zip $(ASSEMBLY_NAME)-docs.tree
+-docsdir = $(prefix)/lib/monodoc/sources
++docsdir = $(libdir)/monodoc/sources
+ docs_DATA = $(TARGETS)
+ else
+ TARGETS = 
+diff -uraN webkit-sharp-0.2.orig/doc/Makefile.in webkit-sharp-0.2/doc/Makefile.in
+--- webkit-sharp-0.2.orig/doc/Makefile.in	2009-02-25 00:04:00.741634382 +0100
++++ webkit-sharp-0.2/doc/Makefile.in	2009-02-25 00:07:41.637410066 +0100
+@@ -168,7 +168,7 @@
+ @ENABLE_MONODOC_FALSE@TARGETS = 
+ @ENABLE_MONODOC_TRUE@TARGETS = $(ASSEMBLY_NAME)-docs.source $(ASSEMBLY_NAME)-docs.zip $(ASSEMBLY_NAME)-docs.tree
+ @ENABLE_MONODOC_FALSE@docsdir = $(datadir)
+-@ENABLE_MONODOC_TRUE@docsdir = $(prefix)/lib/monodoc/sources
++@ENABLE_MONODOC_TRUE@docsdir = $(libdir)/monodoc/sources
+ @ENABLE_MONODOC_FALSE@docs_DATA = 
+ @ENABLE_MONODOC_TRUE@docs_DATA = $(TARGETS)
+ ASSEMBLIES = ../sources/$(ASSEMBLY_NAME).dll
+

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2011-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+class PythonGithub2(AutoPackageRecipe):
+    name = 'python-github2'
+    version = '0.6.1' # + datetime.date.today().strftime("%Y.%m.%d")
+    buildRequires = [ 'python:devel',
+                      'python-setuptools:python',
+                      'python-httplib2:python',
+                      'python-simplejson:python',
+                      'python-dateutil:python',
+                      ]
+
+    def setup(r):
+        r.addGitSnapshot('https://github.com/ask/python-github2.git',
+                         tag = '6432fe9c63')
+        # hostensivelly use system certs
+        r.Replace('SYSTEM_CERTS = not httplib2',
+                  'SYSTEM_CERTS = httplib2',
+                  'github2/request.py')
+        r.PythonSetup('--optimize=2')

@@ -1,0 +1,26 @@
+diff --git a/httpd.init b/httpd.init
+index 828d491..509eb69 100755
+--- a/httpd.init
++++ b/httpd.init
+@@ -104,6 +104,12 @@ case "$1" in
+ 		start
+ 	fi
+ 	;;
++  condgraceful)
++	if [ -f ${pidfile} ] ; then
++		$apachectl graceful
++		RETVAL=$?
++	fi
++	;;
+   force-reload|reload)
+         reload
+ 	;;
+@@ -112,7 +118,7 @@ case "$1" in
+ 	RETVAL=$?
+ 	;;
+   *)
+-	echo $"Usage: $prog {start|stop|restart|condrestart|reload|status|fullstatus|graceful|help|configtest}"
++	echo $"Usage: $prog {start|stop|restart|condrestart|condgraceful|reload|status|fullstatus|graceful|help|configtest}"
+ 	RETVAL=3
+ esac
+ 

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibIRMan(AutoPackageRecipe):
+    name = 'libirman'
+    version = '0.4.4'
+
+    def unpack(r):
+        r.addArchive('http://lirc.sourceforge.net/software/snapshots/'
+                     'libirman-0.4.4.tar.gz')
+
+    def makeinstall(r):
+        r.MakePathsInstall()
+        r.Doc('TECHNICAL')

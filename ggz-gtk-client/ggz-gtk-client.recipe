@@ -1,0 +1,27 @@
+# (c) 2007 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GgzGtkClient(AutoPackageRecipe):
+    name = 'ggz-gtk-client'
+    version = '0.99.4'
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime',
+                      'expat:devel', 'gettext:runtime', 'glib:devel',
+                      'gtk:devel', 'libXrender:devel', 'libggz:devel',
+                      'pango:devel', 'pkgconfig:devel', 'zlib:devel' ,
+                      'ggz-client-libs:devel']
+
+
+    # FIXME get gaim plugin to work with pidgin
+    def unpack(r):
+        r.addArchive('ftp://ftp.ggzgamingzone.org/pub/ggz/snapshots/%(name)s-snapshot-%(version)s.tar.gz')
+        # Avoid lib64 rpaths
+        if Arch.x86_64:
+            r.Replace("/lib /usr/lib", '/%(lib)s %(libdir)s',  'configure')
+
+    def configure(r):
+        r.Configure( ' --disable-gaim-plugin'
+                     ' --disable-debug'
+                     ' --enable-static=no' )
+

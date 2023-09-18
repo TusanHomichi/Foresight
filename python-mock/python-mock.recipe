@@ -1,0 +1,5 @@
+loadSuperClass('pypipackage')
+class PythonMock(PyPiPackage):
+    name = 'python-mock'
+    pyname = 'mock'
+    version = '1.0.1'

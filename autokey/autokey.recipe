@@ -1,0 +1,24 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Autokey(PackageRecipe):
+
+    name = 'autokey'
+    version = '0.71.0'
+
+    buildRequires = ['PyQt4:python', 'PyQt:python', 'at-spi:python', 'chkconfig:runtime', 'desktop-file-utils:runtime', 'notify-python:python', 'pygobject:python', 'pygtk:python', 'pygtksourceview:python', 'pykde:python', 'python:devel', 'python-simplejson:python', 'python-setuptools:python', 'python-xlib:python']
+
+    def setup(r):
+        r.addArchive('http://autokey.googlecode.com/files/%(name)s_%(version)s.tar.gz')
+# no autokey-qt package, so autokey-qt.desktop isn't necessary
+        r.Remove('config/autokey-qt.desktop')
+        r.Replace('"config/autokey-qt.desktop",', '', 'setup.py')
+        r.PythonSetup()
+        r.Install('debian/autokey-common.init', '%(initdir)s/autokey', mode=0755)
+# packageSpec would create a dep on each package so i remove it, for now
+        #r.PackageSpec('autokey-gtk', '.*gtk.*')
+        #r.PackageSpec('autokey-qt', '.*qt.*')

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonVatnumber(PackageRecipe):
+
+    name = 'python-vatnumber'
+    version = '0.6'
+
+    buildRequires = ['python-setuptools:python','python:devel']
+
+    def setup(r):
+        r.addArchive('http://vatnumber.googlecode.com/files/vatnumber-%(version)s.tar.gz')
+        r.PythonSetup()

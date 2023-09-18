@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Automake(AutoPackageRecipe):
+    name = 'automake'
+    version = '1.12.6'
+
+    buildRequires = [ 'perl:runtime', 'perl:lib', 'autoconf:runtime', 'perl:devel', 'tetex:runtime', 'install-info:runtime']
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/automake/')
+
+
+    def policy(r):
+        r.Requires('m4:runtime', '%(bindir)s/*')
+        r.TagSpec('info-file', '%(infodir)s/automake.info.gz')

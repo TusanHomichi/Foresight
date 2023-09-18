@@ -1,0 +1,19 @@
+diff -Nur gqview-2.0.4-orig/src/print.c gqview-2.0.4/src/print.c
+--- gqview-2.0.4-orig/src/print.c	2006-12-01 20:36:55.000000000 +0100
++++ gqview-2.0.4/src/print.c	2007-07-05 10:17:08.000000000 +0200
+@@ -1109,7 +1109,6 @@
+ 	fprintf(f, "%%%%Title:\n");
+ 
+ 	/* setup page size, coordinates (do we really need this?) */
+-#if 0
+ 	fprintf(f, "<<\n");
+ 	fprintf(f, "/PageSize [%f %f]\n", pw->layout_width, pw->layout_height);
+ 	fprintf(f, "/ImagingBBox [%f %f %f %f]\n", /* l b r t */
+@@ -1118,7 +1117,6 @@
+ 	fprintf(f, "/Orientation %d\n",
+ 		(pw->paper_orientation == PAPER_ORIENTATION_PORTRAIT) ? 0 : 1);
+ 	fprintf(f, ">> setpagedevice\n");
+-#endif
+ 
+ 	ret = !pipe_handler_check(pe);
+ 	pipe_handler_free(pe);

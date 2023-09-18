@@ -1,0 +1,20 @@
+--- sysconfig/network-scripts/ifup-eth.orig	2008-09-04 22:47:05.000000000 +0300
++++ sysconfig/network-scripts/ifup-eth	2008-09-04 22:48:33.000000000 +0300
+@@ -173,7 +173,7 @@ if [ -n "${DYNCONFIG}" -a -x /sbin/dhcli
+         cat /etc/dhclient-${DEVICE}.conf.ifupnew > /etc/dhclient-${DEVICE}.conf
+         rm -f /etc/dhclient-${DEVICE}.conf.ifupnew
+     fi
+-    if [[ "${PERSISTENT_DHCLIENT}" =  [yY1]* ]]; then
++    if [[ "${PERSISTENT_DHCLIENT}" != [nN0]* ]]; then
+        ONESHOT="";
+     else
+        ONESHOT="-1";
+@@ -203,7 +203,7 @@ if [ -n "${DYNCONFIG}" -a -x /sbin/dhcli
+     DHCLIENTARGS="${DHCLIENTARGS} ${ONESHOT} -q ${DHCLIENTCONF} -lf /var/lib/dhclient/dhclient-${DEVICE}.leases -pf /var/run/dhclient-${DEVICE}.pid"
+     echo
+     echo -n $"Determining IP information for ${DEVICE}..."
+-    if [[ "${PERSISTENT_DHCLIENT}" !=  [yY1]* ]] && check_link_down ${DEVICE}; then
++    if [[ "${PERSISTENT_DHCLIENT}" ==  [nN0]* ]] && check_link_down ${DEVICE}; then
+ 	echo $" failed; no link present.  Check cable?"
+ 	ip link set dev ${DEVICE} down >/dev/null 2>&1
+ 	exit 1

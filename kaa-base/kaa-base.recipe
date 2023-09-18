@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class KaaBase(CPackageRecipe):
+
+    name = 'kaa-base'
+    version = '0.4.0'
+
+    buildRequires = ['python-setuptools:python', 'glib:devel', 'python-twisted:python', 'python:devel', 'avahi:python', 'dbus-python:python', 'pygobject:python', 'pygtk:python', 'python-inotify:python', 'python-sqlite:python']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/freevo/')
+        r.PythonSetup()
+        # hack to fix update woes
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*.egg-info')

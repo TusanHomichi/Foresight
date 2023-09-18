@@ -1,0 +1,27 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Umplayer(AutoPackageRecipe):
+    name = 'umplayer'
+    version = '0.95'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'libstdc++:devel', 'qt4:devel', 'qt4-core:devellib', 'qt4-gui:devellib', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addSvnSnapshot('https://umplayer.svn.sourceforge.net/svnroot/umplayer')
+
+    def make(r):
+        r.Make('PREFIX=%(prefix)s QMAKE=qmake-qt4 LRELEASE=lrelease-qt4', dir='umplayer/trunk/')
+
+    def makeinstall(r):
+        r.MakeInstall('PREFIX=%(prefix)s', dir='umplayer/trunk/')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class EvolutionWebcal(GnomePackageRecipe):
+
+    name = 'evolution-webcal'
+    version = '2.32.0'
+
+    buildRequires = [ 'evolution-data-server:devel', 'libgnomeui:devel', 'GConf:devel',
+        'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+        'freetype:devel', 'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel',
+        'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+        'libgnome:devel', 'libgnomecanvas:devel', 'libpng:devel',
+        'libsoup:devel', 'libxml2:devel', 'pango:devel', 'popt:devel',
+        'GConf:runtime', 'gettext:runtime', 'perl:runtime' ]

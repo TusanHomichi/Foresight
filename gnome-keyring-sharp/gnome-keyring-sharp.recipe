@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2007-2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GnomeKeyringSharp(AutoPackageRecipe,CPackageRecipe):
+    name = 'gnome-keyring-sharp'
+    version = '1.0.1+r133722'
+
+    buildRequires = ['mono:cil', 'ndesk-dbus:devellib', 'ndesk-dbus:cil', 'mono:devel', 'pkgconfig:devel', 'autoconf:runtime', 'automake:runtime', ]
+
+    def unpack(r):
+        r.addSvnSnapshot('svn://anonsvn.mono-project.com/source/trunk/gnome-keyring-sharp')
+        r.Run('./autogen.sh')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+
+    def makeinstall(r):
+        r.MakeInstall('GACUTIL_FLAGS="/package %(name)s-1.0 /gacdir %(libdir)s /root %(destdir)s%(libdir)s"')
+        r.Replace('libdir=\${exec_prefix}/lib', 'libdir=%(libdir)s', '%(libdir)s/pkgconfig/gnome-keyring-sharp-1.0.pc')
+        # FL: our gnome-keyring-sharp is version 1.0.x /ermo
+        # r.Move('%(libdir)s/pkgconfig/gnome-keyring-sharp-1.0.pc', '%(libdir)s/pkgconfig/gnome-keyring-sharp.pc')
+        # FL: Symlink as a workaround for packages which expect a non-versioned .pc
+        r.Symlink('%(libdir)s/pkgconfig/gnome-keyring-sharp-1.0.pc', '%(libdir)s/pkgconfig/gnome-keyring-sharp.pc')

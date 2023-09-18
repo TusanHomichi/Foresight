@@ -1,0 +1,30 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibOpenRAW(AutoPackageRecipe):
+
+    name = 'libopenraw'
+    version = '0.0.9'
+
+    buildRequires = [
+        'boost:devel', 'curl:devel', 'glib:devel', 'gtk:devel', 'libjpeg:devel',
+        'libstdc++:devel', 'libxml2:devel', 'openssl:devel', 'pkgconfig:devel',
+        'zlib:devel'
+    ]
+
+    def unpack(r):
+        r.addArchive('http://libopenraw.freedesktop.org/download/')
+
+    def configure(r):
+        r.Configure(' --disable-static')
+
+    def makeinstall(r):
+
+        r.MakeInstall(dir='lib')
+
+        r.MakeInstall(dir='gnome', package='libopenraw-gnome')
+
+        r.MakeInstall()
+

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# http://ftp.gnu.org/gnu/aspell/dict/es/
+
+class AspellEs(BuildPackageRecipe):
+    name = 'aspell-es'
+    version = '1.9a' # version cannot have '-' in it
+
+    buildRequires = [ 'aspell:runtime', 'which:runtime' ]
+
+
+    def setup(r):
+        r.addArchive('http://ftp.gnu.org/gnu/aspell/dict/es/aspell6-es-%(version)s-1.tar.bz2')
+
+        # this isn't an autoconf configure script
+        # don't use %(libdir)s for dictdir because we're not looking
+        # at shared libs
+        r.ManualConfigure()
+        r.Make()
+        r.MakeInstall()

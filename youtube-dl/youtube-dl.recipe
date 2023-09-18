@@ -1,0 +1,12 @@
+# Paweł Pogorzelski (pawelpogorzelski@gmail.com)
+
+class Youtubedl(RedirectRecipe):
+
+    name = 'youtube-dl'
+    version = '0'
+
+
+    buildRequires = []
+
+    def setup(r):
+        r.addRemoveRedirect()

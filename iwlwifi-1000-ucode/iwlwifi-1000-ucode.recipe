@@ -1,0 +1,20 @@
+class IWLwifi1k(PackageRecipe):
+
+    name = 'iwlwifi-1000-ucode'
+    version = '39.31.5.1'
+
+    def setup(r):
+        # intel URLs unreacheable atm
+        dURL = '' # 'http://www.intellinuxwireless.org/iwlwifi/downloads/'
+        # we keep providing old firmware, for ppl running older kernels
+        # special bonus points for intel's trully bizarre numbering scheme
+        # 
+
+        for f in ['%(version)s',
+                  #  128.50.3.1 / iwlwifi-1000-3.ucode _already_ in linux-firmware
+                  # '128.50.3.1'
+                  ]:
+            r.addArchive( dURL + '%s-%s.tgz' % (r.name, f))
+        r.Install('../iwlwifi-*/*.ucode', '/lib/firmware/', mode = 0644)
+        r.Flavor(exceptions='/lib/firmware/.*')
+         

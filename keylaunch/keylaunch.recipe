@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Keylaunch(AutoPackageRecipe):
+    buildRequires = ['libX11:devel', 'libXt:devel', 'libICE:devel']
+
+    name = 'keylaunch'
+    version = '1.3.4'
+
+    def unpack(r):
+        r.addArchive('http://ftp.debian.org/debian/pool/main/k/keylaunch/%(name)s_%(version)s.tar.gz')
+
+        r.Replace('/share/doc/\$\(PROG\)', '/share/doc/$(PROG)-%(version)s',
+                'Makefile.in')

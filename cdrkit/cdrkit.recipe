@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Cdrkit(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'cdrkit'
+    version = '1.1.11'
+    rpmRelease = '1.fc14'
+
+    tarballName = 'cdrkit-%(version)s.tar.gz'
+    rpmPatches = [ 'cdrkit-1.1.8-werror.patch',
+		   'cdrkit-1.1.9-efi-boot.patch',
+		   #' cdrkit-1.1.9-no_mp3.patch ',
+		   'cdrkit-1.1.9-buffer_overflow.patch',
+		   #' cdrkit-1.1.9-rr_joliet.patch ',
+		   'cdrkit-1.1.10-build-fix.patch', ]
+ 
+    buildRequires = ['bzip2:devel', 'cmake:runtime', 'file:devel', 'libcap:devel', 'perl:devel', 'zlib:devel']
+
+
+    def configure(r):
+        r.macros.cflags += ' -Wall -Werror -Wno-unused-function -Wno-unused-variable -fno-strict-aliasing'
+        r.Environment('FFLAGS', '%(cflags)s')
+	r.CMake('-DCMAKE_INSTALL_PREFIX:PATH=%(prefix)s -DBUILD_SHARED_LIBS:BOOL=ON ..', objDir='build')
+
+    def make(r):
+	r.Make(dir='build')
+
+    def makeinstall(r):
+	r.MakeInstall('DESTDIR=%(destdir)s', dir='build')
+	r.Symlink('%(bindir)s/genisoimage', '%(bindir)s/mkisofs')
+	r.Symlink('%(bindir)s/genisoimage', '%(bindir)s/mkhybrid')
+	r.Symlink('%(bindir)s/icedax', '%(bindir)s/cdda2wav')
+	r.Symlink('%(bindir)s/wodim', '%(bindir)s/cdrecord')
+	r.Symlink('%(bindir)s/wodim', '%(bindir)s/dvdrecord')
+
+	r.PackageSpec('cdda2wav',
+            '%(bindir)s/cdda2wav',
+	    '%(bindir)s/icedax',
+            r'%(mandir)s/man1/cdda2wav\.1.*')
+
+        r.PackageSpec('mkisofs',
+            '%(bindir)s/mkisofs',
+            '%(bindir)s/mkhybrid',
+            '%(bindir)s/isoinfo',
+            '%(bindir)s/isodump',
+            '%(bindir)s/isovfy',
+            '%(bindir)s/isodebug',
+	    '%(bindir)s/wodim',
+            r'%(mandir)s/man8/isoinfo\.8.*',
+            r'%(mandir)s/man8/mkisofs\.8.*',
+            r'%(mandir)s/man8/mkhybrid\.8.*')
+
+        # our own fake cdrtools
+        # more flexible than a redirect 
+        r.Create('%(bindir)s/cdrtools-stub', mode = 0755)
+        r.PackageSpec('cdrtools', '%(bindir)s/cdrtools-stub')
+        r.Requires('cdrkit:runtime', '%(bindir)s/cdrtools-stub')
+

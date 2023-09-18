@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Supertux(AutoPackageRecipe):
+    name = 'supertux'
+    version = '0.1.3'
+ 
+    buildRequires = ['Mesa:devel', 'SDL:devel', 'SDL_image:devel', 
+        'SDL_mixer:devel', 'desktop-file-utils:runtime', 'libX11:devel', 
+        'libstdc++:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://download.berlios.de/supertux/')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.addPatch('supertux-0.1.3-fix-build.patch')
+

@@ -1,0 +1,39 @@
+B1;1613;0cdiff -r 20de64aacc17 prefdm
+--- a/prefdm	Tue May 20 09:01:43 2008 -0400
++++ b/prefdm	Tue May 20 09:02:51 2008 -0400
+@@ -3,9 +3,18 @@
+ PATH=/sbin:/usr/sbin:/bin:/usr/bin
+ 
+ # shut down any graphical boot that might exist
+-if [ -x /usr/bin/rhgb-client ]; then
+-    /usr/bin/rhgb-client --quit
+-fi
++splash_quit() {
++    if [ -x /usr/sbin/splashy ]; then
++        /sbin/splashy_update progress 100
++        /sbin/splashy_update QUIT
++    fi
++    if [ $(runlevel | cut -d ' ' -f 2) = "5" ] && [ `pidof X` ] ; then
++        /usr/sbin/splashy_chvt 7
++    else
++        /usr/sbin/splashy_chvt 1
++    fi
++    return $?
++}
+ 
+ # We need to source this so that the login screens get translated
+ [ -f /etc/sysconfig/i18n ] && . /etc/sysconfig/i18n
+@@ -31,6 +40,8 @@
+ 
+ [ -n "$preferred" ] && exec $preferred "$@" >/dev/null 2>&1 </dev/null
+ 
++splash_quit
++
+ # Fallbacks, in order
+ exec gdm "$@" >/dev/null 2>&1 </dev/null
+ exec kdm "$@" >/dev/null 2>&1 </dev/null
+@@ -38,3 +49,4 @@
+ exec xdm "$@" >/dev/null 2>&1 </dev/null
+ # catch all exit error
+ exit 1
++

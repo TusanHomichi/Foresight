@@ -1,0 +1,40 @@
+class Tint2(CPackageRecipe):
+    name = 'tint2'
+    version = '0.11'
+
+    buildRequires = [
+        'autoconf:runtime', # ./bootstrap
+        'automake:runtime', # ./bootstrap
+        'cairo:devel',
+        'cvs:runtime', # autopoint (gettext)
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'imlib2:devel',
+        'intltool:runtime',
+        'libXinerama:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+	'atk:devel', 
+	'cmake:runtime', 
+	'desktop-file-utils:runtime', 
+	'gcc-c++:runtime', 
+	'gdk-pixbuf:devel', 
+	'gtk:devel', 
+	'libXcomposite:devel', 
+	'libXdamage:devel', 
+	'libXfixes:devel', 
+	'libXrandr:devel', 
+	'pygobject:python', 
+	'pygtk:python', 
+	'python:devel'
+      ]
+
+    def setup(r):
+        # From tarball
+        r.addArchive('http://tint2.googlecode.com/files/')
+	r.CMake()
+	r.Make()
+	r.MakeInstall()

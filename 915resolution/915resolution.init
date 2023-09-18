@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# 915resolution
+#
+# chkconfig: 345 01 99
+# description: Sets up the Intel Video BIOS
+
+# Source function library.
+. /etc/init.d/functions
+
+if [ -f /etc/sysconfig/915resolution ]; then
+        . /etc/sysconfig/915resolution
+fi
+
+start() {
+    echo -n $"Setting up Intel Video BIOS:"
+    if [ -n "$RESOLUTION" ]; then
+        /usr/sbin/915resolution $RESOLUTION > /dev/null 2>&1
+        RETVAL=$?
+    fi
+    [ $RETVAL = 0 ] && touch /var/lock/subsys/915resolution && success || failure
+    echo
+    return $RETVAL
+}
+
+RETVAL=0
+
+# See how we were called.
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        success
+        ;;
+    *)
+        echo $"Usage: $0 {start, stop}"
+        exit 1
+esac
+
+exit $?

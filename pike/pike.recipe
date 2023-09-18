@@ -1,0 +1,96 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pike(CPackageRecipe):
+
+    buildRequires = ['SDL:devel', 'SDL_mixer:devel', 'bzip2:devel',
+       'freetype:devel', 'gdbm:devel', 'glib:devel', 'glibc:devel',
+       'gmp:devel', 'gtk:devel', 'libjpeg:devel', 'librsvg:devel',
+       'libtiff:devel', 'mysql:devel', 'postgresql:devel',
+       'glibc:devellib', 'userspace-kernel-headers:devel', 'postgresql:lib',
+       'libX11:devel', 'zlib:devel', 'pcre:devel', 'pkgconfig:devel',
+       'nettle:devel', 'm4:runtime', 'GConf:devel', 'Mesa:devel', 
+       'ORBit2:devel', 'bind:devel', 'ffmpeg:devel', 'freeglut:devel', 
+       'fuse:devel', 'gnome-vfs:devel', 'icedtea-jre:runtime', 
+       'krb5:devel', 'lame:devel', 'libICE:devel', 'libSM:devel', 
+       'libXmu:devel', 'libart_lgpl:devel', 'libbonobo:devel', 
+       'libbonoboui:devel', 'libffi:devel', 'libglade:devel', 
+       'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 
+       'libgssapi:devel', 'libxml2:devel', 'popt:devel', 
+       'sane-backends:devel', 'slocate:runtime', 'sqlite:devel']
+
+
+    name = 'pike'
+    version = '7.8.664'
+
+
+    configureargs = (
+        ' --prefix=%(prefix)s'
+        ' --exec-prefix=%(exec_prefix)s'
+        ' --bindir=%(bindir)s'
+        ' --sbindir=%(sbindir)s'
+        ' --sysconfdir=%(sysconfdir)s'
+        ' --datadir=%(datadir)s'
+        ' --includedir=%(includedir)s'
+        ' --libdir=%(libdir)s'
+        ' --libexecdir=%(libexecdir)s'
+        ' --localstatedir=%(localstatedir)s'
+        ' --sharedstatedir=%(sharedstatedir)s'
+        ' --mandir=%(mandir)s'
+        ' --infodir=%(infodir)s')
+
+    def setup(r):
+        r.addArchive('http://pike.ida.liu.se/pub/pike/alpha/7.8.664/Pike-v7.8.664.tar.gz')
+        r.Make(preMake='CONFIGUREARGS="%s"' % r.configureargs)
+        r.Make('doc', preMake='CONFIGUREARGS="%s"' % r.configureargs)
+        r.Make('testsuites', preMake='CONFIGUREARGS="%s"' % r.configureargs)
+        r.MakeInstall('buildroot=%(destdir)s '
+                      'INSTALLARGS=--traditional ', 
+                      'lib_prefix=%(libdir)s/%(name)s/%(version)s/ ',
+                      'include_prefix=%(includedir)s/%(name)s/%(version)s/ ')
+                      #, rootVar='buildroot'
+                      #, installtarget='install_nodoc')
+        r.Install('refdoc/traditional_manual/*', '%(thisdocdir)s/manual/', package=':manual')
+        r.Install('refdoc/modref/*', '%(thisdocdir)s/reference/', package=':reference')
+        r.SetModes('%(bindir)s/pike.syms', 0755)
+        r.Move('%(bindir)s/pike','%(bindir)s/pike78')
+        r.Symlink('%(bindir)s/pike78','%(bindir)s/pike')
+        r.Move('%(prefix)s/doc/pike','%(thisdocdir)s')
+        #r.Remove('%(thisdocdir)s/pike/src/', recursive=True)
+
+        # these are pike header files used in pike modules.
+        r.ComponentSpec('lib', '%(libdir)s/%(name)s/%(version)s/include/')
+        r.ComponentSpec('lib', '%(libdir)s/%(name)s/%(version)s/.*/include/')
+
+        # make testsuite available to be run after installation.
+        #r.Run('cd build/*; find -name "*test*" -exec ../../src/install-sh {} %(destdir)s/%(datadir)s/%(name)s/%(version)s/testsuite/{} \\;', package=':testsuite')
+        #r.Run('find src/ -not -name "*test*.in" -name "*test*" -exec src/install-sh {} %(destdir)s/%(datadir)s/%(name)s/%(version)s/testsuite/{} \\;', package=':testsuite')
+        #r.Install('Makefile', '%(datadir)s/%(name)s/%(version)s/testsuite/', package=':testsuite')
+
+        # FIXME: make docs
+
+        # pike:bzip2 - Bzip2 module
+        # pike:dnssd - DNS Service Discovery (DNS-SD)
+        # pike:fuse - Filesystem in USErspace support
+        # pike:gdbm - Gdbm module
+        # pike:gl - Mesa module
+        # pike:gtk - GTK module
+        # pike:image - Image module
+        # pike:mysql - Mysql module
+        # pike:odbc - Odbc module
+        # pike:pcre - PCRE module
+        # pike:pg - Postgres module
+        # pike:sane - SANE module
+        # pike:sdl - SDL module
+        # pike:sqlite - SQLite module
+        # pike:svg - SVG format support
+
+        # pike:devel - Development files
+        # pike:doc - Pike 7.8 documentation meta package
+        # pike:manual - Pike 7.8 manual
+        # pike:reference - Pike 7.8 reference
+        # pike:runtime - minimum needed to run pike
+        # pike:lib - basic modules

@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage.recipe')
+class PerlXMLParser(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-XML-Parser'
+    version = '2.34'
+
+    buildRequires = [ 'perl-HTTP-Cookies:perl', 'perl-URI:perl', 'expat:devel', 'perl:devel' ]

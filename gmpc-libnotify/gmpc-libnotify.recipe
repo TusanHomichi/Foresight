@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GmpcLibnotify(AutoPackageRecipe):
+    name = 'gmpc-libnotify'
+    version = '0.20.0'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libmpd:devel', 'libnotify:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel', 'automake:runtime','autoconf:runtime','libtool:runtime', 'diffutils:runtime', 'gcc-c++:runtime', 'glibc:devel', 'gob2:runtime', 'gob2:devel', 'gmpc:devel', 'gettext:runtime', 'intltool:runtime']
+ 
+    def unpack(r):
+		r.addArchive('http://download.sarine.nl/Programs/gmpc/%(version)s/')
+                # http://musicpd.org/mantis/view.php?id=3263
+                r.addPatch('gmpc-libnotify-0.20.0-libnotify-0.7.patch')
+                

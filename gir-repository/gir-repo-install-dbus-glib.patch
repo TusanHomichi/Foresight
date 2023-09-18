@@ -1,0 +1,81 @@
+diff --git a/gir/Makefile.am b/gir/Makefile.am
+index b7ce585..5a362b8 100644
+--- a/gir/Makefile.am
++++ b/gir/Makefile.am
+@@ -12,8 +12,7 @@ CUSTOM_GIRSOURCES += $(AVAHI_GIRSOURCES)
+ endif
+ EXTRA_DIST += $(AVAHI_GIRSOURCES)
+ 
+-MISSIONCONTROL_GIRSOURCES = DBusGLib-1.0.gir \
+-			    TelepathyGLib.gir \
++MISSIONCONTROL_GIRSOURCES = TelepathyGLib.gir \
+ 			    LibTelepathy.gir
+ if BUILD_MISSIONCONTROL
+ CUSTOM_GIRSOURCES += $(MISSIONCONTROL_GIRSOURCES)
+@@ -29,6 +28,8 @@ libgirepo_DBus_custom_la_SOURCES = 	\
+ EXTRA_DIST += $(srcdir)/dbus.c $(srcdir)/dbus.h
+ 
+ if BUILD_DBUS
++BUILT_GIRSOURCES += DBusGLib-1.0.gir
++
+ DBus-1.0.gir: libgirepo-DBus-custom.la
+ 	$(INTROSPECTION_SCANNER) -v --namespace DBus --nsversion=1.0 \
+ 	    --add-include-path=$(srcdir) --add-include-path=. \
+diff --git a/gir/Makefile.am b/gir/Makefile.am
+index 5a362b8..40bb44b 100644
+--- a/gir/Makefile.am
++++ b/gir/Makefile.am
+@@ -28,7 +28,7 @@ libgirepo_DBus_custom_la_SOURCES = 	\
+ EXTRA_DIST += $(srcdir)/dbus.c $(srcdir)/dbus.h
+ 
+ if BUILD_DBUS
+-BUILT_GIRSOURCES += DBusGLib-1.0.gir
++CUSTOM_GIRSOURCES += DBusGLib-1.0.gir
+ 
+ DBus-1.0.gir: libgirepo-DBus-custom.la
+ 	$(INTROSPECTION_SCANNER) -v --namespace DBus --nsversion=1.0 \
+diff --git a/gir/DBusGLib-1.0.gir b/gir/DBusGLib-1.0.gir
+index d79a018..41d273a 100644
+--- a/gir/DBusGLib-1.0.gir
++++ b/gir/DBusGLib-1.0.gir
+@@ -3,7 +3,8 @@
+             xmlns="http://www.gtk.org/introspection/core/1.0"
+             xmlns:c="http://www.gtk.org/introspection/c/1.0"
+ 	    xmlns:glib="http://www.gtk.org/introspection/glib/1.0">
+-  <include name="GObject"/>
++  <include name="GObject" version="2.0"/>
++  <package name="dbus-glib-1"/>
+   <namespace name="DBusGLib" version="1.0" shared-library="dbus-glib-1">
+     <record name="Connection" c:type="DBusGConnection"/>
+     <record name="MethodInvocation" c:type="DBusGMethodInvocation"/>
+commit 955452107bd87eecd5c5af3f6552c650fc49bdf2
+Author: Colin Walters <walters@verbum.org>
+Date:   Thu Oct 22 23:01:07 2009 -0400
+
+    [DBusGLib] Add transfer-ownership
+
+diff --git a/gir/DBusGLib-1.0.gir b/gir/DBusGLib-1.0.gir
+index 41d273a..c50bfbb 100644
+--- a/gir/DBusGLib-1.0.gir
++++ b/gir/DBusGLib-1.0.gir
+@@ -12,16 +12,14 @@
+       glib:type-name="DBusGProxy" glib:get-type="dbus_g_proxy_get_type">
+     </class>
+     <record name="ProxyClass" c:type="DBusGProxyClass"/>
+-
+-    <function name="connection_open" c:identifier="dbus_g_connection_open"
+-     throws="1">
++    <function name="connection_open" c:identifier="dbus_g_connection_open" throws="1">
+       <return-value transfer-ownership="full">
+         <type name="Connection" c:type="DBusGConnection*"/>
+       </return-value>
+       <parameters>
+-        <parameter name="address">
+-	  <type name="utf8" c:type="char*"/>
+-	</parameter>
++        <parameter name="address" transfer-ownership="none">
++	      <type name="utf8" c:type="char*"/>
++        </parameter>
+       </parameters>
+     </function>
+   </namespace>

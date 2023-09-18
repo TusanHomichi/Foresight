@@ -1,0 +1,11 @@
+
+class Pygments(PackageRecipe):
+    name = 'Pygments'
+    version = '1.3.1'
+
+    buildRequires = ['python-setuptools:python', 'python:devel','PIL:python', 'python-hashlib:python']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/P/%(name)s/')
+
+        r.PythonSetup()

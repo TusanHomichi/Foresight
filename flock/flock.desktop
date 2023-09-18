@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=Flock
+Comment=Flock; The social web browser
+Encoding=UTF-8
+Exec=/opt/flock/flock/flock-browser 
+Terminal=false
+Type=Application
+Categories=Application;Network;
+StartupNotify=true
+Icon=/opt/flock/flock/icons/mozicon128.png  
+Name[en_US]=Flock
+Name[en_GB]=Flock
+Name[es_ES]=Flock
+
+

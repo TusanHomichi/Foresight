@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EclipseWtpWst(CPackageRecipe):
+    name = 'eclipse-wtp-wst'
+    version = '3.3.1'
+    pkg_date = '20110915193224'
+
+    buildRequires = [
+        'unzip:runtime',
+        'eclipse-sdk:java',
+        'eclipse-emf:java', 
+        'eclipse-gef:java',
+        ]
+
+    shortDesc  = 'part of webtools'
+    longDesc   = """
+part of webtools, includes enough to do web development (e.g. HTML, CSS, Javascript, and XML)
+"""
+    url        = 'http://www.eclipse.org/webtools/'
+    licenses   = [ 'EPL-1.0' ]
+    categories = [ 'Development/Utilities' ]
+
+    def setup(r):
+        r.macros.pkg_date = r.pkg_date
+        r.addArchive('ftp://ftp.ing.umu.se/mirror/eclipse/webtools/downloads/drops/'
+                     'R%(version)s/R-%(version)s-%(pkg_date)s/wtp-sdk-R-%(version)s-%(pkg_date)s.zip')
+
+        r.macros.installdir = r.name.replace('eclipse-', '')
+        r.macros.dropindir = '%(libdir)s/eclipse/dropins/%(installdir)s/eclipse'
+
+        # Features
+        r.Run("""
+find features -type f | while read _feature
+do
+  if [[ ${_feature} =~ (.*\.jar$) ]]
+  then
+    install -dm755 %(destdir)s/%(dropindir)s/${_feature%%*.jar}
+    cd %(destdir)s/%(dropindir)s/${_feature/.jar}
+    jar xf %(builddir)s/${_feature} || return 1
+    cd - > /dev/null 2>&1
+  else
+    install -Dm644 ${_feature} %(destdir)s/%(dropindir)s/${_feature}
+  fi
+done""")
+
+        # Plugins
+        r.Run("""
+find plugins -type f | while read _plugin
+do
+  install -Dm644 ${_plugin} %(destdir)s/%(dropindir)s/${_plugin}
+done""")
+
+        r.Requires('eclipse-sdk:runtime', '%(dropindir)s/')
+        r.Requires('eclipse-sdk:java', '%(dropindir)s/')

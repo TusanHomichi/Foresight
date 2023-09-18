@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonJsonpickle(PackageRecipe):
+
+    name = 'python-jsonpickle'
+    version = '0.4.0'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/j/jsonpickle/jsonpickle-%(version)s.tar.gz')
+        r.PythonSetup()

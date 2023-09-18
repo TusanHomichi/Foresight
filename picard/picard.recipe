@@ -1,0 +1,42 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Picard(PackageRecipe):
+
+    name = 'picard'
+    version = '1.2'
+
+    packageSummary = 'Picard is the next generation MusicBrainz tagging application'
+    packageDescription = 'Picard is the next generation MusicBrainz tagging application. This new tagging concept is album oriented, as opposed to track/file oriented like the ClassicTagger was.'
+
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'ffmpeg:devel',
+        'fftw:devel',
+        'gcc:devel',
+        'gcc:runtime',
+        'gettext:runtime',
+        'libgcc:devellib',
+        'libofa:devel',
+        'libstdc++:devel',
+        'mutagen:python',
+        'PyQt4:python',
+        'python-setuptools:python',
+        'python:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('ftp://ftp.musicbrainz.org/pub/musicbrainz/%(name)s/')
+        r.addSource('picard.desktop')
+        r.addSource('picard.png')
+        r.Requires('libdiscid:lib','picard:python')
+        r.Requires('chromaprint:runtime', 'picard:python')
+        r.PythonSetup('config')
+        r.PythonSetup('install')
+        r.Install('picard.png', '%(datadir)s/pixmaps/')
+        r.Desktopfile('picard.desktop', vendor='foresight')

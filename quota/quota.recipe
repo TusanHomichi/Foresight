@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Quota(RPMPackageRecipe, CPackageRecipe):
+    name = 'quota'
+    version = '3.17'
+    isRHEL = True
+    distroVersion = '6Server'
+    rpmRelease = '18.el6'
+    rpmPatches = [
+        'quota-3.06-warnquota.patch',
+        'quota-3.06-no-stripping.patch',
+        'quota-3.06-man-page.patch',
+        'quota-3.06-pie.patch',
+        'quota-3.13-wrong-ports.patch',
+        'quota-3.16-helpoption.patch',
+        'quota-3.16-quotaoffhelp.patch',
+        'quota-3.17-quotactlmanpage.patch',
+        'quota-3.17-goodclient.patch',
+        'quota-3.17-quotactl_null_corruption.patch',
+        'quota-3.17-64-bit-quota-support.patch',
+        'quota-3.17-use-proc-mounts-for-mountpoint-scanning.patch',
+        'quota-3.17-Add-GFS2-support.patch',
+        'quota-4.00_pre1-Add-always-resolve-to-quota.1-manpage.patch',
+        'quota-4.00_pre1-Document-always-resolve-at-edquota-and-setquota.patch',
+        'quota-3.17-Convert-quota-limits-using-rq_bsize-from-RPC-request.patch',
+        'quota-3.17-Make-RPC-block-factor-dynamic.patch',
+        'quota-3.17-Check-whether-set-limits-fit-into-the-range-supporte.patch',
+        'quota-4.00_pre1-Check-set-limits-fit-into-the-range-supported-by-RPC.patch',
+        'quota-4.00_pre1-Store-PID-of-quota_nld.patch',
+        'quota-4.00_pre1-Add-quotasync-tool.patch',
+        'quota-4.00_pre1-Implement-quotacheck-for-GFS2.patch',
+        'quota-4.00_pre1-fix_vfsv0_format_detection.patch',
+        'quota-4.00_pre1-Initialize-vfsold-block-and-inode-value-boundries-fo.patch',
+        'quota-4.00_pre1-Fix-ddquot-buffer-leak.patch',
+        'quota-4.00_pre1-fix-repquota-to-get-latest-quota-info-header.patch',
+        'quota-3.17-Make-group-warning-message-more-official.patch',
+        'quota-3.17-Do-not-use-real-domains-in-warnquota-example.patch',
+        'quota-4.00_pre1-Disable-grace-period-times-remote-setting.patch',
+        'quota-4.00_pre1-Initialize-v2r1-ddquot-padding-in-dump.patch',
+        'quota-4.00_pre1-Make-dirname-static.patch',
+        'quota-4.00-Do-not-report-missing-utmp-record-to-syslog.patch',
+    ]
+
+    buildRequires = [ 'e2fsprogs:devel', 'gettext:runtime',
+                      'tcp_wrappers:devel' ]
+
+    def setup(r):
+        r.unpack()
+        r.Configure('--with-ext2direct=no')
+        r.Make()
+
+        r.MakeDirs('%(essentialsbindir)s', '%(sysconfdir)s', '%(sbindir)s',
+                   '%(bindir)s', '%(mandir)s/man{1,2,3,8}')
+        r.MakeInstall(rootVar='ROOTDIR')
+        r.Install('warnquota.conf', '%(sysconfdir)s/', mode=0644)
+        # glibc:devel has this file
+        r.Remove('%(prefix)s/include/rpcsvc/rquota.x')

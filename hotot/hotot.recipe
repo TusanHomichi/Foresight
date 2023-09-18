@@ -1,0 +1,38 @@
+
+# Copyright (c) 2010 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Hotot(PackageRecipe):
+
+    name = 'hotot'
+    version = '1110bed8' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [
+        'python-setuptools:python',
+        'gettext:runtime', 
+        'intltool:runtime',
+        'python:devel',
+        'pywebkitgtk:python',
+        'desktop-file-utils:runtime',
+        'python-keybinder:python',
+        'notify-python:python',
+        'pycurl:python',
+        'pygtk:python',
+        'python-distutils-extra:python',
+        'dbus-python:python',
+        'binutils:runtime', 
+        'cmake:runtime', 
+        'libgcc:devellib', 
+        'libstdc++:devel', 
+        'make:runtime', 
+        'phonon:devel', 
+        'pkgconfig:devel', 
+        ]
+
+    def setup(r):
+        r.addGitSnapshot("https://github.com/shellex/Hotot.git", tag='1110bed8')
+        r.CMake('-DWITH_QT=OFF -DWITH_KDE=OFF')
+        r.Make()
+        r.MakeInstall()

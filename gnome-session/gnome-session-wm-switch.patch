@@ -1,0 +1,49 @@
+diff -aur gnome-session-2.23.5.orig/gnome-session/gsm-resumed-app.c gnome-session-2.23.5/gnome-session/gsm-resumed-app.c
+--- gnome-session-2.23.5.orig/gnome-session/gsm-resumed-app.c	2008-07-22 12:34:41.000000000 +0200
++++ gnome-session-2.23.5/gnome-session/gsm-resumed-app.c	2008-07-29 23:23:58.000000000 +0200
+@@ -25,6 +25,7 @@
+ 
+ #include <sys/wait.h>
+ #include <glib.h>
++#include <string.h>
+ 
+ #include <X11/SM/SMlib.h>
+ 
+@@ -213,6 +213,22 @@
+         char          *key;
+         char          *id;
+         char          *val;
++        static gboolean compiz_enabled = FALSE;
++        static gboolean compiz_init = FALSE;
++
++        if (!compiz_init) {
++                gchar *compiz_enable_path;
++
++                /* See if compiz is enabled; if it is, we have to replace
++                 * legacy metacity/compiz entries with gnome-wm */
++                compiz_enable_path = g_build_filename (g_get_user_config_dir (),
++                                                       "compiz", "enable-compiz",
++                                                       NULL);
++                compiz_enabled = compiz_enable_path &&
++                                 g_file_test (compiz_enable_path,
++                                              G_FILE_TEST_IS_REGULAR);
++                g_free (compiz_enable_path);
++        }
+ 
+         key = g_strdup_printf ("%d,id", n);
+         id = g_key_file_get_string (session_file, "Default", key, NULL);
+@@ -242,6 +258,14 @@
+         g_free (key);
+ 
+         if (val) {
++                if (((!strcmp (val, "metacity") ||
++                      !strcmp (val, "/usr/bin/metacity")) && compiz_enabled) ||
++                    (!strcmp (val, "compiz") ||
++                     !strcmp (val, "/usr/bin/compiz"))) {
++                        g_free (val);
++                        val = g_strdup ("gnome-wm");
++                }
++
+                 app->priv->restart_command = val;
+         }
+ 

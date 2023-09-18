@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('rpmpackage')
+class libxcb(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libxcb'
+    version = '7.6_1.7'
+    rpmRelease = '22.1'
+    rpmName = 'xorg-x11-%(name)s'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = [ 'autoconf:runtime','automake:runtime', 'libtool:devel', 'libtool:runtime',
+                      'pkgconfig:devel', 'libXau:devel', 'libXdmcp:devel',
+                      'libpthread-stubs:devellib', 'libxslt:runtime', 'pkgconfig:devel',
+                      'xcb-proto:devellib', 'xcb-proto:python', 'file:runtime', 'doxygen:runtime']
+
+    rpmPatches = [ 'bug-262309_xcb-xauthlocalhostname.diff',
+                   ]
+    tarballName = '%(name)s-1.7.tar.bz2'
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure('--disable-static')
+
+    def policy(r):
+        # create fake libxcb-xlib.so.0
+        r.Create('xcb-xlib.c')
+        r.Run('%(cc)s -Wall -ansi -pedantic -c xcb-xlib.c -fPIC')
+        r.Run('%(cc)s -shared -Wl,-soname,libxcb-xlib.so.0  -o libxcb-xlib.so.0 xcb-xlib.o ')
+        r.Install('libxcb-xlib.so.0', '%(libdir)s/')
+

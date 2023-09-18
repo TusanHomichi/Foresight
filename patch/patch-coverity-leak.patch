@@ -1,0 +1,15 @@
+diff -up patch-2.6.1/gl/lib/hash.c.coverity-leak patch-2.6.1/gl/lib/hash.c
+--- patch-2.6.1/gl/lib/hash.c.coverity-leak	2009-11-02 19:09:57.000000000 +0000
++++ patch-2.6.1/gl/lib/hash.c	2011-05-16 15:13:49.231998981 +0100
+@@ -857,7 +857,10 @@ hash_rehash (Hash_table *table, size_t c
+ 		  struct hash_entry *new_entry = allocate_entry (new_table);
+ 
+ 		  if (new_entry == NULL)
+-		    return false;
++		    {
++		      free (new_table);
++		      return false;
++		    }
+ 
+ 		  new_entry->data = data;
+ 		  new_entry->next = new_bucket->next;

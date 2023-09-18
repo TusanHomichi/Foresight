@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class VorbisTools(AutoPackageRecipe):
+    name = 'vorbis-tools'
+    version = '1.1.1'
+
+    buildRequires = [ 'libogg:devel', 'libvorbis:devel',
+        'curl:runtime', 'curl:devel', 'libao:devel', 'flac:devel',
+        'pkgconfig:devel', 'speex:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.xiph.org/releases/vorbis/')
+        # needed for vorbis-tools to work with curl >=7.16.0
+        r.addPatch('http://viewcvs.gentoo.org/viewcvs.py/*checkout*/gentoo-x86/media-sound/vorbis-tools/files/vorbis-tools-1.1.1-curl-7.16.0.patch')
+
+        r.Replace('-O20', '%(cflags)s', 'configure')
+        r.Replace('-ffast-math', '', 'configure')
+

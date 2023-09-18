@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2010-2011 António Meireles
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class cloogSource(AutoPackageRecipe):
+    name = 'cloog'
+    version = '0.15.7'
+    buildRequires = [ 'gmp:devel', 'install-info:runtime', 'ppl:devel',
+                      'libtool:runtime', 'texinfo:runtime' ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/gcc/infrastructure/%(name)s-ppl-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--with-ppl')
+        # Remove the cloog.info in the tarball
+        # to force the re-generation of a new one
+        r.Remove('doc/cloog.info')
+        
+    def make(r):
+        r.Make('AM_CFLAGS= LIBTOOL=%(bindir)s/libtool')

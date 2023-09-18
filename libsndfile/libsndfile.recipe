@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibSndFile(AutoPackageRecipe):
+    name = 'libsndfile'
+    version = '1.0.25'
+    buildRequires = [ 'alsa-lib:devel', 'flac:devel', 'pkgconfig:devel',
+                      'sqlite:devel', 'gcc-c++:runtime', 'alsa-lib:devel',
+                      'jack:devel', 'libogg:devel', 'libvorbis:devel',
+                      'sqlite:devel', 'autogen:runtime']
+
+    def unpack(r):
+        r.addArchive('http://www.mega-nerd.com/libsndfile/files/')
+
+    def configure(r):
+        r.Configure(' --disable-dependency-tracking '
+                    ' --enable-sqlite '
+                    ' --enable-alsa '
+                    ' --enable-largefile '
+                    ' --enable-shave=no')
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+    def policy(r):
+        r.Move('%(docdir)s/libsndfile1-dev', '%(thisdocdir)s')
+        # drop cruft
+        r.Remove('%(libdir)s/%(name)s.a')

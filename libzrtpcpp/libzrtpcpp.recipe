@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libzrtpcpp(AutoPackageRecipe):
+    name = 'libzrtpcpp'
+    version = '1.4.3'
+ 
+    buildRequires = ['ccrtp:devel', 'commoncpp:devel', 'doxygen:runtime', 'libgcrypt:devel', 'libgpg-error:devel', 'libstdc++:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/gnu/ccrtp/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--disable-static')
+        # r.Replace(' -shared ', ' -Wl,--as-needed\0', 'libtool')

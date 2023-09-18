@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pyexiv2(CPackageRecipe):
+
+    name = 'pyexiv2'
+    version = '0.3.2'
+
+    buildRequires = [
+        'boost:devel', 'exiv2:devel', 'libstdc++:devel', 'python:devel',
+        'scons:runtime'
+    ]
+
+    def setup(r):
+
+        r.addArchive('http://launchpad.net/pyexiv2/0.3.x/%(version)s/+download/')
+
+        r.disableParallelMake()
+        r.Make(makeName='scons')
+        r.Make('DESTDIR=%(destdir)s PREFIX=%(prefix)s install', makeName='scons')
+

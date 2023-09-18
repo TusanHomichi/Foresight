@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class GeckoSharp(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'gecko-sharp'
+    # keep upstream versioning...
+    version = '0.13'
+    rpmName = 'gecko-sharp2'
+    rpmRelease = '2.fc11'
+    rpmPatches = [ 'gecko-sharp-libdir.patch',
+                   'gecko-sharp-2.0-0.12-xulrunner.patch' ]
+
+    tarballName = 'gecko-sharp-2.0-%(version)s.tar.bz2'
+
+    buildRequires = [ 'mono:runtime', 'mono:cil', 'which:runtime',
+                      'gtk-sharp:devellib', 'gtk-sharp:runtime', 'gtk-sharp:cil',
+                      'mono:devellib', 'gawk:runtime', 'pkgconfig:devel',
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime',
+                      'gettext:runtime',
+                      'intltool:runtime', 'gtk:devel']
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Run('autoreconf --force --install')
+
+    def makeinstall(r):
+        r.MakeInstall(' GACUTIL_FLAGS="/package gecko-sharp-2.0 /gacdir %(libdir)s /root %(destdir)s%(libdir)s"  ')
+        r.Remove('/usr/lib/monodoc/sources/', recursive = True)
+

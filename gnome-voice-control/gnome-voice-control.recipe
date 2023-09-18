@@ -1,0 +1,9 @@
+loadRecipe('gnomepackage')
+class GnomeVoiceControl(GnomePackageRecipe):
+    name = 'gnome-voice-control'
+    version = '0.3+r247'
+
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'alsa-lib:devel', 'at-spi:devel', 'gnome-keyring:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'gstreamer:devel', 'libXres:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libwnck:devel', 'pocketsphinx:devel', 'popt:devel', 'rarian:runtime', 'sphinxbase:devel', 'startup-notification:devel', 'autoconf:runtime', 'automake:runtime', 'rarian:devel']
+    svnUrl = 'http://svn.berlios.de/svnroot/repos/festlang/trunk/gnome-voice-control'
+    autogen = 'autogen.sh'
+

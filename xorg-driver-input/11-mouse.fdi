@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<deviceinfo version="0.2">
+  <device>
+    <match key="info.capabilities" contains="input.mouse">
+      <match key="/org/freedesktop/Hal/devices/computer:system.kernel.name"
+             string="Linux">
+        <!-- Logitech tweaks -->
+        <match key="@input.originating_device:usb.vendor_id" int="0x46d">
+          <match key="@input.originating_device:usb.product_id" int="0xc50e">
+            <merge key="input.x11_options.Buttons" type="string">8</merge>
+            <merge key="input.x11_options.EmulateWheel" type="string">on</merge>
+            <merge key="input.x11_options.EmulateWheelButton" type="string">8</merge>
+            <merge key="input.x11_options.YAxisMapping" type="string">4 5</merge>
+            <merge key="input.x11_options.XAxisMapping" type="string">6 7</merge>
+          </match>
+          <match key="@input.originating_device:usb.product_id" int="0xc521">
+            <merge key="input.x11_options.HWHEELRelativeAxisButtons" type="string">7 6</merge>
+          </match>
+        </match>
+        <!-- Microsoft tweaks -->
+        <match key="@input.originating_device:usb.vendor_id" int="0x045e">
+          <match key="@input.originating_device:usb.product_id" int="0x0095">
+            <merge key="input.x11_options.HWHEELRelativeAxisButtons" type="string">7 6</merge>
+          </match>
+        </match>
+        <!-- ibm trackpoint -->
+        <match key="@input.originating_device:usb.vendor_id" int="0x0210">
+          <match key="@input.originating_device:usb.product_id" int="0x0003">
+            <merge key="input.x11_options.EmulateWheel" type="string">on</merge>
+            <merge key="input.x11_options.EmulateWheelButton" type="string">2</merge>
+          </match>
+        </match>
+        <match key="@input.originating_device:usb.vendor_id" int="0x0002">
+          <match key="@input.originating_device:usb.product_id" int="0x000a">
+            <merge key="input.x11_options.EmulateWheel" type="string">on</merge>
+            <merge key="input.x11_options.EmulateWheelButton" type="string">2</merge>
+          </match>
+        </match>
+        <match key="@input.originating_device:usb.vendor_id" int="0x04b3">
+          <match key="@input.originating_device:usb.product_id" int="0x300f">
+            <merge key="input.x11_options.EmulateWheel" type="string">on</merge>
+            <merge key="input.x11_options.EmulateWheelButton" type="string">2</merge>
+          </match>
+        </match>
+        <match key="info.product" string="TPPS/2 IBM TrackPoint">
+          <merge key="input.x11_options.EmulateWheel" type="string">true</merge>
+          <merge key="input.x11_options.EmulateWheelButton" type="string">2</merge>
+          <merge key="input.x11_options.YAxisMapping" type="string">4 5</merge>
+          <merge key="input.x11_options.Emulate3Buttons" type="string">true</merge>
+          <merge key="input.x11_options.EmulateWheelTimeout" type="string">200</merge>
+        </match>
+        <!-- hp-mouse -->
+        <match key="@input.originating_device:usb.vendor_id" int="0x03f0">
+          <match key="@input.originating_device:usb.product_id" int="0x1126">
+            <merge key="input.x11_options.MinX" type="string">0</merge>
+            <merge key="input.x11_options.MaxX" type="string">3000</merge>
+            <merge key="input.x11_options.MinY" type="string">0</merge>
+            <merge key="input.x11_options.MaxX" type="string">3000</merge>
+          </match>
+        </match>
+      </match>
+    </match>
+  </device>
+</deviceinfo>

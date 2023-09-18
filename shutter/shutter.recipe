@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Shutter(PackageRecipe):
+    name = 'shutter'
+    version = '0.88.3'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'perl-Glib:perl', 'perl-Gnome2-Canvas:perl', 'perl-Gnome2-GConf:perl', 'perl-Gnome2-VFS:perl', 'perl-Gnome2-Wnck:perl', 'perl-Gnome2:perl', 'perl-Gtk2-ImageView:perl', 'perl-Gtk2:perl', 'perl-HTTP-Cookies:perl', 'perl-Locale-gettext:perl', 'perl-Net-DBus:perl', 'perl-Proc-ProcessTable:perl', 'perl-URI:perl', 'perl-WWW-Mechanize:perl', 'perl-X11-Protocol:perl', 'perl-XML-Simple:perl', 'perl:devel', 'perlmagick:perl', 'perl-File-BaseDir:perl', 'perl-File-DesktopEntry:perl', 'perl-File-MimeInfo:perl', 'perl-Gtk2-TrayIcon:perl']
+ 
+    def setup(r):
+        r.addArchive('http://shutter-project.org/wp-content/uploads/releases/tars/')
+        r.Install('bin/*','%(bindir)s/')
+        r.Install('share/*','%(datadir)s/')

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UmeLauncher(AutoPackageRecipe):
+    name = 'ume-launcher'
+    version = 'r164'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'clutter:devel', 'clutter-gtk:devel', 'clutter-cairo:devel', 'esound:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel',  'glib:devel', 'gnome-desktop:devel', 'gnome-keyring:devel', 'gnome-menus:devel', 'gnome-vfs:devel', 'gtk:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel', 'libXres:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'libwnck:devel', 'libxcb:devel', 'libxml2:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'popt:devel', 'startup-notification:devel', 'xcb-util:devel', 'zlib:devel', 'Mesa:devel', 'intltool:devel', 'intltool:runtime', 'dbus-glib:devel', 'dbus:devel', 'gettext:runtime', 'autoconf:runtime','automake:runtime',  'libtool:runtime', 'libtool:devel', 'gnome-common:devel', 'gnome-common:runtime']
+ 
+    def unpack(r):
+        r.addBzrSnapshot('http://bazaar.launchpad.net/~netbook-remix-team/netbook-remix-launcher/trunk')
+        r.addSource('distro-logo.png', dir='data/')
+        r.addPatch('distro-logo.patch')
+        r.addSource('ume-launcher-wrapper', dest='%(bindir)s/', mode=0755)
+        r.Replace('ume-launcher', 'ume-launcher-wrapper','data/ume-launcher.desktop.in')
+        r.Replace('gnome-session-save --gui --kill', 'gnome-shutdown', 'src/launcher-sidebar.c')
+
+    def configure(r):
+        r.Configure(configureName='autogen.sh')
+        
+    def policy(r):
+        r.Requires('gnome-shutdown:runtime','%(bindir)s/ume-launcher')

@@ -1,0 +1,48 @@
+class TorcsNG(CPackageRecipe):
+    name = 'torcs-ng'
+    version = 'r1011'
+    buildRequires = [
+        'freeglut:devel', 'gcc:devel', 'libpng:devel', 'openal:devel',
+        'zlib:devel', 'gcc:devel', 'desktop-file-utils:runtime', 'Mesa:devel',
+        'freealut:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel',
+        'libXext:devel', 'libXi:devel', 'libXmu:devel', 'libXrandr:devel',
+        'libXrender:devel', 'libXt:devel', 'libXxf86vm:devel', 'SDL:devel',
+        'libstdc++:devel', 'python:bin', 'cmake:runtime', 'plib:devel'
+    ]
+
+    def setup(r):
+        r.macros.pathrev = r.version[1:]
+        r.addArchive('http://svn.sourceforge.net/viewvc/torcs-ng/branches/sdl-port.tar.gz?view=tar&pathrev=%(pathrev)s')
+        r.Desktopfile('torcs-ng.desktop')
+        r.addSource('torcs-ng.desktop')
+        r.Install('data/data/icons/Ticon.png', '%(datadir)s/pixmaps/torcs-ng.png')
+        r.macros.rellibs=r.macros.libdir[5:]
+        r.Run('cmake -D CMAKE_SKIP_RPATH=TRUE -DTORCS_LIBDIR:PATH=%(rellibs)s/torcs-ng -D CMAKE_INSTALL_PREFIX=%(prefix)s .')
+        r.Make()
+        r.MakeInstall()
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/berniw')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/berniw2')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/berniw3')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/bt')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/damned')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/human')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/hymnie_sc1')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/hymnie_sc2')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/inferno')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/inferno2')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/K1999')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/lliaw')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/locus')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/olethros')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/simplix')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/simplix_36GP')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/simplix_sc')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/simplix_trb1')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/sparkle')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/tita')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/drivers/usr_GP3601')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/lib')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/modules/graphic')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/modules/simu')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/modules/telemetry')
+        r.SharedLibrary(subtrees='%(libdir)s/torcs-ng/modules/track')

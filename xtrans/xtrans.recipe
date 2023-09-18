@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Xtrans(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'xtrans'
+    version = '7.6'
+    isOPENsuse = True
+    isXOrgFactory = True
+    rpmRelease = '16.1'
+    rpmName = 'xorg-x11-xtrans-devel'
+    rpmPatches = [ 'p_xauth.diff', ]
+    tarballName = '%(name)s-1.2.6.tar.bz2'
+
+    def configure(r):
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure()

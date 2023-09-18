@@ -1,0 +1,70 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AudaciousPlugins(AutoPackageRecipe):
+    name = 'audacious-plugins'
+    version = '3.3.4'
+
+    packageSummary = 'Plugins for Audacious audio player'
+    packageDescription = 'Audacious is an advanced audio player. It is free, lightweight, based on GTK2, runs on Linux and many other *nix platforms and is focused on audio quality and supporting a wide range of audio codecs. Its advanced audio playback engine is considerably more powerful than GStreamer. Audacious is a fork of Beep Media Player (BMP), which itself forked from XMMS.'
+
+    buildRequires = [
+        'alsa-lib:devel',
+        'atk:devel',
+        'audacious:devel',
+        'cairo:devel',
+        'curl:devel',
+        'dbus-glib:devel',
+        'dbus:devel',
+        'esound:devel',
+        'faad2:devel',
+        'ffmpeg:devel',
+        'flac:devel',
+        'fluidsynth:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gtk3:devel',
+        'intltool:runtime',
+        'jack:devel',
+        'lame:devel',
+        'libcue:devel',
+        'libmad:devel',
+        'libmms:devel',
+        'libmodplug:devel',
+        'libmowgli:devel',
+        'libnotify:devel',
+        'libogg:devel',
+        'libsamplerate:devel',
+        'libshout:devel',
+        'libsndfile:devel',
+        'libstdc++:devel',
+        'libtheora:devel',
+        'libvorbis:devel',
+        'libX11:devel',
+        'libXcomposite:devel',
+        'libXfixes:devel',
+        'libxml2:devel',
+        'libXrender:devel',
+        'ncurses:runtime',
+        'neon:devel',
+        'openssl:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        'pulseaudio:devel',
+        'SDL:devel',
+        'speex:devel',
+        'wavpack:devel',
+        'zlib:devel'
+        ]
+
+    def unpack(r):
+        r.addArchive('http://distfiles.audacious-media-player.org/')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --enable-dbus --enable-ipv6 --enable-chardet --enable-mp3 --disable-projectm --disable-projectm-1.0 --disable-gtk3')

@@ -1,0 +1,12 @@
+#!/bin/sh
+# 
+# this script trims conary's local sqlite db for size and performance
+# and it is only relevant on heavy use cases like developer setups. 
+#
+#   http://www.sqlite.org/lang_vacuum.html
+#   http://web.utk.edu/~jplyon/sqlite/SQLite_optimization_FAQ.html
+#
+
+echo 'vacuum;' | sqlite3 %(localstatedir)s/lib/conarydb/conarydb
+
+

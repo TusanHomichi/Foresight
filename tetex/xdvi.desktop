@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=DVI Viewer
+Type=Application
+Comment=DVI viewer for TeX DVI files
+Icon=gnome-word.png
+Exec=%(bindir)s/xdvi

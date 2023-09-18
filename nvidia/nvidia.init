@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# nvidia		This scripts sets up nvidia devices.
+#
+# chkconfig: 345 02 95
+# description: 	This creates devices needed for nvidia
+
+mknod /dev/nvidia0 c 195 0
+mknod /dev/nvidia1 c 195 1
+mknod /dev/nvidia2 c 195 2
+mknod /dev/nvidia3 c 195 3
+mknod /dev/nvidiactl c 195 255
+
+chmod 0600 /dev/nvidi*

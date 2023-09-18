@@ -1,0 +1,24 @@
+diff -r f941ede62e43 configure.ac
+--- a/configure.ac	Tue Sep 01 13:54:45 2009 -0400
++++ b/configure.ac	Tue Sep 01 13:56:39 2009 -0400
+@@ -984,19 +984,7 @@
+ case "${host_os_noversion}" in
+ mint)		RPMCANONARCH=m68kmint ;;
+ esac
+-RPMCANONVENDOR="$build_vendor"
+-case "${build_vendor}" in
+-unknown|pc|ibm|redhat|pld|mandrake|conectiva|lvr|yellowdog|caos|suse)
+-	test -f /etc/redhat-release &&		RPMCANONVENDOR=redhat
+-	test -f /etc/SuSE-release &&		RPMCANONVENDOR=suse
+-	test -f /etc/pld-release &&		RPMCANONVENDOR=pld
+-	test -f /etc/mandrake-release &&	RPMCANONVENDOR=mandrake
+-	test -f /etc/conectiva-release &&	RPMCANONVENDOR=conectiva
+-	test -f /etc/lvr-release &&		RPMCANONVENDOR=lvr
+-	test -f /etc/yellowdog-release &&	RPMCANONVENDOR=yellowdog
+-	test -f /etc/caos-release &&		RPMCANONVENDOR=caos
+-	;;
+-esac
++RPMCANONVENDOR=foresight
+ RPMCANONOS="$host_os_noversion"
+ RPMCANONGNU="$host_os_gnu"
+ AC_SUBST(RPMCANONCOLOR)

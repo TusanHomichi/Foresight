@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class M17nLib(AutoPackageRecipe):
+    name = 'm17n-lib'
+    version = '1.6.2'
+ 
+    buildRequires = ['anthy:devel', 
+                    'aspell:runtime', 
+                    'expat:devel', 
+                    'fontconfig:devel', 
+                    'freetype:devel', 
+                    'fribidi:devel', 
+                    'gd:devel', 
+                    'libICE:devel', 
+                    'libSM:devel', 
+                    'libX11:devel', 
+                    'libXau:devel', 
+                    'libXaw:devel', 
+                    'libXdmcp:devel', 
+                    'libXft:devel', 
+                    'libXmu:devel', 
+                    'libXrender:devel', 
+                    'libXt:devel', 
+                    'libxcb:devel', 
+                    'libxml2:devel', 
+                    'pkgconfig:devel', 
+                    'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.m17n.org/m17n-lib-download/')
+        r.disableParallelMake()
+
+    def policy(r):
+        r.Requires('m17n-db:data','%(name)s:lib')

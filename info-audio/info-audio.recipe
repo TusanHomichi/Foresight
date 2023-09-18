@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2006 Antonio Meireles
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class info_audio(GroupInfoRecipe):
+    name = 'info-audio'
+    version = '1'
+
+    def setup(r):
+        r.Group('audio', 63)

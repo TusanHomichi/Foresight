@@ -1,0 +1,44 @@
+=== modified file 'CMakeLists.txt'
+--- CMakeLists.txt	2011-02-01 15:58:40 +0000
++++ CMakeLists.txt	2011-02-03 16:34:48 +0000
+@@ -1,6 +1,6 @@
+ project(libindicate_qt)
+ cmake_minimum_required(VERSION 2.6)
+-set(indicate_qt_VERSION 0.2.5)
++set(indicate_qt_VERSION 0.2.5.91)
+ 
+ # Bump this one when a binary-incompatible change is introduced
+ set(indicate_qt_lib_SOVERSION 1)
+@@ -9,7 +9,7 @@
+ set(indicate_qt_lib_API_VERSION 4)
+ 
+ # Bump this one when changes do not extend the API
+-set(indicate_qt_lib_PATCH_VERSION 0)
++set(indicate_qt_lib_PATCH_VERSION 1)
+ set(indicate_qt_lib_VERSION ${indicate_qt_lib_SOVERSION}.${indicate_qt_lib_API_VERSION}.${indicate_qt_lib_PATCH_VERSION})
+ 
+ find_package(Qt4 REQUIRED)
+@@ -43,7 +43,6 @@
+ set(ARCHIVE_NAME libindicate-qt-${indicate_qt_VERSION})
+ add_custom_target(dist
+     COMMAND bzr export --root=${ARCHIVE_NAME} ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+-    COMMAND gpg --armor --sign --detach-sig  ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+ 
+ add_custom_target(distcheck
+
+=== modified file 'NEWS'
+--- NEWS	2010-03-10 09:44:32 +0000
++++ NEWS	2011-02-03 16:34:48 +0000
+@@ -1,3 +1,10 @@
++# 0.2.5.91
++## Improvements
++- Ported to libindicate 0.5. Still experimental: a lot of unit-tests do not
++  pass, but this should be solved with a new version of libindicate (currently at
++  0.4.91).
++- Do not emit signals from within dbus-glib event loop.
++
+ # 0.2.5
+ ## Improvements
+ - Added support for the dbusmenu functions from libindicate.
+

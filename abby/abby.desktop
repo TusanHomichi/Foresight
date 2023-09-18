@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Abby
+Comment=download videos from Youtube and similar video hosting services
+Exec=abby
+Icon=abby
+Terminal=false
+Type=Application
+Categories=GNOME;Audio;Music;Player;AudioVideo;

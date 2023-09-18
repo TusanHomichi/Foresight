@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('cpanpackage.recipe', label='conary.rpath.com@rpl:devel')
+class CryptSSLeay(CPANPackageRecipe):
+    name='perl-Crypt-SSLeay'
+    version='0.51'
+
+    buildRequires = [ 
+        'elfutils:runtime',
+        'gcc:devel',
+        'gcc:runtime',
+        'glibc:devel',
+        'openssl:devel',
+    ]

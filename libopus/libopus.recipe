@@ -1,0 +1,20 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libopus(AutoPackageRecipe):
+    name = 'libopus'
+    version = '1.0.2'
+
+    buildRequires = [
+        'doxygen:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.xiph.org/releases/opus/opus-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--enable-custom-modes')

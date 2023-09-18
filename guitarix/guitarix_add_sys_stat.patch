@@ -1,0 +1,12 @@
+diff -r 2c5aebd55936 src/gx_head/gx_main_interface.cpp
+--- a/src/gx_head/gx_main_interface.cpp	Tue Feb 14 13:02:06 2012 +0100
++++ b/src/gx_head/gx_main_interface.cpp	Tue Feb 14 13:04:31 2012 +0100
+@@ -24,7 +24,7 @@
+ 
+ #include "guitarix.h"         // NOLINT
+ 
+-
++#include <sys/stat.h>
+ #include <gdk/gdkkeysyms.h>   // NOLINT
+ #include <glibmm/i18n.h>      // NOLINT
+ 

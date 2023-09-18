@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jhdf5(CPackageRecipe):
+    name = 'jhdf5'
+    version = '2.7'
+ 
+    buildRequires = ['hdf5:devel']
+ 
+    def setup(r):
+        r.addArchive('http://www.hdfgroup.org/ftp/HDF5/hdf-java/src/hdf-java-%(version)s-src.tar')
+        r.Run('chmod -x $(find native -type f)')
+        r.addPatch('0004-remove-writable-prefix-check.patch')
+        r.addPatch('0007-update-configure.patch')
+        r.addPatch('0002-add-H4_-prefix-to-constants.patch')
+        r.addPatch('0001-add-a-generic-linux-host.patch')
+        r.addPatch('0003-use-system-linker-for-shared-library.patch')
+        r.addPatch('0005-update-config.sub-and-config.guess.patch')
+        r.addPatch('0006-clean-hdfview.sh.patch')
+
+        r.Configure('--with-jdk=%(libdir)s/jvm/java-1.6.0-sun/include,%(libdir)s/jvm/java-1.6.0-sun/lib --without-h4toh5 --with-libz=%(includedir)s,%(libdir)s --with-libjpeg=%(includedir)s,%(libdir)s --with-libjpeg --with-hdf5=%(includedir)s,%(libdir)s')
+        r.Make()
+
+        r.Install('lib/jhdf5.jar', '%(libdir)s/jhdf5/', mode=0644)
+        r.Install('lib/jhdf5obj.jar', '%(libdir)s/jhdf5/', mode=0644)
+        r.Install('lib/jhdfobj.jar', '%(libdir)s/jhdf5/', mode=0644)
+        r.Install('lib/linux/libjhdf5.so', '%(libdir)s/jhdf5', mode=744)
+        #r.Install('lib/jhdfview.jar', '%(libdir)s/jhdf5/', mode=0644)
+

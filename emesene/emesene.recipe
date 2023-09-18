@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+import datetime
+loadRecipe("python=@fl:2-devel")
+class Emesene(PackageRecipe):
+
+    name = 'emesene'
+    version = '2.12.5' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [
+        'dbus-python:python', 
+        'desktop-file-utils:runtime', 
+        'farsight2:python', 
+        'gnome-python-extras:python', 
+        'gnome-python:python', 
+        'gst-python:python', 
+        'notify-python:python', 
+        'papyon:python', 
+        'pycairo:python', 
+        'pygobject:python', 
+        'pygtk:python', 
+        'python:devel', 
+        'pywebkitgtk:python', 
+        'python-simplejson:python',
+        'PyQt4:python', 
+        'dnspython:python',
+            ]
+
+    def setup(r):
+	r.addGitSnapshot("http://github.com/emesene/emesene.git")
+	r.PythonSetup(data='--install-data=/usr')
+        r.macros.sitepkgs = Python.sitepkgs
+
+        r.Symlink("%(sitepkgs)s/emesene/emesene","%(bindir)s/emesene")
+        r.Requires("xmpppy:python","emesene:python")

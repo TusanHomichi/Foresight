@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class T4k_common(AutoPackageRecipe):
+    name = 't4k_common'
+    version = '0.1.1'
+ 
+    buildRequires = ['SDL:devel', 'SDL_Pango:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'SDL_net:devel', 'cairo:devel', 'doxygen:runtime', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'graphviz:runtime', 'intltool:runtime', 'libogg:devel', 'libpng:devel', 'librsvg:devel', 'libstdc++:devel', 'libvorbis:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'tetex:runtime']
+ 
+    def unpack(r):
+        r.addArchive('https://alioth.debian.org/frs/download.php/3540/')

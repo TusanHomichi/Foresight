@@ -1,0 +1,7 @@
+class DjangoJsonRPC(PackageRecipe):
+    name = 'django-json-rpc'
+    version = '0.6.1'
+    buildRequires = ['python:devel', 'django:python', 'python-simplejson:python']
+    def setup(r):
+        r.addArchive('https://github.com/downloads/samuraisam/django-json-rpc/')
+        r.PythonSetup()

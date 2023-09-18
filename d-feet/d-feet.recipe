@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class DFeet(PackageRecipe):
+
+      name = 'd-feet'
+      version = '0.1.12'
+
+      buildRequires = ['dbus-python:python', 'gnome-python-desktop:python',
+                       'pygobject:python', 'pygtk:python', 'python:devel',
+                       'python-setuptools:python', 'desktop-file-utils:runtime']
+
+      def setup(r):
+            r.macros.majversion = '.'.join(r.version.split('.')[0:2])
+            r.addArchive('mirror://gnome/%(name)s/%(majversion)s/')
+
+            r.Run('python setup.py install --root=%(destdir)s')
+
+            r.macros.pyver = Python.majversion
+            r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+
+            if Arch.x86_64:
+                  r.Move('/usr/lib/python%(pyver)s/site-packages/*', '%(libdir)s/python%(pyver)s/site-packages/')

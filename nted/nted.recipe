@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nted(AutoPackageRecipe):
+    name = 'nted'
+    version = '1.10.18'
+    packageSummary = "Musical score editor"
+    packageDescription = "A WYSIWYG Music Notation program with an aim toward user friendliness."
+ 
+    buildRequires = [
+        'alsa-lib:devel',
+        'atk:devel',
+        'cairo:devel',
+        'desktop-file-utils:runtime',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gdk-pixbuf:runtime',
+        'gettext:runtime',
+        'glib:devel',
+        'gtk:devel',
+        'intltool:runtime',
+        'libX11:devel',
+        'libstdc++:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        'xmlto:runtime',
+        'yelp:runtime',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://vsr.informatik.tu-chemnitz.de/staff/jan/nted/sources/')

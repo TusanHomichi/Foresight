@@ -1,0 +1,12 @@
+class Prozilla(AutoPackageRecipe):
+    name="prozilla"
+    version="2.0.4"
+    buildRequires=[ 'gettext:runtime', 'intltool:runtime', 'libstdc++:devel', 'ncurses:devel' ]
+    def unpack(r):
+        r.addArchive('http://prozilla.genesys.ro/downloads/prozilla/tarballs/')
+        r.Replace('void\ DL_Window::print_status\(download_t\ \*\ download,\ int\ quiet_mode\)\;', 'void print_status(download_t * download, int quiet_mode);', 'src/download_win.h')
+
+
+    def policy(r):
+        r.Remove('%(libdir)s/libprozilla.a')
+        r.Remove('%(datadir)s/locale/locale.alias')

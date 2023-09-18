@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jdownloader(PackageRecipe):
+    name = 'jdownloader'
+    version = '14'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addSource('http://212.117.163.148/jd.sh')
+        r.Install('jd.sh','%(bindir)s/jdownloader')
+        r.addSource('http://aur.archlinux.org/packages/jdownloader/jdownloader/jdownloader.install')
+        r.addSource('http://aur.archlinux.org/packages/jdownloader/jdownloader/jdownloader.desktop')
+        r.Install('jdownloader.install','%(datadir)s/pixmaps/')
+        r.Install('jdownloader.desktop','%(datadir)s/applications/')
+        r.Install('jd.sh','%(bindir)s/jdownloader')
+        r.SetModes('%(bindir)s/jdownloader',02755)
+

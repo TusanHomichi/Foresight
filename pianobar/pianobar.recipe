@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2010 Adam Chasen (adam@chasen.name)
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pianobar(CPackageRecipe):
+    name = 'pianobar'
+    version = '2013.05.19'
+
+    buildRequires = ['faad2:devel', 'libao:devel', 'libmad:devel',
+                     'unzip:runtime', 'gnutls:devel', 'pkgconfig:devel',
+                     'json-c:devel' ]
+    def setup(r):
+        upver = r.macros.version.replace('_', '-')
+        #r.addGitSnapshot('http://github.com/PromyLOPh/pianobar.git',
+        #                 tag=upver)
+        # Missing digest algo 8 CNY-3728
+        #r.addArchive('http://6xq.net/projects/pianobar/', keyid=08D8092A)
+        r.addArchive('http://6xq.net/projects/pianobar/')
+        r.macros.cflags += ' -std=gnu99'
+        r.Make()
+        r.MakeInstall()
+        r.Move('/usr/local/*', '/usr/')

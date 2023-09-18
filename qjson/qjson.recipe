@@ -1,0 +1,19 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Qjson(CMakePackageRecipe):
+
+    name = 'qjson'
+    version = '0.7.1'
+
+    buildRequires = [
+        'libstdc++:devel', 'qt4:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/qjson/qjson/%(version)s/')
+

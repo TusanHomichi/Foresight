@@ -1,0 +1,33 @@
+diff -rupN irrlicht--trunk/source/Irrlicht/Makefile irrlicht--trunk.new/source/Irrlicht/Makefile
+--- irrlicht--trunk/source/Irrlicht/Makefile	2011-02-03 03:53:31.000000000 +0100
++++ irrlicht--trunk.new/source/Irrlicht/Makefile	2011-04-22 14:16:43.966121998 +0200
+@@ -80,10 +80,10 @@ endif
+ staticlib sharedlib install: SYSTEM = Linux
+ STATIC_LIB = libIrrlicht.a
+ LIB_PATH = ../../lib/$(SYSTEM)
+-INSTALL_DIR = /usr/local/lib
++INSTALL_DIR = /usr/lib$(LIBSELECT)
+ sharedlib install: SHARED_LIB = libIrrlicht.so
+ staticlib sharedlib: LDFLAGS += --no-export-all-symbols --add-stdcall-alias
+-sharedlib: LDFLAGS += -L/usr/X11R6/lib$(LIBSELECT) -lGL -lXxf86vm
++sharedlib: LDFLAGS += -L/usr/lib$(LIBSELECT)/xorg.mesa.3d -L/usr/X11R6/lib$(LIBSELECT) -lGL -lXxf86vm
+ staticlib sharedlib: CXXINCS += -I/usr/X11R6/include
+ 
+ #OSX specific options
+@@ -138,11 +138,11 @@ sharedlib_osx: $(LINKOBJ)
+ 
+ # Installs Irrlicht if it was created as shared lib
+ install install_osx:
+-	$(RM) -r $(INSTALL_DIR)/../include/irrlicht
+-	mkdir -p $(INSTALL_DIR)/../include/irrlicht
+-	cp ../../include/*.h $(INSTALL_DIR)/../include/irrlicht/
+-	cp $(LIB_PATH)/$(SHARED_LIB).$(VERSION) $(INSTALL_DIR)
+-	cd $(INSTALL_DIR) && ln -s -f $(SHARED_LIB).$(VERSION) $(COMPATIBILITY_VERSION)
++	$(RM) -r $(DESTDIR)$(INSTALL_DIR)/../include/irrlicht
++	mkdir -p $(DESTDIR)$(INSTALL_DIR)/../include/irrlicht
++	cp ../../include/*.h $(DESTDIR)$(INSTALL_DIR)/../include/irrlicht/
++	cp $(LIB_PATH)/$(SHARED_LIB).$(VERSION) $(DESTDIR)$(INSTALL_DIR)
++	cd $(DESTDIR)$(INSTALL_DIR) && ln -s -f $(SHARED_LIB).$(VERSION) $(COMPATIBILITY_VERSION)
+ 
+ #	ldconfig -n $(INSTALL_DIR)
+ 

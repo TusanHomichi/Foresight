@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AdnsPython(CPackageRecipe):
+    name = 'adns-python'
+    version = '1.2.1'
+
+    buildRequires = ['python:devel', 'adns:devel',
+                     'glibc:devel', 'python-setuptools:python']
+
+    def setup(r):
+        r.addArchive('http://%(name)s.googlecode.com/files/')
+        r.PythonSetup()

@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Metakit(CPackageRecipe):
+    name = 'metakit'
+    version = '2.4.9.5'
+
+    buildRequires = [ 'libstdc++:devel' ]
+
+    def setup(r):
+	r.addArchive('http://www.equi4.com/pub/mk/%(name)s-%(version)s.tar.gz')
+
+        r.Replace('lib/python2.4', '%(lib)s/python2.4', 'unix/configure',
+                  allowNoChange=True)
+        r.Configure('--with-python=%(prefix)s/', subDir = 'unix', objDir = 'builds')
+        r.Make(subDir = 'unix/builds')
+
+        r.MakeDirs('%(libdir)s/python2.4/site-packages/')
+        r.MakeInstall(subDir = 'unix/builds')
+
+        r.Remove('builds/', recursive = True)
+        r.Move('unix/builds', 'builds')
+
+        r.Run('PYTHONPATH=%(destdir)s/%(libdir)s/python2.4/site-packages/ python setup.py build', dir = 'python')
+        r.Run('PYTHONPATH=%(destdir)s/%(libdir)s/python2.4/site-packages/ python setup.py install --root=%(destdir)s', dir = 'python')

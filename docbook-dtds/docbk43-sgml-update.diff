@@ -1,0 +1,159 @@
+diff -ruN 4.3/catalog.xml docbk43/catalog.xml
+--- 4.3/catalog.xml	2005-09-18 16:21:01.000000000 -0500
++++ docbk43/catalog.xml	2005-09-18 15:52:52.000000000 -0500
+@@ -22,7 +22,7 @@
+ <!-- ...................................................................... -->
+ <!-- DocBook driver file .................................................. -->
+ 
+-<public publicId="-//OASIS//DTD DocBook XML V4.3//EN"
++<public publicId="-//OASIS//DTD DocBook V4.3//EN"
+         uri="docbookx.dtd"/>
+ 
+ <!-- ...................................................................... -->
+@@ -49,66 +49,6 @@
+ <public publicId="-//OASIS//ENTITIES DocBook Character Entities V4.3//EN"
+         uri="dbcentx.mod"/>
+ 
+-<!-- ...................................................................... -->
+-<!-- ISO entity sets ...................................................... -->
+-
+-<public publicId="ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+-        uri="ent/iso-dia.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+-        uri="ent/iso-num.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Publishing//EN//XML"
+-        uri="ent/iso-pub.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES General Technical//EN//XML"
+-        uri="ent/iso-tech.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+-        uri="ent/iso-lat1.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Latin 2//EN//XML"
+-        uri="ent/iso-lat2.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Greek Letters//EN//XML"
+-        uri="ent/iso-grk1.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Monotoniko Greek//EN//XML"
+-        uri="ent/iso-grk2.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Greek Symbols//EN//XML"
+-        uri="ent/iso-grk3.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN//XML"
+-        uri="ent/iso-grk4.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN//XML"
+-        uri="ent/iso-amsa.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN//XML"
+-        uri="ent/iso-amsb.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN//XML"
+-        uri="ent/iso-amsc.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN//XML"
+-        uri="ent/iso-amsn.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN//XML"
+-        uri="ent/iso-amso.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN//XML"
+-        uri="ent/iso-amsr.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Box and Line Drawing//EN//XML"
+-        uri="ent/iso-box.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Russian Cyrillic//EN//XML"
+-        uri="ent/iso-cyr1.ent"/>
+-
+-<public publicId="ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN//XML"
+-        uri="ent/iso-cyr2.ent"/>
+-
+ <!-- End of catalog data for DocBook XML V4.3 ............................. -->
+ <!-- ...................................................................... -->
+ 
+diff -ruN 4.3/docbook.cat docbk43/docbook.cat
+--- 4.3/docbook.cat	2005-09-18 16:21:01.000000000 -0500
++++ docbk43/docbook.cat	2005-09-18 16:22:09.000000000 -0500
+@@ -17,6 +17,10 @@
+   --
+ 
+   -- ...................................................................... --
++  -- Prefer PUBID to SYSID ................................................ --
++OVERRIDE YES
++
++  -- ...................................................................... --
+   -- DocBook driver file .................................................. --
+ 
+ PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
+@@ -49,65 +53,5 @@
+ PUBLIC "-//OASIS//ENTITIES DocBook Character Entities V4.3//EN"
+        "dbcentx.mod"
+ 
+-  -- ...................................................................... --
+-  -- ISO entity sets ...................................................... --
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Diacritical Marks//EN"
+-       "iso-dia.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN"
+-       "iso-num.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN"
+-       "iso-pub.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES General Technical//EN"
+-       "iso-tech.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN"
+-       "iso-lat1.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Latin 2//EN"
+-       "iso-lat2.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Greek Letters//EN"
+-       "iso-grk1.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Monotoniko Greek//EN"
+-       "iso-grk2.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Greek Symbols//EN"
+-       "iso-grk3.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN"
+-       "iso-grk4.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN"
+-       "iso-amsa.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN"
+-       "iso-amsb.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN"
+-       "iso-amsc.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN"
+-       "iso-amsn.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN"
+-       "iso-amso.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN"
+-       "iso-amsr.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Box and Line Drawing//EN"
+-       "iso-box.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Russian Cyrillic//EN"
+-       "iso-cyr1.gml"
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN"
+-       "iso-cyr2.gml"
+-
+   -- End of catalog data for DocBook V4.3 ................................. --
+   -- ...................................................................... --

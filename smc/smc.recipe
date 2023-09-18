@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Smc(AutoPackageRecipe):
+    name = 'smc'
+    version = '1.9'
+
+    packageSummary = 'Secret Maryo Chronicles is an Open Source two-dimensional platform game'
+    packageDescription = 'Secret Maryo Chronicles is an Open Source two-dimensional platform game with a design similar to classic computer games. SMC has computer support to a great degree by using an accelerated Open Graphics Library for the best possible graphic design and stock performance.'
+
+    buildRequires = ['CEGUI:devel', 'Mesa:devel',
+        'SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'SDL_ttf:devel',
+        'boost:devel', 'desktop-file-utils:runtime', 'libpng:devel',
+        'libstdc++:devel', 'pkgconfig:devel', 'unzip:runtime',
+        'zlib:devel', 'gettext:runtime', 'libX11:devel']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/smclone/')
+        r.addArchive('mirror://sourceforge/smclone/SMC_music_4.0_high.zip')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+        r.Symlink('%(datadir)s/smc/pixmaps/game/items/mushroom_red.png', '%(datadir)s/pixmaps/smc.png')
+        r.addSource('smc.desktop')
+        r.Desktopfile('smc.desktop')
+
+        r.Requires('CEGUI:devellib', '%(bindir)s/smc')
+
+    def policy(r): 
+        r.Install('../data/music', '%(datadir)s/smc/')
+

@@ -1,0 +1,7 @@
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2-devel')
+class libintlperl(CPANPackageRecipe):
+    name = 'perl-libintl-perl'
+    version = '1.20'
+    author = 'GUIDO'
+    server = 'http://search.cpan.org/CPAN/'
+    buildRequires = ['gettext:runtime', 'glibc:devel', 'intltool:runtime', 'perl:devel']

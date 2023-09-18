@@ -1,0 +1,28 @@
+diff --git a/gui/simple-greeter/gdm-greeter-login-window.ui b/gui/simple-greeter/gdm-greeter-login-window.ui
+index 48c6762..973516c 100644
+--- a/gui/simple-greeter/gdm-greeter-login-window.ui
++++ b/gui/simple-greeter/gdm-greeter-login-window.ui
+@@ -20,8 +20,8 @@
+                     <child>
+                       <object class="GtkImage" id="logo-image">
+                         <property name="visible">True</property>
+-                        <property name="pixel_size">64</property>
+-                        <property name="icon_name">computer</property>
++                        <property name="pixel_size">128</property>
++                        <property name="icon_name">distro-logo</property>
+                       </object>
+                     </child>
+                   </object>
+diff --git a/gui/simple-greeter/gdm-simple-greeter.schemas.in b/gui/simple-greeter/gdm-simple-greeter.schemas.in
+index b69335d..bad83ea 100644
+--- a/gui/simple-greeter/gdm-simple-greeter.schemas.in
++++ b/gui/simple-greeter/gdm-simple-greeter.schemas.in
+@@ -38,7 +38,7 @@
+       <applyto>/apps/gdm/simple-greeter/logo_icon_name</applyto>
+       <owner>gdm-simple-greeter</owner>
+       <type>string</type>
+-      <default>computer</default>
++      <default>distro-logo</default>
+       <locale name="C">
+         <short>Icon name to use for greeter logo</short>
+         <long>Set to the themed icon name to use for the greeter logo.</long>

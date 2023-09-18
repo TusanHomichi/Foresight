@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class Pysvn(CPackageRecipe, Python.VersionMixIn):
+
+    name = 'pysvn'
+    version = '1.7.6'
+
+    buildRequires = ['python:bin', 'python-setuptools:python', 'subversion:runtime',
+                     'subversion:devel', 'apr:devel', 'apr-util:devel', 'python:devel',
+                     'gcc-c++:runtime', 'neon:lib', 'neon:devel']
+
+    def setup(r):
+        r.setDefaultPython()
+        r.macros.sitepkgs = '%s/%%(name)s' % Python.sitepkgs
+        r.addArchive('http://pysvn.barrys-emacs.org/source_kits/')
+        r.mainDir('%(name)s-%(version)s/Source/')
+        r.Run('python setup.py configure --enable-debug --verbose --fixed-module-name --norpath')
+        r.Replace('-Wall -fPIC -fexceptions -frtti', '%(cflags)s -fPIC -frtti', 'Makefile')
+        r.Make()
+        r.Install('pysvn/__init__.py',
+            '%(sitepkgs)s/')
+        r.Install('pysvn/_pysvn.so',
+            '%(sitepkgs)s/')

@@ -1,0 +1,17 @@
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class DigestMD5(CPANPackageRecipe):
+    name='perl-Digest-MD5'
+    version='2.39'
+
+    #In your recipe if you get an IO error, you may need to discover one or
+    #both of the following
+    #author='CPANAUTHORNAME'
+    #upstreamname=''
+ 
+    buildRequires = ['gcc:devel', 'gcc:runtime', 'glibc:devel', 'perl:devel']
+
+
+    def post(r):
+        # already in perl:devel
+        r.Remove('%(datadir)s/man/man3/Digest::MD5.3pm')

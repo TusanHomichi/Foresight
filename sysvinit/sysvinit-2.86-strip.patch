@@ -1,0 +1,30 @@
+--- sysvinit-2.84/src/Makefile.strip	2002-12-02 14:29:36.000000000 -0500
++++ sysvinit-2.84/src/Makefile	2002-12-02 14:33:37.000000000 -0500
+@@ -10,7 +10,7 @@
+ 
+ CC	= gcc
+ CFLAGS	= -Wall -O2 -fomit-frame-pointer -D_GNU_SOURCE
+-LDFLAGS	= -s
++LDFLAGS	=
+ STATIC	=
+ 
+ # For some known distributions we do not build all programs, otherwise we do.
+@@ -49,10 +49,7 @@
+ INSTALL		= install -o $(BIN_OWNER) -g $(BIN_GROUP)
+ MANDIR		= /usr/share/man
+ 
+-# Additional libs for GNU libc.
+-ifneq ($(wildcard /usr/lib/libcrypt.a),)
+ LCRYPT		= -lcrypt
+-endif
+ 
+ all:		$(BIN) $(SBIN) $(USRBIN)
+ 
+@@ -127,7 +124,6 @@
+ 		if [ ! -f $(ROOT)/usr/bin/lastb ]; then \
+ 			ln -sf last $(ROOT)/usr/bin/lastb; \
+ 		fi
+-		$(INSTALL) -m 644 initreq.h $(ROOT)/usr/include/
+ 		for i in $(MAN1); do \
+ 			$(INSTALL) -m 644 ../man/$$i $(ROOT)$(MANDIR)/man1/; \
+ 		done

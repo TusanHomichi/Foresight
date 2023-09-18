@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ufraw(AutoPackageRecipe):
+    name = 'ufraw'
+    version = '0.18'
+
+    buildRequires = ['atk:devel', 'bzip2:devel', 'cairo:devel',
+                     'desktop-file-utils:runtime', 'exiv2:devel',
+                     'expat:devel', 'fontconfig:devel', 'freetype:devel',
+                     'gettext:runtime', 'gimp:devel', 'glib:devel',
+                     'gtk:devel', 'gtkimageview:devel', 'intltool:runtime',
+		     'lcms:devel', 'lensfun:devel',
+                     'libgomp:devellib', 'libjpeg:devel',
+		     'libpng:devel', 'libstdc++:devel', 'libtiff:devel',
+		     'libX11:devel', 'libxcb:devel', 'libXrender:devel',
+		     'pango:devel', 'perl:runtime', 'pixman:devel',
+		     'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel',
+		     'shared-mime-info:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/ufraw/')
+
+    def configure(r):
+        r.Configure(' --enable-extras --enable-contrast --with-lensfun  --with-exiv2 --with-libexif --enable-mime')
+
+    def policy(r):
+        r.Install('ufraw-mime.xml', '%(datadir)s/mime/packages/', mode = 0644)

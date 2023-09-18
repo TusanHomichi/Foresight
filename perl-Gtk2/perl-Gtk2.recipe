@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PerlGtk2(AutoPackageRecipe):
+    name = 'perl-Gtk2'
+    version = '1.221'
+    tarname = 'Gtk2'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 
+'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 
+'libpng:devel', 'pango:devel', 'perl-Cairo:perl', 'perl-Glib:perl', 'perl:devel', 'perl:lib', 
+'perl:runtime','perl-ExtUtils-Depends:perl', 'perl-ExtUtils-PkgConfig', 'perl-Pango:perl', 'pkgconfig:devel', 'zlib:devel']
+
+    def setup(r):
+        r.macros.tarname = r.tarname
+        r.mainDir('%(tarname)s-%(version)s')
+        r.addArchive('mirror://sourceforge/gtk2-perl/%(tarname)s-%(version)s.tar.gz')
+        r.Run('CFLAGS="%(cflags)s" perl Makefile.PL '
+              ' PREFIX=%(prefix)s INSTALLDIRS=vendor < /dev/null')
+        r.Make()
+        r.MakeInstall('BINDIR=%(destdir)s%(bindir)s'
+                      ' PERL5DIR=%(destdir)s%(libdir)s/perl5/vendor_perl/')
+

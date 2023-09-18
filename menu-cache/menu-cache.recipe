@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MenuCache(AutoPackageRecipe):
+    name = 'menu-cache'
+    version = '0.4.1'
+ 
+    buildRequires = [
+        'glib:devel', 
+        'pkgconfig:devel', 
+        'gtk-doc:runtime',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/lxde/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--disable-static')
+        # Get rid of undesirable hardcoded runpaths
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'libtool')

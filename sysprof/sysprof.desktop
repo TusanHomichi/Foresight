@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Sysprof
+Comment=a sampling CPU profiler
+Exec=gksudo sysprof
+Icon=sysprof-icon
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Development;Profiling;

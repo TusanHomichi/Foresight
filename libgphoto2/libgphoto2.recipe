@@ -1,0 +1,85 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class LibGphoto2(RPMPackageRecipe,CPackageRecipe):
+    name = 'libgphoto2'
+    version = '2.4.10'
+    rpmRelease = '2.fc14'
+
+    rpmPatches = [  'gphoto2-pkgcfg.patch',
+                    'gphoto2-storage.patch',
+                    'gphoto2-ixany.patch',
+                    'gphoto2-maxentries.patch',
+                    'gphoto2-device-return.patch',
+                    'gphoto2-badcode.patch']
+
+    buildRequires = [   'gtk:devel', 
+                        'findutils:runtime', 
+                        'flex:runtime',
+                        'libexif:devel', 
+                        'libusb:devel', 
+                        'bison:runtime',
+                        'lockdev:devel', 
+                        'libjpeg:devel', 
+                        'swig:runtime',
+                        'pkgconfig:devel', 
+                        'libtool:runtime', 
+                        'libtool:devel',
+                        'gettext:runtime', 
+                        'libexif:devel', 
+                        'doxygen:runtime',
+                        'dbus:devel', 
+                        'hal:devel', 
+                        'graphviz:runtime', 
+                        'popt:devel',
+                        'readline:devel', 
+                        'gd:devel', 
+                        'rpm:runtime',
+                        'intltool:runtime'
+                            ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+
+        r.Create('gphoto2-%(version)s/gphoto2.pc.in', contents = """
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+VERSION=@VERSION@
+
+Name: gphoto2
+Description: Library for easy access to digital cameras
+Requires:
+Version: @VERSION@
+Libs: -L%(libdir)s -lgphoto2 -lgphoto2_port -lm
+Cflags: -I%(includedir)s -I%(includedir)s/gphoto2
+""")
+
+        # Not needed anymore
+        # r.Run(""" sed -i 's/\(AC_SUBST([^,]*\)}/\1/' {m4m,libgphoto2_port/m4}/gp-documentation.m4; sed -i 's/\(m4_pattern_\)disallow/\1forbid/g' {m4m,libgphoto2_port/m4}/gp-check-library.m4; autoreconf -fi""")
+
+        r.Configure(" --with-drivers=all  --with-doc-dir=%(docdir)s/%(name)s  --disable-static --disable-rpath")
+
+
+        # Don't use rpath
+        r.Run(""" sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool; sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool; sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libgphoto2_port/libtool; sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libgphoto2_port/libtool """)
+        r.Make()
+
+        r.MakeInstall()
+
+
+        r.MakeDirs('%(datadir)s/hal/fdi/information/20thirdparty')
+        r.Run("""
+export LIBDIR=%(destdir)s/%(libdir)s
+export CAMLIBS=%(destdir)s/%(libdir)s/%(name)s/%(version)s
+export LD_LIBRARY_PATH=%(destdir)s/%(libdir)s
+%(destdir)s/%(libdir)s/%(name)s/print-camera-list hal-fdi | \
+grep -v "<!-- This file was generated" > %(destdir)s/%(datadir)s/hal/fdi/information/20thirdparty/10-camera-libgphoto2.fdi
+""")
+
+

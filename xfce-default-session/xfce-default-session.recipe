@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class xfceDefaultSession(PackageRecipe):
+    name = 'xfce-default-session'
+    version = '0.2'
+
+    def setup(r):
+        r.addSource('dmrc', dest='%(sysconfdir)s/skel/.dmrc', mode = 0644)

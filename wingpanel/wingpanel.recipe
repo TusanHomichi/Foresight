@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Wingpanel(PackageRecipe):
+    name = 'wingpanel'
+    version = '0.0.1'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addBzrSnapshot("lp:wingpanel")
+        r.Configure(configureName="waf configure ")
+        r.Run("./waf install --destdir=%(destdir)s")

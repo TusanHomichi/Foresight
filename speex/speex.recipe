@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Speex(AutoPackageRecipe):
+    name = 'speex'
+    version = '1.2rc1'
+
+    buildRequires = [ 'libogg:devel' ]
+
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive('http://downloads.us.xiph.org/releases/speex/')
+    def policy(r):
+        r.Doc('doc/manual.pdf')

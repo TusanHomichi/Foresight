@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Boo(AutoPackageRecipe):
+    name = 'boo'
+    version = '0.9.1.3287'
+ 
+    buildRequires = ['mono:cil', 'mono:devel', 'mono:runtime', 
+        'pkgconfig:devel', 'shared-mime-info:config']
+ 
+    def unpack(r):
+        r.addArchive('http://dist.codehaus.org/boo/distributions/')
+        # replace: prefix/lib -> libdir;
+        # fix libdir in boo.pc: libdir=@libdir@/mono
+        r.addPatch('libdir.patch')

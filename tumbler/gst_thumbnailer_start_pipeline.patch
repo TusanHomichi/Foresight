@@ -1,0 +1,25 @@
+From 93ffbc88965dd6c5eaa1aa8589efea5579b44d2a Mon Sep 17 00:00:00 2001
+From: Sam Thursfield <sam.thursfield@codethink.co.uk>
+Date: Mon, 26 Sep 2011 17:58:10 +0100
+Subject: [PATCH 2/2] gst-thumbnailer: Start pipeline so thumbnail is actually generated
+
+---
+ plugins/gst-thumbnailer/gst-helper.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/plugins/gst-thumbnailer/gst-helper.c b/plugins/gst-thumbnailer/gst-helper.c
+index 53e0b91..a7e4dc1 100644
+--- a/plugins/gst-thumbnailer/gst-helper.c
++++ b/plugins/gst-thumbnailer/gst-helper.c
+@@ -154,6 +154,8 @@ gst_helper_convert_buffer_to_pixbuf (GstBuffer    *buffer,
+ 
+   bus = gst_element_get_bus (GST_ELEMENT (pipeline));
+ 
++  gst_element_set_state (GST_ELEMENT (pipeline), GST_STATE_PLAYING);
++
+   i = 0;
+   msg = NULL;
+   while (msg == NULL && i < 5)
+-- 
+1.7.4.1
+

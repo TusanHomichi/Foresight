@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OBexD(AutoPackageRecipe):
+    name = 'obexd'
+    version = '0.15'
+    buildRequires = ['bluez:devel', 'pkgconfig:devel', 
+                     'dbus:devel', 'glib:devel', 'openobex:devel']
+
+    def unpack(r):
+        r.addArchive('http://www.kernel.org/pub/linux/bluetooth/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--disable-server')

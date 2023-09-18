@@ -1,0 +1,209 @@
+diff -up noip-2.1.9/Makefile.orig noip-2.1.9/Makefile
+--- noip-2.1.9/Makefile.orig	2008-11-22 00:27:15.000000000 +0200
++++ noip-2.1.9/Makefile	2009-03-14 01:56:38.000000000 +0200
+@@ -3,8 +3,8 @@ CC=gcc
+ PKG=noip-2.1.tgz
+ 
+ PREFIX=/usr/local
+-CONFDIR=${PREFIX}/etc
+-BINDIR=${PREFIX}/bin
++CONFDIR=@SYSCONFDIR@
++BINDIR=@SBINDIR@
+ 
+ # these defines are for Linux
+ LIBS=
+@@ -22,7 +22,7 @@ ARCH=linux
+ # ARCH=sun
+ 
+ ${TGT}: Makefile ${TGT}.c 
+-	${CC} -Wall -g -D${ARCH} -DPREFIX=\"${PREFIX}\" ${TGT}.c -o ${TGT} ${LIBS}
++	${CC} @OPTFLAGS@ -D${ARCH} -DPREFIX=\"${PREFIX}\" ${TGT}.c -o ${TGT} ${LIBS}
+ 
+ install: ${TGT} 
+ 	if [ ! -d ${BINDIR} ]; then mkdir -p ${BINDIR};fi
+diff -up noip-2.1.9/noip2.c.orig noip-2.1.9/noip2.c
+--- noip-2.1.9/noip2.c.orig	2008-11-22 00:19:54.000000000 +0200
++++ noip-2.1.9/noip2.c	2009-03-14 01:56:38.000000000 +0200
+@@ -232,11 +232,8 @@
+ #define HOST			1
+ #define GROUP			2
+ #define DOMAIN			3
+-#ifndef PREFIX
+-  #define PREFIX		"/usr/local"
+-#endif
+-#define CONFIG_FILEPATH		PREFIX"/etc"
+-#define CONFIG_FILENAME		PREFIX"/etc/no-ip2.conf"
++#define CONFIG_FILEPATH		"/etc"
++#define CONFIG_FILENAME		"/etc/no-ip2.conf"
+ #define CONFSTRLEN		1024
+ #define MAX_DEVLEN		16
+ #define MAX_INSTANCE		4
+diff -up noip-2.1.9/redhat.noip.sh.orig noip-2.1.9/redhat.noip.sh
+--- noip-2.1.9/redhat.noip.sh.orig	2003-07-28 13:47:03.000000000 +0300
++++ noip-2.1.9/redhat.noip.sh	2009-03-14 01:58:24.000000000 +0200
+@@ -1,76 +1,105 @@
+ #!/bin/sh
+ #
+-# chkconfig: 345 99 80
+-# description: Starts and stops the no-ip.com Dynamic dns client daemon
++# noip		This shell script takes care of starting and stopping the noip
++#		client daemon.
+ #
+-# pidfile: /var/run/noipd.pid
+-#
+-# Written by serge@vanginderachter.be and tested on Redhat 8
+-# ... and debugged by Uwe Dippel
+-# 29-03-2003
+-#
+-# Source function library.
+-if [ -f /etc/init.d/functions ] ; then
+-  . /etc/init.d/functions
+-elif [ -f /etc/rc.d/init.d/functions ] ; then
+-  . /etc/rc.d/init.d/functions
+-else
+-  exit 0
+-fi
+-
+-# Avoid using root's TMPDIR
+-unset TMPDIR
++# chkconfig:   - 20 80
++# description: Starts and stops the noip client daemon.
+ 
+-# Source networking configuration.
+-. /etc/sysconfig/network
++### BEGIN INIT INFO
++# Provides: 
++# Required-Start:  $network
++# Required-Stop: 
++# Should-Start: 
++# Should-Stop: 
++# Default-Start: 
++# Default-Stop: 
++# Short-Description: 
++# Description:      
++### END INIT INFO
+ 
+-# Check that networking is up.
+-[ ${NETWORKING} = "no" ] && exit 0
++# Source function library.
++. /etc/rc.d/init.d/functions
+ 
+-RETVAL=0
++exec="/usr/sbin/noip2"
++prog="noip2"
++config="/etc/no-ip2.conf"
++
++lockfile=/var/lock/subsys/$prog
+ 
+ start() {
+-	if [ -f /var/run/noipd.pid ] ; then
+-		echo "no-ip client daemon already started" && exit 0
+-	fi
+-	echo -n $"Starting no-ip client daemon: "
+-	daemon /usr/local/bin/noip2
+-	echo
+-	RETVAL=$?
+-	/sbin/pidof noip2 > /var/run/noipd.pid
+-}	
++    [ -x $exec ] || exit 5
++    [ -f $config ] || exit 6
++    # Check ownership of config file
++    chown noip: $config
++    echo -n $"Starting $prog: "
++    daemon --user noip /usr/sbin/noip2
++    retval=$?
++    echo
++    [ $retval -eq 0 ] && touch $lockfile
++    return $retval
++}
+ 
+ stop() {
+-	if [ -f /var/run/noipd.pid ] ; then
+-		echo -n $"Stopping no-ip client daemon: "
+-		killproc noip2 -TERM
+-		echo
+-		RETVAL=$?
+-		rm -f /var/run/noipd.pid
+-	else
+-		echo "no-ip client daemon is not running" && exit 0
+-	fi
+-	return $RETVAL
+-}	
++    echo -n $"Stopping $prog: "
++    killproc noip2 -TERM
++    retval=$?
++    echo
++    [ $retval -eq 0 ] && rm -f $lockfile
++    return $retval
++}
+ 
+ restart() {
+-	stop
+-	start
+-}	
++    stop
++    start
++}
++
++reload() {
++    restart
++}
++
++force_reload() {
++    restart
++}
++
++rh_status() {
++    # run checks to determine if the service is running or use generic status
++    status $prog
++}
++
++rh_status_q() {
++    rh_status >/dev/null 2>&1
++}
++
+ 
+ case "$1" in
+-  start)
+-  	start
+-	;;
+-  stop)
+-  	stop
+-	;;
+-  restart)
+-  	restart
+-	;;
+-  *)
+-	echo $"Usage: $0 {start|stop|restart}"
+-	exit 1
++    start)
++        rh_status_q && exit 0
++        $1
++        ;;
++    stop)
++        rh_status_q || exit 0
++        $1
++        ;;
++    restart)
++        $1
++        ;;
++    reload)
++        rh_status_q || exit 7
++        $1
++        ;;
++    force-reload)
++        force_reload
++        ;;
++    status)
++        rh_status
++        ;;
++    condrestart|try-restart)
++        rh_status_q || exit 0
++        restart
++        ;;
++    *)
++        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
++        exit 2
+ esac
+-
+ exit $?

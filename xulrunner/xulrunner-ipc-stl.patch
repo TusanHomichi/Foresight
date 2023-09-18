@@ -1,0 +1,68 @@
+diff -up mozilla-1.9.2/config/system-headers.stl mozilla-1.9.2/config/system-headers
+--- mozilla-1.9.2/config/system-headers.stl	2010-04-28 08:33:14.000000000 -0400
++++ mozilla-1.9.2/config/system-headers	2010-04-28 08:37:42.000000000 -0400
+@@ -212,6 +212,7 @@ dbus/dbus-glib.h
+ dbus/dbus-glib-lowlevel.h
+ ddeml.h
+ Debug.h
++deque
+ dem.h
+ descrip.h
+ Devices.h
+@@ -274,6 +275,7 @@ freetype/tttables.h
+ freetype/t1tables.h
+ fribidi/fribidi.h
+ FSp_fopen.h
++fstream
+ fstream.h
+ ft2build.h
+ fts.h
+@@ -329,6 +331,7 @@ IOKit/pwr_mgt/IOPMLib.h
+ iomanip
+ iostream
+ iostream.h
++iterator
+ jar.h
+ JavaControl.h
+ JavaEmbedding/JavaControl.h
+@@ -612,6 +615,7 @@ pthread.h
+ pwd.h
+ Python.h
+ QDOffscreen.h
++queue
+ Quickdraw.h
+ QuickDraw.h
+ QuickTimeComponents.h
+@@ -646,6 +650,7 @@ security.h
+ secutil.h
+ semaphore.h
+ servprov.h
++set
+ setjmp.h
+ SFNTLayoutTypes.h
+ SFNTTypes.h
+@@ -838,6 +843,7 @@ UReanimator.h
+ URegions.h
+ URegistrar.h
+ UResourceMgr.h
++utility
+ urlhist.h
+ urlmon.h
+ UScrap.h
+diff -up mozilla-1.9.2/config/system_wrappers/fstream.stl mozilla-1.9.2/config/system_wrappers/fstream
+diff -up mozilla-1.9.2/ipc/chromium/Makefile.in.stl mozilla-1.9.2/ipc/chromium/Makefile.in
+--- mozilla-1.9.2/ipc/chromium/Makefile.in.stl	2010-04-13 18:21:42.000000000 -0400
++++ mozilla-1.9.2/ipc/chromium/Makefile.in	2010-04-28 07:55:17.000000000 -0400
+@@ -68,12 +68,6 @@ vpath %.mm \
+   $(srcdir)/src/chrome/common \
+   $(NULL)
+ 
+-# TODO: remove this hack when we switch to GCC 4.3! GCC 4.1
+-# instantiates template declarations in wrapped system headers with
+-# the wrong visibility, which is causing the Linux tinderboxen to die in
+-# std::string internals.
+-VISIBILITY_FLAGS=
+-
+ include $(topsrcdir)/config/config.mk
+ include $(topsrcdir)/ipc/chromium/chromium-config.mk
+ 

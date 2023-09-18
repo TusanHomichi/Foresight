@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Simutrans
+Comment=real-time strategy game
+Exec=/opt/games/simutrans/simutrans
+Icon=/opt/games/simutrans/simutrans.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Game;Action;
+

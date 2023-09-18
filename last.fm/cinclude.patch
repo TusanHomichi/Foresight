@@ -1,0 +1,35 @@
+diff -udr last.fm-1.4.2.58240.orig/src/libFingerprint/fplib/src/FingerprintExtractor.cpp last.fm-1.4.2.58240/src/libFingerprint/fplib/src/FingerprintExtractor.cpp
+--- last.fm-1.4.2.58240.orig/src/libFingerprint/fplib/src/FingerprintExtractor.cpp	2011-02-12 21:32:29.000000000 +0100
++++ last.fm-1.4.2.58240/src/libFingerprint/fplib/src/FingerprintExtractor.cpp	2011-02-12 21:32:35.000000000 +0100
+@@ -24,6 +24,7 @@
+  ***************************************************************************/
+ 
+ 
++#include <string.h>
+ #include <iostream>
+ #include <limits>
+ #include <bitset>
+diff -udr last.fm-1.4.2.58240.orig/src/libFingerprint/fplib/src/OptFFT.cpp last.fm-1.4.2.58240/src/libFingerprint/fplib/src/OptFFT.cpp
+--- last.fm-1.4.2.58240.orig/src/libFingerprint/fplib/src/OptFFT.cpp	2011-02-12 21:32:29.000000000 +0100
++++ last.fm-1.4.2.58240/src/libFingerprint/fplib/src/OptFFT.cpp	2011-02-12 21:32:35.000000000 +0100
+@@ -23,7 +23,7 @@
+  *   See also http://www.cs.cmu.edu/~yke/musicretrieval/                   *
+  ***************************************************************************/
+ 
+-
++#include <stdlib.h>
+ #include "OptFFT.h"
+ #include "fp_helper_fun.h"
+ #include "Filter.h" // for NBANDS
+diff -udr last.fm-1.4.2.58240.orig/src/libFingerprint/MP3_Source_Qt.cpp last.fm-1.4.2.58240/src/libFingerprint/MP3_Source_Qt.cpp
+--- last.fm-1.4.2.58240.orig/src/libFingerprint/MP3_Source_Qt.cpp	2011-02-12 21:32:29.000000000 +0100
++++ last.fm-1.4.2.58240/src/libFingerprint/MP3_Source_Qt.cpp	2011-02-12 21:33:30.000000000 +0100
+@@ -18,6 +18,8 @@
+  *   51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.          *
+  ***************************************************************************/
+ 
++#include <stdlib.h>
++#include <limits.h>
+ #include <iostream>
+ #include <fstream>
+ #include <limits>

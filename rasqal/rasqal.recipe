@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rasqal(AutoPackageRecipe):
+
+    name = 'rasqal'
+    version = '0.9.28'
+
+    buildRequires = [
+        'flex:runtime', 'gmp:devel', 'libxml2:devel', 'm4:runtime',
+        'mpfr:devel', 'pcre:devel', 'perl:runtime', 'pkgconfig:devel',
+        'raptor:devel', 'gtk-doc:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://download.librdf.org/source/')
+

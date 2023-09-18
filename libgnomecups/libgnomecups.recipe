@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Libgnomecups(GnomePackageRecipe):
+    buildRequires = [ 'cups:devel', 'dbus:devel', 'gettext:runtime',
+                      'intltool:runtime', 'glib:devel', 'openssl:devel',
+                      'gnutls:devel', 'libgcrypt:devel', 'libgpg-error:devel',]
+
+    name = 'libgnomecups'
+    version = '0.2.3'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+

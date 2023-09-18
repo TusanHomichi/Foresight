@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2009 Thijs Vermeir <thijsvermeir@gmail.com>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibOil(AutoPackageRecipe):
+
+    name = 'liboil'
+    version = '0.3.16'
+
+    buildRequires = [ 'pkgconfig:devel', 'gtk-doc:runtime']
+
+
+    def unpack(r):
+        r.macros.cflags += ' -fPIC'
+        r.addArchive('http://liboil.freedesktop.org/download/')

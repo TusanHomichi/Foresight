@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MonoBasic(AutoPackageRecipe):
+    name = 'mono-basic'
+    version = '2.8'
+
+    buildRequires = ['mono:devel', 'mono:cil', 'mono:runtime']
+
+    def unpack(r):
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.addArchive('http://ftp.novell.com/pub/mono/sources/mono-basic/')
+
+        r.addPatch('mono-basic.patch', filter = """ sed -e 's!@libdir@!%s!' """ % '%(libdir)s', macros = True)
+        
+        r.Replace('\$\(prefix\)/lib/', '%(libdir)s/', 'build/config-default.make')
+        r.Replace('\$\{exec_prefix\}/lib', '%(libdir)s',  'configure')
+
+    def configure(r):
+        r.ManualConfigure('--prefix=%(prefix)s --libdir=%(libdir)s')
+
+    def make(r):
+        r.Make('libdir=%(libdir)s')
+
+    def makeinstall(r):
+        r.MakeInstall('libdir=%(libdir)s DESTDIR=%(destdir)s')
+
+    def policy(r):
+        r.Create('%(libdir)s/pkgconfig/mono-basic.pc',
+                 mode = 0644,
+                 contents = """
+prefix=%(prefix)s
+exec_prefix=%(prefix)s
+libdir=%(libdir)s
+
+Name: mono-basic
+Description: mono-basic - VB for mono
+Version: 2.0
+Libs: -r:%(libdir)s/mono/2.0/Microsoft.VisualBasic.dll
+""")

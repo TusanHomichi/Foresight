@@ -1,0 +1,33 @@
+Kimono external library should be imported as libkimono
+
+--- a/csharp/kimono/kde/KUrlExtras.cs
++++ b/csharp/kimono/kde/KUrlExtras.cs
+@@ -13,13 +13,13 @@ namespace Kimono {
+ 		public class List : List<KUrl> {
+ 			delegate bool GetNextDictionaryEntryFn(ref IntPtr key, ref IntPtr value);
+ 			
+-			[DllImport("kimono", CharSet=CharSet.Ansi)]
++			[DllImport("libkimono", CharSet=CharSet.Ansi)]
+ 			static extern void KUrlListPopulateMimeData(SmokeMarshallers.NoArgs getNextItem, IntPtr mimeData, GetNextDictionaryEntryFn getNextDictionaryEntry, uint flags);
+-			[DllImport("kimono", CharSet=CharSet.Ansi)]
++			[DllImport("libkimono", CharSet=CharSet.Ansi)]
+ 			static extern void KUrlListMimeDataTypes(SmokeMarshallers.FromIntPtr fn);
+-			[DllImport("kimono", CharSet=CharSet.Ansi)]
++			[DllImport("libkimono", CharSet=CharSet.Ansi)]
+ 			static extern bool KUrlListCanDecode(IntPtr mimeData);
+-			[DllImport("kimono", CharSet=CharSet.Ansi)]
++			[DllImport("libkimono", CharSet=CharSet.Ansi)]
+ 			static extern void KUrlListFromMimeData(SmokeMarshallers.FromIntPtr addfn, IntPtr mimeData, GetNextDictionaryEntryFn getNextDictionaryEntry);
+ 			
+ 			public List() {}
+--- a/csharp/kimono/kde/KPluginFactoryExtras.cs
++++ b/csharp/kimono/kde/KPluginFactoryExtras.cs
+@@ -5,7 +5,7 @@ namespace Kimono {
+ 	using Qyoto;
+ 
+ 	public partial class KPluginFactory : QObject, IDisposable {
+-		[DllImport("kimono", CharSet=CharSet.Ansi)]
++		[DllImport("libkimono", CharSet=CharSet.Ansi)]
+ 		static extern IntPtr KPluginFactory_Create(IntPtr self, string classname, IntPtr parentWidget, IntPtr parent, IntPtr[] args, int numArgs, string keyword);
+ 
+ 		public T Create<T>() where T: class {

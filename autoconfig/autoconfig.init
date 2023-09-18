@@ -1,0 +1,54 @@
+#!/bin/sh
+#
+# autoconfig
+#
+# chkconfig: 345 01 99
+# description: Autoconfig
+#
+# Source function library
+. /etc/init.d/functions
+
+AUTOCONFIGURE=YES
+if [ -f /etc/sysconfig/firstboot ];
+then
+	. /etc/sysconfig/firstboot
+        if [ $RUN_FIRSTBOOT == "NO" ];
+        then
+            echo "AUTOCONFIGURE=NO" > /etc/sysconfig/reconfig
+        fi
+fi
+
+if [ -f /etc/sysconfig/reconfig ];
+then
+	. /etc/sysconfig/reconfig
+fi
+
+RETVAL=0
+
+start() {
+	echo -n $"Running autoconfig: "
+	if [ $AUTOCONFIGURE == "YES" ];
+	then
+            cp /etc/X11/xorg.conf /etc/X11/xorg.conf.backup
+	    /usr/sbin/autoconfig
+	    echo "AUTOCONFIGURE=NO" > /etc/sysconfig/reconfig
+	fi
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/autoconfig
+	return $RETVAL
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+                success
+		;;
+	*)
+		echo $"Usage: $0 {start, stop}"
+		RETVAL=1
+esac
+
+exit $RETVAL

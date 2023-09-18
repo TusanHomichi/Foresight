@@ -1,0 +1,28 @@
+class dvdrip(CPackageRecipe):
+    buildRequires = [ 'perl-IO-Socket-SSL:perl', 'perl:devel', 'perl:runtime', 'ImageMagick:devel',
+                      'hal:devel', 'hal:runtime', 'ffmpeg:devel', 'ffmpeg:runtime', 'ffmpeg:devellib',
+                      'mplayer:runtime', 'transcode:runtime', 'gettext:runtime', 'intltool:runtime',
+                      'perl-Glib:perl', 'perl-Glib:devel', 'perl-Gtk2:perl', 'perl-Gtk2:devel',
+                      'perl-libintl-perl:devel', 'perl-libintl-perl:perl', 'desktop-file-utils:runtime',
+                      'perl-Event:perl', 'perl-Event:devel', 'xine-lib:devellib', 'lsdvd:runtime',
+                      'perl-Net-DNS:perl', ]
+    name = "dvdrip"
+    version = "0.98.11"
+
+    def setup(r):
+        r.addArchive('http://www.exit1.org/%(name)s/dist/')
+        
+        r.Run('PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor')
+        r.MakeInstall()
+	r.addSource('dvdrip.png')
+        r.Install('dvdrip.png', '%(datadir)s/pixmaps/')
+        r.addSource('dvdrip.desktop')
+        r.Desktopfile('dvdrip.desktop', category='AudioVideo')
+        r.Requires('perl-Gtk2:perl', '%(bindir)s/dvdrip')
+        r.Requires('perl-libintl-perl:perl', '%(bindir)s/dvdrip')
+        r.Requires('perl-Glib:perl', '%(bindir)s/dvdrip')
+        r.Requires('transcode:runtime', '%(bindir)s/dvdrip')
+        r.Requires('mplayer:runtime', '%(bindir)s/dvdrip')
+        r.Requires('ffmpeg:runtime', '%(bindir)s/dvdrip')
+        r.Requires('perl-Event:perl', '%(bindir)s/dvdrip')
+        r.Requires('lsdvd:runtime', '%(bindir)s/dvdrip')

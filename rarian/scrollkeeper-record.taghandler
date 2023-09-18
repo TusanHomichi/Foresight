@@ -1,0 +1,56 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+CATALOG=%(sysconfdir)s/xml/catalog
+
+case $type in 
+    files)
+	case $action in
+	    update|remove)
+		%(bindir)s/rarian-sk-update > /dev/null
+		;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    handler)
+        case $action in
+            update)
+                %(bindir)s/xmlcatalog --noout --add "delegateSystem" \
+                    "http://scrollkeeper.sourceforge.net/dtds/" \
+                    "file://%(sysconfdir)s/xml/scrollkeeper.xml" $CATALOG
+                %(bindir)s/xmlcatalog --noout --add "delegateURI" \
+                    "http://scrollkeeper.sourceforge.net/dtds/" \
+                    "file://%(sysconfdir)s/xml/scrollkeeper.xml" $CATALOG
+                %(bindir)s/rarian-sk-update > /dev/null
+                ;;
+            preremove)
+                rm -rf %(localstatedir)s/lib/scrollkeeper
+                %(bindir)s/xmlcatalog --noout --del \
+                    "file://%(sysconfdir)s/xml/scrollkeeper.xml" \
+                    $CATALOG
+                ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

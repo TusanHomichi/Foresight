@@ -1,0 +1,17 @@
+# HG changeset patch
+# User António Meireles <antonio.meireles@openfiler.com>
+# Date 1333387240 -3600
+# Node ID e4581ee63eb5748352cc2955bd25fc8e6e598748
+# Parent  dddee93893aed8e7c067a7ef943831cf5edfc7c7
+sourceforge dowloads' mirror scheme evolved. no need to enumerate mirrors manually anymore.
+
+diff -r dddee93893ae -r e4581ee63eb5 config/mirrors/sourceforge
+--- a/config/mirrors/sourceforge	Mon Apr 02 10:42:12 2012 -0400
++++ b/config/mirrors/sourceforge	Mon Apr 02 18:20:40 2012 +0100
+@@ -1,5 +1,1 @@
+-http://superb-sea2.dl.sourceforge.net/project/
+-http://cdnetworks-us-1.dl.sourceforge.net/project/
+-http://cdnetworks-us-2.dl.sourceforge.net/project/
+-http://softlayer.dl.sourceforge.net/project/
+-http://voxel.dl.sourceforge.net/project/
++http://downloads.sourceforge.net/project/

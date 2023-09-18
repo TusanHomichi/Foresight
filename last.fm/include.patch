@@ -1,0 +1,11 @@
+--- ipod.pro	2007-12-18 15:18:20.000000000 +0100
++++ ipod-copy.pro	2009-11-16 10:51:23.000000000 +0100
+@@ -11,7 +11,7 @@
+ linux* {
+     LIBS += -lgpod
+ 
+-    INCLUDEPATH += /usr/include/gpod-1.0 /usr/include/glib-2.0 /usr/lib/glib-2.0/include
++    INCLUDEPATH += /usr/include/gpod-1.0 /usr/include/glib-2.0 /usr/lib/glib-2.0/include /usr/lib64/glib-2.0/include
+ }
+ 
+ mac* {

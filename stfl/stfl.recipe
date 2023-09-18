@@ -1,0 +1,33 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Stfl(AutoPackageRecipe):
+    name = 'stfl'
+    version = '0.22'
+ 
+    buildRequires = [
+        'ncurses:devel',
+        'perl:devel',
+        'python:devel',
+        'ruby:runtime',
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.clifford.at/stfl/stfl-%(version)s.tar.gz')
+
+    def make(r):
+        r.Make('prefix=%(prefix)s Makefile.deps')
+        r.Make('prefix=%(prefix)s')
+
+    def makeinstall(r):
+        r.MakeInstall('prefix=%(prefix)s DESTDIR=%(destdir)s')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

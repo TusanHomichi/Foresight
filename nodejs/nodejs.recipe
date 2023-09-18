@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2011-2012  The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nodejs(AutoPackageRecipe):
+    name = 'nodejs'
+    version = '0.8.15'
+ 
+    # XXX used shared v8 as soon as it properly pkged
+    buildRequires = [ 'libgcc:devellib', 'libstdc++:devel',
+                      'make:runtime', 'openssl:devel',
+                      'python:devel', 'zlib:devel',
+                      'binutils:runtime', 'which:runtime',
+                      'pkgconfig:devel',
+                      'util-linux:runtime', ]
+ 
+    def unpack(r):
+        # r.addGitSnapshot('git://github.com/joyent/node.git', tag = 'v%s' % r.version)
+        r.addArchive('http://nodejs.org/dist/v%(version)s/node-v%(version)s.tar.gz')
+
+    def configure(r):
+        r.ManualConfigure(' --prefix=%(prefix)s'
+                          ' --gdb'
+                          ' --shared-openssl'
+                          ' --shared-zlib')

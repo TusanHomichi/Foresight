@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('xfcepackage')
+class ThunarMediaTagsPlugin(XfcePackageRecipe):
+
+    name = 'thunar-media-tags-plugin'
+    version = '0.2.1'
+    subtree = "thunar-plugins"
+
+    buildRequires = ['libexo:devel',
+                    'libxfce4util:devel',
+                    'taglib:devel',
+                    'Thunar:devel',]
+
+

@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GtkSharp(GnomePackageRecipe):
+    name = 'gtk-sharp'
+    version = '2.12.10'
+
+    makeInstallArgs = """  DESTDIR=%(destdir)s GACUTIL_FLAGS="/package gtk-sharp-2.0 /gacdir %(libdir)s /root %(destdir)s/%(libdir)s" """
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+                      'freetype:devel', 'glib:devel', 'libglade:devel',
+                      'libpng:devel', 'libxml2:devel', 'mono:cil', 'mono:devel', 'mono:runtime',
+                      'perl-XML-LibXML:perl', 'perl:lib', 'pango:devel', 'perl:devel']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        for p in [ 'gtk-sharp2-2.10.3-libdir.patch',
+                   'gtk-sharp-2.8.2-docfix.patch']:
+            r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/gtk-sharp2/' + p )
+
+        # Fix assembly libdir
+        r.Run(""" sed -i 's|$(prefix)/lib|%(libdir)s|g' parser/Makefile.in \
+                                      generator/Makefile.in \
+                                      doc/Makefile.* \
+                                      configure.in """)
+
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Environment('MONO_CAIRO_LIBS', "-r:%(libdir)s/mono/1.0/Mono.Cairo.dll")
+
+    def policy(r):
+        r.MakeDirs('%(libdir)s/monodoc/sources/')
+        r.Install('doc/gtk-sharp-docs.source', '%(libdir)s/monodoc/sources/', mode = 0755)
+        r.Move('doc/en', '%(libdir)s/monodoc/sources/gtk-sharp-docs')
+
+        r.ComponentSpec('supdoc', '%(libdir)s/monodoc/.*')

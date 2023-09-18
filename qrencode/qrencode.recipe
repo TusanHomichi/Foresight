@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2011 Adam Chasen (achasen@rpath.com)
+#
+
+class Qrencode(AutoPackageRecipe):
+    name = 'qrencode'
+    version = '3.3.0'
+
+    buildRequires = ['pkgconfig:devel', 'libpng:devel']
+
+    def unpack(r):
+        r.addArchive('http://fukuchi.org/works/qrencode/')

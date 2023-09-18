@@ -1,0 +1,11 @@
+prefix=%{_prefix}
+exec_prefix=%{_prefix}
+libdir=%{_libdir}
+includedir=%{_includedir}
+
+Name: libjs
+Description: JS library
+Requires: nspr >= 4.7
+Version: %{version}
+Libs: -L${libdir} -ljs
+Cflags: -DXP_UNIX=1 -DJS_THREADSAFE=1 -I${includedir}/js

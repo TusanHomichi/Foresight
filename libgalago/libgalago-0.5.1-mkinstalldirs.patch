@@ -1,0 +1,11 @@
+--- po/Makefile.in.in	2006-08-08 00:42:54.000000000 -0500
++++ po/Makefile.in.in	2006-08-08 00:43:35.000000000 -0500
+@@ -29,7 +29,7 @@
+ INSTALL = @INSTALL@
+ INSTALL_DATA = @INSTALL_DATA@
+ MKINSTALLDIRS = @MKINSTALLDIRS@
+-mkinstalldirs = $(SHELL) `case "$(MKINSTALLDIRS)" in /*) echo "$(MKINSTALLDIRS)" ;; *) echo "$(top_builddir)/$(MKINSTALLDIRS)" ;; esac`
++mkinstalldirs = $(SHELL) $(MKINSTALLDIRS)
+ 
+ CC = @CC@
+ GMSGFMT = @GMSGFMT@

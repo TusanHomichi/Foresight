@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GstPython(AutoPackageRecipe):
+    name = 'gst-python'
+    version = '0.10.22'
+
+    buildRequires = [ 'glib:devel', 'gst-plugins-base:devel',
+        'gstreamer:devel', 'libxml2:devel', 'pkgconfig:devel',
+        'pygobject:python', 'pygtk:devel', 'pygtk:python', 'pygobject:devel',
+        'python:devel', 'zlib:devel', 'gstreamer:runtime', 'libxml2:python',
+        ]
+
+    def unpack(r):
+        r.addArchive('http://gstreamer.freedesktop.org/src/%(name)s/')

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tucan(PackageRecipe):
+
+    name = 'tucan'
+    version = '0.3.8'
+
+    buildRequires = ['PIL:python', 'python:devel', 'make:runtime', 'desktop-file-utils:runtime']
+
+    def setup(r):
+        r.addArchive('http://forja.rediris.es/frs/download.php/1400/%(name)s-%(version)s.tar.gz')
+        r.MakeInstall("DESTDIR=%(destdir)s%(prefix)s")
+	r.Symlink('%(datadir)s/tucan/tucan.py', '%(bindir)s/tucan')
+	#.Symlink('%(bindir)s/tucan', '%(bidir)s/tucan')

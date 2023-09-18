@@ -1,0 +1,100 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xinelib(AutoPackageRecipe):
+
+    name = 'xine-lib'
+    version = '1.2.2'
+
+    buildRequires = [
+        'alsa-lib:devel', 
+        'audiofile:devel', 
+        'autoconf:runtime',
+        'automake:runtime', 
+        'bzip2:devel', 
+        'cairo:devel',
+        'djvulibre:devel', 
+        'expat:devel',
+        'flac:devel', 
+        'freetype:devel', 
+        'gcc-c++:runtime', 
+        'GConf:devel',
+        'gdk-pixbuf:devel',
+        'ghostscript:devel', 
+        'glib:devel', 
+        'gnome-vfs:devel', 
+        'graphviz:devel',
+        'gtk:devel', 
+        'ImageMagick:devel', 
+        'jack:devel',
+        'jasper:devel',
+        'libbonobo:devel', 
+        'libICE:devel', 
+        'libjpeg:devel', 
+        'libmng:devel',
+        'libmodplug:devel', 
+        'libogg:devel', 
+        'libpng:devel', 
+        'librsvg:devel',
+        'libSM:devel',
+	    'libtheora:devel', 
+        'libtiff:devel', 
+        'libvorbis:devel', 
+        'libX11:devel',
+	    'libxcb:devel', 
+        'libXext:devel', 
+        'libXinerama:devel', 
+        'libxml2:devel',
+	    'libXv:devel', 
+        'libXvMC:devel', 
+        'Mesa:devel', 
+        'libgomp:devellib',
+        'module-init-tools:runtime', 
+        'OpenEXR:devel', 
+        'ORBit2:devel',
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'pulseaudio:devel',
+        'samba:devel', 
+        'SDL:devel', 
+        'speex:devel',
+	    'zlib:devel', 
+        'aalib:devel', 
+        'esound:devel', 
+        'faad2:devel',
+        'gettext:runtime', 
+        'gpm:devel', 
+        'intltool:runtime',
+	    'libcaca:devel', 
+        'slang:devel', 
+        'lcms:devel', 
+        'libtool:devel', 
+        'libv4l:devel',
+	    'a52dec:devel', 
+        'libcdio:devel', 
+        'libdca:devel', 
+        'libmad:devel', 
+	    'libmpcdec:devel', 
+        'librsvg:runtime', 
+        'vcdimager:devel', 
+        'xmlto:runtime',
+        'libbluray:devel', 
+        'ffmpeg:devel',
+            ]
+
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/xine/xine-lib/%(version)s/xine-lib-%(version)s.tar.xz') 
+        r.addPatch('xine-lib-1.1.16.2-multilib.patch')
+        r.addPatch('xine-lib-1.1.19-no_autopoint.patch')
+        r.macros.cflags += ' -fomit-frame-pointer'
+
+    def configure(r):
+        r.Configure('--disable-optimizations --disable-vdpau --disable-dxr3 --with-real-codecs-path=%(libdir)s/mplayer-codecs --with-w32-path=%(libdir)s/mplayer-codecs')
+
+    def policy(r):
+        r.PackageSpec('xine-lib-gnome', '%(libdir)s/xine/plugins/%(version)s/xineplug_inp_gnome_vfs.so')
+

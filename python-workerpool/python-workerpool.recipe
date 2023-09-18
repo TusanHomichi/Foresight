@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class PythonWorkerpool(PackageRecipe):
+
+    name = 'python-workerpool'
+    version = '0.9.2'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('https://workerpool.googlecode.com/files/workerpool-%(version)s.tar.gz')
+        r.PythonSetup()

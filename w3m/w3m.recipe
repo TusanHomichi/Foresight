@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class w3m(AutoPackageRecipe):
+    name = 'w3m'
+    version = '0.5.2'
+
+    buildRequires = [
+        'gc:devel', 'libtermcap:devel', 'man:runtime', 'openssl:devel',
+        'perl:devel', 'perl:runtime', 'pkgconfig:devel', 'zlib:devel',
+        'gettext:runtime', 'intltool:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+
+    def configure(r):
+        extraConfig = "--enable-image=no"
+        if Use.ssl:
+            extraConfig += ' --with-ssl'
+
+        # disable GPM, since w3m does some strange things that
+        # don't work if you build gpm with --without-ncurses
+        # see http://dickey.his.com/ncurses/ncurses.faq.html#using_gpm_lib
+        r.Environment('ac_cv_lib_gpm_Gpm_Open', 'no')
+        r.Configure(extraConfig)

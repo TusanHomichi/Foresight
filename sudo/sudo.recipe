@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# All rights reserved
+#
+
+loadSuperClass('rpmpackage') 
+class Sudo(RPMPackageRecipe,CPackageRecipe):
+    name = 'sudo'
+    version = '1.7.4p5'
+    rpmRelease = '7.el6'
+    rpmURL = 'http://ftp.redhat.com/redhat/linux/enterprise/6Server/en/os/SRPMS/'
+    rpmPatches = [ 'sudo-1.6.7p5-strip.patch',
+                   'sudo-1.7.2p1-envdebug.patch',
+                   'sudo-1.7.4p3-m4path.patch',
+                   'sudo-1.7.4p4-auditeditor.patch',
+                   'sudo-1.7.4p4-getgrouplist-fixed.patch',
+                   'sudo-1.7.4p4-sudoi.patch',
+                   'sudo-1.7.4p5-auditrolechange.patch',
+                   ]
+
+    buildRequires = [ 'pam:devel', 'groff:runtime', 'zlib:devel' ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('wheel.patch')
+        r.addSource('sudo.pam', dest='%(sysconfdir)s/pam.d/sudo', use=Use.pam)
+
+        r.macros.cflags += ' -fpie'
+        r.macros.ldflags += ' -pie'
+
+        r.Configure('--with-logging=syslog --with-logfac=authpriv'
+                    ' --with-editor=%(essentialbindir)s/vi'
+                    ' --with-env-editor --with-ignore-dot'
+                    ' --with-tty-tickets --without-interfaces'
+                    ' --with-passprompt="[sudo] password for %%p: "'
+                    ' --without-lecture'
+                    ' --with-pam')
+
+        r.Make()
+
+        r.MakeInstall('install_uid=0 install_gid=0'
+                      ' sudoers_uid=0 sudoers_gid=0')
+        r.MakeDirs('%(sysconfdir)s/sudoers.d', mode=0750)
+        r.MakeDirs('%(localstatedir)s/run/sudo/', mode=0700)
+        r.ExcludeDirectories(exceptions=['%(localstatedir)s/run/sudo',
+                                         '%(sysconfdir)s/sudoers.d',
+                                         '%(localstatedir)s/db/sudo'])
+
+        r.SetModes('%(bindir)s/sudo{edit,}', 04511)
+        r.SetModes('%(sysconfdir)s/sudoers', 0440)
+        r.SetModes('%(localstatedir)s/db/sudo', 0700)
+
+        r.Doc('TROUBLESHOOTING', 'UPGRADE', '*.pod')
+
+        # bison is used only in a commented-out section of the Makefile
+        r.EnforceConfigLogBuildRequirements(exceptions='%(bindir)s/bison')
+
+        # avoid upgrade woes
+        r.InitialContents('%(sysconfdir)s/pam.d/sudo')
+        r.InitialContents('%(sysconfdir)s/sudoers')
+        

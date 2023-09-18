@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class libXrender(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libXrender'
+    version = '7.6_0.9.6'
+    rpmRelease = '16.1'
+    rpmName = 'xorg-x11-%(name)s'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = [ 'renderproto:devel',  'pkgconfig:devel',
+                      'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'xproto:devel']
+
+    tarballName = '%(name)s-0.9.6.tar.bz2'
+
+    def configure(r):
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure('--disable-static --with-pic')
+
+    def policy(r):
+        for requirement in ('libX11:devel', 'renderproto:devel', 'xproto:devel'):
+            r.Requires(requirement, '%(libdir)s/pkgconfig/xrender.pc')
+

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class QImageBlitz(CMakePackageRecipe):
+
+    name = 'qimageblitz'
+    version = '0.0.6'
+
+    buildRequires = [
+        'libX11:devel', 'libXext:devel', 'libstdc++:devel', 'qt4:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/qimageblitz/')
+

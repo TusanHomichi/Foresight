@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tea(CPackageRecipe):
+    name = 'tea'
+    version = '32.0.1'
+ 
+    buildRequires = ['aspell:devel', 'libstdc++:devel', 
+		'qt4-core:devellib', 'qt4-gui:devellib', 'qt4:devel', 'zlib:devel', 'desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://semiletov.ho.ua/tea-releases/tea-%(version)s.tar.bz2')
+	r.addSource('tea.desktop')
+	r.Desktopfile('tea.desktop')
+	r.Install('icons/tea_icon_v2.png', '%(datadir)s/pixmaps/tea.png')
+	r.Run("qmake-qt4 PREFIX=%(bindir)s")
+	r.Make()
+	r.MakeInstall('INSTALL_ROOT=%(destdir)s')
+	

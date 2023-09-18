@@ -1,0 +1,59 @@
+loadSuperClass('rpmpackage')
+class Erlang(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'erlang'
+    version = 'R13B'
+    subVersion = '04'
+    buildRequires = ['ncurses:devel','openssl:devel', 'unixODBC:devel', 
+                     'flex:devel', 'flex:runtime', 'bison:runtime', 'perl:runtime', 'openssl:runtime',
+                     'gcc-c++:runtime', 'Mesa:devel', 'libxslt:runtime', 'python:bin',
+                     'icedtea-jdk:runtime', 'wxWidgets:devel']
+    rpmRelease = subVersion + '.2.fc12'
+    rpmPatches = [ # 'otp-links.patch',
+                   'otp-0001-Do-not-format-man-pages.patch',
+                   'otp-0002-Remove-rpath.patch']
+
+    tarballName = 'otp_src_%(version)s' + subVersion + '.tar.gz'
+    rpmSources = [ 'otp_doc_man_%(version)s' + subVersion + '.tar.gz',
+                   'otp_doc_html_%(version)s' + subVersion + '.tar.gz']
+    
+    def setup(r):
+        r.unpack()
+        # remove shipped zlib sources
+        r.Remove('erts/emulator/zlib/*.[ch]', recursive = True) 
+        r.macros.cflags += ' -fno-strict-aliasing  '
+        
+        # the line bellow is ironic...
+        r.disableParallelMake()
+
+        r.Configure(' --enable-shared-zlib --prefix=%(prefix)s '
+                    ' --exec-prefix=%(prefix)s --bindir=%(bindir)s '
+                    ' --libdir=%(libdir)s --enable-dynamic-ssl-lib --with-ssl')
+
+        r.Make()
+        r.MakeInstall(rootVar='INSTALL_PREFIX')
+
+        r.addAction('mkdir erlang_doc')
+        r.addAction('mkdir erlang_man')
+        r.addAction('cd erlang_man; tar -xzf ../otp_doc_man_%(version)s' + r.subVersion + '.tar.gz')
+        r.addAction('cd erlang_doc; tar -xzf ../otp_doc_html_%(version)s' + r.subVersion + '.tar.gz')
+
+        for mandir in ['1','3','4','6']:
+            r.MakeDirs('%(mandir)s/man'+mandir)
+            r.Install('erlang_man/man/man'+mandir+'/*', '%(mandir)s/man'+mandir)
+        # avoid file collisions with stock man pages  
+        r.Remove('%(mandir)s/man*/{queue,inet,string,rpc,zlib,random}*')
+
+        r.Doc('erlang_doc') 
+        
+        for bin in [ 'erl', 'erlc', 'escript', 'dialyzer']:
+            r.Symlink('%(libdir)s/erlang/bin/'+bin, '%(bindir)s/'+bin)
+        
+        # remove buildroot from installed files
+        # remove unneeded sources, but keep *.hrl and *.yrl
+        r.Replace('%(destdir)s', '',
+                  '%(destdir)s/%(libdir)s/erlang/erts*/bin/{erl,start}',
+                  '%(destdir)s/%(libdir)s/erlang/releases/RELEASES',
+                  '%(destdir)s/%(libdir)s/erlang/bin/{erl,start}',
+                  allowNoChange = True)
+        r.Run("""  for d in %(destdir)s/%(libdir)s/erlang/lib/* ; do find $d/src -maxdepth 1 -type f ! -name "*.[yh]rl" -print -delete || true ; done
+             find %(destdir)s/%(libdir)s/erlang/lib/ -maxdepth 2 -type d -name src -empty -delete """)

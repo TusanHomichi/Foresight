@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2010 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class VGAbios(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'vgabios'
+    version = '0.6c'
+    rpmRelease = '2.fc14'
+    rpmPatches = [ '0001-Makefile-cleanup.patch',
+                   '0002-Add-defines-for-PCI-IDs.patch',
+                   '0003-Add-qemu-stdvga-pci-bios.patch',
+                   '0004-update-pci_get_lfb_addr-for-vmware-vga.patch', 
+                   '0005-Add-qemu-vmware-vga-pci-bios.patch',
+                   '0006-Add-qemu-qxl-vga-pci-bios.patch']
+    buildRequires = ['dev86:runtime']
+    
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.Make('clean')
+        r.Make('biossums')
+        r.Make()
+
+        r.Install('VGABIOS-lgpl-*.bin', '%(datadir)s/%(name)s/', mode = 0644)

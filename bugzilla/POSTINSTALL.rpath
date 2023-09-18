@@ -1,0 +1,31 @@
+For more detailed instructions, look in %(thisdocdir)s
+
+After installing the package, to run bugzilla, you must:
+
+1. Run mysql as the root mysql user, and run the following commands (after 
+   substituting in values for <bugsdb>, <bugsuser>, and <bugs_password> -- 
+   bugs is a good default for both <bugsdb> and <bugsuser>):
+
+CREATE DATABASE <bugsdb>;
+GRANT SELECT,INSERT,UPDATE,DELETE,INDEX, ALTER,CREATE,DROP,REFERENCES ON <bugsdb>.* TO <bugsuser>@localhost IDENTIFIED BY '<bugs_password>';
+
+2. Edit /%(sysconfdir)s/httpd/conf.d/bugzilla.conf, adding a line similar to
+   Alias /bugzilla %(bugzilladir)s  
+
+   The first /bugzilla is the location on your web server that bugzilla
+   will be accessible from. 
+
+3. In %(bugzilladir)s, run ./checksetup.pl 
+
+3. In %(bugzilladir)s, edit localconfig.  Make sure to fix 
+   $db_pass = '<bugs_password>'.  
+
+4. In %(bugzilladir)s, run ./checksetup.pl again, and answer the questions.
+   (If you are updating an existing installation, it probably will not ask
+   any questions.)
+
+5. Restart apache
+
+6. Visit http://www.example.com/bugzilla/editparams.cgi (modify to fit the
+   URL for your installation, of course).
+

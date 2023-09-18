@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Eog(GnomePackageRecipe):
+
+    buildRequires = [ 'glib:devel', 'pango:devel', 'gtk:devel',
+        'libgnomeui:devel',  'gnome-vfs:devel',
+        'libgnome-keyring:devel', 'libgnomeprintui:devel',
+        'libexif:devel', 'intltool:runtime', 'libjpeg:devel',
+        'rarian:runtime', 'gettext:runtime', 'ORBit2:devel',
+        'GConf:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+        'freetype:devel', 'glibc:devel', 'lcms:devel', 'libart_lgpl:devel',
+        'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel',
+        'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel',
+        'libpng:devel', 'libxml2:devel', 'popt:devel', 'gnome-desktop:devel',
+        'startup-notification:devel', 'GConf:runtime', 'expat:devel', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+        'desktop-file-utils:runtime', 'glib:runtime', 'perl:runtime', 'gnome-icon-theme:devellib', 'dbus-glib:runtime', 'shared-mime-info:devellib','shared-mime-info:runtime', 'python:devel' ]
+
+    name = 'eog'
+    version = '2.32.1'
+
+    preMakeInstall = 'GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 '
+    extraConfig = ' --disable-scrollkeeper'
+
+    docs = ['AUTHORS', 'COPYING', 'ChangeLog', 'NEWS', 'README']

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=fotoxx
+GenericName=fotoxx
+Comment=Program for editing image files from a digital camera
+Exec=fotoxx
+Icon=fotoxx
+Terminal=false
+Type=Application
+Categories=Graphics;

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Hwdata(RPMPackageRecipe, CPackageRecipe):
+    name = 'readahead'
+    version = '1.5.1'
+    rpmRelease = '2.fc12'
+    rpmPatches = [ 'readahead-1.5.1-noconsole.patch' ]
+    buildRequires = [ 'audit:devel', 'e2fsprogs:devel', 'gettext:runtime',
+                    'intltool:runtime', 'util-linux:devel' ]
+
+    def setup(r):
+        r.unpack()
+        r.Configure('--sbindir=/%(essentialsbindir)s')
+        r.Make()
+        r.MakeInstall()

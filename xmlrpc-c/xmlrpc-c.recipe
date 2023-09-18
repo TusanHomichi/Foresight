@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class XMLRPC_C(AutoPackageRecipe):
+
+    name = 'xmlrpc-c'
+    version = '1.06.35'
+
+    buildRequires = [
+        'curl:devel', 'libstdc++:devel', 'libxml2:devel', 'openssl:devel',
+        'w3c-libwww:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/xmlrpc-c/xmlrpc-c-%(version)s.tgz')
+
+        # Fix x86_64 build
+        r.Replace(
+            '^CXXFLAGS_COMMON = ', 'CXXFLAGS_COMMON = -fPIC ',
+            'Makefile.common'
+        )
+
+    def configure(r):
+
+        r.Configure('--enable-libxml2-backend')
+

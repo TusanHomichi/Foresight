@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PerlGlib(AutoPackageRecipe):
+    name = 'perl-Glib'
+    version = '1.222'
+    tarname = 'Glib'
+
+    buildRequires = ['glib:devel', 'perl:devel', 'perl:lib', 'perl:runtime',
+ 'perl-ExtUtils-PkgConfig:perl', 'perl-ExtUtils-Depends:perl',
+ 'pkgconfig:devel']
+
+    def setup(r):
+        r.macros.tarname = r.tarname
+        r.mainDir('%(tarname)s-%(version)s')
+        r.addArchive('mirror://sourceforge/gtk2-perl/%(tarname)s-%(version)s.tar.gz')
+        r.Run('CFLAGS="%(cflags)s" perl Makefile.PL '
+              ' PREFIX=%(prefix)s INSTALLDIRS=vendor < /dev/null')
+        r.Make()
+        r.MakeInstall('BINDIR=%(destdir)s%(bindir)s'
+                      ' PERL5DIR=%(destdir)s%(libdir)s/perl5/vendor_perl/')
+        r.Requires(exceptDeps=r'perl\:\ ParseXSDoc')

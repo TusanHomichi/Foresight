@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2010      Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Boost(CPackageRecipe):
+
+    name = 'boost'
+    version = '1.42.0'
+
+    buildRequires = [
+        'bzip2:devel', 'icu:devel', 'libstdc++:devel', 'python:devel',
+        'zlib:devel'
+    ]
+
+    def setup(r):
+        r.macros.undersc_ver = r.version.replace('.', '_')
+        r.addArchive('mirror://sourceforge/boost/%(name)s_%(undersc_ver)s.tar.bz2')
+        r.addPatch('boost-strict_aliasing.patch')
+        r.addPatch('boost-thread.patch')
+
+        r.ManualConfigure(' --with-icu'
+                          ' --prefix=%(prefix)s'
+                          ' --libdir=%(libdir)s',
+                          configureName='./bootstrap.sh')
+
+        r.Make(' install '
+               ' -d2 %(parallelmflags)s'
+               ' cflags="%(optflags)s" '
+               ' cxxflags="%(optflags)s"'
+               ' --prefix=%(destdir)s%(prefix)s'
+               ' --libdir=%(destdir)s%(libdir)s ',
+               makeName='./bjam')
+
+        r.AutoDoc(exceptions='/.+/')
+
+        docs = [ 'LICENSE_1_0.txt', 'boost.{css,png}',
+                 'index.htm', 'rst.css',
+                 'more', 'people', 'status', 'wiki' ]
+
+        r.Doc(*docs)
+        r.Doc('doc/html', dir='doc')
+
+        r.CheckSonames(exceptions='%(libdir)s/libboost_.*')

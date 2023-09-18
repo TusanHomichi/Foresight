@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LmSensors(CPackageRecipe):
+    name = "lm_sensors"
+    version = "3.1.2"
+
+    buildRequires = ['grep:runtime', 
+                     'bison:runtime', 
+                     'flex:runtime',
+                     'chkconfig:runtime', 
+                     'perl:devel', 
+                     'perl:runtime' ]
+
+    def setup(r):
+        r.addArchive(
+          'http://dl.lm-sensors.org/lm-sensors/releases/%(name)s-%(version)s.tar.bz2',
+          keyid='38F02FC8')
+	r.Move('prog/init/README', 'prog/init/README.initscripts')
+
+	r.addSource('sensord.sysconfig')
+	r.addSource('sensord.init')
+
+        # configuration in Makefile...
+        r.Replace(('^PREFIX.*', 'PREFIX := %(prefix)s'),
+                  ('^ETCDIR.*', 'ETCDIR := %(sysconfdir)s'),
+                  ('^LIBDIR.*', 'LIBDIR := %(libdir)s'),
+                  ('^MANDIR.*', 'MANDIR := %(mandir)s'),
+                  ('^I2C_HEADERS.*', 'I2C_HEADERS := %(includedir)s'),
+                  'Makefile')
+        r.Make()
+        r.MakeInstall()
+	r.Install('sensord.sysconfig', '%(sysconfdir)s/sensord')
+	r.Install('sensord.init', '%(initdir)s/sensord', mode=0755)
+        r.Install('prog/init/lm_sensors.init', '%(initdir)s/lm_sensors', mode=0755)
+
+        r.Doc('prog/init/fancontrol.init', 'prog/init/README.initscripts')

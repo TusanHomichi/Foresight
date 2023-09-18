@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Id3v2(CPackageRecipe):
+    name = 'id3v2'
+    version = '0.1.12'
+ 
+    buildRequires = ['groff:runtime', 'libstdc++:devel', 'zlib:devel',
+                     'gcc-c++:runtime', 'id3lib:devel']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/id3v2/%(name)s-%(version)s.tar.gz')
+        r.macros.ldflags += '-L%(libdir)s'
+        # patches taken from openSuse
+        for p in [ 'id3v2-0.1.11.diff',
+                   'id3v2-0.1.12-bogus-linkage.patch']:
+            r.addPatch(p)
+        # upstream tarball COMES with pre compiled binaries ...
+        r.Remove('{id3v2,create_map,core,*.o}')
+        r.Make()
+        r.MakeDirs('%(bindir)s')
+        r.MakeDirs('%(mandir)s/man1')
+        r.MakeInstall()

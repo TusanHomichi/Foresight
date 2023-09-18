@@ -1,0 +1,14 @@
+class PyhttlLIb2(AutoPackageRecipe):
+    name = 'python-httplib2'
+    version = '0.7.2'
+
+    buildRequires = [ 'python:devel',
+                      'python-setuptools:python',
+                      'protobuf:python',
+                    ]
+
+    def setup(r):
+        r.addArchive('http://httplib2.googlecode.com/files/httplib2-%(version)s.tar.gz')
+        r.addPatch('python-httplib2.certfile.patch')
+        r.PythonSetup()
+        

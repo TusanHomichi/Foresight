@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Recipe(AutoPackageRecipe):
+    name = 'pycairo'
+    version = '1.8.8'
+
+    buildRequires = ['cairo:devel', 'fontconfig:devel', 'expat:devel', 'freetype:devel', 'libpng:devel', 'zlib:devel', 'pkgconfig:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'libXext:devel', 'libXi:devel', 'libXinerama:devellib', 'libXrender:devel','libdmx:devel', 'python:devel' ]
+
+    # FIXME - update in tandem with pycairo and goocanvas. python -c 'import goocanvas' MUST not segfault!
+
+    def unpack(r):
+        r.addArchive('http://cairographics.org/releases/')

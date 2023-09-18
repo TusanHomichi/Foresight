@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tivion(PackageRecipe):
+
+    name = 'tivion'
+    version = '0.0.4'
+
+    packageSummary = 'Tivion is an application that plays some streaming TV and radio channels available'
+    packageDescription = 'Tivion is an application that plays some streaming TV and radio channels available. For the moment, 447 channels from 67 countries. Here are some key features of "Tivion": more than 400 channels, screenshoot capture, fullscreen'
+
+    buildRequires = [
+            'python-setuptools:python', 
+            'gnome-python:python', 
+            'gst-python:python', 
+            'gtk:runtime', 
+            'gtk:devel', 
+            'pygobject:python', 
+            'pygtk:python', 
+            'python:devel', 
+            'desktop-file-utils:runtime',
+            'binutils:runtime'
+                ]
+
+    def setup(r):
+        r.macros.site = 'http://www.shakaran.net/blog/wp-content/uploads/tivion/tivion-0.0.4-lucid-deb'
+        dist = [
+            ('tivion_0.0.4-0ubuntu5~lucid_i386.deb', Arch.x86),
+            ('tivion_0.0.4-0ubuntu5~lucid_amd64.deb', Arch.x86_64),
+        ]
+        for (deb, arch) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/', use=(arch==True))
+	r.Requires('mplayer:runtime', '%(bindir)s/tivion')
+

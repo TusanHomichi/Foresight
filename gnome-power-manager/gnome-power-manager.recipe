@@ -1,0 +1,83 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class GnomePowerManager(RPMPackageRecipe,GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel',
+                      'ORBit2:devel',
+                      'atk:devel',
+                      'cairo:devel',
+                      'dbus-glib:devellib',
+                      'dbus:devel',
+                      'fontconfig:devel',
+                      'freetype:devel',
+                      'glib:devel',
+                      'libgnome-keyring:devel',
+                      'gnome-vfs:devel',
+                      'hal:devel',
+                      'libart_lgpl:devel',
+                      'libbonobo:devel',
+                      'libbonoboui:devel',
+                      'libglade:devel',
+                      'libgnome:devel',
+                      'libgnomecanvas:devel',
+                      'libgnomeui:devel',
+                      'libnotify:devel',
+                      'libpng:devel',
+                      'libwnck:devel',
+                      'libxml2:devel',
+                      'pango:devel',
+                      'popt:devel',
+                      'GConf:runtime',
+                      'desktop-file-utils:runtime',
+                      'docbook-utils:runtime',
+                      'gettext:runtime',
+                      'glib:runtime',
+                      'gtk:runtime',
+                      'perl:runtime',
+                      'rarian:runtime',
+                      'rarian:devel',
+                      'xmlto:runtime',
+                      'libtool:runtime',
+                      'gnome-doc-utils:devel',
+                      'gnome-doc-utils:runtime',
+                      'dbus-glib:runtime',
+                      'opensp:runtime',
+                      'expat:devel',
+                      'perl-SGMLS:runtime',
+                      'gnome-panel:devel',
+                      'gstreamer:devel', 
+                      'libXrandr:devel',
+                      'unique:devel',
+                      'libcanberra:devel',
+                      'DeviceKit-power:runtime',
+                      'DeviceKit-power:devel',
+                      'polkit-gnome:devel', 
+                      'polkit:devel', 
+                      'automake:runtime',
+                      'autoconf:runtime',
+                      'libtool:runtime'
+                     ]
+
+    name = 'gnome-power-manager'
+    version = '2.32.0'
+    rpmRelease = '3.fc14'
+    rpmPatches = [ 'dont-eat-the-logs.patch']
+
+    extraConfig =  ' --disable-scrollkeeper --enable-policykit --enable-hal --disable-applets '
+
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('gnome-power-manager-2.32.0-libnotify-0.7.patch')
+        r.Replace('GNOME;XFCE;', 'GNOME;XFCE;LXDE;', 'data/gnome-power-manager.desktop.in')
+        r.Replace('GNOME;XFCE;', 'GNOME;XFCE;LXDE;', 'data/gnome-power-manager.desktop.in.in')
+        r.Replace('GNOME;XFCE;', 'GNOME;XFCE;LXDE;', 'data/gnome-power-preferences.desktop.in')
+        r.Replace('GNOME;XFCE;', 'GNOME;XFCE;LXDE;', 'data/gnome-power-preferences.desktop.in.in')
+        r.Replace('WARNINGFLAGS=.*', 'WARNINGFLAGS=\'\' ', 'configure.ac')
+        r.Run('autoreconf -fi')

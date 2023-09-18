@@ -1,0 +1,259 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Cups(RPMPackageRecipe, CPackageRecipe):
+    name = 'cups'
+    version = '1.4.8'
+    rpmRelease = '5.fc15'
+
+    buildRequires = [
+        'acl:devel',
+        'avahi:devel',
+        'autoconf:runtime',
+        'automake:runtime',
+        'chkconfig:runtime',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'gnutls:devel',
+        'groff:runtime',
+        'gtk:runtime',
+        'icedtea-jdk:runtime',
+        'info-lp',
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+        'libjpeg:devel',
+        'libpng:devel',
+        'libstdc++:devel',
+        'libstdc++:devellib',
+        'libtiff:devel',
+        'libusb:devel',
+        'openldap:devel',
+        'openslp:devel',
+        'openssl:devel',
+        'pam:devel',
+        'perl:runtime',
+        'php-cgi:runtime',
+        'php:devel',
+        'pkgconfig:devel',
+        'poppler:runtime',
+        'python:bin',
+        'samba-client:runtime',
+        'xdg-utils:runtime',
+        'zlib:devel',
+    ]
+
+    rpmPatches = [ 'cups-no-gzip-man.patch',
+                   'cups-1.1.16-system-auth.patch',
+                   'cups-multilib.patch',
+                   'cups-serial.patch',
+                   'cups-banners.patch',
+                   'cups-serverbin-compat.patch',
+                   'cups-no-export-ssllibs.patch',
+                   'cups-direct-usb.patch',
+                   'cups-lpr-help.patch',
+                   'cups-peercred.patch',
+                   'cups-pid.patch',
+                   'cups-page-label.patch',
+                   'cups-eggcups.patch',
+                   'cups-getpass.patch',
+                   'cups-driverd-timeout.patch',
+                   'cups-strict-ppd-line-length.patch',
+                   'cups-logrotate.patch',
+                   'cups-usb-paperout.patch',
+                   'cups-build.patch',
+                   'cups-res_init.patch',
+                   'cups-filter-debug.patch',
+                   'cups-uri-compat.patch',
+                   'cups-cups-get-classes.patch',
+                   'cups-str3382.patch',
+                   'cups-force-gnutls.patch',
+                   'cups-serialize-gnutls.patch',
+#                   'cups-gnutls-gcrypt-threads.patch',
+                   'cups-0755.patch',
+#                   'cups-hostnamelookups.patch',
+                   'cups-snmp-quirks.patch',
+                   'cups-hp-deviceid-oid.patch',
+                   'cups-dnssd-deviceid.patch',
+                   'cups-ricoh-deviceid-oid.patch',
+                   'cups-texttops-rotate-page.patch',
+                   'cups-usb-parallel.patch',
+                   'cups-str3535.patch',
+                   'cups-polld-busy-loop.patch',
+                   'cups-CVE-2011-2896.patch',
+                   'cups-str3947.patch',
+                   'cups-avahi-1-config.patch',
+                   'cups-avahi-2-backend.patch',
+                   'cups-avahi-3-timeouts.patch',
+                   'cups-avahi-4-poll.patch',
+                   'cups-avahi-5-services.patch',
+                   'cups-icc.patch',
+
+                   ## SECURITY PATCHES:
+
+                   #        'cups-lspp.patch', # selinux support
+                   ]
+    externalArchive = 'ftp://ftp.easysw.com/pub/cups/%(version)s/cups-%(version)s-source.tar.bz2'
+
+    # XXX remove when f15 is released
+    #rpmURL = 'http://download.fedora.redhat.com/pub/fedora/linux/releases/test/15-Beta/Fedora/source/SRPMS'
+
+    def setup(r):
+        r.unpack()
+        r.addSource('cups.init' , rpm=r.srpm)
+        r.addSource('cupsprinter.png' , rpm=r.srpm,
+            dest="%(datadir)s/pixmaps/")
+        # Install the udev rules.
+        r.addSource('cups-libusb.rules', rpm=r.srpm,
+            dest="/lib/udev/rules.d/70-cups-libusb.rules", package = ':runtime')
+        r.addSource('cups-lpd' , rpm=r.srpm)
+        r.addSource('cups.logrotate' , rpm=r.srpm,
+                    dest="%(sysconfdir)s/logrotate.d/cups", mode=0644,
+                    package=':runtime')
+        r.addSource('ncp.backend' , rpm=r.srpm,
+            dest="%(prefix)s/lib/cups/backend/ncp", mode=0755)
+        r.addSource('cups.cron' , rpm=r.srpm,
+                    dest="%(sysconfdir)s/cron.daily/cups",
+                    package=':runtime')
+        # Ship a generic postscript PPD file (RH BZ#73061)
+        r.addSource('textonly.ppd' , rpm=r.srpm,
+            dest="%(datadir)s/cups/model/")
+        r.addSource('textonly.filter' , rpm=r.srpm,
+            dest="%(prefix)s/lib/cups/filter/textonly")
+
+	# r.addPatch('http://patches.ubuntu.com/c/cups/extracted/rootbackends-worldreadable.dpatch')
+	# r.addPatch('http://patches.ubuntu.com/c/cups/extracted/runloop-backchannel-eof-spin.dpatch')
+
+        r.Replace('DefaultAuthType Basic',
+            'DefaultAuthType Basic\n\nMaxLogSize 0',
+            'conf/cupsd.conf.in')
+        r.Copy('cups-lpd', 'cups-lpd.real')
+        r.Move('locale/cups_no.po', 'locale/cups_nb.po')
+
+        # Change in 'cups-serverbin-compat.patch' breaks x86_64 build
+        r.Replace('method', 'scheme', 'scheduler/job.c')
+
+        #r.Automake(aclocalArgs='-I config-scripts',
+        #    autoConfArgs='-I config-scripts')
+        r.Run('aclocal -I config-scripts')
+        r.Run('autoconf -I config-scripts')
+
+        r.macros.cflags += ' -fPIC -DLDAP_DEPRECATED=1'
+
+        # ssl
+        r.macros.cflags += ' `pkg-config --cflags openssl`  '
+        r.macros.ldflags += ' `pkg-config --libs-only-L openssl` '
+
+        r.Configure(' --with-optim="%(cflags)s" --with-docdir=%(thisdocdir)s '
+            '--enable-slp --enable-libpaper --enable-ssl '
+            '--enable-gnutls --enable-static --enable-relro '
+            '--enable-avahi --enable-dbus --with-dbusdir=%(sysconfdir)s/dbus-1 '
+            '--with-pdftops=pdftops '
+            '--enable-gssapi --disable-launchd '
+            '--with-cups-group=lp --with-printcap=/var/run/cups/printcap '
+            '--with-system-groups=wheel '
+            '--with-log-file-perm=0600 '
+            '--with-config-file-perm=0644 '
+            '--with-php=/usr/bin/php-cgi '
+            '--enable-threads '
+            '--localedir=%(datadir)s/locale')
+
+        # --misa: for some reason I get EAI_NODATA errors. Force _GNU_SOURCE
+        r.Make('OPTIM="%(cflags)s -D_GNU_SOURCE"')
+
+        r.MakeInstall(rootVar='BUILDROOT')
+
+        # Serial backend needs to run as root (bug #212577).
+        r.SetModes("%(prefix)s/lib/cups/backend/serial", 0700)
+
+        r.Install('cups.init', '%(initdir)s/cups', mode=0755)
+        r.Run('find %(destdir)s%(datadir)s/cups/model -name "*.ppd" '
+              ' |xargs gzip -n9f')
+
+        r.Install('cups-lpd.real', '%(sysconfdir)s/xinetd.d/cups-lpd',
+                  mode=0755)
+        r.Symlink('%(bindir)s/smbspool', '%(libdir)s/cups/backend/smb')
+        r.Symlink('%(thisdocdir)s', '%(datadir)s/%(name)s/doc')
+
+        # Handle https:// device URIs (bug #478677, STR #3122).
+        r.Symlink('%(prefix)s/lib/cups/backend/https', 'ipp')
+
+        r.Remove('%(datadir)s/applications/cups.desktop') # RPL-2129
+        # Put the php config bit into place
+        r.Create('%(sysconfdir)s/php.d/cups.ini',
+            contents = """\
+; Enable %(name)s extension module
+extension=phpcups.so
+""")
+
+        for dir in 'admin classes jobs printers'.split(' '):
+            r.MakeDirs('%(thisdocdir)s/' + dir)
+            r.Create('%(thisdocdir)s/' + dir + '/index.html',
+            contents = '''<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="refresh" content="2; URL=http://localhost:631/%s" />
+<title>CUPS $i</title>
+</head>
+<body bgcolor="#cccc99" text="#000000" link="#0000ff" vlink="#ff00ff">
+<p>You are trying to access the CUPS admin frontend through reading the files.
+The correct way to access the CUPS admin frontend is pointing your browser at
+<a href="http://localhost:631/">http://localhost:631/</a>.</p>
+<p>You should be automatically redirected to the correct URL in 2 seconds.
+If your browser does not support redirection, please use
+<a href="http://localhost:631/%s">this link</a>.</p>
+</body>
+</html>''' % (dir, dir))
+
+        r.DanglingSymlinks(exceptions=['%(mandir)s/man1/.*',
+                                       '%(libdir)s/cups/backend/smb'])
+        r.MakeDirs('%(localstatedir)s/spool/cups')
+        r.MakeDirs('%(sysconfdir)s/cups/certs/', mode=0711)
+        r.MakeDirs('%(sysconfdir)s/cups/ppd/', mode=0755)
+        r.MakeDirs('%(localstatedir)s/log/cups')
+
+        r.SetModes('%(localstatedir)s/cache/cups', 0755)
+        r.SetModes('%(localstatedir)s/cache/cups/rss', 0755)
+        
+        r.SetModes('%(localstatedir)s/run/cups/certs', 0511)
+        r.Ownership('lp', 'sys', '%(localstatedir)s/run/cups/certs')
+
+        r.SetModes('%(sysconfdir)s/cups/ssl', 0700)
+
+        r.SetModes('%(bindir)s/lppasswd', 04755)
+        r.SetModes('%(localstatedir)s/spool/cups/', 0710)
+        r.SetModes('%(localstatedir)s/spool/cups/tmp', 1770)
+        r.SetModes('%(sysconfdir)s/cups/cupsd.conf', 0640)
+        r.Ownership('root', 'sys',
+            '%(sysconfdir)s/cups',
+            '%(sysconfdir)s/cups/certs',
+            '%(sysconfdir)s/cups/(classes|printers).conf')
+        r.Ownership('root', 'lp',
+                    '%(sysconfdir)s/cups/ppd',
+                    '%(sysconfdir)s/cups/ssl',
+                    '%(localstatedir)s/spool/cups',
+                    '%(localstatedir)s/spool/cups/tmp',
+                    '%(localstatedir)s/run/cups',
+                    '%(sysconfdir)s/cups/*.conf')
+        r.Ownership('lp', 'sys', '%(localstatedir)s/log/cups')
+
+        r.ExcludeDirectories(exceptions=['%(localstatedir)s/spool/cups',
+                                         '%(sysconfdir)s/cups/certs',
+                                         '%(sysconfdir)s/cups/ppd',
+                                         '%(localstatedir)s/log/cups', 
+                                         '%(localstatedir)s/cache/cups/rss', 
+                                         '%(prefix)s/lib/cups/driver',
+                                         '%(sysconfdir)s/cups/interfaces',])
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.TagSpec('gtk-update-icon-cache', '/usr/share/pixmaps/cupsprinter.png')
+        # put filters/backend progs in :runtime
+        r.ComponentSpec('cups:runtime', '%(libdir)s/cups/')
+        # FIXME: cups uses its docdir as a location to store web page info such
+        # as css and images. we should probably hack it not to do that, but for
+        # now we can just include all that in :runtime
+        r.ComponentSpec('runtime', '%(thisdocdir)s/')
+        r.Requires('poppler:runtime','/usr/lib/cups/filter/pdftops')

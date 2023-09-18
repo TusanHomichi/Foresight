@@ -1,0 +1,53 @@
+#        
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#  
+loadSuperClass('rpmpackage')
+class PPTPClient(RPMPackageRecipe,CPackageRecipe):
+ 
+    name = "pptpclient"
+    version = "1.7.2"
+    rpmName = 'pptp'
+    tarballName = 'pptp-%(version)s.tar.gz'
+    rpmRelease = '14.fc15'
+    rpmPatches = [ 'pptp-1.7.2-compat.patch',
+                   'pptp-1.7.2-ip-path.patch',
+                   'pptp-1.7.2-pptpsetup.patch',
+                   'pptp-1.7.2-makedeps.patch',
+                   'pptp-1.7.2-pptpsetup-encrypt.patch',
+                   'pptp-1.7.2-pptpsetup-mppe.patch',
+                   'pptp-1.7.2-waitpid.patch',
+                   'pptp-1.7.2-conn-free.patch',
+                   'pptp-1.7.2-conn-free2.patch',
+                   'pptp-1.7.2-call-disconnect-notify.patch',
+                   'pptp-1.7.2-so_mark.patch',
+                   'pptp-1.7.2-nohostroute-option.patch',
+                   'pptp-1.7.2-parallel-build.patch',
+                   'pptp-1.7.2-fsf-update.patch',
+                   'pptp-1.7.2-sign-compare.patch',
+                   'pptp-1.7.2-const.patch',
+                   'pptp-1.7.2-field-init.patch',
+                   'pptp-1.7.2-unused.patch',
+                   'pptp-1.7.2-prototype.patch',
+                   'pptp-1.7.2-nested-externs.patch',
+                   'pptp-1.7.2-aliasing.patch',
+                   ]
+    rpmSources = ['pptp-tmpfs.conf']
+    buildRequires = [ 'perl:runtime', ]
+ 
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.Replace('install -o root -m 555 pptp', 'install -m 755 pptp', 'Makefile')
+
+        r.macros.cflags += '  -Wextra -Wstrict-aliasing=2 -Wnested-externs -Wstrict-prototypes'
+        r.Make('IP=/sbin/ip')
+
+        r.MakeInstall('INSTALL=install install')
+        r.Requires('%(sbindir)s/pppd', '%(bindir)s/pptp')
+
+        r.Install('pptp-tmpfs.conf', '%(sysconfdir)s/tmpfiles.d/pptp.conf', 
+                  mode = 0644)
+
+        r.MakeDirs('%(localstatedir)s/run/pptp', mode = 0750)
+        r.ExcludeDirectories(exceptions = '%(localstatedir)s/run/pptp')

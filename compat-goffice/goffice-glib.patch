@@ -1,0 +1,12 @@
+diff -up goffice-0.8.17/configure.cow goffice-0.8.17/configure
+--- goffice-0.8.17/configure.cow	2012-07-10 11:29:55.491034608 -0400
++++ goffice-0.8.17/configure	2012-07-10 11:30:02.378034799 -0400
+@@ -15161,7 +15161,7 @@ LIBS="$GOFFICE_LIBS $LIBS"
+ $as_echo_n "checking for G_REGEX_ERROR_STRAY_BACKSLASH... " >&6; }
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+-#include <glib/gregex.h>
++#include <glib.h>
+ int
+ main ()
+ {

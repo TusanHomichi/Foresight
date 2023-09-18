@@ -1,0 +1,18 @@
+class Vpnc(CPackageRecipe):
+    name = "vpnc"
+    version = "0.5.3"
+
+    buildRequires = ['libgcrypt:devel', 'libgpg-error:devel',
+                     'perl:runtime', 'perl:devel', ]
+
+    def setup(r):
+        # http://www.answeredubuntu.com/94351/vpnc_cannot_connect_to_vpn_due_to_vpnc_script
+        r.addArchive('http://www.unix-ag.uni-kl.de/~massar/vpnc/')
+        r.addSource('http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script')
+        r.addSource('generic-vpnc.conf')
+
+        r.Make('PREFIX=%(prefix)s')
+        r.MakeInstall('DESTDIR="%(destdir)s" PREFIX="%(prefix)s"')
+
+        r.Install('generic-vpnc.conf', '%(sysconfdir)s/vpnc/default.conf', mode=0600)
+        r.Install('vpnc-script', '%(sysconfdir)s/vpnc/vpnc-script', mode=0755)

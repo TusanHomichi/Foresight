@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# Original versions by Gil Hamlin and Alex Bucur
+#
+
+class autogen(AutoPackageRecipe):
+    name = 'autogen'
+    version = '5.8.9'
+    buildRequires = [ 'gmp:devel', 'guile:devel', 'install-info:runtime', 'libxml2:devel', 'texi2html:runtime', 'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/autogen/')
+
+    def policy(r):
+        r.Doc('AUTHORS', 'COPYING', 'NEWS', 'NOTES', 'README', 'THANKS',
+              'TODO', 'VERSION')

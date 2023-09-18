@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Udisks2(AutoPackageRecipe):
+    name = 'udisks2'
+    version = '1.98.0'
+ 
+    buildRequires = [
+	'acl:devel', 
+	'gettext:runtime', 
+	'glib:devel', 
+	'gtk-doc:runtime', 
+	'gudev:devel', 
+	'intltool:runtime', 
+	'libatasmart:devel', 
+	'libxslt:runtime', 
+	'pkgconfig:devel', 
+	'polkit:devel',
+		]
+ 
+    def unpack(r):
+        r.addArchive('http://udisks.freedesktop.org/releases/udisks-%(version)s.tar.bz2')
+        r.addPatch('udisks-2.1.1-firewire-ident.patch')
+        r.addSource('99-foresight.rules')
+        r.Install('99-foresight.rules', '/etc/polkit-1/rules.d/')

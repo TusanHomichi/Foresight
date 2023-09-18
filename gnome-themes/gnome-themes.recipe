@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#import os
+loadRecipe('gnomepackage')
+class GnomeThemes(GnomePackageRecipe):
+
+    buildRequires = [ 'gtk:devel', 'gtk-engines:devellib', 'gettext:runtime',
+        'gtk:runtime', 'cairo:devel', 'freetype:devel', 'fontconfig:devel',
+        'libpng:devel', 'icon-naming-utils:runtime', 'icon-naming-utils:devellib' ]
+
+    name = 'gnome-themes'
+    version = '2.32.1'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.addPatch('icons.patch')
+
+    def policy(r):
+        # dangling symlink
+        r.Remove('%(datadir)s/icons/HighContrastLargePrint/48x48/apps/ax-applet.png')
+        r.Remove('%(datadir)s/icons/HighContrastLargePrintInverse/48x48/apps/ax-applet.png')
+
+        # Clearlooks gtk theme is in gtk2-engines
+        r.Remove('%(datadir)s/themes/Clearlooks/gtk-2.0', recursive = True) 
+        r.Remove('%(datadir)s/themes/ThinIce/README.html')
+        r.Remove('%(datadir)s/themes/ThinIce/ICON.png')
+
+        # we want to own the icon caches
+        #lst = os.listdir('%(destdir)s/%(datadir)s/icons/')
+        #for i in lst:
+        #    r.Create(i + '/icon-theme.cache')
+        #    r.InitialContents(i + '/icon-theme.cache')

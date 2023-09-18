@@ -1,0 +1,13 @@
+loadSuperClass('gnomepackage')
+class Dates(GnomePackageRecipe,AutoPackageRecipe):
+
+    name = 'dates'
+    version = '0.4.11'
+
+    buildRequires = ['ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'evolution-data-server:devel', 'expat:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gnome-vfs:devel', 'gtk:devel', 'gtk:runtime', 'libXrender:devel', 'libbonobo:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'popt:devel', 'zlib:devel', 'intltool:runtime']
+
+    extraConfig = '--disable-debug'
+
+
+    patches = [ 'dates-fixmake.patch', 'dates-ftbfs.patch' ]
+    potFileName = 'Dates'

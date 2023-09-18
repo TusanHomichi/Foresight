@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class KDevelop(kdePackageRecipe):
+
+    name = 'kdevelop'
+    version = '4.2.0'
+
+    buildRequires = [
+        'kdebase-workspace:devel', 'kdevplatform:devel', 'okteta:devel',
+        'python:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/kdevelop/%(version)s/src/')
+

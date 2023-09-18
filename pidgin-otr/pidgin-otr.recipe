@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginOTR(AutoPackageRecipe):
+
+        name = 'pidgin-otr'
+        version = '3.2.0'
+
+        buildRequires = ['gettext:runtime', 'libgcrypt:devel', 'libgpg-error:devel', 'libotr:devel', 'perl:runtime', 'pkgconfig:devel', 'perl-XML-Parser:perl', 'gtk:devel', 'glib:devel','pidgin:devel' ]
+
+        def unpack(r):
+                r.addArchive("http://www.cypherpunks.ca/otr/%(name)s-%(version)s.tar.gz")
+

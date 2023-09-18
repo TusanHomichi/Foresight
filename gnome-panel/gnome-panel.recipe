@@ -1,0 +1,113 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('rpmpackage')
+loadRecipe('gnomepackage')
+class GnomePanel(RPMPackageRecipe,GnomePackageRecipe):
+
+    buildRequires = [ 'libpng:devel', 'rarian:devel', 'rarian:runtime',
+                      'glib:devel', 'gtk:devel', 'libglade:devel',
+                      'libgnomeui:devel', 'gnome-desktop:devel',
+                      'libwnck:devel', 'gnome-doc-utils:runtime',
+                      'libbonobo:devel', 'libbonoboui:devel',
+                      'gnome-doc-utils:devel', 'gnome-vfs:devel',
+                      'libxslt:devel', 'gcc-c++:runtime',
+                      'fontconfig:devel', 'startup-notification:devel',
+                      'libgnome-keyring:devel', 'evolution-data-server:devel',
+                      'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel',
+                      'NetworkManager:devel', 'freetype:devel', 'gnome-menus:devel',
+                      'libart_lgpl:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                      'libxml2:devel', 'pango:devel', 'popt:devel', 'GConf:runtime',
+                      'gettext:runtime', 'glib:runtime', 'perl:runtime', 'gtk:runtime',
+                      'dbus-glib:devellib', 'dbus:devel', 'which:runtime', 'libxslt:runtime',
+                      'librsvg:devel', 'libgweather:devel', 'gtk-doc:runtime', 'gvfs:devel',
+                      'polkit-gnome:devel', 'polkit:runtime', 'desktop-file-utils:runtime',
+                      'ConsoleKit:devel', 'ConsoleKit:runtime', 'gettext:devel',
+                      'libXrandr:devel', 'libcanberra:devel', 'gobject-introspection:devel', ]
+
+    name = 'gnome-panel'
+    version = '2.32.0.2'
+    rpmRelease = '2.fc14'
+
+    extraConfig = '--disable-shave --disable-gtk-doc  --disable-scrollkeeper --enable-eds=yes'
+
+    fuzzyRpmPatches = [
+                        # FL: this one is specific to fedora
+                        ## fedora renames some desktop files, by
+                        ## desktop-file-install --vendor gnome --delete-original...
+                        #'gnome-panel-vendor.patch',
+
+                        'gnome-panel-2.10.1-speak-to-us-ye-old-wise-fish.patch',
+                        'gnome-panel-search.patch',
+
+                        # FL: this one is specific to fedora.
+                        ## fedora installs a
+                        ## /usr/share/applications/about-this-computer.desktop
+                        ## through gnome-system-monitor.
+                        ## 'gnome-panel-about.patch',
+
+                        # FL: this one is specific to fedora.
+                        ## fedora uses a custom panel layout (redhat-panel-default-setup.entries),
+                        ## we use the default from upstream, so the patches are not relevant to us.
+                        # the next three patches belong together
+                        # http://bugzilla.gnome.org/show_bug.cgi?id=470966
+                        #'launcher-desktop-files.patch',
+                        #'desktop-file-monitoring.patch',
+                        #'preferred-apps.patch',
+
+                        # don't pop up an error dialog if an applet from the
+                        # default configuration is missing; we don't want to
+                        # add a hard dependency on e.g. tomboy
+                        'applet-error.patch',
+
+                        # http://bugzilla.gnome.org/show_bug.cgi?id=520111
+                        'gnome-panel-2.21.92-allow-spurious-view-done-signals.patch',
+
+                        # http://bugzilla.gnome.org/show_bug.cgi?id=579092
+                        'clock-network.patch',
+
+                        'clock-home.patch',
+                        # Do more damage than good in FL
+                        #'bookmarks-submenu.patch',
+
+                        # http://bugzilla.gnome.org/show_bug.cgi?id=343436
+                        'panel-padding.patch',
+
+                        # https://bugzilla.gnome.org/show_bug.cgi?id=583273
+                        'icon-padding.patch',
+                        
+                        # https://bugzilla.redhat.com/show_bug.cgi?id=537798
+                        'fix-clock-crash.patch',
+                        ]
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        for p in r.fuzzyRpmPatches:
+            r.addPatch(p, rpm = r.srpm,extraArgs = '-F3')
+
+        r.macros.optflags += ' -DGWEATHER_I_KNOW_THIS_IS_UNSTABLE '
+        r.addPatch('firefox.patch')
+        r.Run('libtoolize --force --copy; aclocal -I m4; automake --add-missing; autoheader; autoconf;')
+
+    def setup(r):
+        r.addSource('gnome-panel-settings.tagdescription', macros=True)
+        r.addSource('gnome-panel-settings.taghandler', macros=True)
+        r.Install('gnome-panel-settings.tagdescription',
+            '%(tagdescriptiondir)s/gnome-panel-settings')
+        r.Install('gnome-panel-settings.taghandler',
+            '%(taghandlerdir)s/gnome-panel-settings', mode=0755)
+        r.TagSpec('gconf2schema',
+                  exceptions='%(sysconfdir)s/gconf/schemas/.*\.schemas')
+        r.TagSpec('gnome-panel-settings',
+                  '%(sysconfdir)s/gconf/schemas/.*')
+        GnomePackageRecipe.setup(r)
+
+    def policy(r):
+        r.PackageSpec('gnome-panel-layout', '%(sysconfdir)s/gconf/schemas/panel-default-setup.entries')
+        r.Requires('libical:lib', '%(libexecdir)s/clock-applet')
+        # make sure that tag scripts get always what they need ... 
+        r.Requires('grep:runtime', '%(taghandlerdir)s/gnome-panel-settings')
+        r.Requires('GConf:runtime', '%(taghandlerdir)s/gnome-panel-settings')

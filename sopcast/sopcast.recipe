@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Sopcast(PackageRecipe):
+    name = 'sopcast'
+    version = '3.2.6'
+ 
+    buildRequires = ['libgcc:devellib', 'libstdc++5:lib']
+ 
+    def setup(r):
+        r.addArchive('http://download.easetuner.com/download/sp-auth.tgz')
+        r.Install('sp-sc-auth', '%(bindir)s/')

@@ -1,0 +1,157 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Mono(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'mono'
+    version = '2.8.1'
+    rpmRelease = '1.fc15'
+    rpmPatches = [  'mono-1.2.3-use-monodir.patch',
+                    'mono-2.0-monoservice.patch',
+                    'mono-2.2-uselibdir.patch',
+                    'mono-2.8-monodis.patch',
+                    'mono-2.8-ppc-thread.patch',
+                    'mono-281-libgdiplusconfig.patch',
+                    'mono-281-moonlightbuild.patch',
+                   ]
+    rpmSources = ['monodir.c', 'mono.snk']
+    buildRequires = [   'zlib:devel', 
+                        'glib:devel', 
+                        'bison:runtime',
+                        'pkgconfig:devel', 
+                        'openssl:devel', 
+                        'autoconf:runtime',
+                        'automake:runtime', 
+                        'expat:devel', 
+                        'libtool:devel',
+                        'libtool:runtime', 
+                        'm4:runtime', 
+                        'pkgconfig:devel',
+                        'attr:devel', 
+                        'ncurses:devel', 
+                        'wget:runtime', 
+                        'curl:runtime',
+                        'libgdiplus:devellib', 
+                        'libgdiplus:lib', 
+                        'gettext:runtime', 
+                        'intltool:runtime',
+                        'libstdc++:devel', 
+                        'python:devel', 
+                        'PIL:python'
+                            ]
+
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('mono-2.8-libdir.patch', rpm=r.srpm, filter = """ sed -e 's!@libdir@!%s!' """ % '%(libdir)s', macros = True)
+        r.addPatch('mono-2.8-metadata-makefile.patch', rpm=r.srpm)
+        r.addSource('http://mono.ximian.com/daily/monolite-94-20110121.tar.gz')
+        for f in [ 'data/mono.web.pc.in', 'data/system.web.extensions_1.0.pc.in',
+		   'data/system.web.extensions.design_1.0.pc.in', 'docs/Makefile.{am,in}']:
+            r.Replace('@prefix@/lib/', '%(libdir)s', f, allowNoChange = True)
+
+        r.Run(' autoreconf -f -i -s ')
+        # Add undeclared Arg
+        r.Run(""" sed -i "61a #define ARG_MAX_POSIX_ARG_MAX" mono/io-layer/wapi_glob.h """)
+        # Remove prebuilt binaries
+        r.Remove('mcs/class/lib/monolite/*', recursive = True)
+	# not safe atm ...
+	r.disableParallelMake()
+
+    def configure(r):
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.macros.cflags += ' -fno-strict-aliasing '
+
+        r.Run('%(cc)s -o monodir  monodir.c -DMONODIR=\\"%(libdir)s/mono\\"')
+        r.Install('monodir', '%(bindir)s/')
+
+        extraConfig = ( ' --with-ikvm-native=yes --with-jit=yes --with-xen_opt=yes'
+                        ' --with-moonlight=yes '
+                        ' --with-profile2=yes '
+                        ' --with-profile4=yes '
+                        ' --with-monotouch=no '
+                        ' --with-sgen=no '
+                        ' --with-libgdiplus=installed ')
+
+        # we need this, otherwise won't cook
+        # extraConfig += ' --with-tls=pthread '
+
+        r.Configure(extraConfig)
+
+        # do not add spurious builddir RPATH entry
+        #r.Replace(('^runpath_var=.*', 'runpath_var=""'),
+        #          ('^hardcode_libdir_flag_spec=.*',
+        #           'hardcode_libdir_flag_spec=""'), 'libtool')
+
+    def makeinstall(r):
+        r.MakeInstall()
+
+        # RPM scripts are not necessary
+        r.Remove('%(bindir)s/mono-find-{provides,requires}')
+
+        # This was removed upstream... 
+        r.Remove('%(libdir)s/gac/Mono.Security.Win32/[12]*', allowNoMatch=True)
+        r.Remove('%(libdir)s/1.0/Mono.Security.Win32.dll', allowNoMatch=True)
+        r.Remove('%(libdir)s//2.0/Mono.Security.Win32.dll', allowNoMatch=True)
+        r.Remove('%(datadir)s/libgc-mono', recursive = True, allowNoMatch=True)
+        r.Remove('%(bindir)s/jay', allowNoMatch=True)
+        r.Remove('%(bindir)s/smcs', allowNoMatch=True)
+        r.Remove('%(libdir)s/pkgconfig/smcs.pc', allowNoMatch=True)
+        r.Remove('%(datadir)s/jay', recursive = True, allowNoMatch=True)
+        r.Remove('%(mandir)s/man1/{jay,monostyle,oldmono,mint}*', allowNoMatch=True)
+        r.Remove('%(libdir)s/mono/1.0/browsercaps-updater.exe*', allowNoMatch=True)
+        r.Remove('%(libdir)s/mono/*/mono-api-info.exe', recursive = True, allowNoMatch=True)
+
+
+    def policy(r):
+        r.Install('mono.snk', '%(sysconfdir)s/pki/mono/', mode = 0644, component = 'runtime')
+        r.Config(exceptions='%(sysconfdir)s/pki/mono/mono.snk')
+        # The mono libraries that provide CIL: dependencies have an
+        # implicit requirement on the mono interpreter
+        r.Requires('%(bindir)s/mono', r'.*\.(dll|exe)')
+
+        # FIXME: review this list...
+        r.ComponentSpec('devel', '%(bindir)s/monodis',
+                                 '%(mandir)s/man1/monodis.1.*',
+                                 '%(bindir)s/ilasm.*',
+                                 '%(mandir)s/man1/ilasm.1.*',
+                                 '%(bindir)s/genxs.*',
+                                 '%(mandir)s/man1/genxs.1.*',
+                                 '%(bindir)s/al.*',
+                                 '%(bindir)s/makecert',
+                                 '%(bindir)s/MakeCert.exe',
+                                 '%(mandir)s/man1/makecert.1.*',
+                                 '%(bindir)s/monop.*',
+                                 '%(mandir)s/man1/monop.1.*',
+                                 '%(bindir)s/cert2spc.*',
+                                 '%(mandir)s/man1/cert2spc.1.*',
+                                 '%(bindir)s/signcode.*',
+                                 '%(mandir)s/man1/signcode.1.*',
+                                 '%(bindir)s/secutil.*',
+                                 '%(mandir)s/man1/secutil.1.*',
+                                 '%(bindir)s/pedump',
+                                 '%(bindir)s/monoresgen.*',
+                                 '%(bindir)s/resgen',
+                                 '%(libdir)s/libmono-profiler-cov.so.*')
+
+        r.SetModes('%(bindir)s/mono-gdb.py', 0755)
+
+        # at least monodoc consumes this macros
+        # FIXME find a saner way of doing this
+        r.macros.macroFile = '%(destdir)s/%(sysconfdir)s/conary/macros.d/%(name)s'
+        r.MakeDirs('%(sysconfdir)s/conary/macros.d')
+        r.Run(""" echo -n  'cecildll = "'  > %(macroFile)s
+                  echo -n `find . | grep Cecil.dll$ | sed -e 's,^.,,'` >> %(macroFile)s
+                  echo  '"' >> %(macroFile)s;
+                  echo -n  'cecilmdbdll = "' >> %(macroFile)s
+                  echo -n `find . | grep Cecil.Mdb.dll$ | sed -e 's,^.,,'` >> %(macroFile)s
+                  echo  '"' >> %(macroFile)s;
+                  echo -n  'nunitver = "' >> %(macroFile)s
+                  echo -n `find %(libdir)s/mono/gac/nunit.framework/* -type d | sed -e 's,^.*/,,' -e 's,__.*,,'` >> %(macroFile)s
+                  echo  '"' >> %(macroFile)s ;
+              """, dir = '%(destdir)s')
+        r.ComponentSpec('devel', '%(macroFile)s')
+        r.Config(exceptions='%(macroFile)s')

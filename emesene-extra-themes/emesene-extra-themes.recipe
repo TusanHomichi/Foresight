@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EmeseneExtraThemes(PackageRecipe):
+    name = 'emesene-extra-themes'
+    version = '0.1'
+    smilies="%(datadir)s/emesene/smilies"
+    themes="%(datadir)s/emesene/themes"
+    buildRequires = ['emesene:data']
+ 
+    def setup(r):
+        r.macros.themes=r.themes
+        r.macros.smilies=r.smilies
+        r.addArchive('Live.tar.bz2',dir="%(themes)s")
+        r.addArchive('http://www.gnome-look.org/CONTENT/content-files/77804-MblSN.tar.gz',dir="%(themes)s")
+        r.addArchive('http://www.emesene.org/trac/raw-attachment/wiki/Themes/Gajim-big.tar.gz',dir="%(smilies)s")
+        r.addArchive('http://www.emesene.org/trac/raw-attachment/wiki/Themes/Gajim-small.tar.gz',dir="%(smilies)s")
+        r.addArchive('http://emesene.org/trac/raw-attachment/wiki/Themes/MSN.tar.gz',dir="%(smilies)s")

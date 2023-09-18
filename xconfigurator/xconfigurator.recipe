@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class xconfigurator(PackageRecipe):
+    name = 'xconfigurator'
+    version = '0.1'
+ 
+    buildRequires = ['chkconfig:runtime']
+ 
+    def setup(r):
+        r.addSource('xconfigurator', dest='%(initdir)s/', mode=0755)

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class KdeSettings(PackageRecipe):
+    name = 'kde-settings'
+    version = '0.90.1'
+
+    buildRequires = ['gtk:runtime']
+ 
+    def setup(r):
+        #This archive contains all the config files
+        r.addMercurialSnapshot('http://www.dragonstrider.com/hg/foresight-kde-settings/')
+        r.Copy('*', '/')
+
+        #This is the icon theme
+        r.addArchive('http://people.rpath.com/~jtate/Gnome-Green.tar.gz', dir='%(datadir)s/icons/')

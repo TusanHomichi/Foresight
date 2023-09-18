@@ -1,0 +1,23 @@
+--- mkinitrd	2010-01-20 19:01:58.000000000 -0500
++++ mkinitrd	2010-01-20 19:46:34.000000000 -0500
+@@ -94,7 +94,7 @@
+ nodmraid=""
+ 
+ IMAGESIZE=8000
+-PRESCSIMODS=""
++PRESCSIMODS="sd_mod"
+ fstab="/etc/fstab"
+ 
+ vg_list=""
+@@ -1652,6 +1660,10 @@
+     exit 1
+ fi
+ 
++# explicitly load scsi_mod and sd_mod
++if [ -z "$noscsi" ] ; then
++     MODULES="scsi_mod sd_mod $MODULES"
++fi
+ emitmodules
+ 
+ if [ -z "$nolvm" -a -n "$vg_list" -o $ncryptodevs -ne 0 ]; then
+

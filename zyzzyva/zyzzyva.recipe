@@ -1,0 +1,29 @@
+class Zyzzyva(CPackageRecipe):
+    name = 'zyzzyva'
+    version = '1.0.6'
+
+    buildRequires = ['Mesa:lib', 'qt4:devel', 'gcc-c++' ]
+
+    def setup(r):
+        r.addArchive('http://zyzzyva.net/packages/1.0.x/%(name)s-%(version)s.tar.gz')
+        # r.Environment("QMAKESPEC", "linux-g++-32")
+        r.Run("qmake-qt4")
+        r.Run("find data -type d -name .svn -print0 | xargs rm -rf")
+        r.Make()
+        r.Move("bin/libzyzzyva.so*", "%(libdir)s/")
+        r.Install("bin/zyzzyva", '%(libexecdir)s/%(name)s/') 
+        r.MakeDirs('%(datadir)s/%(name)s')
+        r.Install("AUTHORS", '%(datadir)s/%(name)s/')
+        r.Install("CHANGES", "%(datadir)s/%(name)s/")
+        r.Install("COPYING", "%(datadir)s/%(name)s/")
+        r.Install("LICENSE", "%(datadir)s/%(name)s/")
+        r.Install("README", "%(datadir)s/%(name)s/")
+        r.Install("data", "%(datadir)s/%(name)s/")
+        r.Install("images", "%(datadir)s/%(name)s/")
+        r.Symlink("%(datadir)s/%(name)s/data", "%(libexecdir)s/%(name)s/data")
+        r.Symlink("%(datadir)s/%(name)s/images", "%(libexecdir)s/%(name)s/images")
+        r.Create("%(bindir)s/zyzzyva", contents='''#!/bin/sh
+cd %(libexecdir)s/%(name)s
+./zyzzyva
+''', mode=0755)
+

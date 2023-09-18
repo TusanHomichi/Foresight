@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class Muine(GnomePackageRecipe,AutoPackageRecipe):
+    name = 'muine'
+    version = '0.8.11'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'atk:devel', 'cairo:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdbm:devel', 'gettext:runtime', 'glib:devel', 'gnome-sharp:cil', 'gnome-sharp:devellib', 'gnome-common:runtime', 'gnome-common:devel', 'gnome-icon-theme:devellib', 'gstreamer:devel', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'gtk:devel', 'gtk:runtime', 'intltool:runtime', 'libtool:runtime', 'libxml2:devel', 'mono:cil', 'mono:devel', 'mono:runtime', 'ndesk-dbus-glib', 'ndesk-dbus', 'pango:devel', 'pkgconfig:devel', 'taglib-sharp:cil', 'taglib-sharp:devellib', 'which:runtime', 'ndesk-dbus-glib:cil', 'ndesk-dbus:cil']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # do not break on warnings...
+        r.Replace('\-Werror', '', 'configure')
+        r.Replace('\-Werror', '', 'aclocal.m4')
+	
+    def policy(r):
+        r.Install('plugins/TrayIcon.dll{,.config}', '/usr/lib/muine/plugins/')

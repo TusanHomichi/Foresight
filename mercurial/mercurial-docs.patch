@@ -1,0 +1,57 @@
+# HG changeset patch
+# User Jonathan Smith <https://issues.rpath.com/>
+# Date 1168893050 18000
+# Node ID a48971ae138704d1ea6e749a7e9b8ee9a323fa89
+# Parent  de081fbb27feed82bdaa61a584ca9989b64936c0
+install man pages by default into $(PREFIX)/share/man not $(PREFIX)/man since the FHS puts them there
+
+diff -r de081fbb27fe -r a48971ae1387 doc/Makefile
+--- a/doc/Makefile	Fri Jan 12 14:27:59 2007 +0100
++++ b/doc/Makefile	Mon Jan 15 15:30:50 2007 -0500
+@@ -2,7 +2,7 @@ MAN=$(SOURCES:%.txt=%)
+ MAN=$(SOURCES:%.txt=%)
+ HTML=$(SOURCES:%.txt=%.html)
+ PREFIX=/usr/local
+-MANDIR=$(PREFIX)/man
++MANDIR=$(PREFIX)/share/man
+ INSTALL=install -c
+ 
+ all: man html
+# HG changeset patch
+# User Jonathan Smith <https://issues.rpath.com/>
+# Date 1168893098 18000
+# Node ID 15b2528239e40f684ee1c8eae42f2e0e4560f0f2
+# Parent  a48971ae138704d1ea6e749a7e9b8ee9a323fa89
+honor DESTDIR env variable for docs' make install
+
+diff -r a48971ae1387 -r 15b2528239e4 doc/Makefile
+--- a/doc/Makefile	Mon Jan 15 15:30:50 2007 -0500
++++ b/doc/Makefile	Mon Jan 15 15:31:38 2007 -0500
+@@ -37,7 +37,7 @@ install: man
+ 	for i in $(MAN) ; do \
+ 	  subdir=`echo $$i | sed -n 's/..*\.\([0-9]\)$$/man\1/p'` ; \
+ 	  mkdir -p $(MANDIR)/$$subdir ; \
+-	  $(INSTALL) $$i $(MANDIR)/$$subdir ; \
++	  $(INSTALL) $$i $(DESTDIR)/$(MANDIR)/$$subdir ; \
+ 	done
+ 
+ clean:
+# HG changeset patch
+# User Jonathan Smith <https://issues.rpath.com/>
+# Date 1168894146 18000
+# Node ID c9160748c0944a70aec247f66f30c1267c172ae0
+# Parent  15b2528239e40f684ee1c8eae42f2e0e4560f0f2
+use DESTDIR both places its needed
+
+diff -r 15b2528239e4 -r c9160748c094 doc/Makefile
+--- a/doc/Makefile	Mon Jan 15 15:31:38 2007 -0500
++++ b/doc/Makefile	Mon Jan 15 15:49:06 2007 -0500
+@@ -36,7 +36,7 @@ install: man
+ install: man
+ 	for i in $(MAN) ; do \
+ 	  subdir=`echo $$i | sed -n 's/..*\.\([0-9]\)$$/man\1/p'` ; \
+-	  mkdir -p $(MANDIR)/$$subdir ; \
++	  mkdir -p $(DESTDIR)/$(MANDIR)/$$subdir ; \
+ 	  $(INSTALL) $$i $(DESTDIR)/$(MANDIR)/$$subdir ; \
+ 	done
+ 

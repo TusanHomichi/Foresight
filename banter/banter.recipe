@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class Banter(GnomePackageRecipe):
+
+    name = 'banter'
+    version = '0.1.11'
+
+    buildRequires = ['ndesk-dbus:cil', 'ndesk-dbus:devellib', 'ndesk-dbus:devellib', 'ndesk-dbus-glib:cil', 'ndesk-dbus-glib:devellib', 'GConf:runtime', 'desktop-file-utils:runtime', 'evolution-sharp:cil', 'gnome-sharp:cil', 'gnome-sharp:devellib', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'mono:devel', 'telepathy-sharp:cil', 'telepathy-sharp:devellib', 'gnome-keyring-sharp:cil', 'gnome-keyring-sharp:devellib', 'notify-sharp:cil', 'notify-sharp:devellib']
+
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # FL: Our gnome-keyring-sharp is -1.0 so needs this replacement /ermo
+        r.Replace('gnome-keyring-sharp','gnome-keyring-sharp-1.0','configure')

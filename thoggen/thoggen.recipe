@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Thoggen(AutoPackageRecipe):
+    name = 'thoggen'
+    version = '0.7.1'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gst-plugins-good:lib', 'gst-plugins-ugly:lib', 'gst-plugins-bad:lib', 'gst-plugins-base:devel', 'gstreamer:runtime', 'gstreamer:devel', 'gtk:devel', 'hal:devel', 'libX11:devel', 'libXrender:devel', 'libdvdread:devel', 'libglade:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'zlib:devel', 'intltool:runtime']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')

@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ospm(RedirectRecipe):
+    name = 'ospm'
+    version = '0'
+
+    def setup(r):
+        r.addRemoveRedirect()

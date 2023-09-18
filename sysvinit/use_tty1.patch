@@ -1,0 +1,34 @@
+--- src/init.c.orig	2007-10-02 11:38:07.000000000 +0300
++++ src/init.c	2007-10-12 15:20:31.000000000 +0300
+@@ -42,6 +42,7 @@
+ #include <stdarg.h>
+ #include <sys/syslog.h>
+ #include <sys/time.h>
++#include <sys/vt.h>
+ 
+ #ifdef __i386__
+ #  if (__GLIBC__ >= 2)
+@@ -481,6 +482,7 @@ void console_init(void)
+ 	int tried_devcons = 0;
+ 	int tried_vtmaster = 0;
+ 	char *s;
++	struct vt_stat vs;
+ 
+ 	if (user_console) {
+ 		console_dev = user_console;
+@@ -504,6 +506,15 @@ void console_init(void)
+ 		}
+ 		break;
+ 	}
++
++	if (fd >= 0) {
++		int retval = ioctl(fd, VT_GETSTATE, &vs);
++		// If console is vty (even if it's vty1), force using vty1
++		if (retval == 0) {
++			console_dev = "/dev/tty1";
++		}
++	}
++
+ 	if (fd < 0)
+ 		console_dev = "/dev/null";
+ 	else

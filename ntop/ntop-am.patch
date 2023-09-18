@@ -1,0 +1,40 @@
+diff -up ./Makefile.am.am-patch ./Makefile.am
+--- ./Makefile.am.am-patch	2008-07-28 18:52:44.000000000 +0200
++++ ./Makefile.am	2008-07-28 18:55:10.000000000 +0200
+@@ -49,14 +49,6 @@ DISTCLEANFILES = trivialcompilemessage *
+ CLEANFILES     = $(DISTCLEANFILES) stamp-h1
+ INSTALLCLEANFILES = addressQueue.db dnsCache.db
+ 
+-#
+-# Fake out the missing tests for the auto* tools
+-#
+-ACLOCAL = /bin/sh ./missing --run echo
+-AUTOCONF = /bin/sh ./missing --run echo
+-AUTOMAKE = /bin/sh ./missing --run echo
+-AUTOHEADER = /bin/sh ./missing --run echo
+-
+ # A list of all the files in the current directory which can be regenerated
+ MAINTAINERCLEANFILES = COPYING Makefile.in aclocal.m4 config.guess \
+                        config.h.in config.sub configure install-sh \
+@@ -112,7 +104,7 @@ DOCSFILES      = `cat docs/FILES`
+ #
+ # The Games
+ #
+-bin_PROGRAMS   = ntop
++sbin_PROGRAMS   = ntop
+ EXTRA_PROGRAMS = ntops
+ bin_SCRIPTS    = 
+ 
+diff -up ./configure.in.am-patch ./configure.in
+--- ./configure.in.am-patch	2007-06-09 23:30:00.000000000 +0200
++++ ./configure.in	2008-07-28 18:54:43.000000000 +0200
+@@ -61,7 +61,7 @@ AM_CONFIG_HEADER(config.h)
+ HAS_ERROR=
+ HAS_WARNING=
+ 
+-NTOP_VERSION_EXTRA=""
++NTOP_VERSION_EXTRA="Fedora RPM"
+ 
+ echo
+ echo "Welcome to $PACKAGE_NAME, Version $PACKAGE_VERSION $NTOP_VERSION_EXTRA"
+

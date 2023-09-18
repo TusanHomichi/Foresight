@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/xorg-driver-input
+datasource	stdin
+implements	files update
+implements	files remove
+

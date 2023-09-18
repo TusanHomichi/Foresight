@@ -1,0 +1,13 @@
+--- lib/Crypto/Util/number.py.orig	2012-04-12 11:07:22.799724002 +0100
++++ lib/Crypto/Util/number.py	2012-04-12 11:08:02.093862315 +0100
+@@ -53,8 +53,8 @@
+     _fastmath = None
+ 
+ # You need libgmp v5 or later to get mpz_powm_sec.  Warn if it's not available.
+-if _fastmath is not None and not _fastmath.HAVE_DECL_MPZ_POWM_SEC:
+-    _warn("Not using mpz_powm_sec.  You should rebuild using libgmp >= 5 to avoid timing attack vulnerability.", PowmInsecureWarning)
++#if _fastmath is not None and not _fastmath.HAVE_DECL_MPZ_POWM_SEC:
++#    _warn("Not using mpz_powm_sec.  You should rebuild using libgmp >= 5 to avoid timing attack vulnerability.", PowmInsecureWarning)
+ 
+ # New functions
+ from _number_new import *

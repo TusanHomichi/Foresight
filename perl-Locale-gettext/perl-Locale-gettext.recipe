@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('cpanpackage.recipe', label='conary.rpath.com@rpl:devel')
+class PerlLocaleGettext(CPANPackageRecipe):
+    name = 'perl-Locale-gettext'
+    version = '1.05'
+
+    upstreamname = 'gettext'
+
+    buildRequires = [
+        'elfutils:runtime', 'perl:devel',
+        'gcc:runtime', 'gcc:lib', 'gcc:devel', 'gcc:devellib', 'glibc:devel',
+    ]

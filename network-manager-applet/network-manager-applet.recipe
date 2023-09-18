@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class NetworkManagerApplet(GnomePackageRecipe):
+
+    name = "network-manager-applet"
+    version = '0.8.6'
+
+    buildRequires = [
+        'autoconf:runtime',
+        'automake:runtime',
+        'GConf:devel',
+        'GConf:runtime',
+        'NetworkManager:devel',
+        'chkconfig:runtime',
+        'dbus-glib:devellib',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'gnome-bluetooth:devel',
+        'gnome-common:devel',
+        'gnome-common:runtime',
+        'gnome-keyring:devel',
+        'hal:devel',
+        'intltool:devel',
+        'intltool:runtime',
+        'iproute:runtime',
+        'libgcrypt:devel',
+        'libglade:devel',
+        'libgnome-keyring:devellib',
+        'libgpg-error:devel',
+        'libnl:devel',
+        'libnotify:devel',
+        'libtool:devel',
+        'libtool:runtime',
+        'nspr:devel',
+        'nss:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        'polkit-gnome:devel',
+        'polkit:devel',
+        'popt:devel',
+        'ppp:devel',
+        'util-macros:devel',
+        'wireless-tools:devel',
+        ]
+
+    extraConfig = (
+        ' --disable-static'
+        ' --enable-more-warnings=no'
+        ' --with-bluetooth'
+        ' --with-gtkver=2'
+        )
+    potFileName = 'nm-applet'
+
+    patches = [ 'nm-applet-no-notifications.patch',
+                'nm-applet-show-in-xfce.patch', 
+                'applet-ignore-deprecated.patch',
+                ]
+    configureName = './autogen.sh'
+
+    def unpack(r):
+        r.addGitSnapshot('git://git.gnome.org/network-manager-applet', branch = 'NMA_0_8',
+                         tag = 'cecb12d')
+        for p in r.patches:
+            r.addPatch(p)
+
+
+    def policy(r):
+        # NetworkManager has been known to change protocol in a
+        # minor version update (0.8.2 -> 0.8.4, for instance).
+        r.macros.protver = '.'.join(r.version.split('.')[0:3])
+        r.Requires('NetworkManager:runtime(%(protver)s)',
+                   '%(bindir)s/nm-applet')

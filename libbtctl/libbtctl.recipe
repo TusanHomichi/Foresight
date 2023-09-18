@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+loadSuperClass('rpmpackage')
+class Libbtctl(RPMPackageRecipe,GnomePackageRecipe):
+    buildRequires = [ 'bluez:devel', 'gettext:runtime', 'glib:devel', 'gtk-sharp:runtime',
+                      'gtk-sharp:lib', 'gtk-sharp:devellib', 'mono:lib', 'openobex:devel', 'gnome-python:devel',
+                      'gnome-python:python', 'python:devel', 'mono:devel', 'gtk-sharp:cil', 'mono:cil', 
+                      'GConf:devel', 'ORBit2:devel', 'gnome-vfs:devel', 'unixODBC:devel', 
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime']
+
+    name = "libbtctl"
+    version = '0.11.1'
+    rpmRelease = '2.fc11'
+    rpmPatches = [ 'libbtctl-0.4.1-pydir.patch',
+                   'libbtctl-libtool2.patch', ]
+    # FIXME
+    #    extraConfig = ' --with-mono'
+    extraConfig = ' --disable-mono '
+    def unpack(r):
+        r.disableParallelMake()
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        RPMPackageRecipe.unpack(r)
+        r.Run('libtoolize ; aclocal; automake -a; intltoolize -c -f; autoconf')
+        r.Replace('\$\(DESTDIR\)\$\(MONO_INSTDIR\)/lib', '\$\(DESTDIR\)\$%(libdir)s', 'mono/libbtctl/Makefile.*')
+

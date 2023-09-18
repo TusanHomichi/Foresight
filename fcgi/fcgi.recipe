@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fcgi(AutoPackageRecipe):
+    name = 'fcgi'
+    version = '2.4.0'
+    buildRequires = [ 'libstdc++:devel', ]
+
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive('http://www.fastcgi.com/dist/')
+        r.addSource('fcgi-autogen.sh')
+        for patch in [ 'fcgi-2.4.0-autotools.patch',
+                       # 'fcgi-2.4.0-configure.in.patch',
+                       # 'fcgi-2.4.0-Makefile.am-CPPFLAGS.patch',
+                       'fcgi-2.4.0-gcc44_fixes.patch', ]:
+            r.addPatch(patch)
+        
+
+    def policy(r):
+        r.Install('doc/cgi-fcgi.1',
+                  '%(mandir)s/man1/cgi-fcgi.1', mode = 0644)
+        r.Install('doc/*.3',
+                  '%(mandir)s/man3/', mode = 0644)
+        r.Remove('%(libdir)s/*.a')

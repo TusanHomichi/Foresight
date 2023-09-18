@@ -1,0 +1,27 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libnfs(AutoPackageRecipe):
+    name = 'libnfs'
+    version = '1.5.0'
+ 
+    buildRequires = [
+        'autoconf:data',
+        'autoconf:runtime',
+        'automake:runtime',
+        'libtool:devel',
+        'libtool:runtime',
+        'pkgconfig:devel',
+        ]
+ 
+    def unpack(r):
+        # r.addGitSnapshot('git://github.com/sahlberg/libnfs.git')
+        r.addArchive('https://github.com/downloads/sahlberg/libnfs/libnfs-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Run('autoreconf -vif')
+        r.Configure('--prefix=%(prefix)s')

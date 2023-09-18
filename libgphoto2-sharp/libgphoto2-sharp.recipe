@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibGphoto2Sharp(AutoPackageRecipe):
+
+    buildRequires = ['libgphoto2:devel', 'mono:lib', 'mono:runtime', 'mono:devel', 'mono:cil', 'pkgconfig:devel']
+    name = 'libgphoto2-sharp'
+    version = '2.3.0'
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/gphoto/')
+
+    def policy(r):
+        r.Requires('libgphoto2:lib', '%(libdir)s/libgphoto2-sharp/libgphoto2-sharp.dll')

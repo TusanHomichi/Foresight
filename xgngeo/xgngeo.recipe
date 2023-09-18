@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xgngeo(PackageRecipe):
+
+    name = 'xgngeo'
+    version = '16'
+
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'pygtk:python',
+        'python-setuptools:python',
+        'python:bin',
+        'python:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('http://download.berlios.de/%(name)s/XGngeo-%(version)s.tar.bz2')
+        r.addPatch('remove-dumb-install.patch')
+        r.Replace('share', '%(datadir)s', 'setup.py')
+        r.PythonSetup()
+        r.Replace('sys.prefix, "lib"',
+                  '"%(libdir)s"', 'data/script/xgngeo_startup.py')
+        r.Install('data/script/xgngeo_startup.py', '%(bindir)s/%(name)s')

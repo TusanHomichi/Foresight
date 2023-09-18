@@ -1,0 +1,10 @@
+loadSuperClass('firefox-addon')
+class Greasemonkey(FirefoxAddonRecipe):
+    name = 'firefox-new-mitm-me'
+    version = '2.0.2_gad4a086'
+    fileURI='https://download.github.com/andras-tim-mitm-me-v2.0.2-6-gad4a086.zip'
+
+    def unpack(r):
+        r.addArchive(r.macros.fileuri, dir='xpi')
+        r.Move('andras-tim-mitm-me-ad4a086/*', '.')
+

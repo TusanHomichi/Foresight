@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage.recipe')
+class FileCache(CPANPackageRecipe):
+    name = 'perl-File-BaseDir'
+    version = '0.03'
+
+    buildRequires = ['perl:devel', 'perl:lib', 'perl-Module-Build:perl' ]
+
+    def unpack(r):
+        CPANPackageRecipe.unpack(r)
+
+    def build(r):
+        r.Run('%(preConfigure)s CFLAGS="%(cflags)s" perl Makefile.PL'
+              ' %(extraConfig)s OPTIMIZE="%(cflags)s"'
+              ' destdir=%(destdir)s INSTALLDIRS=vendor'
+              ' < /dev/null')
+        r.Make()
+
+    def install(r):
+        r.MakeInstall()
+

@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginAutoresize(AutoPackageRecipe):
+    name = 'pidgin-autoresize'
+    version = '0.6'
+ 
+    buildRequires = [
+            'atk:devel', 
+            'cairo:devel', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gdk-pixbuf:devel', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gtk:devel', 
+            'intltool:runtime', 
+            'libpng:devel', 
+            'libpurple:devel', 
+            'pango:devel', 
+            'pidgin:devel',
+            'pkgconfig:devel',
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.paldo.org/paldo/sources/pidgin-autoresize/pidgin-autoresize-%(version)s.tar.bz2')

@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ImageshackUploader(AutoPackageRecipe):
+    name = 'imageshack-uploader'
+    version = '2.3.0'
+
+    packageSummary = 'The Imageshack Bulk Uploader is a simple application for uploading one or more image and video files to Imageshack.'
+    packageDescription = 'The Imageshack Bulk Uploader is a simple standalone application for uploading one or more image and video files to Imageshack. Users can upload to their account or anonymously. By popular demand, the bulk uploader also supports: Sharing to Twitter via yfrog (Imageshack’s Twitter upload service), Tags, Previews, Image resizing, Drag and drop uploads, Group link creation.'
+
+    buildRequires = ['desktop-file-utils:runtime', 'ffmpeg:devel', 'libstdc++:devel', 'pkgconfig:devel', 'qt:devel', 'qt4-core:devellib', 'qt4-gui:devellib', 'qt4:devel' ]
+ 
+    def setup(r):
+        r.addMercurialSnapshot('https://imageshack-uploader.googlecode.com/hg/')
+	r.addPatch('av_log_level.patch')
+	r.addPatch('nodevkey.patch')
+	r.addPatch('noautoupdate.patch')
+	r.addPatch('ffmpeg_patch.diff')
+	#r.Replace('QVariant(true)', 'QVariant(false)', 'optionsdialog.cpp')
+	
+	r.Run('qmake-qt4')
+	r.Make()
+	r.MakeInstall('INSTALL_ROOT=%(destdir)s')
+
+	r.MakeDirs('%(datadir)s/%(name)s/translations/')
+	r.Run('cp translations/*.qm %(destdir)s%(datadir)s/%(name)s/translations/')

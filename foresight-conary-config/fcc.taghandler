@@ -1,0 +1,94 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+fixILP() {
+    ILP=${CONARY_NEW_LABEL}-kernel\ ${CONARY_NEW_LABEL}\ foresight.rpath.org@rpl:2-qa
+
+    echo setting \"installLabelPath $ILP\" in $target 
+    sed -i s/^installLabelPath\ .*/installLabelPath\ "$ILP"/g $target
+}
+
+fixConaryRc() {
+    # rBuilder adds entries to /etc/conaryrc that can break Foresight,
+    # and Foresight packages all the right things in /etc/conary/config.d/
+    if grep '^pinTroves ' /etc/conaryrc >/dev/null 2>&1 ; then
+        sed -i '/^\(pinTroves\|installLabelPath\|autoResolve\)/s/^/#/' /etc/conaryrc
+    fi
+}
+
+
+case $type in
+    files)
+        case $action in
+	    update)
+		# we assume distro-release is available
+		# as the package that calls this has a Requires on it 
+		CONARY_NEW_LABEL=$(conary q --labels --config='showComponents False' --config='showFlavors False' distro-release | sed -e 's,.*=,,' -e 's|/[^/]*$||;s|.*/||')
+
+		if [ -z "$CONARY_NEW_LABEL" ] ; then 
+
+		    exit 0 
+		else
+		    echo 'trying to fix default iLP to match label we are consuming stuff from (' $CONARY_NEW_LABEL   ')'
+		    target=$(cat "$@")
+
+		    case $CONARY_NEW_LABEL in
+			# known labels
+			'foresight.rpath.org@fl:2-qa')
+			    fixILP
+			    exit 0
+			    ;;
+			'foresight.rpath.org@fl:2-devel')
+			    fixILP
+			    exit 0
+			    ;;
+			'foresight.rpath.org@fl:2')
+			    fixILP
+			    exit 0
+			    ;;
+			*)
+			    echo $CONARY_NEW_LABEL is not a supported label
+			    echo ask the authors of this foresight derivative about this message
+			    exit 1 
+			    ;;
+		    esac
+		fi
+
+		;;
+	    *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+        esac
+        ;;
+    handler)
+        case $action in
+	    update)
+                # ignore input
+                cat > /dev/null
+                fixConaryRc
+		exit 0
+                ;;
+	    *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+
+esac
+
+exit 0

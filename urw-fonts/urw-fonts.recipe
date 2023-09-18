@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UrwFonts(PackageRecipe):
+    name = 'urw-fonts'
+    version = '1.0.7pre41'
+
+    # require fontconfig:runtime to get the cacheable-font tag desc
+    buildRequires = [ 'fontconfig:runtime' ]
+
+    def setup(r):
+        r.addArchive('ftp://ftp.gnome.ru/fonts/urw/release/%(name)s-%(version)s.tar.bz2',
+                     dir='%(maindir)s/')
+        r.Install('*.{afm,pfb}', '%(datadir)s/fonts/default/Type1/')

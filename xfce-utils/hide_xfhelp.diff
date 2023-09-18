@@ -1,0 +1,10 @@
+diff -r de909c1df033 scripts/xfhelp4.desktop.in
+--- a/scripts/xfhelp4.desktop.in	Fri May 13 23:20:40 2011 +0200
++++ b/scripts/xfhelp4.desktop.in	Fri May 13 23:22:01 2011 +0200
+@@ -7,5 +7,6 @@
+ Terminal=false
+ Categories=Utility;X-XFCE;X-Xfce-Toplevel;
+ OnlyShowIn=XFCE;
++NoDisplay=true
+ _Name=Help
+ _Comment=Help using Xfce

@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hardinfo(AutoPackageRecipe):
+    name = 'hardinfo'
+    version = '0.5.1'
+    packageSummary = "System Info and Benchmark"
+    packageDescription = "System Info and Benchmark for Linux"
+ 
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'desktop-file-utils:runtime',
+        'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'gnutls:devel', 'gtk:devel', 'gtk:runtime',
+        'libgcrypt:devel', 'libgpg-error:devel', 'libsoup:devel',
+        'libxml2:devel',
+        'pango:devel', 'pkgconfig:devel',
+        'which:runtime',
+        'zlib:devel'
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://download.berlios.de/%(name)s/%(name)s-%(version)s.tar.bz2')
+
+# Problem:
+# Checking for GTK version >= 2.6.0... which: no pkg-config in (/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin: bin:/# usr/bin)
+

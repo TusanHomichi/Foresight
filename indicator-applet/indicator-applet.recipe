@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IndicatorApplet(AutoPackageRecipe):
+    name = 'indicator-applet'
+    version = '0.4.12'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel',
+        'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel',
+        'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime',
+        'glib:devel', 'gnome-keyring:devel', 'gnome-panel:devel',
+        'gnome-vfs:devel', 'gtk-doc:runtime', 'gtk:devel', 'intltool:runtime',
+        'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel',
+        'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+        'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel',
+        'libpng:devel', 'libxcb:devel', 'libxml2:devel', 'pango:devel',
+        'pixman:devel', 'pkgconfig:devel', 'popt:devel', 'python:bin',
+        'xcb-util:devel', 'zlib:devel', 'gnome-doc-utils:runtime',
+        'gnome-doc-utils:devel', 'gnome-panel:devel', 'gnome-common:devel',
+        'gnome-common:runtime', 'libtool:devel', 'libtool:runtime',
+        'gtk-doc:devel', 'gettext:devel', 'dbus-glib:runtime',
+        'libindicator:devel'
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/%(major_version)s/%(version)s/+download/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+
+#    def policy(r):
+        # avoid superceeding gdm-user-switch-applet for now ...
+        # FIXME
+#        r.Remove('%(libdir)s/bonobo/servers/GNOME_FastUserSwitchApplet.server')
+        

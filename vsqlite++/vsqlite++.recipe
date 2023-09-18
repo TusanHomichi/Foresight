@@ -1,0 +1,19 @@
+class vSQLite(AutoPackageRecipe):
+    name = 'vsqlite++'
+    version = '0.3.12'
+
+    upstreamName = 'vsqlite--'
+
+    buildRequires = [
+        'sqlite:devel', 'gettext:devel', 'automake:runtime', 
+        'autoconf:runtime', 'm4:runtime', 'libtool:runtime',
+        'gcc-c++:runtime', 'boost:devel'
+    ]
+
+    def unpack(r):
+        r.macros.upname = r.upstreamName
+        r.addGitSnapshot(url='https://github.com/vinzenz/vsqlite--.git', tag='%(version)s')
+        # Current gcc version (4.4.7-2-1) has an issue with -std=c++03, so changing to -ansi.
+        r.Replace('-std\=c\+\+03', '-ansi', 'Makefile.am')
+        r.Run('aclocal')
+        r.Run('./autogen.sh')

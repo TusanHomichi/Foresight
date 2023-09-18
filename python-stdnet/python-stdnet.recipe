@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2011-2012 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# 
+
+loadSuperClass('pypipackage')
+class RedisStdNet(PyPiPackage, CPackageRecipe):
+    name = 'python-stdnet'
+    version = '0.6.2'
+
+    buildRequires = [ 'python:devel', 'django:python',
+                      'python-redis:python', 'python-simplejson:python',
+                      'cython:devel']
+
+    def policy(r):
+        r.Requires('python-redis:python', '%(name)s:python')
+        r.Requires('cython:runtime', '%(name)s:python')

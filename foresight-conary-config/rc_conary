@@ -1,0 +1,4 @@
+installLabelPath foresight.rpath.org@fl:2-kernel  foresight.rpath.org@fl:2 foresight.rpath.org@rpl:2-qa
+interactive         True
+autoResolve         True
+excludeTroves       .*:devel .*:devellib .*:supdoc

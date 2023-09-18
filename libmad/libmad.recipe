@@ -1,0 +1,34 @@
+class Libmad(AutoPackageRecipe):
+        buildRequires = [ ]
+
+        name = 'libmad'
+        version = '0.15.1b'
+
+        def unpack(r):
+                r.addArchive('http://aleron.dl.sourceforge.net/sourceforge/mad/%(name)s-%(version)s.tar.gz')
+
+        def configure(r):
+                config = '--disable-dependency-tracking --enable-accuracy --disable-debugging --disable-static'
+
+                if Arch.x86_64:
+                        config += ' --enable-fpm=64bit'
+
+                r.Configure(config)
+
+        def make(r):
+                r.Make('CPPFLAGS=\"%(optflags)s\"')
+
+        def policy(r):
+                r.Create('%(libdir)s/pkgconfig/mad.pc', contents = """
+prefix=%(prefix)s
+exec_prefix=%(prefix)s
+libdir=%(libdir)s
+includedir=%(includedir)s
+
+Name: mad
+Description: MPEG audio decoder
+Requires:
+Version: %(version)s
+Libs: -L${libdir} -lmad -lm
+Cflags: -I${includedir}
+""", mode = 0644)

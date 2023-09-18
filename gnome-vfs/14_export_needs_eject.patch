@@ -1,0 +1,41 @@
+diff -Nurp gnome-vfs2-2.13.92/libgnomevfs/gnome-vfs-drive.c gnome-vfs2-2.13.92.new/libgnomevfs/gnome-vfs-drive.c
+--- gnome-vfs2-2.13.92/libgnomevfs/gnome-vfs-drive.c	2006-02-24 13:54:46.000000000 +0100
++++ gnome-vfs2-2.13.92.new/libgnomevfs/gnome-vfs-drive.c	2006-03-03 13:30:53.000000000 +0100
+@@ -327,6 +327,26 @@ gnome_vfs_drive_is_mounted (GnomeVFSDriv
+ 	return res;
+ }
+ 
++/** 
++ * gnome_vfs_drive_needs_eject:
++ * @drive: a #GnomeVFSDrive.
++ *
++ * Returns: %TRUE if the @drive needs to be ejected, %FALSE otherwise.
++ *
++ * Since: 2.6
++ */
++gboolean
++gnome_vfs_drive_needs_eject (GnomeVFSDrive *drive)
++{
++	gboolean res;
++	
++	G_LOCK (drives);
++	res = drive->priv->must_eject_at_unmount;
++	G_UNLOCK (drives);
++	
++	return res;
++}
++
+ void
+ gnome_vfs_drive_remove_volume_private (GnomeVFSDrive      *drive,
+ 				       GnomeVFSVolume     *volume)
+diff -Nurp gnome-vfs2-2.13.92/libgnomevfs/gnome-vfs-drive.h gnome-vfs2-2.13.92.new/libgnomevfs/gnome-vfs-drive.h
+--- gnome-vfs2-2.13.92/libgnomevfs/gnome-vfs-drive.h	2004-09-16 20:17:27.000000000 +0200
++++ gnome-vfs2-2.13.92.new/libgnomevfs/gnome-vfs-drive.h	2006-03-03 13:22:09.000000000 +0100
+@@ -79,6 +79,7 @@ char *             gnome_vfs_drive_get_h
+ gboolean           gnome_vfs_drive_is_user_visible     (GnomeVFSDrive *drive);
+ gboolean           gnome_vfs_drive_is_connected        (GnomeVFSDrive *drive);
+ gboolean           gnome_vfs_drive_is_mounted          (GnomeVFSDrive *drive);
++gboolean           gnome_vfs_drive_needs_eject         (GnomeVFSDrive *drive);
+ 
+ gint               gnome_vfs_drive_compare             (GnomeVFSDrive *a,
+ 							GnomeVFSDrive *b);

@@ -1,0 +1,20 @@
+diff -r 9f3a48459b94 pypanel
+--- a/pypanel	Fri Jan 25 15:34:20 2008 -0500
++++ b/pypanel	Fri Jan 25 15:36:48 2008 -0500
+@@ -919,6 +919,7 @@ CLOCK_SHADOW_COLOR     = "0xffffff"
+ #-------------------------
+ if __name__ == "__main__":
+ #-------------------------
++    datadir = "/usr/share"
+     try:
+         src  = None
+         dst  = None
+@@ -931,7 +932,7 @@ if __name__ == "__main__":
+             # create it from /<pythonlib>/site-packages/pypanel/pypanelrc
+             import shutil
+             if not src:
+-                src = "%s/pypanel/pypanelrc" % sysconfig.get_python_lib()
++                src = "%s/pypanel/pypanelrc" % datadir
+             dst = "%s/.pypanelrc" % home
+             shutil.copyfile(src, dst)
+         execfile("%s/.pypanelrc" % home)

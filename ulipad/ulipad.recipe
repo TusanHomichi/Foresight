@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ulipad(PackageRecipe):
+
+    name = 'ulipad'
+    version = '3.9'
+
+    buildRequires =  ['PIL:python', 'PyYAML:python', 'desktop-file-utils:runtime', 'python:devel', 'python:tk', 'ruby:runtime', 'unzip:runtime', 'wxPython:python','ipython:python', 'python-feedparser:python']
+
+    def setup(r):
+        r.addArchive('http://ulipad.googlecode.com/files/%(name)s.%(version)s.zip',
+            dir="%(datadir)s/")
+        r.addSource("ulipad.desktop")
+        r.addSource("ulipad")
+        r.Install("ulipad","%(bindir)s/")
+        r.Desktopfile("ulipad.desktop")
+        r.addSource("ulipad.png", dir="%(datadir)s/pixmaps/")
+        dirs = ["","acp/",'conf/']
+        for i in dirs:
+            r.SetModes("%(datadir)s/ulipad/" +i,0777)

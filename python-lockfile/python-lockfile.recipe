@@ -1,0 +1,5 @@
+loadSuperClass('pypipackage')
+class PythonMock(PyPiPackage):
+    name = 'python-lockfile'
+    pyname = 'lockfile'
+    version = '0.9.1'

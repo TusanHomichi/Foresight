@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gudev(PackageRecipe):
+    name = 'gudev'
+    version = '0.1.1'
+ 
+    buildRequires = ['python-setuptools:python', 'dbus-python:python', 'pycairo:python', 'pygobject:python', 'pygtk:python', 'python-feedparser:python', 'python:devel', 'desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addBzrSnapshot('lp:gudev')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+	r.Requires('pyinotify:python', '%(bindir)s/gudev.py')
+
+# Needs a newer udev than Foresight has, do not add to groups.

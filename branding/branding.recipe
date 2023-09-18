@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2008-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Branding(PackageRecipe):
+    name = 'branding'
+    version = '2.5'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addSource('distro-logo.png', dest='%(datadir)s/pixmaps/')
+        r.addSource('ume-distro-logo.png', dest='%(datadir)s/pixmaps/')
+
+        # Boot branding
+        r.macros.extlinuxdir = '/boot/extlinux'
+        r.MakeDirs('%(extlinuxdir)s') # ensure that we can copy files here
+
+        # Enable spiffy Terminus 8x16 CP437 (US ASCII) console font in extlinux
+        r.addSource('ter-i16f.psf') # menu font
+        r.Install('ter-i16f.psf', '%(extlinuxdir)s',
+                  package='branding:data')
+
+        # Add nice menu colors
+        r.addSource('syslinux.conf') # menu colors
+        r.Install('syslinux.conf', '%(sysconfdir)s/bootloader/syslinux.conf',
+                  package='branding:data')
+
+        # And add background image
+        r.addSource('syslinux_bg.png')
+        r.Install('syslinux_bg.png', '%(extlinuxdir)s/',
+                  package='branding:data')
+        r.Create('%(sysconfdir)s/bootloader.d/syslinux_bg.png',
+                 contents='background %(extlinuxdir)s/syslinux_bg.png',
+                 package='branding:data')
+
+        # PURE EVIL FOR NV CARDS!!! (and besides, it's naughty to hide it here)
+        # Finally, avoid the annoying white 'flash' when booting the selected kernel
+        #r.MakeDirs('%(sysconfdir)s/bootloader.d/') # ensure that we can copy files there
+        #r.Create('%(sysconfdir)s/bootloader.d/no_white_flash_on_boot.conf',
+        #         contents='add_option vga=current',
+        #         package='branding:data')
+        
+        # We depend on syslinux and bootman.
+        r.Requires('bootman:runtime', '%(sysconfdir)s/bootloader.d/syslinux_bg.png' )
+        # no '.d' in bootloader/ is not a typo -- this is where extra preamble stuff goes
+        r.Requires('extlinux:runtime', '%(sysconfdir)s/bootloader/syslinux.conf')

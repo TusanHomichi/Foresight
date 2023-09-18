@@ -1,0 +1,14 @@
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WvWare(AutoPackageRecipe):
+    name = 'wv'
+    version = '1.2.4'
+ 
+    buildRequires = ['glib:devel', 'libgsf:devellib', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/wvware/'
+                     '%(name)s-%(version)s.tar.gz')

@@ -1,0 +1,35 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Girara(AutoPackageRecipe):
+    name = 'girara'
+    version = '0.1.4'
+ 
+    buildRequires = [
+                    'atk:devel',
+                    'cairo:devel',
+                    'fontconfig:devel',
+                    'freetype:devel',
+                    'gdk-pixbuf:devel',
+                    'gettext:runtime',
+                    'glib:devel',
+                    'gtk:devel',
+                    'libpng:devel',
+                    'pango:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://pwmt.org/projects/girara/download/girara-%(version)s.tar.gz')
+
+    def make(r):
+        r.Make('LIBDIR=%(libdir)s GIRARA_GTK_VERSION=2') 
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

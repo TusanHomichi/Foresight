@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GTKHtml(GnomePackageRecipe):
+
+    buildRequires = [
+            'GConf:devel',
+            'enchant:devel', 'gsettings-desktop-schemas:devel',
+            'gnome-icon-theme:devellib', 'gtk3:devel', 'iso-codes:devellib',
+            'libsoup:devel'
+        ]
+
+    name = 'gtkhtml4'
+    version = '4.6.4'
+
+    def unpack(r):
+        r.macros.name = 'gtkhtml'
+        GnomePackageRecipe.unpack(r)
+        r.Replace('-Werror-implicit-function-declaration', '', 'configure')
+
+    def postInstall(r):
+        GnomePackageRecipe.postInstall(r)
+        r.Move('%(bindir)s/gtkhtml-editor-test', '%(bindir)s/gtkhtml4-editor-test')

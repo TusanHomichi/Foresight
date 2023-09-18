@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gdb(AutoPackageRecipe):
+    name = 'gdb'
+    version = '7.2'
+
+    buildRequires = [ 'ncurses:devel', 'glibc:devel', 'gcc:runtime',
+        'texinfo:runtime', 'perl:runtime', 'findutils:runtime',
+        'install-info:runtime', 'expat:devel', ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/gdb/')
+        # hack around CNY-994
+        r.addAction('for x in `find .`; do chmod o-w $x;done')
+
+    def configure(r):
+        r.Configure('--with-separate-debug-dir=/usr/lib/debug --disable-werror')
+
+    def policy(r):
+        #in binutils and libc
+        r.Remove('%(libdir)s/lib{bfd,iberty,opcodes}.a',
+                 '%(includedir)s/{ansidecl,bfd,bfdlink,dis-asm,symcat}.h',
+                 '%(infodir)s/{bfd,configure,standards}.*',
+                 '%(datadir)s/locale/*/LC_MESSAGES/{bfd,opcodes}.mo')
+
+
+        if Use.buildtests:
+            r.Configure(dir='sim/testsuite')
+            r.Make('site.exp', dir='gdb/testsuite')
+        #r.TestSuite('gdb/testsuite', 'make just-check')
+        #r.TestSuite('sim/testsuite', 'make check-DEJAGNU')

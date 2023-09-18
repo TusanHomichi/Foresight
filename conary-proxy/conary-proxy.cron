@@ -1,0 +1,14 @@
+#!%(essentialbindir)s/sh
+#
+# Clean out cached %(name)s files older than GRACE_PERIOD
+#
+# Set a sensible default GRACE_PERIOD
+GRACE_PERIOD="30d"
+
+if [ -f %(sysconfdir)s/sysconfig/%(name)s ]; then
+  . %(sysconfdir)s/sysconfig/%(name)s
+fi
+
+%(sbindir)s/tmpwatch -qumca "$GRACE_PERIOD" %(proxydir)s/cscache
+%(sbindir)s/tmpwatch -qumca "$GRACE_PERIOD" %(proxydir)s/contents
+

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class pulseaudioLxde(PackageRecipe):
+
+    name = 'pulseaudio-lxde'
+    version = '1.0'
+
+    def setup(r):
+        r.addSource('lxde_startpulse.sh', mode=0755, dir='/%(bindir)s/')
+        r.addSource('lxde_pulseaudio.desktop', mode=0644, dir='/%(sysconfdir)s/xdg/autostart/')
+        r.Requires('pulseaudio:runtime','%(bindir)s/xfce_startpulse.sh')

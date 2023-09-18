@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoVoting(PackageRecipe):
+
+    name = 'django-voting'
+    version = 'r69'
+
+    buildRequires = ['python-setuptools:python','django:python', 'python:devel']
+
+    def setup(r):
+        r.addSvnSnapshot('http://django-voting.googlecode.com/svn/trunk/')
+        r.PythonSetup()

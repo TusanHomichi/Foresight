@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pcre(CPackageRecipe):
+    name = 'pcre'
+    version = '8.01'
+
+    buildRequires = ['sed:runtime', 'readline:devel', 'zlib:devel']
+    if Use.bootstrap:
+        keepBuildReqs = True
+        buildRequires.extend(['binutils[!cross]', 'gcc[!cross]'])
+        crossRequires = [ 'glibc:devel', 'userspace-kernel-headers:devel' ]
+    else:
+        buildRequires += [ 'libstdc++:devel' ]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.addArchive('ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/',
+            keyid='FB0F43D8')
+        # r.addPatch('pcre_compile.c.patch') # CVE-2008-2371 (RPL-2754)
+	# The patch isnt needed anymore
+
+        # we will be installing in system library directory
+        r.Replace(r'-L@libdir@\$libR ', '', 'pcre-config.in')
+
+        config = '--includedir=%(includedir)s/pcre --enable-utf8 --enable-unicode-properties'
+
+        if Use.bootstrap:
+            config += ' --disable-cpp'
+            r.Configure(config, preConfigure='CC_FOR_BUILD=%(buildcc)s')
+        else:
+            r.Configure(config)
+
+        # avoid hardcoding the *build* path, including .lib, as an RPATH
+        r.Replace('hardcode_into_libs=yes', 'hardcode_into_libs=no', 'libtool')
+        r.Make('LIBTOOL="sh ./libtool --tag=CC"')
+        # avoid relinking when installing libraries
+        r.Run('sed -i "s/relink_command=.*//" $(find -name "*.la")')
+        r.MakeInstall('LIBTOOL="sh ./libtool --tag=CC"')
+        r.Move('%(libdir)s/libpcre.so.*', '/%(lib)s/')
+        r.Symlink('%(essentiallibdir)s/libpcre.so.0',
+                  '%(libdir)s/libpcre.so')
+
+        # Split C++ bindings into separate package to cut down on
+        # runtime deps.
+        r.PackageSpec('%(name)s-c++', '%(libdir)s/libpcrecpp.*',
+                '%(prefix)s/include/pcre/pcre(cpp|cpparg|_scanner|_stringpiece).h',
+                '%(libdir)s/pkgconfig/libpcrecpp.pc',
+                '%(mandir)s/man3/pcrecpp.3.gz',
+                '%(docdir)s/pcre/html/pcrecpp.html')

@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Expedite(AutoPackageRecipe):
+    name = 'expedite'
+    version = '1.7.5'
+ 
+    buildRequires = [
+        'SDL:devel', 
+        'eet:devel', 
+        'eina:devel', 
+        'evas:devel', 
+        'libICE:devel', 
+        'libX11:devel', 
+        'libstdc++:devel', 
+        'pkgconfig:devel', 
+        'python:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://download.enlightenment.org/releases/expedite-%(version)s.tar.gz')

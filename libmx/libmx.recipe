@@ -1,0 +1,23 @@
+
+class Libmx(AutoPackageRecipe):
+    buildRequires = [
+    ]
+
+    name = "libmx"
+    version = "1.2.1"
+
+    buildRequires = [
+        'clutter:devel',
+        'dbus-glib:devel',
+        'gdk-pixbuf:devel',
+        'startup-notification:devel',
+        'gettext:runtime', 
+        'gtk-doc:runtime', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'libXrandr:devel'
+    ]
+
+    def unpack(r):
+        r.macros.archive_name = 'mx'
+        r.addArchive('http://source.clutter-project.org/sources/mx/1.2/')

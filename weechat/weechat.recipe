@@ -1,0 +1,67 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Weechat(AutoPackageRecipe):
+
+    name = 'weechat'
+    version = '0.4.2'
+
+    packageSummary = 'WeeChat is a fast, light and extensible chat client.'
+    packageDescription = 'WeeChat is: modular: a lightweight core with plugins around, multi-protocols: IRC and Jabber (other soon), extensible with C plugins and scripts (Perl, Python, Ruby, Lua and Tcl), free software, released under GPLv3 license.'
+
+    buildRequires = [
+        # gtk frontend doesn't work yet, so we'll disable
+        #'gtk:devel',
+        'asciidoc:runtime',
+        'aspell:devel',
+        'atk:devel',
+        'cairo:devel',
+        'cmake:runtime',
+        'curl:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gdk-pixbuf:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gnutls:devel',
+        'guile:devel',
+        'intltool:runtime',
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+        'libpng:devel',
+        'lua:devel',
+        'lua:runtime',
+        'ncurses:devel',
+        'pango:devel',
+        'perl:devel',
+        'perl:runtime',
+        'pkgconfig:devel',
+        'python:devel',
+        'python:runtime',
+        'ruby:devellib',
+        'ruby:runtime',
+        'tcl:devel',
+        'tcl:runtime',
+        ]
+
+    # patches = [
+    #     'weechat-cmake-paths.patch',
+    #     ]
+
+    extraConfig = '-DENABLE_GTK=OFF -DLIBDIR=%(libdir)s -DGUILE_INCLUDE_DIR=%(includedir)s/guile'
+
+    if Arch.x86_64:
+        # define LIB_SUFFIX to use in the cmake-paths patch
+        extraConfig = '-DLIB_SUFFIX=64 -DENABLE_GTK=OFF -DLIBDIR=%(libdir)s -DGUILE_INCLUDE_DIR=%(includedir)s/guile'
+
+    def unpack(r):
+        r.addArchive('http://www.weechat.org/files/src/')
+        # for patch in r.patches:
+        #     r.addPatch(patch)
+
+    def configure(r):
+        r.CMake(r.extraConfig)

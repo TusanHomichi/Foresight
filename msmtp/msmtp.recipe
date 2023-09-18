@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2010-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Msmtp(AutoPackageRecipe):
+    name = 'msmtp'
+    version = '1.4.23'
+ 
+    buildRequires = [
+            'gettext:runtime', 
+            'gnutls:devel', 
+            'install-info:runtime', 
+            'intltool:runtime', 
+            'libidn:devel',
+            'gnome-keyring:devel',
+            'libgsasl:devel'
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/%(name)s/%(version)s/')
+        r.Configure('--disable-rpath --with-gnome-keyring')

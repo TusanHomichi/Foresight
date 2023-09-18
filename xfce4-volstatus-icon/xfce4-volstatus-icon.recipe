@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4VolstatusIcon(XfcePackageRecipe):
+
+    name = 'xfce4-volstatus-icon'
+    version = '0.1.0'
+    subtree = 'apps'
+
+    buildRequires = [
+        'hal:devel', 'libexo:devel', 'libxfce4util:devel', 'libxfcegui4:devel'
+    ] 

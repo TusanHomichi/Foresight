@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2005-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibEvent(AutoPackageRecipe):
+    name = 'libevent'
+    version = '2.0.18_stable'
+
+    buildRequires = ['openssl:devel', 'python:devel']
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://downloads.sourceforge.net/levent/')
+        r.addPatch('libevent-2.0.10-stable-configure.patch')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-static')

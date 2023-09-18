@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GnomeSubtitles(AutoPackageRecipe):
+    name = 'gnome-subtitles'
+    version = '1.0'
+ 
+    buildRequires = ['GConf:runtime', 'desktop-file-utils:runtime', 'gettext:runtime', 'glib:devel', 'gnome-sharp:cil', 'gst-plugins-base:devel', 'gstreamer:devel', 'gtk-doc:runtime', 'gtk-sharp:cil', 'intltool:runtime', 'libxml2:devel', 'mono:cil', 'mono:devel', 'mono:runtime', 'pkgconfig:devel', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'gnome-sharp:lib', 'gnome-sharp:devellib', 'gtk:devellib', 'gtk-sharp:devellib', 'gtk-sharp:lib', 'which:runtime']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/gnome-subtitles/')
+    def configure(r):
+        r.Configure(' --disable-scrollkeeper --disable-schemas-install ')

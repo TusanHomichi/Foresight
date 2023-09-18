@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pycscope(PackageRecipe):
+
+    name = 'pycscope'
+    version = '0.3'
+
+    packageSummary = 'A python script to generate a cscope index from a Python source tree'
+
+    buildRequires = [
+        'python-setuptools:python',
+        'python:devel',
+        ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/pycscope/')
+        r.PythonSetup()

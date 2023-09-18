@@ -1,0 +1,241 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+#               2008-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class XULRunner(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'xulrunner'
+    version = '1.9.2.22'
+    rpmRelease = '1.fc14'
+    tarballName = '%(name)s-%(version)s.source.tar.bz2'
+
+    buildRequires = [
+        'atk:devel', 'autoconf213:runtime', 'cairo:devel', 'desktop-file-utils:runtime',
+        'doxygen:runtime', 'file:runtime', 'fontconfig:devel', 'freetype:devel',
+        'gcc:devel', 'glib:devel', 'gtk:devel', 'krb5:devel', 'libgcc:devellib',
+        'libICE:devel', 'libIDL:devel', 'libjpeg:devel', 'libpng:devel',
+        'libSM:devel', 'libstdc++:devel', 'libX11:devel', 'libXau:devel',
+        'libXdmcp:devel', 'libXext:devel', 'libXft:devel',
+        'libXinerama:devel', 'libXrender:devel', 'libXt:devel',
+        'makedepend:runtime', 'nspr:devel', 'nss:devel', 'pango:devel',
+        'perl:runtime', 'pkgconfig:devel', 'unzip:runtime', 'zip:runtime',
+        'zlib:devel', 'expat:devel', 'libXinerama:devel', 'alsa-lib:devel',
+        'bzip2:devel', 'lcms:devel', 'sqlite:devel', 'python:devel',
+        # gnome-related buildreqs
+        'GConf:devel', 'ORBit2:devel', 'gnome-vfs:devel',
+        'libbonobo:devel', 'libgnome:devel', 'popt:devel',
+        'gnome-keyring:devel', 'libart_lgpl:devel', 'libbonoboui:devel',
+        'libgnomecanvas:devel', 'libgnomeui:devel', 'libxml2:devel',
+        'dbus-glib:devel', 'dbus:devel', 'startup-notification:devel',
+        'libnotify:devel',
+        # java
+        # 'icedtea-jdk:runtime', 'icedtea-jre:runtime',
+        ]
+
+    rpmSources = ['%(name)s-redhat-default-prefs.js']
+
+    rpmPatches = [ 'xulrunner-version.patch',
+                   'mozilla-build.patch',
+                   'mozilla-jemalloc.patch',
+                   'mozilla-about-firefox-version.patch',
+                   'xulrunner-1.9.2.1-build.patch',
+                   'mozilla-build-sbrk.patch',
+                   'mozilla-gdk-pixbuf.patch',
+                   'mozilla-192-pkgconfig.patch',
+                   'mozilla-libjpeg-turbo.patch',
+                   'mozilla-513747.patch',
+
+                   # 'mozilla-crashreporter-static.patch',
+                   # 'crashreporter-remove-static.patch', 
+                    ]
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        # Enable x64 JIT backend by default (bug 489146, r=gal). 
+        r.addPatch('http://hg.mozilla.org/mozilla-central/raw-rev/b427d529e897')
+
+
+
+    def configure(r):
+        # jit patch expects it
+        r.Run('autoconf-2.13 ')
+
+        r.macros.longVersion =  r.macros.version
+        r.macros.version = '1.9.2'
+        r.Replace('__RPM_VERSION_INTERNAL__', '%(version)s', 'xulrunner/installer/Makefile.in')
+        r.Environment('INTERNAL_GECKO','%(version)s')
+        r.Environment('MOZ_APP_DIR','%(libdir)s/%(name)s-%(version)s')
+
+        r.macros.MOZ_APP_DIR = '%(libdir)s/%(name)s-%(version)s'
+        r.macros.INTERNAL_GECKO = '%(version)s'
+
+        r.Environment('BUILD_OFFICIAL', '1')
+        r.Environment('MOZILLA_OFFICIAL', '1')
+        r.Environment('CFLAGS', '%(optflags)s')
+        r.Environment('CXXFLAGS', '%(optflags)s')
+
+        r.macros.ldflags += ' -Wl,-rpath,%(MOZ_APP_DIR)s '
+
+        r.Configure( ' --with-system-nspr'
+                     ' --with-system-nss'
+                     ' --with-system-jpeg'
+                     ' --with-system-zlib'
+                     ' --with-system-bz2'
+                     ' --enable-system-lcms'
+                     ' --disable-system-hunspell'
+                     ' --disable-system-sqlite'
+                     ' --enable-system-cairo'
+                     ' --with-pthreads'
+                     ' --disable-strip'
+                     ' --disable-tests'
+                     ' --disable-mochitest'
+                     ' --disable-installer'
+                     ' --disable-debug'
+                     ' --enable-optimize=\"%(optflags)s\"'
+                     ' --enable-default-toolkit=cairo-gtk2'
+                     ' --enable-pango'
+                     ' --enable-svg'
+                     ' --enable-canvas'
+                     ' --enable-application=xulrunner'
+                     ' --disable-javaxpcom'
+                     ' --enable-extensions=default'
+                     ' --enable-libnotify'
+                     ' --enable-safe-browsing'
+                     ' --disable-crashreporter'
+                     ' --enable-startup-notification'
+                     ' --disable-necko-wifi '
+                     )
+
+
+
+    def makeinstall(r):
+
+        r.macros.MOZ_APP_DIR = '%(libdir)s/%(name)s-%(version)s'
+        r.macros.INTERNAL_GECKO = '%(version)s'
+        r.macros.INTERNAL_APP_SDK_NAME='%(name)s-sdk-%(version)s'
+        r.macros.MOZ_APP_SDK_DIR='%(libdir)s/%(INTERNAL_APP_SDK_NAME)s'
+
+        r.MakeInstall()
+
+        r.Install('dist/sdk/bin/regxpcom', '%(MOZ_APP_DIR)s/')
+
+        # set up our default preferences
+
+        r.Replace(('RPM_VERREL','%(version)s'),
+                  ('file:///usr/share/doc/HTML/index.html','http://www.foresightlinux.org'),
+                  ('Fedora', 'Foresight Linux'),
+                  '%(name)s-redhat-default-prefs.js')
+
+        r.Install('%(name)s-redhat-default-prefs.js', '%(MOZ_APP_DIR)s/defaults/pref/all-foresight.js', mode = 0644)
+
+        # Start script install
+        r.Remove('%(bindir)s/%(name)s')
+        r.addSource('%(name)s.sh.in', rpm = r.srpm)
+        r.Install('%(name)s.sh.in', '%(bindir)s/%(name)s', mode = 0755)
+        r.Replace('XULRUNNER_VERSION', '%(version)s', '%(bindir)s/%(name)s')
+        r.Remove('%(MOZ_APP_DIR)s/%(name)s-config')
+
+        # Prepare our devel package
+        r.Run('cp -rL dist/include/*   %(destdir)s/%(includedir)s/%(INTERNAL_APP_SDK_NAME)s')
+        # Copy pc files (for compatibility with 1.9.1)
+        r.Copy('%(libdir)s/pkgconfig/libxul.pc',
+               '%(libdir)s/pkgconfig/libxul-unstable.pc')
+        r.Copy('%(libdir)s/pkgconfig/libxul-embedding.pc',
+               '%(libdir)s/pkgconfig/libxul-embedding-unstable.pc')
+
+        # Fix multilib devel conflicts...
+        if Arch.x86_64:
+            mozbits = '64'
+        else:
+            mozbits = '32'
+
+        for target in ['mozilla-config', 'jsautocfg']:
+            subDir = ['']
+
+            for d in subDir:
+                dir = '%(includedir)s/%(INTERNAL_APP_SDK_NAME)s/' + d + '/'
+                r.Move(dir + target + '.h', dir + target + mozbits + '.h')
+                r.Create(dir + target + '.h', contents = """
+// This file exists to fix multilib conflicts
+#if defined(__x86_64__) || defined(__ia64__) || defined(__s390x__) || defined(__powerpc64__)
+#include "%s64.h"
+#else
+#include "%s32.h"
+#endif
+""" % (target, target))
+
+        for i in [ 'xpcshell',
+                   'xpidl',
+                   'xpt_dump',
+                   'xpt_link',]:
+                   r.Install('dist/bin/' + i, '%(MOZ_APP_DIR)s/')
+
+
+        r.Remove('%(includedir)s/%(name)s-%(version)s', recursive = True)
+        r.Remove('%(datadir)s/idl/%(name)s-%(version)s', recursive = True)
+
+        r.Remove('%(MOZ_APP_SDK_DIR)s/include', recursive = True)
+        r.Symlink('%(includedir)s/%(INTERNAL_APP_SDK_NAME)s',
+                  '%(MOZ_APP_SDK_DIR)s/include')
+
+        r.Remove('%(MOZ_APP_SDK_DIR)s/idl', recursive = True)
+        r.Symlink('%(datadir)s/idl/%(INTERNAL_APP_SDK_NAME)s',
+                  '%(MOZ_APP_SDK_DIR)s/idl')
+
+        r.Remove('%(MOZ_APP_SDK_DIR)s/sdk/include', recursive = True)
+        r.Symlink('%(includedir)s/%(INTERNAL_APP_SDK_NAME)s',
+                  '%(MOZ_APP_SDK_DIR)s/sdk/include')
+
+        r.Remove('%(MOZ_APP_SDK_DIR)s/sdk/idl', recursive = True)
+        r.Symlink('%(datadir)s/idl/%(INTERNAL_APP_SDK_NAME)s',
+                  '%(MOZ_APP_SDK_DIR)s/sdk/idl')
+
+        r.Remove('%(MOZ_APP_SDK_DIR)s/sdk/lib/*.so')
+
+        r.Run('for lib in $(ls *.so); do (cd %(destdir)s/%(MOZ_APP_SDK_DIR)s/sdk/lib/; ln -s %(MOZ_APP_DIR)s/$lib ); done;', dir = '%(MOZ_APP_DIR)s')
+
+        # GRE stuff
+        r.macros.gre_conf_file_orig = '%(sysconfdir)s/gre.d/%(longVersion)s.system.conf'
+        # add  missing trailing newline for policy happiness
+        r.Run('echo >> %(destdir)s/%(gre_conf_file_orig)s')
+
+        if Arch.x86_64:
+            r.macros.gre_conf_file = 'gre64.conf'
+        else:
+            r.macros.gre_conf_file = 'gre.conf'
+
+        r.Move('%(gre_conf_file_orig)s', '%(sysconfdir)s/gre.d/%(gre_conf_file)s')
+        r.ComponentSpec('lib',  '%(sysconfdir)s/gre.d/%(gre_conf_file)s')
+
+        # Library path
+        r.Create('%(sysconfdir)s/ld.so.conf.d/%(name)s-%(version)s' + mozbits + '.conf', contents = """
+%(libdir)s/%(name)s-%(version)s
+""")
+
+        # Ghost files
+        r.MakeDirs('%(MOZ_APP_DIR)s/components')
+#        r.Create('%(MOZ_APP_DIR)s/components/compreg.dat')
+        r.Create('%(MOZ_APP_DIR)s/components/xpti.dat')
+#        r.InitialContents('%(MOZ_APP_DIR)s/components/compreg.dat')
+        r.InitialContents('%(MOZ_APP_DIR)s/components/xpti.dat')
+
+        # remove unused files
+        r.Remove('%(MOZ_APP_DIR)s/crashreporter')
+        r.Remove('%(MOZ_APP_DIR)s/crashreporter.ini')
+
+        # branding
+
+
+    def policy(r):
+        r.SharedLibrary(subtrees='%(libdir)s/%(name)s-%(version)s')
+        r.SharedLibrary(subtrees='%(libdir)s/%(name)s-%(version)s/components')
+        r.SharedLibrary(subtrees='%(libdir)s/%(name)s-%(version)s/plugins')
+
+        r.Requires(exceptDeps='java:.*')
+
+        r.Requires('mozilla-filesystem:runtime', '%(libdir)s/')
+
+        r.LinkCount(exceptions=('%(libdir)s/xulrunner-1.9.2/.*'))
+

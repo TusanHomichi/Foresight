@@ -1,0 +1,45 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class xfceCorePackage(AutoPackageRecipe):
+
+    name = 'xfce-core-package'
+    version = '4.4.2'
+
+    xfce = None
+
+    buildRequires = [
+        'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel',
+        'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel',
+        'freetype:devel', 'gamin:devel', 'gettext:runtime', 'glib:devel',
+        'gtk:devel', 'gtk:runtime', 'hal:devel', 'iceauth:runtime',
+        'inputproto:devel', 'libICE:devel', 'libjpeg:devel', 'libpng:devel',
+        'libSM:devel', 'libX11:devel', 'libXau:devel', 'libXcomposite:devel',
+        'libXcursor:devel', 'libXdamage:devel', 'libXdmcp:devel',
+        'libXext:devel', 'libxfce4mcs:devel', 'libxfce4util:devel',
+        'libxfcegui4:devel', 'libXfixes:devel', 'libXrandr:devel',
+        'libXrender:devel', 'libXt:devel', 'libXxf86vm:devel', 'pango:devel',
+        'perl-XML-Parser:perl', 'pkgconfig:devel', 'startup-notification:devel',
+        'xfce-mcs-manager:devel', 'zlib:devel'
+    ]
+
+    extraConfig = ''
+
+    def unpack(r):
+
+        if r.__class__.__name__ == 'xfceCorePackage':
+            return
+
+        r.macros.xfce = r.xfce or r.version
+        r.addArchive('http://www.xfce.org/archive/xfce-%(xfce)s/src/')
+
+    def configure(r):
+
+        r.Configure(r.extraConfig)
+
+    def policy(r):
+
+        r.ComponentSpec('doc', '%(datadir)s/xfce4/doc/')
+

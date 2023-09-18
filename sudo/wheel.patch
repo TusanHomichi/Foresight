@@ -1,0 +1,11 @@
+--- sudoers.in.orig	2011-12-05 10:59:52.037926918 +0000
++++ sudoers.in	2011-12-05 11:00:22.556925041 +0000
+@@ -72,7 +72,7 @@
+ root ALL=(ALL) ALL
+ 
+ ## Uncomment to allow members of group wheel to execute any command
+-# %wheel ALL=(ALL) ALL
++%wheel ALL=(ALL) ALL
+ 
+ ## Same thing without a password
+ # %wheel ALL=(ALL) NOPASSWD: ALL

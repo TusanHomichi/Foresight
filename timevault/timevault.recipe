@@ -1,0 +1,15 @@
+loadRecipe('gnomepackage')
+class TimeVault(GnomePackageRecipe):
+	name = 'timevault'
+	version = '0.7.5'
+
+	buildRequires = ['chkconfig:runtime', 'dbus-python:python', 'desktop-file-utils:runtime', 'gamin:python', 'gettext:runtime', 'pygobject:python', 'pygtk:python', 'python-sqlite:python', 'python:devel']
+
+	def unpack(r):
+		r.addBzrSnapshot('http://bazaar.launchpad.net/~timevaulters/timevault/trunk')
+		r.addPatch('%(name)s-%(version)s-no-python2.5-1.patch')
+		r.Run('NOCONFIGURE=yes ./autogen.sh')
+
+	def policy(r):
+		GnomePackageRecipe.policy(r)
+		r.RequireChkconfig(exceptions='%(sysconfdir)s/init\.d/%(name)s')

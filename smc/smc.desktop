@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Secret Maryo Chronicles
+Comment=Secret Maryo Chronicles is an Open Source two-dimensional platform game$
+Exec=smc
+Icon=smc.png
+Terminal=false
+Type=Application
+Categories=Application;Game;

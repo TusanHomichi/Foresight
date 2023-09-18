@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2012-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class FileZilla(AutoPackageRecipe):
+    name = 'filezilla'
+    version = '3.8.1'
+
+    buildRequires = [ 'gnutls:devel', 'wxWidgets:devel', 'gcc-c++:runtime',
+                      'libidn:devel', 'gettext:runtime', 'wxWidgets:runtime', 
+                      'desktop-file-utils:runtime', 'dbus:devel', 'pkgconfig:devel', 'xdg-utils:runtime', 'atk:devel', 'cairo:devel', 'cppunit:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'pango:devel', 'sqlite:devel']
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://downloads.sourceforge.net/filezilla/FileZilla_%(version)s_src.tar.bz2')
+
+    def configure(r):
+        r.Configure(' --disable-static '
+                    ' --enable-locales '
+                    ' --localedir=%(datadir)s/locale '
+                    ' --disable-manualupdatecheck '
+                    ' --disable-autoupdatecheck '
+                    ' --with-tinyxml=builtin ')
+        

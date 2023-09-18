@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BBPager(AutoPackageRecipe):
+    name = 'bbpager'
+    version = '0.4.7'
+
+    buildRequires = [
+        'blackboxwm:devel',
+        'pkgconfig:devel',
+        'libICE:devel',
+        'libSM:devel',
+        'libXext:devel',
+        'libstdc++:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/bbtools/')

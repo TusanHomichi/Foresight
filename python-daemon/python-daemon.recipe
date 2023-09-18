@@ -1,0 +1,7 @@
+class PythonDaemon(PackageRecipe):
+    name = 'python-daemon'
+    version = '1.5.5'
+    buildRequires = ['python:devel','python-setuptools:python']
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/python-daemon/python-daemon-1.5.5.tar.gz')
+        r.PythonSetup()

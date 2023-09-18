@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Extremetuxracer(AutoPackageRecipe):
+    name = 'extremetuxracer'
+    version = '0.4'
+ 
+    buildRequires = ['Mesa:devel', 'SDL:devel', 'SDL_mixer:devel', 
+        'desktop-file-utils:runtime', 'freetype:devel', 'libICE:devel', 
+        'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXi:devel', 
+        'libXmu:devel', 'libXt:devel', 'libpng:devel', 'libstdc++:devel', 
+        'pkgconfig:devel', 'tcl:devel', 'tcl:lib', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/extremetuxracer/%(name)s-%(version)s.tar.gz')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.addSource('etracericon.png')
+        r.addSource('etracer.desktop')
+        r.Install('etracericon.png', '%(datadir)s/pixmaps/')
+        r.Desktopfile('etracer.desktop')
+
+    def configure(r):
+        extraConfig = ''
+        if Arch.x86_64:
+            extraConfig += '--with-tcl=%(libdir)s'
+        r.Configure(extraConfig)

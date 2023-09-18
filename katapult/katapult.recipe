@@ -1,0 +1,12 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class Katapult(kdePackageRecipe):
+    name = 'katapult'
+    version = '0.3.2.1'
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/katapult/')

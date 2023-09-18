@@ -1,0 +1,177 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class vlc(AutoPackageRecipe):
+    buildRequires = [
+        'a52dec:devel',
+        'aalib:devel',
+        'alsa-lib:devel',
+        'autoconf:runtime',
+        'automake:runtime',
+        'avahi:devel',
+        'dbus-glib:devel',
+        'desktop-file-utils:runtime',
+        'dirac:devel',
+        'faac:devel',
+        'faad2:devel',
+        'ffmpeg:devel',
+        'flac:devel',
+        'fluidsynth:devel',
+        'freetype:devel',
+        'fribidi:devel',
+        'GConf:devel',
+        'gettext:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gnome-vfs:devel',
+        'gnutls:devel',
+        'gsm:devel',
+        'hal:devel',
+        'intltool:runtime',
+        'lame:devel',
+        'libass:devel',
+        'libavc1394:devel',
+        'libavc1394:devellib',
+        'libbluray:devel',
+        'libcaca:devel',
+        'libcddb:devel',
+        'libcdio:devel',
+        'libdca:devel',
+        'libdvbpsi:devel',
+        'libdvdcss:devel',
+        'libdvdcss:devellib',
+        'libdvdnav:devel',
+        'libdvdread:devel',
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+        'libICE:devel',
+        'libidn:devel', 
+        'libjpeg:devel',
+        'libkate:devel',
+        'libmad:devel',
+        'libmodplug:devel',
+        'libmpcdec:devel',
+        'libmpeg2:devel',
+        'libmpeg2:devellib',
+        'libmtp:devel',
+        'libnotify:devel',
+        'libogg:devel',
+        'liboil:devel',
+        'libopus:devel',
+        'libpng:devel',
+        'libproxy:devel',
+        'librsvg:devel',
+        'libsamplerate:devel',
+        'libshout:devel',
+        'libSM:devel',
+        'libssh2:devel',
+        'libstdc++:devel',
+        'libtheora:devel',
+        'libtiff:devel',
+        'libtool:devel',
+        'libtool:runtime',
+        'libupnp:devel',
+        'libusb:devel',
+        'libv4l:devel',
+        'libva:devel',
+        'libvdpau:devel', 
+        'libvorbis:devel',
+        'libX11:devel',
+        'libXext:devel',
+        'libXi:devel',
+        'libXinerama:devel',
+        'libxml2:devel',
+        'libXpm:devel',
+        'libXrandr:devel',
+        'libXv:devel',
+        'libXxf86vm:devel',
+        'live555:devel',
+        'lua:devel',
+        'lua:runtime',
+        'Mesa:devel',
+        'ncurses:devel',
+        'net-tools:runtime',
+        'ORBit2:devel',
+        'pkgconfig:devel',
+        'portaudio:devel',
+        'pulseaudio:devel',
+        'qt4-core:lib',
+        'qt4:devel',
+        'qt4-gui:lib',
+        'samba-client:lib',
+        'samba:devel',
+        'schroedinger:devel',
+        'SDL:devel',
+        'SDL_image:devel',
+        'speex:devel',
+        'sysfsutils:devel',
+        'taglib:devel',
+        'twolame:devel',
+        'udev:devel',
+        'wxWidgets:devel',
+        'x264:devel',
+        'xcb-util:devel',
+        'xulrunner:devel',
+        'xvidcore:devel',
+        'xz:runtime',
+        'zlib:devel',
+    ]
+
+    name = "vlc"
+    version = "2.1.3"
+
+    packageSummary = 'VLC media player is a highly portable multimedia player'
+    packageDescription = 'VLC media player is a highly portable multimedia player supporting most audio and video formats (H.264, Ogg, DivX, MKV, TS, MPEG-2, mp3, MPEG-4, aac, ...) from files, physical media (DVDs, VCD, Audio-CD), TV capture cards and many network streaming protocols.'
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://download.videolan.org/pub/videolan/%(name)s/%(version)s/')
+        # r.addArchive('http://nightlies.videolan.org/build/source/vlc-%(version)s-0025.tar.xz')
+
+
+    def configure(r):
+        r.Run('rm aclocal.m4 m4/lib*.m4 m4/lt*.m4 ; ./bootstrap')
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d '
+
+        # Workaround for issue FL-2918 and FL-2902
+        # r.Replace('VLC_MMX', '', 'modules/video_filter/deinterlace/algo_x.c')
+
+        r.Configure(' --enable-pulse'
+                    ' --enable-dv'
+                    ' --enable-faad'
+                    ' --enable-notify'
+                    ' --enable-gnomevfs'
+                    ' --enable-ogg'
+                    ' --enable-mod'
+                    ' --enable-flac'
+                    ' --enable-vorbis'
+                    ' --enable-libmpeg2'
+                    ' --enable-libva'
+                    ' --enable-nls'
+                    ' --enable-bluray'
+                    ' --enable-opus'
+                    ' --enable-skins2=yes '
+                    ' --enable-libtar=no'
+                    ' --enable-merge-ffmpeg'
+                    ' --disable-dependency-tracking'
+                    ' --with-pic'
+                    ' --with-tuning=no'
+                    ' --disable-optimizations'
+                    ' --disable-rpath'
+                    ' --disable-mmx'
+                    ' --with-binary-version=%(version)s'
+                )
+
+    def policy(r):
+        r.macros.cflags += ' -fomit-frame-pointer'
+        r.addSource('vlc-cache-gen.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/vlc-cache-gen')
+        r.addSource('vlc-cache-gen.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/vlc-cache-gen', mode=0755)
+
+        r.addSource('vlc.png')
+        r.Install('vlc.png', '%(datadir)s/pixmaps/')

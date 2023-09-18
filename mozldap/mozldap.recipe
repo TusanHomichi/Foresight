@@ -1,0 +1,71 @@
+loadInstalled('nss')
+loadInstalled('nspr')
+
+class MozillaLDAP(CPackageRecipe):
+    name = 'mozldap'
+    # 6.0.7 does not build everything we need, it seems
+    version = '6.0.5'
+
+    buildRequires = [
+        'cyrus-sasl:devel',
+        'nss:devel', 'nspr:devel', 'svrcore:devel', 'libstdc++:devel',
+        'perl:runtime', 'pkgconfig:devel',
+    ]
+
+    def setup(r):
+        r.macros.major, r.macros.minor, r.macros.submin = r.version.split('.')
+        r.macros.libsuffix = '%(major)s0'
+        r.macros.nss_version = NSS.version
+        r.macros.nspr_version = Nspr.version
+
+        r.addArchive('ftp://ftp.mozilla.org/pub/mozilla.org/directory/c-sdk/releases/v%(version)s/src/')
+        #r.mainDir('mozldap-%(version)s/c-sdk')
+        r.mainDir('mozldap-%(version)s/mozilla')
+
+        b64 = ''
+        m64 = ''
+        if Arch.bits64:
+            b64 = '--enable-64bit'
+            m64 = 'USE_64=1'
+        r.Environment('PKG_CONFIG_ALLOW_SYSTEM_LIBS', '1')
+        r.Environment('PKG_CONFIG_ALLOW_SYSTEM_CFLAGS', '1')
+        r.Environment('BUILD_OPT', '1')
+        r.Environment('XCFLAGS', '%(cflags)s')
+
+        r.Configure(b64 + ' --enable-clu --with-system-svrcore'
+                    ' --enable-optimize --disable-debug',
+                    dir='directory/c-sdk')
+
+        r.Make(m64, dir='directory/c-sdk')
+
+        # why no "make install"?
+        r.Install('directory/c-sdk/mozldap.pc.in',
+                  '%(libdir)s/pkgconfig/%(name)s.pc')
+        r.Replace((r'%%prefix%%', '%(prefix)s'),
+                  (r'%%exec_prefix%%', '%(exec_prefix)s'),
+                  (r'%%libdir%%', '%(libdir)s'),
+                  (r'%%includedir%%', '%(includedir)s/%(name)s'),
+                  (r'%%bindir%%', '%(bindir)s'),
+                  (r'%%major%%', '%(major)s'),
+                  (r'%%minor%%', '%(minor)s'),
+                  (r'%%submin%%', '%(submin)s'),
+                  (r'%%libsuffix%%', '%(libsuffix)s'),
+                  (r'%%libdir%%', '%(libdir)s'),
+                  (r'%%MOZLDAP_VERSION%%', '%(version)s'),
+                  (r'%%NSPR_VERSION%%', '%(nspr_version)s'),
+                  (r'%%NSS_VERSION%%', '%(nss_version)s'),
+                  '%(libdir)s/pkgconfig/%(name)s.pc')
+
+        r.Install('dist/lib/*.so', '%(libdir)s/', mode=0755)
+
+        r.Remove('dist/bin/*.so')
+        r.Install('dist/bin/', '%(libdir)s/%(name)s/', mode=0755)
+
+        r.Install('dist/public/ldap/*.h', '%(includedir)s/%(name)s/', mode=0644)
+
+        r.Install('directory/c-sdk/ldap/examples', '%(thisdocdir)s/')
+        r.Install('directory/c-sdk/ldap/examples/xmplflt.conf',
+                  'directory/c-sdk/ldap/libraries/libldap/ldap{templates,filter,searchprefs}.conf',
+                  '%(datadir)s/%(name)s/etc/')
+
+        r.ComponentSpec('runtime', '%(libdir)s/%(name)s/')

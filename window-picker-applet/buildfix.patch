@@ -1,0 +1,12 @@
+diff --git a/src/task-item.c b/src/task-item.c
+--- a/src/task-item.c
++++ b/src/task-item.c
+@@ -205,7 +205,7 @@
+                                    WnckWindow *window,
+                                    gint size)
+ {
+-  GdkPixbuf *pbuf;
++  GdkPixbuf *pbuf = NULL;
+   
+   g_return_val_if_fail (WNCK_IS_WINDOW (window), NULL);
+   

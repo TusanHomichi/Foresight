@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class LibGWeather(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'gnome-vfs:devel',
+                      'gnutls:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libsoup:devel']
+
+    name = 'libgweather'
+    version = '2.30.3'

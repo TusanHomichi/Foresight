@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Hardware Lister
+Comment=Browse hardware on host computer
+#Exec=/usr/bin/lshw-gui
+Exec=gksu /usr/sbin/gtk-lshw
+Icon=lshw-logo
+Terminal=false
+Type=Application
+Categories=GTK;System;
+

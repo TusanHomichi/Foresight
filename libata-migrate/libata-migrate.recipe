@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+loadInstalled('python')
+class LibataMigrate(RPMPackageRecipe,CPackageRecipe):
+    name = 'libata-migrate'
+    version = '0.20080410.1'
+
+    buildRequires = [ 'sysfsutils:devel', 'pkgconfig:devel', 'glib:runtime',
+                      'bison:runtime', 'pam:devel', 'chkconfig:runtime' ]
+
+    rpmPatches = [ 'udev-116-nettype.patch',
+                   'udev-089-nopie.patch',
+                   'udev-091-lib64.patch',
+                   ]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.macros.debug = 'true'
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+
+        r.srpm = 'http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/source/SRPMS/udev-116-3.fc8.src.rpm'
+        r.tarballName = 'udev-116.tar.bz2'
+        r.unpack()
+        r.addMercurialSnapshot('http://hg.rpath.com/devsub',
+                               tag='%(version)s')
+        r.addSource('libata-migrate-links')
+        r.addPatch('path_id-ash.patch') # RPL-2462
+
+        # Make the static binaries...
+        r.Make('USE_KLIBC=false'
+               ' USE_SELINUX=false'
+               ' USE_STATIC=true'
+               ' STRIP="%(essentialbindir)s/true"'
+               ' udevdir="/dev"'
+               ' USE_LOG=false'
+               ' VOLUME_ID_STATIC=true'
+               ' DEBUG=%(debug)s'
+               ' EXTRAS="extras/scsi_id extras/ata_id extras/usb_id '
+                         'extras/edd_id extras/path_id extras/volume_id '
+                         'extras/cdrom_id extras/floppy"'
+               ' all ')
+
+        for t in [
+                  'extras/scsi_id/scsi_id',
+                  'extras/ata_id/ata_id',
+                  'extras/edd_id/edd_id',
+                  'extras/usb_id/usb_id', 
+                  'extras/path_id/path_id', 
+                  'extras/cdrom_id/cdrom_id',
+                  'extras/volume_id/vol_id' ]:
+            r.Install(t, '%(essentialsbindir)s/' + t.rsplit('/')[-1] + \
+                      '.libata-migrate')
+
+        r.Install('libata-migrate-links', '%(essentialsbindir)s/')
+
+        r.Copy('../devsub--%(version)s/devsub', '%(bindir)s/')
+        r.Install('../devsub--%(version)s/devid.py', '%(sitepkgs)s/')
+        r.CompilePython('%(sitepkgs)s/')
+
+        r.AutoDoc(exceptions='/') # We don't need udev docs in package
+

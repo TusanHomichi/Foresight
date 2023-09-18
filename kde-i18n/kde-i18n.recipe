@@ -1,0 +1,105 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeBase(kdeCorePackageRecipe):
+
+        name = 'kde-i18n'
+        version = '3.5.10'
+        buildRequires = [ 'kdelibs:devel', 'kdelibs:data', 'gettext:runtime' ]
+
+        # curl -s ftp://ftp.kde.org/pub/kde/stable/3.5.8/src/kde-i18n/ | sed -r 's/.*-i18n-(.*)-.*/"\1",/'
+        # FIXME: we need to define which langs we ship by default and which we don't
+        supportedLangs = [
+            "af",
+            "ar",
+            "az",
+            "bg",
+            "bn",
+            "br",
+            "bs",
+            "ca",
+            "cs",
+            "csb",
+            "cy",
+            "da",
+            "de",
+            "el",
+            "en_GB",
+            "eo",
+            "es",
+            "et",
+            "eu",
+            "fa",
+            "fi",
+            "fr",
+            "fy",
+            "ga",
+            "gl",
+            "he",
+            "hi",
+            "hr",
+            "hu",
+            "is",
+            "it",
+            "ja",
+            "kk",
+            "km",
+            "ko",
+            "lt",
+            "lv",
+            "mk",
+            "mn",
+            "ms",
+            "nb",
+            "nds",
+            "nl",
+            "nn",
+            "pa",
+            "pl",
+            "pt",
+            "pt_BR",
+            "ro",
+            "ru",
+            "rw",
+            "se",
+            "sk",
+            "sl",
+            "sr",
+            "sr@Latn",
+            "ss",
+            "sv",
+            "ta",
+            "te",
+            "tg",
+            "th",
+            "tr",
+            "uk",
+            "uz",
+            "vi",
+            "wa",
+            "zh_CN",
+            "zh_TW",
+        ]
+
+        def unpack(r):
+
+            for lang in r.supportedLangs:
+                r.addArchive('%%(site)s/%%(kversion)s/src/kde-i18n'
+                             '/kde-i18n-%s-%%(version)s.tar.bz2' % lang, dir='kde-i18n')
+
+        def build(r):
+
+            for lang in r.supportedLangs:
+
+                langDir = 'kde-i18n-%s-%%(version)s' % lang
+
+                r.Configure(r.extraConf, dir=langDir)
+
+                r.Make(dir=langDir)
+
+                r.MakeInstall(dir=langDir, package='kde-i18n-%s:locale' % lang.replace('@', '_' ))
+

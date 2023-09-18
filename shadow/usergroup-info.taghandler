@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# we use ">/dev/null 2>&1 || :" whenever calling these functions because
+# they *will* be called sometimes on existing users, and that's not an
+# error and we don't want it to look like one.  An "ignore existing"
+# argument in shadow would be nice, though.
+
+# we do not care about the arguments; they cannot be anything other
+# than "files update"
+
+while read tags; do
+    read filename
+    case $tags in
+        user-info)
+            # this parsing uses shell features to avoid dependencies
+            USER=$(basename $filename)
+            PREFERRED_UID=
+            GROUP=
+            GROUPID=
+            HOMEDIR='/'
+            COMMENT=
+            SHELL=
+            SUPPLEMENTAL=
+            PASSWORD=
+
+            # open $filename as descriptor 3
+            exec 3<$filename
+            while read -u 3 line; do
+                case $line in
+                    PREFERRED_UID=*) PREFERRED_UID=${line:14} ;;
+                    GROUP=*) GROUP=${line:6} ;;
+                    GROUPID=*) GROUPID=${line:8} ;;
+                    HOMEDIR=*) HOMEDIR=${line:8} ;;
+                    COMMENT=*) COMMENT=${line:8} ;;
+                    SHELL=*) SHELL=${line:6} ;;
+                    SUPPLEMENTAL=*) SUPPLEMENTAL=${line:13} ;;
+                    PASSWORD=*) PASSWORD=${line:9} ;;
+                esac
+            done
+            # close descriptor 3
+            exec 3<&-
+
+            if [ -n "$GROUPID" ] ; then
+                GGROUPARG="-g $GROUPID"
+                GROUPARG="-g ${GROUP:-$USER}"
+            else
+                GGROUPARG="-r"
+                GROUPARG=
+            fi
+            if [ -n "$GROUPID$GROUP" ] ; then
+                # first try specific args; if that fails fall back
+                # because the group really needs to exist
+                groupadd ${GGROUPARG} \
+                    ${GROUP:-$USER} >/dev/null 2>&1
+                if [ $? -eq 4 ] ; then
+                    # group ID not unique, choose another ID from the system
+                    # id pool
+                    groupadd -r ${GROUP:-$USER} >/dev/null 2>&1
+                fi
+            fi
+
+            if [ -n "$PREFERRED_UID" ] ; then
+                UIDARG="-u $PREFERRED_UID"
+            else
+                UIDARG="-r"
+            fi
+            ADDARGS=("-M" "-d" "${HOMEDIR}" \
+                ${COMMENT:+-c "${COMMENT}"} \
+                ${SHELL:+-s "${SHELL}"} \
+                ${PASSWORD:+-p "${PASSWORD}"} \
+                $USER)
+            useradd \
+                ${UIDARG} \
+                ${GROUPARG} \
+                "${ADDARGS[@]}" >/dev/null 2>&1
+            RETCODE=$?
+            if [ ${RETCODE} -eq 4 ] ; then
+                # 4 uid already in use - allocate new one
+                useradd \
+                    ${GROUPARG} \
+                    "${ADDARGS[@]}" >/dev/null 2>&1
+                RETCODE=$?
+                # if got 9 here, gonna get 4 again first and then 0, below
+            fi
+            if [ ${RETCODE} -eq 9 -a -z "$GROUPARG" ] ; then
+                # 9 can be user *or* group already exists, so if we did
+                # not specify a group and got exit code 9, try again
+                # with the group specified explictly
+                useradd \
+                    ${UIDARG} \
+                    -g ${GROUP:-$USER} \
+                    "${ADDARGS[@]}" >/dev/null 2>&1
+                RETCODE=$?
+                if [ ${RETCODE} -eq 4 ] ; then
+                    # 4 uid already in use - allocate new one
+                    useradd \
+                        -g ${GROUP:-$USER} \
+                        "${ADDARGS[@]}" >/dev/null 2>&1
+                    RETCODE=$?
+                fi
+            fi
+            if [ ${RETCODE} -ne 0 -a ${RETCODE} -ne 9 ] ; then
+              echo "Warning: useradd error, exit code ${RETCODE}, probably"\
+                   "user is not created"
+            fi
+            if [ -n "$SUPPLEMENTAL" ] ; then
+                GRPS=$(id -Gn ${USER}) || :
+                PRIMARY=$(id -gn ${USER})
+                for GRP in $(echo ${SUPPLEMENTAL//,/ } ${PRIMARY}) ; do
+                    GRPS=${GRPS//${GRP}/}
+                done
+                # echo to trim whitespace
+	        GRPS=$(echo ${GRPS} ${SUPPLEMENTAL//, })
+                GRPS=${GRPS// /,}
+                usermod -G $GRPS $USER >/dev/null 2>&1 || :
+            fi
+            ;;
+
+
+
+        group-info)
+            GROUP=$(basename $filename)
+            PREFERRED_GID=
+            USER=
+
+            # open $filename as descriptor 3
+            exec 3<$filename
+            while read -u 3 line; do
+                case $line in
+                    PREFERRED_GID=*) PREFERRED_GID=${line:14} ;;
+                    USER=*) USER=${line:5} ;;
+                esac
+            done
+            # close descriptor 3
+            exec 3<&-
+
+            if [ -n "$PREFERRED_GID" ] ; then
+                GIDARG="-g $PREFERRED_GID"
+            else
+                GIDARG="-r"
+            fi
+            groupadd ${GIDARG} \
+                     $GROUP >/dev/null 2>&1 || :
+            if [ -n "$USER" ] ; then
+                usermod -G $GROUP $USER >/dev/null 2>&1 || :
+            fi
+            ;;
+
+        *)
+            echo "ERROR: taghandler invoked for a tag ($tags) that is unknown"
+            exit 1
+            ;;
+    esac
+done
+
+exit 0

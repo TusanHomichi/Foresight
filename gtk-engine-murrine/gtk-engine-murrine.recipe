@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkMurrine(AutoPackageRecipe):
+    name = 'gtk-engine-murrine'
+    version = '0.98.2'
+
+    buildRequires = [ 
+        'atk:devel', 
+        'cairo:devel', 
+        'expat:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'glib:devel', 
+        'gtk:devel', 
+        'libX11:devel', 
+        'libXrender:devel', 
+        'libpng:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'zlib:devel', 
+        'libtool:runtime', 
+        'gettext:runtime', 
+        'gettext:devel',
+        'intltool:runtime',
+            ]
+
+
+    def unpack(r):
+        r.addArchive('http://ftp.acc.umu.se/pub/GNOME/sources/murrine/0.98/murrine-%(version)s.tar.xz')
+
+    def configure(r):
+        r.Configure(' --enable-animation --enable-animationrtl')

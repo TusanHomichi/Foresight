@@ -1,0 +1,25 @@
+From 80ed591f446ce9d021df901223e38af8b59b36c0 Mon Sep 17 00:00:00 2001
+From: Luca Ferretti <lferrett@gnome.org>
+Date: Wed, 23 Mar 2011 16:38:45 +0100
+Subject: [PATCH] Use /org/gnome as starting path for schemas
+
+---
+ data/org.gnome.gcalctool.gschema.xml.in |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/data/org.gnome.gcalctool.gschema.xml.in b/data/org.gnome.gcalctool.gschema.xml.in
+index 6d01b56..f063205 100644
+--- a/data/org.gnome.gcalctool.gschema.xml.in
++++ b/data/org.gnome.gcalctool.gschema.xml.in
+@@ -18,7 +18,7 @@
+     <value value="2" nick="gradians"/>
+   </enum>
+ 
+-  <schema path="/apps/gcalctool/" id="org.gnome.gcalctool" gettext-domain="gcalctool">
++  <schema path="/org/gnome/gcalctool/" id="org.gnome.gcalctool" gettext-domain="gcalctool">
+     <key type="i" name="accuracy">
+       <default>9</default>
+       <range min="0" max="9"/>
+-- 
+1.7.1
+

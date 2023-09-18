@@ -1,0 +1,19 @@
+class fltk(CPackageRecipe):
+    name = 'fltk'
+    version = '1.1.10'
+
+    buildRequires = [ 'libjpeg:devel', 'libpng:devel', 'Mesa:devel',
+        'zlib:devel', 'groff:runtime', 'freetype:devel', 'libstdc++:devel',
+        'libX11:devel', 'libXext:devel', 'libXft:devel', 'libXinerama:devel',
+	'libXt:devel', 'libICE:devel', 'libSM:devel', 'alsa-lib:devel',
+	'xprop:runtime', ]
+
+    def setup(r):
+        r.macros.url = 'http://ftp.easysw.com/pub/fltk/%(version)s/'
+        r.extraConf = ' --enable-shared --enable-threads --enable-xft --enable-largefile --enable-xdbe --enable-xinerama --x-libraries=%(libdir)s/xorg.mesa.3d/ --enable-gl'
+	r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.addArchive('%(url)s/%(name)s-%(version)s-source.tar.bz2')
+        r.Configure(r.extraConf)
+        r.Make()
+        r.MakeInstall()
+        r.ComponentSpec('devel', '%(bindir)s/fluid')

@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class NautilusOpenTerminal(GnomePackageRecipe):
+    name = 'nautilus-open-terminal'
+    version = '0.19'
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'esound:devel',  'gnome-desktop:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'nautilus:devel', 'popt:devel', 'startup-notification:devel', 'GConf:runtime', 'gvfs:devel' ]
+

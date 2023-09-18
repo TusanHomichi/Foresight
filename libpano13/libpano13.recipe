@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libpano13(AutoPackageRecipe):
+    name = 'libpano13'
+    version = '2.9.18'
+ 
+    buildRequires = ['libjpeg:devel', 'libpng:devel', 'libtiff:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/panotools/libpano13/libpano13-%(version)s/libpano13-%(version)s.tar.gz')

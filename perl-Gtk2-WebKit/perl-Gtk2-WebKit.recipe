@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGtk2Webkit(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Gtk2-WebKit'
+    version = '0.07'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['WebKit:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libsoup:devel', 'pango:devel', 'perl-Cairo:perl', 'perl-ExtUtils-Depends:perl', 'perl-ExtUtils-PkgConfig:perl', 'perl-Gtk2:perl', 'perl:devel', 'pkgconfig:devel']

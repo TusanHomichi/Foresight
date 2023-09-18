@@ -1,0 +1,185 @@
+# vim: ts=4 sw=4 expandtab ai
+#
+# Copyright (c) 2009 Erik Southworth <erik.southworth@gmail.com>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gambas(PackageRecipe):
+    name = 'gambas2'
+    version = '2.21.0'
+
+    archive = 'mirror://sourceforge/gambas/%(name)s-%(version)s.tar.bz2'
+
+    buildRequires = [
+        'atk:devel', 'binutils:runtime', 'bzip2:devel', 'cairo:devel', 'librsvg:devel', 'poppler:devel',
+        'curl:devel', 'expat:devel', 'file:runtime', 'fontconfig:devel',
+        'freetype:devel', 'gcc:devel', 'gcc:runtime', 'glib:devel', 'gtk:devel',
+        'libffi:devel', 'libgcc:devellib', 'libICE:devel', 'libjpeg:devel',
+        'libpng:devel', 'libSM:devel', 'libstdc++:devel', 'libX11:devel',
+        'libXcursor:devel', 'libXext:devel', 'libXft:devel', 'libxml2:devel',
+        'libXrender:devel', 'libxslt:devel', 'libXtst:devel', 'make:runtime',
+        'Mesa:devel', 'Mesa:devellib', 'mysql:devel', 'openssl:devel',
+        'pango:devel', 'pcre:devel', 'pixman:devel', 'pkgconfig:devel',
+        'poppler:devel', 'postgresql:devel', 'qt:devel', 'SDL:devel',
+        'SDL_image:devel', 'SDL_mixer:devel', 'shared-mime-info:runtime',
+        'sqlite:devel', 'unixODBC:devel', 'xdg-utils:runtime', 'zlib:devel',
+#        'kdelibs3:lib', 'kdelibs3:devel',
+        ]
+            
+    def setup(r):
+        r.setMacros()
+        r.unpack()
+        r.configure()
+        r.make()
+        r.makeInstall()
+        r.installMime()
+        r.removeNonPackageFiles()
+        r.disableStrip()
+        r.components()
+        r.policy()
+        
+    def setMacros(r):
+        r.macros.homepage = r.packageHomepage
+        # configure in gb.sdl doesn't discover -lGLU'
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/ -L`pkg-config libffi --variable=libdir` '
+        r.macros.cflags += " -I%(includedir)s/poppler -I`pkg-config libffi --variable=includedir` "
+
+    def unpack(r):
+        r.addArchive(r.archive)
+        
+    def configure(r):
+        #r.Run('%(builddir)s/reconf')
+        r.Configure('-C ')
+
+    def make(r):
+        r.Make()
+        
+    def makeInstall(r):
+        r.MakeInstall()
+
+    def installMime(r):
+        r.Install('app/mime/application-x-gambasscript.xml',
+                  'app/mime/application-x-gambasserverpage.xml',
+                  'main/mime/application-x-gambas.xml',
+                        '%(datadir)s/mime/packages/')
+
+    def removeNonPackageFiles(r):
+        r.RemoveNonPackageFiles(exceptions='.*\.la')
+        r.Remove('%(libdir)s/%(name)s/gb.{la,so,so.0,so.0.0.0}',
+            '%(datadir)s/%(name)s/help/help.tar.gz')
+                        
+    def disableStrip(r):
+        r.Strip(exceptions='.*')
+        
+    def components(r):
+# trove:runtime 
+        binModules = [
+            'gbr2',
+            'gbx2',
+            ]
+
+        for module in binModules:
+            r.ComponentSpec('runtime', '%(bindir)s/' + module)
+
+        runtimeModules = [
+            'gb.debug',
+            'gb.draw',
+            'gb.eval',
+            ]
+
+        for module in runtimeModules:
+            r.ComponentSpec('runtime', '%(libdir)s/%(name)s/' + module + '.*')
+            r.ComponentSpec('runtime', '%(datadir)s/%(name)s/info/' + module + '.*')
+            
+        r.ComponentSpec('runtime', '%(libdir)s/%(name)s/gb.component')
+        r.ComponentSpec('runtime', '%(datadir)s/%(name)s/info/gb.info')
+        r.ComponentSpec('runtime', '%(datadir)s/%(name)s/info/gb.list')
+
+# trove:devel 
+        develModules = [
+            'gba2',
+            'gbc2',
+            'gbai',
+            ]
+
+        for module in develModules:
+            r.ComponentSpec('devel', '%(bindir)s/' + module)
+
+# trove:script 
+        scriptModules = [
+            'gbs2',
+            'gbs2.gambas',
+            ]
+
+        for module in scriptModules:
+            r.ComponentSpec(   'script', '%(bindir)s/' + module)
+            r.Requires('%(name)s:devel', '%(bindir)s/' + module)
+
+# trove:ide 
+        ideModules = [
+            'gambas2',
+            'gambas2.gambas',
+            'gambas2-database-manager.gambas',
+            ]
+
+        for module in ideModules:
+            r.ComponentSpec(      'ide', '%(bindir)s/' + module)
+            r.Requires('%(name)s:devel', '%(bindir)s/' + module)
+
+# trove:example 
+        exampleModules = [
+            'examples/',
+            ]
+
+        for module in exampleModules:
+            r.ComponentSpec('examples', '%(datadir)s/%(name)s/' + module)
+            r.Requires( '%(name)s:ide', '%(datadir)s/%(name)s/' + module)
+
+# trove:help 
+        helpModules = [
+            'help/',
+            ]
+
+        for module in helpModules:
+            r.ComponentSpec(   'help', '%(datadir)s/%(name)s/' + module)
+            r.Requires('%(name)s:ide', '%(datadir)s/%(name)s/' + module)
+
+# trove:xxx
+        componentModules = [
+            'gb.chart', 'gb.component', 'gb.compress',
+            'gb.compress.bzlib2', 'gb.compress.zlib', 'gb.crypt',
+            'gb.db.form', 'gb.db.odbc', 'gb.db.postgresql',
+            'gb.db.sqlite3', 'gb.db.sqlite', 'gb.db', 'gb.desktop',
+            'gb.form.dialog', 'gb.form', 'gb.form.mdi', 'gb.gtk.ext',
+            'gb.gtk.ext', 'gb.gtk', 'gb.gui', 'gb.image', 'gb.info',
+            'gb.list', 'gb.net.curl', 'gb.net', 'gb.net.smtp',
+            'gb.opengl', 'gb.option', 'gb.pcre', 'gb.pdf',
+            'gb.qt.ext', 'gb.qt', 'gb.qt.opengl', 'gb.report', 'gb.sdl',
+            'gb.sdl.sound', 'gb.settings', 'gb.v4l', 'gb.vb', 'gb.web',
+            'gb.xml', 'gb.xml.rpc', 'gb.xml.xslt',
+            ]
+
+        for module in componentModules:
+            componentName = module.replace(".", "-")
+            r.ComponentSpec('%(name)s:' + componentName, '%(libdir)s/%(name)s/' + module + '.*')
+            r.ComponentSpec('%(name)s:' + componentName, '%(datadir)s/%(name)s/info/' + module + '.*')
+
+    def policy(r):
+        r.SharedLibrary(subtrees='%(libdir)s/gambas2/')
+        
+        r.Licenses('GPLv2')
+
+        r.Description(
+            shortDesc=r.packageSummary,
+            longDesc =r.packageDescription)
+    packageHomepage = 'http://gambas.sourceforge.net'
+    packageSummary = 'Gambas - Graphical IDE based on a BASIC interpreter with object extensions'
+    packageDescription = \
+        """Gambas is a free development environment based on a Basic
+           interpreter with object extensions, like Visual Basic (but
+           it is NOT a clone !). With Gambas, you can quickly design
+           your program GUI, access MySQL or PostgreSQL databases, pilot
+           KDE applications with DCOP, translate your program into many
+           languages, create network applications easily, and so on...
+           Homepage: %(homepage)s"""

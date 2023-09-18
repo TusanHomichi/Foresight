@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ogmtools(AutoPackageRecipe):
+    name = 'ogmtools'
+    version = '1.5'
+ 
+    buildRequires = ['libdvdread:devel', 'libogg:devel', 'libstdc++:devel', 'libvorbis:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.bunkus.org/videotools/%(name)s/')

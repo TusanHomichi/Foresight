@@ -1,0 +1,21 @@
+--- lxde-common/lxde-common-0.5.5/openbox/rc.xml.in	2011-07-29 16:04:03.000000000 +0200
++++ lxde-common/lxde-common-0.5.5/openbox/copy-rc.xml.in	2012-04-08 17:52:00.000000000 +0200
+@@ -287,7 +287,18 @@
+           <command>lxtask</command>
+       </action>
+   </keybind>
++  <!-- Take screenshot with printscreen -->
++    <keybind key="Print">
++      <action name="Execute">
++        <command>gnome-screenshot</command>
++      </action>
++    </keybind>
+ 
++    <keybind key="A-Print">
++      <action name="Execute">
++        <command>gnome-screenshot -w</command>
++      </action>
++    </keybind>
+ </keyboard>
+ 
+ 

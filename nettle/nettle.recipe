@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Martin Baehr (mbaehr@foresightlinux.org)
+#
+
+class Nettle(AutoPackageRecipe):
+    name = 'nettle'
+    version = '2.7.1'
+
+    buildRequires = [
+        'glibc:devel', 
+        'gmp:devel', 
+        'install-info:runtime', 
+        'libstdc++:devel', 
+        'm4:runtime',
+        'openssl:devel', 
+        'texinfo:runtime',
+            ]
+
+    def unpack(r):
+        r.addArchive('http://www.lysator.liu.se/~nisse/archive/')

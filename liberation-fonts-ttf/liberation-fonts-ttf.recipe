@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LiberationFontsTtf(PackageRecipe):
+    name = 'liberation-fonts-ttf'
+    version = '2'
+ 
+    buildRequires = [ 'fontconfig:runtime', 'mkfontdir:runtime' ]
+ 
+    def setup(r):
+        r.addArchive('https://www.redhat.com/f/fonts/%(name)s-%(version)s.tar.gz', dir='%(datadir)s/fonts/liberation/')
+        r.Move('%(datadir)s/fonts/liberation/{License.txt,COPYING}', '%(datadir)s/doc/%(name)s-%(version)s/')

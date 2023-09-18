@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/texdata
+include		%(datadir)s/texmf/.*
+implements 	files update
+implements 	files remove
+datasource	stdin

@@ -1,0 +1,21 @@
+class TextFlow(PackageRecipe):
+    name = 'textflow'
+    version = '0.2.9'
+
+    buildRequires = [
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'gettext:runtime',
+        'gnome-python-desktop:python',
+        'intltool:runtime',
+        'gnome-python:python',
+        'pygobject:python',
+        'pygtk:python',
+        'pygtksourceview:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addBzrSnapshot('lp:textflow/stable')
+        r.PythonSetup()

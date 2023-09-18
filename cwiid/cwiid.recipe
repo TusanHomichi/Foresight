@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cwiid(AutoPackageRecipe):
+    name = 'cwiid'
+    version = '0.6.00'
+ 
+    buildRequires = ['atk:devel', 'bluez:devel', 'cairo:devel', 'flex:runtime', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'pango:devel', 'pkgconfig:devel', 'python:devel' ]
+ 
+    def setup(r):
+        r.addArchive('http://abstrakraft.org/cwiid/downloads/')
+	r.addPatch('cwiid-0.6.00-bluez-api.patch')
+	r.Configure()
+	r.Make()
+	r.MakeInstall('DESTDIR=%(destdir)s LDCONFIG=/bin/true')

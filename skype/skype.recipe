@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:devel')
+class Skype(BinaryPackageRecipe):
+
+    name = 'skype'
+    version = '4.2.0.11'
+    buildRequires = ['gtk:runtime']
+    def unpack(r):
+
+        r.addArchive('http://download.skype.com/linux/')
+
+        files = [
+            ('skype', '/opt/%(name)s/%(name)s.bin'),
+            ('skype.desktop', '%(datadir)s/applications/'),
+            ('skype.conf', '%(sysconfdir)s/dbus-1/system.d/'),
+            ('icons/SkypeBlue_48x48.png', '%(datadir)s/icons/skype.png'),
+            ('{avatars,lang,sounds}', '%(datadir)s/skype/'),
+            ('{LICENSE,README}', '%(thisdocdir)s/')
+        ]
+        for file in files:
+            r.Install(*file)
+
+    def policy(r):
+        # hooks for proper webcam support and theming support
+        r.addSource('skype.wrapper', dest = '%(bindir)s/skype', mode = 0755)
+
+        r.TagSpec('desktop-file', '%(datadir)s/applications/')
+
+        r.Requires('soname: libcanberra.so.0(CANBERRA_0 SysV x86)',
+                   '/opt/%(name)s/%(name)s.bin')
+
+        r.Requires('soname: /usr/lib/libv4l/v4l2convert.so.0(SysV x86)',
+                   '/opt/%(name)s/%(name)s.bin')
+        # bah...
+        r.Requires('soname: /usr/lib/gtk-2.0/2.10.0/menuproxies/libappmenu.so(SysV x86)',
+                   '/opt/%(name)s/%(name)s.bin')
+

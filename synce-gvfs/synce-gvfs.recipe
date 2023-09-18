@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Dick Marinus (dick@mrns.nl)
+#
+
+class SynCEGVFS(CPackageRecipe):
+    name = 'synce-gvfs'
+    version = '0.4'
+
+    buildRequires = [ 'dbus:devel', 'file:runtime', 'gettext:runtime',
+        'glib:devel', 'gvfs:devel', 'intltool:runtime', 'libsynce:devel',
+        'make:runtime', 'perl:runtime', 'pkgconfig:devel', 'librapi2:devel',
+        'shared-mime-info:runtime' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/synce/SynCE-GNOME/0.15/')
+        r.addArchive('http://ftp.gnome.org/pub/gnome/sources/gvfs/1.6/gvfs-1.6.6.tar.bz2')
+        r.Configure('--with-gvfs-source=../gvfs-1.6.6/')
+        r.Make()
+        r.MakeInstall()

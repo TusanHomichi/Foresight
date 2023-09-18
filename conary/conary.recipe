@@ -1,0 +1,295 @@
+#
+# Copyright (c) 2004-2012 rPath, Inc.
+#               2007-2014 The Foresight Linux Project
+#                     
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadInstalled('python')
+class Conary(CPackageRecipe, Python.VersionMixIn):
+    name = 'conary'
+    version = '2.5.2'
+    tag = '47469c5'
+
+    if tag:
+        version += '_' + tag
+
+    buildRequires = [ 'python:devel', 'python:lib', 
+                      'libelf:devel', 'pycrypto:python',
+                      'openssl:devel', 'zlib:devel', 'python:bin',
+                      'elementtree:python', 'kid:python', 'm2crypto:python',
+                      'perl:runtime', 'kid:runtime',
+                      'robj:python', 'xobj:python', 'python-webob:python',
+                      # needed to generate the bash-completion scripts
+                      'rmake:python',
+                      # for the docs
+                      'epydoc:runtime',
+                    ]
+    def setup(r):
+        r.setDefaultPython()
+        r.macros.sitepkgs = '%s/%%(name)s' % Python.sitepkgs
+        r.macros.sqlitever = '3071201'
+        r.macros.sqlite = 'sqlite-autoconf-%(sqlitever)s'
+
+        if r.tag:
+            r.addGitSnapshot('https://github.com/sassoftware/conary.git',
+                                   tag=r.tag)
+
+        r.addPatch('rpl2-build-flags.patch')          
+        # CMake BuildAction Improvements
+        r.addPatch('CNY-3684.patch')
+        # get PythonSetup() a lot more robust
+        r.addPatch('CNY-1089.patch')
+        # add policyDirs to sys.path so that the stuff there could
+        # be consumed by pluggable policies
+        r.addPatch('BUGS-475.patch')
+        # patch by MarkT - https://issues.rpath.com/browse/BUGS-476
+        # we turn case insensivity off byDefault
+        # upstream may want to do the other way around to keep
+        # previous modus operandi
+        r.addPatch('allowSearchCaseInsensivity.patch')
+        # sourceforge dowloads' mirror scheme evolved.
+        # no need to enumerate mirrors manually anymore.
+        # this patch allows old recipes to keep working
+        # without further modifications. 
+        r.addPatch('sourceforgeMirrors.patch')
+        # turn xz the prefered format for archives.
+        r.addPatch('xzPreferedForArchives.patch')
+
+        r.addPatch('elfutils-libelf.ByDefault.patch')
+
+        # stop genmodel to offer mailing generated system-models
+        # to an address that is not available anymore
+        r.addPatch('genmodel-offer-fix.patch')
+
+        # 
+        r.addPatch('CNY-3817.patch')
+
+        r.addSource('docs.html')
+
+        # Use embedded sqlite
+        r.addArchive('http://sqlite.org/%(sqlite)s.tar.gz',
+                     dir='%(maindir)s/conary/pysqlite3/')
+
+        # add optional vacuumm cleaner hook
+        r.addSource('vacuumdb.cron', macros = True, 
+                    dest='%(sysconfdir)s/cron.weekly/conary-vacuumdb.cron',
+                    package = 'conary-vacuumdb',
+                    mode = 0755)
+        r.Config(exceptions = '%(sysconfdir)s/cron.weekly/vacuumdb.cron')
+        
+        # # wsgi hooks
+        # r.addSource('conary.wsgi',
+        #             dest='/srv/conary-repositories/config/common/',
+        #             mode = 0644, package = 'conary-repository:data')
+        # r.addSource('conary-repositories-common-wsgi.conf',
+        #             dest = '%(sysconfdir)s/httpd/conf.d/',
+        #             mode = 0644, package = 'conary-repository')
+        # # we actually want mod_wsgi to be around ... we now default to it
+        # r.Requires('mod_wsgi:lib', '%(sysconfdir)s/httpd/conf.d/common.conf')
+
+        # Bash-completion scripts
+        r.addArchive('https://github.com/downloads/zhangsen/conary-bash-completion/conary-bash-completion-0.2.tar.bz2',
+            dir='%(maindir)s')
+        r.Make(dir='conary-bash-completion-0.2')
+        r.MakeInstall(dir='conary-bash-completion-0.2')
+
+        r.Replace('___VERSION___', '%(version)s', 'docs.html')
+        
+        # %(x11prefix)s deprecated in rPL2 (CNY-1205)
+        r.Replace('^x11prefix.*$', 'x11prefix = \'%(exec_prefix)s\'',
+                  'config/macros')
+
+        conf = ''
+        if r.isCrossCompiling():
+            r.macros.pyver = Python.majversion
+            # distutils needs LDSHARED to get its linking correct.
+            # PYVERSION and PYINCLUDE tell conary to find python in the
+            # sysroot instead of trusting the installed python for info.
+            conf = ' PYVERSION=%(pyver)s PYINCLUDE=%(sysroot)s/%(includedir)s/python%(pyver)s LDSHARED="%(cc)s -pthread -shared"'
+
+            r.Replace('setup.py build', 'setup.py build_py build_ext -I%(sysroot)s/%(includedir)s/python%(pyver)s', 'conary/pysqlite3/Makefile')
+            r.macros.cflags += ' -I%(sysroot)s/%(includedir)s/libelf-lgpl '
+
+            # Makefiles need to know where to find include files
+            r.Environment('SYSROOT', '%(sysroot)s')
+
+        if Use.bootstrap:
+            preMake='NO_KID=1'
+        else:
+            preMake = ''
+
+        # Build internal sqlite library for Conary to use
+        r.Configure('--disable-shared --enable-threadsafe',
+                    dir='conary/pysqlite3/%(sqlite)s')
+        r.Make('CFLAGS="%(cflags)s -fPIC"', dir='conary/pysqlite3/%(sqlite)s')
+
+        r.Make('libdir=%(libdir)s' + conf, preMake=preMake)
+        r.MakeInstall('libdir=%(libdir)s', preMake=preMake)
+
+        # Include API docs by default, batteries included style
+        r.Make('docs')
+        docsDestination = '%(docdir)s/conary-api/'
+        r.MakeDirs(docsDestination)
+        for dir in [ 'developer_api', 'public_api']:
+            r.Install('doc/%s' % dir , docsDestination, mode = 0644,
+                      package = ':devel')
+        r.Install('docs.html',
+                  '%sindex.html' % docsDestination,
+                  package = ':devel')
+        # teach httpd how to display the API docs
+        r.addSource('conary-api-doc.conf', macros=True, mode=0644,
+                    dest='%(sysconfdir)s/httpd/conf.d/')
+        r.ComponentSpec('devel', '%(docdir)s/conary-api/.*',
+						'%(sysconfdir)s/httpd/conf.d/')
+
+        r.Create('%(sysconfdir)s/conaryrc',
+                 contents='includeConfigFile %(sysconfdir)s/conary/config.d/*\n')
+        r.MakeDirs('%(sysconfdir)s/conary/config.d/')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/conary/config.d')
+
+        r.MakeDirs('%(localstatedir)s/conary/emerge')
+        r.Ownership('emerge', 'emerge', '%(localstatedir)s/conary/emerge')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/conary/emerge')
+
+        r.Create('%(sysconfdir)s/logrotate.d/conary',
+                 contents='\n'.join(('/var/log/conary {',
+                                     '    missingok',
+                                     '    notifempty',
+                                     '    size 10M',
+                                     '}',
+                                     )))
+        # XXX temporarly unti we sort how we want to ship the wsgi bits
+        for x in [ '%(sysconfdir)s/conary-repos/gunicorn.conf',
+                   '%(sysconfdir)s/conary-repos/nginx-includes',
+                   '%(sysconfdir)s/logrotate.d/conary-repos.conf',
+                   '%(sysconfdir)s/nginx/conf.d/conary-common.conf',
+                   '%(sysconfdir)s/sysconfig/conary-repos',
+               ]:
+            r.Remove(x)
+        # /XXX
+
+        # FIXME: refactor commonly used build code into new generic modules
+        r.PackageSpec('conary',
+                      '%(libdir)s/.*/conary/build/__init__.py.*',
+                      '%(libdir)s/.*/conary/build/errors.py.*',
+                      '%(libdir)s/.*/conary/build/filter.py.*',
+                      '%(libdir)s/.*/conary/build/nextversion.py.*',
+                      '%(libdir)s/.*/conary/build/tags.py.*',
+                      '%(libdir)s/.*/conary/build/use.py.*')
+        r.PackageSpec('conary-repository',
+                      '%(libdir)s/.*/conary/repository/netrepos/',
+                      r'%(libdir)s/.*/conary/repository/shimclient\.py.*',
+                      '%(libdir)s/.*/conary/web/',
+                      '%(libdir)s/.*/conary/server/',
+                      '%(datadir)s/conary/migration/',
+                      '%(datadir)s/conary/logcat')
+        r.PackageSpec('conary-build',
+                      '%(bindir)s/cvc(|desc)',
+                      r'%(libdir)s/.*/conary/cvc(|desc)\.py.*',
+                      r'%(libdir)s/.*/conary/cmds/(cvccmd|clone|branch)\.py.*',
+                      '%(mandir)s/.*/cvc.*',
+                      '%(libdir)s/.*/conary/build/',
+                      r'%(libdir)s/.*/conary/(checkin|clone|branch)\.py.*',
+                      '%(libdir)s/conary/',
+                      '%(libexecdir)s/conary/perlreqs.pl',
+                      '%(localstatedir)s/conary/emerge', #/var/conary for emerge
+                      '%(sysconfdir)s/conary/recipeTemplates/',
+                      '%(sysconfdir)s/conary/mirrors/',
+                      )
+        # keyrings are binary, and we are providing the initial version
+        # only
+        r.InitialContents('%(sysconfdir)s/conary/.*gpg')
+
+        # Ensure that we get the right version of python when migrating
+        # from rPL1-based to rPL2-based systems; this is critical when
+        # any part of the update uses SSL. (RPL-3043)
+        r.Requires('python:lib(%(targetarch)s)', '%(bindir)s/conary')
+        
+        r.Requires('conary-policy:lib',
+                   '%(libdir)s/.*/conary/build/packagepolicy.py')
+
+        # Conary pieces need to work together with the same version
+        r.ComponentProvides('%(version)s')
+        r.ComponentProvides('group-scripts')
+        # Ensure that we get the right version of python when migrating
+        # from legacy rPL1 based systems; this is critical when
+        # any part of the update uses SSL. (RPL-3043)
+        r.Requires('python:lib(%(targetarch)s)', '%(bindir)s/conary')
+
+        r.ComponentRequires({'python': set(('runtime',))})
+
+        # Make inter-package deps only apply to the :python components
+        # (per http://hg.rpath.com/conary-2.4/rev/a8d70af1cfbf)
+        # This allows conary-build:python and conary:python
+        # to be installed without any :runtime components.
+        r.Requires('conary:python(%(version)s)',
+                   '%(libdir)s/.*/conary/cvc.py')
+        r.Requires('conary:python(%(version)s)',
+                   '%(libdir)s/.*/conary/server/server.py')
+        # r.Requires('conary:python(%(version)s)',
+        #           '%(bindir)s/conary')
+
+        r.UtilizeUser('emerge', '%(libdir)s/.*/conary/cvc.py')
+        # emerge really requires all of conary-build, so if
+        # it moves to cvc we can remove this whiteout
+        r.Requires(exceptDeps=('(%(bindir)s/conary|conarycmd.py)',
+                               'python: conary.build.cook'))
+        # CNY-3314 -- conary.commit should not depend on conary.cvc
+        r.Requires(exceptDeps=('.*/conary/commit\.py.*$',
+                               'python: conary.cvc'))
+
+        # force conary-repository to require conary-web-common:data
+        r.Requires('conary-web-common:data', '%(libdir)s/.*/conary/server/')
+
+        # This is only required when called from conary-repository,
+        # which contains the dependency
+        r.Requires(exceptDeps=('.*/conary/local/deptable\.py.*$',
+                               'python: conary.repository.*'))
+
+        # keyutils should not be a dep as it is included conditionally
+        r.Requires(exceptDeps=('.*/conary/callbacks.py.*$',
+                               'python: keyutils.*'))
+        # This exception needs to be here in order to bootstrap perl;
+        # if we don't have perl, we won't be using this file or those
+        # modules anyway.
+        r.Requires(exceptions='%(libexecdir)s/conary/perlreqs.pl')
+        r.Requires(exceptDeps='perl:.*')
+        # We use embedded epdb if epdb is not installed
+        r.Requires(exceptDeps='python: epdb')
+        # Server works in standalone mode without mod_python
+        r.Requires(exceptDeps='python: mod_python.*')
+
+        # MySQL is optional.
+        r.Requires(exceptDeps='python: MySQLdb.*')
+        # postgresql is also optional
+        r.Requires(exceptDeps='python: pgsql')
+
+        r.AutoDoc('EULA_Conary_Dual_License.txt')
+
+        # Conary no longer adds python requires when building the bootstrap
+        # flavor of packages.
+        if Use.bootstrap:
+            r.Requires('python:lib', '%(sitepkgs)s/.*')
+            r.Requires('pycrypto:python', '%(sitepkgs)s/lib/sha1helper.py')
+            r.Requires('elementtree:python', '%(sitepkgs)s/build/packagepolicy.py')
+
+        r.macros.pybin = "%(bindir)s/python%(pyver)s"
+        versionMap = [ ('%%(bindir)s/python%s' % x, '%(pybin)s')
+                       for x in [ '', '2.4', '2.5', '2.6' ] ]
+        r.NormalizePythonInterpreterVersion(versionMap=versionMap)
+
+        # we've been building conary in a special comtext with an oldish glibc
+        # so that upgrades from geriatric installs keep working (as conary
+        # otherwise would get updated in a earlier job than the bumped glibc
+        # on which it it would depend.
+        # 
+        # the trick bellow should avoid the need to do that, making sure that
+        # both conary and glibc are upgraded in the same job. 
+        if Arch.x86:
+            r.Requires( 'soname: ld-linux.so.2(Linux)',
+                        '.*')
+        elif Arch.x86_64:
+            r.Requires( 'soname: ld-linux-x86-64.so.2(Linux)',
+                        '.*')

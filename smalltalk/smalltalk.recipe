@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SmallTalk(AutoPackageRecipe):
+    name = 'smalltalk'
+    version = '3.2.4'
+ 
+    buildRequires = ['pkgconfig:devel', 'binutils:runtime', 'install-info:runtime', 'zip:runtime']
+    # pkg-config windres install-info zip InfoZIP
+ 
+    def unpack(r):
+        r.addArchive('mirror://gnu/%(name)s/')
+    def policy(r):
+        r.Symlink('%(mandir)s/man1/gst-load.1',  '%(mandir)s/man1/gst-reload.1')

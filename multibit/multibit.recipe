@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('binarypackage')
+class Multibit(BinaryPackageRecipe):
+    name = 'multibit'
+    version = '0.5.16'
+ 
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addSource('https://multibit.org/releases/multibit-%(version)s/multibit-exe.jar', dir='%(datadir)s/java/multibit')
+	r.addSource('multibit', dir='%(bindir)s')
+	r.addSource('multibit.png', dir='%(datadir)s/pixmaps/')
+	r.addSource('multibit.desktop', dir='%(datadir)s/applications/')
+

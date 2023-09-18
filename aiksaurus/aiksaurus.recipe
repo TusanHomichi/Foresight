@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Aiksaurus(AutoPackageRecipe):
+    name = 'aiksaurus'
+    version = '1.2.1'
+
+    buildRequires = [
+        'atk:devel', 'cairo:devel', 'expat:devel',
+        'fontconfig:devel', 'freetype:devel',
+        'gcc-c++:runtime', 'glib:devel', 'gtk:devel',
+        'libX11:devel', 'libXrender:devel', 'libpng:devel',
+        'pango:devel', 'zlib:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://easynews.dl.sourceforge.net/sourceforge/aiksaurus/aiksaurus-%(version)s.tar.gz')

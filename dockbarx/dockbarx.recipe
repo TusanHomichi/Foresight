@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Dockbarx(PackageRecipe):
+
+    name = 'dockbarx'
+    version = '0.90.3'
+
+    buildRequires = [
+        'python-setuptools:python', 
+        'PIL:python', 
+        'dbus-python:python', 
+        'desktop-file-utils:runtime', 
+        'gnome-python-desktop:python', 
+        'gnome-python:python', 
+        'pycairo:python', 
+        'pygobject:python', 
+        'pygtk:python', 
+        'python-keybinder:python', 
+        'python:devel', 
+        'pyxdg:python',
+        'gst-python:python',
+            ]
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/dockbar/dockbarx/%(version)s/+download/dockbarx_%(version)s.tar.gz')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        r.Requires('python-xlib:python', 'dockbarx:runtime')

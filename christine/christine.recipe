@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Christine(AutoPackageRecipe):
+    name = 'christine'
+    version = "0.7.0"
+    packageSummary="Christine is a small media player based on Gstreamer written in Python+GTK"
+    packageDescription="Christine is a small media player based on Gstreamer written in Python using GTK as GUI Tool Kit. The goal is to allow you to listen your music in a very easy way, by let you import your files and browse them. "
+    url = "http://www.christine-project.org"
+ 
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gst-python:python',
+        'gtk:devel',
+        'intltool:runtime',
+        'notify-python:python',
+        'pango:devel',
+        'pkgconfig:devel',
+        'pycairo:python',
+        'pygobject:python',
+        'pygtk:devel',
+        'pygtk:devellib',
+        'pygtk:python',
+        'python:bin',
+        'python:devel',
+        'readline:devel',
+        'mutagen:python'
+        ]
+
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s-Beta1.tar.bz2')
+    def policy(r):
+        r.Requires("mutagen:python","%(bindir)s/christine")
+        r.Requires("dbus-python:python","%(bindir)s/christine")

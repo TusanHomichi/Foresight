@@ -1,0 +1,46 @@
+diff -r 5a80dd901836 Makefile
+--- a/Makefile	Thu Mar 05 13:43:22 2009 -0500
++++ b/Makefile	Thu Mar 05 15:15:53 2009 -0500
+@@ -1,6 +1,6 @@
+ #Customisable stuff here
+-LINUX32_COMPILER = i686-pc-linux-gnu-gcc
+-LINUX64_COMPILER = x86_64-pc-linux-gnu-gcc
++LINUX32_COMPILER = /usr/bin/i686-unknown-linux-gcc
++LINUX64_COMPILER = /usr/bin/x86_64-unknown-linux-gcc
+ WIN32_COMPILER = /usr/bin/i586-mingw32-gcc
+ #LINUX_ARM_COMPILER = arm-pc-linux-gnu-gcc
+ LINUX_ARM_COMPILER = arm-none-linux-gnueabi-gcc
+@@ -8,7 +8,7 @@
+ FREEBSD60_COMPILER = i686-pc-freebsd6.0-gcc
+ 
+ LIBPURPLE_CFLAGS = -I/usr/include/libpurple -I/usr/local/include/libpurple -DPURPLE_PLUGINS -DENABLE_NLS -DNO_ZLIB
+-GLIB_CFLAGS = -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include -I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include -I/usr/local/include
++GLIB_CFLAGS = -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/lib64/glib-2.0/include -I/usr/include -I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include -I/usr/local/include
+ WIN32_DEV_DIR = /root/pidgin/win32-dev
+ WIN32_PIDGIN_DIR = /root/pidgin/pidgin-2.3.0_win32
+ WIN32_CFLAGS = -I${WIN32_DEV_DIR}/gtk_2_0/include/glib-2.0 -I${WIN32_PIDGIN_DIR}/libpurple/win32 -I${WIN32_DEV_DIR}/gtk_2_0/include -I${WIN32_DEV_DIR}/gtk_2_0/include/glib-2.0 -I${WIN32_DEV_DIR}/gtk_2_0/lib/glib-2.0/include
+@@ -40,13 +40,17 @@
+ all:	libfacebook.so libfacebook.dll libfacebook64.so libfacebookarm.so libfacebookppc.so installers sourcepackage
+ 
+ install:
+-	cp libfacebook.so /usr/lib/purple-2/
+-	cp libfacebook64.so /usr/lib64/purple-2/
+-	cp libfacebookarm.so /usr/lib/pidgin/
+-	cp libfacebookppc.so /usr/lib/purple-2/
+-	cp facebook16.png /usr/share/pixmaps/pidgin/protocols/16/facebook.png
+-	cp facebook22.png /usr/share/pixmaps/pidgin/protocols/22/facebook.png
+-	cp facebook48.png /usr/share/pixmaps/pidgin/protocols/48/facebook.png
++	mkdir -p $(DESTDIR)/usr/{lib,lib64}/purple-2
++	mkdir -p $(DESTDIR)/usr/share/pixmaps/pidgin/protocols/{16,22,48}
++	if [ -f "libfacebook.so" ]; then \
++		cp libfacebook.so $(DESTDIR)/usr/lib/purple-2/; \
++	fi
++	if [ -f "libfacebook64.so" ]; then \
++		cp libfacebook64.so $(DESTDIR)/usr/lib64/purple-2/; \
++	fi
++	cp facebook16.png $(DESTDIR)/usr/share/pixmaps/pidgin/protocols/16/facebook.png
++	cp facebook22.png $(DESTDIR)/usr/share/pixmaps/pidgin/protocols/22/facebook.png
++	cp facebook48.png $(DESTDIR)/usr/share/pixmaps/pidgin/protocols/48/facebook.png
+ 
+ installers:	pidgin-facebookchat.exe pidgin-facebookchat.deb pidgin-facebookchat.tar.bz2
+ 

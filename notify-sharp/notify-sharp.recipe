@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class NotifySharp(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'notify-sharp'
+    version = '0.4.0'
+    rpmRelease = '139'
+    isOPENsuse = True
+    buildRequires = ['gtk-sharp:cil', 'ndesk-dbus-glib:devellib', 'ndesk-dbus:devellib', 'ndesk-dbus:cil', 'gtk-sharp:devellib', 'mono:devel', 'pkgconfig:devel', 'which:runtime', 'gnome-common:runtime', 'ndesk-dbus-glib:cil']
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+
+    def configure(r):
+        r.Configure('--disable-docs')
+
+    def policy(r):
+        r.Replace('\${exec_prefix}/lib', '%(libdir)s', '%(libdir)s/pkgconfig/*.pc')

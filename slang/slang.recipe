@@ -1,0 +1,41 @@
+#
+# Copyright © 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Slang(AutoPackageRecipe):
+    name = 'slang'
+    version = '2.2.4'
+ 
+    buildRequires = [
+        'ncurses:devel', 
+        'pcre:devel', 
+        'readline:devel', 
+        'zlib:devel',
+        'libpng:devel', 
+        'libICE:devel',
+        'oniguruma:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('ftp://space.mit.edu/pub/davis/slang/v2.2/')
+        r.addPatch('slang-2.2.4-makefile.patch')
+
+    def configure(r):
+        r.Configure(
+            ' --with-pcre'
+            ' --with-png'
+            ' --with-z'
+            ' --with-onig'
+            )
+        r.disableParallelMake()
+
+
+    def makeinstall(r):
+        r.MakeInstall('DESTDIR=%(destdir)s', installtarget='install-all')
+        r.Remove('%(docdir)s/{slang,slsh}')
+        
+        r.Doc('NEWS', 'README', '*.txt', 'doc/{,internal,text}/*.txt')
+        r.Doc('doc/slangdoc.html', 'slsh/doc/html/*.html', dir='html')
+

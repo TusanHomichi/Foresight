@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lesstif(AutoPackageRecipe):
+    name = 'lesstif'
+    version = '0.95.2'
+ 
+    buildRequires = [
+        'bison:runtime', 
+        'bzip2:devel', 
+        'ctags:runtime', 
+        'flex:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXext:devel', 
+        'libXt:devel', 
+        'lynx:runtime', 
+        'man:runtime', 
+        'zlib:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/lesstif/lesstif/%(version)s/')

@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libusb(CPackageRecipe):
+    name = 'libusb'
+    version = '0.1.12'
+    buildRequires = ['libstdc++:devel', 'openjade:runtime', 'pkgconfig:devel']
+
+    if Use.builddocs:
+        buildRequires += [ 'docbook-utils:runtime', 'docbook-dtds:data',
+                           'docbook-dsssl:data', 'tetex-latex:runtime' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/libusb/')
+
+        extraConfig = ''
+        if not Use.builddocs:
+            extraConfig += ' --disable-build-docs'
+
+        r.macros.cflags += ' -fPIC'
+        r.macros.cppflags += ' -fPIC'
+        r.Configure(extraConfig)
+        r.Make()
+        if Use.builddocs:
+            r.Run('cd doc; docbook2ps manual.sgml')
+
+        r.MakeInstall()
+
+        if Use.builddocs:
+            r.Doc('doc/html', component='devel')
+            r.Doc('doc/manual.ps')

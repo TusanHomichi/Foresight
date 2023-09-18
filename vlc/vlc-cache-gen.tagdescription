@@ -1,0 +1,4 @@
+file		%(taghandlerdir)s/vlc-cache-gen
+datasource	stdin
+implements	files update
+implements	files remove

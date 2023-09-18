@@ -1,0 +1,25 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Xz(AutoPackageRecipe):
+
+    name = 'xz'
+    version = '5.0.5'
+
+    buildRequires = [
+        'gettext:runtime', 'intltool:runtime'
+    ]
+
+    def unpack(r):
+        r.addArchive('http://tukaani.org/xz/')
+        r.macros.cflags += ' -D_FILE_OFFSET_BITS=64'
+        r.macros.cxxflags += ' -D_FILE_OFFSET_BITS=64'
+
+    def configure(r):
+        r.Configure('--disable-static')
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+

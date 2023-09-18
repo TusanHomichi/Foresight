@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ToLuaPlusPlus(CPackageRecipe):
+    name = 'tolua++'
+    version = '1.0.93'
+ 
+    buildRequires = [ 'lua:devel',
+                      'scons:runtime',
+                      ]
+ 
+    def setup(r):
+        r.addArchive('http://www.codenix.com/~tolua/')
+        r.addPatch('tolua++-1.0.93-lua51.patch')
+        r.macros.solib = 'tolua++-5.1'
+        r.Run("""scons %(parallelmflags)s -Q CCFLAGS="%(optflags)s -I%(includedir)s" tolua_lib=%(solib)s LINKFLAGS="-Wl,-soname,lib%(solib)s.so" shared=1""")
+        #Recompile the exe without the soname. An ugly hack.
+        r.Run(""" %(cc)s -o bin/%(name)s src/bin/tolua.o src/bin/toluabind.o -Llib -l%(solib)s -llua -ldl -lm""")
+
+        r.Install('bin/%(name)s',
+                  '%(bindir)s/',
+                  mode = 0755)
+        r.Install('lib/lib%(solib)s.so',
+                  '%(libdir)s/',
+                  mode = 0755)
+        r.Install('include/%(name)s.h',
+                  '%(includedir)s/',
+                  mode = 0644)
+        r.Symlink('%(libdir)s/lib%(solib)s.so',
+                  '%(libdir)s/libtolua++.so')

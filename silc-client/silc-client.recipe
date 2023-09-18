@@ -1,0 +1,26 @@
+class silcClient(AutoPackageRecipe):
+    name="silc-client"
+    version="1.1.5"
+    buildRequires = [ 'autoconf', 'automake', 'libtool',
+                        'glib:devel', 
+                        'nasm:runtime', 
+                        'ncurses:devel',
+                        'pkgconfig:devel',
+                        'silc-toolkit:devel',
+                        'perl-URI:perl', 'perl-HTTP-Cookies:perl', 'perl:devel',
+                        'irssi:devel', 'libtermcap:devel'
+         ]
+
+
+        #%(libdir)s/perl5/%(version)s/%(unamearch)s-%(os)s%(perlthreadarch)s'
+
+    def configure(r):
+        r.Configure(
+         ' --with-perl=no '
+        ) 
+    def unpack(r):
+        r.addArchive("http://silcnet.org/download/client/sources/%(name)s-%(version)s.tar.gz")
+    def policy(r):
+        r.Requires('silc-toolkit:lib','%(libdir)s/libsilcclient-1.1.so.2')
+
+

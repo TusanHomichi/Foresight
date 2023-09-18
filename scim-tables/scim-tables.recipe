@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ScimTables(AutoPackageRecipe):
+    name = 'scim-tables'
+    version = '0.5.9'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'expat:devel',
+'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel',
+'gtk:devel', 'intltool:runtime', 'kdelibs:config', 'libX11:devel',
+'libXrender:devel', 'libpng:devel', 'libstdc++:devel', 'pango:devel',
+'pixman:devel', 'pkgconfig:devel', 'scim:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/scim/%(name)s-%(version)s.tar.gz')

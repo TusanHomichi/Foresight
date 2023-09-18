@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibRsync(CPackageRecipe):
+    name = 'librsync'
+    version = '0.9.7'
+
+    buildRequires = [ 'bzip2:devel', 'popt:devel', 'zlib:devel' ]
+
+    def setup(r):
+        r.addArchive('librsync-0.9.7.tar.bz2')
+
+        r.Configure('--enable-shared')
+        r.Make()
+        r.MakeInstall()
+        r.Install('.libs/rdiff', '%(bindir)s/rdiff', mode=0755)

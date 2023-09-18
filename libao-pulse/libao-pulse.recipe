@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PulseAudio(AutoPackageRecipe):
+    name = 'libao-pulse'
+    version  = '0.9.3'
+    buildRequires = ['lynx:runtime', 'pkgconfig:devel', 'pulseaudio:devel', 'gcc-c++:runtime', 'libao:devel']
+
+    def unpack(r):
+        r.addArchive('http://0pointer.de/lennart/projects/libao-pulse/%(name)s-%(version)s.tar.gz')

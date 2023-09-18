@@ -1,0 +1,152 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+# Get python version from this label
+loadInstalled('python')
+
+class Subversion(CPackageRecipe):
+    name = 'subversion'
+    version = '1.6.21'
+
+    buildRequires = [ 
+        'autoconf:runtime', 'libtool:runtime', 'python:devel',
+        'python:runtime', 'db:devel', 'apr:devel',
+        'apr-util:devel', 'neon:devel', 'httpd:devel',
+        'swig:runtime', 'which:runtime', 'krb5:devellib',
+        'expat:devel', 'libxml2:devel', 'zlib:devel',
+        'gettext:runtime', 'krb5:devel', 'httpd:runtime',
+        'e2fsprogs:devel', 'openldap:devel', 'perl:devel',
+        'perl:runtime', 'util-linux:devel',
+        'openssl:devel', 'sqlite:devel', 'cyrus-sasl:devel',
+        'pkgconfig:devel', 'ruby:runtime',
+        'util-linux:devel', 'libgnome-keyring:devel',
+        'dbus:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'libgnome-keyring:devel', 'kdelibs:devel',
+        'libICE:devel', 'libSM:devel', 'libX11:devel',
+        'libXext:devel', 'libXinerama:devel', 'libXrandr:devel',
+        'libXrender:devel', 'libpng:devel', 'libstdc++:devel',
+        'qt4:devel', 'qt4-core:devellib', 'qt4-gui:devellib',
+        'chkconfig:runtime', 'icedtea-jdk:runtime' ]
+
+    if Use.builddocs:
+        buildRequires.extend(['texinfo:runtime', 'docbook-xsl:data'])
+
+    def setup(r):
+        r.disableParallelMake()
+        # svnparentpath is the directory containing the repositories
+
+        r.macros.cflags += ' -fpie'
+        
+        # The JDK installation (location of Java Library directory & headers)
+        r.macros.javahome = '%(jvmdir)s/java-1.6.0-icedtea'
+        r.macros.javahl = '--enable-javahl '
+        javahl = True 
+        # If Arch is supported Java Architecture, add javahl opts
+        # to configure.
+        if Arch.x86:
+            r.macros.jvmlibdir = '%(javahome)s/jre/lib/i386'
+            r.macros.javahl += '--with-jdk=%(javahome)s'
+        elif Arch.x86_64:
+            r.macros.jvmlibdir = '%(javahome)s/jre/lib/amd64'
+            r.macros.javahl += '--with-jdk=%(javahome)s'
+        else:
+            r.macros.javahl = ''
+            javahl = True
+
+        r.macros.svnparentpath = '%(servicedir)s/subversion'
+        r.macros.svnconfdir = '%(sysconfdir)s/subversion'
+
+        r.macros.pydir = Python.sitepkgs
+        r.macros.swigdirs = "swig_pydir=%(pydir)s/libsvn swig_pydir_extra=%(pydir)s/svn"
+
+        r.addArchive('http://subversion.tigris.org/downloads/')
+        # from RH
+        for patch in [ 'subversion-1.6.0-deplibs.patch',
+                       'subversion-1.6.1-rpath.patch',
+                       'subversion-1.6.11-pie.patch',
+                       'subversion-1.1.3-java.patch',
+                       'subversion-1.6.6-kwallet.patch',
+                       'subversion-1.6.11-authzuname.patch', ]:
+            r.addPatch(patch)
+
+        r.addSource('subversion.conf', dest='%(sysconfdir)s/httpd/conf.d/subversion.conf')
+        r.addSource('useraccess', dest='%(svnconfdir)s/useraccess')
+        
+        r.addSource('svnserve.init', dest='%(initdir)s/svnserve', mode = 0755)
+
+        r.Replace(('SVN_PARENT_PATH','%(svnparentpath)s'),('SVN_CONF_DIR','%(svnconfdir)s'),
+                  '%(sysconfdir)s/httpd/conf.d/subversion.conf',
+                  '%(svnconfdir)s/useraccess')
+
+        r.Create('%(svnconfdir)s/users')
+        r.Run('./autogen.sh --release ')
+        r.Configure('--with-neon=%(prefix)s '
+                    '--with-apr=%(prefix)s '
+                    '--with-apr-util=%(prefix)s '
+                    '--with-berkeley-db '
+                    '--disable-mod-activation '
+                    ' --with-gnome-keyring '
+                    ' --with-kwallet '
+                    '--with-sasl=%(prefix)s '
+                    '%(javahl)s') 
+        # For some annoying reason, LDFLAGS will contain /usr/lib even on
+        # 64-bit systems
+        r.Make(' LDFLAGS=')
+        r.Make(' svnmucc LDFLAGS=')
+           
+        
+        r.MakeInstall('LDFLAGS=')
+
+        if javahl:
+            r.Make('javahl')
+            r.Make('install-javahl', preMake='DESTDIR=%(destdir)s')
+        r.Install('tools/client-side/svnmucc/.libs/svnmucc', '%(bindir)s/svnmucc', mode = 0755)
+        
+        r.Make('swig-py %(swigdirs)s LDFLAGS=')
+        r.Make('install-swig-py %(swigdirs)s', preMake='DESTDIR=%(destdir)s')
+        r.Make('swig-pl-lib LDFLAGS=')
+        r.Make('install-swig-pl-lib LDFLAGS=', preMake='DESTDIR=%(destdir)s')
+        r.Run('perl', 'Makefile.PL', 'INSTALLDIRS=vendor',
+                'DESTDIR=%(destdir)s',
+                dir='subversion/bindings/swig/perl/native')
+        r.Replace('LD_RUN_PATH', '#LD_RUN_PATH',
+                'subversion/bindings/swig/perl/native/Makefile.[a-z]*',
+                'subversion/bindings/swig/perl/native/Makefile',
+                lines='^LD_RUN_PATH.*')
+        r.Make(dir='subversion/bindings/swig/perl/native')
+        r.MakeInstall(dir='subversion/bindings/swig/perl/native')
+
+        r.MakeDirs('%(svnparentpath)s')
+        
+        # Bash Completion stuff
+        r.Install('tools/client-side/bash_completion',
+                  '%(sysconfdir)s/bash_completion.d/svn')
+        # Add libjavahl symlink to jvmlibdir so it's always available in 
+        # java.library.path
+        if javahl:
+            r.Symlink('%(libdir)s/libsvnjavahl-1.so.0.0.0', '%(jvmlibdir)s/libsvnjavahl-1.so')
+            r.Move('%(libdir)s/svn-javahl/svn-javahl.jar', '%(javadir)s/')
+            r.Remove('%(libdir)s/svn-javahl', recursive=True)
+
+        r.Config(exceptions='%(sysconfdir)s/bash_completion.d/')
+
+        # pkgSpec gnome/kde stuff 
+        for a,b in [('gnome_keyring', 'gnome'),
+                    ('kwallet', 'kde')]:
+            r.ComponentSpec('%(name)s-' + b + ':lib',
+                          '%(libdir)s/libsvn_auth_'+ a + '-.*.so.*')
+            r.Requires( 'dbus:runtime',
+                        '%(libdir)s/libsvn_auth_'+ a + '-.*.so.*')
+
+        r.PackageSpec('mod_dav_svn',
+                      '%(sysconfdir)s/httpd/conf.d/subversion.conf',
+                      '%(libdir)s/httpd/',
+                      '%(svnconfdir)s/')
+        r.ComponentSpec('python', '%(libdir)s/libsvn_swig_py.*', '%(pydir)s/')
+        r.ComponentSpec('java', '%(libdir)s/libsvnjavahl-1\.so\.0.*', '%(jvmlibdir)s/.*', '%(javadir)s/.*')
+
+        r.ExcludeDirectories(exceptions='%(svnparentpath)s')

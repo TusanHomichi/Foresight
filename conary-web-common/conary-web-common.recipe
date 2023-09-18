@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ConaryWebCommon(PackageRecipe):
+    name = 'conary-web-common'
+    version = '1.0'
+    buildRequires =  ['make:runtime'] 
+
+    def setup(r):
+        r.addArchive('ftp://download.rpath.com/conary/%(name)s-%(version)s.tar.bz2')
+        r.Make()
+        r.MakeInstall()
+        # # native wsgi  
+        # r.addSource('wsgi.apache.inc')
+        # r.addSource('wsgi.conary-web-common.conf')
+        # # 
+        # r.Install('wsgi.conary-web-common.conf',
+        #           '%(sysconfdir)s/httpd/conf.d/conary-web-common.conf',
+        #           mode = 0644, package = ':data')
+        # r.Install('wsgi.apache.inc',
+        #           '/srv/conary-repositories/config/common/wsgi.apache.inc',
+        #           mode = 0644, package = ':data')
+        # r.Requires('mod_wsgi:python', '%(sysconfdir)s/httpd/conf.d/wsgi.*')
+        r.Requires('conary-repository:python', '/srv/conary-repositories/.*')
+        r.Requires('httpd:runtime', '/srv/conary-repositories/.*')
+

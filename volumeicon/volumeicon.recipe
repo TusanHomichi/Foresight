@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class VolumeIcon(AutoPackageRecipe):
+    name = 'volumeicon'
+    version = '0.4.6'
+ 
+    buildRequires = ['alsa-lib:devel', 'atk:devel', 'cairo:devel', 'pkgconfig:devel', 
+	'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 
+	'pango:devel', 'libnotify:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://softwarebakery.com/maato/files/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.Replace('Default', 'tango', 'src/config.c')
+        r.addPatch('volumeicon-0.4.6-default-config.patch')
+        r.addPatch('volumeicon-0.4.6-fedora.patch')
+        r.addSource('volumeicon.desktop', mode=0755, dir='/%(sysconfdir)s/xdg/autostart/')
+
+    def configure(r):
+        r.Configure('--enable-notify')

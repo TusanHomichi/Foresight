@@ -1,0 +1,15 @@
+import datetime
+loadSuperClass('binarypackage')
+class AppInventor(BinaryPackageRecipe):
+    name = 'google-appinventor'
+    version = 'beta_' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [ 'binutils:runtime',
+                      ]
+
+    def unpack(r):
+        r.addArchive('http://dl.google.com/dl/appinventor/installers/linux/appinventor-extras_1.0-1_all.deb', dir='%(destdir)s')
+
+    def policy(r):
+        r.Symlink('/usr/google/appinventor-extras/commands-for-Appinventor/run-emulator', '%(bindir)s/google-appinventor')
+        r.Replace('/Applications/Appinventor/', '/usr/google/appinventor-extras/', '/usr/google/appinventor-extras/commands-for-Appinventor/run-emulator')

@@ -1,0 +1,32 @@
+class XMLTv(PackageRecipe):
+    buildRequires = ['perl:runtime', 'coreutils:runtime', 'make:runtime',
+        'perl-DateManip:perl',
+        'perl-File-Slurp:perl',
+        'perl-HTML-TableExtract:perl',
+        'perl-HTML-Tree:perl',
+        'perl-HTTP-Cache-Transparent:perl',
+        'perl-PerlIO-gzip:perl',
+        'perl-SOAP-Lite:perl',
+        'perl-Term-ReadKey:perl',
+        'perl-Term-ProgressBar:perl',
+        'perl-WWW-Mechanize:perl',
+        'perl-XML-Twig:perl',
+        'perl-XML-Writer:perl',
+        'perl-XML-LibXML:perl', 
+        'perl:devel',
+        'perl-IO-stringy:perl',
+        'perl-Archive-Zip:perl', 
+        'perl-IO-Compress:perl', 
+    ]
+    name = "xmltv"
+    version = "0.5.56"
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/xmltv/xmltv-%(version)s.tar.bz2')
+	r.addPatch('xmltv-0.5.52-noutf8simple.patch')
+        r.Run('yes | perl Makefile.PL PREFIX=%(prefix)s')
+        r.Replace('site_perl', 'vendor_perl', 'Makefile')
+        r.Make()
+        r.MakeInstall()
+	r.Requires('perl-Term-ReadKey:perl','%(libdir)s/perl5/vendor_perl/5.8.8/XMLTV/Ask/Term.pm*')
+	r.Requires('perl-XML-Writer:perl','%(libdir)s/perl5/vendor_perl/5.8.8/XMLTV.pm')

@@ -1,0 +1,1075 @@
+diff --git a/installclass.py b/installclass.py
+index a417762..74cbf05 100644
+--- a/installclass.py
++++ b/installclass.py
+@@ -275,6 +275,8 @@ def availableClasses(showHidden=0):
+             found = imputil.imp.find_module(mainName)
+         except:
+             log.warning ("module import of %s failed: %s" % (mainName, sys.exc_type))
++            if flags.debug:
++                raise
+             continue
+ 
+         try:
+diff --git a/installclasses/fedora.py b/installclasses/fedora.py
+index 678cba9..32d123f 100644
+--- a/installclasses/fedora.py
++++ b/installclasses/fedora.py
+@@ -44,6 +44,7 @@ class InstallClass(BaseInstallClass):
+     sortPriority = 10000
+     if productName.startswith("Red Hat Enterprise"):
+         hidden = 1
++    hidden = 1
+ 
+     tasks = [(N_("Graphical Desktop"),
+               ["admin-tools", "base", "base-x", "core", "editors", "fonts",
+diff --git a/installclasses/rpathapp.py b/installclasses/rpathapp.py
+new file mode 100644
+index 0000000..447f9ca
+--- /dev/null
++++ b/installclasses/rpathapp.py
+@@ -0,0 +1,45 @@
++#
++# Copyright (c) 2011 rPath, Inc.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++#
++
++import gettext
++_ = lambda x: gettext.ldgettext("anaconda", x)
++
++import security
++import tarinstall
++from installclass import BaseInstallClass
++from rhel import InstallClass as RHELInstallClass
++
++
++class InstallClass(RHELInstallClass):
++    id = 'rpath'
++    name = _('rPath Appliance Base')
++    description = _('default install class for rPath based appliances')
++
++    sortPriority = 25000
++    hidden = 1
++
++    def getBackend(self):
++        return tarinstall.TarBackend
++
++    def setInstallData(self, anaconda):
++        # Copied from rhel.py because supercalling it is hard due to a
++        # weird importer bug.
++        BaseInstallClass.setInstallData(self, anaconda)
++        BaseInstallClass.setDefaultPartitioning(self, anaconda.id.storage,
++                anaconda.platform)
++        # Don't overwrite selinux config by default.
++        anaconda.id.security.setSELinux(security.SELINUX_DONT_CHANGE)
+diff --git a/network.py b/network.py
+index f9142ee..e8ecc7e 100644
+--- a/network.py
++++ b/network.py
+@@ -548,7 +548,7 @@ class Network:
+             line += "\n"
+             f.write(line)
+ 
+-    def _copyFileToPath(self, file, instPath='', overwrite=False):
++    def _copyFileToPath(self, file, instPath='', overwrite=True):
+         if not os.path.isfile(file):
+             return False
+         destfile = os.path.join(instPath, file.lstrip('/'))
+@@ -574,18 +574,18 @@ class Network:
+ 
+         # /etc/sysconfig/network
+         self._copyFileToPath(networkConfFile, instPath,
+-                             overwrite=flags.livecdInstall)
++                             overwrite=True)
+ 
+         # /etc/resolv.conf
+         self._copyFileToPath("/etc/resolv.conf", instPath,
+-                             overwrite=flags.livecdInstall)
++                             overwrite=True)
+ 
+         # /etc/udev/rules.d/70-persistent-net.rules
+         self._copyFileToPath("/etc/udev/rules.d/70-persistent-net.rules",
+-                             instPath, overwrite=flags.livecdInstall)
++                             instPath, overwrite=True)
+ 
+         self._copyFileToPath(ipv6ConfFile, instPath,
+-                             overwrite=flags.livecdInstall)
++                             overwrite=True)
+ 
+     def disableNMForStorageDevices(self, anaconda, instPath=''):
+         for devName, device in self.netdevices.items():
+diff --git a/product.py b/product.py
+index 3031f96..d64e101 100644
+--- a/product.py
++++ b/product.py
+@@ -36,6 +36,8 @@ productPath = "Packages"
+ productArch = None
+ bugUrl = "your distribution provided bug reporting tool."
+ productIsFinal = False
++topGroup = ('group-dist', 'conary.rpath.com@rpl:1', '')
++productPackagePath = None
+ 
+ if path is not None:
+     f = open(path, "r")
+@@ -46,14 +48,14 @@ if path is not None:
+         productArch = productStamp[productStamp.index(".")+1:]
+         productName = lines[1][:-1]
+         productVersion = lines[2][:-1]
+-
+-        # set productIsFinal
+-        isfinal = lines[3].strip().lower()
+-        key, sep, isfinal = isfinal.partition("=")
+-        productIsFinal = (key == "final" and isfinal == "yes")
+-
++        productPath = lines[3][:-1]
+     if len(lines) >= 5:
+         bugUrl = lines[4][:-1]
++    if len(lines) >= 6:
++        topGroup = lines[5][:-1].split(' ')
++        assert len(topGroup) == 3
++    if len(lines) >= 7:
++        productPackagePath = lines[6].strip()
+ 
+ if os.environ.has_key("ANACONDA_PRODUCTNAME"):
+     productName = os.environ["ANACONDA_PRODUCTNAME"]
+@@ -68,5 +70,8 @@ if os.environ.has_key("ANACONDA_BUGURL"):
+ if os.environ.has_key("ANACONDA_ISFINAL"):
+     productIsFinal = True
+ 
++if not productPackagePath:
++    productPackagePath = '%s/changesets' % productPath
++
+ if productVersion == "development": # hack to transform for now
+     productVersion = "rawhide"
+diff --git a/rpathbackendbase.py b/rpathbackendbase.py
+new file mode 100644
+index 0000000..f057b2f
+--- /dev/null
++++ b/rpathbackendbase.py
+@@ -0,0 +1,365 @@
++#
++# Copyright (c) 2011 rPath, Inc.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++#
++
++import gettext
++import os
++import shutil
++_ = lambda x: gettext.ldgettext("anaconda", x)
++
++import image
++import isys
++import iutil
++import logging
++import network
++import packages
++import security
++from constants import DISPATCH_BACK, productName
++from flags import flags
++from backend import AnacondaBackend
++from urlgrabber import grabber
++
++log = logging.getLogger('anaconda')
++
++
++class rPathBackendBase(AnacondaBackend):
++
++    def __init__(self, anaconda):
++        AnacondaBackend.__init__(self, anaconda)
++
++        self.supportsUpgrades = False
++        self.supportsPackageSelection = False
++
++    def doPreInstall(self, anaconda):
++        if anaconda.dir == DISPATCH_BACK:
++            for d in ("/selinux", "/dev", "/proc/bus/usb"):
++                try:
++                    isys.umount(anaconda.rootPath + d, removeDir = False)
++                except Exception, e:
++                    log.error("unable to unmount %s: %s" %(d, e))
++            return
++
++        dirList = ['/var', '/var/lib', '/var/lib/rpm', '/tmp', '/dev', '/etc',
++                   '/etc/sysconfig', '/etc/sysconfig/network-scripts',
++                   '/etc/X11', '/root', '/var/tmp', '/etc/rpm', '/var/cache',
++                   '/var/cache/yum', '/etc/modprobe.d']
++
++        # If there are any protected partitions we want to mount, create their
++        # mount points now.
++        for protected in anaconda.id.storage.protectedDevices:
++            if getattr(protected.format, "mountpoint", None):
++                dirList.append(protected.format.mountpoint)
++
++        for i in dirList:
++            try:
++                os.mkdir(anaconda.rootPath + i)
++            except os.error, (errno, msg):
++                pass
++#            log.error("Error making directory %s: %s" % (i, msg))
++
++        self.initLog(anaconda.id, anaconda.rootPath)
++
++        # SELinux hackery (#121369)
++        if flags.selinux:
++            try:
++                os.mkdir(anaconda.rootPath + "/selinux")
++            except Exception, e:
++                pass
++            try:
++                isys.mount("/selinux", anaconda.rootPath + "/selinux", "selinuxfs")
++            except Exception, e:
++                log.error("error mounting selinuxfs: %s" %(e,))
++
++        # For usbfs
++        try:
++            isys.mount("/proc/bus/usb", anaconda.rootPath + "/proc/bus/usb", "usbfs")
++        except Exception, e:
++            log.error("error mounting usbfs: %s" %(e,))
++
++        # Write the fstab here as in yuminstall, it will be re-invoked after
++        # the contents are laid down.
++        self.anaconda = anaconda
++        self.writeConfiguration(preInstall=True)
++
++    def writeConfiguration(self, preInstall=False):
++        anaconda = self.anaconda
++        # write out the fstab
++        anaconda.id.storage.fsset.write(anaconda.rootPath)
++        if os.access("/etc/modprobe.d/anaconda.conf", os.R_OK):
++            shutil.copyfile("/etc/modprobe.d/anaconda.conf", 
++                            anaconda.rootPath + "/etc/modprobe.d/anaconda.conf")
++        anaconda.id.network.write()
++        anaconda.id.network.copyConfigToPath(instPath=anaconda.rootPath)
++        anaconda.id.storage.write(anaconda.rootPath)
++        if not anaconda.id.isHeadless:
++            anaconda.id.keyboard.write(anaconda.rootPath)
++
++        # make a /etc/mtab so mkinitrd can handle certain hw (usb) correctly
++        f = open(anaconda.rootPath + "/etc/mtab", "w+")
++        f.write(anaconda.id.storage.mtab)
++        f.close()
++
++        if not preInstall:
++            # fstab and such may have changed, regenerate the initrd.
++            w = anaconda.intf.waitWindow(_("Configuring"),
++                    _("Configuring initramfs for your hardware"))
++            for (n, arch, tag) in self.kernelVersionList():
++                packages.recreateInitrd(n, self.anaconda.rootPath)
++            w.pop()
++
++            # Since tarballs don't have SELinux contexts, force a relabel if
++            # anaconda has overwritten the SELinux config. If selinux is set to
++            # "don't change" then also don't write the relabel file, it is up to
++            # the image creator to do so.
++            if anaconda.id.security.getSELinux() > security.SELINUX_DISABLED:
++                open(anaconda.rootPath + '/.autorelabel', 'w').close()
++
++    def kernelVersionList(self, rootPath='/'):
++        l = []
++
++        for file in os.listdir(self.instPath + '/boot'):
++            if file.startswith('vmlinuz'):
++                if 'domU' in file:
++                    tag = 'xenU'
++                elif 'dom0' in file:
++                    tag = 'xen0'
++                elif 'xen' in file:
++                    tag = 'xen'
++                elif 'smp' in file:
++                    tag = 'smp'
++                else:
++                    tag = ''
++                n = file.split('-')
++                version = '-'.join(n[1:])
++                arch = n[-1]
++                l.append([version, arch, tag])
++        return l
++
++    # Stubs for packageless images
++
++    def writePackagesKS(self, f, anaconda):
++        pass
++
++    def selectGroup(self, group, *args):
++        pass
++
++    def getDefaultGroups(self, anaconda):
++        return []
++
++
++class PackageSource(object):
++    def __init__(self, anaconda):
++        self.anaconda = anaconda
++        self._timestamp = None
++        self._baseRepoURL = None
++
++        # Only needed for hard drive and nfsiso installs.
++        self._discImages = {}
++        self.isodir = None
++
++        # Only needed for media installs.
++        self.currentMedia = None
++        self.hasMedia = False
++
++        # Where is the source media mounted?  This is the directory
++        # where Packages/ is located.
++        self.tree = "/mnt/source"
++
++    def setup(self):
++        # yum doesn't understand all our method URLs, so use this for all
++        # except FTP and HTTP installs.
++        self._baseRepoURL = "file://%s" % self.tree
++
++        while True:
++            try:
++                self.configBaseURL()
++                break
++            except SystemError, e:
++                self.anaconda.intf.messageWindow(
++                    _("Error Setting Up Repository"),
++                    _("The following error occurred while setting up the "
++                      "installation repository:\n\n%(e)s\n\nPlease provide the "
++                      "correct information for installing %(productName)s.")
++                    % {'e': e, 'productName': productName})
++                self.anaconda.methodstr = self.anaconda.intf.methodstrRepoWindow(
++                        self.anaconda.methodstr or "cdrom:")
++    def _switchCD(self, discnum):
++        if os.access("%s/.discinfo" % self.tree, os.R_OK):
++            f = open("%s/.discinfo" % self.tree)
++            self._timestamp = f.readline().strip()
++            f.close()
++
++        dev = self.anaconda.id.storage.devicetree.getDeviceByName(self.anaconda.mediaDevice)
++        dev.format.mountpoint = self.tree
++
++        # If self.currentMedia is None, then there shouldn't be anything
++        # mounted.  Before going further, see if the correct disc is already
++        # in the drive.  This saves a useless eject and insert if the user
++        # has for some reason already put the disc in the drive.
++        if self.currentMedia is None:
++            try:
++                dev.format.mount()
++
++                if image.verifyMedia(self.tree, discnum, None):
++                    self.currentMedia = discnum
++                    return
++
++                dev.format.unmount()
++            except:
++                pass
++        else:
++            image.unmountCD(dev, self.anaconda.intf.messageWindow)
++            self.currentMedia = None
++
++        dev.eject()
++
++        while True:
++            if self.anaconda.intf:
++                self.anaconda.intf.beep()
++
++            self.anaconda.intf.messageWindow(_("Change Disc"),
++                _("Please insert %(productName)s disc %(discnum)d to continue.")
++                % {'productName': productName, 'discnum': discnum})
++
++            try:
++                dev.format.mount()
++
++                if image.verifyMedia(self.tree, discnum, self._timestamp):
++                    self.currentMedia = discnum
++                    break
++
++                self.anaconda.intf.messageWindow(_("Wrong Disc"),
++                        _("That's not the correct %s disc.")
++                          % (productName,))
++
++                dev.format.unmount()
++                dev.eject()
++            except:
++                self.anaconda.intf.messageWindow(_("Error"),
++                        _("Unable to access the disc."))
++
++    def _switchImage(self, discnum):
++        image.umountImage(self.tree, self.currentMedia)
++        self.currentMedia = None
++
++        # mountDirectory checks before doing anything, so it's safe to
++        # call this repeatedly.
++        image.mountDirectory(self.anaconda.methodstr,
++                       self.anaconda.intf.messageWindow)
++
++        self._discImages = image.mountImage(self.isodir, self.tree, discnum,
++                                      self.anaconda.intf.messageWindow,
++                                      discImages=self._discImages)
++        self.currentMedia = discnum
++
++    def unmount(self):
++        if not self.currentMedia:
++            return
++        if self.isodir:
++            image.umountImage(self.tree, self.currentMedia)
++        elif self.hasMedia:
++            dev = self.anaconda.id.storage.devicetree.getDeviceByName(
++                    self.anaconda.mediaDevice)
++            dev.format.mountpoint = self.tree
++            image.unmountCD(dev, self.anaconda.intf.messageWindow)
++        self.currentMedia = None
++
++    def configBaseURL(self):
++        # We only have a methodstr if method= or repo= was passed to
++        # anaconda.  No source for this base repo (the CD media, NFS,
++        # whatever) is mounted yet since loader only mounts the source
++        # for the stage2 image.  We need to set up the source mount
++        # now.
++        if self.anaconda.methodstr:
++            m = self.anaconda.methodstr
++
++            if m.startswith("hd:"):
++                if m.count(":") == 2:
++                    (device, path) = m[3:].split(":")
++                else:
++                    (device, fstype, path) = m[3:].split(":")
++
++                self.isodir = "/mnt/isodir/%s" % path
++
++                # This takes care of mounting /mnt/isodir first.
++                self._switchImage(1)
++            elif m.startswith("nfsiso:"):
++                self.isodir = "/mnt/isodir"
++
++                # Calling _switchImage takes care of mounting /mnt/isodir first.
++                if not network.hasActiveNetDev():
++                    if not self.anaconda.intf.enableNetwork():
++                        self._baseRepoURL = None
++                        return
++
++                    grabber.reset_curl_obj()
++
++                self._switchImage(1)
++            elif m.startswith("http") or m.startswith("ftp:"):
++                self._baseRepoURL = m
++            elif m.startswith("nfs:"):
++                if not network.hasActiveNetDev():
++                    if not self.anaconda.intf.enableNetwork():
++                        self._baseRepoURL = None
++
++                    grabber.reset_curl_obj()
++
++                (opts, server, path) = iutil.parseNfsUrl(m)
++                isys.mount(server+":"+path, self.tree, "nfs", options=opts)
++
++                # This really should be fixed in loader instead but for now see
++                # if there's images and if so go with this being an NFSISO
++                # install instead.
++                images = image.findIsoImages(self.tree, self.anaconda.intf.messageWindow)
++                if images != {}:
++                    isys.umount(self.tree, removeDir=False)
++                    self.anaconda.methodstr = "nfsiso:%s" % m[4:]
++                    self.configBaseURL()
++                    return
++            elif m.startswith("cdrom:"):
++                self.hasMedia = True
++                self._switchCD(1)
++                self._baseRepoURL = "file://%s" % self.tree
++        else:
++            # No methodstr was given.  In order to find an installation source,
++            # we should first check to see if there's a CD/DVD with packages
++            # on it, and then default to the mirrorlist URL.  The user can
++            # always change the repo with the repo editor later.
++            cdr = image.scanForMedia(self.tree, self.anaconda.id.storage)
++            if cdr:
++                self.anaconda.mediaDevice = cdr
++                self.currentMedia = 1
++                log.info("found installation media on %s" % cdr)
++            else:
++                # No CD with media on it and no repo=/method= parameter, so
++                # default to using whatever's enabled in /etc/yum.repos.d/
++                self._baseRepoURL = None
++
++    def grab(self, discnum, path, filename=None):
++        # The package exists on media other than what's mounted right now.
++        if discnum != self.currentMedia:
++            log.info("switching from media #%s to #%s for %s" %
++                     (self.currentMedia, discnum, path))
++
++            # Unmount any currently mounted ISO images and mount the one
++            # containing the requested packages.
++            if self.isodir:
++                self._switchImage(discnum)
++            elif self.hasMedia:
++                self._switchCD(discnum)
++
++        ug = grabber.URLGrabber()
++        return ug.urlgrab("%s/%s" % (self._baseRepoURL, path), filename)
+diff --git a/security.py b/security.py
+index 5e5928e..0c8b346 100644
+--- a/security.py
++++ b/security.py
+@@ -26,9 +26,13 @@ from pykickstart.constants import *
+ import logging
+ log = logging.getLogger("anaconda")
+ 
++SELINUX_DONT_CHANGE = -1
++
+ selinux_states = { SELINUX_DISABLED: "disabled",
+                    SELINUX_ENFORCING: "enforcing",
+-                   SELINUX_PERMISSIVE: "permissive" }
++                   SELINUX_PERMISSIVE: "permissive",
++                   SELINUX_DONT_CHANGE: "disabled",
++                   }
+ 
+ class Security:
+     def __init__(self):
+@@ -48,6 +52,8 @@ class Security:
+         return self.selinux
+ 
+     def writeKS(self, f):
++        if self.selinux == SELINUX_DONT_CHANGE:
++            return
+         if not selinux_states.has_key(self.selinux):
+             log.error("unknown selinux state: %s" %(self.selinux,))
+             return
+@@ -55,6 +61,8 @@ class Security:
+ 	f.write("selinux --%s\n" %(selinux_states[self.selinux],))
+ 
+     def write(self, instPath):
++        if self.selinux == SELINUX_DONT_CHANGE:
++            return
+         args = [ "--quiet", "--nostart" ]
+ 
+         if not selinux_states.has_key(self.selinux):
+diff --git a/tarcallbacks.py b/tarcallbacks.py
+new file mode 100644
+index 0000000..b4e3084
+--- /dev/null
++++ b/tarcallbacks.py
+@@ -0,0 +1,124 @@
++#
++# Copyright (c) 2011 rPath, Inc.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++#
++
++import logging
++import time
++
++log = logging.getLogger('anaconda')
++
++
++def postProcess(func):
++    def wrapper(self, *args, **kwargs):
++        result = func(self, *args, **kwargs)
++        self.processEvents()
++        return result
++    return wrapper
++
++class ProgressCallback(object):
++    def __init__(self, anaconda, totalChunks, totalSize):
++        self.anaconda = anaconda
++        self.progress = anaconda.id.instProgress
++        self.totalChunks = totalChunks
++        self.totalSize = totalSize
++
++        self._label = ''
++        self._chunkSize = 0
++        self._bufferSize = 0
++        self._timeRemaining = 0
++        self._totalChunkTime = 0
++        self._percentComplete = 0
++        self._installedChunkSize = 0.0
++        self._timeChunkStarted = None
++
++        self._stats = []
++
++    def setChunkSize(self, size):
++        self._installedChunkSize += size
++        self._chunkSize = size
++
++    def setBufferSize(self, size):
++        if not self._bufferSize:
++            self._bufferSize = size
++
++    def processEvents(self):
++        self._updateDisplay()
++        self.progress.set_fraction(self._percentComplete)
++        self.progress.set_label(self._label)
++        self.progress.processEvents()
++
++    def _updateDisplay(self):
++        self._label = """\
++Time Remaining: %s
++""" % (self._formatTime(self._timeRemaining))
++
++    def _getAverageSecondsPerByte(self):
++        sum = 0
++        for x in self._stats:
++            sum += x
++        if sum:
++            avrg = sum / len(self._stats)
++        else:
++            avrg = 0
++        return avrg
++
++    def _formatTime(self, t):
++        minutes = int(round(t) / 60)
++        seconds = int(round(t) % 60)
++        minutesStr = str(minutes)
++        secondsStr = str(seconds)
++        if minutes < 10:
++            minutesStr = '0%s' % minutes
++        if seconds < 10:
++            secondsStr = '0%s' % seconds
++        return '%s:%s' % (minutesStr, secondsStr)
++
++    def startChunk(self):
++        self._timeChunkStarted = time.time()
++
++    @postProcess
++    def stopChunk(self):
++        t = time.time() - self._timeChunkStarted
++        self._timeChunkStarted = None
++
++        self._totalChunkTime += t
++
++        if self._chunkSize:
++            log.debug('t: %s' % t)
++
++            self._stats.append(t / float(self._chunkSize))
++
++            avrgSecsPerByte = self._getAverageSecondsPerByte()
++            bytesRemaining = self.totalSize - self._installedChunkSize
++
++            log.debug('average secs per byte: %s' % avrgSecsPerByte)
++            log.debug('bytes remaining: %s' % bytesRemaining)
++
++            if bytesRemaining > 0:
++                self._timeRemaining = avrgSecsPerByte * bytesRemaining
++            else:
++                self._timeRemaining = 0
++            self._percentComplete = self._installedChunkSize / self.totalSize
++
++            log.debug('timeRemaining: %s' % self._timeRemaining)
++            log.debug('percentComplete: %s' % self._percentComplete)
++
++    def startWriteBuffer(self):
++        pass
++
++    @postProcess
++    def stopWriteBuffer(self):
++        pass
+diff --git a/tarextract.py b/tarextract.py
+new file mode 100644
+index 0000000..76f4634
+--- /dev/null
++++ b/tarextract.py
+@@ -0,0 +1,130 @@
++#!/usr/bin/python
++#
++# Copyright (c) 2011 rPath, Inc.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++#
++
++import sha
++from subprocess import Popen, PIPE
++
++import logging
++
++log = logging.getLogger('anaconda')
++
++class TarExtractor(object):
++    def __init__(self, root, progress=None):
++        self.root = root
++
++        if progress:
++            self.progress = progress
++        else:
++            self.progress = ProgressStub()
++
++        self._stdoutlog = open('/tmp/tarextract.out', 'w')
++        self._stderrlog = open('/tmp/tarextract.err', 'w')
++
++        self._proc = self._getPipe()
++        self._bufferSize = 16*1024
++
++    def _getPipe(self):
++        proc = Popen(['tar', 'vvvzixf', '-'],
++                    stdin=PIPE, stdout=self._stdoutlog,
++                     stderr=self._stderrlog, cwd=self.root)
++        return proc
++
++    def extractFile(self, file):
++        sha1 = sha.new()
++        chunkfh = open(file)
++
++        chunkfh.seek(0, 2)
++        end = chunkfh.tell()
++        chunkfh.seek(0)
++
++        self.progress.setChunkSize(end)
++        self.progress.startChunk()
++
++        while chunkfh.tell() < end:
++            pos = chunkfh.tell()
++            if pos + self._bufferSize > end:
++                size = end - pos
++            else:
++                size = self._bufferSize
++
++            self.progress.setBufferSize(size)
++            self.progress.startWriteBuffer()
++
++            data = chunkfh.read(size)
++            self._extract(data)
++            sha1.update(data)
++
++            self.progress.stopWriteBuffer()
++
++        self.progress.stopChunk()
++
++        return sha1.digest()
++
++    def done(self):
++        self._proc.stdin.flush()
++        self._proc.stdin.close()
++        self._proc.wait()
++        self._stdoutlog.close()
++        self._stderrlog.close()
++        self._proc = None
++
++    def _extract(self, data):
++        self._proc.stdin.write(data)
++        self._proc.stdin.flush()
++
++
++class TarExtractError(Exception):
++    pass
++
++
++class ProgressStub:
++    def __getattr__(self, name):
++        return self.foo
++    def foo(self, *args, **kwargs):
++        pass
++
++
++if __name__ == '__main__':
++    import os
++    import sys
++    import epdb
++    from conary.lib import util
++
++    sys.excepthook = util.genExcepthook()
++
++    def usage():
++        print 'usage: %s <directory of tarballs> <root to expand into>' % sys.argv[0]
++        sys.exit(1)
++
++    if len(sys.argv) != 3:
++        usage()
++
++    tbPath = sys.argv[1]
++    root = sys.argv[2]
++
++    epdb.st()
++
++    te = TarExtractor(root)
++
++    tbList = os.listdir(tbPath)
++    tbList.sort()
++
++    for tb in tbList:
++        fullPath = os.path.join(tbPath, tb)
++        epdb.st()
++        te.extractFile(fullPath)
+diff --git a/tarinstall.py b/tarinstall.py
+new file mode 100644
+index 0000000..44dd23e
+--- /dev/null
++++ b/tarinstall.py
+@@ -0,0 +1,240 @@
++#
++# Copyright (c) 2011 rPath, Inc.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++#
++
++import gettext
++import os
++import sys
++_ = lambda x: gettext.ldgettext("anaconda", x)
++
++import logging
++from urlgrabber import grabber
++
++from constants import DISPATCH_BACK
++from flags import flags
++from tarextract import TarExtractor
++from tarcallbacks import ProgressCallback
++from rpathbackendbase import rPathBackendBase, PackageSource
++from product import productPath, productPackagePath
++
++log = logging.getLogger('anaconda')
++
++
++class TarBackend(rPathBackendBase):
++
++    def __init__(self, anaconda):
++        rPathBackendBase.__init__(self, anaconda)
++        self.source = PackageSource(anaconda)
++        self.manifests = [('tblist', False)]
++
++    def addManifest(self, name, optional=False):
++        self.manifests.append((name, optional))
++
++    def doBackendSetup(self, anaconda):
++        if anaconda.dir == DISPATCH_BACK:
++            return DISPATCH_BACK
++
++        self.source.setup()
++        self.comps = TarComps(self.source, anaconda.intf, self.manifests)
++        if not self.comps.chunks:
++            self.comps.processPackageData()
++
++    def doInstall(self, anaconda):
++        if flags.test:
++            return
++
++        totalSize = 0
++        for chunk in self.comps.chunks:
++            totalSize += chunk.size
++
++        instProgress = ProgressCallback(anaconda, len(self.comps), totalSize)
++
++        te = TarExtractor(anaconda.rootPath, progress=instProgress)
++
++        scratchDir = '/tmp'
++
++        for chunk in self.comps.chunks:
++            # Try to retreive tarball chunk.
++            while True:
++                try:
++                    path = os.path.join(productPackagePath, chunk.fn)
++                    tempPath = os.path.join(scratchDir,
++                            os.path.basename(chunk.fn))
++                    fn = self.source.grab(chunk.disc, path, tempPath)
++                    break
++                except grabber.URLGrabError:
++                    self.source.unmount()
++                    anaconda.intf.messageWindow(_("Error"),
++                        _("The file %s cannot be opened. This is due "
++                          "to a missing or corrupt file.  "
++                          "If you are installing from CD media this usually "
++                          "means the CD media is corrupt, or the CD drive is "
++                          "unable to read the media.\n\n"
++                          "Press <return> to try again.") % chunk.fn)
++
++            log.info('installing %s' % chunk.fn)
++
++            # Extract chunk
++            sha1sum = te.extractFile(fn)
++
++            # Verify tar chunk
++            if chunk.sha1sum and chunk.sha1sum != sha1sum.encode('hex'):
++                log.critical('file failed to verify: %s' % chunk.fn)
++                log.critical('expected %s, but got %s'
++                    % (chunk.sha1sum, sha1sum.encode('hex')))
++                self.source.unmount()
++                rc = anaconda.intf.messageWindow(_('Error'),
++                        _("The file %s cannot be verified. This is due "
++                          "to a missing or corrupt file.  "
++                          "If you are installing from CD media this usually "
++                          "means the CD media is corrupt, or the CD drive is "
++                          "unable to read the media.") % chunk.fn,
++                        type='custom',
++                        custom_icon='error',
++                        custom_buttons=[_('_Exit'), ])
++                if not rc:
++                    if flags.rootpath:
++                        msg =  _("The installer will now exit...")
++                        buttons = [_("_Exit installer")]
++                    else:
++                        msg =  _("Your system will now be rebooted...")
++                        buttons = [_("_Reboot")]
++
++                    anaconda.intf.messageWindow(_("Exiting"),
++                        msg,
++                        type="custom",
++                        custom_icon="warning",
++                        custom_buttons=buttons)
++                    sys.exit(1)
++            elif chunk.sha1sum:
++                log.info('verified %s' % chunk.fn)
++
++            if fn == tempPath:
++                # Only unlink if a temporary file was used.
++                os.unlink(fn)
++
++        te.done()
++        anaconda.id.instProgress = None
++        self.source.unmount()
++
++    def getRequiredMedia(self):
++        return self.comps.getRequiredMedia()
++
++
++class TarComps(object):
++    def __init__(self, source, intf, manifests):
++        self.source = source
++        self.intf = intf
++        self.manifests = list(manifests)
++        self.chunks = []
++
++    def __len__(self):
++        return len(self.chunks)
++
++    def _getFiles(self):
++        log.info('copying needed files')
++
++        fullPaths = []
++        for name, optional in self.manifests:
++            relPath = productPath + '/base/' + name
++            fullPath = None
++            try:
++                fullPath = self.source.grab(1, relPath)
++            except grabber.URLGrabError:
++                log.error("Error copying manifest file %s", relPath)
++
++            if fullPath and not os.path.exists(fullPath):
++                log.error("Manifest file %s is missing", relPath)
++                fullPath = None
++
++            if fullPath:
++                fullPaths.append(fullPath)
++            elif not optional:
++                raise grabber.URLGrabError
++
++        self.manifests = fullPaths
++
++    def _parseTbList(self):
++        log.info('parsing tblist')
++        for path in self.manifests:
++            for i, line in enumerate(open(path).readlines()):
++                line = line.strip()
++                parts = line.split()
++                # Allow for lines with more elements, ignore extra elements.
++                if len(parts) >= 4:
++                    chunkfile, size, disc, sha1sum = parts[:4]
++                elif len(parts) == 3:
++                    chunkfile, size, disc = parts
++                    sha1sum = None
++                else:
++                    log.warn('invalid line in tblist: %s: %s' % (i, line))
++                    continue
++
++                size = long(size)
++                disc = int(disc)
++
++                chunk = TarChunk(chunkfile, size, disc, sha1sum)
++                if chunk not in self.chunks:
++                    self.chunks.append(chunk)
++
++    def processPackageData(self):
++        title = _('Parsing Package Data')
++
++        win = self.intf.waitWindow(title,
++                    _('Copying needed files...'))
++
++        self._getFiles()
++
++        win.pop()
++        win = self.intf.waitWindow(title,
++                    _('Parsing File List...'))
++
++        self._parseTbList()
++
++        win.pop()
++
++    def getRequiredMedia(self):
++        discs = []
++        for chunk in self.chunks:
++            if chunk.disc not in discs:
++                discs.append(chunk.disc)
++        return discs
++
++
++class TarChunk(object):
++    __slots__ = ('fn', 'size', 'disc', 'sha1sum')
++
++    def __init__(self, fn, size, disc, sha1sum):
++        self.fn = fn
++        self.size = size
++        self.disc = disc
++        self.sha1sum = sha1sum
++
++    def __cmp__(self, other):
++        if self.fn == other.fn:
++            if not self.sha1sum and other.sha1sum:
++                self.sha1sum = other.sha1sum
++            elif not other.sha1sum and self.sha1sum:
++                other.sha1sum = self.sha1sum
++            return 0
++        elif self.fn > other.fn:
++            return 1
++        elif self.fn < other.fn:
++            return -1
++
++    def __repr__(self):
++        return ('<TarChunk(fn=%s, size=%s, disc=%s, sha1sum=%s)>'
++                % (self.fn, self.size, self.disc, self.sha1sum))

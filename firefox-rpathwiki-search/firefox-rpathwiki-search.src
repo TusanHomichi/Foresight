@@ -1,0 +1,11 @@
+<search 
+ name="rPath Wiki"
+ method="GET"
+ sourceTextEncoding="0"
+ action="http://www.google.com/search"
+ queryCharset="utf-8"
+> 
+<input name="q" user>
+<input name"hl" value="en"
+  <input name="sitesearch" value="wiki.rpath.com">
+</search>

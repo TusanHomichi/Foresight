@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class Smartgithg(BinaryPackageRecipe):
+    name = 'smartgithg'
+    version = '4.0.2'
+ 
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://www.syntevo.com/download/smartgithg/smartgithg-generic-4_0_2.tar.gz', dir='/opt')
+        r.addSource('smartgithg.desktop')
+        r.Desktopfile('smartgithg.desktop')
+
+        r.Symlink('/opt/smartgithg-4_0_2/bin/smartgithg.sh',  '%(bindir)s/smartgit')

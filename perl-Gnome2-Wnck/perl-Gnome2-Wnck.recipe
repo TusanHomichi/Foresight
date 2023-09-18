@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGnome2Wnck(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Gnome2-Wnck'
+    version = '0.16'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libwnck:devel', 'pango:devel', 'perl-Cairo:perl', 'perl-ExtUtils-Depends:perl', 'perl-ExtUtils-PkgConfig:perl', 'perl-Gtk2:perl', 'perl:devel', 'pkgconfig:devel']

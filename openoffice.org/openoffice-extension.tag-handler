@@ -1,0 +1,56 @@
+#!/bin/bash
+
+set -u
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+UNOPKG=/usr/bin/unopkg%(major_version)s
+
+function add() {
+    local f=$1
+    remove $f
+    $UNOPKG add --shared $f
+}
+
+function remove() {
+    local f=$1
+    extId="$(/usr/bin/unzip -p  $f description.xml | /bin/fgrep '<identifier value=' | /bin/cut -f2 -d'"')"
+    $UNOPKG list --shared | /bin/grep -q "^Identifier: $extId" && {
+        $UNOPKG remove --shared "$extId"
+    }
+}
+
+case "$type" in
+    files)
+        case "$action" in
+            update)
+                for extension in "$@"; do
+                    add $extension
+                done
+                ;;
+            remove)
+                for extension in "$@"; do
+                    remove $extension
+                done
+                ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

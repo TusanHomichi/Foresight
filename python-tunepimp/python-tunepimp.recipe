@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonTunepimp(PackageRecipe):
+
+    name = 'python-tunepimp'
+    version = '0.5.3'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+	r.macros.base = 'http://ftp.musicbrainz.org/pub/musicbrainz'
+        r.addArchive('%(base)s/libtunepimp-%(version)s.tar.gz')
+
+        r.PythonSetup(dir='python')
+
+	r.Requires('libtunepimp:runtime', '%(libdir)s/python2.6/site-packages/tunepimp/tunepimp.py')

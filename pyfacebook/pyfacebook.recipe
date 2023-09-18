@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pyfacebook(PackageRecipe):
+
+    name = 'pyfacebook'
+    version = '7ba3654569e2'
+
+    buildRequires = ['python-setuptools:python', 'PIL:python', 'PyYAML:python', 'decorator:python', 'django:python', 'python:devel', 'python-simplejson:python']
+
+    def setup(r):
+        r.addGitSnapshot('http://github.com/sciyoshi/pyfacebook.git')
+        r.PythonSetup()

@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libvoikko(AutoPackageRecipe):
+    name = 'libvoikko'
+    version = '3.0'
+ 
+    buildRequires = ['libstdc++:devel', 'python:devel', 'suomi-malaga:lib']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/voikko/')
+	r.macros.pyver = '2.6' 
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages' 
+
+    def configure(r):
+	r.Configure('--with-dictionary-path=%(libdir)s/voikko')
+
+    def makeinstall(r):
+	r.MakeInstall('INSTALL="install -p" DESTDIR=%(destdir)s')
+	r.Install('python/libvoikko.py', '%(sitepkgs)s/', mode=0644)

@@ -1,0 +1,19 @@
+# Copyright 2007, Antonio Meireles, http://sbin.reboot.sh
+#
+#
+
+class GtkUbuntuLooks(AutoPackageRecipe):
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'expat:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libpng:devel', 'pango:devel', 'pkgconfig:devel', 'zlib:devel','libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel', 'libXau:devel', 'libXdmcp:devel' ]
+
+    name = 'gtk-engine-ubuntulooks'
+    version = '0.9.12'
+
+    def unpack(r):
+        r.addArchive('http://archive.ubuntu.com/ubuntu/pool/main/u/ubuntulooks/ubuntulooks_%(version)s.orig.tar.gz')
+        r.addPatch('http://archive.ubuntu.com/ubuntu/pool/main/u/ubuntulooks/ubuntulooks_%(version)s-12.diff.gz')
+
+    def policy(r):
+        # drop collision with human-theme:data
+        r.Remove('%(datadir)s/themes/Human/gtk-2.0/gtkrc')
+        r.Requires('human-theme:data', '%(libdir)s/.*')

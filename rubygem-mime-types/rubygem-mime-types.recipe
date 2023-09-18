@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class MimeTypes(RubygemPackageRecipe):
+
+    name = 'rubygem-mime-types'
+    version = '1.17.2'
+

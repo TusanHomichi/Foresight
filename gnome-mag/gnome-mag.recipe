@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+class GnomeMag(GnomePackageRecipe):
+
+    buildRequires = GnomePackageRecipe.buildRequires
+    buildRequires.extend([ 'intltool:runtime', 'libbonobo:devel',
+        'gtk:devel', 'at-spi:devel', 'gettext:runtime', 'ORBit2:devel',
+        'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'libpng:devel', 'pango:devel', 'popt:devel','libXdamage:devel', 'libXfixes:devel', 'perl:runtime',
+        'libXcomposite:devel' ])
+
+    name = 'gnome-mag'
+    version = '0.16.3'
+
+
+    def setup(r):
+        r.disableParallelMake()
+        r.Environment('LIBS',"-lm")
+        GnomePackageRecipe.setup(r)

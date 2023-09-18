@@ -1,0 +1,18 @@
+--- bumblebee/bumblebee-3.2.1/conf/xorg.conf.nvidia	2013-04-26 11:49:03.010174177 -0400
++++ bumblebee/bumblebee-3.2.1/conf/xorg.conf.nvidia-patch	2014-06-09 09:35:53.370932500 -0400
+@@ -1,3 +1,6 @@
++Section "Files"
++EndSection
++
+ Section "ServerLayout"
+     Identifier  "Layout0"
+     Option      "AutoAddDevices" "false"
+@@ -32,3 +35,8 @@
+     Option "UseEDID" "false"
+     Option "UseDisplayDevice" "none"
+ EndSection
++
++Section "Screen"
++    Identifier "Screen1"
++    Device "Device1"
++EndSection

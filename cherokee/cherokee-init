@@ -1,0 +1,74 @@
+#! /bin/bash
+# cherokee        Startup script for the cherokee HTTP Server
+#
+# chkconfig: 345 23 15
+# description: The cherokee HTTP Server
+# processname: cherokee
+# config: /etc/cherokee/cherokee.conf
+#
+#
+# cherokee	Start the cherokee HTTP server.
+#
+
+# general config
+
+NAME=cherokee
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/lib/cherokee
+DAEMON=/usr/sbin/cherokee
+PIDFILE=/var/run/$NAME.pid
+CONF=/etc/cherokee/cherokee.conf
+
+# Source function library.
+. /etc/init.d/functions
+
+trap "" 1
+export LANG=C
+export PATH
+
+test -f $DAEMON || exit 0
+
+case "$1" in
+  start)
+    echo -n $q"Starting cherokee web server: $NAME"
+    daemon $DAEMON -d 
+    ;;
+
+  stop)
+    echo -n $"Stopping cherokee web server: $NAME"
+    killproc -p $PIDFILE $DAEMON
+    ;;
+
+  reload)
+    echo -n "Reloading $NAME configuration"
+    killproc -p $PIDFILE $DAEMON && daemon $DAEMON -d  
+    ;;
+
+  reload-modules)
+    echo -n "Restarting $NAME"
+    killproc -p $PIDFILE $DAEMON 
+	daemon $DAEMON -d
+    ;;
+
+  restart)
+    $0 reload-modules
+    exit $?
+    ;;
+
+  force-reload)
+    $0 reload-modules
+    exit $?
+    ;;
+
+  *)
+    echo "Usage: /etc/init.d/$NAME {start|stop|reload|reload-modules|force-reload|restart}"
+    exit 1
+    ;;
+esac
+
+if [ $? == 0 ]; then
+	echo 
+	exit 0
+else
+	echo failed
+	exit 1
+fi

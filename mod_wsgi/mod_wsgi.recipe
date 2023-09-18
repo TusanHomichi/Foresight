@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mod_wsgi(AutoPackageRecipe):
+    name = 'mod_wsgi'
+    version = '3.4'
+
+    buildRequires = [
+        'httpd:devel',
+        'python:devel',
+        # due to mod_wsgi-3.4-coredump.patch
+        'automake:runtime', 
+        'autoconf:runtime',
+        'libtool:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://modwsgi.googlecode.com/files/')
+        for p in [ 'mod_wsgi-3.4-connsbh.patch',
+                   'mod_wsgi-3.4-coredump.patch',
+                   'mod_wsgi-3.4-procexit.patch', ]:
+            r.addPatch(p)
+
+        r.addSource('wsgi.conf')
+
+        r.macros.ldflags += ' -L%(libdir)s'
+        r.macros.cflags += ' -fno-strict-aliasing'
+
+        # due to mod_wsgi-3.4-coredump.patch
+        r.Run('autoreconf -fi')
+
+    def configure(r):
+        r.Configure('--with-apxs=%(sbindir)s/apxs')
+
+    def policy(r):
+        r.Install('wsgi.conf', '%(sysconfdir)s/httpd/conf.d/', mode = 0644)

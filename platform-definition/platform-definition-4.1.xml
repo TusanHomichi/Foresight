@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<platformDefinition xmlns="http://www.rpath.com/permanent/rpd-4.1.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.rpath.com/permanent/rpd-4.1.xsd rpd-4.1.xsd" version="4.1">
+  <platformName>Foresight Linux 2 Devel</platformName>
+  <platformVersionTrove>group-world</platformVersionTrove>
+  <baseFlavor>~X, ~!alternatives, !bootstrap, ~builddocs, ~buildtests, !cross, ~desktop, ~!dom0, ~!domU, ~emacs, ~!gcj, ~gnome, ~gtk, ~ipv6, ~krb, ~ldap, ~nptl, pam, ~pcre, ~perl, ~!pie, ~python, ~readline, ~!sasl, ~!selinux, ~ssl, ~tcl, ~tk, ~!vmware, ~!xen, ~!xfce</baseFlavor>
+    <platformInformation>
+        <platformClassifier version="2" name="fl" tags="rpath rpl-2 fl fl-2"/>
+        <originLabel>foresight.rpath.org@fl:2-devel</originLabel>
+    </platformInformation>
+  <searchPaths>
+    <searchPath troveName="group-world" label="foresight.rpath.org@fl:2-devel" isGroupSearchPathTrove="true" isResolveTrove="true"/>
+    <searchPath troveName="group-os" label="conary.rpath.com@rpl:2-qa" isGroupSearchPathTrove="true" isResolveTrove="true"/>
+  </searchPaths>
+  <factorySources>
+    <factorySource troveName="group-factories" label="conary.rpath.com@rpl:2-qa"/>
+  </factorySources>
+  <autoLoadRecipes>
+    <autoLoadRecipe troveName="group-superclasses" label="foresight.rpath.org@fl:2-devel"/>
+  </autoLoadRecipes>
+  <architectures>
+    <architecture flavor="is:x86(~i486, ~i586, ~i686, ~cmov, ~mmx, ~sse, ~sse2)" displayName="x86 (32-bit)" name="x86"/>
+    <architecture flavor="is:x86_64 x86(~i486, ~i586, ~i686, ~cmov, ~mmx, ~sse, ~sse2)" displayName="x86 (64-bit)" name="x86_64"/>
+  </architectures>
+  <flavorSets>
+    <flavorSet name="generic" displayName="Generic" flavor="~!xen, ~!dom0, ~!domU, ~!vmware"/>
+    <flavorSet name="vmware" displayName="VMware" flavor="~vmware, ~!xen, !domU, ~!dom0"/>
+  </flavorSets>
+  <containerTemplates>
+    <image containerFormat="applianceIsoImage" autoResolve="false" baseFileName="" installLabelPath="" anacondaCustomTrove="foresight.rpath.org@fl:2-devel" anacondaTemplatesTrove="foresight.rpath.org@fl:2-devel" betaNag="false" bugsUrl="http://issues.foresightlinux.org" maxIsoSize="681574400" mediaTemplateTrove="foresight.rpath.org@fl:2-devel" showMediaCheck="false" />
+    <image containerFormat="installableIsoImage" autoResolve="false" baseFileName="" installLabelPath="" anacondaCustomTrove="foresight.rpath.org@fl:2-devel" anacondaTemplatesTrove="foresight.rpath.org@fl:2-devel" betaNag="false" bugsUrl="http://issues.foresightlinux.org" maxIsoSize="681574400" mediaTemplateTrove="foresight.rpath.org@fl:2-devel" showMediaCheck="false" />
+    <image containerFormat="rawFsImage" autoResolve="false" baseFileName="" installLabelPath="" freespace="1024" swapSize="512" />
+    <image containerFormat="rawHdImage" autoResolve="false" baseFileName="" installLabelPath="" freespace="1024" swapSize="512" />
+    <image containerFormat="tarballImage" autoResolve="false" baseFileName="" installLabelPath="" swapSize="0" />
+    <image containerFormat="vhdImage" autoResolve="false" baseFileName="" installLabelPath="" freespace="1024" swapSize="512" vhdDiskType="dynamic" />
+    <image containerFormat="vmwareImage" autoResolve="false" baseFileName="" installLabelPath="" diskAdapter="lsilogic" freespace="1024" natNetworking="true" swapSize="512" vmMemory="256" vmSnapshots="false" />
+    <image containerFormat="vmwareEsxImage" autoResolve="false" baseFileName="" installLabelPath="" freespace="1024" natNetworking="true" swapSize="512" vmMemory="256" />
+  </containerTemplates>
+  <buildTemplates>
+    <buildTemplate name="ISO" containerTemplateRef="applianceIsoImage" architectureRef="x86" />
+    <buildTemplate name="ISO" containerTemplateRef="installableIsoImage" architectureRef="x86" />
+    <buildTemplate name="ISO" containerTemplateRef="applianceIsoImage" architectureRef="x86_64" />
+    <buildTemplate name="ISO" containerTemplateRef="installableIsoImage" architectureRef="x86_64" />
+    <buildTemplate name="Raw Filesystem" containerTemplateRef="rawFsImage" architectureRef="x86" />
+    <buildTemplate name="Raw Filesystem" containerTemplateRef="rawFsImage" architectureRef="x86_64" />
+    <buildTemplate name="Raw Hard Drive" containerTemplateRef="rawHdImage" architectureRef="x86" />
+    <buildTemplate name="Raw Hard Drive" containerTemplateRef="rawHdImage" architectureRef="x86_64" />
+    <buildTemplate name="Tar Image" containerTemplateRef="tarballImage" architectureRef="x86" />
+    <buildTemplate name="Tar Image" containerTemplateRef="tarballImage" architectureRef="x86_64" />
+    <buildTemplate name="VMware" containerTemplateRef="vmwareImage" architectureRef="x86"  flavorSetRef="vmware" />
+    <buildTemplate name="VMware" containerTemplateRef="vmwareEsxImage" architectureRef="x86"  flavorSetRef="vmware" />
+    <buildTemplate name="VMware" containerTemplateRef="vmwareImage" architectureRef="x86_64"  flavorSetRef="vmware" />
+    <buildTemplate name="VMware" containerTemplateRef="vmwareEsxImage" architectureRef="x86_64"  flavorSetRef="vmware" />
+  </buildTemplates>
+</platformDefinition>

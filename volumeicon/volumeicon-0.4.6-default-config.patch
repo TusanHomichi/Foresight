@@ -1,0 +1,24 @@
+--- volumeicon/volumeicon-0.4.6/src/config.c	2012-01-14 17:09:20.000000000 +0100
++++ volumeicon/volumeicon-0.4.6/src/config-copy.c	2012-05-13 10:21:03.000000000 +0200
+@@ -49,9 +49,9 @@
+ static gboolean m_mmb_mute = FALSE;
+ static gboolean m_use_horizontal_slider = FALSE;
+ static gboolean m_show_sound_level = FALSE;
+-static gboolean m_hotkey_up_enabled = FALSE;
+-static gboolean m_hotkey_down_enabled = FALSE;
+-static gboolean m_hotkey_mute_enabled = FALSE;
++static gboolean m_hotkey_up_enabled = TRUE;
++static gboolean m_hotkey_down_enabled = TRUE;
++static gboolean m_hotkey_mute_enabled = TRUE;
+ 
+ //##############################################################################
+ // Static functions
+@@ -59,7 +59,7 @@
+ static void config_load_default()
+ {
+ 	if(!m_helper_program)
+-		config_set_helper("xterm -e 'alsamixer'");
++		config_set_helper("pavucontrol");
+ 	if(!m_channel)
+ 		config_set_channel(NULL);
+ 	if(!m_card)

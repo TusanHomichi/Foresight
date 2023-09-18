@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyWBEM(PackageRecipe):
+    name = 'pywbem'
+    revision = 'r570'
+    version = '0.7.0_' + revision
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        #r.addArchive('mirror://sourceforge/%(name)s/')
+        # Handle CDATA sections
+        #r.addPatch('http://pywbem.svn.sourceforge.net/viewvc/pywbem/pywbem/trunk/tupletree.py?view=patch&r1=567&r2=566&pathrev=567')
+        r.addSvnSnapshot('http://pywbem.svn.sourceforge.net/svnroot/pywbem/pywbem/trunk', 
+            revision = r.revision)
+        r.addPatch('http://people.rpath.com/~misa/twisted_client.patch')
+        r.PythonSetup()

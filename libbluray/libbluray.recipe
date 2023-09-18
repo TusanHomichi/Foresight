@@ -1,0 +1,20 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libbluray(AutoPackageRecipe):
+    name = 'libbluray'
+    version = '0.2.1'
+ 
+    buildRequires = ['autoconf:data', 'autoconf:runtime', 'automake:runtime', 'doxygen:runtime', 'graphviz:runtime', 'libtool:runtime', 'libxml2:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        #r.addGitSnapshot('git://git.videolan.org/libbluray.git')
+        r.addArchive('ftp://ftp.videolan.org/pub/videolan/libbluray/%(version)s/libbluray-%(version)s.tar.bz2')
+
+    def configure(r):
+        r.Run('./bootstrap')
+        r.Configure()

@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TranslateToolkit(PackageRecipe):
+    name = 'translate-toolkit'
+    version = '1.9.0'
+
+    buildRequires = [
+        'chardet:python', 
+        'elementtree:python',
+        'lxml:python',
+        'python:devel',
+        'python-iniparse:python',
+        'python-setuptools:python',
+        'python-simplejson:python',
+        'python-sqlite:python',
+        'psyco:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/translate/Translate Toolkit/%(version)s/translate-toolkit-%(version)s.tar.bz2')
+        r.PythonSetup()
+
+        r.Requires(exceptDeps=r'python\:\ re.*')
+        r.Requires(exceptDeps=r'python\:\ time.*')
+        r.Requires(exceptDeps=r'python\:\ urllib.*')

@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+#               2009-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class LibWmf(RPMPackageRecipe,AutoPackageRecipe):
+
+    buildRequires = [ 'expat:devel', 'freetype:devel', 'glib:devel',
+                      'gd:devel', 'libICE:devel', 'libXpm:devel', 'libxml2:devel', 
+                      'libjpeg:devel', 'libpng:devel', 'pkgconfig:devel', 'zlib:devel',
+                      'libX11:devel', 'automake:runtime', 'autoconf:runtime',
+                      'libtool:runtime', 'gdk-pixbuf:devel' ]
+
+    name = 'libwmf'
+    version = '0.2.8.4'
+    rpmRelease = '30.fc15'
+    rpmPatches = [ 'libwmf-0.2.8.3-nodocs.patch',
+                   'libwmf-0.2.8.3-relocatablefonts.patch',
+                   'libwmf-0.2.8.4-fallbackfont.patch',
+                   'libwmf-0.2.8.4-deps.patch',
+                   'libwmf-0.2.8.4-multiarchdevel.patch',
+                   'libwmf-0.2.8.4-intoverflow.patch',
+                   'libwmf-0.2.8.4-reducesymbols.patch',
+                   'libwmf-0.2.8.4-useafterfree.patch',
+                   'libwmf-0.2.8.4-pixbufloaderdir.patch',
+                   'libwmf-0.2.8.4-CVE-2007-0455.patch',
+                   'libwmf-0.2.8.4-CVE-2007-3472.patch',
+                   'libwmf-0.2.8.4-CVE-2007-3473.patch',
+                   'libwmf-0.2.8.4-CVE-2007-3477.patch',
+                   'libwmf-0.2.8.4-CVE-2007-2756.patch',
+                   'libwmf-0.2.8.4-CAN-2004-0941.patch',
+                   'libwmf-0.2.8.4-CVE-2009-3546.patch']
+
+    def configure(r):
+        r.Run('rm configure.ac ; ln -s patches/acconfig.h acconfig.h ; autoreconf -i -f')
+        r.Configure('--with-docdir=%(thisdocdir)s --with-libxml2 --disable-static --disable-dependency-tracking')
+
+    def policy(r):
+        #we're carrying around duplicate fonts
+        r.Remove('%(datadir)s/libwmf/fonts/*afm')
+        r.Remove('%(datadir)s/libwmf/fonts/*pfb')
+        r.Replace('libwmf/fonts', 'fonts/default/Type1', '%(datadir)s/libwmf/fonts/fontmap') 
+
+

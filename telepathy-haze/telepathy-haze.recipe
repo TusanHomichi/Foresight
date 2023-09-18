@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2007-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class TelepathyHaze(GnomePackageRecipe):
+
+    name = 'telepathy-haze'
+    version = '0.4.0'
+
+    buildRequires = [
+        'libpurple:devel',
+        'telepathy-glib:devel',
+        'dbus:devel',
+        ]
+
+    externalArchive ='http://telepathy.freedesktop.org/releases/%(name)s/'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.macros.cflags += ' -I%(libdir)s/dbus-1.0/include/ '

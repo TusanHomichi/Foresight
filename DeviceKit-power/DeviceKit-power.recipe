@@ -1,0 +1,30 @@
+
+loadSuperClass('rpmpackage')
+class DeviceKitPower(RPMPackageRecipe,AutoPackageRecipe):
+    buildRequires = [ 'dbus-glib:devel', 'dbus:devel', 'glib:devel', 'libxslt:runtime',
+                      'pkgconfig:devel', 'udev:devel', 'gudev:devel', 'polkit:devel',
+                      'gettext:runtime', 'intltool:runtime', 'libusb:devel', 'eggdbus:devel',
+                      'gobject-introspection:devel', 'libusbx:devel',
+                      'libimobiledevice:devel', 'libplist:devel']
+
+    name = "DeviceKit-power"
+    version = '0.9.5'
+    rpmRelease = '7.fc14'
+    rpmName = 'upower'
+    tarballName = rpmName +'-%(version)s.tar.bz2'
+    rpmPatches = [ 'upower-clear-error.patch',
+                   'upower-dbus-fixes.patch']
+
+    def configure(r):
+        r.Replace(('-Werror', ''),
+                  ('-Wtype-limits', ''),
+                  'configure')
+
+        # FIXME: get manpages generation to work inside mooks
+        r.Configure('--disable-gtk-doc --disable-man-pages '
+                    # FIXME
+                    '--enable-introspection=no ')
+
+    def policy(r):
+        r.Requires('pm-utils:runtime', '%(bindir)s/.*')
+        r.ExcludeDirectories(exceptions = '%(localstatedir)s/lib/%(name)s')

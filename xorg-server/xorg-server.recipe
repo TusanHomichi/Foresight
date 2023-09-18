@@ -1,0 +1,214 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgServer(RPMPackageRecipe, CPackageRecipe):
+    name = 'xorg-server'
+    version = '7.6_1.9.3'
+    rpmRelease = '154.1'
+    rpmName = 'xorg-x11-server'
+    isOPENsuse = True
+    isXOrgFactory = True
+    tarballName = '%(name)s-1.9.3.tar.bz2'
+    rpmSources = []
+    # FIXME: ld dies trying to link xorgcfg without libXext, need to make sure
+    # configure checks for it
+    # perl:lib needed to satisfy "perl: File::Glob" for /usr/bin/getconfig.pl
+    buildRequires = [ 
+        'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'xproto:devel',
+        'bison:runtime', 'flex:runtime', 'freetype:devel',
+        'ghostscript:runtime', 'libICE:devel', 'libSM:devel', 'libXaw:devel',
+        'libXext:devel', 'libXfixes:devel', 'libXfont:devel', 'libXmu:devel',
+        'libXpm:devel', 'libXt:devel', 'libXxf86misc:devel',
+        'libXxf86vm:devel', 'chkconfig:runtime', 'pixman:devel',
+        'libfontenc:devel', 'liblbxutil:devellib', 'libxkbfile:devel',
+        'libxkbui:devel', 'ncurses:devel', 'perl:lib', 'perl:runtime',
+        'xorg-sgml-doctools:data', 'xtrans:devel', 'zlib:devel',
+        'automake:runtime', 'linuxdoc-tools:runtime', 'autoconf:runtime',
+        'libtool:devel', 'libtool:runtime', 'util-macros:devel', 'pkgconfig:devel',
+        'hal:devel', 'dbus:devel', 'docbook-utils:runtime', 'SDL:devel', 'libXv:devel',
+        'libjpeg:devel', 'libpciaccess:devel', 'openssl:devel', 'docbook-utils-pdf:runtime',
+        'libXinerama:devel', 'udev:devel', 'font-util:devel', 'libgcrypt:devel', 'xmlto:runtime',
+        # hal keybd 
+        'glib:devel', 'rhpl:python',
+        # begin dri
+        'Mesa:devel', 'glproto:devel', 'libdrm:devel', 
+        'xf86driproto:devel', 'dri2proto:devel',
+        # end dri, begin dmx
+        'libXi:devel', 'libXrender:devel', 'libXres:devel',
+        'libXtst:devellib', 'libdmx:devel',
+        # end dmx
+        ]
+
+    protoBuildRequires = [ 'bigreqsproto:devel', 'compositeproto:devel',
+        'damageproto:devel', 'evieext:devel', 'fixesproto:devel',
+        'fontsproto:devel', 'inputproto:devel', 'randrproto:devel',
+        'recordproto:devel', 'renderproto:devel', 'resourceproto:devel',
+        'scrnsaverproto:devel', 'trapproto:devel', 'videoproto:devel',
+        'xcmiscproto:devel', 'xextproto:devel', 'xf86bigfontproto:devel',
+        'xf86dgaproto:devel', 'xf86miscproto:devel', 'xf86vidmodeproto:devel',
+        'xineramaproto:devel', 'vncproto:devel', 'xproto:devel' ]
+
+    buildRequires.extend(protoBuildRequires)
+
+    def setup(r):
+        r.unpack()
+
+        r.macros.osname = "'Foresight Linux'"
+        r.macros.vendor = "'The Foresight Linux Project'"
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+
+        extraConfig = ' --with-os-name=%(osname)s '
+        extraConfig += (' --with-os-vendor=%(vendor)s '
+                        # FIXME decide between vnc opt bellow and 
+                        # one provided by 'vnc' pkg
+                        ' --disable-vnc'
+                        # ' --disable-xcliplist'
+                        ' --enable-install-libxf86config '
+
+                        ' --enable-xdmcp '
+                        ' --enable-xdm-auth-1 '
+                        ' --enable-dri'  
+                        ' --enable-dri2'
+                        ' --enable-dmx'
+                        ' --enable-xnest'
+                        ' --enable-kdrive'
+                        ' --enable-kdrive-evdev'
+                        ' --enable-xephyr'
+                        ' --enable-record'
+                        ' --enable-xcsecurity'
+                        ' --with-sha1=libcrypto'
+                        ' --enable-xorg' 
+                        # XXX change after we are dead sure that migration of existing
+                        # configs keep behaving
+                        ' --disable-config-udev '
+                        ' --enable-config-hal '
+                        #
+                        # Move xkb config to %(localstatedir)s so that X isn't trying to write
+                        # to /usr on startup and /usr is not writable in anaconda.
+                        ' --with-xkb-output=%(localstatedir)s/lib/xkb/compiled')
+
+        # Fonts
+        extraConfig += (' --with-fontrootdir=%(datadir)s/fonts'
+                        ' --with-xkb-path="%(datadir)s/X11/xkb"'
+                        ' --with-default-font-path="%(datadir)s/fonts/misc:unscaled,'
+                        '%(datadir)s/fonts/Type1/,%(datadir)s/fonts/100dpi:unscaled,'
+                        '%(datadir)s/fonts/75dpi:unscaled,%(datadir)s/fonts/cyrillic:unscaled,'
+                        '%(datadir)s/fonts/truetype/,built-ins"'
+                          # FIXME:
+                          # ' --enable-builtin-fonts'
+                          )
+
+        r.addArchive('xorgcfg.tar.bz2', rpm=r.srpm, dir='xorg-server-1.9.3')
+        r.addArchive('xorg-docs-1.6.tar.bz2', rpm=r.srpm, dir='xorg-server-1.9.3')
+
+
+        # XXX: still needed ?
+        r.addSource('xserver.pamd',
+                    dest='%(sysconfdir)s/pam.d/xserver', mode=00644)
+
+        if Arch.x86:
+            r.macros._lib = 'lib'
+        elif Arch.x86_64:
+            r.macros._lib = 'lib64'
+
+        rpmPatches = [ 
+                       'p_default-module-path.diff',
+                       'pu_fixes.diff',
+                       'u_OS-acpi-Reconnect-to-acpid-when-it-gets-restarted.patch',
+                       'p_xnest-ignore-getimage-errors.diff',
+
+                       # we scrap vnc patches are we aren't using them...
+                       'fbdevhw.diff',
+                       'edid_data_sanity_check.diff',
+#                       'scaled_warning_xserver.diff',
+                       'confine_to_shape.diff',
+                       'randr1_1-sig11.diff',
+                       'fix-dpi-values.diff',
+                       'vidmode-sig11.diff',
+                       '0001-Xinput-Catch-missing-configlayout-when-deleting-dev.patch',
+                       'dpms_screensaver.diff',
+                       'pci-legacy-mem-fallback.diff',
+                       
+                       'autoconfig_fallback_fbdev_first.diff',
+                       'driver-autoconfig.diff',
+                       'cache-xkbcomp-output-for-fast-start-up.patch',
+                       'xserver-bg-none-root.patch',
+                       'xorg-detect-psb.patch',
+                       'bug534768-prefer_local_symbols.patch',
+                       '0001-Check-harder-for-primary-PCI-device.patch',
+                       '0001-Fix-segfault-when-killing-X-with-ctrl-alt-backspace.patch',
+                       'fix_fglrx_screendepth_issue.patch',
+                       'pio_ia64.diff',
+                       '0001-Prevent-XSync-Alarms-from-senslessly-calling-CheckTr.patch',
+                       'xorg-server-xdmcp.patch',
+                       
+                       'commit-5c6a2f9.diff',
+                       'sync-fix.patch',
+                       'pad-size-of-system-memory-copy-for-1x1-pixmaps',
+                       'xorg-server-stop-cpu-eating.diff',
+                       'record-avoid-crash-when-calling-RecordFlushReplyBuff.patch',
+                       'Replace-malloc-with-calloc-to-initialize-the-buffers.patch',
+                       'EXA-mixed-ModifyPixmapHeader-pitch-fixes.-bug-33929.patch',
+                       ]
+
+
+        for p in rpmPatches:
+            r.addPatch(p, rpm=r.srpm)
+
+
+#        r.addPatch('xorg-docs.diff', rpm=r.srpm, dir='xorg-docs-1.6')
+        r.addPatch('bug474071-fix1.diff', rpm=r.srpm, dir='hw/xfree86/os-support/bus')
+
+
+
+#        r.Run('chmod 755 hw/vnc/symlink-vnc.sh')
+
+        r.macros.optflags += ' -fno-strict-aliasing '
+        
+        # need automake for changes to GL Makefile.am's for Mesa 6.5.3+
+        r.Run('autoreconf -fi')
+        r.Configure(extraConfig)
+
+        r.Run('autoreconf -fi', dir='xorg-docs-1.6')
+        r.Configure(dir='xorg-docs-1.6')
+
+        r.Make('DESTDIR=%(destdir)s')
+        r.Make('DESTDIR=%(destdir)s', dir='hw/kdrive')
+
+        r.MakeInstall('DESTDIR=%(destdir)s')
+        r.MakeInstall('DESTDIR=%(destdir)s', dir='hw/kdrive')
+        r.MakeInstall(dir='xorg-docs-1.6')
+
+        r.Install('hw/xfree86/parser/{xf86Parser.h,xf86Optrec.h}', '%(includedir)s/xorg/')
+
+        # priority driver overlay (for closed drivers - ATI/NVidia)
+        r.MakeDirs('/usr/%(_lib)s/xorg/modules/updates/{fonts,input,linux,drivers,multimedia,extensions}')
+        r.ExcludeDirectories(exceptions='/usr/%(_lib)s/xorg/modules/.*')
+
+        r.SetModes('%(bindir)s/Xorg', 04611)
+
+        # FIXME: copied from xorg-x11 recipe; is this for consolehelper?
+        r.Create('%(sysconfdir)s/security/console.apps/xserver')
+
+        # make xorg.conf an InitialContents file so it's managed locally, but
+        # removed when xorg-server is
+        r.Create('%(sysconfdir)s/X11/xorg.conf')
+        r.InitialContents('%(sysconfdir)s/X11/xorg.conf')
+
+        # Install the vesamodes and extramodes files to let our install/config tools
+        # be able to parse the same modelist as the X server uses (rhpxl).
+        r.Install('hw/xfree86/common/vesamodes', '%(datadir)s/xorg/vesamodes')
+        r.Install('hw/xfree86/common/extramodes', '%(datadir)s/xorg/extramodes')
+
+        # own %(sysconfdir)s/X11/fontpath.d
+        r.MakeDirs('%(sysconfdir)s/X11/fontpath.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/X11/fontpath.d')
+
+        #  until we get rid of hal...
+        r.addArchive('https://fedorahosted.org/releases/f/e/fedora-setup-keyboard/fedora-setup-keyboard-0.4.tar.bz2')
+        r.Make(dir = '../fedora-setup-keyboard-0.4')
+        r.MakeInstall(dir = '../fedora-setup-keyboard-0.4')

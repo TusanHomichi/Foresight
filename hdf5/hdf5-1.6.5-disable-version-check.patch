@@ -1,0 +1,12 @@
+diff -ruN hdf5-1.8.6.orig/src/H5.c hdf5-1.8.6/src/H5.c
+--- hdf5-1.8.6.orig/src/H5.c	2011-02-14 08:23:19.000000000 -0800
++++ hdf5-1.8.6/src/H5.c	2011-03-15 10:53:42.875717000 -0700
+@@ -622,7 +622,7 @@
+     char	lib_str[256];
+     char	substr[] = H5_VERS_SUBRELEASE;
+     static int	checked = 0;            /* If we've already checked the version info */
+-    static unsigned int	disable_version_check = 0;      /* Set if the version check should be disabled */
++    static unsigned int	disable_version_check = 2;      /* Set if the version check should be disabled */
+     static const char *version_mismatch_warning = VERSION_MISMATCH_WARNING;
+     herr_t      ret_value = SUCCEED;    /* Return value */
+ 

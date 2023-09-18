@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Flex(RPMPackageRecipe,CPackageRecipe):
+    name = 'flex'
+    version = '2.5.35'
+    rpmRelease = '13.fc15'
+    rpmPatches = [ 'flex-2.5.35-sign.patch',
+                   'flex-2.5.35-gcc44.patch',
+                   'flex-2.5.35-hardening.patch',
+                   'flex-2.5.35-missing-prototypes.patch',
+                   ]
+
+    buildRequires = [ 'byacc:runtime', 'indent:runtime',
+                      'install-info:runtime', 'm4:runtime',
+                      'gettext:runtime', 'bison:runtime',
+                      'intltool:runtime', ]
+
+    def setup(r):
+        r.disableParallelMake()
+        RPMPackageRecipe.unpack(r)
+        r.macros.optflags += ' -fPIC '
+        r.mainDir('flex-2.5.35')
+
+        r.ManualConfigure('--prefix=%(prefix)s --disable-dependency-tracking')
+        r.Make()
+
+        r.MakePathsInstall('mandir=%(destdir)s/%(mandir)s/')
+        r.Symlink('flex', '%(bindir)s/lex')
+        r.Symlink('flex', '%(bindir)s/flex++')
+        r.Symlink('flex.1', '%(mandir)s/man1/lex.1')
+        r.Symlink('flex.1', '%(mandir)s/man1/flex++.1')
+        r.Symlink('libfl.a', '%(libdir)s/libl.a')
+
+        # r.test
+        # remove prereqs for recompiling flex -- we'll take care of them
+        # r.Replace('\$\(FLEX\): .*', '$(FLEX): scan.c', 'Makefile')
+        r.TestSuiteFiles('(ccl|dfa|ecs|gen|main|misc|nfa|parse|scan|skel|sym|tblcmp|yylex).o',
+                         'libfl.a', 'scan.l')
+        r.TestSuite('.', 'make check')
+
+        # sanitize runtime dep chain
+        r.Requires('m4:runtime', 'flex:runtime')
+        r.Requires('flex:runtime', 'flex:devel')
+        r.Requires('flex:devel', 'flex:runtime')

@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class EvolutionDataServer(GnomePackageRecipe):
+    name = 'evolution-data-server'
+    version = '2.32.3'
+
+    buildRequires = [ 'gnome-vfs:devel', 'GConf:devel', 'openldap:devel',
+                      'intltool:runtime', 'libsoup:devel', 'ORBit2:devel', 'libgnome:devel',
+                      'libgnomeui:devel', 'nss:devel', 'nspr:devel',
+                      'bison:runtime', 'bison:devellib', 'flex:runtime', 'flex:devel',
+                      'gettext:runtime', 'sendmail:runtime', 'krb5:devel', 'libbonobo:devel',
+                      'libxml2:devel', 'libglade:devel', 'glib:devel', 'db:devel',
+                      'popt:devel', 'atk:devel', 'libgnome-keyring:devel', 'libart_lgpl:devel',
+                      'libbonoboui:devel', 'libgnomecanvas:devel', 'pango:devel',
+                      'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'libpng:devel',
+                      'GConf:runtime', 'docbook-utils:runtime', 'perl:runtime',
+                      'e2fsprogs:devel', 'gcc-c++:runtime', 'krb5:devel', 'openldap:devel',
+                      'gtk-doc:runtime', 'sqlite:devel', 'libgweather:devel', 'libical:devel',
+                      'gperf:runtime', 'dbus-glib:runtime', 'libgdata:devel',
+                      ]
+
+    extraConfig = (' --with-libdb=%(prefix)s --enable-gnome-keyring  '
+                                       ' --with-openldap --enable-nss=yes --enable-smime=yes --enable-nntp=yes '
+                                       '  --with-krb5=/usr/kerberos --enable-file-locking=fcntl --enable-dot-locking=no ')
+    patches = ['evolution-data-server-1.11.5-fix-64bit-acinclude.patch']
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.macros.cflags += ' -DLDAP_DEPRECATED -fPIC '
+        r.Run('autoreconf -fi')
+
+        r.Replace('/var/spool/mail', '%(servicedir)s/spool/mail',
+                  'camel/providers/local/camel-local-folder.c')
+
+        r.Replace('/var/spool/mail', '%(servicedir)s/spool/mail',
+                  'configure{,.ac}')
+

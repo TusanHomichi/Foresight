@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CommonCPP(AutoPackageRecipe):
+
+    name = 'commoncpp'
+    version = '1.7.3'
+
+    buildRequires = [
+        'doxygen:runtime', 'gnutls:devel', 'install-info:runtime',
+        'libgcrypt:devel', 'libgpg-error:devel', 'libstdc++:devel',
+        'openssl:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'commoncpp2'
+        r.addArchive('http://ftp.gnu.org/pub/gnu/commoncpp/')
+
+    def configure(r):
+        r.disableParallelMake()
+        # gcc4.x fix
+        r.Replace("""ep\ =\ strchr\(cp,\ \'\/\'\);""", """ep = (char *)strchr(cp, '/');""", 'src/cidr.cpp')
+        r.Configure('--disable-static --disable-dependency-tracking')

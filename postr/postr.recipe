@@ -1,0 +1,10 @@
+loadSuperClass('gnomepackage')
+class Postr(GnomePackageRecipe,PackageRecipe):
+   name = 'postr'
+   version = '0.12.4'
+   buildRequires = ['desktop-file-utils:runtime', 'python-setuptools:python', 'gnome-python:python', 'pygobject:python', 'pygtk:python', 'python-twisted:python', 'python:devel']
+
+   def setup(r):
+       GnomePackageRecipe.unpack(r)
+       r.PythonSetup()
+       r.Move('%(libdir)s/python2.6/site-packages/share/*', '%(datadir)s/')

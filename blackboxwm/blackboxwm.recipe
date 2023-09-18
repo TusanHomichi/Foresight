@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BlackboxWM(AutoPackageRecipe):
+    name = 'blackboxwm'
+    version = '0.70.1'
+
+    buildRequires = [
+      'expat:devel', 'fontconfig:devel', 'freetype:devel', 'libX11:devel',
+      'libXext:devel', 'libXft:devel',
+      'libXrender:devel',
+      'libXt:devel',
+      'libstdc++:devel',
+      'libxcb:devel', 'pkgconfig:devel', 'xextproto:devel', 'xproto:devel',
+      'zlib:devel',
+    ]
+
+    def unpack(r):
+        r.macros.archive_name = 'blackbox'
+        r.addArchive('mirror://sourceforge/blackboxwm/')

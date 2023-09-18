@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class SoundConverter(AutoPackageRecipe):
+    name = 'soundconverter'
+    version = '2.0.4'
+    buildRequires = [ 'desktop-file-utils:runtime', 'gettext:runtime',
+        'gnome-python:python', 'gst-python:python', 'intltool:runtime',
+        'perl:runtime', 'pygobject:python', 'pygtk:python', 'python:devel', 'notify-python:python', 'xz:runtime' ]
+
+
+    def unpack(r):
+        r.addArchive('https://launchpad.net/soundconverter/trunk/%(version)s/+download/')

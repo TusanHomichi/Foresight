@@ -1,0 +1,16 @@
+#!/bin/bash
+
+DIRECT=`glxinfo | grep "direct rendering: " | head -n 1 | cut -d " " -f 3`
+ISSW=`glxinfo | grep "Software Rasterizer" -c`
+
+HAVETFP=`glxinfo | grep texture_from_pixmap -c`
+
+# force indirect rendering, for now
+export LIBGL_ALWAYS_INDIRECT=1
+
+if ( [ $DIRECT == "Yes" ] && [ $ISSW == 0 ] && [ $HAVETFP -ge 2 ] ); then 
+	 exec  compiz.real --ignore-desktop-hints glib gconf  $@ 
+fi
+
+# Fall back to metacity
+exec metacity $@ 

@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Etherape(AutoPackageRecipe):
+    name = 'etherape'
+    version = '0.9.9'
+
+    packageSummary = 'EtherApe is a graphical network monitor modeled after etherman'
+    packageDescription = 'EtherApe is a graphical network monitor modeled after etherman. Featuring Ethernet, IP, TCP, FDDI and Token Ring modes, it displays network activity graphically. Hosts and links change in size with traffic. Color coded protocols display'
+
+    buildRequires = [ 'gtk:devel', 'libglade:devel', 'libpcap:devel',
+        'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel',
+        'fontconfig:devel', 'freetype:devel', 'glib:devel',
+        'glibc:devel', 'gnome-keyring:devel', 'gnome-vfs:devel',
+        'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+        'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel',
+        'libpng:devel', 'libxml2:devel', 'pango:devel', 'popt:devel',
+        'zlib:devel', 'binutils:runtime', 'gawk:runtime',
+        'pkgconfig:devel', 'desktop-file-utils:runtime', 'expat:devel',
+        'rarian:runtime', 'libICE:devel', 'libSM:devel',
+	'gettext:runtime', 'intltool:runtime', 'gnome-doc-utils:devel', 'rarian:devel',
+	'libxslt:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/etherape/')
+
+    def policy(r):
+        # require /usr/%(lib)s/libglade/2.0/libgnome.so
+        r.Requires('libgnomeui:runtime', '%(bindir)s/etherape')

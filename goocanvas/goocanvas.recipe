@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class goocanvas(GnomePackageRecipe):
+    name = 'goocanvas'
+    version = '0.14'
+
+    buildRequires = [ 'cairo:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libXrender:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'zlib:devel', 'expat:devel', 'pango:devel' ]
+
+
+    # FIXME - update in tandem with pycairo and goocanvas. python -c 'import goocanvas' MUST not segfault!

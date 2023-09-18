@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Txt2tags(PackageRecipe):
+    name = 'txt2tags'
+    version = '2.6'
+ 
+    buildRequires = ['python:devel', 'python:tk', 'ruby:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://txt2tags.googlecode.com/files/txt2tags-%(version)s.tgz')
+        r.Install('txt2tags', '%(bindir)s/', mode=0755)
+        r.Install('extras/pagemaker.vim', '%(datadir)s/vim/vimfiles/syntax/', mode=0644)
+        r.Install('extras/gvim-menu.vim', '%(datadir)s/vim/vimfiles/plugin/', mode=0644)
+        r.Install('extras/txt2tags.vim', '%(datadir)s/vim/vimfiles/syntax/', mode=0644)
+        r.Install('extras/txt2tags-compiler.vim', '%(datadir)s/vim/vimfiles/compiler/', mode=0644)
+        r.Install('extras/unhtml.vim', '%(datadir)s/vim/vimfiles/macros/', mode=0644)
+        r.Install('extras/txt2tags-mode.el', '%(datadir)s/emacs/site-lisp/', mode=0644)
+        r.Install('extras/t2tmake.rb', '%(bindir)s/', mode=0755)
+        r.Install('extras/gensite', '%(bindir)s/', mode=0755)
+        r.Install('extras/html-update.sh', '%(bindir)s/', mode=0755)
+        r.Install('extras/dynartslides', '%(bindir)s/', mode=0755)

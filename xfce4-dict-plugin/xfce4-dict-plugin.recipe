@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Xfce4DictPlugin(RedirectRecipe):
+
+    name = 'xfce4-dict-plugin'
+    version = '0'
+
+    def setup(r):
+        r.addRedirect('xfce4-dict')

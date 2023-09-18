@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+#
+
+class IOmeter(CPackageRecipe):
+    name = 'iometer'
+    version = '1.1.0_rc1'
+
+    buildRequires = [ 'libstdc++:devel', ]
+
+    def setup(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/%(name)s-devel/%(version)s/%(name)s-%(version)s-src.tar.bz2')
+
+        if Arch.x86:
+            args = 'Makefile-Linux.i386'
+        elif Arch.x86_64:
+            args = 'Makefile-Linux.x86_64'
+        r.Replace('\#include\ \<stropts\.h\>', '', 'src/IOPerformance.h')
+        r.Make('-f %s all ' % args, dir = 'src')
+
+        r.Install('src/dynamo', '%(bindir)s/', mode = 0755)

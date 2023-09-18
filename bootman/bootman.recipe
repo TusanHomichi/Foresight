@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2007-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bootman(CPackageRecipe):
+    name = 'bootman'
+    version = '0.20100303.0'
+    buildRequires = ['python:devel', 'rhpl:python', ]    
+
+    def setup(r):
+        r.addMercurialSnapshot('http://hg.rpath.com/bootman',
+                               tag='%(name)s-%(version)s')
+
+        # Branding moved to a seperate package (cleverly named 'branding')
+        #r.addPatch('syslinux-font.patch')
+
+        r.addSource('bootman.conf')
+        r.addSource('bootman-config.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/bootman-config')
+        r.addSource('bootman-config.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/bootman-config', mode=0755)
+        r.Make('libdir=%(libdir)s')
+        r.MakeInstall('libdir=%(libdir)s')
+
+        r.Copy('bootman.conf', '%(sysconfdir)s/bootman.conf')
+        r.Create('%(sysconfdir)s/bootloader.conf', contents="""\
+include '%(sysconfdir)s/bootloader.d/*'
+""")
+        r.MakeDirs('%(sysconfdir)s/bootloader')
+        r.MakeDirs('%(sysconfdir)s/bootloader.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/bootloader')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/bootloader.d')
+        for req in ('%(bindir)s/[',
+                    '%(essentialbindir)s/cat',
+                    '%(essentialbindir)s/egrep',
+                    '%(essentialbindir)s/sed',
+                    '%(essentialbindir)s/sync',
+                    '%(essentialsbindir)s/ext3flush',
+                    '%(essentialsbindir)s/bootman',
+                    'extlinux:runtime(swap)',):
+            r.Requires(req, '%(essentialsbindir)s/bootman')
+
+        r.ComponentProvides('bommy-get')

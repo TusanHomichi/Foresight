@@ -1,0 +1,173 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Vim(CPackageRecipe):
+    name = 'vim'
+    version = '7.4.052'
+    patchlevel = version[version.rfind('.')+1:]
+
+    buildRequires = [
+        'acl:devel',
+        'atk:devel',
+        'attr:devel',
+        'cairo:devel',
+        'desktop-file-utils:runtime',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'grep:runtime',
+        'gtk:devel',
+        'imake:runtime',
+        'libelf:devel',
+        'libICE:devel',
+        'libpng:devel',
+        'libSM:devel',
+        'libtermcap:devel',
+        'libX11:devel',
+        'libXdmcp:devel',
+        'libXext:devel',
+        'libXpm:devel',
+        'libXrender:devel',
+        'libXt:devel',
+        'ncurses:devel',
+        'pango:devel',
+        'perl:devel',
+        'perl:lib',
+        'perl:runtime',
+        'pkgconfig:devel',
+        'python:devel',
+        'ruby:devellib',
+        'ruby:runtime',
+        'sed:runtime',
+        'tcl:devel',
+        'tcl:runtime',
+        'zlib:devel',
+        ]
+
+    def setup(r):
+        r.macros.update({
+            'vername': 'vim'+"".join(r.macros.major_version.split('.')),
+            'patchlevel': r.patchlevel,
+            'cflags': '%(cflags)s -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64'
+        })
+        r.mainDir('%(vername)s')
+
+        site = 'ftp://ftp.vim.org/pub/vim'
+
+        r.addArchive(site+'/unix/vim-%(major_version)s.tar.bz2')
+        #r.addArchive(site+'/extra/vim-%(major_version)s-extra.tar.gz')
+        #r.addArchive(site+'/extra/vim-%(major_version)s-lang.tar.gz')
+
+        # official upstream patches
+        if r.patchlevel != '0':
+            for patch in range(1,int(r.patchlevel)+1):
+                r.addPatch(site+'/patches/%%(major_version)s/%%(major_version)s.%03d' % patch, level=0)
+
+        r.addPatch('vim-7.0-rclocation.patch')
+        r.addPatch('vim-7.0-fixkeys.patch')
+
+        r.addSource('gvim.desktop')
+        r.addSource('vimrc')
+        r.addSource('gvim.png')
+
+        r.Replace(re.escape('bin/nawk'), 'bin/awk', 'runtime/tools/mve.awk')
+        r.Run('sed -i "s,\$VIMRUNTIME,/usr/share/vim/%(vername)s,g;'
+                  's,\$VIM,/usr/share/vim/%(vername)s/macros,g" src/os_unix.h')
+
+        r.macros.enableperl = '--enable-perlinterp'
+        r.macros.enablepython = '--enable-pythoninterp'
+    	r.macros.enableruby = '--enable-rubyinterp'
+
+        r.Configure(
+            ' --with-features=huge'
+            ' %(enablepython)s %(enableperl)s'
+		    ' --disable-tclinterp --enable-rubyinterp'
+            ' --with-x=yes --enable-gtk2-check --enable-gui=auto'
+            ' --exec-prefix=%(exec_prefix)s'
+            ' --enable-xim --enable-multibyte --enable-fontset'
+            ' --disable-gpm --with-gnome --disable-netbeans'
+            ' --with-compiledby="<http://issues.foresightlinux.org>"',
+            dir='src' )
+        r.Make('-C src VIMRCLOC=%(sysconfdir)s VIMRUNTIMEDIR=%(datadir)s/%(name)s/%(vername)s')
+        r.Install('src/vim', '%(bindir)s/gvim', mode=0755)
+        r.Make('-C src clean')
+
+        r.Configure(
+            '--with-features=huge'
+            ' %(enablepython)s %(enableperl)s'
+            ' --disable-tclinterp --enable-rubyinterp'
+            ' --with-x=no --enable-gui=no'
+            ' --enable-multibyte'
+            ' --disable-gpm --disable-netbeans'
+            ' --with-compiledby="<http://issues.foresightlinux.org>"',
+            dir='src'
+            )
+        r.Make('-C src VIMRCLOC=%(sysconfdir)s VIMRUNTIMEDIR=%(datadir)s/%(name)s/%(vername)s')
+        r.Run('mv src/vim .')
+        r.Make('-C src clean')
+
+        r.Configure(
+            ' --with-features=small'
+            ' --enable-pythoninterp --enable-perlinterp' # --enable-rubyinterp'
+	        ' --enable-tclinterp'
+            ' --with-tlib=termcap --with-x=no --enable-gui=no'
+            ' --disable-gpm --disable-netbeans'
+            ' --with-compiledby="<http://issues.foresightlinux.org>"',
+            dir='src'
+            )
+        r.Make('-C src VIMRCLOC=%(sysconfdir)s VIMRUNTIMEDIR=%(datadir)s/%(name)s/%(vername)s')
+
+        r.MakeInstall('-C src BINDIR=/bin')
+    	r.Move('/bin/xxd', '%(bindir)s/')
+        r.MakeInstall('-C src', installtarget='installmacros')
+        r.Move('/bin/vimtutor', '%(bindir)s/')
+    	r.Copy('/bin/vim', '/bin/vi')
+        r.Move('/bin/vim', '/bin/vim-minimal')
+    	r.Remove('/bin/rvim')
+        r.Symlink('vim.1', '%(mandir)s/man1/vi.1')
+        # ja_JP.ujis is obsolete, ja_JP.eucJP is recommended.
+        r.Symlink('menu_ja_jp.ujis.vim',
+            '%(datadir)s/vim/%(vername)s/lang/menu_ja_jp.eucjp.vim')
+        r.Requires(exceptions='/usr/share/vim/.*/doc/')
+        r.Requires(exceptions='/usr/share/vim/.*/tools/(vim132|.*.pl|mve.awk)')
+        r.Symlink('vim', '%(bindir)s/vi')
+        r.Install('vimrc', '%(sysconfdir)s/', mode=0644)
+    	r.Install('gvim.png', '%(datadir)s/pixmaps/')
+
+	for program in ('view', 'ex', 'rvi', 'rview'):
+		r.Symlink('vim', '/usr/bin/%s' %program)
+
+        r.Symlink('vim.1', '%(mandir)s/man1/gvim.1')
+        r.Symlink('vim.1', '%(mandir)s/man1/gvimdiff.1')
+        for program in ('gview', 'gex', 'evim', 'gvimdiff', 'vimx'):
+            r.Symlink('gvim', '%(bindir)s/'+program)
+
+        r.Desktopfile('gvim.desktop', category='Development')
+
+        r.Install('vim', '%(bindir)s/', mode=0755)
+        r.Symlink('vim.1', '%(mandir)s/man1/rvi.1')
+        r.Symlink('vim.1', '%(mandir)s/man1/rvim.1')
+        r.Symlink('vim.1', '%(mandir)s/man1/vimdiff.1')
+        for program in ('ex', 'rvim', 'vimdiff'):
+            r.Symlink('vi', '%%(bindir)s/%s' %program)
+
+        r.Run('mv -f runtime/macros/README.txt README.macros')
+        r.Run('mv -f runtime/tools/README.txt README.tools')
+        r.Symlink('%(datadir)s/vim/%(vername)s/doc',
+                  '%(docdir)s/%(name)s-%(version)s/docs')
+        r.Doc('README*')
+
+        r.ComponentSpec('locale', '%(datadir)s/vim/%(vername)s/lang/.*')
+        r.PackageSpec('vim-minimal', '%(essentialbindir)s/(ex|vi|view|rvi|rview|vim-minimal)')
+
+        r.PackageSpec('gvim', '%(bindir)s/(gvim|gvimdiff|gview|gex|vimx|evim)',
+                              '%(essentialbindir)s/gvimtutor',
+                              '%(datadir)s/applications/.*',
+                              '%(mandir)s/.*/evim.*',
+                              '%(mandir)s/.*/gvim.*')
+        r.Requires('vim:data', '%(bindir)s/gvim')
+        r.TagSpec('desktop-file', '%(datadir)s/applications/')

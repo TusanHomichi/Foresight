@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# Modified 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Recipe(AutoPackageRecipe):
+    name = 'icon-naming-utils'
+    version = '0.8.90'
+
+    buildRequires = [ 'perl-XML-Simple:perl', 'perl:lib', 'perl:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://tango.freedesktop.org/releases/')

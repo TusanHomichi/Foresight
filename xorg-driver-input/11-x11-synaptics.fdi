@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<deviceinfo version="0.2">
+  <device>
+    <match key="info.capabilities" contains="input.touchpad">
+        <merge key="input.x11_driver" type="string">synaptics</merge>
+        <!-- Arbitrary options can be passed to the driver using 
+             the input.x11_options property since xorg-server-1.5. -->
+        <!-- EXAMPLE:
+        <merge key="input.x11_options.LeftEdge" type="string">120</merge>
+        -->
+        <merge key="input.x11_options.SHMConfig" type="string">on</merge>
+        <merge key="input.x11_options.HorizScrollDelta" type="string">0</merge>
+      <match key="info.product" contains="Synaptics TouchPad">
+      </match>
+      <match key="info.product" contains="AlpsPS/2 ALPS">
+      </match>
+      <match key="info.product" contains="appletouch">
+      </match>
+      <match key="info.product" contains="bcm5974">
+      </match>
+      <match key="info.product" contains="ETPS/2 Elantech Touchpad">
+      </match>
+    </match>
+  </device>
+</deviceinfo>

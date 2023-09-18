@@ -1,0 +1,7 @@
+class info_davfs2(UserInfoRecipe):
+    name = 'info-davfs2'
+    version = '1'
+
+    def setup(r):
+        r.User('davfs2', 444, comment='User account for davfs2',
+               homedir='%(cachedir)s/davfs2')

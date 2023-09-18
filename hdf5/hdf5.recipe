@@ -1,0 +1,29 @@
+class Hdf5(AutoPackageRecipe):
+    name = 'hdf5'
+    version = '1.8.7'
+    buildRequires = ['gcc-fortran:devellib', 'zlib:devel', 'net-tools:runtime']
+
+    def unpack(r):
+        r.mainDir('%(name)s-%(version)s')
+        r.addArchive('ftp://ftp.hdfgroup.org/HDF5/current/src/%(name)s-%(version)s.tar.gz')
+
+        r.addPatch('hdf5-1.6.5-disable-version-check.patch')
+
+        # Seems they pulled h5perf out of the make
+        r.Replace('@BUILD_PARALLEL_CONDITIONAL_FALSE@bin_PROGRAMS = ',
+                  '@BUILD_PARALLEL_CONDITIONAL_FALSE@bin_PROGRAMS = h5perf$(EXEEXT)',
+                  'perform/Makefile.in')
+        r.Replace('bin_PROGRAMS=h5perf_serial',
+                  'bin_PROGRAMS=h5perf h5perf_serial',
+                  'perform/Makefile.am')
+
+    def configure(r):
+        r.macros.optflags = re.sub('-O2', '-O3', r.macros.optflags)
+
+        r.macros.cflags += ' -fPIC'
+        r.Configure(' -with-pthread=%(includedir)s,%(libdir)s'
+                    ' --with-zlib=%(includedir)s,%(libdir)s'
+                    ' --disable-dependency-tracking'
+                    ' --enable-hl'
+                    ' --enable-shared')
+

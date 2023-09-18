@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+#               2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lxc(AutoPackageRecipe):
+    name = 'lxc'
+    version = '0.8.0'
+
+    buildRequires = [
+        'docbook-utils:runtime',
+        'opensp:runtime',
+        'libcap:devel',
+        'libcap:runtime',
+        'perl:devel',
+      ]
+
+    if '+git' in version:
+        buildRequires += [
+            'autoconf:runtime',
+            'automake:runtime',
+            'libtool:runtime',
+          ]
+
+    def unpack(r):
+        if '+git' in r.version:
+            rev = ('lxc_' + r.version.replace('_', '-'
+                    ).replace('+git', '+').replace('.', '_'))
+            r.addGitSnapshot('git://lxc.git.sourceforge.net/gitroot/lxc',
+                tag=rev)
+            r.Run('./autogen.sh')
+        else:
+            r.addArchive('http://lxc.sourceforge.net/download/lxc/')
+
+        # We might build on older kernels, but we'll never deploy
+        # on anything older than this, and until/unless runtime
+        # uname checking is implemented, we need this to avoid a
+        # long hang on container shutdown
+
+    def configure(r):
+        r.Configure(' --with-kernel-release=2.6.29 '
+                    ' --disable-rpath '
+                    ' --enable-doc'
+                    ' --disable-apparmor'
+                    ' --with-config-path=%(sysconfdir)s/%(name)s'
+                    ' --enable-examples')
+        r.MakeDirs('%(sysconfdir)s/%(name)s')
+
+        # XXX do we really need this in FLland ?!
+        # # Rebuild lxc-init linked statically against liblxc
+        # r.Run('gcc %(cflags)s %(ldflags)s -Isrc -Lsrc/lxc/.libs src/lxc/lxc_init.c -o lxc-init -static -llxc -dynamic')
+        # r.Install('lxc-init', '%(bindir)s/lxc-init')
+
+        # # Move lxc-init to the :init component so it can be included in
+        # # appliances without extra baggage.
+        # r.ComponentSpec('init', '%(bindir)s/lxc-init')
+        # r.Requires('%(bindir)s/lxc-init', '%(bindir)s/lxc-execute')
+
+    def policy(r):
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/%(name)s')

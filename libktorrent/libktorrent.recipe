@@ -1,0 +1,21 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class Libktorrent(kdePackageRecipe):
+
+    name = 'libktorrent'
+    version = '1.0.5+3'
+
+    buildRequires = [
+        'boost:devel', 'gmp:devel', 'qca2:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_version = r.version.replace('+', '-')
+
+        r.addArchive('http://ktorrent.org/downloads/4.0.5/')
+

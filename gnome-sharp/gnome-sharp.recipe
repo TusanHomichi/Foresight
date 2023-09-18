@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomerSharp(GnomePackageRecipe):
+    name = 'gnome-sharp'
+    version = '2.24.2'
+
+    makeInstallArgs = 'GACUTIL_FLAGS="/package gtk-sharp-2.0 /gacdir %(libdir)s /root %(destdir)s/%(libdir)s"'
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel',
+                      'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'libgnome-keyring:devel', 'gnome-panel:devel', 'gnome-vfs:devel',
+                      'gtk-sharp:lib', 'gtk-sharp:cil', 'gtk-sharp:runtime', 'gtk-sharp:devellib', 
+                      'libart_lgpl:devel',
+                      'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel',
+                      'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel',
+                      'libgnomeui:devel', 'libpng:devel', 'libxml2:devel', 'mono:devel',
+                      'mono:lib', 'mono:cil', 'mono:runtime', 'pango:devel', 'popt:devel', 'vte:devel',
+                      'gtkhtml:devel', 'librsvg:devel', 'which:runtime',
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime', 'GConf:runtime'
+                      ]
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.disableParallelMake()
+        for p in ['%(name)s-2.20.0-libdir.patch', 'gnome-sharp-gconf-init.patch']:
+            r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/%(name)s/' + p )
+        r.Run('autoreconf --force --install; aclocal')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Environment('MONO_CAIRO_LIBS',"-r:%(libdir)s/mono/1.0/Mono.Cairo.dll")
+
+
+

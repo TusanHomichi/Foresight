@@ -1,0 +1,10 @@
+class PythonTwitter(PackageRecipe):
+
+    name = 'python-twitter'
+    version = '0.5'
+
+    buildRequires = ['python:devel', 'python-simplejson:python']
+
+    def setup(r):
+        r.addArchive('http://python-twitter.googlecode.com/files/')
+        r.PythonSetup()

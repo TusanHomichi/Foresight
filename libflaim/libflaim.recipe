@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libflaim(AutoPackageRecipe):
+    name = 'libflaim'
+    version = '4.9.989'
+ 
+    buildRequires = ['libgcc:devellib', 'libstdc++:devel', 'make:runtime', 'ncurses:devel', 'python:bin']
+ 
+    def setup(r):
+        r.addArchive('http://forge.novell.com/modules/xfcontent/private.php/flaim/development/flaim/downloads/source/%(name)s-%(version)s.tar.gz')
+	r.Make()
+	r.MakeInstall()

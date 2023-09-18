@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Soya3D(PackageRecipe):
+    name = 'soya3d'
+    version = '0.14'
+    buildRequires = ['python-setuptools:python', 'PIL:python', 'Pyrex:python', 'SDL:devel', 'cal3d:devel', 'freetype:devel', 'glew:devel', 'libgcc:devellib', 'libstdc++:devel', 'ode:devel', 'openal:devel', 'pycairo:python', 'python:devel', 'python:tk', 'gcc:runtime', 'userspace-kernel-headers:devel', 'which:runtime', 'glibc:devel', 'gcc:devel', 'glew:devel', 'Mesa:devel']
+
+    def setup(r):
+        r.addArchive('http://download.gna.org/soya/Soya-0.14.tar.bz2')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+	r.Replace('__file__', 'os.curdir', 'setup.py')	
+	r.PythonSetup()

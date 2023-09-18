@@ -1,0 +1,23 @@
+class Orange(AutoPackageRecipe):
+    name = 'orange'
+    version = '0.4'
+ 
+    buildRequires = [ 'dynamite:devel', 
+                      'file:devel', 
+                      'unshield:devel', 
+                      'zlib:devel', 
+                      'libsynce:devel',
+                      'glib:devel',
+                      'libgsf:devel',
+                      'libxml2:devel',
+                      'pkgconfig:devel',
+                       ]
+ 
+    def unpack(r):
+        r.macros.name = 'liborange'
+        r.addArchive('http://downloads.sourceforge.net/synce/')
+
+
+    def configure(r):
+        r.Configure(' --disable-static --disable-rpath'
+                    ' --with-libgsf')

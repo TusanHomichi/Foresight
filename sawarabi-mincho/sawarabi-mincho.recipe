@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SawarabiMincho(PackageRecipe):
+    name = 'sawarabi-mincho'
+    version = '20100315'
+ 
+    packageSummary = 'Mincho font for Japanese'
+
+    buildRequires = [
+        'mkfontdir:runtime',
+        ]
+ 
+    def setup(r):
+        r.addArchive('http://dl.sourceforge.jp/sawarabi-fonts/46383/')
+        r.Install('%(name)s-medium.ttf', '%(datadir)s/fonts/%(name)s/')

@@ -1,0 +1,9 @@
+class libavc1394(AutoPackageRecipe):
+    name = 'libavc1394'
+    version = '0.5.3'
+
+    buildRequires = [ 'libraw1394:devel', 'pkgconfig:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://superb-east.dl.sourceforge.net/sourceforge/'
+                     'libavc1394/libavc1394-%(version)s.tar.gz')

@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2007-2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomeMainMenu(GnomePackageRecipe):
+    name = 'gnome-main-menu'
+    version = '0.9.16'
+
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'NetworkManager:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'esound:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel',  'gettext:runtime', 'glib:devel', 'gnome-desktop:devel', 'libgnome-keyring:devel', 'gnome-menus:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'gtk:devel', 'hal:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libgtop:devel', 'libpng:devel', 'librsvg:devel', 'libxcb:devel', 'libxml2:devel', 'nautilus:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'popt:devel', 'startup-notification:devel', 'wireless-tools:devel', 'xcb-util:devel', 'zlib:devel', 'gnome-common:devel', 'gnome-common:runtime', 'libtool:runtime', 'gtk-doc:runtime', 'gtk-doc:devel', 'libslab:devel', 'unique:devel'] 
+
+    extraConfig = (' --with-pic'
+                   ' --enable-nautilus-extension'
+                   ' --disable-docs'
+                   ' --enable-schema-install'
+                   ' --libexecdir=%(libexecdir)s/%(name)s'
+                   ' --sysconfdir=%(sysconfdir)s'
+                   ' --disable-static'
+                   ' --enable-compile-warnings=yes'
+                   ' --enable-maintainer-mode'
+                   )
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        for i in ["system-items.xbel","applications.xbel"]:
+            r.addSource(i)
+    def postInstall(r):
+        GnomePackageRecipe.postInstall(r)
+        for i in ["system-items.xbel","applications.xbel"]:
+            r.Copy(i,"%(datadir)s/%(name)s/" )
+    def policy(r):
+        r.Remove('%(datadir)s/applications/gnome-session-kill.desktop')
+        r.Symlink("%(datadir)s/gnome-main-menu","%(datadir)s/libslab")

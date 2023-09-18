@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Libxklavier(GnomePackageRecipe):
+
+    buildRequires = [ 'libxml2:devel', 'glib:devel', 'libxkbfile:devel', 'iso-codes', 'xkbcomp:runtime' ]
+
+    name = 'libxklavier'
+    version = '5.0'
+
+    extraConfig = '--with-xkb-base=%(datadir)s/X11/xkb \
+                   --with-xkb-bin-base=%(bindir)s \
+                   --with-pic'
+

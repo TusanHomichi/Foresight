@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('openssl')
+loadInstalled('python')
+loadSuperClass('rpmpackage')
+class Authconfig(RPMPackageRecipe, CPackageRecipe):
+    name = 'authconfig'
+    version = '5.3.10'
+    buildRequires = [ 'pam:devel', 'newt:devel', 'glib:devel', 'popt:devel',
+                      'intltool:runtime', 'desktop-file-utils:runtime',
+                      'pkgconfig:devel', 'python:devel', 'perl:runtime',
+                      'gettext:runtime', 'newt:python', 'pygtk:python',
+                      'rhpl:python', 'openssl:devel' ]
+
+    def setup(r):
+        r.macros.pyver = Python.majversion
+        # FIXME: work around CNY-2027; remove try/except when fixed
+        try:
+            r.macros.certsdir = OpenSSL.certsdir
+        except:
+            r.macros.certsdir = '%(sysconfdir)s/ssl/certs'
+        r.unpack()
+        r.addPatch('Makefile.in.authconfig', level=0)
+        r.addPatch('authinfo.py.rpc', level=0)
+        # RPL-2126
+        r.addPatch('authinfo.py.system-auth-ac.patch')
+        # RPL-1683.
+        r.Replace('^PATH_LDAP_CACERTS = "/etc/openldap/cacerts"$',
+                  'PATH_LDAP_CACERTS = "%(certsdir)s"',
+                  'authinfo.py')
+
+        r.macros.cflags += ' -fPIC'
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+
+        r.Move('%(datadir)s/applications/redhat-authconfig.desktop',
+               '%(datadir)s/applications/authconfig-gtk.desktop')
+        r.Remove('%(sysconfdir)s/pam.d/system-auth-ac') # RPL-2088
+
+        r.Requires('pygtk:python', '%(bindir)s/authconfig-gtk')
+
+        # the snack dependency is false for authconfig.py (only as -tui)
+        r.Requires(exceptDeps=('authconfig.py', 'python: snack'))
+        r.PackageSpec('%(name)s',
+            '%(datadir)s/authconfig/authconfig.py',
+            '%(datadir)s/authconfig/authinfo.py',
+            '%(datadir)s/authconfig/shvfile.py',
+            '%(datadir)s/authconfig/dnsclient.py',
+            '%(libdir)s/python.*/site-packages/acutilmodule.so',
+        )
+        r.Requires('authconfig:python',
+            '%(datadir)s/authconfig/authconfig-tui.py')
+        r.Requires('authconfig:python',
+            '%(bindir)s/authconfig',
+            '%(sbindir)s/authconfig',
+        )
+        r.ComponentSpec('python',
+            '%(datadir)s/authconfig/authconfig.py',
+            '%(datadir)s/authconfig/authinfo.py',
+            '%(datadir)s/authconfig/shvfile.py',
+            '%(datadir)s/authconfig/dnsclient.py',
+        )
+        r.PackageSpec('%(name)s-tui',
+            '%(datadir)s/authconfig/authconfig-tui.py',
+            '%(sysconfdir)s/pam.d/authconfig-tui',
+            '%(sysconfdir)s/security/console.apps/authconfig-tui',
+            '%(mandir)s/man8/authconfig-tui.8.gz',
+            '%(bindir)s/authconfig-tui',
+            '%(sbindir)s/authconfig-tui',
+        )
+        r.PackageSpec('%(name)s-gtk',
+            '%(sbindir)s/system-config-authentication',
+            '%(bindir)s/authconfig-gtk',
+            '%(sbindir)s/authconfig-gtk',
+            '%(datadir)s/authconfig/',
+            '%(libdir)s/python.*/site-packages/',
+            '%(sysconfdir)s/pam.d/authconfig-gtk',
+            '%(sysconfdir)s/security/console.apps/authconfig-gtk',
+            '%(datadir)s/applications/',
+            '%(datadir)s/pixmaps/',
+        )

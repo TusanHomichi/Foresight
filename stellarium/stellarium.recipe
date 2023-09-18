@@ -1,0 +1,28 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Stellarium(AutoPackageRecipe):
+    name = 'stellarium'
+    version = '0.11.3'
+    packageSummary = "Stellarium planetarium for your computer"
+    packageDescription = "Stellarium is a free open source planetarium for your computer. It shows a realistic sky in 3D, just like what you see with the naked eye, binoculars or a telescope. Just set your coordinates and go. "
+ 
+    buildRequires = [ 'Mesa:devel', 'binutils:runtime', 'boost:devel', 'cmake:runtime', 'dbus:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gcc-c++:runtime', 'gcc:runtime', 'gcc:devel', 'gettext:runtime', 'glib:devel', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXau:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXft:devel', 'libXi:devel', 'libXinerama:devel', 'libXpm:devel', 'libXrandr:devel', 'libXrender:devel', 'libXt:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel', 'libgcc:devellib', 'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'make:runtime', 'openssl:devel', 'qt4-core:devellib', 'qt4-gui:devellib', 'qt4:devel', 'qt4:runtime', 'zlib:devel', 'phonon:devel' ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/stellarium/Stellarium-sources/%(version)s/stellarium-%(version)s.tar.gz')
+        r.addSource('stellarium.png')
+        r.addSource('stellarium.desktop')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+    def configure(r):
+        r.Run('mkdir -p builds/unix')
+        r.CMake(dir='builds/unix/' '../..')
+
+    def policy(r):
+        r.Move('stellarium.png', '%(datadir)s/pixmaps/stellarium.png')
+        r.Desktopfile('stellarium.desktop', vendor='foresight')

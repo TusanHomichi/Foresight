@@ -1,0 +1,15 @@
+loadSuperClass('rpmpackage')
+class MugShot(RPMPackageRecipe,AutoPackageRecipe):
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'curl:devel', 'dbus-glib:devellib', 'dbus:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libpng:devel', 'loudmouth:devel', 'pango:devel', 'zlib:devel', 'libXrender:devel', 'GConf:runtime', 'gtk:runtime', 'pkgconfig:devel', 'dbus-glib:devel', 'libX11:devel', 'libXScrnSaver:devel', 'expat:devel', 'libXext:devel', 'libjpeg:devel', 'libstdc++:devel', 'nspr:devel', 'GConf:devel', 'ORBit2:devel', 'desktop-file-utils:runtime', 'gnome-desktop:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'libICE:devel', 'libSM:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libxml2:devel', 'pcre:devel', 'popt:devel', 'startup-notification:devel','xulrunner:devel', 'desktop-data-model:devel', 'hippo-canvas:devel', 'python:devel']
+
+    name = 'mugshot'
+    version = '1.2.2'
+    rpmRelease = '3.fc11'
+
+    def unpack(r):
+        # we resort to koji as upstream download site is MIA...
+        RPMPackageRecipe.unpack(r)
+
+    def policy(r):
+        r.Requires('file: /usr/libexec/desktop-data-engine', '%(bindir)s/%(name)s')

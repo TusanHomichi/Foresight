@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SmpegRecipe(AutoPackageRecipe):
+    name='smpeg'
+    version='0.4.4'
+
+    buildRequires = [
+        'SDL:devel',
+        'autoconf:runtime',
+        'automake:runtime',
+        'gtk:devel',
+        'libstdc++:devel',
+    ]
+
+    def unpack(r):
+        srpm = 'http://ftp.freshrpms.net/pub/freshrpms/fedora/linux/6/smpeg/'\
+               'smpeg-0.4.4-2.fc6.src.rpm'
+        r.addArchive('%(name)s-%(version)s.tar.gz', rpm=srpm)
+        r.addPatch('smpeg-0.4.4-gcc32.patch', rpm=srpm)
+        r.addPatch('smpeg-0.4.4-fixes.patch', rpm=srpm)
+        r.addPatch('smpeg-0.4.4-PIC.patch', rpm=srpm)
+        r.addPatch('smpeg-0.4.4-gnu-stack.patch', rpm=srpm)
+        r.addPatch('smpeg-0.4.4-m4.patch', rpm=srpm)
+        r.addPatch('smpeg-0.4.4-gcc41.patch', rpm=srpm)
+        r.addPatch('smpeg-0.4.4-configure.patch')
+        r.Create('NEWS')
+        r.Create('AUTHORS')
+        r.Create('ChangeLog')
+
+    def configure(r):
+        r.Automake(autoMakeArgs="--add-missing")
+        r.Configure('--disable-opengl-player --disable-gtk-player')

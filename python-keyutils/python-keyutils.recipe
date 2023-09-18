@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonKeyutilsPackage(CPackageRecipe):
+    name = 'python-keyutils'
+    version = '0.1'
+
+    buildRequires = [
+        'keyutils:devel', 'python:devel',
+        'python-setuptools:python', ]
+
+    def setup(r):
+        r.addMercurialSnapshot("http://hg.rpath.com/python-keyutils")
+        r.Replace('distutils\.core', 'setuptools', 'setup.py')
+        r.PythonSetup()

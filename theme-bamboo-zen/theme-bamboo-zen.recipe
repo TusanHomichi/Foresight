@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class themeforesightmodern(PackageRecipe):
+    name = 'theme-bamboo-zen'
+    version = '1.5.1'
+
+    buildRequires = [ 'gtk:devel', ]
+
+    def setup(r):
+        r.addArchive('https://launchpad.net/~bisigi/+archive/ppa/+files/bamboo-zen-theme_%(version)s.natty.ppa1.tar.gz')
+        r.addArchive('bamboo-zen.tar.gz', dir='%(datadir)s/themes/', sourceDir='Gtk/')
+        r.addArchive('bamboo-zen.tar.bz2', dir='%(datadir)s/icons/', sourceDir='Icons/')

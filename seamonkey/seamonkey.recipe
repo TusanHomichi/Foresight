@@ -1,0 +1,130 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2006-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#
+class Seamonkey(AutoPackageRecipe):
+    name = 'seamonkey'
+    version = '2.8'
+
+    buildRequires = [
+                    'atk:devel', 'bzip2:devel', 'cairo:devel',
+                    'ccache:runtime', 'fontconfig:devel', 'freetype:devel',
+                    'dbus-glib:devel', 'wireless-tools:devel',
+                    'desktop-file-utils:runtime', 'curl:devel',
+                    'expat:devel', 'alsa-lib:devel',
+                    'GConf:devel', 'Mesa:devel', 'ORBit2:devel',
+                    'glib:devel', 'perl:runtime',
+                    'gnome-keyring:devel', 'gnome-vfs:devel',
+                    'gtk:devel', 'libIDL:devel', 'hunspell:devel',
+                    'libart_lgpl:devel', 'libbonobo:devel', 'libevent:devel',
+                    'libbonoboui:devel', 'libgnome:devel',
+                    'libgnomecanvas:devel', 'libgnomeui:devel',
+                    'libICE:devel', 'libSM:devel',
+                    'libjpeg:devel', 'libnotify:devel',
+                    'libpng:devel', 'libproxy:devel', 'libstdc++:devel',
+                    'libvpx:devel', 'libxml2:devel', 'pango:devel',
+                    'libX11:devel', 'libXau:devel',
+                    'libXdmcp:devel', 'libXt:devel',
+                    'libXext:devel', 'libXi:devel',
+                    'libXinerama:devellib', 'libXft:devel',
+                    'libXrender:devel', 'libdmx:devel',
+                    'nspr:devel', 'nss:devel',
+                    'popt:devel', 'zlib:devel',
+                    'startup-notification:devel', 'sqlite:devel',
+                    'unzip:runtime', 'yasm:devel', 'yasm:runtime',
+                    'zip:runtime', 'pkgconfig:devel',
+                     ] 
+
+    langpacks = [
+                        'be',
+                        'ca',
+                        'cs',
+                        'de',
+                        'en-GB',
+                        'es-AR',
+                        'es-ES',
+                        'fi',
+                        'fr',
+                        'gl',
+                        'hu',
+                        'it',
+                        'ja',
+                        'lt',
+                        'nb-NO',
+                        'nl',
+                        'pl',
+                        'pt-PT',
+                        'ru',
+                        'sk',
+                        'sv-SE',
+                        'tr',
+                        'zh-CN',
+                         ]
+
+    packageSummary = 'SeaMonkey is an all-in-one Internet application suite.'
+    packageDescription = 'SeaMonkey is an all-in-one Internet application suite. It includes a browser, mail/news client, IRC client, JavaScript debugger, and a tool to inspect the DOM for web pages. It is derived from the application formerly known as Mozilla Application Suite.'
+    
+    def defmacros(r):
+        r.macros.MOZ_APP_DIR = '%(libdir)s/%(name)s-%(version)s'
+        r.macros.ldflags += ' -Wl,-rpath,%(MOZ_APP_DIR)s '
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.macros.langpackdir = '%(MOZ_APP_DIR)s/extensions/'
+
+    def unpack(r):
+#        r.addArchive('http://releases.mozilla.org/pub/mozilla.org/seamonkey/releases/%(version)s/source/%(name)s-%(version)s.source.tar.bz2')
+        r.addArchive('ftp://ftp.mozilla.org/pub/mozilla.org/seamonkey/releases/%(version)s/source/%(name)s-%(version)s.source.tar.bz2')
+        r.addSource('seamonkey.desktop')
+        r.addSource('seamonkey.png')
+
+        for langs in r.langpacks:
+#            r.addSource('http://releases.mozilla.org/pub/mozilla.org/seamonkey/releases/%(version)s/langpack/seamonkey-%(version)s.'+ langs + '.langpack.xpi', dir='seamonkey-langpacks')
+            r.addSource('ftp://ftp.mozilla.org/pub/mozilla.org/seamonkey/releases/%(version)s/langpack/seamonkey-%(version)s.'+ langs + '.langpack.xpi', dir='seamonkey-langpacks')
+            r.Move('seamonkey-langpacks/%(name)s-%(version)s.'+ langs + '.langpack.xpi', 'seamonkey-langpacks/'+ langs + '.xpi')
+
+        r.addSource('seamonkey-mozconfig', apply='mv seamonkey-mozconfig .mozconfig', macros='true')
+        r.addSource('seamonkey.sh.in', macros='true')
+        r.addSource('seamonkey-default-prefs.js', macros='true')
+
+    def make(r):
+        r.Make('-f client.mk build MOZ_MAKE_FLAGS="%(parallelmflags)s" MOZ_SERVICE_SYNC="1" STRIP="/bin/true"')
+
+    def makeinstall(r):
+        r.MakeInstall('-f client.mk')
+        r.Remove('%(bindir)s/seamonkey')
+        r.Install('seamonkey.sh.in', '%(bindir)s/seamonkey', mode=0755) 
+        r.Install('seamonkey-default-prefs.js', '%(MOZ_APP_DIR)s/defaults/pref/all-foresight.js')
+        r.Install('seamonkey.png', '%(datadir)s/pixmaps/')
+        r.Desktopfile('seamonkey.desktop', vendor='foresight')
+
+# install languages
+    def languages(r):
+        r.MakeDirs('%(langpackdir)s')
+        r.Run("""
+for langpack in `ls seamonkey-langpacks/*.xpi`; do
+  language=`basename $langpack .xpi`
+  extensionID=langpack-$language@seamonkey.mozilla.org
+  mkdir $extensionID
+  unzip $langpack -d $extensionID
+  find $extensionID -type f | xargs chmod 644
+
+  cd $extensionID
+  zip -r9mX ../${extensionID}.xpi *
+  cd -
+  cp ${extensionID}.xpi %(destdir)s/%(langpackdir)s/
+done
+
+""")
+
+        r.Run('''echo 'pref("intl.locale.matchOS", true)' >> %(destdir)s%(libdir)s/%(name)s-%(version)s/defaults/pref/suite-l10n.js ''')
+        #r.ComponentSpec('locale', '%(destdir)s/%(langpackdir)s/')
+
+    def setup(r):
+        r.defmacros()
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.languages()
+        r.policy()

@@ -1,0 +1,71 @@
+diff -urNp coreutils-7.6-orig/doc/coreutils.texi coreutils-7.6/doc/coreutils.texi
+--- coreutils-7.6-orig/doc/coreutils.texi	2009-11-23 10:21:55.000000000 +0100
++++ coreutils-7.6/doc/coreutils.texi	2009-11-23 10:24:03.000000000 +0100
+@@ -6113,8 +6113,9 @@ Exit status:
+ 1 minor problems  (e.g., failure to access a file or directory not
+   specified as a command line argument.  This happens when listing a
+   directory in which entries are actively being removed or renamed.)
+-2 serious trouble (e.g., memory exhausted, invalid option or failure
+-  to access file or directory specified as a command line argument)
++2 serious trouble (e.g., memory exhausted, invalid option, failure
++  to access a file or directory specified as a command line argument
++  or a directory loop)
+ @end display
+ 
+ Also see @ref{Common options}.
+diff -urNp coreutils-7.6-orig/src/ls.c coreutils-7.6/src/ls.c
+--- coreutils-7.6-orig/src/ls.c	2009-11-23 10:21:55.000000000 +0100
++++ coreutils-7.6/src/ls.c	2009-11-23 10:24:40.000000000 +0100
+@@ -2494,6 +2494,7 @@ print_dir (char const *name, char const 
+           error (0, 0, _("%s: not listing already-listed directory"),
+                  quotearg_colon (name));
+           closedir (dirp);
++          set_exit_status (true);
+           return;
+         }
+ 
+diff -urNp coreutils-7.6-orig/tests/ls/infloop coreutils-7.6/tests/ls/infloop
+--- coreutils-7.6-orig/tests/ls/infloop	2009-09-01 13:01:16.000000000 +0200
++++ coreutils-7.6/tests/ls/infloop	2009-11-23 10:28:45.000000000 +0100
+@@ -2,6 +2,7 @@
+ # show that the following no longer makes ls infloop
+ # mkdir loop; cd loop; ln -s ../loop sub; ls -RL
+ 
++# Also ensure ls exits with status = 2 in that case.
+ # Copyright (C) 2001-2002, 2004, 2006-2009 Free Software Foundation, Inc.
+ 
+ # This program is free software: you can redistribute it and/or modify
+@@ -27,21 +28,22 @@ fi
+ mkdir loop || framework_failure
+ ln -s ../loop loop/sub || framework_failure
+ 
+-fail=0
+-
+-ls -RL loop 2>err | head -n 7 > out
+-# With an inf-looping ls, out will contain these 7 lines:
+-cat <<EOF > bad
++cat <<\EOF > exp-out || framework_failure
+ loop:
+ sub
++EOF
+ 
+-loop/sub:
+-sub
+-
+-loop/sub/sub:
++cat <<\EOF > exp-err || framework_failure
++ls: loop/sub: not listing already-listed directory
+ EOF
+ 
+-# Make sure we don't get the "bad" output.
+-compare out bad > /dev/null 2>&1 && fail=1
++fail=0
++
++timeout 1 ls -RL loop 2>err > out
++# Ensure that ls exits with status 2 upon detecting a cycle
++test $? = 2 || fail=1
++
++compare err exp-err || fail=1
++compare out exp-out || fail=1
+ 
+ Exit $fail

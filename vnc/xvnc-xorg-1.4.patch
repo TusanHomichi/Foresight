@@ -1,0 +1,58 @@
+--- vnc-4_1_2-unixsrc/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc.jau	2007-11-14 14:15:04.000000000 -0500
++++ vnc-4_1_2-unixsrc/unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc	2007-11-14 16:44:39.000000000 -0500
+@@ -925,11 +925,15 @@ void InitOutput(ScreenInfo *screenInfo, 
+ int SelectWaitTime = 10000; /* usec */
+ #endif
+ 
+-Bool LegalModifier(unsigned int key, DevicePtr pDev)
++Bool LegalModifier(unsigned int key, DeviceIntPtr pDev)
+ {
+   return TRUE;
+ }
+ 
++void DDXRingBell(int volume, int pitch, int duration)
++{
++}
++
+ void ProcessInputEvents()
+ {
+   mieqProcessInputEvents();
+@@ -1125,8 +1125,8 @@
+     map[3] = 3;
+     map[4] = 4;
+     map[5] = 5;
+-    InitPointerDeviceStruct(pDev, map, 5, miPointerGetMotionEvents,
+-                            (PtrCtrlProcPtr)NoopDDA, miPointerGetMotionBufferSize());
++    InitPointerDeviceStruct(pDev, map, 5, GetMotionHistory,
++                            (PtrCtrlProcPtr)NoopDDA, GetMotionHistorySize(), 2);
+     break;
+ 
+   case DEVICE_ON:
+@@ -1153,6 +1153,5 @@
+   k = AddInputDevice(vfbKeybdProc, TRUE);
+   RegisterPointerDevice(p);
+   RegisterKeyboardDevice(k);
+-  miRegisterPointerDevice(screenInfo.screens[0], p);
+-  (void)mieqInit ((DevicePtr)k, (DevicePtr)p);
++  (void)mieqInit ();
+ }
+--- vnc-4_1_2-unixsrc/unix/vncinstall.orig	2008-01-23 18:43:58.000000000 +0200
++++ vnc-4_1_2-unixsrc/unix/vncinstall	2008-01-23 18:44:11.000000000 +0200
+@@ -56,7 +56,7 @@ if [ "$mandst" != "" ]; then
+   fi
+ fi
+ 
+-for f in xc/programs/Xserver/Xvnc vncviewer/vncviewer vncpasswd/vncpasswd \
++for f in xc/programs/Xserver/vnc/Xvnc vncviewer/vncviewer vncpasswd/vncpasswd \
+ 	 vncconfig/vncconfig vncserver x0vncserver/x0vncserver; do
+   if [ ! -f $f ]; then
+     echo "Couldn't find $f"
+--- vnc-4_1_2-unixsrc/unix/vncserver.orig     2008-01-25 19:44:35.000000000 +0200
++++ vnc-4_1_2-unixsrc/unix/vncserver  2008-01-25 19:41:46.000000000 +0200
+@@ -157,6 +157,7 @@
+ # Add font path and color database stuff here, e.g.:
+ #
+ # $cmd .= " -fp /usr/lib/X11/fonts/misc/,/usr/lib/X11/fonts/75dpi/";
++$cmd .= " -fp /usr/share/X11/fonts/misc/,/usr/share/X11/fonts/75dpi/";
+ # $cmd .= " -co /usr/lib/X11/rgb";
+ #

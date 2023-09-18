@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2010 Foresight Linux (adam@chasen.name)
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libdiscid(AutoPackageRecipe):
+    name = 'libdiscid'
+    version = '0.2.2'
+
+    def unpack(r):
+        r.addArchive('http://users.musicbrainz.org/~matt/%(name)s-%(version)s.tar.gz')

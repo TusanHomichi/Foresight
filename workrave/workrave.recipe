@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Workrave(AutoPackageRecipe):
+    name = 'workrave'
+    version = '1.8.4'
+
+    buildRequires = ['ORBit2:devel', 'doxygen:runtime', 'gettext:runtime',
+                     'm4:runtime', 'perl:runtime', 'pkgconfig:devel',
+                     'GConf:devel', 'atk:devel', 'cairo:devel',
+                     'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                     'glibmm:devel', 'gnet:devel', 'gnome-keyring:devel',
+                     'gnome-panel:devel', 'gnome-vfs:devel', 'gtk:devel',
+                     'gtkmm:devel', 'libart_lgpl:devel', 'libbonobo:devel',
+                     'libbonoboui:devel', 'libgnome:devel', 'zlib:devel',
+                     'libgnomecanvas:devel', 'libgnomeui:devel',
+                     'libsigc++:devel', 'libstdc++:devel', 'libxml2:devel',
+                     'pango:devel', 'popt:devel', 'cairomm:devel',
+                     'libpng:devel', 'perl-libxml-perl:perl', 'dbus:devel',
+                     'dbus-glib:devellib', 'gnet:devellib',
+                     'libICE:devel', 'libSM:devel', 'libXmu:devel',
+                     'libXtst:devellib', 'libXi:devel', 'libX11:devel',
+                     'libXrender:devel']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.addPatch('http://viewcvs.gentoo.org/viewcvs.py/*checkout*/gentoo-x86/app-misc/workrave/files/workrave-1.8.4-nls_macros.patch')

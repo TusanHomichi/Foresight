@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xterm(CPackageRecipe):
+    name = 'xterm'
+    version = '298'
+
+    buildRequires = [ 
+        'expat:devel', 
+        'fontconfig:devel', 
+        'freetype:devel',
+        'imake:runtime', 
+        'ncurses:devel', 
+        # 'desktop-file-utils:runtime',
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXau:devel',
+        'libXaw:devel', 
+        'libXdmcp:devel', 
+        'libXext:devel', 
+        'libXft:devel',
+        'libXmu:devel', 
+        'libXrender:devel', 
+        'libXt:devel', 
+        'libtermcap:devel',
+        'luit:runtime', 
+        'pkgconfig:devel', 
+        'utempter:devel', 
+        'zlib:devel', 
+        'ctags:runtime', 
+        'libelf:devel', 
+	'groff:runtime', 
+	'libXcursor:devel',
+            ]
+
+    def setup(r):
+        r.addArchive('ftp://invisible-island.net/xterm/')
+        r.addPatch('metaSendsEscape.patch')
+        # We leave out xterm menu entry, as we don't want it in gnome
+        # r.Desktopfile('xterm.desktop')
+
+        # fixes a permissions issue. the source indicates that this is
+        # automatically enabled for !gnu systems, but we certainly provide this
+        # interface, and using it prevents possible race conditions where xterm
+        # has to chmod/chown the tty correctly.
+        # reference RPL-1396 and CVE-2007-2797
+        r.macros.cflags += ' -DUSE_UTEMPTER'
+
+        r.Configure('--enable-luit --enable-warnings '
+                    '--enable-256-color --enable-exec-xterm --with-tty-group=tty '
+                    '--enable-wide-chars --with-utempter ',
+                    '--with-app-defaults=%(datadir)s/X11/app-defaults/')
+        # RPL-1396
+        # need to change tty group incorrectly guessed by autoconf as "rmake"
+        r.Replace('#define TTY_GROUP_NAME ".*"',
+                  '#define TTY_GROUP_NAME "tty"',
+                  'xtermcfg.h')
+
+        r.Make()
+        r.MakeInstall()

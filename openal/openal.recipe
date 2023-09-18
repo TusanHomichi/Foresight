@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2009 - 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenAl(AutoPackageRecipe):
+
+    name = "openal"
+    version = "1.15.1"
+
+    buildRequires = [
+        'cmake:runtime', 
+        'pulseaudio:devel', 
+        'alsa-lib:devel', 
+        'pkgconfig:devel',
+            ]
+
+    def setup(r):
+        r.macros.srcname = "%(name)s-soft"
+        r.addArchive('http://kcat.strangesoft.net/%(name)s-releases/%(srcname)s-%(version)s.tar.bz2')
+        r.addSource('openal-config', macros=True)
+        r.Run('cmake -D CMAKE_INSTALL_PREFIX=%(prefix)s CMAKE_BUILD_TYPE=Release .')
+        r.Make()
+        r.Install('openal-config', '%(bindir)s/', mode=0755)
+        r.Install('alsoftrc.sample', '%(sysconfdir)s/openal/alsoft.conf')
+        r.MakeInstall()
+        r.Symlink("%(libdir)s/pkgconfig/openal.pc", "%(libdir)s/pkgconfig/openal_soft.pc")

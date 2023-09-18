@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=SmartGit/Hg
+Comment=Graphical Git/Hg client
+Comment[de]=Ein grafischer Git/Hg Client
+Exec=smartgit
+Icon=/opt/smartgithg-4_0_1/bin/smartgithg-48.png
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Categories=Development;
+MimeType=application/smartgithg;application/x-smartgit;

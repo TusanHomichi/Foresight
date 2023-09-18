@@ -1,0 +1,32 @@
+class Terminator(PackageRecipe):
+
+    name = 'terminator'
+    version = '0.97'
+
+    buildRequires = [
+        'deskbar-applet:python',
+        'desktop-file-utils:runtime',
+        'gettext:runtime',
+        'gnome-python:python',
+        'intltool:runtime',
+        'notify-python:python',
+        'pygobject:python',
+        'pygtk:python',
+        'python-ctypes:python',
+        'python-setuptools:python',
+        'python:devel',
+        'vte:python',
+	'ConfigObj:python', 
+	'python-keybinder:python',
+    ]
+
+    def setup(r):
+        #r.addBzrSnapshot('lp:terminator')
+        r.addArchive('http://launchpad.net/%(name)s/trunk/%(version)s/+download/')
+        r.addAction("sed -i '/#! \?\/usr.*/d' terminatorlib/*.py")
+        r.addPatch('0000-terminator-fix-desktop-file.patch')
+        r.addPatch('0001-terminator-fix-inactive-colour.patch')
+
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        r.Remove('%(datadir)s/icons/hicolor/icon-theme.cache')
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*egg*')

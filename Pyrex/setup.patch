@@ -1,0 +1,15 @@
+--- setup.py	2009-02-11 12:38:55.000000000 -0500
++++ setup.py	2009-02-11 12:39:26.000000000 -0500
+@@ -24,7 +24,10 @@
+                 pkg_names = parent_names + [name]
+                 result.append(".".join(pkg_names))
+                 find_packages(subdir, pkg_names)
+-    source_dir = os.path.dirname(__file__) or os.curdir
++    try:
++        source_dir = os.path.dirname(__file__) or os.curdir
++    except NameError:
++        source_dir = os.curdir
+     find_packages(source_dir, [])
+     return result
+ 
+

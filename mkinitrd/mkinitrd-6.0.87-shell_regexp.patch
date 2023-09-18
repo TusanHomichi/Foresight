@@ -1,0 +1,51 @@
+diff -u --recursive mkinitrd-6.0.87.orig/mkinitrd mkinitrd-6.0.87/mkinitrd
+--- mkinitrd-6.0.87.orig/mkinitrd	2009-08-25 11:17:40.826129000 +0100
++++ mkinitrd-6.0.87/mkinitrd	2009-08-25 11:25:18.594013081 +0100
+@@ -333,7 +333,7 @@
+         sysfs=$(readlink ${sysfs%/*})
+     fi
+ 
+-    if [[ ! "$sysfs" =~ '^/sys/.*block/.*$' ]]; then
++    if [[ ! "$sysfs" =~ ^/sys/.*block/.*$ ]]; then
+         error "WARNING: $sysfs is a not a block sysfs path, skipping"
+         return
+     fi
+@@ -344,12 +344,12 @@
+         *) handleddevices="$handleddevices $sysfs" ;;
+     esac
+ 
+-    if [[ "$sysfs" =~ '^/sys/.*block/md[0-9]+$' ]]; then
++    if [[ "$sysfs" =~ ^/sys/.*block/md[0-9]+$ ]]; then
+         local raid=${sysfs##*/}
+         vecho "Found MDRAID component $raid"
+         handleraid $raid
+     fi
+-    if [[ "$sysfs" =~ '^/sys/.*block/dm-[0-9]+$' ]]; then
++    if [[ "$sysfs" =~ ^/sys/.*block/dm-[0-9]+$ ]]; then
+         vecho "Found DeviceMapper component ${sysfs##*/}"
+         handledm $(cat $sysfs/dev |cut -d : -f 1) $(cat $sysfs/dev |cut -d : -f 2)
+     fi
+@@ -1112,7 +1112,7 @@
+ # loopfs : filesystem of loopdev
+ # loopots : options to mount loopfs
+ 
+-if [ -n "${loopfs}" ] || [[ "$rootopts" =~ "loop" ]]; then
++if [ -n "${loopfs}" ] || [[ "$rootopts" =~ loop ]]; then
+     	# FIXME: probe this somehow?
+ 	
+ 	rootdev=/dev/loop0
+@@ -1344,12 +1344,12 @@
+ 
+         # we mount usbfs before the first module *after* the HCDs
+         if [ "$usb_mounted" == "prep" ]; then
+-            if [[ "$module" =~ ".hci[_-]hcd" ]]; then
++            if [[ "$module" =~ .hci[_-]hcd ]]; then
+                 usb_mounted="no"
+                 found_hcd_module="yes"
+             fi
+         elif [ "$usb_mounted" == "no" ]; then
+-            if [[ ! "$module" =~ ".hci[_-]hcd" ]]; then
++            if [[ ! "$module" =~ .hci[_-]hcd ]]; then
+                 usb_mounted=yes
+                 emit "mount -t usbfs /proc/bus/usb /proc/bus/usb"
+             fi

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ArpScan(AutoPackageRecipe):
+    name = 'arp-scan'
+    version = '1.7'
+ 
+    buildRequires = ['libpcap:devel', 'perl-HTTP-Cookies:perl', 'perl:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.nta-monitor.com/tools/arp-scan/download/')
+        
+    def configure(r):
+        r.Configure('--bindir=%(sbindir)s')

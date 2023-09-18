@@ -1,0 +1,35 @@
+# HG changeset patch
+# User António Meireles, aka doniphon <antonio.meireles@reboot.sh>
+# Date 1311028371 -3600
+# Node ID e42056c927ff1116fed87464420e151dc0f8dbf2
+# Parent  78530f40c31d6b9dd865ed5b3413109df93dbaa2
+CNY-1089: stop using (not working anymore) PythonSetup setuptools hack.
+(on current python releases execfile() doesn't set __file__ anymore so previous logic would always fail)
+
+diff -r 78530f40c31d -r e42056c927ff conary/build/build.py
+--- a/conary/build/build.py	Mon Jul 18 15:07:16 2011 -0400
++++ b/conary/build/build.py	Mon Jul 18 23:32:51 2011 +0100
+@@ -1332,17 +1332,13 @@
+         macros.platlib = self.platlib
+         macros.data = self.data
+ 
+-        # now figure out which kind of setup.py this is
+-        if re.compile('(import setuptools|from setuptools import|import ez_setup|from ez_setup import)').search(file('%s/%s' %(rundir, self.setupName)).read()):
+-            macros.pythonsetup = 'python%s %s ' % (pythonVersion,
+-                                                   self.setupName)
+-            self._addActionPathBuildRequires(['python'])
+-        else:
+-            # hack to use setuptools instead of disttools
+-            macros.pythonsetup = (
+-                '''python%(pyver)s -c "import setuptools;execfile('%(setupName)s')"''')
+-        # python-setuptools:python is required either way
++        # (CNY-1089) we assume setup.py is setuptools/disttools/distribute aware
++        # otherwise user should just call r.Run().
++        macros.pythonsetup = 'python%s %s ' % (pythonVersion,
++                                               self.setupName)
++
+         self._addActionTroveBuildRequires(['python-setuptools:python'])
++        self._addActionPathBuildRequires(['python%s' % pythonVersion])
+ 
+         # prepare to test for multilib problems
+         if macros.lib != 'lib':

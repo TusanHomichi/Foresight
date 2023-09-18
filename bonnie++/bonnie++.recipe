@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+#               2012 Openfiler Ltd.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BonniePlusPlus(AutoPackageRecipe):
+    name = 'bonnie++'
+    version = '1.96'
+    buildRequires = [ 'libstdc++:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://www.coker.com.au/bonnie++/experimental/')
+        r.addPatch('bonnie++-1.96-makefile.patch')
+
+    def configure(r):
+        r.Configure('--disable-stripping')
+    

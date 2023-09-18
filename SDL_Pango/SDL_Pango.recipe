@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SDLPangoRecipe(AutoPackageRecipe):
+    name = 'SDL_Pango'
+    version = '0.1.2'
+
+    buildRequires = ['expat:devel', 'SDL:devel', 'glib:devel', 
+        'pango:devel', 'pkgconfig:devel']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/sdlpango/')
+        r.addPatch('http://zarb.org/~gc/t/SDL_Pango-0.1.2-API-adds.patch')
+        r.addPatch('matrix_declarations.patch')

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Droopy(PackageRecipe):
+    name = 'droopy'
+    version = '20080727'
+ 
+    buildRequires = ["python:devel",'python:runtime']
+ 
+    def setup(r):
+        r.addSource('http://stackp.online.fr/wp-content/uploads/droopy',dest='%(bindir)s/%(name)s', mode=0755)

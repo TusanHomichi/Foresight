@@ -1,0 +1,29 @@
+--- PyPAM-0.5.0/PAMmodule.c.orig	2007-12-03 23:37:31.000000000 -0500
++++ PyPAM-0.5.0/PAMmodule.c	2007-12-03 23:37:50.000000000 -0500
+@@ -27,7 +27,6 @@
+     struct pam_response *response_data;
+     int                 response_len;
+     PyObject            *user_data;
+-    void                *dlh1, *dlh2;
+ } PyPAMObject;
+ 
+ staticforward PyTypeObject PyPAMObject_Type;
+@@ -148,9 +147,6 @@
+     p->response_len = 0;
+     Py_INCREF(Py_None);
+     p->user_data = Py_None;
+-    
+-    p->dlh1 = dlopen("libpam.so", RTLD_LAZY | RTLD_GLOBAL);
+-    p->dlh2 = dlopen("libpam_misc.so", RTLD_LAZY | RTLD_GLOBAL);
+ 
+     return (PyObject *) p;
+ }
+@@ -539,8 +535,6 @@
+     free(self->user);
+     free(self->conv);
+     pam_end(self->pamh, PAM_SUCCESS);
+-    dlclose(self->dlh2);
+-    dlclose(self->dlh1);
+     PyMem_DEL(self);
+ }
+ 

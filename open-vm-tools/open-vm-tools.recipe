@@ -1,0 +1,92 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenVmTools(CPackageRecipe):
+    name = "open-vm-tools"
+    version = "9.2.3_1031360"
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'chkconfig:runtime',
+                      'desktop-file-utils:runtime', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'gtk:devel', 'icu:devel', 'inputproto:devel',
+                      'libICE:devel', 'libSM:devel', 'libX11:devel',
+                      'libXext:devel', 'libXinerama:devel', 'libXrandr:devel',
+                      'libXrender:devel', 'libXtst:devel', 'libnotify:devel',
+                      'libpng:devel', 'libstdc++:devel', 'libxcb:devel',
+                      'pango:devel', 'pixman:devel', 'pkgconfig:devel',
+                      'xcb-util:devel', 'xextproto:devel', 'uriparser:devel',
+                      'xineramaproto:devel', 'zlib:devel',
+                      'cairomm:devel', 'fuse:devel', 'glibmm:devel',
+                      'gtkmm:devel', 'libXScrnSaver:devel', 'libsigc++:devel',
+                      'pangomm:devel', 'doxygen:runtime', 'graphviz:runtime',
+                      'pam:devel', 'expat:devel', 'inputproto:devel', 'libxcb:devel',
+                      'pixman:devel', 'procps:devel', 'xcb-util:devel', 'libXi:devel',
+                      'libdnet:devel',
+                      ]
+
+    def setup(r):
+        r.macros.version = r.macros.version.replace('_', '-')
+        r.addArchive('http://sourceforge.net/projects/open-vm-tools/files/%(name)s/stable-9.2.x/')
+        r.addSource('xautostart.conf')
+        r.addSource('vmware-guestd.init')
+        r.addSource('open-vm-tools-sysconfig.mouse')
+        r.addSource('vmware-toolbox.desktop')
+        r.addSource('open-vm-tools-modprobe.vmnics')
+
+        r.Replace('CFLAGS -Werror"', 'CFLAGS"', 'configure')
+        # Report distro
+        r.Replace('{"RedHat",             "/etc/redhat-release"},',
+            """\
+{"Foresight",          "/etc/distro-release"},
+{"RedHat",             "/etc/redhat-release"},""",
+            'lib/misc/hostinfoPosix.c')
+
+        r.Configure(' --disable-static '
+                    ' --disable-dependency-tracking'
+                    ' --without-kernel-modules'
+                    ' --without-root-privileges'
+                    ' --with-gtkmm')
+
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+        r.Make()
+        r.MakeDirs('%(sysconfdir)s/vmware-tools',
+                   '/mnt/hgfs',)
+        r.MakeInstall()
+        # remove tests that are not multilib-safe
+        r.Remove('%(datadir)s/open-vm-tools/tests', recursive=True)
+        # work around install of broken symlink
+        r.Remove('%(essentialsbindir)s/mount.vmhgfs')
+        r.Symlink('%(sbindir)s/mount.vmhgfs', '%(essentialsbindir)s/')
+
+        r.Install('xautostart.conf', '%(sysconfdir)s/vmware-tools/xautostart.conf',
+                  mode=0644)
+        # XXXX %(sysconfdir)s/sysconfig/mouse created previously by anaconda so 
+        # unowned/unmanaged. breaks installs.
+        # r.Install('open-vm-tools-sysconfig.mouse', '%(sysconfdir)s/sysconfig/mouse',
+        #          mode=0644)
+        r.Install('vmware-guestd.init', '%(initdir)s/vmware-guestd',
+                  mode=0755)
+        # Install VMCI sockets header file 
+        r.Install('lib/include/vmci_sockets.h', '%(includedir)s/', mode=0644)
+        # Install desktop file and icon for toolbox 
+        r.Desktopfile('vmware-toolbox.desktop')
+        
+        # Setup module-init-tools file for vmxnet
+        r.Install('open-vm-tools-modprobe.vmnics', '%(sysconfdir)s/modprobe.d/vmnics.conf', mode = 0644)
+
+        # Set suid bit on vmware-user suid wrapper 
+        r.SetModes('%(bindir)s/vmware-user-suid-wrapper', 04755)
+        r.SetModes('%(sbindir)s/mount.vmhgfs', 04755)
+
+        r.ExcludeDirectories(exceptions='/mnt/hgfs')
+

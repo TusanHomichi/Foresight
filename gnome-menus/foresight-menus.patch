@@ -1,0 +1,15 @@
+diff -urN gnome-menus-2.15.91.orig/layout/applications.menu gnome-menus-2.15.91/layout/applications.menu
+--- gnome-menus-2.15.91.orig/layout/applications.menu	2006-08-13 18:46:45.000000000 +0200
++++ gnome-menus-2.15.91/layout/applications.menu	2006-08-13 18:49:52.000000000 +0200
+@@ -150,4 +150,11 @@
+     </Include>
+   </Menu> <!-- End Other -->
+ 
++  <!-- The Foresight menu -->
++  <Menu>
++    <Name>Foresight</Name>
++    <MergeFile>foresight-menu.menu</MergeFile>
++    <Directory>Foresight.directory</Directory>
++  </Menu>
++
+ </Menu> <!-- End Applications -->

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Firewall Builder
+Comment=Design IPTables Firewall Rules
+Icon=fwbuilder
+Categories=System;Settings;Security;Qt;
+Exec=fwbuilder
+Type=Application
+StartupNotify=true
+Terminal=false

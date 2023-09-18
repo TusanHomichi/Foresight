@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage.recipe')
+class TaglibExtras(CMakePackageRecipe):
+
+    name = 'taglib-extras'
+    version = '1.0.1'
+
+    buildRequires = [
+        'libstdc++:devel', 'taglib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://www.kollide.net/~jefferai/')
+

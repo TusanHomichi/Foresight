@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Mistelix(CPackageRecipe):
+
+    name = "mistelix"
+    svnVersion = '0907939e'
+    version = '0.3.3+r' + svnVersion + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [ 'gettext:runtime', 'intltool:runtime', 'mono:runtime', 'perl:runtime', 'pkgconfig:devel', 'binutils:runtime', 'desktop-file-utils:runtime', 'file:runtime', 'glib:devel', 'glibc:lib', 'gnome-sharp:cil', 'gst-plugins-base:devel', 'gstreamer:devel', 'gstreamer:runtime', 'gtk-sharp:cil', 'libxml2:devel', 'libvorbis:devel', 'make:runtime', 'mono-addins:cil', 'mono:cil', 'mono:devel', 'zlib:devel', 'diffutils:runtime', 'libtool:runtime', 'automake:runtime', 'autoconf:runtime', 'intltool:devel', 'gcc:runtime', 'gtk-sharp:devellib','gtk-sharp:cil', 'mono-addins:devellib', 'gnome-sharp:devellib', 'gnome-sharp:cil', 'dvdauthor:runtime', 'libtheora:devel', 'which:runtime']
+
+    def setup(r):
+	r.addGitSnapshot('git://git.gnome.org/mistelix', tag='0907939e66fa1a1edb7480284f7eaa01cf05b067')
+	r.Run('chmod +x ./autogen.sh') 
+	r.Configure(configureName='autogen.sh')
+ 	r.MakeInstall()
+	r.Requires('dvdauthor:runtime','/usr/bin/mistelix')
+	r.Requires('gst-fluendo-mp3:lib','/usr/bin/mistelix')
+

@@ -1,0 +1,70 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Guake(AutoPackageRecipe):
+
+    name = 'guake'
+    version = '0.4.4'
+
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'GConf:runtime',
+        'gettext:runtime',
+        'glib:devel',
+        'gnome-python-extras:python',
+        'gnome-python:python',
+        'gtk:devel',
+        'intltool:runtime',
+        'libpng:devel',
+        'libX11:devel',
+        'libXau:devel',
+        'libxcb:devel',
+        'libXdmcp:devel',
+        'libXrender:devel',
+        'notify-python:python',
+        'notify-python:python',
+        'pango:devel',
+        'perl:runtime',
+        'perl-XML-Parser',
+        'perl-XML-Parser',
+        'pixman:devel',
+        'pkgconfig:devel',
+        'pycairo:python',
+        'pycairo:python',
+        'pygobject:python',
+        'pygobject:runtime',
+        'pygtk:devel',
+        'pygtk:devellib',
+        'pygtk:devellib',
+        'pygtk:python',
+        'python:devel',
+        'vte:devel',
+        'vte:python',
+        'xcb-util:devel',
+        'pyxdg:python',
+        'zlib:devel',
+            ]
+
+    def unpack(r):
+        r.addArchive('http://guake.org/files/')
+    	r.addAction(""" sed -i -e 's|if test -z "$ac_pvte_result"; then|if test -z "" ; then|g' configure """)
+        r.addPatch('0001-Fix-notification.patch')
+
+    def configure(r):
+        r.Configure('--disable-static --disable-schemas-install --prefix=%(prefix)s --with-gconf-schema-file-dir=/usr/share/gconf/schemas')
+
+    def policy(r):
+        r.NonMultilibComponent(exceptions='%(libdir)s/')
+        r.Requires('vte:python', '%(bindir)s/guake')
+
+        if Arch.x86_64:
+            r.Move('/usr/lib/python%(pyver)s/site-packages/guake/*', '%(libdir)s/python%(pyver)s/site-packages/guake/')

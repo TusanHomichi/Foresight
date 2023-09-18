@@ -1,0 +1,27 @@
+From 73a91fafe8da0a1e8905280e8fa861a5d1d0e698 Mon Sep 17 00:00:00 2001
+From: Kamil Dudka <kdudka@redhat.com>
+Date: Wed, 18 Jul 2012 14:11:55 +0200
+Subject: [PATCH] fix crash of el_insertstr() on incomplete multi-byte
+ sequence
+
+https://bugzilla.redhat.com/840598
+---
+ src/chared.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/chared.c b/src/chared.c
+index f816d89..d3b0f22 100644
+--- a/src/chared.c
++++ b/src/chared.c
+@@ -612,7 +612,7 @@ FUN(el,insertstr)(EditLine *el, const Char *s)
+ {
+ 	size_t len;
+ 
+-	if ((len = Strlen(s)) == 0)
++	if (s == NULL || (len = Strlen(s)) == 0)
+ 		return -1;
+ 	if (el->el_line.lastchar + len >= el->el_line.limit) {
+ 		if (!ch_enlargebufs(el, len))
+-- 
+1.7.10.4
+

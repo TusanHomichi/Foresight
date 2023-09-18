@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gnonlin(AutoPackageRecipe):
+    name = 'gnonlin'
+    version = '0.10.17'
+
+    buildRequires = [
+        'glib:devel',
+        'gst-plugins-base:devel',
+        'gstreamer:devel',
+        'gtk-doc:runtime',
+        'libxml2:devel',
+        'pkgconfig:devel',
+        ]
+
+    def unpack(r):
+        r.addArchive('http://gstreamer.freedesktop.org/src/%(name)s/')

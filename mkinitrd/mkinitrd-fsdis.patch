@@ -1,0 +1,13 @@
+diff --git a/mkinitrd b/mkinitrd
+index 6f06084..8fd6c0f 100755
+--- a/mkinitrd
++++ b/mkinitrd
+@@ -285,7 +285,7 @@
+ finddevnoinsys() {
+     majmin="$1"
+     if [ -n "$majmin" ]; then
+-        dev=$(for x in /sys/block/* ; do findall $x/ -name dev ; done | while read device ; do \
++        dev=$(for x in $( echo /sys/block/* | egrep -v '^(ram|loop)' ); do findall $x/ -name dev ; done | while read device ; do \
+               echo "$majmin" | cmp -s $device && echo $device ; done)
+         if [ -n "$dev" ]; then
+             dev=${dev%%/dev}

@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class CompressRawZlib(CPANPackageRecipe,CPackageRecipe):
+    name = 'perl-Compress-Raw-Zlib'
+    version = '2.054'
+
+    buildRequires = ['perl:devel']
+

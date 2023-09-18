@@ -1,0 +1,27 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class KPlayer(kdePackageRecipe):
+
+    name = 'kplayer'
+    version = '0.6.3'
+
+    buildRequires = [
+        'autoconf:runtime', 'automake:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/kplayer/')
+
+        r.Make('-f admin/Makefile.common')
+
+
+    def policy(r):
+
+        r.Requires('mplayer:runtime', '%(libdir)s/kde3/.*')
+        r.Requires('mplayer:runtime', '%(bindir)s/kplayer')
+

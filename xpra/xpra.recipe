@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2011-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+from conary.build import build
+
+# The distutils/setup-tools compatibility hack breaks Cython's
+# setup.py becuase it wants __file__ defined.
+# This is a temporary hack to work around it: correct fix is in
+# Conary and is probably to use distutils only if explicitly
+# requested for a very old package.
+class MyPythonSetup(build.PythonSetup):
+    '''
+    Override setting of pythonsetup
+    '''
+    template = (
+        '%%(cdcmd)s'
+        ' CFLAGS="%%(cflags)s" CXXFLAGS="%%(cflags)s %%(cxxflags)s"'
+        ' CPPFLAGS="%%(cppflags)s"'
+        ' LDFLAGS="%%(ldflags)s" CC=%%(cc)s CXX=%%(cxx)s'
+        ' %%(mypythonsetup)s'
+        ' %(action)s'
+        ' --prefix=%%(prefix)s'
+        ' %%(purelib)s'
+        ' %%(platlib)s'
+        ' %%(data)s'
+        ' --root=%%(rootdir)s'
+        ' %%(arguments)s'
+    )
+
+
+class xpra(CPackageRecipe):
+    name = 'xpra'
+    version = '0.8.5'
+
+    buildRequires = [
+        'cython:runtime', 'PIL:python', 'atk:devel',
+        'cairo:devel', 'dbus-python:python', 'fontconfig:devel',
+        'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel',
+        'ipython:python', 'libX11:devel', 'libXcomposite:devel',
+        'libXdamage:devel', 'libXfixes:devel', 'libXrandr:devel',
+        'libXtst:devel', 'libpng:devel', 'notify-python:python',
+        'pango:devel', 'pkgconfig:devel', 'PyOpenGL:python',
+        'pycairo:python', 'pygobject:python', 'pygobject:devel',
+        'pygtk:python', 'pygtk:devel', 'python:devel',
+        'ffmpeg:devel', 'libappindicator:python', 'libvpx:devel',
+        'desktop-file-utils:runtime',  'x264:devel',
+        'gst-python:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://xpra.org/src/')
+
+        # Should be r.PythonSetup() when it is fixed
+        r.macros.mypythonsetup = 'python%(pyver)s setup.py'
+        r.extraBuild(MyPythonSetup(r, data=''))
+        #r.PythonSetup(data = '')
+
+        # parti and xpra both depend on wimpiggy, but xpra does not depend on parti
+        r.PackageSpec('parti', '.*parti.*')
+        r.PackageSpec('wimpiggy', '.*wimpiggy.*')
+        # fix update woes from older version that had an  /usr/share/icons/xpra.png/xpra.png 
+        # when we now hwve righfully  /usr/share/icons/xpra.png
+        preUpdateFix = ("""#!/bin/bash\n"""
+                        """ if [ -f %(datadir)s/icons/xpra.png/xpra.png ] ; then\n"""
+                        """ echo 'erasing undesired %(datadir)s/icons/xpra.png/ directory from previous installed version in advance' >&2\n """
+                        """ rm -rf %(datadir)s/icons/xpra.png \n"""
+                        """ fi\n""" % r.macros)
+        r.ScriptPreUpdate('xpra:data', contents=preUpdateFix)
+
+        # /usr/lib64/python2.6/site-packages/xpra/webm/__init__.py ...
+        r.Requires('libwebp:lib', '%(libdir)s/python%(pyver)s/site-packages/xpra/webm/')

@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NotifyOsdConf(CPackageRecipe):
+    name = 'notify-osd-conf'
+    version = '2010.06.03.r7'
+ 
+    buildRequires = [
+		'desktop-file-utils:runtime',
+		'libstdc++:devel',
+		'qt4:devel'
+			]
+ 
+    def setup(r):
+        r.addBzrSnapshot('lp:notifyconf')
+	r.addSource('notify-osd-conf.desktop')
+	r.addPatch('makefile.patch')
+	r.Replace('/usr', '%(destdir)s%(prefix)s', 'Makefile', lines=(267,273))
+        r.Make()
+        r.MakeInstall()
+	r.Desktopfile('notify-osd-conf.desktop')

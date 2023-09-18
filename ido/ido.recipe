@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ido(AutoPackageRecipe):
+    name = 'ido'
+    version = '0.2.2'
+ 
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                      'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel', 'libpng:devel',
+                      'pango:devel', 'gtk-doc:runtime', 'pkgconfig:devel',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/trunk/%(version)s/+download/')
+
+    def configure(r):
+        r.Configure(' --disable-static ')

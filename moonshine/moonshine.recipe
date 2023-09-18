@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Moonshine(AutoPackageRecipe):
+    name = 'moonshine'
+    version = '0.3'
+
+    buildRequires = ['desktop-file-utils:runtime', 'glib:devel', 'gtk:runtime', 'pkgconfig:devel', 'python:bin', 'xulrunner:devel']
+
+    def unpack(r):
+        # abock not publishing plain tarballs
+        # r.addArchive('http://abock.org/moonshine/releases/')
+        r.addArchive('%(name)s-%(version)s.tar.bz2',
+                     rpm='http://download.opensuse.org/factory/repo/src-oss/suse/src/moonshine-0.3-2.14.src.rpm')
+
+    def configure(r):
+        r.Configure(' --with-browser-plugin-dir=%(libdir)s/mozilla/plugins/')
+
+
+    def policy(r):
+        r.Replace('^LIBDIR=.*', 'LIBDIR=%(libdir)s/xulrunner-1.9.2', '%(bindir)s/%(name)s')
+        r.Remove('%(datadir)s/moonshine/chrome/icons/default/moonshine-window.png')
+        r.Symlink('%(datadir)s/icons/hicolor/256x256/apps/moonshine.png', 
+                  '%(datadir)s/moonshine/chrome/icons/default/moonshine-window.png')

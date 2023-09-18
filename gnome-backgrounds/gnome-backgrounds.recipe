@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage.recipe')
+class GnomeBackgrounds(GnomePackageRecipe):
+
+    buildRequires = [ 'gettext:runtime', 'intltool:runtime',
+        'gnome-doc-utils:devel' ]
+
+    name = 'gnome-backgrounds'
+    version = '2.32.0'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.addSource('foresight.png', dir='foresight')
+        # FIXME . 
+        # r.addPatch('foresight.patch')
+        # for color in ['green', 'yellow', 'orange', 'brown', 'blue', 'purple', 'red']:
+        #    r.Symlink('%(datadir)s/pixmaps/backgrounds/gnome/foresight/foresight.png',
+        #        '%(datadir)s/pixmaps/backgrounds/gnome/foresight/foresight_'+color+'.png')

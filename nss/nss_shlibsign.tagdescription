@@ -1,0 +1,4 @@
+file		%(taghandlerdir)s/nss_shlibsign
+implements	files update
+
+

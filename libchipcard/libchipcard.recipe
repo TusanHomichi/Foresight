@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libchipcard(AutoPackageRecipe):
+    name = 'libchipcard'
+    version = '5.0.0'
+    buildRequires = [ 
+        'gettext:runtime',
+        'gwenhywfar:devel',
+        'libstdc++:devel',
+        'libusb:devel',
+        'pkgconfig:devel',
+        'sysfsutils:devel',
+        'dbus:devel',
+        'hal:devel', 
+        'zlib:devel',
+        'chkconfig:runtime',
+        'pcsc-lite:devel',
+    ]
+
+    def unpack(r):
+        r.macros.cppflags += ' -I%(includedir)s/PCSC'
+        r.addArchive('http://www.aquamaniac.de/sites/download/download.php?package=02&release=24&file=01&dummy=libchipcard-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-static --with-pcsc-libs=%(libdir)s')

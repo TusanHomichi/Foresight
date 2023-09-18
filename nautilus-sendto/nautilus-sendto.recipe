@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class NAUtilusSendTo(GnomePackageRecipe,AutoPackageRecipe):
+    name = 'nautilus-sendto'
+    version = '2.32.0'
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel',
+                      'evolution-data-server:devel', 'gssdp:devel', 'gupnp:devel', 'libbonobo:devel',
+                      'libpurple:devel', 'libsoup:devel', 'nautilus:devel', 'telepathy-glib:devel'
+                      ]
+
+    patches = ['nautilus-sendto_Use-org-gnome-as-starting-path-for-schemas.patch',]
+
+    def policy(r):
+        # now in gnome-bluetooth...
+        r.Remove('%(libdir)s/nautilus-sendto/plugins/libnstbluetooth.so')

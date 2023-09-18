@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+#               
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SublimeText(CPackageRecipe):
+    name = 'sublime-text'
+    tag = '2220'
+    version = '2.0.1'
+    if tag:
+        version += '_' + tag
+
+    buildRequires = [
+        'glib:devel', 'libX11:devel', 'libstdc++:devel', 'python:devel',
+        'desktop-file-utils:runtime',
+    ]
+
+    def setup(r):
+        # http://www.sublimetext.com/
+        urlPrefix = 'http://c758482.r82.cf2.rackcdn.com/Sublime Text 2 Build '
+        r.addArchive(urlPrefix + r.tag + '.tar.bz2', Arch.x86)
+        r.addArchive(urlPrefix + r.tag + ' x64.tar.bz2', Arch.x86_64)
+
+        r.addSource('sublime.png')
+        r.addSource('sublime.desktop')
+
+        r.MakeDirs('/opt/%(name)s/')
+        r.Install('*', '/opt/%(name)s/')
+        r.Symlink('/opt/%(name)s/sublime_text', '%(bindir)s/subl')
+
+        r.Install('sublime.png', '%(datadir)s/pixmaps/', mode = 0644)
+        r.Desktopfile('sublime.desktop')
+

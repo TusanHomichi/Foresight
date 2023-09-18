@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FaenzaVariantsIconTheme(PackageRecipe):
+    name = 'faenza-variants-icon-theme'
+    version = '0.20'
+
+    # URL: http://gnome-look.org/content/show.php/Faenza+Variants?content=134347
+
+    buildRequires = [
+        'unzip:runtime',
+        ]
+
+    def setup(r):
+        r.addArchive('http://www.deviantart.com/download/184551528/faenza_variants_by_spg76-d31vkvc.zip',
+            dir='%(name)s-%(version)s')
+        r.addArchive('Faenza-Variants-Cupertino.tar.gz', sourceDir='.', dir='%(name)s-%(version)s')
+        r.addArchive('Faenza-Variants-Dark.tar.gz', sourceDir='.', dir='%(name)s-%(version)s')
+        r.addArchive('Faenza-Variants.tar.gz', sourceDir='.', dir='%(name)s-%(version)s')
+
+        r.Install('Faenza-Variants-Cupertino', '%(datadir)s/icons/')
+        r.Install('Faenza-Variants-Dark', '%(datadir)s/icons/')
+        r.Install('Faenza-Variants', '%(datadir)s/icons/')
+
+        r.SetModes('%(datadir)s/icons/*/index.theme', 0644)

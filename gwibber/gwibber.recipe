@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2008-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gwibber(PackageRecipe):
+
+    name = 'gwibber'
+    version = '3.1.0'
+    buildRequires = ['python-setuptools:python','PIL:python', 'dbus-python:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-python:python', 'intltool:runtime', 'python:devel', 'pyxdg:python', 'sexy-python:python', 'python-simplejson:python','python-distutils-extra:python', 'notify-python:python', 'pygtk:python', 'pycurl:python','gnome-python-desktop:python', 'gnome-python-extras:python', 'libproxy:python', 'python-mako:python', 'pywebkitgtk:python','mx:python', 'desktopcouch:python', 'python-oauth:python', 'protobuf:python']
+
+    def setup(r):
+        r.addArchive("http://launchpad.net/gwibber/3.2/%(version)s/+download/")
+
+        r.PythonSetup()
+
+        r.Move('%(libdir)s/python%(pyver)s/site-packages/share/*', '%(datadir)s/')
+        r.Run('cp -a build/mo %(destdir)s%(datadir)s/locale')
+        #r.addSource('gwibber.png')
+        #r.Install('gwibber.png', '%(datadir)s/gwibber/ui/')
+        r.Requires('python-mako:python', '%(bindir)s/gwibber')
+        r.Requires('pywebkitgtk:python', '%(bindir)s/gwibber')
+        r.Requires('pycurl:python', '%(bindir)s/gwibber')
+        r.Requires('python-feedparser:python', '%(bindir)s/gwibber')
+        r.Requires('python-oauth:python', '%(bindir)s/gwibber')

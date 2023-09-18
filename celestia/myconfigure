@@ -1,0 +1,2 @@
+#!/bin/bash -x
+exec ./configure $* --with-gl-libs=$(pkg-config --libs gl|sed 's/.*-L\([^ ]*\).*/\1/')

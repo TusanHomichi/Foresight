@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe("trytonpackage")
+class Trytond_ldap_connection(TrytonPackage):
+    name = 'trytond_ldap_connection'
+
+    prebuild = []
+    deps = ["python-ldap:python"]
+
+    def setup(r):
+        TrytonPackage.setup(r)
+

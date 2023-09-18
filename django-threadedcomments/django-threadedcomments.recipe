@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoThreadedComments(PackageRecipe):
+
+    name = 'django-threadedcomments'
+    version = 'ded46fc5bfd9a9d37a15'
+
+    buildRequires = [
+        'django:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        #r.addArchive('http://pypi.python.org/packages/source/d/%(name)s/')
+        r.addGitSnapshot("http://github.com/ericflo/django-threadedcomments.git")
+        r.PythonSetup()

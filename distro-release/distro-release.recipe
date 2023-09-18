@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+class DistroRelease(PackageRecipe):
+    name = 'distro-release'
+    version = '2.0'
+
+    if Use.bootstrap:
+        clearBuildRequires()
+        buildRequires = [ 'setup:runtime' ]
+
+    def setup(r):
+        r.addSource('initscript', dest='%(initdir)s/distro-release', mode=0755)
+        r.addSource('distro-release.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/distro-release')
+        r.addSource('distro-release.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/distro-release', mode=0755)
+        r.TagSpec('initscript', '%(initdir)s/distro-release')
+        r.TagSpec('distro-release', '%(initdir)s/distro-release')
+
+        # this file is used to write out /etc/issue. Edit this file to change
+        # what your distro or appliance says when it is finished booting.
+        r.addSource('distro-welcome', dir='%(sysconfdir)s/')
+
+        # we want these to be overwritten by the above initscript
+        r.Create('%(sysconfdir)s/{distro-release,issue{,.net}}')
+        r.InitialContents('%(sysconfdir)s/(issue.*|distro-release)')
+
+        # these files store the toplevel group and name given by rbuilder or
+        # anaconda, in case someone has installed another group after the
+        # initial install
+        r.Create('%(sysconfdir)s/sysconfig/appliance-{name,group}')
+        r.InitialContents('%(sysconfdir)s/sysconfig/appliance-(group|name)')
+
+        # create a file to signify the distro is, or is derived from Foresight
+        # useful for tools like gnome-system-tools 
+        r.Create('%(sysconfdir)s/sysconfig/base-distro', contents='Foresight Linux')
+
+        # Require distro use flags
+        r.Requires('distro-conary-config:config', '%(sysconfdir)s/distro-release')
+        # conary is deliberately omitted here to prevent dep in group-bootable.
+        r.Requires('%(bindir)s/[', '%(initdir)s/distro-release')
+        r.Requires('%(essentialbindir)s/cat', '%(initdir)s/distro-release')
+        r.Requires('%(essentialbindir)s/echo', '%(initdir)s/distro-release')
+        r.Requires('%(essentialbindir)s/grep', '%(initdir)s/distro-release')
+        r.Requires('%(bindir)s/wc', '%(initdir)s/distro-release')
+        r.Requires('%(essentialbindir)s/sed', '%(initdir)s/distro-release')
+        r.Requires('%(essentialbindir)s/awk', '%(initdir)s/distro-release')
+        r.Requires('%(bindir)s/head', '%(initdir)s/distro-release')

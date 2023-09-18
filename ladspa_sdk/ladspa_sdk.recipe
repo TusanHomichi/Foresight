@@ -1,0 +1,13 @@
+class ladspa_sdk(CPackageRecipe):
+    name = "ladspa_sdk"
+    version = "1.13"
+    buildRequires = [ 'libstdc++:devel', 'imake:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://www.ladspa.org/download/%(name)s_%(version)s.tgz')
+        r.mainDir('%(name)s/src')
+        r.Replace(('/usr/bin', '%(destdir)s/%(bindir)s'), ('/usr/local', '%(destdir)s/%(prefix)s'), ('/usr/include', '%(destdir)s/%(prefix)s/include'), ('/usr/lib', '%(destdir)s/%(libdir)s'), 'makefile')
+        #r.addSource('makefile')
+        #r.Configure()
+        #r.Make()
+        r.MakeInstall()

@@ -1,0 +1,29 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('icedtea[bootstrap]')
+
+class XalanJ(PackageRecipe):
+
+    name = 'xalan-j'
+    version = '2.7.1'
+
+    buildRequires = ['unzip:runtime']
+
+
+    buildRequires.extend([ 'icedtea-jdk:runtime[bootstrap]', ])
+
+    def setup(r):
+
+        r.macros.archive_version = r.version.replace('.', '_')
+        r.addArchive(
+            'http://www.apache.org/dist/xml/xalan-j/xalan-j_%(archive_version)s-src.zip'
+        )
+
+        r.Run("sed -i 's/\\x0D$//' build.sh")
+        r.Run('JAVA_HOME='+IcedTea.java_home+' bash build.sh')
+
+        r.Install('build/*.jar', '%(datadir)s/java/')
+

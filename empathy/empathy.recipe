@@ -1,0 +1,103 @@
+#
+# Copyright (c) 2007-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Empathy(GnomePackageRecipe):
+
+    name = 'empathy'
+    version = '2.34.0'
+
+    buildRequires = [
+        'GConf:devel',
+        'GConf:runtime',
+        'NetworkManager:devel',
+        'WebKit:devel',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'enchant:devellib',
+        'evolution-data-server:devel',
+        'folks:devel',
+        'geoclue:devel',
+        'gnome-keyring:devellib',
+        'libgnome-keyring:devel',
+        'gnutls:devel',
+        'gst-plugins-base:devellib',
+        'iso-codes:devellib',
+        'libcanberra:devel',
+        'libnotify:devel',
+        'openssl:devel',
+        'popt:devel',
+        'pygobject:runtime',
+        'pygtk:devel',
+        'pygtk:devellib',
+        'python:devel',
+        'rarian:devel',
+        'rarian:runtime',
+        'telepathy-farsight:devel',
+        'telepathy-logger:devel',
+        'telepathy-mission-control:devel',
+        'unique:devellib',
+        # 'libchamplain:devel',
+        'nautilus-sendto:devellib',
+        'nautilus-sendto:devel',
+        'autoconf:runtime',
+        'automake:runtime',
+        'dee:devel', 'ido:devel',
+        'libdbusmenu-glib:devel',
+        'libunity:devel',
+        ]
+
+    extraConfig = (
+        ' --disable-Werror'
+        ' --enable-location=yes'
+        # FIXME that one needs a matching libchamplain / clutter-gtk
+        # latest clutter bump broke build with it enabled
+        # ' --enable-map=yes'
+        ' --enable-map=no'
+        ' --enable-nautilus-sendto=yes'
+        ' --enable-spell=yes'
+        ' --enable-webkit=yes'
+        ' --with-ca-file=/etc/ssl/certs/ca-bundle.crt'
+        ' --with-connectivity=nm'
+        ' --disable-static'
+        ' --with-pic '
+        ' --disable-gtk3'
+        ' --enable-silent-rules'
+        ' --disable-coding-style-checks'
+        # '--disable-schemas-compile'
+        )
+
+    patches = [ '00_lp_748535.patch',
+                '02_notifications_focus.patch',
+                '10_use_notify_osd_icons.patch',
+                '11_empathy_accounts_category.patch',
+                '20_libindicate.patch',
+                '21_login_indicators.patch',
+                '23_idomessagedialog_for_voip_and_ft.patch',
+                '31_really_raise_window.patch',
+                '34_start_raised_execpt_in_session.patch',
+                '36_chat_window_default_size.patch',
+                '37_facebook_default.patch',
+                '38_lp_569289.patch',
+                '40_unity_launcher_count.patch',
+                '41_unity_launcher_progress.patch',
+                'empathy-2.34.0-CVE-2011-3635.patch',
+                'empathy-2.34.0-missing-include.patch',
+                ]
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # force these to be regenerated
+        r.Remove('data/empathy.desktop')
+        r.Remove('data/empathy.schemas')
+        r.Run('autoreconf -fi')
+
+    def install(r):
+        # XXX fix build... understand why the heck this is needed now
+        r.Replace('/usr/include/gstreamer-0.10/gst/audio/audio-enumtypes.h', '',
+                  'src/.deps/empathy_av-empathy-audio-sink.Po')
+        GnomePackageRecipe.install(r)

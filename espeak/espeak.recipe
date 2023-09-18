@@ -1,0 +1,13 @@
+class espeak(CPackageRecipe):
+    name = 'espeak'
+    version = '1.39'
+ 
+    buildRequires = ['libstdc++:devel', 'portaudio:devel', 'unzip:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://internap.dl.sourceforge.net/sourceforge/%(name)s/%(name)s-%(version)s-source.zip')
+        r.addPatch('espeak-1.23-makefile_nostaticlibs.patch')
+        r.Replace('LIBDIR=', 'LIBDIR=%(libdir)s#', 'src/Makefile')
+        r.Copy('src/portaudio19.h', 'src/portaudio.h')
+        r.Make(dir='src')
+        r.MakeInstall(dir='src')

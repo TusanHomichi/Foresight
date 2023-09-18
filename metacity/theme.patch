@@ -1,0 +1,36 @@
+diff -ur metacity-2.9.34.old/src/main.c metacity-2.9.34/src/main.c
+--- metacity-2.9.34.old/src/main.c	2005-01-17 15:25:09.000000000 -0500
++++ metacity-2.9.34/src/main.c	2005-03-02 15:50:14.444078864 -0500
+@@ -430,7 +430,7 @@
+    * try anything in the themes directory.
+    */
+   if (!meta_ui_have_a_theme ())
+-    meta_ui_set_current_theme ("Simple", FALSE);
++    meta_ui_set_current_theme ("Clearlooks", FALSE);
+   
+   if (!meta_ui_have_a_theme ())
+     {
+diff -ur metacity-2.9.34.old/src/metacity.schemas metacity-2.9.34/src/metacity.schemas
+--- metacity-2.9.34.old/src/metacity.schemas	2005-02-28 15:21:38.000000000 -0500
++++ metacity-2.9.34/src/metacity.schemas	2005-03-02 15:50:32.016407464 -0500
+@@ -1829,7 +1829,7 @@
+       <applyto>/apps/metacity/general/theme</applyto>
+       <owner>metacity</owner>
+       <type>string</type>
+-      <default>Simple</default>
++      <default>Clearlooks</default>
+       <locale name="C">
+          <short>Current theme</short>
+          <long>
+diff -ur metacity-2.9.34.old/src/metacity.schemas.in metacity-2.9.34/src/metacity.schemas.in
+--- metacity-2.9.34.old/src/metacity.schemas.in	2005-02-24 17:02:44.000000000 -0500
++++ metacity-2.9.34/src/metacity.schemas.in	2005-03-02 15:50:39.656246032 -0500
+@@ -114,7 +114,7 @@
+       <applyto>/apps/metacity/general/theme</applyto>
+       <owner>metacity</owner>
+       <type>string</type>
+-      <default>Simple</default>
++      <default>Clearlooks</default>
+       <locale name="C">
+          <short>Current theme</short>
+          <long>

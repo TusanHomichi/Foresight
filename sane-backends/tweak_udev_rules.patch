@@ -1,0 +1,12 @@
+diff --git a/tools/sane-desc.c b/tools/sane-desc.c
+--- a/tools/sane-desc.c
++++ b/tools/sane-desc.c
+@@ -3490,7 +3490,7 @@
+ 
+   printf("# For Linux >= 2.6.22 without CONFIG_USB_DEVICE_CLASS=y\n"
+ 	 "# If the following rule does not exist on your system yet, uncomment it\n"
+-	 "# ENV{DEVTYPE}==\"usb_device\", "
++	 "ENV{DEVTYPE}==\"usb_device\", "
+ 	 "MODE=\"0664\", OWNER=\"root\", GROUP=\"root\"\n"
+ 	 "\n");
+ 

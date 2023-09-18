@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009 Filip Brcic <brcha@gna.org>
+# Distributed under the terms of the GNU General Public License v3
+#
+
+class Djbfft(RedirectRecipe):
+    name = 'djbfft'
+    version = '0'
+
+    buildRequires = []
+
+    def setup(r):
+    	r.addRemoveRedirect()

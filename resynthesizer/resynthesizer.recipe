@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class resynthesizer(CPackageRecipe):
+    name = 'resynthesizer'
+    version = '0.16'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'gimp:devel', 'glib:devel',
+                      'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel',
+                      'libstdc++:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel',
+                      'xcb-util:devel', 'zlib:devel', 'gimp:runtime', 'gimp:devel',
+                      'gtk:devel', 'pkgconfig:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('http://www.logarithmic.net/pfh-files/resynthesizer/')
+        r.Make()
+        r.Install('resynth', '%(libdir)s/gimp/2.0/plug-ins/')
+        r.Install('smart-enlarge.scm', '%(datadir)s/gimp/2.0/scripts/')
+        r.Install('smart-remove.scm', '%(datadir)s/gimp/2.0/scripts/')

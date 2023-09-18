@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class LensFun(CPackageRecipe):
+    name = 'lensfun'
+    version = '0.2.6'
+
+    buildRequires = [ 'cmake:runtime', 'glib:devel',
+                      'libstdc++:devel', 'pkgconfig:devel',
+                      'doxygen:runtime']
+
+    def setup(r):
+        r.addArchive('http://download.berlios.de/lensfun/%(name)s-%(version)s.tar.bz2') 
+        for pt in [ 'lensfun-0.2.6-cmake_LIB_SUFFIX.patch',
+                    'lensfun-0.2.6-cmake_pkgconfig.patch', ]:
+            r.addPatch(pt)
+        r.CMake(' -DBUILD_DOC:BOOL=ON '
+                ' -DBUILD_TESTS:BOOL=OFF',
+                objDir = 'build')
+
+        r.Make(dir = 'build')
+        r.Make('doc', dir = 'build')
+        r.Make('install/fast DESTDIR=%(destdir)s',
+               dir = 'build')
+

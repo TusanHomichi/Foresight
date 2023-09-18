@@ -1,0 +1,57 @@
+#
+# (c) 2011 António Meireles
+#
+class RubygemPackageRecipe(CPackageRecipe):
+    name = 'rubygempackage'
+    version = '1'
+    abstractBaseClass = 1
+
+    buildRequires = [ 'ruby:runtime', 
+                      'rubygems:runtime'
+                      ]
+
+    gemBaseURL = 'http://gems.rubyforge.org/gems/'
+
+    def setup(r):
+        if r.__class__.__name__ == 'RubygemPackageRecipe':
+            return
+
+        # Get the source
+        # name - 'rubygem-'
+        r.macros.upstreamName = r.macros.name
+        if r.macros.name.startswith('rubygem-'):
+            r.macros.upstreamName = r.macros.name[8:]
+
+        r.unpack()
+        r.build()
+        r.defaultpolicy()
+        r.policy()
+
+
+    def unpack(r):
+        r.macros.gemName = '%(upstreamName)s-%(version)s.gem'
+        r.addSource(r.gemBaseURL + '%(gemName)s')
+
+    def build(r):
+        r.Run('gem install -V '
+              ' --local '
+              ' --install-dir %(destdir)s/%(gemHome)s'
+              ' --force --rdoc '
+              ' %(gemName)s')
+
+    def defaultpolicy(r):
+        # XXX: remove this when Conary gets proper 
+        # Ruby/gems dep support & introspection
+        r.Requires('ruby:runtime', '.*/.*\.rb')
+        r.Requires('ruby:runtime', '%(bindir)s/.*' )
+        r.Requires('rubygems:runtime','.*/.*\.gemspec' )
+
+        # FIXME get LICENSE CHANGELOG MIT-LICENSE README USAGE*
+        # files under %(gemHome)s/gems/%(name)s-%(version)s
+        # under :doc or supdoc
+        
+        # XXX doc or supdoc ?
+        r.ComponentSpec('doc', '%(gemHome)s/doc/.*')
+
+    def policy(r):
+        pass

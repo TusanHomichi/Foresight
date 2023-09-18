@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class QtPackageRecipe(AutoPackageRecipe):
+
+    name = 'qtpackage'
+    version = '20070212'
+
+    buildRequires = [
+        'fontconfig:devel', 'freetype:devel', 'gcc-c++:runtime',
+        'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'pkgconfig:devel',
+        'qt:devel', 'zlib:devel'
+    ]
+
+    abstractBaseClass = True
+
+    extraConf = ' --disable-debug --with-qt-libraries=%(libdir)s '
+
+    def configure(r):
+
+        r.Configure(r.extraConf)
+

@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NssPamLdapd(AutoPackageRecipe):
+    name = 'nss-pam-ldapd'
+    version = '0.8.12'
+ 
+    buildRequires = [
+        'chkconfig:runtime',
+        'cyrus-sasl:devel',
+        'krb5:devel',
+        'openldap:devel',
+        'pam:devel',
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://arthurdejong.org/nss-pam-ldapd/')
+        # taken from http://pkgs.fedoraproject.org/cgit/nss-pam-ldapd.git/plain/nslcd.init
+        r.addSource('nslcd.init')
+        # taken from http://pkgs.fedoraproject.org/cgit/nss-pam-ldapd.git/plain/nss-pam-ldapd-0.8.12-uid-overflow.patch
+        r.addPatch('nss-pam-ldapd-0.8.12-uid-overflow.patch')
+        # taken from same place
+        r.addPatch('nss-pam-ldapd-0.8.12-validname.patch')
+
+    def configure(r):
+        r.Configure(' --libdir=%(essentiallibdir)s' 
+                    ' --with-pam-seclib-dir=%(essentiallibdir)s/security')
+
+    def policy(r):
+        r.Replace(('^uid.*', 'uid nslcd'),
+                  ('^gid.*', 'gid ldap'),
+                  '%(sysconfdir)s/nslcd.conf')
+
+        r.Symlink('libnss_ldap.so.2', '%(essentiallibdir)s/libnss_ldap.so')
+        r.Install('nslcd.init', '%(initdir)s/nslcd', mode = 0755)
+        r.Ownership('nslcd', 'root', '%(localstatedir)s/run/nslcd')
+        r.MakeDirs('%(localstatedir)s/run/nslcd')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/run/nslcd')

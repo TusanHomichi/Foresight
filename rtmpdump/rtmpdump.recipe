@@ -1,0 +1,29 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rtmpdump(AutoPackageRecipe):
+    name = 'rtmpdump'
+    version = '2.3'
+ 
+    buildRequires = ['gnutls:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'openssl:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://rtmpdump.mplayerhq.hu/download/')
+
+    def make(r):
+        #r.Make('prefix=%(prefix)s libdir=%(libdir)s')
+        #r.Make('-C librtmp prefix=%(prefix)s libdir=%(libdir)s librtmp.pc')
+        r.Make('CRYPTO=GNUTLS SHARED=yes LIB_GNUTLS="-lgnutls -lgcrypt -ldl" LIBRTMP=librtmp/librtmp.so LIBS=')
+
+    def makeinstall(r):
+        r.MakeInstall('CRYPTO=GNUTLS SHARED=yes DESTDIR=%(destdir)s prefix=%(prefix)s libdir=%(libdir)s')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

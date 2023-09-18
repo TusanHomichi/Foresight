@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2005-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Dstat(BuildPackageRecipe):
+    name = 'dstat'
+    version = '0.7.2'
+
+    buildRequires = [ 'python:devel', ]
+    # FIXME - do we want to drag mysql as a buildrequire/runtime dep
+    # of this ?
+    def setup(r):
+        r.addArchive('http://dag.wieers.com/home-made/dstat/')
+        # from RH
+        # r.addPatch('dstat-0.6.8-dbus.patch')
+        r.addPatch('dstat-0.7.2-bits.patch')
+        r.MakeInstall()
+        r.Remove('examples/dstat.py')
+        r.Doc('examples')
+        # module explicitly handles missing dependency, and we do
+        # not want to force dbus onto the system just for the
+        # purpose of monitoring it...
+        r.Requires(exceptions='%(datadir)s/dstat/dstat_dbus.py')

@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GeoIP(AutoPackageRecipe):
+    name = 'GeoIP'
+    version = '1.4.6'
+
+    buildRequires = [ 'zlib:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://geolite.maxmind.com/download/geoip/api/c/')
+        # Note: use "cvc refresh" when new versions are released upstream
+        # to refresh the lists of IPs
+        r.addSource('http://geolite.maxmind.com/download/geoip/database/'
+                    'GeoLiteCity.dat.gz',
+                    dir='%(datadir)s/GeoIP/')
+        r.addSource('http://geolite.maxmind.com/download/geoip/database/'
+                    'asnum/GeoIPASNum.dat.gz',
+                    dir='%(datadir)s/GeoIP/')
+        r.Run('gunzip %(destdir)s/%(datadir)s/GeoIP/*.dat.gz')
+

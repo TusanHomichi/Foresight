@@ -1,0 +1,27 @@
+diff -r 614ebd782e01 src/audacity.desktop
+--- a/src/audacity.desktop	Thu Mar 13 16:22:38 2008 -0400
++++ b/src/audacity.desktop	Thu Mar 13 16:26:31 2008 -0400
+@@ -1,6 +1,5 @@
+-﻿[Desktop Entry]
++[Desktop Entry]
+ Encoding=UTF-8
+-
+ Name=Audacity Sound Editor
+ Name[de]=Audacity Audio-Editor
+ Name[ru]=Редактор звуковых файлов Audacity
+@@ -8,14 +7,11 @@ GenericName[de]=Audio-Editor
+ GenericName[de]=Audio-Editor
+ GenericName[ru]=Редактор звуковых файлов
+ Comment=Record and edit audio files
+-Comment[de]=Audio-Dateien aufnehmen und bearbeiten
++Comment[de]=Audio-Dateien aufnehmen und bearbeiten
+ Comment[ru]=Запись и редактирование звуковых файлов
+-
+ Icon=/usr/share/audacity/audacity.xpm
+-
+ Type=Application
+ Categories=Application;AudioVideo;Audio;Multimedia;
+-
+ Exec=audacity
+ StartupNotify=false
+ Terminal=false

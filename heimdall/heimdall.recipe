@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2011-2013 the Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+# 
+import datetime
+class Heimdall(CPackageRecipe):
+    name = 'heimdall'
+    version = '1.4.0' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'libstdc++:devel',
+        'libusbx:devel',
+        'pkgconfig:devel',
+        'binutils:runtime',
+        'libgcc:devellib',
+        'qt4:devel',
+        'qt4-core:lib',
+        'qt4-gui:lib',
+        'udev:runtime',
+        'zlib:devel',
+    ]
+
+    def setup(r):
+        r.addGitSnapshot('https://github.com/Benjamin-Dobell/Heimdall.git')
+        r.Configure(dir='libpit')
+        r.Make(dir='libpit')
+        r.Configure(dir='heimdall')
+        r.Make(dir='heimdall')
+        r.MakeInstall(dir='heimdall')
+
+        r.Run('qmake-qt4', dir='heimdall-frontend')
+        r.Replace(('/local/', '/'),
+                  ('INSTALL_ROOT', 'DESTDIR'),
+                  'heimdall-frontend/Makefile')
+        r.Make(dir='heimdall-frontend')
+        r.MakeInstall(dir='heimdall-frontend', package='heimdall-frontend')
+
+        r.Requires('heimdall:runtime', '%(bindir)s/heimdall-frontend')
+        r.addSource('heimdall.desktop')
+        r.Desktopfile('heimdall.desktop')

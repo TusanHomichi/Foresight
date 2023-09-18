@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2011-2013 The Foresight Linux Project
+#               2011-2013 Openfiler Ltd.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+class Make(AutoPackageRecipe):
+    name = 'make'
+    version = '3.82'
+
+    if not Use.bootstrap:
+        # needs info-file tag description from the install-info package
+        buildRequires = [ 'install-info:runtime' ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/make/')
+        for p in [ 'make-3.82-noclock_gettime.patch',
+                   'make-3.82-j8k.patch',
+                   'make-3.82-getcwd.patch',
+                   'make-3.82-err-reporting.patch',
+                   'make-3.82-weird-shell.patch',
+                   'make-3.82-newlines.patch',
+                   'make-3.82-jobserver.patch',
+                   'make-3.82-bugfixes.patch',
+                   'make-3.82-sort-blank.patch',
+                   'make-3.82-copy-on-expand.patch',
+                   'make-3.82-parallel-remake.patch',
+                   'make-3.82-warn_undefined_function.patch',
+                   'make-3.82-trace.patch',
+                   'make-3.82-expensive_glob.patch',
+                   'make-3.82-dont-prune-intermediate.patch',
+                   'make-3.82-aarch64.patch',
+                   'make-3.82-empty-members.patch', ]:
+            r.addPatch(p)
+        r.Remove('tests/scripts/features/parallelism.orig')
+
+    def policy(r):
+        # some makefiles call gmake to ensure getting the gnu make
+        r.Symlink('%(bindir)s/make', '%(bindir)s/gmake')
+        r.Symlink('make.1', '%(mandir)s/man1/gmake.1')
+
+        if not Use.bootstrap and not r.isCrossCompiling:
+            r.Make('check', preMake = 'LANG=C')

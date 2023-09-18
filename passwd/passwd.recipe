@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Passwd(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'passwd'
+    version = '0.74'
+    rpmRelease = '5.fc8'
+    buildRequires = [   'glib:devel',
+                        'libuser:devel',
+                        'pam:devel',
+                        'popt:devel',
+                        'pkgconfig:devel',
+                        'audit:devel',
+                        'gettext:runtime',
+                        'intltool:runtime'
+                    ]
+
+    def policy(r):
+        # Make it harder to accidentally remove passwd binary and make it set uid       
+        r.SetModes('%(bindir)s/passwd', 04555)
+
+        # Enforce a sane PAM setup by making sure the user gets a non-merged file
+        r.addSource('passwd.pamd')
+        r.Install('passwd.pamd', '%(sysconfdir)s/pam.d/passwd', mode=0644)
+        r.ComponentSpec('runtime', '%(sysconfdir)s/pam.d/passwd')
+
+

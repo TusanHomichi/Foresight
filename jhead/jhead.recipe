@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2005-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class JHead(CPackageRecipe):
+    name = 'jhead'
+    version = '2.87'
+
+    def setup(r):
+        r.addArchive('http://www.sentex.net/~mwandel/%(name)s/')
+        r.Make()
+        r.MakeDirs('%(bindir)s/')
+        r.MakeInstall()
+        r.Install('jhead.1', '%(mandir)s/man1/')
+        r.Doc('usage.html')

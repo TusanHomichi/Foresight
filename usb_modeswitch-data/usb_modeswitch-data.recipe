@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Usb_modeswitchData(CPackageRecipe):
+    name = 'usb_modeswitch-data'
+    version = '20121109'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('http://www.draisberghof.de/usb_modeswitch/usb-modeswitch-data-%(version)s.tar.bz2')
+        r.Make()
+        r.MakeInstall()
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/usb_modeswitch.d')
+        r.Config(exceptions='.*')
+        r.ComponentSpec('data', '.*')

@@ -1,0 +1,11 @@
+diff -Naur mplayerplug-in.orig/mplayerplug-in.types mplayerplug-in/mplayerplug-in.types
+--- mplayerplug-in.orig/mplayerplug-in.types	2006-09-18 18:01:36.000000000 -0400
++++ mplayerplug-in/mplayerplug-in.types	2008-01-21 08:33:34.000000000 -0500
+@@ -9,7 +9,6 @@
+ audio/mpeg3:mp3:MPEG audio;
+ audio/x-mpeg3:mp3:MPEG audio;
+ audio/mp3:mp3:MPEG audio;
+-audio/x-mpegurl:m3u:MPEG url;
+ video/mp4:mp4:MPEG 4 Video;
+ application/x-ogg:ogg:Ogg Vorbis Media;
+ audio/flac:ogg:FLAC Lossless Audio;

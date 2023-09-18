@@ -1,0 +1,79 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeLibs(kdeCorePackageRecipe):
+
+    name = 'kdelibs'
+    version = '4.6.1'
+
+    buildRequires = [
+        'acl:devel', 'aspell:devel', 'attica:devel', 'attr:devel',
+        'automoc:runtime', 'avahi-qt4:devel', 'avahi:devel', 'bison:runtime',
+        'bzip2:devel', 'dbusmenu-qt', 'dbusmenu-qt:devel', 'enchant:devel',
+        'flex:devel', 'flex:runtime', 'gamin:devel', 'giflib:devel',
+        'icedtea-jre:runtime', 'ilmbase:devel', 'inputproto:devel',
+        'jasper:devel', 'krb5:devel', 'libjpeg:devel', 'libstdc++:devel',
+        'libXcursor:devel', 'libXfixes:devel', 'libXi:devel', 'libxml2:devel',
+        'libxml2:runtime', 'libXpm:devel', 'libXScrnSaver:devel',
+        'libxslt:devel', 'libXtst:devel', 'Mesa:devel', 'OpenEXR:devel',
+        'openssl:devel', 'pcre:devel', 'perl:devel', 'perl:perl',
+        'phonon:devel', 'polkit-qt-1:devel', 'PyQt4:python', 'python:devel',
+        'qca2:devel', 'shared-desktop-ontologies:devellib',
+        'shared-mime-info:runtime', 'sip:python', 'strigi:devel', 'udev:devel',
+        'utempter:devel', 'raptor:devel',
+        'xz:devel', 'aspell:runtime',  'dbus:devel', 'libXv:devel', 'libXxf86misc:devel',
+        'libxkbfile:devel', 'libxslt:runtime', 'soprano:runtime',
+    ]
+
+    clearBuildReqs('kdelibs:devel', 'kdepimlibs:devel')
+
+    def postUnpack(r):
+
+        r.cmakeArgs += ' -DKAUTH_BACKEND=PolkitQt-1 '
+
+        # Ubuntu patches
+        r.addPatches(
+            '11_default_kde4_xdg_menu_prefix.diff',
+            '14_hardcode_ptm_device.diff',
+            '19_findqt4_optional_x11_pthread.diff',
+            '22_hack_in_etc_kde4_in_kstandarddirs.diff',
+            '25_ld_exclude_libs_qtuitools.diff',
+            '30_kfileshare_kdesu_fileshareset.diff',
+            'kubuntu_67_cmake_install_paths.diff',
+            'kubuntu_77_no_kbookmark_write_error.diff',
+            'security_01_CVE-2009-2702.diff',
+        )
+        # avoids a runtime dep in openssl:devellib
+        r.addPatches('kdelibs-4.0.0-openssl.patch')
+
+        r.Replace(
+            '/opt/local/bin', '/usr/kerberos/bin', 'cmake/modules/FindGSSAPI.cmake'
+        )
+
+    def policy(r):
+
+        # develtools that startkde uses
+        # put it into :config b/c x86 and x86_64 kdelibs:lib must be co-installable
+        r.ComponentSpec('config', '%(bindir)s/kde4-config')
+        r.ComponentSpec('config', '%(bindir)s/buildsycoca4')
+
+        develTools = [
+            'checkXML', 'kconfig_compiler', 'kde4automoc', 'kunittestmodrunner',
+            'makekdewidgets', 'meinproc4', 'nepomuk-rcgen', 'preparetips'
+        ]
+        for x in develTools:
+            r.ComponentSpec('devel', '%(bindir)s/' + x)
+
+        # common deps that must be installed:
+        commonDeps = [
+            'openssl:lib',
+            'qca2-ossl:lib',
+            'qca2:lib',
+            'qimageblitz:lib'
+        ]
+        for package in commonDeps:
+            r.Requires(package, '%(libdir)s/libkdecore.so.5')
+

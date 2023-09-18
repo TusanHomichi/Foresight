@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GupnpIGD(AutoPackageRecipe):
+    name = 'gupnp-igd'
+    version = '0.2.0'
+ 
+    buildRequires = ['gupnp:devel', 'gtk-doc:runtime', 'pkgconfig:devel',
+                     'python:devel', 'pygobject:devel', 'pygobject:runtime' ]
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.heanet.ie/mirrors/gnome/sources/gupnp-igd/0.2/')

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibZip(AutoPackageRecipe):
+    name='libzip'
+    version='0.8'
+
+    buildRequires=['zlib:devel']
+
+    def unpack(r):
+        r.addArchive('http://www.nih.at/libzip/')

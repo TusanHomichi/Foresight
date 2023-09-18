@@ -1,0 +1,31 @@
+class Amsn(AutoPackageRecipe):
+    name="amsn"
+    version="0.98.3"
+    buildRequires=['libICE:devel', 
+                    'libSM:devel',
+                    'libX11:devel', 
+                    'libjpeg:devel', 
+                    'libpng:devel', 
+                    'libstdc++:devel', 
+                    'zlib:devel',
+                    'python:devel',
+                    'which:runtime',
+                    'tcl:runtime',
+                    'gcc:runtime',
+                    'tk:lib',
+                    'tk:devel',
+                    'desktop-file-utils:runtime',
+                    'dbus-python:python',
+                    'perl-Net-DBus:perl', 
+                    'pkgconfig:devel',
+                    'tk:runtime'
+                   ]
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s-src.tar.gz')
+        r.Requires("tls:lib",'%(bindir)s/amsn')
+    def policy(r):
+        r.ImproperlyShared('%(datadir)s/amsn/utils/linux/*')
+        r.ImproperlyShared('%(datadir)s/amsn/utils/TkCximage/*')
+        r.ImproperlyShared('%(datadir)s/amsn/utils/webcamsn/*')
+        r.ImproperlyShared('%(datadir)s/amsn/utils/tcl_sirens/*')
+        

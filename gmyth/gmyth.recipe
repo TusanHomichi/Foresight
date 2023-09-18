@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gmyth(AutoPackageRecipe):
+    name = 'gmyth'
+    version = '0.7.1'
+ 
+    buildRequires = ['curl:devel', 'glib:devel', 'libxml2:devel', 'mysql:devel', 'openssl:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/gmyth/')

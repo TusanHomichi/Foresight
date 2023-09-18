@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+#               2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibTASN1(AutoPackageRecipe):
+    name = 'libtasn1'
+    version = '2.14'
+
+    buildRequires = ['bison:runtime', 'install-info:runtime',
+                     'gtk-doc:runtime', 'pkgconfig:devel', ]
+
+
+    def unpack(r):
+        r.addArchive('http://ftp.gnu.org/gnu/libtasn1/')
+        r.addPatch('libtasn1-2.12-rpath.patch')
+
+    def configure(r):
+        r.Configure('--disable-static')
+

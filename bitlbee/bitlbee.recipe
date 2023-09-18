@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Bitlbee(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'bitlbee'
+    version = '3.0.5'
+    rpmRelease = '4.fc19'
+    rpmPatches = [ 'bitlbee-syslibdirs.patch',
+                   'bitlbee-libresolv.patch',
+                   'bitlbee-3.0.5-installP.patch',
+                   'bitlbee-3.0.5-ssl_nss-implement.patch', ]
+
+    rpmSources = ['bitlbee.xinetd']
+ 
+    buildRequires = [ 'glib:devel',  'libgpg-error:devel', 'pkgconfig:devel', 'info-bitlbee', 
+                      'libotr:devel', 'nss:devel', 'libgcrypt:devel', ]
+ 
+    def configure(r):
+        r.Configure(' --prefix=%(prefix)s  --bindir=%(sbindir)s  --etcdir=%(sysconfdir)s/%(name)s '
+                    ' --mandir=%(mandir)s  --datadir=%(datadir)s/%(name)s '
+                    ' --config=%(localstatedir)s/lib/%(name)s '
+                    ' --strip=0  --plugins=1 '
+                    ' --ssl=nss'
+                    ' --otr=plugin'
+                    )
+
+    def policy(r):
+        r.Make('DESTDIR=%(destdir)s install-dev install-etc')
+        r.MakeDirs('%(localstatedir)s/lib/%(name)s')
+        r.Install('bitlbee.xinetd', '%(sysconfdir)s/xinetd.d/%(name)s', mode = 0644)
+        r.Install('bitlbee.conf', '%(sysconfdir)s/%(name)s/%(name)s.conf', mode = 0644)
+        r.Install('doc/*.8', '%(mandir)s/man8/', mode = 0644)
+        r.Ownership('%(name)s', '%(name)s', '%(localstatedir)s/lib/%(name)s')
+        r.SetModes('%(localstatedir)s/lib/%(name)s', 0700)
+        r.Requires('info-%(name)s:group', '%(sbindir)s/%(name)s')

@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Man(CPackageRecipe):
+    name = 'man'
+    version = '1.6e'
+
+    buildRequires = [ 'findutils:runtime', 'groff:runtime', 'less:runtime' ]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.macros.cachedir = '%(cachedir)s/man'
+
+        r.addArchive('http://primates.ximian.com/~flucifredi/man/')
+        r.addSource('makewhatis.cronweekly', dest='%(sysconfdir)s/cron.weekly/makewhatis.cron', mode=0755)
+        r.addSource('makewhatis.crondaily', dest='%(sysconfdir)s/cron.daily/makewhatis.cron', mode=0755)
+        # Patch from fedora
+        r.addPatch('man-1.5m2-confpath.patch') # man.conf -> man.config
+        r.addPatch('man-1.6b-man-pages.patch') # man.conf -> man.config
+        r.addPatch('man-1.5h1-make.patch') # man.conf -> man.config
+        r.addPatch('man-1.6b-i18n_nroff.patch')
+
+        r.ManualConfigure('-default -confdir %(sysconfdir)s +fhs +lang all')
+        r.Run("find . -type f"
+              " | xargs sed -i -e 's/man\.conf \(5\)/man.config (5)/g'")
+        r.Run('''
+            for i in $(find man -name man.conf.man); do
+               mv $i ${i%%man.conf.man}man.config.5
+            done''')
+        # HACK: Make output default to using -c; otherwise it appears broken.
+        r.Replace('nroff ', 'nroff -c ', 'conf_script')
+        # HACK: make thinks we have not run configure yet, on fast systems
+        r.Run('touch -t 198001010000 Makefile.in configure')
+        r.Make()
+
+        r.MakeDirs('%(bindir)s', '%(sbindir)s')
+        r.Run('make install PREFIX=%(destdir)s/')
+
+        r.MakeDirs('%(mandir)s/man{1,5,8}')
+        r.Install('src/man.conf', '%(sysconfdir)s/man.config')
+
+        # FIXME: The config file is what defines what programs get run, but we
+        # should determine this dynamically
+        usrBinReqs = ( 'groff', 'nroff', 'gtbl', 'geqn', 'grefer', 'gpic',
+            'less', 'cmp', 'bzip2', )
+        binReqs= ( 'cat', 'gunzip', 'zcat', )
+        for requirement in usrBinReqs:
+            location = '/usr/bin/'
+            r.Requires(location+requirement, '%(sysconfdir)s/man.config')
+        for requirement in binReqs:
+            location = '/bin/'
+            r.Requires(location+requirement, '%(sysconfdir)s/man.config')
+
+        r.MakeDirs('%(cachedir)s/{local,X11R6}')
+        manSubDirs = range(1, 9)
+        manSubDirs.append('n')
+        for dir in manSubDirs:
+            r.MakeDirs('%(cachedir)s/{,local/,X11R6/}cat' + str(dir))
+
+        r.MakeInstall(dir='man2html')
+        r.Symlink('man.1', '%(mandir)s/man1/manpath.1')
+
+        # FIXME move locale files to proper directories
+
+        r.Remove('%(bindir)s/man2dvi')
+        r.Remove('%(datadir)s/locale/ru', recursive=True)
+        r.Ownership('root', 'man', '%(cachedir)s.*')
+        r.ExcludeDirectories(exceptions='%(cachedir)s.*')

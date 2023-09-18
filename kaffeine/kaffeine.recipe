@@ -1,0 +1,9 @@
+
+class Kaffeine(RedirectRecipe):
+
+    name = 'kaffeine'
+    version = '0'
+
+
+    def setup(r):
+        r.addRemoveRedirect()

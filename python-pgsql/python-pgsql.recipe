@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonPgSQL(CPackageRecipe):
+    name = 'python-pgsql'
+    version = '0.9.7'
+
+    buildRequires = [ 'postgresql:devel', 'mx:python',
+        'python-setuptools:python', 'python:devel', ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+        r.addPatch('close-fork.patch')
+        r.PythonSetup()
+        r.Doc('demo.py')

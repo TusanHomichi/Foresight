@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UtouchEvemu(AutoPackageRecipe):
+    name = 'utouch-evemu'
+    version = '1.0.5'
+ 
+    buildRequires = [ 'asciidoc:runtime', 'xmlto:runtime',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/trunk/v%(version)s/+download/')
+
+    def configure(r):
+        r.Configure(' --disable-static ')

@@ -1,0 +1,186 @@
+diff --git a/configure.ac b/configure.ac
+index 9857d52..e2a39cb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -22,6 +24,22 @@ AC_SUBST(LIBUDEV_LT_AGE)
+ AC_PREFIX_DEFAULT([/usr])
+ AC_PATH_PROG([XSLTPROC], [xsltproc])
+
++AC_CHECK_HEADER([sys/signalfd.h])
++AC_CHECK_HEADER([sys/inotify.h])
++
++if test x"$ac_cv_header_sys_signalfd_h" == xno || \
++		test x"$ac_cv_header_sys_inotify_h" == xno ; then
++	AC_MSG_CHECKING([kernel architecture string])
++	KERN_BASE=/lib/modules/%(kver)s/build
++	KERN_UNISTD=$KERN_BASE/include/asm/unistd.h
++	AC_MSG_RESULT([x86])
++else
++	KERN_UNISTD=
++fi
++
++AC_DEFINE_UNQUOTED([KERN_UNISTD], ["$KERN_UNISTD"],
++                   [Path to kernel unistd.h])
++
+ AC_ARG_WITH([rootlibdir],
+ 	AS_HELP_STRING([--with-rootlibdir=DIR], [rootfs directory to install shared libraries]),
+ 	[], [with_rootlibdir=$libdir])
+ AC_SUBST([rootlib_execdir], [$with_rootlibdir])diff --git a/udev/Makefile.am b/udev/Makefile.am
+index 94989e6..6cd2f23 100644
+--- a/udev/Makefile.am
++++ b/udev/Makefile.am
+@@@ -121,6 +121,7 @@
+ 
+ udev_common_sources =\
+ 		      udev/udev.h \
++		      udev/udev-sysdeps.c \
+ 		      udev/udev-event.c \
+ 		      udev/udev-watch.c \
+ 		      udev/udev-node.c \
+diff --git a/udev/udev-sysdeps.h b/udev/udev-sysdeps.h
+new file mode 100644
+index 0000000..718ee8b
+--- /dev/null
++++ b/udev/udev-sysdeps.h
+@@ -0,0 +1,107 @@
++/*
++ * wrapping of kernel interfaces
++ *
++ * Copyright (C) 2005-2009 Kay Sievers <kay.sievers <at> vrfy.org>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef _UDEV_SYSDEPS_H_
++#define _UDEV_SYSDEPS_H_
++
++#include <stdint.h>
++#include <errno.h>
++
++#if HAVE_SYS_INOTIFY_H
++#include <sys/inotify.h>
++#else
++#include <unistd.h>
++#include KERN_UNISTD
++
++struct inotify_event
++{
++	int wd;
++	uint32_t mask;
++	uint32_t cookie;
++	uint32_t len;
++	char name[1];
++};
++
++#define IN_CREATE	 0x00000100
++#define IN_DELETE	 0x00000200
++#define IN_MOVED_FROM	 0x00000040
++#define IN_MOVED_TO	 0x00000080
++#define IN_MOVE		 (IN_MOVED_FROM | IN_MOVED_TO)
++#define IN_CLOSE_WRITE	 0x00000008
++#define IN_IGNORED	 0x00008000
++
++static inline int inotify_init(void)
++{
++	return syscall(__NR_inotify_init);
++}
++
++static inline int inotify_add_watch(int fd, const char *name,
++		uint32_t mask)
++{
++	return syscall(__NR_inotify_add_watch, fd, name, mask);
++}
++#endif /* HAVE_SYS_INOTIFY_H */
++
++#if HAVE_SYS_SIGNALFD_H
++#include <sys/signalfd.h>
++#else
++#include <unistd.h>
++#include <signal.h>
++#include KERN_UNISTD
++
++struct signalfd_siginfo {
++	uint32_t ssi_signo;   /* Signal number */
++	int32_t  ssi_errno;   /* Error number (unused) */
++	int32_t  ssi_code;    /* Signal code */
++	uint32_t ssi_pid;     /* PID of sender */
++	uint32_t ssi_uid;     /* Real UID of sender */
++	int32_t  ssi_fd;      /* File descriptor (SIGIO) */
++	uint32_t ssi_tid;     /* Kernel timer ID (POSIX timers) */
++	uint32_t ssi_band;    /* Band event (SIGIO) */
++	uint32_t ssi_overrun; /* POSIX timer overrun count */
++	uint32_t ssi_trapno;  /* Trap number that caused signal */
++	int32_t  ssi_status;  /* Exit status or signal (SIGCHLD) */
++	int32_t  ssi_int;     /* Integer sent by sigqueue(2) */
++	uint64_t ssi_ptr;     /* Pointer sent by sigqueue(2) */
++	uint64_t ssi_utime;   /* User CPU time consumed (SIGCHLD) */
++	uint64_t ssi_stime;   /* System CPU time consumed (SIGCHLD) */
++	uint64_t ssi_addr;    /* Address that generated signal
++	                         (for hardware-generated signals) */
++	uint8_t  pad[48];     /* Pad size to 128 bytes (allow for
++	                         additional fields in the future) */
++};
++
++static inline int signalfd(int fd, sigset_t *mask, uint32_t flags)
++{
++	int rv = syscall(__NR_signalfd4, fd, mask, (size_t)8, flags);
++
++	if(rv < 0) {
++		if(flags != 0) {
++			errno = EINVAL;
++			return -1;
++		}
++
++		return syscall(__NR_signalfd, fd, mask, (size_t)8);
++	}
++	else
++		return rv;
++}
++#endif /* HAVE_SYS_SIGNALFD_H */
++
++#endif
+diff --git a/udev/udev-watch.c b/udev/udev-watch.c
+index 5a49c96..944cd4a 100644
+--- a/udev/udev-watch.c
++++ b/udev/udev-watch.c
+@@ -26,8 +26,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
+-#include <sys/inotify.h>
+
++#include "udev-sysdeps.h"
+ #include "udev.h"
+
+ static int inotify_fd = -1;
+diff --git a/udev/udevd.c b/udev/udevd.c
+index 2e7a179..a5d05fd 100644
+--- a/udev/udevd.c
++++ b/udev/udevd.c
+@@ -32,14 +32,13 @@
+ #include <dirent.h>
+ #include <sys/prctl.h>
+ #include <sys/socket.h>
+-#include <sys/signalfd.h>
+ #include <sys/select.h>
+ #include <sys/poll.h>
+ #include <sys/wait.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+-#include <sys/inotify.h>
+
++#include "udev-sysdeps.h"
+ #include "udev.h"
+
+ #define UDEVD_PRIORITY			-4

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cppunit(AutoPackageRecipe):
+    name = 'cppunit'
+    version = '1.12.1'
+ 
+    buildRequires = ['doxygen:runtime', 'graphviz:runtime', 'libstdc++:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/')
+        r.addPatch('cppunit-1.12.0-nolibdir.patch')
+        r.macros.ldflags += ' -ldl '
+
+    def configure(r):
+        r.Configure('--disable-static')

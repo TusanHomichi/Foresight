@@ -1,0 +1,38 @@
+diff -r 283f6740508f src/polkit-dbus/polkit-read-auth-helper.c
+--- a/src/polkit-dbus/polkit-read-auth-helper.c	Tue Nov 11 10:10:44 2008 -0500
++++ b/src/polkit-dbus/polkit-read-auth-helper.c	Tue Nov 11 10:47:07 2008 -0500
+@@ -338,6 +338,7 @@
+         /* check that we are setgid polkituser */
+         egid = getegid ();
+         group = getgrgid (egid);
++        /*
+         if (group == NULL) {
+                 fprintf (stderr, "polkit-read-auth-helper: cannot lookup group info for gid %d\n", egid);
+                 goto out;
+@@ -346,6 +347,7 @@
+                 fprintf (stderr, "polkit-read-auth-helper: needs to be setgid " POLKIT_GROUP "\n");
+                 goto out;
+         }
++        */
+ 
+ #ifdef POLKIT_BUILD_TESTS
+ skip_check:
+diff -r 283f6740508f src/polkit-grant/polkit-revoke-helper.c
+--- a/src/polkit-grant/polkit-revoke-helper.c	Tue Nov 11 10:10:44 2008 -0500
++++ b/src/polkit-grant/polkit-revoke-helper.c	Tue Nov 11 10:47:07 2008 -0500
+@@ -146,6 +146,7 @@
+ #endif
+         egid = getegid ();
+         group = getgrgid (egid);
++        /*
+         if (group == NULL) {
+                 fprintf (stderr, "polkit-revoke-helper: cannot lookup group info for gid %d\n", egid);
+                 goto out;
+@@ -154,6 +155,7 @@
+                 fprintf (stderr, "polkit-revoke-helper: needs to be setgid " POLKIT_GROUP "\n");
+                 goto out;
+         }
++        */
+ #ifdef POLKIT_BUILD_TESTS
+ skip_check:
+ #endif

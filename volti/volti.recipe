@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Volti(PackageRecipe):
+
+    name = 'volti'
+    version = '0.2.3'
+
+    buildRequires = ['python-setuptools:python', 'dbus-python:python', 'pygobject:python', 'pygtk:python', 'python-xlib:python', 'python:devel', 'desktop-file-utils:runtime', 'pyalsaaudio:python', 'gettext:runtime']
+
+    def setup(r):
+        r.addArchive('http://volti.googlecode.com/files/')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+	r.Requires('pyalsaaudio:python', '%(bindir)s/volti')

@@ -1,0 +1,12 @@
+--- rc.d/rc.sysinit.orig	2010-08-05 21:34:20.864765047 +0100
++++ rc.d/rc.sysinit	2010-08-05 21:39:16.290326475 +0100
+@@ -337,6 +337,9 @@ action $"Setting hostname ${HOSTNAME}: "
+ # Sync waiting for storage.
+ { rmmod scsi_wait_scan ; modprobe scsi_wait_scan ; rmmod scsi_wait_scan ; } >/dev/null 2>&1
+ 
++# Start any MD RAID arrays that haven't been started yet
++[ -f /etc/mdadm.conf -a -x /sbin/mdadm ] && /sbin/mdadm -As --auto=yes --run
++
+ # Device mapper & related initialization
+ if ! __fgrep "device-mapper" /proc/devices >/dev/null 2>&1 ; then
+        modprobe dm-mod >/dev/null 2>&1

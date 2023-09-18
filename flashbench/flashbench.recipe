@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Flashbench(CPackageRecipe):
+    name = 'flashbench'
+    version = '2e30b1'
+
+    def setup(r):
+        r.addGitSnapshot('git://git.linaro.org/people/arnd/flashbench.git',
+                         tag='%(version)s')
+        r.Make()
+        r.Install('flashbench', '%(bindir)s/')
+        r.Install('erase', '%(libexecdir)s/flashbench/')

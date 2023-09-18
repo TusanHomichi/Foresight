@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010-2011 António Meireles
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class glpkSource(AutoPackageRecipe):
+    name = 'glpk'
+    version = '4.40'
+    buildRequires = [  ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/%(name)s/')
+        r.Environment('LIBS', '-ldl')
+        r.Remove('{examples,src}/{,*}/{README,COPYING}')
+
+    

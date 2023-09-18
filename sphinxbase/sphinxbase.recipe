@@ -1,0 +1,25 @@
+class SphinxBase(AutoPackageRecipe):
+    name = "sphinxbase"
+    version = "0.4.1"
+
+    buildRequires = [ 'alsa-lib:devel', 'python:devel', 'bison:runtime', 'doxygen:runtime', 'perl:devel', 'perl:perl', 'perl:runtime' ]
+
+    def unpack(r):
+        r.addArchive("http://downloads.sourceforge.net/project/cmusphinx/%(name)s/%(version)s/")
+        r.Replace('setup.py\ install\ \-\-prefix\ \$\(DESTDIR\)\$\(prefix\)', 'setup.py install --skip-build --root $(DESTDIR)', 'python/Makefile.in')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-static')
+
+        # Get rid of undesirable hardcoded runpaths
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'libtool')
+        
+        # Get rid of undesirable direct library dependencies
+        #r.Replace('\-lpthread\ \-lm\ \-lblas\ \-llapack', '-lm/g',  'src/libsphinxad/Makefile')
+        r.Replace('\-lpthread\ \-lm', '-lm',  'src/libsphinxad/Makefile')
+        for f in ('libsphinxbase/', 'libsphinxbase/fe/', 'libsphinxbase/feat/', 'libsphinxbase/lm/',
+                  'libsphinxbase/util/', 'sphinx_adtools/', 'sphinx_cepview/', 'sphinx_fe/',
+                  'sphinx_jsgf2fsg/', 'sphinx_lmtools/'):
+            r.Replace('-lasound', '', 'src/'+f+'Makefile')
+

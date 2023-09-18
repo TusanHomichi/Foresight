@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class cinelerra(CPackageRecipe):
+
+    name = 'cinelerra'
+    version = '1.2.2+070481d15cb7303a6c5b4ef69db1097702074905'
+
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime', 
+                      'OpenEXR:devel', 'a52dec:devel', 'alsa-lib:devel',
+                      'audiofile:devel', 'desktop-file-utils:runtime',
+                      'e2fsprogs:devel', 'esound:devel', 'faac:devel',
+                      'faad2:devel', 'ffmpeg:devel', 'ffmpeg:runtime',
+                      'fftw:devel', 'freetype:devel', 'gettext:runtime',
+                      'ilmbase:devel', 'intltool:runtime', 'lame:devel',
+                      'libICE:devel', 'libX11:devel', 'libXext:devel',
+                      'libXv:devel', 'libXxf86vm:devel', 'libdv:devel',
+                      'libjpeg:devel', 'libogg:devel', 'libpng:devel',
+                      'libsndfile:devel', 'libstdc++:devel',
+                      'libtheora:devel', 'libtiff:devel', 'libvorbis:devel',
+                      'Mesa:devel', 'mjpegtools:devel', 'pkgconfig:devel',
+                      'SDL:devel', 'x264:devel', 'xvidcore:devel', 'zlib:devel' ,
+                      'libtool:runtime', 'nasm:runtime', 'libavc1394:devel',
+                      'libavc1394:devellib', 'x264:devellib', 'xvidcore:devellib',
+                      'faac:devellib', 'faad2:devellib', 'util-linux:devel',
+                      'libgcc:devellib', 'make:runtime', 'imlib2:devel',
+                      'libiec61883:devel',]
+
+    def setup(r):
+        r.addGitSnapshot('git://git.cinelerra.org/CinelerraCV.git', tag='070481d15cb7303a6c5b4ef69db1097702074905')
+        for patch in [ 'cinelerra-entry.patch',
+                       'cinelerra-ffmpeg.patch',
+                       'cinelerra-underlinking.patch',
+                       'cinelerra-ffmpeg-0.11.patch',
+                       'cinelerra-std_and_str_h.patch',
+                       ]:
+            r.addPatch(patch)
+
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d -D__STDC_CONSTANT_MACROS'
+	r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ -Wl,-z,noexecstack'
+
+	r.Run('./autogen.sh')
+        cfg = (' --with-buildinfo=git/recompile --enable-opengl '\
+              ' --disable-esd'
+               '  --with-external-ffmpeg '
+               ' --prefix=%(prefix)s --with-plugindir=%(libdir)s/%(name)s/ ')
+        if Arch.x86:
+            cfg += ' --enable-mmx'
+        r.Configure(cfg)
+        r.Make()
+        r.MakeInstall()

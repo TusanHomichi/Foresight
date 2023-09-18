@@ -1,0 +1,19 @@
+#
+# Copyright © 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Most(AutoPackageRecipe):
+    name = 'most'
+    version = '5.0.0a'
+    packageSummary = "Like less, most is a pager. It depends on S-Lang."
+ 
+    buildRequires = [
+        'libICE:devel',
+        'slang:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('ftp://space.mit.edu/pub/davis/%(name)s/%(name)s-5.0.0.tar.bz2')
+        r.addPatch('ftp://space.mit.edu/pub/davis/%(name)s/5.0.0__%(version)s.diff.bz2')

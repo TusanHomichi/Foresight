@@ -1,0 +1,163 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+import re
+loadSuperClass('rpmpackage')
+class Thunderbird(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'thunderbird'
+    version = '24.0'
+    rpmRelease = '1.fc19'
+
+    rpmArchives = [ '%(name)s-langpacks-%(version)s-20130916.tar.xz',
+                    ]
+
+    rpmSources = [ '%(name)s.desktop', 
+                   'thunderbird.sh.in', 
+                   'thunderbird-redhat-default-prefs.js',
+                   'thunderbird-mozconfig',
+                   'xulrunner-24.0-jemalloc-ppc.patch',
+                   'xulrunner-10.0-gcc47.patch',
+                   ]
+    rpmPatches = [ 'thunderbird-8.0-enable-addons.patch',
+    
+    ]
+
+    tarballName = '%(name)s-%(version)s.source.tar.bz2'
+
+    buildRequires = [
+        'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 
+        'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 
+        'libICE:devel', 'libIDL:devel', 'libpng:devel', 'libSM:devel', 
+        'libstdc++:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 
+        'libXext:devel', 'libXft:devel', 'libXinerama:devellib', 'python:devel',
+        'libXrender:devel', 'libXt:devel', 'nspr:devel', 'nss:devel', 
+        'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'zip:runtime', 
+        'zlib:devel', 'GConf:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 
+        'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 
+        'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 
+        'libxml2:devel', 'ORBit2:devel', 'popt:devel', 'gawk:runtime', 
+        'expat:devel', 'libjpeg:devel', 'unzip:runtime', 'libXinerama:devel',
+        'alsa-lib:devel', 'dbus-glib:devel', 'libnotify:devel', 'python:devel',
+        'curl:devel', 'gstreamer:devel', 'gst-plugins-base:devel',
+        # they are still locked in the middle ages
+        'autoconf213:runtime', 'xz:runtime', 'startup-notification:devel',
+        'yasm:runtime', 'Mesa:devel', 'libvpx:devel',
+	# for hostname
+        'net-tools:runtime',
+        ]
+
+    def configure(r):
+        r.macros.mozappdir = '%(libdir)s/%(name)s-%(version)s'
+        r.macros.ldflags += ' -Wl,-rpath,%(mozappdir)s '
+        r.macros.cxxflags += ' -fpermissive '
+
+        r.addPatch('xulrunner-24.0-jemalloc-ppc.patch', sourceDir = '.', dir = 'mozilla')
+        r.addPatch('xulrunner-10.0-gcc47.patch', sourceDir = '.', dir = 'mozilla')
+        
+        r.Replace('disable-gnomevfs', 'disable-gnomevfs\nac_add_options --with-system-nss\nac_add_options --with-system-nspr\n', 
+                  'thunderbird-mozconfig')
+        r.Copy('thunderbird-mozconfig', '.mozconfig')
+        r.Run('echo "ac_add_options --enable-official-branding" >> .mozconfig')
+        # we 're not on hunspell yet
+        r.Replace('ac_add_options --enable-system-hunspell', '', '.mozconfig')
+
+        r.macros.optflags = re.sub('-fexceptions', '-fnoexceptions', r.macros.optflags)
+        r.macros.optflags = re.sub('-Wall', '', r.macros.optflags)
+        r.Replace(('\$RPM_OPT_FLAGS', '%(optflags)s -fpermissive'),
+                  ('\$PREFIX', '%(prefix)s'),
+                  ('\$LIBDIR', '%(libdir)s'),'.mozconfig')
+        r.Replace('include\ \$\(topsrcdir\)\/config\/rules\.mk',
+                  'include $(topsrcdir)/config/rules.mk\nMOZ_APP_VERSION="%(version)s"',
+                  'mail/installer/Makefile.in')
+
+        # XXX should not be needed but it is so that inside rMake
+        # shell, and term are detected by the new py27 based build machinery
+        r.Environment('SHELL', '%(essentialbindir)s/bash')
+        r.Environment('TERM', 'vt100')
+
+        # HACK ALERT. THIS SHOULD HAD NOT BE NEEDED
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=850088 supposed to have been fixed
+        r.Replace('sys\.exit\(1\)', 'sys.exit(0)', 'mozilla/js/src/config/check-sync-dirs.py')
+
+        # keep older gcc happy
+        for f in [ 'mailnews/compose/public/nsIMsgSend.idl',
+                   'mailnews/compose/src/nsMsgAttachmentHandler.cpp',
+                   'mailnews/compose/src/nsMsgSend.cpp',]:
+            r.Replace('nsMsgAttachmentHandler>>', 'nsMsgAttachmentHandler> >', f)            
+
+    def make(r):
+        r.Make('-f client.mk build', preMake = 'MAKE="gmake %(parallelmflags)s"')
+        # create debuginfo for crash-stats.mozilla.com
+        # r.Make('buildsymbols', dir='objdir-tb')
+
+    def makeinstall(r):
+        r.MakeInstall(dir='objdir')
+
+    def policy(r):
+        r.Desktopfile('thunderbird.desktop', category='Email;Network;GNOME;')
+        r.addSource('thunderbird.png', dest='%(datadir)s/pixmaps/')
+        
+        # set up the thunderbird start script
+        r.Replace('MOZ_LIB_DIR/thunderbird', 'MOZ_LIB_DIR/thunderbird-%(version)s', 'thunderbird.sh.in')
+        r.Remove('%(bindir)s/%(name)s')
+        r.Install('thunderbird.sh.in', '%(bindir)s/%(name)s', mode = 0755 )
+
+        r.Replace('THUNDERBIRD_RPM_VR', '%(version)s', '%(name)s-redhat-default-prefs.js')
+        r.Replace('Fedora', 'Foresight Linux', '%(name)s-redhat-default-prefs.js')
+        r.Install('%(name)s-redhat-default-prefs.js', '%(mozappdir)s/greprefs/all-redhat.js')
+        r.Install('%(name)s-redhat-default-prefs.js', '%(mozappdir)s/defaults/pref/all-redhat.js')
+        
+        # 
+        r.Remove('%(bindir)s/thunderbird-config')
+
+        # langpacks
+        r.Run(""" 
+ mkdir  %(destdir)s/%(mozappdir)s/extensions
+ cp -ar ../%(name)s-%(version)s/%(name)s-langpacks %(destdir)s/%(mozappdir)s/extensions/
+ cd %(destdir)s/%(mozappdir)s/extensions/
+ for langpack in `ls %(name)s-langpacks/*.xpi`; do
+   language=`basename $langpack .xpi`
+   extensiondir=%(destdir)s/%(mozappdir)s/extensions/langpack-$language@thunderbird.mozilla.org
+   mkdir  $extensiondir
+   unzip $langpack -d $extensiondir
+   find $extensiondir -type f | xargs chmod 644
+
+ done
+ rm -rf thunderbird-langpacks
+
+ """)
+
+        # ghost files
+        r.Create('%(mozappdir)s/components/compreg.dat')
+        r.Create('%(mozappdir)s/components/xpti.dat')
+        r.InitialContents('%(mozappdir)s/components/compreg.dat')
+        r.InitialContents('%(mozappdir)s/components/xpti.dat')
+
+        # tell tbird to honour users' LANG env
+        r.Run('''echo 'pref("intl.locale.matchOS", true)' >> %(destdir)s/%(libdir)s/%(name)s-%(version)s/defaults/pref/all-thunderbird.js ''')
+
+        r.Copy('other-licenses/branding/%(name)s/mailicon16.png',
+               '%(mozappdir)s/icons/')
+        r.Copy('other-licenses/branding/%(name)s/mailicon16.png',
+               '%(datadir)s/icons/hicolor/16x16/apps/thunderbird.png')
+
+        r.Copy('other-licenses/branding/%(name)s/mailicon22.png',
+               '%(datadir)s/icons/hicolor/22x22/apps/thunderbird.png')
+        r.Copy('other-licenses/branding/%(name)s/mailicon24.png',
+               '%(datadir)s/icons/hicolor/24x24/apps/thunderbird.png')
+        r.Copy('other-licenses/branding/%(name)s/mailicon32.png',
+               '%(datadir)s/icons/hicolor/32x32/apps/thunderbird.png')
+        r.Copy('other-licenses/branding/%(name)s/mailicon48.png',
+               '%(datadir)s/icons/hicolor/48x48/apps/thunderbird.png')
+        r.Copy('other-licenses/branding/%(name)s/mailicon256.png',
+               '%(datadir)s/icons/hicolor/256x256/apps/thunderbird.png')
+
+        # devel bits useless in current scope, so trim them
+        r.Remove('%(includedir)s/%(name)s-%(version)s/', recursive = True)
+        r.Remove('%(libdir)s/%(name)s-devel-%(version)s/', recursive = True)
+        r.Remove('%(datadir)s/idl/', recursive = True)
+

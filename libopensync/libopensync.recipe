@@ -1,0 +1,19 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class LibOpenSync(CMakePackageRecipe):
+
+    name = 'libopensync'
+    version = '0.34'
+
+    buildRequires = [
+        'glib:devel', 'libxml2:devel', 'libxml2:devel', 'sqlite:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://www.opensync.org/download/releases/%(version)s/')
+

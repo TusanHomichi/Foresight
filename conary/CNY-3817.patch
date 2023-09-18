@@ -1,0 +1,36 @@
+# HG changeset patch
+# User António Meireles <antonio.meireles@openfiler.com>
+# Date 1378565261 -3600
+#      Sat Sep 07 15:47:41 2013 +0100
+# Node ID 8fccc5799d264a72d2e723d55eb27e03ed9989bb
+# Parent  4057c70ece6d71d62e645fd5ff84a7a119388316
+update repository stock template branding to reflect present status-quo. world didn't end circa 2007, nor did conary development.
+
+diff -r 4057c70ece6d -r 8fccc5799d26 conary/server/templates/library.kid
+--- a/conary/server/templates/library.kid	Mon Aug 26 13:53:28 2013 +0000
++++ b/conary/server/templates/library.kid	Sat Sep 07 15:47:41 2013 +0100
+@@ -43,7 +43,7 @@
+                 <img id="topgradleft" src="${cfg.staticPath}/images/topgrad_left.png" alt="" />
+                 <img id="topgradright" src="${cfg.staticPath}/images/topgrad_right.png" alt="" />
+                 <div id="corpLogo">
+-                    <img py:if="branded" src="${cfg.staticPath}/images/corplogo.png" width="80" height="98" alt="rPath Logo" />
++                    <img py:if="branded" src="${cfg.staticPath}/images/corplogo.png" width="80" height="98" alt="SAS Logo" />
+                 </div>
+                 <div id="prodLogo">
+                     <img py:if="branded" src="${cfg.staticPath}/images/prodlogo.gif" alt="rBuilder Online Logo" />
+@@ -72,12 +72,12 @@
+                 <div>
+                     <span id="topOfPage"><a href="#top">Top of Page</a></span>
+                     <ul class="footerLinks">
+-                        <li><a href="http://www.rpath.com/">About rPath</a></li>
++                        <li><a href="http://www.sas.com/">About SAS</a></li>
+                     </ul>
+                 </div>
+                 <div id="bottomText">
+-                    <span id="copyright">Copyright &copy; 2005-2007 rPath. All Rights Reserved.</span>
+-                    <span id="tagline">rPath. The Software Appliance Company.</span>
++                    <span id="copyright">Copyright &copy; SAS Institute Inc. All Rights Reserved.</span>
++                    <span id="tagline">THE POWER TO KNOW. Providing software solutions since 1976.</span>
+                 </div>
+ 
+             </div>

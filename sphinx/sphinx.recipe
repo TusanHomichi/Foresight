@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class Sphinx(PackageRecipe):
+    name = 'sphinx'
+    version = '0.5.1'
+ 
+    buildRequires = [
+        'docutils:python',
+        'Jinja:python',
+        'Pygments:python',
+        'python-setuptools:python',
+        'python:devel',
+        'python-simplejson:python'
+    ]
+ 
+    def setup(r):
+        r.macros.archive_name = 'Sphinx'
+        r.macros.pyver = Python.majversion
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+
+        r.addArchive('http://pypi.python.org/packages/source/S/%(name)s/')
+        r.addPatch('setuptools.patch')
+        r.PythonSetup()

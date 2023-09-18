@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libtool(AutoPackageRecipe):
+    name = 'libtool'
+    version = '2.4.2'
+
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime', 'file:runtime', 'install-info:runtime',
+                      'gcc-c++:runtime', 'gcc-fortran:runtime']
+
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive('mirror://gnu/%(name)s/')
+        r.addPatch('libtool-2.2.10-rpath.patch')
+        r.macros.cflags += ' -fPIC'
+        if Use.bootstrap:
+            r.Run('./bootstrap')
+
+    def policy(r):
+        # drop static
+        r.Remove('%(libdir)s/libltdl.a')
+
+        r.Requires('/usr/bin/file', '%(bindir)s/libtool')
+        r.Requires('/usr/bin/file', '%(datadir)s/aclocal/libtool.m4')
+        r.Requires('binutils:runtime', '%(bindir)s/libtool')
+        r.Requires('libtool:devel', '%(bindir)s/libtoolize')
+        if Use.bootstrap:
+            # we only need libltdl development files
+            r.Remove('%(datadir)s', '%(bindir)s', recursive=True)

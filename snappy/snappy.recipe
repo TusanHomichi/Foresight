@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011-2013 Openfiler Ltd
+#               2012-2013 The Foresight Linux Project
+#
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Snappy(AutoPackageRecipe):
+    name = 'snappy'
+    version = '1.1.0'
+    buildRequires = [ 'libstdc++:devel',
+                      'pkgconfig:devel',
+                      'zlib:devel',
+                      # XXX add gtest
+                      ]
+
+    def unpack(r):
+        r.addArchive('http://snappy.googlecode.com/files/')
+
+    def configure(r):
+        r.macros.cxxflags += ' -DNDEBUG'
+        r.Configure(' --disable-static')

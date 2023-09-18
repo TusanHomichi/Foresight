@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python=conary.rpath.com@rpl:2-qa')
+loadSuperClass('gnomepackage')
+class Pyorbit(GnomePackageRecipe):
+    buildRequires = [ 'ORBit2:devel',
+                      'libIDL:devel', 'glib:devel',
+                      'python:runtime','python:devel' ]
+
+    name = 'pyorbit'
+    version = '2.24.0'
+
+    def setup(r):
+        GnomePackageRecipe.setup(r)
+        r.Requires('python:runtime', Python.sitepkgs + '/.*')

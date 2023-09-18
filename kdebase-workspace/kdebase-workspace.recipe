@@ -1,0 +1,99 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeBaseWorkspace(kdeCorePackageRecipe):
+
+    name = 'kdebase-workspace'
+    version = '4.8.3'
+
+    module = 'kde-workspace'
+
+    buildRequires = [
+        'bluez:devel', 
+        'boost:devel', 
+        'ConsoleKit:devel', 
+        'dbus:devel',
+        'dbusmenu-qt:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'glib:devel',
+        'google-gadgets-kde:devel', 
+        'iceauth:runtime',
+        'kactivities:devel', 
+        'kdelibs:runtime',
+        'kdelibs:devel',
+        'libICE:devel', 
+        'libjpeg:devel',
+        'libpng:devel', 
+        'libraw1394:devel', 
+        'libSM:devel', 
+        'libusb:devel',
+        'libX11:devel', 
+        'libXau:devel', 
+        'libXcomposite:devel',
+        'libXcursor:devel', 
+        'libXdamage:devel', 
+        'libXdmcp:devel',
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXft:devel', 
+        'libXi:devel',
+        'libXinerama:devel', 
+        'libxkbfile:devel', 
+        'libxklavier:devel',
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libXres:devel',
+        'libXScrnSaver:devel', 
+        'libXtst:devel', 
+        'libXxf86misc:devel',
+        'lm_sensors:devel', 
+        'Mesa:devel', 
+        'NetworkManager:devel', 
+        'pam:devel',
+        'pciutils:devel', 
+        'polkit-qt-1:devel', 
+        'prison:devel', 
+        'PyQt4:python', 
+        'python:devel',
+        'qimageblitz:devel', 
+        'qt4:devel', 
+        'strigi:devel', 
+        'xz:runtime', 
+        'zlib:devel', 
+        'soprano:runtime',
+    ]
+
+    def unpack(r):
+        r.macros.module = r.module
+        r.addArchive('mirror://kde//stable/%(version)s/src/%(module)s-%(version)s.tar.xz')
+
+    def postUnpack(r):
+
+        # We don't like *.bak
+        r.Environment('GENKDMCONF_FLAGS', '--no-backup')
+
+
+
+        # we don't have kdm user
+        r.Replace('Instance: "kdm"', 'Instance: #"kdm"', 'kdm/config.def')
+
+    def postInstall(r):
+
+        # Make gdm happy
+        r.Install('kdm/kfrontend/sessions/kde-plasma.desktop', '%(datadir)s/xsessions/')
+        r.Install('kdm/kfrontend/sessions/kde-plasma-safe.desktop', '%(datadir)s/xsessions/')
+
+        r.Move('%(sysconfdir)s/ksysguarddrc', '%(sysconfdir)s/ksysguarddrc4')
+
+    def policy(r):
+
+        r.Requires('xdm:config', '%(bindir)s/kdm')
+        r.Requires('qt4-core:runtime', '%(bindir)s/startkde')
+
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/kde4/kdm/sessions')
+
+

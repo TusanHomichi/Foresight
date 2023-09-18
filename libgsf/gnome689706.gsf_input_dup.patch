@@ -1,0 +1,27 @@
+diff --git a/gsf/gsf-infile-msole.c b/gsf/gsf-infile-msole.c
+index 41134c8..a368a77 100644
+--- a/gsf/gsf-infile-msole.c
++++ b/gsf/gsf-infile-msole.c
+@@ -642,20 +642,9 @@ static GsfInput *
+ gsf_infile_msole_dup (GsfInput *src_input, GError **err)
+ {
+ 	GsfInfileMSOle const *src = GSF_INFILE_MSOLE (src_input);
+-	GsfInfileMSOle *dst = ole_dup (src, err);
++	GsfInfileMSOle *parent = GSF_INFILE_MSOLE (gsf_input_container (src_input));
+ 
+-	if (dst == NULL)
+-		return NULL;
+-
+-	if (src->bat.block != NULL) {
+-		dst->bat.block = g_new (guint32, src->bat.num_blocks),
+-		memcpy (dst->bat.block, src->bat.block,
+-			sizeof (guint32) * src->bat.num_blocks);
+-	}
+-	dst->bat.num_blocks = src->bat.num_blocks;
+-	dst->dirent = src->dirent;
+-
+-	return GSF_INPUT (dst);
++	return gsf_infile_msole_new_child(parent, src->dirent, err);
+ }
+ 
+ static guint8 const *

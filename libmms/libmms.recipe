@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2008 Dick Marinus (dick@mrns.nl)
+#
+
+class LibMMS(AutoPackageRecipe):
+    name = 'libmms'
+    version = '0.4'
+
+    buildRequires = ['glib:devel', 'pkgconfig:devel']
+
+    def unpack(r):
+        r.addArchive('https://launchpad.net/%(name)s/trunk/%(version)s/+download/%(name)s-%(version)s.tar.gz')
+

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class mpgtx(AutoPackageRecipe):
+    name = 'mpgtx'
+    version = '1.3.1'
+
+    buildRequires = [ 'libstdc++:devel' ]
+
+    name = 'mpgtx'
+    version = '1.3.1'
+    
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/mpgtx/')
+
+    def configure(r):
+        r.ManualConfigure('--prefix=/usr')
+        r.Replace('\$\(PREFIX\)','$(DESTDIR)$(PREFIX)','Makefile')
+
+    def policy(r):
+        r.Move('/usr/man','%(mandir)s')
+

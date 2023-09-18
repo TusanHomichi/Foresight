@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rubrica(AutoPackageRecipe):
+  name = "rubrica"
+  version = "2.1.6"
+  buildRequires = [ 'gtk:devel','glibc:devel','gcc-c++:runtime',
+			'libgnome:devel', 'GConf:runtime', 'desktop-file-utils:runtime', 'expat:devel', 'gettext:runtime', 'intltool:runtime', 'libglade:devel', 'libxml2:devel', 'pkgconfig:devel', 'gtk-doc:runtime', 'dbus-glib:devel', 'dbus:devel', 'libnotify:devel'
+            ]
+	
+  def unpack(r):
+    r.addArchive('http://download.berlios.de/%(name)s/%(name)s2-%(version)s.tar.bz2')
+    r.addPatch('rubrica-2.1.6-libnotify-0.7.patch')

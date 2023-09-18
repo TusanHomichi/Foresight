@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('pypipackage')
+class PyASN1(PyPiPackage,CPackageRecipe):
+    name = 'python-pyasn1'
+    pyname = 'pyasn1'
+    version = '0.1.3'

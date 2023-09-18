@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Zsh(AutoPackageRecipe):
+    name = 'zsh'
+    version = '4.3.10'
+ 
+    buildRequires = ['gdbm:devel',
+                     'libcap:devel',
+                     'libtermcap:devel',
+                     'ncurses:devel',
+                     'tetex:runtime', 
+                     'texi2html:runtime',
+                     'texinfo:runtime',
+                     'pcre:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/zsh/')
+
+    def configure(r):
+	r.Configure('--enable-cap --with-tcsetpgrp --enable-pcre --disable-dynamic --enable-ldflags=-static')
+
+    def policy(r):
+        r.Replace('#!/bin/zsh', '#!%(bindir)s/zsh',
+                  '%(datadir)s/zsh/%(version)s/functions/*', allowNoChange=True)
+        r.ExcludeDirectories(exceptions='%(datadir)s/zsh/site-functions')
+        # Some scripts expect /bin/zsh...
+        r.Symlink('%(bindir)s/zsh', '%(essentialbindir)s/zsh')

@@ -1,0 +1,25 @@
+--- rpm-4.4.1/tools/debugedit.c.orig	2005-06-27 00:01:38.000000000 +0100
++++ rpm-4.4.1/tools/debugedit.c	2005-06-27 00:06:01.000000000 +0100
+@@ -712,8 +712,8 @@
+ 		}
+ 	    }
+ 
+-	  if (t->attr[i].attr == DW_AT_comp_dir &&
+-	      form == DW_FORM_strp &&
++	    if (t->attr[i].attr == DW_AT_comp_dir) {
++		if (form == DW_FORM_strp &&
+ 	      debug_sections[DEBUG_STR].data)
+ 	    {
+ 	      char *dir;
+@@ -738,6 +738,11 @@
+ 				ELF_C_SET, ELF_F_DIRTY);
+ 		}
+ 	    }
++		else if (form == DW_FORM_string) {
++			free(comp_dir);
++			comp_dir = strdup (ptr);			
++		}
++	    }
+ 	  else if ((t->tag == DW_TAG_compile_unit
+ 		    || t->tag == DW_TAG_partial_unit)
+ 		   && t->attr[i].attr == DW_AT_name

@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2009-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+from conary.build import build
+
+# The distutils/setup-tools compatibility hack breaks Cython's
+# setup.py becuase it wants __file__ defined.
+# This is a temporary hack to work around it: correct fix is in
+# Conary and is probably to use distutils only if explicitly
+# requested for a very old package.
+class MyPythonSetup(build.PythonSetup):
+    '''
+    Override setting of pythonsetup
+    '''
+    template = (
+        '%%(cdcmd)s'
+        ' CFLAGS="%%(cflags)s" CXXFLAGS="%%(cflags)s %%(cxxflags)s"'
+        ' CPPFLAGS="%%(cppflags)s"'
+        ' LDFLAGS="%%(ldflags)s" CC=%%(cc)s CXX=%%(cxx)s'
+        ' %%(mypythonsetup)s'
+        ' %(action)s'
+        ' --prefix=%%(prefix)s'
+        ' %%(purelib)s'
+        ' %%(platlib)s'
+        ' %%(data)s'
+        ' --root=%%(rootdir)s'
+        ' %%(arguments)s'
+    )
+
+class Cython(CPackageRecipe):
+    name = 'cython'
+    version = '0.17.2'
+
+    buildRequires = ['python:devel',
+                     'python-setuptools:python', 
+                     'cElementTree:python',
+                     'numpy:python',
+                     'Pygments:python'
+                     ]
+
+    def setup(r):
+        r.macros.archive_name = 'Cython'
+        r.addArchive('http://cython.org/release/')
+
+        # Should be r.PythonSetup() when it is fixed
+        r.macros.mypythonsetup = 'python%(pyver)s setup.py'
+        r.extraBuild(MyPythonSetup(r))
+
+        # Separate compiler from stuff needed at runtime:
+        # The compiler (including python!) lives in :devel
+        # The runtime lives in :python and is all you need to
+        # install for pure python that can optionally be built
+        # with Cython - this way you don't need to drag in the
+        # whole compiler just because your code is pure python
+        # that can be conditionally compiled with Cython
+        r.ComponentSpec('python', '.*/Cython/Shadow.pyc?',
+                                  '.*/cython.pyc?')
+        r.ComponentSpec('devel', '.*/site-packages/.*')
+
+        # cython.py has conditional imports that we need to turn
+        # off deps from
+        r.Requires(exceptions='.*/cython.pyc?')
+

@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2004-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libgksu(CPackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 
+                'GConf:runtime', 
+                'ORBit2:devel',
+                'atk:devel', 
+                'autoconf:runtime',
+                'automake:runtime',
+                'cairo:devel', 
+                'desktop-file-utils:runtime', 
+                'intltool:runtime',
+                'intltool:devel',
+                'fontconfig:devel', 
+                'freetype:devel', 
+                'gettext:runtime',
+                'glib:devel', 
+                'gnome-keyring:devel', 
+                'gtk:devel', 
+                'libX11:devel',
+                'libXrender:devel', 
+                'libglade:devel', 
+                'libgtop:devel', 
+                'libtool:devel', 
+                'libtool:runtime', 
+                'GConf:config', 
+                'expat:devel',
+                'libpng:devel', 
+                'libxml2:devel', 
+                'pango:devel', 
+                'perl:runtime',
+                'pkgconfig:devel', 
+                'startup-notification:devel', 
+                'zlib:devel', 
+                'libgnome-keyring:devel' ]
+
+    name = 'libgksu'
+    version = '2.0.12'
+
+    def setup(r):
+        r.addArchive('http://people.debian.org/~kov/gksu/')
+        r.Create('NEWS')
+        r.Create('README')
+        r.addPatch('libgksu-2.0.0-fbsd.patch')
+        r.addPatch('libgksu-2.0.7-libs.patch')
+        r.addPatch('libgksu-2.0.12-notests.patch')
+        r.addPatch('libgksu-2.0.12-revert-forkpty.patch')
+        r.addPatch('libgksu-2.0.7-polinguas.patch')
+        r.Run('autoreconf -fi')
+        r.Configure('--disable-gtk-doc')
+        r.addPatch('libgksu-2.0.12-fix-make-3.82.patch')
+        r.addPatch('libgksu-2.0.12-automake-1.11.2.patch')
+        r.Make()
+        r.MakeInstall()

@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadRecipe('gnomepackage')
+class Gbrainy(GnomePackageRecipe):
+
+        name = 'gbrainy'
+        version = '2.2.0'
+
+        packageSummary = 'gbrainy is a brain teaser game and trainer to have fun and to keep your brain trained. '
+        packageDescription = 'gbrainy is a brain teaser game and trainer to have fun and to keep your brain trained. It provides the following types of games: Logic puzzles. Games designed to challenge your reasoning and thinking skills. Mental calculation. Games based on arithmetical operations designed to prove your mental calculation skills. Memory trainers. Games designed to challenge your short term memory. Verbal analogies. Games that challenge your verbal aptitude. gbrainy provides enough flexibility in terms of number of games, difficulty levels and parametrization to make it enjoyable for kids, adults or senior citizens.'
+
+        buildRequires =  [  'desktop-file-utils:runtime',
+                        'gettext:runtime',
+                        'gnome-sharp:cil',
+                        'gnome-sharp:devellib',
+                        'gtk-sharp:cil',
+                        'gtk-sharp:devellib',
+                        'gtk:runtime',
+                        'intltool:runtime',
+                        'librsvg:devel',
+                        'mono:cil',
+                        'mono:devel',
+                        'mono:runtime',
+                        'mono-addins',
+                        'perl:runtime',
+                        'pkgconfig:devel',
+                        # synapse is dead upstream
+                        # 'synapse:mono',
+                     ]
+
+        externalArchive = 'http://gent.softcatala.org/jmas/gbrainy/'

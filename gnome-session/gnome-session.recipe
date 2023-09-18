@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeSession(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'audiofile:devel',
+                      'cairo:devel', 'libXrandr:devel', 'xrdb:runtime', 'libXtst:devel',
+                      'gnome-control-center:devel', 'fontconfig:devel', 'freetype:devel',
+                      'libgnome-keyring:devel', 'libart_lgpl:devel', 'libgnomecanvas:devel',
+                      'libpng:devel', 'libxml2:devel', 'pango:devel', 'popt:devel',
+                      'tcp_wrappers:devel', 'esound:devel', 'glib:devel', 'gnome-vfs:devel',
+                      'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel',
+                      'libgnomeui:devel', 'GConf:runtime', 'desktop-file-utils:runtime',
+                      'gettext:runtime', 'glib:runtime', 'gnome-desktop:devel',
+                      'gnome-keyring:runtime', 'krb5-workstation:runtime', 'perl:runtime',
+                      'startup-notification:devel', 'dbus-glib:devellib', 'dbus:devel',
+                      'expat:devel', 'rsh:runtime', 'gnome-common:runtime',
+                      'gnome-common:devel', 'gnome-settings-daemon:devel', 'libglade:devel',
+                      'xmlto:runtime', 'xtrans:devel', 'dbus-glib:devel', 'dbus-glib:runtime', 
+                      'DeviceKit-power:devel', 'libnotify:devel',
+                      'polkit:devel', 'polkit-gnome:devel',]
+
+    name = 'gnome-session'
+    version = '2.32.1'
+    GnomePackageRecipe.extraConfig += ' --with-gtk=2.0 '
+
+    patches = [
+        # https://bugzilla.gnome.org/show_bug.cgi?id=607094
+        'nag-root-user.patch',
+        'gnome-session-cflags.patch',
+        'gnome-session-ice-auth-for-suid.patch',
+        'gnome-session-kdm-support.patch',
+        'gnome-session-bgo507101-tile-ui.patch',
+        'gnome-session-enable-disable-compiz.patch',
+        '95_dbus_request_shutdown.patch',
+        ]
+
+    def setup(r):
+        GnomePackageRecipe.unpack(r)
+        r.addSource('gnome.desktop')
+        r.addSource('gnome-session-sleep.svg')
+        # https://bugzilla.gnome.org/show_bug.cgi?id=597030
+        r.addPatch('http://bugzilla-attachments.gnome.org/attachment.cgi?id=173699')
+        r.Run(""" echo "ACLOCAL_AMFLAGS = -I m4" >> Makefile.am ; autoreconf -i -f """)
+
+        GnomePackageRecipe.build(r)
+        GnomePackageRecipe.install(r)
+
+        r.Install('gnome.desktop', '%(datadir)s/xsessions/', mode=0644)
+ 
+        r.MakeDirs('%(datadir)s/gnome/autostart')
+
+        r.Remove('%(datadir)s/pixmaps/splash')
+        r.Install('gnome-session-sleep.svg', '%(datadir)s/icons/hicolor/scalable/apps/',
+                  mode = 0644)
+
+
+        # for /usr/bin/pam-panel-icon
+        r.Requires('usermode-gtk:runtime',
+                   '%(name)s:runtime')
+
+        # bellow now provided by libcamberra...
+        r.Remove('%(datadir)s/gnome/autostart/gnome-login-sound.desktop')
+        r.Remove('%(datadir)s/gnome/shutdown/gnome-logout-sound.sh')
+        r.Remove('%(libdir)s/gnome-session/helpers/gnome-login-sound')
+
+        r.ExcludeDirectories(exceptions='%(datadir)s/gnome/autostart')

@@ -1,0 +1,2 @@
+autoLoadRecipes []
+autoLoadRecipes baserequires:recipe=foresight.rpath.org@fl:2-devel

@@ -1,0 +1,18 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('kdepackage.recipe')
+class libkdcraw(kdePackageRecipe):
+
+    name = 'libkdcraw'
+    version = '0.1.7'
+
+    buildRequires = [
+        'lcms:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/kipi/')
+

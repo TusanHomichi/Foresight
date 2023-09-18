@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AutoPackageRecipe(CPackageRecipe):
+    name = 'autopackage'
+    version = '1'
+
+    abstractBaseClass = 1
+
+    def setup(r):
+        r.unpack()
+        r.configure()
+        r.make()
+        r.makeinstall()
+        r.policy()
+
+    def unpack(r):
+        pass
+    def configure(r):
+        r.Configure()
+    def make(r):
+        r.Make()
+    def makeinstall(r):
+        r.MakeInstall()
+    def policy(r):
+        pass

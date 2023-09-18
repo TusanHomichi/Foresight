@@ -1,0 +1,15 @@
+class Hunspell(CPackageRecipe):
+    name = 'hunspell'
+    version = '1.3.2'
+    buildRequires = ['gettext:runtime', 'intltool:runtime', 'libstdc++:devel', 'ncurses:devel', 'perl:devel', 'readline:devel']
+    packageSummary = 'Spell checker'
+    packageDescription = '''Hunspell is a spell checker and morphological analyzer library and program
+designed for languages with rich morphology and complex word compounding or
+character encoding. Hunspell interfaces: Ispell-like terminal interface
+using Curses library, Ispell pipe interface, OpenOffice.org UNO module.'''
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/Hunspell/%(version)s/')
+        r.Configure('--disable-rpath --disable-static --with-ui --with-readline')
+        r.Make()
+        r.MakeInstall()

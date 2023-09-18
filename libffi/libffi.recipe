@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2009-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Libffi(AutoPackageRecipe):
+    name = 'libffi'
+    version = '3.0.13'
+ 
+    buildRequires = ['install-info:runtime']
+ 
+    def unpack(r):
+        r.addArchive('ftp://sourceware.org/pub/%(name)s/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+
+    def policy(r):
+        # gcc-4.1.x had this builtin
+        # so we mv libs around ...
+        r.Move('%(libdir)s/*.so*','%(libdir)s/%(name)s-%(version)s/lib/')
+        # ... and then we make sure they get picked 
+        r.Create('%(sysconfdir)s/ld.so.conf.d/%(name)s-%(target)s.%(version)s.conf',
+                 mode = 0644, 
+                 contents = '%(libdir)s/%(name)s-%(version)s/lib/')
+        r.ComponentSpec('lib', '%(sysconfdir)s/ld.so.conf.d/.*')
+        
+        r.Replace('includedir=\$\{libdir\}/libffi-%(version)s/include',
+                  'includedir=%(libdir)s/%(name)s-%(version)s/include',
+                  '%(libdir)s/pkgconfig/%(name)s.pc')
+        r.Replace('libdir=%(libdir)s',
+                  'libdir=%(libdir)s/%(name)s-%(version)s/lib',
+                  '%(libdir)s/pkgconfig/%(name)s.pc')

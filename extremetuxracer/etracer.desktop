@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Extreme Tux Racer
+Comment=Tux slalom game
+Exec=etracer
+Icon=/usr/share/pixmaps/etracericon.png
+Terminal=false
+Type=Application
+Categories=Game

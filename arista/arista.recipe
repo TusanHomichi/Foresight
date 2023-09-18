@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Arista(PackageRecipe):
+
+    name = 'arista'
+    version = '0.9.5'
+
+    buildRequires = ['python-setuptools:python','dbus-python:python', 'gnome-python:python', 'gst-python:python', 'pycairo:python', 'python:devel','desktop-file-utils:runtime', 'notify-python:python', 'python-simplejson:python']
+
+    def setup(r):
+        r.addArchive('http://programmer-art.org/media/releases/arista-transcoder/')
+        r.PythonSetup(data=" --install-data=%(prefix)s")

@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2007-2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class TelepathyGlib(GnomePackageRecipe):
+
+    name = 'telepathy-glib'
+    version = '0.14.8'
+
+    buildRequires = [
+        'dbus-glib:runtime',
+        'gobject-introspection:devel',
+        'vala:runtime',
+        ]
+
+    externalArchive = 'http://telepathy.freedesktop.org/releases/%(name)s/'
+
+    extraConfig = ('--enable-static=no '
+                   '--enable-introspection=yes '
+                   '--enable-vala-bindings=yes '
+                  )

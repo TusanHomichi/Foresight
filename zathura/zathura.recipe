@@ -1,0 +1,44 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Zathura(AutoPackageRecipe):
+    name = 'zathura'
+    version = '0.2.1'
+ 
+    buildRequires = [
+                    'atk:devel',
+                    'cairo:devel',
+                    'desktop-file-utils:runtime',
+                    'fontconfig:devel',
+                    'freetype:devel',
+                    'gdk-pixbuf:devel',
+                    'gettext:runtime',
+                    'girara:devel',
+                    'glib:devel',
+                    'gtk:devel',
+                    'libpng:devel',
+                    'pango:devel',
+                    'poppler:devel',
+                    'poppler-glib:devel',
+                    'sqlite:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://pwmt.org/projects/zathura/download/zathura-%(version)s.tar.gz')
+    #    r.addPatch('Makefile.patch')
+
+    def make(r):
+        r.Make('ZATHURA_GTK_VERSION=2 WITH_SQLITE=1 LIBDIR=%(libdir)s')
+
+    def policy(r):
+        r.Requires('zathura-pdf-poppler:lib', '%(bindir)s/%(name)s')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

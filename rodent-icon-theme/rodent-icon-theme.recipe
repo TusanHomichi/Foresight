@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class RodentIconTheme(PackageRecipe):
+    name = 'rodent-icon-theme'
+    version = '5.0'
+
+    buildRequires = ['diffutils:runtime', 'file:runtime', 'make:runtime']
+
+    def setup(r):
+        r.addArchive('http://sourceforge.net/projects/xffm/files/%(name)s/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

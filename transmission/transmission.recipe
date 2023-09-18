@@ -1,0 +1,36 @@
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Transmission(AutoPackageRecipe):
+
+    name = 'transmission'
+    version = '2.60'
+
+    packageSummary = 'Transmission is a cross-platform BitTorrent client'
+    packageDescription = 'Transmission is a free, lightweight BitTorrent client. It features a simple, intuitive interface on top on an efficient, cross-platform back-end.'
+
+    buildRequires = [
+            'gettext:runtime', 'pkgconfig:devel', 
+            'atk:devel', 'cairo:devel', 
+            'desktop-file-utils:runtime', 
+            'expat:devel', 'fontconfig:devel', 
+            'freetype:devel', 'glib:devel', 
+            'gtk:devel', 'libX11:devel', 
+            'libXrender:devel', 'libevent:devel', 
+            'libpng:devel', 'openssl:devel', 
+            'pango:devel', 'zlib:devel', 
+            'curl:devel', 'dbus-glib:devel', 
+            'dbus:devel', 'intltool:runtime', 
+            'libnotify:devel', 'dbus-glib:runtime', 
+            'gcc-c++:runtime', 'xfsprogs:devel', 
+            'GConf:devel', 'libcanberra:devel', 
+            'libdbusmenu-glib:devel']
+            
+
+    def unpack(r):
+        r.addArchive('http://mirrors.m0k.org/transmission/files/')
+
+    def configure(r):
+        r.Configure('--disable-static --with-gtk') 

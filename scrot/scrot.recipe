@@ -1,0 +1,14 @@
+class Scrot(CPackageRecipe):
+    name = 'scrot'
+    version = '0.8'
+ 
+    buildRequires = ['giblib:devel']
+ 
+    def setup(r):
+        r.addArchive('http://linuxbrit.co.uk/downloads/'
+                     '%(name)s-%(version)s.tar.gz')
+	r.Configure()
+	r.Make()	
+	r.MakeInstall()
+	r.Move('/usr/doc', '%(docdir)s')
+

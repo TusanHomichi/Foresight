@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LinkGrammar(CPackageRecipe):
+    name = 'link-grammar'
+    version = '4.7.6'
+ 
+    buildRequires = ['aspell:devel', 'aspell:runtime', 'pkgconfig:devel', 'glibc:devel', 'gcc-c++:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://www.abisource.com/downloads/link-grammar/%(version)s/')
+        r.Configure('--disable-static --enable-pthreads --includedir=%(includedir)s')
+        # Get rid of undesirable hardcoded runpaths
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'libtool')
+        r.Make()
+        r.MakeInstall()

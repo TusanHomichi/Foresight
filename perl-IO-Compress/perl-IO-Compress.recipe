@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlIoCompress(CPANPackageRecipe):
+    name = 'perl-IO-Compress'
+    version = '2.052'
+    author = 'PMQS'
+ 
+    buildRequires = []
+

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 rPath, Inc. 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class AllTray(CPackageRecipe):
+    name = 'alltray'
+    version = '0.7.5.1dev'
+ 
+    buildRequires = ['GConf:devel', 'libXpm:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'pango:devel', 'pkgconfig:devel', 'zlib:devel', 'libXres:devel', 'libgtop:devel', 'libwnck:devel', 'startup-notification:devel', 'autoconf:runtime', 'binutils:runtime', 'file:runtime', 'gettext:runtime', 'intltool:runtime', 'make:runtime', 'diffutils:runtime', 'automake:runtime', 'gcc:runtime', 'glibc:devel', 'gcc:lib', 'vala:runtime']
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/alltray/trunk/%(version)s/+download/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class StartupManager(PackageRecipe):
+    name = 'startup-manager'
+    version = '1.9.13'
+ 
+    buildRequires = ['python-setuptools:python', 'gettext:runtime', 'gnome-python:python', 'intltool:runtime', 'python:devel', 'desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/startup-manager/startupmanager_1.9.13.tar.gz')
+	r.Run('chmod +x setup.py')
+        r.Run('./setup.py install --prefix=%(destdir)s/%(prefix)s')
+#	r.PythonSetup('--prefix=%(destdir)s/%(prefix)s')

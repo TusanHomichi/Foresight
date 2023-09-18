@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Giggle(GnomePackageRecipe):
+
+    name = 'giggle'
+    version = '0.5'
+
+    buildRequires = ['GConf:devel', 
+			'ORBit2:devel', 
+			'desktop-file-utils:runtime', 
+			'evolution-data-server:devel', 
+			'git:runtime', 
+			'gtksourceview:devel', 
+			'libbonobo:devel', 
+			'libsoup:devel', 
+			'vte:devel']
+
+

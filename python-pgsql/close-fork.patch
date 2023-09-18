@@ -1,0 +1,63 @@
+diff --git a/NEWS b/NEWS
+--- a/NEWS
++++ b/NEWS
+@@ -1,3 +1,8 @@
++Changed in 0.9.8:
++ o Added a "fd" connection attribute to access the underlying socket.
++ o Added close_fork() connection method to close the socket without
++   notifying the server.
++
+ Changed in 0.9.7:
+  o updated inserttable (aka copy from stdin) support to correctly
+    detect and report more error conditions that can happen during the
+diff --git a/pgsql.c b/pgsql.c
+--- a/pgsql.c
++++ b/pgsql.c
+@@ -2135,6 +2135,10 @@
+     if (!strcmp(name, "transaction"))
+ 	return _pg_transaction(self);
+ 
++    /* file descriptor */
++    if (!strcmp(name, "fd"))
++        return PyInt_FromLong(PQsocket(self->cnx));
++
+     /* attributes list */
+     if (!strcmp(name, "__members__")) {
+ 	static char *members[] = {
+@@ -2278,3 +2282,6 @@
+ 	if (PyErr_Occurred())
+ 		Py_FatalError("can't initialize module _pgsql");
+ }
++
++
++/* vim: set sts=4 sw=4 expandtab : */
+diff --git a/pgsql.py b/pgsql.py
+--- a/pgsql.py
++++ b/pgsql.py
+@@ -323,6 +323,17 @@
+         self.__cnx.close()
+         self.__cnx = None
+ 
++    def close_fork(self):
++        """Close the connection without notifying the server.
++
++        Use this when cleaning up resources after forking a process that had
++        a connection open.
++        """
++        os.close(self.__cnx.fd)
++        self.__cache = {}
++        self.__cnx.close()
++        self.__cnx = None
++
+     # Postgresql autocommits everything not inside a transaction
+     # block, so to simulate autocommit=off, we have to start new
+     # transactions as soon as we flush them
+@@ -367,7 +378,7 @@
+     
+     def __getattr__(self, name):
+         if name in set([
+-            "dbname", "host", "port", "opt", "tty", "notices", "status",
++            "dbname", "host", "port", "opt", "tty", "fd", "notices", "status",
+             "escape_string", "escape_bytea", "unescape_bytea", "transaction",
+             "locreate", "loimport", "getlo", "setnotices"]):
+             return getattr(self.__cnx, name)

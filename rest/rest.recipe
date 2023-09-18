@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Rest(GnomePackageRecipe):
+
+    name = 'rest'
+    version = '0.7.6'
+
+    buildRequires = ['libsoup:devel']
+
+    extraConfig = (' --disable-static')
+
+    def policy(r):
+        r.Symlink('%(libdir)s/librest-0.7.so.0.0.0', '%(libdir)s/librest-0.7.so')
+        r.Symlink('%(libdir)s/librest-extras-0.7.so.0.0.0', '%(libdir)s/librest-extras-0.7.so')

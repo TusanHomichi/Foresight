@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009 Dick Marinus (dick@mrns.nl)
+#
+
+class LibRAPI2(CPackageRecipe):
+    name = 'librapi2'
+    version = '0.15.2'
+
+    buildRequires = ['dbus-glib:devel', 'dbus:devel', 'file:runtime', 'glib:devel', 'libsynce:devel', 'make:runtime', 'pkgconfig:devel', 'gcc-c++:runtime', 'hal:devel']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/synce/SynCE/%(version)s/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

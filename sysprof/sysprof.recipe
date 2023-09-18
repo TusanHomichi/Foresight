@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadRecipe('gnomepackage')
+class Sysprof(GnomePackageRecipe):
+    name = 'sysprof'
+    version = '1.1.8'
+    buildRequires = [ 'libglade:devel', 'desktop-file-utils:runtime' ]
+    externalArchive = 'http://sysprof.com/'
+    
+    
+    def policy(r):
+        r.addSource('sysprof.desktop')
+        r.Desktopfile('sysprof.desktop')
+        for size in [ '16', '24',  '32', '48', ]:
+            r.Symlink('%%(datadir)s/pixmaps/sysprof-icon-%s.png' % size,
+                      '%%(datadir)s/icons/hicolor/%sx%s/apps/sysprof-icon.png' % (size,size))
+        

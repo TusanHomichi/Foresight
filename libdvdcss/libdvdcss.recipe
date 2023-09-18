@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libdvdcss(AutoPackageRecipe):
+        name = 'libdvdcss'
+        version = '1.2.11'
+        buildRequires = [ 'doxygen:runtime', 'tetex-latex:runtime', 'tetex-dvips:runtime']
+
+        def unpack(r):
+                r.addArchive('http://download.videolan.org/pub/libdvdcss/%(version)s/%(name)s-%(version)s.tar.bz2')
+

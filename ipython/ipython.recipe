@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+#               2007-2008 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IPython(PackageRecipe):
+    name = 'ipython'
+    version = '1.1.0'
+    buildRequires = [
+        'decorator:python', 
+        'desktop-file-utils:runtime',
+        'docutils:python', 
+        'idle:lib',
+        'paramiko:python', 
+        'pexpect:python', 
+        'Pygments:python',
+        'pygobject:python',
+        'pygtk:python',
+        'pyparsing:python', 
+        'python-argparse:python',
+        'python:devel',
+        'python-numeric:python',
+        'python-sqlite:python', 
+        'python:tk',
+        'ruby:runtime', 
+        'wxPython:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://archive.ipython.org/release/%(version)s/%(name)s-%(version)s.tar.gz')
+        # patch for fix warning of python 2.6
+        #r.addPatch("http://launchpadlibrarian.net/18963160/py26_set.diff")
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        r.addSource('ipythonx.desktop')
+        r.Desktopfile('ipythonx.desktop')
+        # workaround for rMake excessive creativity
+        #r.Requires(exceptions = 'file: /tmp/.*')
+        r.Requires('Pygments:python', 'ipython:runtime')
+        r.Requires('tornado:python', 'ipython:runtime')
+        r.Requires('python-zmq:python', 'ipython:runtime')
+
+        r.Remove('/usr/lib*/python*/site-packages/*egg-info', recursive = True)

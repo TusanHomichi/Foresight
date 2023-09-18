@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2011 Andres Vargas (zodman@foresightlinux.org)
+#
+import datetime
+class Sparkleshare(CPackageRecipe):
+    name = 'SparkleShare'
+    version = 'git.d7d6e4a' 
+
+    buildRequires = ['desktop-file-utils:runtime', 'file:runtime', 'gettext:runtime', 'git:runtime', 'gtk-sharp:cil', 'intltool:runtime', 'make:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'nant:runtime', 'notify-sharp:cil', 'pkgconfig:devel', 'webkit-sharp:cil','libtool:runtime','which:runtime',
+    'automake:runtime','autoconf:runtime',"intltool:runtime",'libtool:devel','libtool:runtime',"intltool:devel","intltool:runtime","intltool:data",
+    'gtk-sharp:devellib','gtk-sharp:cil',
+    'webkit-sharp:cil', 'webkit-sharp:devellib',
+    'notify-sharp:cil', 'notify-sharp:devellib',
+    'pygobject:python', 'pygtk:python', 'python:devel'
+    ]
+
+
+    def setup(r):
+        r.Run("git clone git://github.com/hbons/SparkleShare.git")
+        #r.addArchive("https://github.com/downloads/hbons/SparkleShare/sparkleshare-0.2-rc1.tar.gz");
+        r.Configure(configureName="autogen.sh", dir="SparkleShare")
+        r.Make(dir="SparkleShare")
+        r.MakeInstall(dir="SparkleShare")

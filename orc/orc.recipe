@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Orc(AutoPackageRecipe):
+    name = 'orc'
+    version = '0.4.13'
+
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addArchive('http://code.entropywave.com/download/orc/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+
+    def policy(r):
+        r.Remove('%(libdir)s/%(name)s', recursive = True)

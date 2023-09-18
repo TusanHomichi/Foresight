@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Amaya(AutoPackageRecipe):
+    name = "amaya"
+    version = "11.3.1"
+
+    packageSummary = 'Amaya is a Web editor, i.e. a tool used to create and update documents directly on the Web'
+    packageDescription = 'Amaya is a Web editor, i.e. a tool used to create and update documents directly on the Web. Browsing features are seamlessly integrated with the editing and remote access features in a uniform environment. This follows the original vision of the Web as a space for collaboration and not just a one-way publishing medium. It was extended to support XML and an increasing number of XML applications such as the XHTML family, MathML, and SVG. It allows all those vocabularies to be edited simultaneously in compound documents.'
+
+    buildRequires = ['Mesa:devel', 'desktop-file-utils:runtime', 'expat:devel', 'freetype:devel', 'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'openssl:devel', 'pkgconfig:devel', 'raptor:devel', 'w3c-libwww:devel', 'which:runtime', 'wxWidgets:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.macros.upstreamVersion = r.macros.version.replace('_','-')
+	r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+	r.addArchive('http://www.w3.org/Amaya/Distribution/%(name)s-fullsrc-%(version)s.tgz')
+
+        for p in [ 'amaya-fix-amaya-wxfile.patch',
+                   'amaya-fix-thotlib-png14.patch',
+                   'amaya-fix-thotlib-wxfile.patch',
+                   'amaya-splitmode.patch',
+                   'amaya-wakeupidle.patch',
+                   'amaya-wxyield.patch'
+                   ]:
+            r.addPatch(p, dir = '..')
+
+	r.addSource('MesaConfig-x86', use=Arch.x86)
+	r.addSource('MesaConfig-x86-64', use=Arch.x86_64)
+	r.addSource('amaya.wrapper', macros=True)
+        r.Remove('../wxWidgets', recursive = True)
+        r.Remove('../redland', recursive = True)
+        r.Remove('../Mesa', recursive = True)
+
+    def configure(r):
+	r.MakeDirs('../Amaya/wx')
+	r.Move('MesaConfig-*', '../Mesa/configs/current')
+	r.ManualConfigure(' --prefix=%(libdir)s '
+                          ' --host=%(target)s'
+                          ' --bindir=%(bindir)s '
+                          ' --infodir=%(datadir)s/info '
+                          ' --mandir=%(datadir)s/man '
+                          ' --docdir=%(datadir)s/doc/%(name)s-%(version)s '
+                          ' --datadir=%(datadir)s '
+                          ' --sysconfdir=%(sysconfdir)s '
+                          ' --with-dav '
+                          ' --with-mesa '
+                          ' --enable-system-wx '
+                          ' --enable-system-raptor '
+                          # ' --enable-system-libwww '
+                          ,
+                          configureName='../configure',
+                          dir='../Amaya/wx')
+
+    def make(r):
+	r.Make('all', dir='../Amaya/wx')
+
+    def makeinstall(r):
+	r.MakeInstall(dir='../Amaya/wx')
+	r.Run('./script_install_gnomekde bin %(destdir)s%(datadir)s %(destdir)s%(bindir)s', dir='../Amaya/wx')
+	r.Remove('%(bindir)s/%(name)s')
+	r.Install('amaya.wrapper', '%(bindir)s/%(name)s', mode=0755)
+	

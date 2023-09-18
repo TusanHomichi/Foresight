@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UbuntuMonoIconTheme(AutoPackageRecipe):
+    name = 'ubuntu-mono-icon-theme'
+    version = '0.0.30'
+ 
+    buildRequires = [
+                      ]
+ 
+    def setup(r):
+        r.addArchive('https://launchpad.net/ubuntu/+archive/primary/+files/ubuntu-mono_%(version)s.tar.gz')
+
+        r.Install('ubuntu-mono-dark', '%(datadir)s/icons/')
+        r.Install('ubuntu-mono-light', '%(datadir)s/icons/')
+        # 
+        r.Replace('Humanity', 'Faenza',
+                  '%(datadir)s/icons/*/index.theme')
+        r.Remove('%(datadir)s/icons/*/apps/*/{start-here.svg,distributor-logo.svg}')

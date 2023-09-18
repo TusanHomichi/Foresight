@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkSpell(AutoPackageRecipe):
+    buildRequires = [ 'gtk:devel', 'aspell:devel', 'atk:devel', 'glib:devel',
+                      'pango:devel', 'cairo:devel', 'pkgconfig:devel',
+                      'fontconfig:devel', 'freetype:devel', 'libpng:devel',
+                      'zlib:devel', 'libXau:devel', 'libXdmcp:devel',
+                      'libX11:devel', 'libXext:devel', 'libXrender:devel',
+                      'gettext:runtime', 'file:runtime', 'gtk-doc:devel', 
+                      'expat:devel']
+
+    extraConfig = ''
+    if Use.builddocs:
+        buildRequires.append('gtk-doc:runtime')
+        extraConfig += ' --enable-gtk-doc'
+    else:
+        extraConfig += ' --disable-gtk-doc'
+
+    name = 'gtkspell'
+    version = '2.0.11'
+
+    def unpack(r):
+        r.addArchive('http://gtkspell.sourceforge.net/download/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure(r.extraConfig)

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomeIconTheme(GnomePackageRecipe):
+    buildRequires = [ 'perl:runtime', 
+        'hicolor-icon-theme:data', 'gettext:runtime', 'gtk:runtime',
+        'icon-naming-utils:runtime', 'icon-naming-utils:devellib' ]
+
+    name = 'gnome-icon-theme'
+    version = '2.31.0'

@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GuCharMap(GnomePackageRecipe):
+    name = 'gucharmap'
+    version = '2.32.1'
+
+    extraConfig = (
+        ' --disable-gtk-immodules'
+        ' --disable-scrollkeeper'
+        )
+
+    makeInstallArgs = 'RUN_QUERY_IMMODULES_TEST=false'
+
+    buildRequires = [ 'atk:devel', 'desktop-file-utils:runtime', 'GConf:devel',
+                      'glib:devel', 'gnome-vfs:devel', 'libart_lgpl:devel',
+                      'libbonobo:devel', 'libbonoboui:devel', 'libgnomecanvas:devel',
+                      'libgnome:devel', 'libgnomeui:devel', 'libxml2:devel',
+                      'libxslt:runtime', 'ORBit2:devel', 'pango:devel', 'popt:devel',
+                      'rarian:runtime', 'cairo:devel', 'fontconfig:devel',
+                      'freetype:devel', 'libgnome-keyring:devel', 'libpng:devel',
+                      'gettext:runtime', 'perl:runtime', 'intltool:runtime',
+                      'gnome-doc-utils:devel', 'gnome-doc-utils:data', 'gtk:runtime',
+                      'gnome-doc-utils:runtime', 'GConf:runtime'
+                      ]
+    

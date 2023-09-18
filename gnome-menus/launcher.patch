@@ -1,0 +1,20 @@
+diff -r 543dc92d519f layout/settings.menu
+--- a/layout/settings.menu	Sun Mar 09 01:27:07 2008 -0500
++++ b/layout/settings.menu	Sun Mar 09 01:29:03 2008 -0500
+@@ -41,4 +41,16 @@
+     <Menuname>Administration</Menuname>
+   </Layout>
+ 
++  <Include>
++     <Filename>foresight-user-guide.desktop</Filename>
++     </Include>
++  
++  <!-- Separator between menus and gnome-app-install -->
++  <Layout>
++      <Merge type="menus"/>
++      <Merge type="files"/>
++      <Separator/>
++       <Filename>foresight-user-guide.desktop</Filename>
++  </Layout>
++
+ </Menu> <!-- End Settings -->

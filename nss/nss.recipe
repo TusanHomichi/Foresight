@@ -1,0 +1,286 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadInstalled('nspr')
+class NSS(CPackageRecipe):
+    name = 'nss'
+    version = '3.15.1'
+
+    buildRequires = [ 'nspr:devel', 'perl:runtime', 'sqlite:devel', 'zlib:devel']
+
+    def setup(r):
+        vmajor, vminor, vpatch = r.version.split('.')
+        r.disableParallelMake()
+        r.addArchive('http://ftp.mozilla.org/pub/mozilla.org/security/'
+                     'nss/releases/NSS_%s_%s_%s_RTM/src/' % (vmajor, vminor, vpatch))
+
+        r.addArchive('%(name)s-pem-20130405.tar.bz2', dir = '%(name)s-%(version)s/')
+        r.addSource('mkpkgconfigfiles.sh', macros = True)
+        r.addSource('nss.pc.in')
+        r.addSource('nss-config.in')
+        r.addSource('nss-util.pc.in')
+        r.addSource('nss-util-config.in')
+        r.addSource('nss-softokn.pc.in')
+        r.addSource('nss-softokn-config.in')
+    
+
+
+        # vmajor, vminor, vpatch = r.version.split('.')
+
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=367577
+        # r.addPatch('https://bugzilla.mozilla.org/attachment.cgi?id=252152',
+        #           dir = 'mozilla')
+
+        # taken from nss pk from RH
+        for p in [ #'add-relro-linker-option.patch',
+                   'renegotiate-transitional.patch',
+                   'nss-enable-pem.patch',
+                   'nss-539183.patch',
+                   'nss-646045.patch',
+                   # must statically link pem against the freebl in the buildroot
+                   # Needed only when freebl on tree has newe APIS
+                   # 'nsspem-use-system-freebl.patch',
+                   # This patch is currently meant for stable branches
+                   # 'nss-ssl-cbc-random-iv-off-by-default.patch',
+                   # TODO: Remove this patch when the ocsp test are fixed
+                'nss-3.14.0.0-disble-ocsp-test.patch',
+                '0001-sync-up-with-upstream-softokn-changes.patch',
+                'Bug-896651-pem-dont-trash-keys-on-failed-login.patch',
+                # The ocsp stapling tests currently require access to the
+                # kuix.de test server but koji forbids outbount connections
+                'disable-ocsp-stapling-tests.patch',
+                # Fedora / RHEL-only patch, the templates directory was originally introduced to support mod_revocator
+                'utilwrap-include-templates.patch',
+                # TODO submit this patch upstream
+                'nss-versus-softoken-tests.patch',
+                # TODO remove when we switch to building nss without softoken
+                'nss-skip-bltest-and-fipstest.patch',
+                'iquote.patch',
+
+        ]:
+            r.addPatch(p) # , dir='mozilla')
+
+
+#        r.addPatch('https://raw.github.com/PhantomX/slackbuilds/master/nss/patches/0001-sync-up-with-upstream-softokn-changes.patch')
+
+        # tweak softtokn .in
+        r.Replace(('@MOD_MAJOR_VERSION@', vmajor),
+                  ('@MOD_MINOR_VERSION@', vminor),
+                  ('@MOD_PATCH_VERSION@', vpatch),
+                  ('@prefix@','%(prefix)s'),
+                  'nss-softokn-config.in')
+
+        r.Replace(('@libdir@','%(libdir)s'),
+                  ('@prefix@','%(prefix)s'),
+                  ('@exec_prefix@','%(exec_prefix)s'),
+                  ('@includedir@','%(includedir)s'),
+                  ('@SOFTOKEN_VERSION@', '%(version)s'),
+                  ('@NSSUTIL_VERSION@', '%(version)s'),
+                  ('@NSPR_VERSION@', Nspr.version),
+                  'nss-softokn.pc.in')
+
+        if Arch.x86_64:
+            r.Environment('USE_64', '1')
+
+        r.Environment('BUILD_OPT', '1')
+        r.Environment('FREEBL_NO_DEPEND', '1')
+
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=717906
+        r.Environment('FREEBL_LOWHASH', '1')
+
+        r.Environment('XCFLAGS', '%(optflags)s')
+
+        r.Environment('PKG_CONFIG_ALLOW_SYSTEM_LIBS', '1')
+        r.Environment('PKG_CONFIG_ALLOW_SYSTEM_CFLAGS', '1')
+
+        r.Environment('NSPR_INCLUDE_DIR','%(includedir)s/nspr4')
+        r.Environment('NSPR_LIB_DIR','%(libdir)s')
+
+        r.Environment('NSS_USE_SYSTEM_SQLITE', '1')
+
+        ## Add custom CA certificates
+        # First, obtain a DER file of the root certificate and feed
+        # it to addbuiltin, which is provided by this package:
+        #
+        # /usr/lib/nss/unsupported-tools/addbuiltin \
+        #   -n "Cert Nickname" -t "CT,C,C" <foo.der >foo.txt
+        #
+        # Then, `cvc add' the .txt file to this package and make an
+        # addSource line like the one(s) below.
+        #
+        # XXX 
+        # XXX CACERT.org cert  now added by aproper patch
+        # XXX stuff above & bellow remains as comment for archeological reasons
+        # XXX
+        # 
+        #        r.addSource('cacert.org.txt', dir='custom_builtins')
+        #        r.Run('cat custom_builtins/*.txt >>mozilla/security/nss/lib/ckfw/'
+        #            'builtins/certdata.txt')
+        #        r.Make('generate', dir='mozilla/security/nss/lib/ckfw/builtins')
+
+        r.Environment('NSS_ENABLE_ECC', '1')
+        # r.Environment('NSS_ECC_MORE_THAN_SUITE_B', '1')
+        # r.Environment('NSDISTMODE', 'copy')
+
+        r.Make(dir='nss/coreconf')
+        r.Make(dir='nss/lib/dbm')
+        r.Make(dir='nss/')
+
+        r.MakeDirs('%(libdir)s/pkgconfig')
+        # Set up our package files
+        r.macros.nspr_version = Nspr.version
+
+        r.MakeDirs('mozilla/dist/')
+        r.Replace('mozilla/security/nss/lib', 'nss/lib', 'mkpkgconfigfiles.sh')
+        r.Run('sh %(builddir)s/mkpkgconfigfiles.sh')
+
+        r.Install('mozilla/dist/pkgconfig/*.pc', '%(libdir)s/pkgconfig/', mode=0644)
+        r.Install('mozilla/dist/pkgconfig/*config', '%(bindir)s/', mode=0755)
+        # override nss-softokn* zero bit default ones
+        r.Install('nss-softokn-config.in', '%(bindir)s/nss-softokn-config', mode=0755)
+        r.Install('nss-softokn.pc.in', '%(libdir)s/pkgconfig/nss-softokn.pc')
+
+        r.macros.unsupported_tools_directory='%(libdir)s/nss/unsupported-tools'
+
+        # Copy the pkcs #11 configuration script
+        r.addSource('setup-nsssysinit.sh', dir='%(bindir)s/setup-nsssysinit.sh', mode = 0755)
+
+        # There is no make install target so we'll do it ourselves.
+        for file in [ 'libnss3.so',
+                      'libnssckbi.so',
+                      'libnsspem.so',
+                      'libnsssysinit.so',
+                      'libsmime3.so',
+                      'libssl3.so',
+                      # nss-util
+                      'libnssutil3.so',
+                      # nss-softokn
+                      'libsoftokn3.so',
+                      'libnssdbm3.so',
+                      'libfreebl.a',
+                      ]:
+            r.Install('dist/*.OBJ/lib/%s' % file, '%(libdir)s/', mode=0755)
+
+        # softokn
+        for file in [ 'libfreebl3.so',
+                      ]:
+            r.Install('dist/*.OBJ/lib/%s' % file, '/%(lib)s/', mode=0755)
+            r.Symlink('/%(lib)s/' + file, '%(libdir)s/' + file)
+
+        # Install the empty NSS db files
+        r.MakeDirs('%(sysconfdir)s/pki/nssdb')
+
+        r.addSource('blank-cert8.db',
+                    dest = '%(sysconfdir)s/pki/nssdb/cert8.db',
+                    mode = 0644,)
+
+
+        r.addSource('blank-key3.db',
+                    dest = '%(sysconfdir)s/pki/nssdb/key3.db',
+                    mode = 0644,)
+
+        r.addSource('blank-secmod.db',
+                    dest = '%(sysconfdir)s/pki/nssdb/secmod.db',
+                    mode = 0644,)
+
+        # Shared db
+        r.addSource('blank-cert9.db',
+                    dest = '%(sysconfdir)s/pki/nssdb/cert9.db',
+                    mode = 0644,)
+
+        r.addSource('blank-key4.db',
+                    dest = '%(sysconfdir)s/pki/nssdb/key4.db',
+                    mode = 0644,)
+
+        r.addSource('system-pkcs11.txt',
+                    dest = '%(sysconfdir)s/pki/nssdb/pkcs11.txt',
+                    mode = 0644,)
+
+        # Copy the development libraries we want
+        for file in [ 'libcrmf.a',
+                      'libnssb.a',
+                      'libnssckfw.a'
+                      ]:
+            r.Install('dist/*.OBJ/lib/%s' % file,
+                      '%(libdir)s/',
+                      mode=0755)
+
+        # Copy the binaries we want
+        for file in [ 'certutil',
+                      'cmsutil',
+                      'crlutil',
+                      'modutil',
+                      'pk12util',
+                      'signtool',
+                      'signver',
+                      'ssltap'
+                      ]:
+            r.Install('dist/*.OBJ/bin/%s' % file,
+                      '%(bindir)s/',
+                      mode=0755)
+
+        # Copy the binaries we ship as unsupported
+        for file in [ 'atob', 
+                      'btoa',
+                      'derdump',
+                      'ocspclnt',
+                      'pp',
+                      'selfserv',
+                      'strsclnt',
+                      'symkeyutil',
+                      'tstclnt',
+                      'vfyserv',
+                      'vfychain',
+                      # softokn
+                      'shlibsign',
+                      ]:
+            r.Install('dist/*.OBJ/bin/%s' % file,
+                      '%(unsupported_tools_directory)s/',
+                      package=':runtime',
+                      mode=0755)
+
+        # Copy the include files we want
+        r.Install('dist/public/nss/*.h', '%(includedir)s/nss3/')
+
+        # softokn
+        r.Install('dist/private/nss/blapi.h', '%(includedir)s/nss3/')
+
+        r.Config(exceptions = '%(sysconfdir)s/pki/nssdb/.*')
+        r.InitialContents('%(sysconfdir)s/pki/nssdb/.*')
+        
+        # shlibsign refuses to behave under rMake...
+        # this gets around it
+        r.addSource('nss_shlibsign.tagdescription',
+                    macros=True,
+                    dest='%(tagdescriptiondir)s/nss_shlibsign')
+
+        r.addSource('nss_shlibsign.taghandler',
+                    macros=True,
+                    dest='%(taghandlerdir)s/nss_shlibsign',
+                    mode=0755)
+
+        r.Requires('nss:runtime', '%(taghandlerdir)s/nss_shlibsign')
+
+        # for file in [ 'libsoftokn3', 'libnssdbm3' ]:
+        #     sign = '%(libdir)s/' + file + '.chk'
+        #     so = '%(libdir)s/' + file + '.so'
+        #     r.Create(sign)
+        #     r.Transient(sign)
+        #     # r.Run('%(destdir)s%(unsupported_tools_directory)s/shlibsign -v -i  %(destdir)s/' + so + ' -o %(destdir)s/'+ sign)
+        #     r.Symlink(sign, '/%(lib)s/' + file + '.chk')
+        #     r.TagSpec('nss_shlibsign', so)
+
+        # for file in [ 'libfreebl3',]:
+        #     sign = '/%(lib)s/' + file + '.chk'
+        #     so = '/%(lib)s/' + file + '.so'
+        #     r.Create(sign)
+        #     r.Transient(sign)
+        #     # r.Run('%(destdir)s%(unsupported_tools_directory)s/shlibsign -v -i  %(destdir)s/' + so + ' -o %(destdir)s/'+ sign)
+        #     r.Symlink(sign, '%(libdir)s/' + file + '.chk')
+        #     r.TagSpec('nss_shlibsign', so)
+
+        r.Requires('ca-certificates:config', 'nss:config')
+

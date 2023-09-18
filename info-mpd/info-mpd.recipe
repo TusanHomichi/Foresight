@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2009-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class info_mpd(UserInfoRecipe):
+    name = 'info-mpd'
+    version = '1'
+
+    buildRequires = [ 'info-pulse-access:user', 'info-pulse-rt:user' ]
+
+    def setup(r):
+         r.User('mpd', 251, group = 'mpd', supplemental=['pulse-access', 'pulse-rt'],
+            homedir='%(localstatedir)s/tmp/')

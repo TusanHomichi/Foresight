@@ -1,0 +1,5 @@
+PGPORT="5432"
+PGDATA="%(pgdata)s"
+PGOPTS=""
+PGLOG="%(pglog)s"
+PGTZ="/usr/share/zoneinfo"

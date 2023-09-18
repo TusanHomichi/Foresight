@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Elementary(AutoPackageRecipe):
+    name = 'elementary'
+    version = '1.7.5'
+
+    buildRequires = [
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'doxygen:runtime', 
+        'ecore:devel', 
+        'e-dbus:devel',
+        'edje:devel', 
+        'edje:runtime', 
+        'eet:devel', 
+        'eet:runtime', 
+        'efreet:devel',
+        'efreet:runtime', 
+        'eina:devel', 
+        'eio:devel', 
+        'embryo:devel',
+        'embryo:runtime',
+        'emotion:devel', 
+        'ethumb:devel', 
+        'evas:devel', 
+        'gettext:runtime', 
+        'intltool:runtime', 
+        'gtk:runtime',
+        'libexif:devel', 
+        'pkgconfig:devel',
+            ]
+ 
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive("http://download.enlightenment.org/releases/elementary-%(version)s.tar.gz")
+
+    def configure(r):
+        r.Configure('--disable-elementary-test --disable-doc --disable-debug --disable-static --disable-emap')

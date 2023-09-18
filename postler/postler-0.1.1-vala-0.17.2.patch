@@ -1,0 +1,42 @@
+diff -up postler-0.1.1/postler/postler-folders.vala.vala18 postler-0.1.1/postler/postler-folders.vala
+--- postler-0.1.1/postler/postler-folders.vala.vala18	2011-03-21 02:06:07.000000000 +0100
++++ postler-0.1.1/postler/postler-folders.vala	2012-07-25 19:36:25.653159301 +0200
+@@ -340,7 +340,7 @@ public class Postler.Folders : Gtk.TreeV
+                                 Columns.LOCATION, null);
+                     Gtk.TreeIter iter;
+                     while (store.iter_children (out iter, account_iter))
+-                        store.remove (iter);
++                        store.remove (ref iter);
+                 }
+                 else {
+                     var monitor = folder_dir.monitor_directory (0, null);
+@@ -443,7 +443,7 @@ public class Postler.Folders : Gtk.TreeV
+                     if (folder.role != null
+                      && get_folder_iter (account_info.path + "/" + folder.role,
+                                          account_iter, out folder_iter)) {
+-                        store.remove (folder_iter);
++                        store.remove (ref folder_iter);
+                         need_update = true;
+                     }
+ 
+diff -up postler-0.1.1/postler/postler-messages.vala.vala18 postler-0.1.1/postler/postler-messages.vala
+--- postler-0.1.1/postler/postler-messages.vala.vala18	2011-03-21 02:06:07.000000000 +0100
++++ postler-0.1.1/postler/postler-messages.vala	2012-07-25 19:35:44.055603418 +0200
+@@ -899,7 +899,7 @@ public class Postler.Messages : Gtk.Tree
+         case FileMonitorEvent.DELETED:
+             Gtk.TreeIter iter;
+             if (get_message_iter (file.get_path (), out iter))
+-                store.remove (iter);
++                store.remove (ref iter);
+             break;
+         case FileMonitorEvent.CHANGED:
+         case FileMonitorEvent.CHANGES_DONE_HINT:
+@@ -1079,7 +1079,7 @@ public class Postler.Messages : Gtk.Tree
+                     sort.convert_iter_to_child_iter (out child_iter, sort_iter);
+                     Gtk.TreePath next_path = sort.get_path (sort_iter);
+                     content.clear ();
+-                    if (store.remove (child_iter)) {
++                    if (store.remove (ref child_iter)) {
+                         next_path.prev ();
+                         if (sort.get_iter (out sort_iter, next_path)) {
+                             set_cursor (sort.get_path (sort_iter), null, false);

@@ -1,0 +1,14 @@
+#
+# Copyright (c) %(year)s Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class istream(AutoPackageRecipe):
+    name = 'istream'
+    version = '0.10'
+ 
+    buildRequires = ['gnome-panel:devel', 'gst-plugins-base:devel', 'expat:devel', 'libXtst:devel', 'pkgconfig:devel', 'xextproto:devel', 'libgnomeui:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.jochen-baier.de/istream/istream-0.10.tar.gz')

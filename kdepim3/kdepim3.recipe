@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kde3corepackage')
+class kdePIM3(kde3CorePackageRecipe):
+
+    name = 'kdepim3'
+    version = '3.5.9'
+
+    verify = False
+    buildAPIDox = False
+    enableFinal = False
+
+    buildRequires = [
+        'autoconf:runtime', 'automake:runtime', 'bison:runtime',
+        'cyrus-sasl:devel', 'flex:runtime', 'gnupg:runtime', 'gpgme:devel',
+        'libgpg-error:devel', 'libmal:devel', 'libopensync:devel',
+        'lockdev:devel', 'pcre:devel', 'perl:devel', 'perl:runtime',
+        'pilot-link:devel'
+    ]
+
+    modules = [
+        'akregator',
+        'kaddressbook',
+       ('kaddressbook', 'kabc'),
+        'kalarm',
+        'kandy',
+        'karm',
+       (name, 'mimelib'),
+       (name, 'networkstatus'),
+       (name, 'libkdepim'),
+       (name, 'libkmime'),
+       (name, 'pixmaps'),
+       ('kdepim3-wizards', 'wizards'),
+       ('kfile-plugins-pim', 'kfile-plugins'),
+       ('kio-plugins-pim', 'kioslaves'),
+        #'kitchensync', doesn't builds b/c of libopensync TODO: maybe it will builds with auto*
+       ('kleopatra', 'certmanager'),
+       ('kleopatra', 'doc/kleopatra'),
+       ('kleopatra', 'doc/kwatchgnupg'),
+        'kmail',
+       ('kmail', 'indexlib'),
+       ('kmail', 'plugins'),
+       ('kmail', 'kmailcvt'),
+       ('kmail', 'libksieve'),
+        'kmobile',
+        'knode',
+        'knotes',
+        'kode',
+        'konsolekalendar',
+        'kontact',
+        'korganizer',
+       ('korganizer', 'kgantt'),
+       ('korganizer', 'kdgantt'),
+        'korn',
+        'kpilot',
+        'kresources',
+        'ktnef',
+        'libkcal',
+        'libkdenetwork',
+        'libkholidays',
+        'libkpgp',
+        'libkpimexchange',
+        'libkpimidentities',
+        'libemailfunctions'
+    ]
+
+    def postUnpack(r):
+
+        r.addPatch('kdepim-3.5.9-kde#127696.patch')
+        r.addPatch('kdepim-3.5.x-kmail-imap-crash.patch')
+        r.addPatch('kdepim-xdg_open.patch')
+        r.addPatch('kdepim-kde#151150.patch')
+        r.addPatch('kdepim-3.5.9-opensync03.patch', dir='kitchensync')
+
+        # Fix pic installs dir
+        r.Replace('default.kde', 'crystalsvg', 'kmobile/devices/pics/Makefile.in')
+
+    def postInstall(r):
+
+        # Provided by kdeartwork-icon-themes
+        r.Remove('%(datadir)s/icons/crystalsvg', recursive=True)
+

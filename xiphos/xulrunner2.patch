@@ -1,0 +1,60 @@
+--- trunk/src/gecko/gecko-utils.cpp	2010/11/26 01:24:21	4136
++++ trunk/src/gecko/gecko-utils.cpp	2010/11/27 11:12:24	4137
+@@ -233,11 +233,9 @@
+ 	//I have really no clue what this ranges mean but if xulrunner is
+ 	//outside of this range we get coredumps =( so here is a bold assumption
+ 	//that we will be able to work with any future xulrunner.
+-#define UPPER_RANGE "1.9.99"
+-#define LOWER_RANGE "1.9.0"
+ 	static const GREVersionRange greVersion = {
+-		LOWER_RANGE, PR_TRUE,
+-		UPPER_RANGE, PR_TRUE
++		GECKO_MIN, PR_TRUE,
++		GECKO_MAX, PR_TRUE
+ 	};
+ 	char xpcomLocation[PATH_MAX];
+ 	rv = GRE_GetGREPathWithProperties(&greVersion, 1, nsnull, 0, xpcomLocation, sizeof (xpcomLocation));
+
+--- trunk/wscript	2010/11/26 01:24:21	4136
++++ trunk/wscript	2010/11/27 11:12:24	4137
+@@ -311,7 +311,7 @@
+ 
+ 
+     if conf.check_cfg(modversion='gtkhtml-editor-3.14',
+-                      msg='Is post GNOME3 gtkhtml-editor available?',
++                      msg='Checking for GNOME3 gtkhtml-editor',
+                       okmsg='Deffinatly',
+                       errmsg='Probably, not'
+                       ):
+@@ -377,6 +377,20 @@
+                                                      args='--variable=sdkdir',
+                                                      okmsg=waffles.misc.myokmsg,
+                                                      msg="Checking for libxul sdkdir").strip())
++            conf.define('GECKO_VER', conf.check_cfg(package='libxul-embedding',
++                                                    args='--modversion',
++                                                     okmsg=waffles.misc.myokmsg,
++                                                    msg="Checking for Gecko GREVersion").strip())
++            if not env['GECKO_VER'][3].isalpha():
++                    conf.define('GECKO_MIN', env['GECKO_VER'][0:5]+'.0')
++                    conf.define('GECKO_MAX', env['GECKO_VER'][0:5]+'.99')
++            else:
++                    conf.define('GECKO_MIN', env['GECKO_VER'][0:4]+'0')
++                    conf.define('GECKO_MAX', env['GECKO_VER'][0:3]+'.0.99')
++
++            conf.check_message("Gecko", "GREVersionMin", 1, env['GECKO_MIN'])
++            conf.check_message("Gecko", "GREVersionMax", 1, env['GECKO_MAX'])
++
+         else:
+                     d = env['MOZILLA_DISTDIR']
+                     conf.define['CPPPATH_GECKO'] = ['%s/sdk/include' % d,
+@@ -389,6 +403,10 @@
+                                                 '%s/include/gfx' % d]
+                     conf.define['LIBPATH_GECKO'] = ['%s/sdk/lib' % d]
+                     conf.define['LIB_GECKO'] = ['xpcomglue_s', 'xpcom', 'xul', 'nspr4']
++                    # FIXME: how to detect Gecko-ver on Win similar to pkg-config on unix?
++                    conf.define('GECKO_MIN', '1.9.0.0')
++                    conf.define('GECKO_MAX', '2.0.0.*')
++
+ 
+         env.append_value('ALL_LIBS', 'NSPR')
+         env.append_value('ALL_LIBS', 'GECKO')

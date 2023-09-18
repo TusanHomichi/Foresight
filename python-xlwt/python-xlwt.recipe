@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+class PythonXlwt(PackageRecipe):
+    name = 'python-xlwt'
+    version = '0.7.2'
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/x/xlwt/xlwt-%(version)s.tar.gz')
+        r.PythonSetup()

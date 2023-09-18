@@ -1,0 +1,43 @@
+#!/bin/sh
+
+branch=$(grep -m 1 ^branch CONARY)
+case $branch in
+  */2-devel)
+    BRANCH="foresight.rpath.org@fl:2-devel"
+    MAP="foresight.rpath.org@fl:2-devel--foresight.rpath.org@fl:2-qa foresight.rpath.org@fl:2-devel-kernel--foresight.rpath.org@fl:2-qa-kernel"
+    TARGET="fl:2-qa"
+    ;;
+  */2-qa)
+    BRANCH="foresight.rpath.org@fl:2-qa"
+    MAP="foresight.rpath.org@fl:2-qa--foresight.rpath.org@fl:2 foresight.rpath.org@fl:2-qa-kernel--foresight.rpath.org@fl:2-kernel"
+    TARGET="fl:2"
+    ;;
+  */2)
+    echo "DO NOT PROMOTE ON STABLE LABEL!"
+    exit 1
+    ;;
+  *)
+    echo "WHERE ARE YOU?"
+    exit 1
+    ;;
+esac
+
+set -x
+time cvc promote -m "Promote to $TARGET" \
+  --all-flavors \
+  --to-file=foo.ccs \
+  group-desktop-platform=$BRANCH \
+  $MAP \
+  group-world \
+  "$@"
+
+time conary commit foo.ccs
+
+rm -f promote.ccs
+time ./promote-redirects -z \
+  $MAP \
+  -t promote.ccs
+if [ -f promote.ccs ] ; then
+    echo 'review promote.ccs, may commit it with "conary commit promote.ccs"'
+fi
+

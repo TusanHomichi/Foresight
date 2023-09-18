@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Rygel(GnomePackageRecipe):
+    name = 'rygel'
+    version = '0.14.1'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 
+        'GConf:devel', 
+        'gssdp:devel', 
+        'gst-plugins-base:devel', 
+        'gstreamer:devel', 
+        'gtk3:devel', 
+        'gupnp-av:devel', 
+        'gupnp:devel', 
+        'gupnp-dlna:devel', 
+        'libgee:devel', 
+        'libsoup:devel', 
+        'sqlite:devel', 
+        'util-linux:devel', 
+        'vala:runtime',
+        'xz:runtime',
+            ]

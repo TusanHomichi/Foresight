@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class ConsoleKit(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'ConsoleKit'
+    version = '0.4.1'
+    rpmRelease = '3.fc12'
+    rpmPatches = [ 'nodaemon.patch',
+                   'reorder-initialization.patch'
+                   ]
+
+    buildRequires = [ 'chkconfig:runtime', 'dbus-glib:devel', 'dbus:devel',
+                      'glib:devel', 'libX11:devel', 'libXau:devel',
+                      'libXdmcp:devel', 'libxcb:devel', 'pkgconfig:devel',
+                      'xmlto:runtime', 'pam:devel', 'dbus:devellib',
+                      'polkit:devel', 'zlib:devel','gettext:runtime',
+                      'automake:runtime', 'autoconf:runtime',
+                      'libtool:runtime', 'libtool:devel'
+                      ]
+
+    def configure(r):
+        # from gentoo
+#        r.addPatch('consolekit-0.2.10-cleanup_console_tags.patch')
+#        r.addPatch('consolekit-0.4.0-polkit-automagic.patch')
+#        r.addPatch('consolekit-0.4.1-shutdown-reboot-without-policies.patch')
+
+        r.Run('autoreconf -fi')
+        r.Configure('--with-pid-file=%(localstatedir)s/run/'
+                     'console-kit-daemon.pid --enable-pam-module '
+                     '--with-pam-module-dir=/%(lib)s/security')
+
+    def policy(r):
+        r.MakeDirs('%(sysconfdir)s/ConsoleKit/')
+        r.MakeDirs('%(sysconfdir)s/ConsoleKit/run-seat.d')
+        r.MakeDirs('%(sysconfdir)s/ConsoleKit/seats.d')
+        r.MakeDirs('%(sysconfdir)s/ConsoleKit/run-session.d')
+
+        r.MakeDirs('/usr/lib/ConsoleKit/')
+        r.MakeDirs('/usr/lib/ConsoleKit/run-seat.d')
+        r.MakeDirs('/usr/lib/ConsoleKit/scripts')
+        r.MakeDirs('/usr/lib/ConsoleKit/run-session.d')
+
+
+
+        # get around missing trailing newsline
+        r.Run('echo >> %(destdir)s/%(sysconfdir)s/ConsoleKit/seats.d/'
+              '00-primary.seat')
+
+        r.Create('/var/log/ConsoleKit/history') 
+        r.InitialContents('/var/log/ConsoleKit/history')
+
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/run/ConsoleKit')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/log/ConsoleKit')
+        r.ExcludeDirectories(exceptions='/usr/lib/ConsoleKit/run-seat.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/ConsoleKit/run-seat.d')
+        r.ExcludeDirectories(exceptions='/usr/lib/ConsoleKit/run-session.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/ConsoleKit/run-session.d')
+        
+        r.Ownership('root','root','%(localstatedir)s/log/ConsoleKit')
+        r.SetModes('%(localstatedir)s/log/ConsoleKit', 0755)
+
+
+        # allows x86 and x86_64 :lib co-existence
+        r.ComponentSpec(':runtime', '/usr/lib/ConsoleKit/scripts/.*')
+
+        # early upstart hooks
+        r.MakeDirs('%(sysconfdir)s/event.d')
+        r.Copy('data/ck-log-system-{start,stop,restart}', '%(sysconfdir)s/event.d')
+
+        r.addSource('pam-foreground-compat.ck')
+        r.Install('pam-foreground-compat.ck', '/usr/lib/ConsoleKit/run-session.d/', mode = 0755)
+        

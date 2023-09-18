@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class FontUtil(AutoPackageRecipe):
+    name = 'font-util'
+    version = '1.2.0'
+    buildRequires = [ 'fontconfig:runtime', 'mkfontdir:runtime' ]
+
+    # this is xorg-x11-fonts-devel in opensuse xorg stack (we keep canonic
+    # name for convenience and compat with rPL
+
+    def unpack(r):
+        r.addArchive('http://xorg.freedesktop.org/releases/individual/font/')
+
+    def configure(r):
+        r.addSource('http://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP932.TXT')
+        r.Move('CP932.TXT', 'map-JISX0201.1976-0')
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure('--with-mapdir=%(datadir)s/fonts/util')

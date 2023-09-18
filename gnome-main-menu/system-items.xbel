@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbel version="1.0"
+      xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+      xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+>
+  <bookmark href="gnome-about.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>About GNOME</title>
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-0</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="About GNOME" exec="gnome-about" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="foresight-user-guide.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Foresight User Guide</title>
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-1</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Foresight User Guide" exec="foresight-user-guide" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="yelp.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Help</title>
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-2</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Yelp" exec="yelp" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="gnomecc.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-3</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Control Center" exec="gnome-control-center" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="gpk-application.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-4</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Install Software" exec="gpk-application %F" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="gpk-update-viewer.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-5</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Update System" exec="gpk-update-viewer %F" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="gnome-screensaver-lock.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-6</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Lock Screen" exec="gnome-screensaver-command --lock" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="gnome-shutdown.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Logout</title>
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-7</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Logout" exec="gnome-shutdown" timestamp="1168926817" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+</xbel>

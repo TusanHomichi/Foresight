@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MythtvThemes(AutoPackageRecipe):
+    name = 'mythtv-themes'
+    version = '0.23'
+ 
+    buildRequires = ['gcc-c++:runtime', 'mythtv:devel', 'qt4:devel', 'which:runtime']
+ 
+    def setup(r):
+	r .addSvnSnapshot('http://svn.mythtv.org/svn/branches/release-0-23-fixes/myththemes/')
+	r.Configure('--qmake=qmake-qt4 --prefix=%(prefix)s')
+	r.Make()
+	r.MakeInstall(rootVar='INSTALL_ROOT')

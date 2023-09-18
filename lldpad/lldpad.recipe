@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class lldpad(AutoPackageRecipe):
+    name = 'lldpad'
+    version = '0.9.45'
+
+    buildRequires = [ 'chkconfig:runtime', 'libconfig:devel', 'libnl:devel',
+                      'libtool:devel', 'libtool:runtime', 'gcc-c++:runtime',
+                      'bison:runtime', 'flex:runtime', 'pkgconfig:devel',
+                      'autoconf:runtime', 'automake:runtime', 
+                      'readline:devel',]
+
+    def unpack(r):
+        r.addArchive('http://www.open-lldp.org/open-lldp/downloads/%(name)s-%(version)s.tar.gz/at_download/file')
+        for patch in [ 'lldpad-0.9.41-lldptool-invalid-pointer.patch',
+                       'lldpad-0.9.45-archiver.patch',
+                       'lldpad-0.9.45-The-display-of-the-Management-Address-TLV-had-some.patch',
+                       ]:
+            r.addPatch(patch)
+
+    def configure(r):
+        r.Run('./bootstrap.sh')
+        r.Configure('--disable-static')
+
+
+    def policy(r):
+        r.MakeDirs('%(localstatedir)s/lib/%(name)s/')
+        r.Create('%(localstatedir)s/lib/%(name)s/%(name)s.conf')
+        r.InitialContents('%(localstatedir)s/lib/%(name)s/%(name)s.conf')

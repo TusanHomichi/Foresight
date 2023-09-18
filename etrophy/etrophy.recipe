@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Etrophy(AutoPackageRecipe):
+    name = 'etrophy'
+    version = '0.5.1'
+ 
+    buildRequires = [
+        'dbus:devel', 
+        'doxygen:runtime', 
+        'ecore:devel', 
+        'e-dbus:devel', 
+        'edje:devel', 
+        'edje:runtime',
+        'eet:devel', 
+        'efreet:devel', 
+        'eina:devel', 
+        'elementary:devel', 
+        'emotion:devel', 
+        'ethumb:devel', 
+        'evas:devel', 
+        'libexif:devel', 
+        'pkgconfig:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive("http://download.enlightenment.org/releases/")

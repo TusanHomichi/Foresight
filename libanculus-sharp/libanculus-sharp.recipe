@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+class Libanculussharp(CPackageRecipe):
+
+    name = 'libanculus-sharp'
+    version = '0.3.1'
+
+    buildRequires = ['gtk-sharp:cil', 'mono:cil', 'mono:devel', 'mono:runtime', 'monodoc:runtime', 'pkgconfig:devel', 'automake:runtime', 'autoconf:runtime', 'gtk-sharp:devellib']
+
+    def setup(r):
+        r.addArchive('http://libanculus-sharp.googlecode.com/files/%(name)s-%(version)s.tar.bz2')
+	r.Run('chmod +x ./autogen.sh')
+	r.Run('./autogen.sh --prefix=/usr --disable-winforms')
+        r.Make()
+        r.MakeInstall()
+
+

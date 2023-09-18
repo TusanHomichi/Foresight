@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class PythonOauth2(PackageRecipe):
+
+    name = 'python-oauth2'
+    version = '1.0.' + datetime.datetime.now().strftime("%Y%m%d")
+
+    buildRequires = ['python-setuptools:python','python:devel','python-httplib2:python']
+
+    def setup(r):
+        r.addGitSnapshot('git://github.com/simplegeo/python-oauth2.git')
+        r.PythonSetup()
+	r.Requires("python-httplib2:python","python: oauth2(2.6 lib)")

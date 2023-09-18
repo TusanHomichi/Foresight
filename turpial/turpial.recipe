@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Turpial(PackageRecipe):
+    name = 'turpial'
+    version = 'devel'
+ 
+    buildRequires = [
+        'python-setuptools:python',
+        'desktop-file-utils:runtime',
+        'notify-python:python', 
+        'pycairo:python', 
+        'pygame:python', 
+        'pygobject:python', 
+        'pygtk:python', 
+        'python:devel', 
+        'pywebkitgtk:python', 
+        'python-simplejson:python',
+        'PIL:python', 
+        'gnome-python-extras:python', 
+        'gnome-python:python',
+        'pyxdg:python',
+        'babel:python'
+    ]
+ 
+    def setup(r):
+        #r.addArchive('http://turpial.googlecode.com/files/')
+        r.addGitSnapshot('http://github.com/satanas/Turpial.git',branch="development")
+        r.addPatch("turpial.patch")
+        r.PythonSetup(data='--install-data=%(prefix)s')
+

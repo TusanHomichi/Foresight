@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Virtualgl(CPackageRecipe):
+    name = 'VirtualGL'
+    version = '2.3.2'
+ 
+    buildRequires = [
+        'Mesa:devel', 
+        'cmake:runtime', 
+        'fltk:devel', 
+        'gcc-c++:runtime', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXScrnSaver:devel', 
+        'libXau:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXdamage:devel', 
+        'libXdmcp:devel', 
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXinerama:devel', 
+        'libXmu:devel', 
+        'libXpm:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libXres:devel', 
+        'libXt:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'libXxf86vm:devel', 
+        'libxkbfile:devel', 
+        'openssl:devel', 
+        'pkgconfig:devel', 
+        'turbojpeg:devel',
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/virtualgl/%(name)s/%(version)s/')
+        r.addPatch('VirtualGL-fltk.patch')
+        r.addPatch('VirtualGL-glx.patch')
+        r.addPatch('VirtualGL-redhatpathsmultilibfix.patch')
+        r.CMake('-DTJPEG_LIBRARY=%(libdir)s/libturbojpeg.so -DTJPEG_INCLUDE_DIR=%(includedir)s -DVGL_USESSL=ON -DVGL_LIBDIR=%(libdir)s -DVGL_FAKELIBDIR=%(libdir)s/fakelib .')
+        r.Make()
+        r.MakeInstall('DESTDIR=%(destdir)s')
+
+        r.Remove('%(bindir)s/glxinfo')
+        # r.Move('%(libdir)s/libdlfaker.so', '%(libdir)s/VirtualGL/')
+        # r.Move('%(libdir)s/libgefaker.so', '%(libdir)s/VirtualGL/')
+        # r.Move('%(libdir)s/librrfaker.so', '%(libdir)s/VirtualGL/')

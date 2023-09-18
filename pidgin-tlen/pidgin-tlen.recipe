@@ -1,0 +1,22 @@
+#Paweł Pogorzelski (pawelpogorzelski@gmail.com)
+
+class Pidgintlen(CPackageRecipe):
+    name = 'pidgin-tlen'
+    version = '20090411'
+
+    buildRequires = ['pidgin:devel', 'pkgconfig:devel']
+
+    def setup(r):
+        r.addArchive('http://nic.com.pl/~alek/pidgin-tlen/'
+                     '%(name)s-%(version)s.tar.gz')
+
+        r.Replace(('^CC.*', 'CC = %(cc)s'),
+                   ('^LOCALBASE.*', 'LOCALBASE=%(prefix)s'),
+                   ('^DESTDIR.*', 'DESTDIR=%(destdir)s'),
+                  ('\-o\ root', ' '),
+                  ('\-g\ wheel', ' '),
+                  ('/lib/', '/%(lib)s/'),
+                  'Makefile')
+        r.Make()
+        r.MakeInstall()
+

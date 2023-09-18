@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class LibjpegTurbo(CPackageRecipe):
+    name = 'libjpeg-turbo'
+    version = '1.2.90'
+ 
+    buildRequires = [
+        'autoconf:runtime', 
+        'automake:runtime',
+        'nasm:runtime', 
+        'binutils:runtime', 
+        'file:runtime', 
+        'make:runtime',
+        'intltool:runtime', 
+        'libtool:runtime',
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/libjpeg-turbo/')
+        r.addPatch('libjpeg-turbo12-noinst.patch')
+        r.Run('autoreconf -fiv')
+        r.Configure()
+        r.Make()
+
+        # We only want turbojpeg stuff, as libjpeg handles the rest for now
+        r.Install('turbojpeg.h', '%(includedir)s/')
+        r.Install('.libs/libturbojpeg.so.0.0.0', '%(libdir)s/libturbojpeg.so')
+        r.Install('.libs/libturbojpeg.a', '%(libdir)s/')
+        r.PackageSpec('turbojpeg', '%(includedir)s/turbojpeg.h')
+        r.PackageSpec('turbojpeg', '%(libdir)s/libturbojpeg.so')
+        r.PackageSpec('turbojpeg', '%(libdir)s/libturbojpeg.so.0')
+        r.PackageSpec('turbojpeg', '%(libdir)s/libturbojpeg.a')

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ccrtp(AutoPackageRecipe):
+    name = 'ccrtp'
+    version = '1.7.1'
+ 
+    buildRequires = ['commoncpp:devel', 'doxygen:runtime', 'install-info:runtime', 'libgcrypt:devel', 'libgpg-error:devel', 'libstdc++:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/gnu/%(name)s/')
+
+    def configure(r):
+        r.disableParallelMake() 
+        r.Configure('--disable-static')

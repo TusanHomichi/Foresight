@@ -1,0 +1,89 @@
+# when changing this package, keep Fedora's packaging in mind; see
+# http://pkgs.fedoraproject.org/cgit/nginx.git/
+# for the latest
+
+class nginx(AutoPackageRecipe):
+    name = 'nginx'
+    version = '1.4.4'
+
+    buildRequires = [
+        'openssl:devel',
+        'zlib:devel',
+        'bzip2:devel',
+        'libxml2:devel',
+        'libxslt:devel',
+        'pcre:devel',
+        'perl:devel',
+        'readline:devel',
+        'chkconfig:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://nginx.org/download/', keyid='A1C052F8')
+
+    def configure(r):
+        r.macros.thisdatadir = '%(datadir)s/%(name)s'
+        r.macros.thisconfdir = '%(sysconfdir)s/nginx'
+        r.macros.thishomedir = '%(localstatedir)s/lib/nginx'
+        r.macros.thislogdir  = '%(localstatedir)s/log/nginx'
+        r.macros.thiswebroot = '%(thisdatadir)s/html'
+        r.macros.thistmpdir  = '%(thishomedir)s/tmp'
+        r.macros.thisclientbody  = '%(thishomedir)s/client_body'
+        r.macros.thisproxy   = '%(thishomedir)s/proxy'
+        r.macros.thisfastcgi = '%(thishomedir)s/fastcgi'
+        r.macros.thisuwsgi   = '%(thishomedir)s/uwsgi'
+        r.macros.thisscgi    = '%(thishomedir)s/scgi'
+        r.ManualConfigure('--prefix=%(thisdatadir)s'
+                          ' --sbin-path=%(sbindir)s/nginx'
+                          ' --conf-path=%(thisconfdir)s/nginx.conf'
+                          ' --error-log-path=%(thislogdir)s/error.log'
+                          ' --http-log-path=%(thislogdir)s/access.log'
+                          ' --http-client-body-temp-path=%(thisclientbody)s'
+                          ' --http-proxy-temp-path=%(thisproxy)s'
+                          ' --http-fastcgi-temp-path=%(thisfastcgi)s'
+                          ' --http-uwsgi-temp-path=%(thisuwsgi)s'
+                          ' --http-scgi-temp-path=%(thisscgi)s'
+                          ' --pid-path=%(localstatedir)s/run/nginx.pid'
+                          ' --lock-path=%(localstatedir)s/run/lock/subsys/nginx'
+                          ' --user=nginx --group=nginx'
+                          ' --with-file-aio'
+                          ' --with-ipv6'
+                          ' --with-http_ssl_module'
+                          ' --with-http_spdy_module'
+                          ' --with-http_dav_module'
+                          ' --with-http_xslt_module'
+                          ' --with-http_gunzip_module'
+                          ' --with-http_gzip_static_module'
+                          ' --with-http_degradation_module'
+                          ' --with-http_perl_module'
+                          ' --with-pcre'
+                          ' --with-cc-opt="%(optflags)s $(pcre-config --cflags)"'
+                          ' --with-ld-opt="%(optflags)s -Wl,-E"')
+
+    def makeinstall(r):
+        r.MakeInstall('INSTALLDIRS=vendor')
+        r.MakeDirs('%(thistmpdir)s')
+        r.addSource('nginx.initscript.in', dest='%(initdir)s/nginx', 
+                    macros = True, mode = 0755)
+        r.SetModes('%(thishomedir)s', '%(thistmpdir)s', '%(thislogdir)s', 0700)
+        r.Create('%(sysconfdir)s/logrotate.d/nginx', contents='''%(thislogdir)s/*log {
+    daily
+    rotate 10
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        %(initdir)s/nginx postrotate
+    endscript
+}
+''')
+
+    def policy(r):
+        r.ExcludeDirectories(exceptions='%(thisdatadir)s')
+        r.ExcludeDirectories(exceptions='%(thishomedir)s')
+        r.ExcludeDirectories(exceptions='%(thistmpdir)s')
+        r.ExcludeDirectories(exceptions='%(thislogdir)s')
+        r.Ownership('nginx', 'nginx', '%(thisdatadir)s', '%(thistmpdir)s')
+        r.UtilizeUser('nginx', '%(sysconfdir)s/nginx/nginx.conf')
+        r.ComponentSpec('doc', '%(thisconfdir)s/.*\.default')

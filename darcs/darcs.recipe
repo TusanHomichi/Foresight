@@ -1,0 +1,13 @@
+class Darcs(AutoPackageRecipe):
+    name = 'darcs'
+    version = '1.0.9'
+
+    buildRequires = [
+        'ghc:runtime', 'ghc:devel', 'tetex-dvips:runtime',
+        'tetex-latex:runtime', 'curl:devel', 'e2fsprogs:devel',
+        'gmp:devel', 'krb5:devel', 'ncurses:devel',
+        'openssl:devel', 'readline:devel', 'zlib:devel'
+      ]
+
+    def unpack(r):
+        r.addArchive('http://darcs.net/darcs-%(version)s.tar.gz')

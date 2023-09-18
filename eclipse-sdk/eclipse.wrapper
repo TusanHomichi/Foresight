@@ -1,0 +1,43 @@
+#!/bin/sh
+# looselly based in http://git.debian.org/?p=pkg-java/eclipse.git;a=blob_plain;f=debian/extra/eclipse;h=69ec2fd2a49d928a6b11ba65883961dd52834eda;hb=HEAD
+
+# work around for e#290395 / LP: #458703
+# https://bugs.eclipse.org/bugs/show_bug.cgi?id=290395
+# https://bugs.launchpad.net/bugs/458703
+export GDK_NATIVE_WINDOWS=true
+
+
+ECLIPSE=%(libdir)s/eclipse/eclipse
+
+inject_update_site(){
+    if [ ! -e "$1" ] ; then
+    echo "W: Cannot find $1" 2>&1
+    return 1
+    fi
+    cp "$1" "$1.orig"
+    cat - >>"$1.orig" <<EOF
+repositories/http\:__download.eclipse.org_releases_juno/count=1
+repositories/http\:__download.eclipse.org_releases_juno/enabled=true
+repositories/http\:__download.eclipse.org_releases_juno/isSystem=false
+repositories/http\:__download.eclipse.org_releases_juno/nickname=Juno
+repositories/http\:__download.eclipse.org_releases_juno/uri=http\://download.eclipse.org/releases/juno
+EOF
+    cp "$1.orig" "$1"
+    rm -rf "$1.orig"
+}
+
+if [ ! -d ~/.eclipse/ ] ; then
+    $ECLIPSE -clean -initialize || exit $?
+else
+    settings=`echo ~/.eclipse/*/p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile/.data/.settings/`
+
+    if [ ! -d "$settings" ] ; then
+	echo "W: Cannot inject update-sites, cannot find the correct config." 2>&1
+    else
+	( inject_update_site "$settings/org.eclipse.equinox.p2.metadata.repository.prefs" && \
+	    inject_update_site "$settings/org.eclipse.equinox.p2.artifact.repository.prefs" && \
+            echo "I: Injected update sites" ) || echo "W: Could not inject update sites." # 2>&1
+    fi
+fi
+
+exec $ECLIPSE "$@"

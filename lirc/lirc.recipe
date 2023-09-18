@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class Lirc(CPackageRecipe):
+    
+    name = "lirc"
+    version = "0.8.5"
+
+    buildRequires = [ 'alsa-lib:devel','libICE:devel', 'libSM:devel',
+                      'libX11:devel', 'chkconfig:runtime', 'libusb:devel',
+                      'libirman:devel', 'portaudio:devel', 'libftdi:devel', 'python:devel' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/'
+                     '%(name)s-%(version)s.tar.bz2')
+        r.addPatch('lirc-use-new-instead-of-conf-as-filename-suffix.patch')
+        r.addAction(""" sed -i -e 's/\r//' remotes/hercules/lircd.conf.smarttv_stereo    remotes/adstech/lircd.conf.usbx-707 """)
+        r.addPatch('lirc-0.8.5-standardized-remote-keycodes.patch')
+        r.addPatch('lirc-0.8.4-make-remote-names-all-unique.patch')
+
+        r.Replace('/usr/local/etc/', '%(sysconfdir)s', 'contrib/irman2lirc')
+        r.Replace('/sbin/init.d/lircd', '%(initdir)s/lirc',  'contrib/lircs')
+
+        r.Replace('/lib /usr/lib ', '/%(lib)s %(libdir)s ', 'configure') 
+
+        r.Run('touch -r aclocal.m4 configure.ac')
+        r.Configure(' --disable-static   --disable-dependency-tracking   --enable-sandboxed --with-driver=userspace')
+        r.Make()
+        r.MakeInstall()
+
+        r.Install('contrib/irman2lirc', '%(bindir)s/', mode = 0755)
+        r.Install('contrib/lirc.rules', '%(sysconfdir)s/udev/rules.d/',
+                  mode=0644)
+        r.addSource('lirc.init', '%(initdir)s/lirc', mode=0755, macros = True)
+        r.addSource('lirc.sysconfig', '%(sysconfdir)s/sysconfig/lirc', mode=0644)
+        r.Install('remotes', '%(datadir)s/lirc-remotes/')
+#        r.Create('%{_sysconfdir}/lirc{d,md}.conf

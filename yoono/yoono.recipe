@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('binarypackage')
+class Yoono(BinaryPackageRecipe):
+    name = 'yoono'
+    version = '1.8.14'
+ 
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://cdn.yoono.com/desktop/yoono-desktop-%(version)s.tar.bz2', dir='/opt/%(name)s')
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libgnomevfs\-2\.so\.0\(SysV\ x86\)')
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libnotify\.so\.1\(SysV\ x86\)')
+        r.ExcludeDirectories(exceptions='.*')
+        r.addSource('yoono', dest = '%(bindir)s/')
+        r.Symlink('/opt/yoono/yoono-desktop/chrome/branding/content/icon64.png', '%(datadir)s/pixmaps/yoono.png')
+        r.addSource('yoono.desktop')
+        r.Desktopfile('yoono.desktop')

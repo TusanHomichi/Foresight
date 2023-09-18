@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class InfoMemCached(UserInfoRecipe):
+    name = 'info-memcached'
+    version = '1'
+
+    def setup(r):
+        # XXX get a central uid/gid registry
+        r.User('memcached', 404, groupid= 404,
+            comment='Memcached daemon', homedir='%(localstatedir)s/run/memcached',
+            shell='/sbin/nologin')

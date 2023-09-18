@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ObexDataServer(AutoPackageRecipe):
+    name = 'obex-data-server'
+    version = '0.4.3'
+    buildRequires = [ 'bluez:devel', 'dbus-glib:devel', 'dbus-glib:runtime',
+                      'dbus:devel', 'glib:devel', 'openobex:devel',
+                      'pkgconfig:devel', 'gtk:devel', 'libusb:devel', ]
+ 
+    def unpack(r):
+        r.addArchive('http://tadas.dailyda.com/software/')
+
+    def configure(r):
+        r.Configure('--enable-bip=gdk-pixbuf' )

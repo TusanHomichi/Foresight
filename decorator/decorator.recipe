@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# All rights reserved
+#
+
+class Decorator(PackageRecipe):
+    name = 'decorator'
+    version = '2.2.0'
+
+    buildRequires = ['python:devel', 'unzip:runtime']
+
+    def setup(r):
+        r.addArchive('http://www.phyast.pitt.edu/~micheles/python/decorator-%(version)s.zip', dir='%(maindir)s')
+        r.PythonSetup()

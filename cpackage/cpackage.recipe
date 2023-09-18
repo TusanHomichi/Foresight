@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CPackageRecipe(BuildPackageRecipe):
+    name = 'cpackage'
+    version = '1'
+    abstractBaseClass = 1
+    buildRequires = [
+        'binutils:runtime',
+        'binutils:lib',
+        'binutils:devellib',
+        'gcc:runtime',
+        'gcc:lib',
+        'gcc:devel',
+        'gcc:devellib',
+        'glibc:runtime',
+        'glibc:lib',
+        'glibc:devellib',
+        'glibc:devel',
+        'libgcc:lib',
+        'libgcc:devellib',
+        'debugedit:runtime',
+        'elfutils:runtime',
+    ]

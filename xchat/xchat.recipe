@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Xchat(GnomePackageRecipe):
+    name = 'xchat'
+    version = '2.8.8'
+    buildRequires = [ 'dbus-glib:runtime', 'desktop-file-utils:runtime', 
+	'openssl:devel', 'perl:devel', 'python:devel', 'GConf:runtime', 'tcl:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://xchat.org/files/source/2.8/')
+        r.Replace('#define GTK_DISABLE_DEPRECATED', '', 'src/fe-gtk/*.c', allowNoChange=True)

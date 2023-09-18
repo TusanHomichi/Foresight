@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+class Gtkpod(AutoPackageRecipe):
+    name = 'gtkpod'
+    version = '2.0.1'
+
+    buildRequires = ['pkgconfig:devel', 'GConf:devel', 'ORBit2:devel', 'anjuta:devel',
+                     'atk:devel', 'cairo:devel', 'curl:devel', 'dbus:devel',
+                     'desktop-file-utils:runtime', 'expat:devel', 'flex:runtime',
+                     'fontconfig:devel', 'freetype:devel', 'gdl:devel',
+                     'glib:devel', 'gnome-vfs:devel', 'gtk:runtime', 'gtk:devel',
+                     'hal:devel', 'libX11:devel', 'libXrender:devel', 'libart_lgpl:devel',
+                     'libglade:devel', 'libgnomecanvas:devel', 'libgpod:devel',
+                     'libid3tag:devel', 'libpng:devel', 'libxcb:devel', 'libxml2:devel',
+                     'openssl:devel', 'pango:devel', 'perl:devel', 'perl:runtime', 'gettext:runtime',
+                     'pixman:devel', 'python:devel', 'xcb-util:devel', 'zlib:devel', 'intltool:runtime',
+                     'flac:devel', 'libvorbis:devel', 'flex:runtime',  'bison:runtime',]
+
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/gtkpod/files/gtkpod/gtkpod-%(version)s/gtkpod-%(version)s.tar.gz')

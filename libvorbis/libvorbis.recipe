@@ -1,0 +1,15 @@
+# Copyright (c) 2009 Thijs Vermeir <thijsvermeir@gmail.com>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+class Libvorbis(AutoPackageRecipe):
+    name = 'libvorbis'
+    version = '1.3.2'
+
+    buildRequires = [ 'libogg:devel', 'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.addArchive ('http://downloads.xiph.org/releases/vorbis/')
+        r.Replace(('-O20', '%(cflags)s'),
+                  ('-ffast-math', ''),
+                  'configure')

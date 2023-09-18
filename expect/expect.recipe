@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2011      Openfiler Inc
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('tcl')
+loadRecipe('tk')
+class Expect(AutoPackageRecipe):
+    name = 'expect'
+    version = '5.45'
+
+    buildRequires = [ 'tcl:devel', 'tcl:runtime', 'tk:devel',
+                      'mktemp:runtime', 'autoconf:runtime',
+                      'libX11:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/%(name)s%(version)s.tar.gz')
+        r.addPatch('expect-5.43.0-log_file.patch')
+        r.addPatch('expect-5.43.0-pkgpath.patch')
+        r.addPatch('expect-5.32.2-random.patch')
+        r.addPatch('expect-5.45-mkpasswd-dash.patch')
+
+    def configure(r):
+        r.Run('autoconf -f ; cd testsuite ; autoconf -f -I.. ')
+        r.Configure('--with-tcl=%(libdir)s --with-tk=%(libdir)s'
+                    ' --with-tclinclude=%(includedir)s/tcl-private/generic'
+                    ' --enable-shared --enable-gcc --enable-symbols')
+
+    def policy(r):
+        r.Move('%(libdir)s/tcl8.5/expect%(version)s/libexpect%(version)s.so',
+               '%(libdir)s/')
+        r.Symlink('libexpect%(version)s.so', '%(libdir)s/libexpect.so')
+        r.Remove('%(bindir)s/{{de,}cryptdir},autopasswd}')
+        r.Remove('%(mandir)s/man1/{de,}cryptdir.*')
+        r.PackageSpec('expectk',
+                '%(bindir)s/(expectk|multixterm|tknewsbiff|tkpasswd|xpstat)',
+                '%(mandir)s/man1/(expectk.1.*|multixterm.1.*|tknewsbiff.1.*)')
+
+
+        r.macros.protver = '.'.join(Tcl.version.split('.')[0:2])
+
+        # %(libdir)s/tcl%(protver)s is a symlink. 
+        # let's keep conary happy
+        r.MakeDirs('%(datadir)s/tcl%(protver)s/')
+        r.Move('%(libdir)s/tcl%(protver)s/expect%(version)s',
+               '%(datadir)s/tcl%(protver)s/')
+        # XXX Find why bellow breaks...
+        # r.Requires('tcl:runtime(%(protver)s)',
+        r.Requires('tcl:lib(8.5)',
+                   '%(datadir)s/tcl%(protver)s/')

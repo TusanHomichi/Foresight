@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Stow(AutoPackageRecipe):
+    name = 'stow'
+    version = '1.3.3'
+ 
+    packageSummary = 'Manage the installation of software packages from source'
+    packageDescription = '''
+GNU Stow is a program for managing the installation of software packages,
+keeping them separate (/usr/local/stow/emacs vs. /usr/local/stow/perl, for
+example) while making them appear to be installed in the same place
+(/usr/local). Software to ease the keeping track of software built from source,
+making it easy to install, delete, move etc.'''
+
+    buildRequires = [
+        'install-info:runtime',
+        'perl:devel',
+        'perl:runtime',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('mirror://gnu/stow/')

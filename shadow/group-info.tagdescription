@@ -1,0 +1,3 @@
+file		/usr/libexec/conary/tags/usergroup-info
+datasource      multitag
+implements	files update

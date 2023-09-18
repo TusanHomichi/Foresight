@@ -1,0 +1,77 @@
+--- LVM2.2.02.84.old/libdm/ioctl/libdm-iface.c	2011-02-04 22:26:33.000000000 +0100
++++ LVM2.2.02.84/libdm/ioctl/libdm-iface.c	2011-06-21 13:24:14.261923553 +0200
+@@ -73,9 +73,9 @@ static unsigned _dm_version_minor = 0;
+ static unsigned _dm_version_patchlevel = 0;
+ static int _log_suppress = 0;
+ 
+-static int _kernel_major;
+-static int _kernel_minor;
+-static int _kernel_release;
++static int _kernel_major = 0;
++static int _kernel_minor = 0;
++static int _kernel_release = 0;
+ 
+ /*
+  * If the kernel dm driver only supports one major number
+@@ -152,6 +152,7 @@ static int _uname(void)
+ {
+ 	static int _uts_set = 0;
+ 	struct utsname _uts;
++	int parts;
+ 
+ 	if (_uts_set)
+ 		return 1;
+@@ -160,10 +161,14 @@ static int _uname(void)
+ 		log_error("uname failed: %s", strerror(errno));
+ 		return 0;
+ 	}
+-	if (sscanf(_uts.release, "%d.%d.%d",
++
++	parts = sscanf(_uts.release, "%d.%d.%d",
+ 			&_kernel_major,
+ 			&_kernel_minor,
+-			&_kernel_release) != 3) {
++			&_kernel_release);
++
++	/* Kernels with a major number of 2 always had 3 parts. */
++	if (parts < 1 || (_kernel_major < 3 && parts < 3)) {
+ 		log_error("Could not determine kernel version used.");
+ 		return 0;
+ 	}
+--- LVM2.2.02.84.old/libdm/libdm-deptree.c	2010-11-29 13:42:10.000000000 +0100
++++ LVM2.2.02.84/libdm/libdm-deptree.c	2011-06-21 13:25:11.062393944 +0200
+@@ -1541,13 +1541,20 @@ static int _mirror_emit_segment_line(str
+ 	int dm_log_userspace = 0;
+ 	struct utsname uts;
+ 	unsigned log_parm_count;
+-	int pos = 0;
++	int pos = 0, parts;
+ 	char logbuf[DM_FORMAT_DEV_BUFSIZE];
+ 	const char *logtype;
+-	unsigned kmaj, kmin, krel;
++	unsigned kmaj = 0, kmin = 0, krel = 0;
+ 
+-	if (uname(&uts) == -1 || sscanf(uts.release, "%u.%u.%u", &kmaj, &kmin, &krel) != 3) {
+-		log_error("Cannot read kernel release version");
++	if (uname(&uts) == -1) {
++		log_error("Cannot read kernel release version.");
++		return 0;
++	}
++
++	/* Kernels with a major number of 2 always had 3 parts. */
++	parts = sscanf(uts.release, "%u.%u.%u", &kmaj, &kmin, &krel);
++	if (parts < 1 || (kmaj < 3 && parts < 3)) {
++		log_error("Wrong kernel release version %s.", uts.release);
+ 		return 0;
+ 	}
+ 
+--- LVM2.2.02.84.old/WHATS_NEW_DM	2011-02-09 13:04:39.000000000 +0100
++++ LVM2.2.02.84/WHATS_NEW_DM	2011-06-21 13:24:58.862292506 +0200
+@@ -1,3 +1,7 @@
++Version 1.02.65 - 
++==================================
++  Accept new kernel version 3 formats in initialisation.
++
+ Version 1.02.63 - 9th February 2011
+ ===================================
+   Reinstate DEBUG_MEM as it's part of the API. (1.02.62)

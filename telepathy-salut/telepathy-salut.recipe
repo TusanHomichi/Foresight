@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class TelepathySalut(GnomePackageRecipe):
+
+    name = 'telepathy-salut'
+    version = '0.3.13'
+
+    packageDescription = 'Link-local XMPP connection manager for the Telepathy framework'
+
+    buildRequires = [
+        'avahi-glib:devel',
+        'avahi:devel',
+        'dbus-glib:runtime',
+        'krb5:devel',
+        'openssl:devel',
+        'telepathy-glib:devel',
+        'gnutls:devel',
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+        'libsoup:devel',
+        ]
+
+    externalArchive ='http://telepathy.freedesktop.org/releases/%(name)s/'
+    extraconfig = '--enable-ssl'

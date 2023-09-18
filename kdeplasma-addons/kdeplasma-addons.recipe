@@ -1,0 +1,23 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdePlasmaAddons(kdeCorePackageRecipe):
+
+    name = 'kdeplasma-addons'
+    version = '4.6.1'
+
+    buildRequires = [
+        'attica:devel', 'boost:devel', 'eigen2:devel', 'inputproto:devel',
+        'kdebase-workspace:devel', 'libkexiv2:devel', 'libXi:devel',
+        'libXtst:devel', 'marble:devel', 'qca2:devel', 'qimageblitz:devel',
+        'shared-desktop-ontologies:devellib'
+    ]
+
+    def postUnpack(r):
+
+        r.addPatches(
+            'kubuntu_04_kimpanel_disable_scim.diff',
+        )

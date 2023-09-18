@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage.recipe')
+class LibGnomemm(GnomePackageRecipe):
+    name = 'libgnomemm'
+    version = '2.30.0'
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel', 
+    		  'cairo:devel', 'cairomm:devel', 'fontconfig:devel', 
+		  'freetype:devel', 'glib:devel', 'glibmm:devel', 
+		  'gnome-vfs:devel', 'gtkmm:devel', 'libbonobo:devel', 
+		  'libgnome:devel', 'libpng:devel', 'libsigc++:devel', 
+		  'libstdc++:devel', 'm4:runtime', 'pango:devel', 'popt:devel']

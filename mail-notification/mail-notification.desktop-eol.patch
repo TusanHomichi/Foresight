@@ -1,0 +1,9 @@
+--- data/mail-notification.desktop.in	2006-05-03 02:55:40.000000000 +0100
++++ data/mail-notification.desktop.in-eol	2006-06-14 02:37:19.000000000 +0100
+@@ -8,4 +8,4 @@
+ Exec=mail-notification --sm-disable
+ Terminal=false
+ StartupNotify=true
+-X-GNOME-DocPath=mail-notification/mail-notification.xml
+\ No newline at end of file
++X-GNOME-DocPath=mail-notification/mail-notification.xml

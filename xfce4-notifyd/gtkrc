@@ -1,0 +1,22 @@
+style "green-window"
+{
+    bg[NORMAL] = "#539235"
+    XfceNotifyWindow::border-color = "#20420b"
+    XfceNotifyWindow::border-radius = 10.0
+    XfceNotifyWindow::border-width = 6.0
+}
+class "XfceNotifyWindow" style "green-window"
+
+style "green-text"
+{
+    fg[NORMAL] = "#ffffff"
+    GtkWidget::link-color = "#abcaa0"
+}
+widget_class "XfceNotifyWindow.*.<GtkLabel>" style "green-text"
+
+style "green-btn"
+{
+    bg[NORMAL] = "#20420b"
+    bg[PRELIGHT] = "#abcaa0"
+}
+widget "XfceNotifyWindow.*.GtkButton" style "green-btn"

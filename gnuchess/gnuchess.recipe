@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+#               2007-2008 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class Gnuchess(GnomePackageRecipe):
+ 
+    name = 'gnuchess'
+    version = '5.07'
+ 
+    buildRequires = ['flex:devel', 'flex:runtime', 'ncurses:devel', 'readline:devel']
+
+    def setup(r):
+        r.addArchive('http://ftp.gnu.org/pub/gnu/chess/%(name)s-%(version)s.tar.gz')
+        r.Move('src/input.c','src/input.c_back')
+        r.Run('cat src/input.c_back | sed "s/static pthread_t input_thread/pthread_t input_thread/g" >> src/input.c')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+

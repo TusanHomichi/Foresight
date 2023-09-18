@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2005 rPath, Inc.
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Easytag(AutoPackageRecipe):
+
+    name = 'easytag'
+    version = '2.1.7'
+
+    buildRequires = [
+                    'atk:devel',
+                     'cairo:devel',
+                     'expat:devel',
+                     'flac:devel',
+                     'fontconfig:devel',
+                     'freetype:devel',
+                     'gettext:runtime',
+                     'glib:devel',
+                     'gtk:devel',
+                     'id3lib:devel',
+                     'intltool:runtime',
+                     'libogg:devel',
+                     'libpng:devel',
+                     'libstdc++:devel',
+                     'libvorbis:devel',
+                     'libX11:devel',
+                     'pango:devel',
+                     'pkgconfig:devel',
+                     'zlib:devel',
+                     ]
+
+    def unpack(r):
+
+        r.addArchive('http://downloads.sourceforge.net/project/easytag/easytag (gtk 2)/%(major_version)s/easytag-%(version)s.tar.bz2')
+
+    def policy(r):
+
+        r.Doc('USERS-GUIDE')
+
+        r.TagSpec('desktop-file', '%(datadir)s/applications/easytag.desktop')
+

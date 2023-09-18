@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DaapSharp(AutoPackageRecipe):
+    name = 'daap-sharp'
+    version = '0.3.5'
+ 
+    buildRequires = ['avahi-sharp:cil', 'avahi-sharp:devellib', 'mono:cil', 'mono:devel', 'mono:devellib', 'mono:runtime',  'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.snorp.net/files/%(name)s/')
+        r.disableParallelMake()

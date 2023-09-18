@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xf86VideoOpenChrome(AutoPackageRecipe):
+    name = 'xf86-video-openchrome'
+    version = '0.2.904'
+
+    buildRequires = [
+        'Mesa:devel',
+        'fontsproto:devel',
+        'glproto:devel',
+        'inputproto:devel',
+        'libX11:devel',
+        'libXext:devel',
+        'libXv:devel',
+        'libXvMC:devel',
+        'libdrm:devel',
+        'pkgconfig:devel',
+        'python:bin',
+        'randrproto:devel',
+        'renderproto:devel',
+        'xf86driproto:devel',
+        'xorg-server:devel',
+        ]
+    
+    def unpack(r):
+        r.addArchive('http://www.openchrome.org/releases/')

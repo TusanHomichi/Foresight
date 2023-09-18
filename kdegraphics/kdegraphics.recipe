@@ -1,0 +1,45 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeGraphics(kdeCorePackageRecipe):
+
+    name = 'kdegraphics'
+    version = '4.6.1'
+
+    buildRequires = [
+        'chmlib:devel', 'djvulibre:devel', 'exiv2:devel', 'ghostscript:devel',
+        'lcms:devel', 'libgomp:devellib', 'libgphoto2:devel',
+        'libspectre:devel', 'libtiff:devel', 'libXxf86vm:devel', 'phonon:devel',
+        'poppler-qt4:devel', 'poppler:devel', 'qca2:devel', 'qimageblitz:devel',
+        'sane-backends:devel', 'shared-desktop-ontologies:devellib',
+        'strigi:devel', 'xf86vidmodeproto:devel'
+    ]
+
+    modules = [
+        ('cmake-fake', 'cmake'),
+        'gwenview',
+        ('kamera', 'kamera', 'doc/kcontrol/kamera'),
+        'kcolorchooser',
+        ('kgamma', 'kgamma', 'doc/kcontrol/kgamma'),
+        'kolourpaint',
+        'kruler',
+        'ksaneplugin',
+        'ksnapshot',
+        'okular',
+        ('kdegraphics-svgpart', 'svgpart'),
+        ('kdegraphics-thumbnailers', 'thumbnailers'),
+        ('libkdcraw', 'libs/libkdcraw'),
+        ('libkexiv2', 'libs/libkexiv2'),
+        ('libkipi', 'libs/libkipi'),
+        ('libksane', 'libs/libksane'),
+        ('strigi-analyzer-graphics', 'strigi-analyzer'),
+    ]
+
+    def postUnpack(r):
+
+        r.PackageSpec('okular', '%(datadir)s/apps/cmake/modules/FindOkular.cmake')
+        r.PackageSpec('libksane', '%(datadir)s/apps/cmake/modules/FindKSane.cmake')
+

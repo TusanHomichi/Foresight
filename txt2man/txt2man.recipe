@@ -1,0 +1,48 @@
+# vim: ts=4 sw=4 expandtab ai
+#
+# Copyright (c) 2009 Erik Southworth <erik.southworth@gmail.com>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Txt2man(AutoPackageRecipe):
+    name = 'txt2man'
+    version = '1.5.5'
+
+    archive = 'http://mvertes.free.fr/download/%(name)s-%(version)s.tar.gz'
+
+    buildRequires = [
+        'python:bin',
+        ]
+
+    def setMacros(r):
+        r.macros.homepage = r.packageHomepage
+
+    def unpack(r):
+        r.setMacros()
+        r.addArchive(r.archive)
+        # modified so -r rel can override -p doprobe option -- plus minor fixes
+        r.addPatch('txt2man-1.5.5.patch')
+
+    def configure(r):
+        # fix/add mandir path in Makefile
+        r.Replace('\$\(prefix\)/man/man1', r'$(mandir)/man1', 'Makefile')
+            # else: conary will auto-fix this path and issue a warning.
+
+    def makeinstall(r):
+        r.MakeInstall('prefix=%(destdir)s/%(prefix)s',
+                      'mandir=%(destdir)s/%(mandir)s')
+
+    def policy(r):
+        r.Requires('gawk:runtime', '%(bindir)s/')
+        r.Licenses('GPLv2')
+        r.Description(
+            shortDesc=r.packageSummary,
+            longDesc =r.packageDescription)
+
+    packageHomepage = 'http://mvertes.free.fr/'
+    packageSummary  = 'txt2man - Converts flat ASCII text to man page format.'
+    packageDescription = \
+        """A command to extract comments from source code src2man, and
+           a command to build an indexed volume from a set of man pages
+           bookman are also provided. Homepage: %(homepage)s"""

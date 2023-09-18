@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class info_kvm(GroupInfoRecipe):
+    name = 'info-kvm'
+    version = '1'
+
+    def setup(r):
+        r.Group('kvm', 444)

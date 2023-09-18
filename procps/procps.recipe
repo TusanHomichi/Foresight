@@ -1,0 +1,85 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2011      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Procps(RPMPackageRecipe,CPackageRecipe):
+    name = 'procps'
+    version = '3.2.8'
+    rpmRelease = '22.20110302git.fc15'
+    tarballName = 'procps-%(version)s-20110302git.tar.gz'
+    rpmPatches = [ 'procps-3.2.7-misc.patch',
+                   'procps-3.2.7-FAQ.patch',
+                   'procps-3.2.7-noproc.patch',
+                   'procps-3.2.7-pseudo.patch',
+                   'procps-3.2.7-0x9b.patch',
+                   # 161303 - 'top' failed when remove cpus
+                   # 186017 - Top "Cpu0" line never updates on single processor machine
+                   'procps-3.2.7-top-remcpu.patch',
+                   # 177453 - for VIRT use proc->vm_size rather then proc->size (workaround)
+                   'procps-3.2.7-top-env-vmsize.patch',
+                   # 174619 - workaround for reliable Cpu(s) data in the first loop
+                   'procps-3.2.7-top-env-cpuloop.patch',
+                   # 185299 - cpu steal time support
+                   'procps-3.2.7-vmstat-cpusteal.patch',
+                   # 189349 - 32bit vmstat on 64bit kernel
+                   'procps-3.2.7-vmstat-pgpg.patch',
+                   # 140975 - top corrupts screen when sorting on first column
+                   'procps-3.2.7-top-sorthigh.path',
+                   # 234546 - 'w' doesn't give correct information about what's being run.
+                   'procps-3.2.7-w-best.patch',
+                   # 183029 - watch ignores unicode characters
+                   'procps-3.2.7-watch-unicode.patch',
+                   #244152 - ps truncates eip and esp to 32-bit values on 64-bit systems
+                   'procps-3.2.7-ps-eip64.patch',
+                   #185994 - error when using "Single Cpu = Off" option
+                   'procps-3.2.7-top-cpu0.patch',
+                   #354001 - CPU value in top is reported as an integer
+                   'procps-3.2.7-top-cpuint.patch',
+                   #472783 - 'vmstat -p <partition name>', 
+                   # the detailed statistics of the partition name is not output.
+                   'procps-3.2.7-vmstat-partstats-long.patch',
+                   # Fix vmstat header to be 80 chars not 81
+                   'procps-3.2.7-vmstat-header.patch',
+                   # rhel bug #475963: slabtop -o should display the info once
+                   'procps-3.2.7-slabtop-once.patch',
+                   #476134 - added timestamp to vmstat with new option -t
+                   'procps-3.2.7-vmstat-timestamp.patch',
+                   #manual page updated to document the -t functionality
+                   'procps-3.2.7-vmstat-timestamp-manpage.patch',
+                   # 'requested writes' display in partition statistics
+                   'procps-3.2.7-vmstat-partstats-reqwrites.patch',
+                   # bug in showing threads fixed
+                   'procps-3.2.8-threads.patch',
+                   # enable core file generation (don't trap it)
+                   'procps-enable-core.patch',
+                   #548711 -  [abrt] crash in procps-3.2.8-3.fc12
+                   'procps-3.2.8-setlocale.patch',
+                   # debian bug #505571 pmap -x should show more information
+                   'procps-pmap-smaps.patch',
+                   #692995 - procps: Regarding FROM field in "w" command
+                   'procps-3.2.8-w-envlength.patch',
+                   #532668 - procps/top SWAP statistics makes no sense
+                   'procps-3.2.8-top-swap.patch',
+                   #vmstat -t option does not work
+                   'procps-3.2.7-vmstat-timestamp-getopt.patch',]
+    rpmSources = [ 'FAQ', ]
+    buildRequires = [ 'ncurses:devel' ]
+
+    def setup(r):
+        r.disableParallelMake()
+        RPMPackageRecipe.unpack(r)
+        r.Replace('--owner 0 --group 0', '', 'Makefile')
+
+        r.Make('SHARED=1 CFLAGS="%(cflags)s" W_SHOWFROM=-DW_SHOWFROM lib64=%(lib)s')
+
+        r.MakeDirs('%(bindir)s', '%(essentialbindir)s',
+            '%(essentialsbindir)s', '%(mandir)s/man{1,5,8}',
+            '%(essentiallibdir)s', '%(includedir)s/proc')
+        r.MakeInstall('SKIP="/bin/kill /usr/share/man/man1/kill.1" ldconfig=true')
+
+        r.Install('proc/*.h', '%(includedir)s/proc/', mode = 0644)
+        r.Symlink('%(essentiallibdir)s/libproc-%(version)s.so', '%(essentiallibdir)s/libproc.so')

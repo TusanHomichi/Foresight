@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ImageExiftool(AutoPackageRecipe):
+    name = 'image-exiftool'
+    version = '9.38'
+
+    packageSummary = 'ExifTool is a platform-independent Perl library plus a command-line application for reading, writing and editing meta information in a wide variety of files.'
+    packageDescription = 'ExifTool is a platform-independent Perl library plus a command-line application for reading, writing and editing meta information in a wide variety of files. ExifTool supports many different metadata formats including EXIF, GPS, IPTC, XMP, JFIF, GeoTIFF, ICC Profile, Photoshop IRB, FlashPix, AFCP  and ID3, as well as the maker notes of many digital cameras by Canon, Casio, FujiFilm, HP, JVC/Victor, Kodak, Leaf, Minolta/Konica-Minolta, Nikon, Olympus/Epson, Panasonic/Leica, Pentax/Asahi, Ricoh, Samsung, Sanyo, Sigma/Foveon  and Sony.'
+ 
+    buildRequires = ['perl-IO-Compress:perl', 'perl-Term-ReadKey:perl', 'perl:devel', 'perl:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-%(version)s.tar.gz')
+
+    def make(r):
+	r.Run('perl Makefile.PL')
+
+    def policy(r):
+        r.Requires('%(name)s:perl', '%(bindir)s/exiftool')
+
+    def setup(r):
+	r.unpack()
+	r.make()
+	r.makeinstall()
+	r.policy()

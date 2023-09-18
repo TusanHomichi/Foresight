@@ -1,0 +1,105 @@
+From ef78b966702e3463dd7b15d42787346fc6e8f22a Mon Sep 17 00:00:00 2001
+From: Fabrice Bellet <fabrice@bellet.info>
+Date: Sun, 22 Jan 2012 14:41:59 +0100
+Subject: [PATCH 2/3] nuke old bundled copy of expat, use system expat
+
+---
+ CMakeLists.txt               |    4 +++-
+ simgear/CMakeLists.txt       |    2 +-
+ simgear/props/CMakeLists.txt |    4 +++-
+ simgear/xml/CMakeLists.txt   |   15 ---------------
+ simgear/xml/easyxml.cxx      |    2 +-
+ 5 files changed, 8 insertions(+), 19 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 037ede6..cdafb35 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -112,6 +112,7 @@ set (BOOST_CXX_FLAGS "-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_BIMAP_DI
+ 
+ find_package(ZLIB REQUIRED)
+ find_package(Threads REQUIRED)
++find_package(EXPAT REQUIRED)
+ 
+ if(SIMGEAR_HEADLESS)
+     message(STATUS "headless mode")
+@@ -229,7 +230,8 @@ include_directories(${PROJECT_BINARY_DIR}/simgear)
+ 
+ include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS} 
+     ${Boost_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR} 
+-    ${ALUT_INCLUDE_DIR} ${OPENAL_INCLUDE_DIR} )
++    ${ALUT_INCLUDE_DIR} ${OPENAL_INCLUDE_DIR}
++    ${EXPAT_INCLUDE_DIR} )
+ 
+ 
+ add_definitions(-DHAVE_CONFIG_H)
+diff --git a/simgear/CMakeLists.txt b/simgear/CMakeLists.txt
+index 684e2ee..4d45799 100644
+--- a/simgear/CMakeLists.txt
++++ b/simgear/CMakeLists.txt
+@@ -56,7 +56,7 @@ if(SIMGEAR_SHARED)
+     set_property(TARGET SimGearCore PROPERTY VERSION   ${SIMGEAR_VERSION})
+     set_property(TARGET SimGearCore PROPERTY SOVERSION ${SIMGEAR_SOVERSION})
+ 
+-    target_link_libraries(SimGearCore ${ZLIB_LIBRARY} ${RT_LIBRARY})
++    target_link_libraries(SimGearCore ${ZLIB_LIBRARY} ${RT_LIBRARY} ${EXPAT_LIBRARY})
+     install(TARGETS SimGearCore LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+     if(NOT SIMGEAR_HEADLESS)
+diff --git a/simgear/props/CMakeLists.txt b/simgear/props/CMakeLists.txt
+index f0dcbed..b79479e 100644
+--- a/simgear/props/CMakeLists.txt
++++ b/simgear/props/CMakeLists.txt
+@@ -27,7 +27,9 @@ if(ENABLE_TESTS)
+ if (SIMGEAR_SHARED)
+     set(TEST_LIBS SimGearCore)
+ else()
+-    set(TEST_LIBS sgprops sgxml sgstructure sgmisc sgdebug)
++    set(TEST_LIBS
++            sgprops sgxml sgstructure sgmisc sgdebug
++            ${EXPAT_LIBRARY})
+ endif()
+ 
+ 
+diff --git a/simgear/xml/CMakeLists.txt b/simgear/xml/CMakeLists.txt
+index 0365e86..e2dae9e 100644
+--- a/simgear/xml/CMakeLists.txt
++++ b/simgear/xml/CMakeLists.txt
+@@ -7,21 +7,6 @@ set(HEADERS
+     )
+     
+ set(SOURCES 
+-    asciitab.h
+-    hashtable.h
+-    iasciitab.h
+-    latin1tab.h
+-    nametab.h
+-    utf8tab.h
+-    xmldef.h
+-    xmlparse.h
+-    xmlrole.h
+-    xmltok.h
+-    xmltok_impl.h
+-    hashtable.c
+-    xmlparse.c
+-    xmlrole.c
+-    xmltok.c
+     easyxml.cxx
+     )
+ 
+diff --git a/simgear/xml/easyxml.cxx b/simgear/xml/easyxml.cxx
+index 65a3551..0a5b617 100644
+--- a/simgear/xml/easyxml.cxx
++++ b/simgear/xml/easyxml.cxx
+@@ -9,7 +9,7 @@
+ #include <string.h>		// strcmp()
+ 
+ #include "easyxml.hxx"
+-#include "xmlparse.h"
++#include <expat.h>
+ 
+ #include <fstream>
+ #include <iostream>
+-- 
+1.7.7.6
+

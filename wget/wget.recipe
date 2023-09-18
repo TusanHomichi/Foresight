@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2012-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Wget(AutoPackageRecipe):
+    name = 'wget'
+    version = '1.15'
+
+    buildRequires = [
+        'flex:runtime', 
+        'gettext:runtime', 
+        'install-info:runtime',
+        'intltool:runtime', 
+        'libidn:devel', 
+        'openssl:devel',
+        'util-linux:devel',
+        ]
+
+
+    shortDesc  = 'Wget console downloader'
+    longDesc   = 'Network utility to retrieve files from the WWW'
+    url        = 'http://www.gnu.org/software/wget/'
+    licenses   = [ 'GPL-3' ]
+    categories = [ 'System' ]
+
+
+    def unpack(r):
+        r.addArchive('http://ftp.gnu.org/gnu/wget/')
+
+
+
+    def configure(r):
+        r.Configure(
+            ' --disable-rpath'
+            ' --with-ssl=openssl --enable-opie --enable-digest'
+            ' --enable-iri'
+            ' --enable-ipv6'
+            ' --enable-nls'
+            ' --enable-ntlm'
+            ' --enable-largefile'
+            )
+
+    def policy(r):
+        r.Doc('AUTHORS', 'ChangeLog*', 'MAILING-LIST', 'NEWS',
+              'README', 'doc/sample.wgetrc')

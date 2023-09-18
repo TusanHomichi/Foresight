@@ -1,0 +1,8 @@
+class Twolame(AutoPackageRecipe):
+    name = 'twolame'
+    version = '0.3.12'
+ 
+    buildRequires = ['pkgconfig:devel', 'libsndfile:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/twolame/twolame-0.3.12.tar.gz')

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pyflakes(PackageRecipe):
+
+    name = 'pyflakes'
+    version = '0.4.0'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+        r.PythonSetup()

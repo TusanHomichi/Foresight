@@ -1,0 +1,6 @@
+class DdRescue(AutoPackageRecipe):
+    name = 'ddrescue'
+    version = '1.14'
+    buildRequires = ['gcc-c++:runtime','install-info:runtime']
+    def unpack(r):
+        r.addArchive('mirror://gnu/%(name)s/')

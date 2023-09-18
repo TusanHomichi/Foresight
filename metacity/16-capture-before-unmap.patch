@@ -1,0 +1,679 @@
+Description: Add an optional feature that makes metacity save in a window property
+             a pixmap of each window before it is unmapped.
+Author: Ugo Riboni <ugo.riboni@canonical.com>
+Forwarded: not-needed
+Bug: https://bugs.launchpad.net/unity-2d/+bug/696864
+
+Index: metacity-2.30.3/src/Makefile.am
+===================================================================
+--- metacity-2.30.3.orig/src/Makefile.am	2010-09-04 18:09:52.000000000 +0200
++++ metacity-2.30.3/src/Makefile.am	2011-04-14 13:01:28.691553256 +0200
+@@ -96,7 +96,9 @@
+ 	ui/theme.h				\
+ 	ui/themewidget.c			\
+ 	ui/themewidget.h			\
+-	ui/ui.c					\
++        ui/ui.c					\
++        core/capture.c			\
++        core/capture.h			\
+ 	include/all-keybindings.h
+ 
+ # by setting libmetacity_private_la_CFLAGS, the files shared with
+Index: metacity-2.30.3/src/core/atomnames.h
+===================================================================
+--- metacity-2.30.3.orig/src/core/atomnames.h	2010-09-04 18:09:52.000000000 +0200
++++ metacity-2.30.3/src/core/atomnames.h	2011-04-14 13:01:28.691553256 +0200
+@@ -71,6 +71,8 @@
+ item(VERSION)
+ item(ATOM_PAIR)
+ 
++item(_METACITY_WINDOW_CAPTURE)
++
+ /* Oddities: These are used, and we need atoms for them,
+  * but when we need all _NET_WM hints (i.e. when we're making
+  * lists of which _NET_WM hints we support in order to advertise
+Index: metacity-2.30.3/src/core/capture.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ metacity-2.30.3/src/core/capture.c	2011-04-14 13:01:28.691553256 +0200
+@@ -0,0 +1,231 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++
++/* 
++ * Copyright (C) 2011 Canonical
++ * 
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++ * 02111-1307, USA.
++ */
++
++#define _GNU_SOURCE
++
++#include <config.h>
++
++#ifdef HAVE_COMPOSITE_EXTENSIONS
++
++#include <stdlib.h>
++
++#include <gdk/gdk.h>
++
++#include "display.h"
++#include "screen.h"
++#include "screen-private.h"
++#include "frame.h"
++#include "errors.h"
++#include "window.h"
++#include "display.h"
++#include "display-private.h"
++#include "xprops.h"
++#include "prefs.h"
++
++#include <X11/Xlib.h>
++#include <X11/X.h>
++#include <X11/Xatom.h>
++#include <X11/extensions/Xcomposite.h>
++
++#include "capture.h"
++
++/* All the following defines are copied directly from the
++   xrender compositor. They are needed to check at runtime
++   if the composite extensions are enabled on a specific
++   display. */
++
++#if COMPOSITE_MAJOR > 0 || COMPOSITE_MINOR >= 2
++#define HAVE_NAME_WINDOW_PIXMAP 1
++#endif
++
++#ifdef HAVE_COMPOSITE_EXTENSIONS
++static inline gboolean
++composite_at_least_version (MetaDisplay *display,
++                            int maj, int min)
++{
++  static int major = -1;
++  static int minor = -1;
++
++  if (major == -1)
++    meta_display_get_compositor_version (display, &major, &minor);
++  
++  return (major > maj || (major == maj && minor >= min));
++}
++
++#define have_name_window_pixmap(display) \
++  composite_at_least_version (display, 0, 2)
++
++#endif
++
++/* Notice that this is essentially the same that the xrender compositor
++   does, except that we use CompositeRedirectAutomatic instead of
++   CompositeRedirectManual. */
++void
++capture_enable_redirection_screen (MetaScreen *screen)
++{
++  screen->capture_enabled = FALSE;
++
++#ifdef HAVE_COMPOSITE_EXTENSIONS
++  MetaDisplay *display = meta_screen_get_display (screen);
++  Display *xdisplay = meta_display_get_xdisplay (display);
++
++  int screen_number = meta_screen_get_screen_number (screen);
++  Window xroot = meta_screen_get_xroot (screen);
++
++  gdk_error_trap_push ();
++  XCompositeRedirectSubwindows (xdisplay, xroot,
++                                CompositeRedirectAutomatic);
++  XSync (xdisplay, FALSE);
++
++  if (gdk_error_trap_pop ())
++    {
++      g_warning ("Can't enable window redirection on screen %i",
++                 screen_number);
++      return;
++    }
++  else screen->capture_enabled = TRUE;
++#endif
++}
++
++void
++capture_disable_redirection_screen (MetaScreen *screen)
++{
++#ifdef HAVE_COMPOSITE_EXTENSIONS
++  if (screen->capture_enabled)
++    {
++      MetaDisplay *display = meta_screen_get_display (screen);
++      Display *xdisplay = meta_display_get_xdisplay (display);
++      Window xroot = meta_screen_get_xroot (screen);
++
++      XCompositeUnredirectSubwindows (xdisplay, xroot,
++                                      CompositeRedirectAutomatic);
++      screen->capture_enabled = FALSE;
++    }
++#endif
++}
++
++/* Get our own copy of the backing pixmap for the window
++   via XCompositeNameWindowPixmap.
++   This is much simpler than what the xrender compositor
++   does but it's suitable for our purpose. */
++static Pixmap
++get_window_pixmap (MetaWindow *window)
++{
++#ifdef HAVE_COMPOSITE_EXTENSIONS
++  Pixmap pixmap;
++  MetaDisplay *display = meta_window_get_display (window);
++  Display *xdisplay = meta_display_get_xdisplay (display);
++  MetaFrame *frame = meta_window_get_frame (window);
++
++  Window xid = (frame) ? meta_frame_get_xwindow (frame) :
++                         meta_window_get_xwindow (window);
++
++#ifdef HAVE_NAME_WINDOW_PIXMAP
++  if (have_name_window_pixmap (display))
++    {
++      meta_error_trap_push (display);
++      pixmap = XCompositeNameWindowPixmap(xdisplay, xid);
++      meta_error_trap_pop (display, FALSE);
++      return pixmap;
++    }
++  else
++#endif
++    return None;
++#endif
++}
++
++void
++capture_create_for_window (MetaWindow *window)
++{
++  MetaScreen *screen = meta_window_get_screen(window);
++  if (!screen->capture_enabled) return;
++
++  Pixmap pixmap;
++  Window xwindow = meta_window_get_xwindow(window);
++  MetaDisplay *display = meta_window_get_display(window);
++  Display *xdisplay = meta_display_get_xdisplay(display);
++
++  pixmap = get_window_pixmap (window);
++  meta_topic(META_DEBUG_CAPTURE, "Captured pixmap %lu for window %lu\n", xwindow, pixmap);
++  if (pixmap != None)
++    {
++      meta_error_trap_push (display);
++      int success = XChangeProperty (xdisplay, xwindow,
++                                     display->atom__METACITY_WINDOW_CAPTURE,
++                                     XA_PIXMAP,
++                                     32, PropModeReplace, (guchar*) &pixmap, 1);
++      meta_error_trap_pop (display, FALSE);
++      if (!success) meta_warning("Failed to save capture property on window %lu\n", xwindow);
++    }
++}
++
++void
++capture_cleanup_for_window (MetaWindow *window)
++{
++  MetaScreen *screen = meta_window_get_screen(window);
++  if (!screen->capture_enabled) return;
++
++  Pixmap pixmap;
++  Window xwindow = meta_window_get_xwindow(window);
++  MetaDisplay *display = meta_window_get_display(window);
++  Display *xdisplay = meta_display_get_xdisplay(display);
++
++  meta_topic(META_DEBUG_CAPTURE, "Cleaning up property for window %lu\n", xwindow);
++  meta_error_trap_push (display);
++  if (meta_prop_get_pixmap(display, xwindow,
++                           display->atom__METACITY_WINDOW_CAPTURE,
++                           &pixmap))
++    {
++      /* Delete the property before freeing the pixmap, to avoid people
++         accessing it and getting a bad pixmap */
++      XDeleteProperty(xdisplay, xwindow,
++                      display->atom__METACITY_WINDOW_CAPTURE);
++      XFreePixmap(xdisplay, pixmap);
++    }
++  meta_error_trap_pop (display, FALSE);
++}
++
++void
++capture_enable_redirection_display (MetaDisplay *display)
++{
++  meta_topic(META_DEBUG_CAPTURE, "Enabling window redirection for capture.");
++  GSList *list = meta_display_get_screens(display);
++  for (; list != NULL; list = list->next)
++    {
++      MetaScreen *screen = list->data;
++      capture_enable_redirection_screen (screen);
++    }
++}
++
++void
++capture_disable_redirection_display (MetaDisplay *display)
++{
++  meta_topic(META_DEBUG_CAPTURE, "Disabling window redirection for capture.");
++  GSList *list = meta_display_get_screens(display);
++  for (; list != NULL; list = list->next)
++    {
++      MetaScreen *screen = list->data;
++      capture_disable_redirection_screen (screen);
++    }
++}
++
++#endif /* HAVE_COMPOSITE_EXTENSIONS */
++
+Index: metacity-2.30.3/src/core/capture.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ metacity-2.30.3/src/core/capture.h	2011-04-14 13:01:28.691553256 +0200
+@@ -0,0 +1,97 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++
++/* 
++ * Copyright (C) 2011 Canonical
++ * 
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++ * 02111-1307, USA.
++ */
++
++/** \file capture.h Capture windows before unmapping
++  *
++  * This module implements the bulk of the functionality for the
++  * "capture before unmapping" feature.
++  * Essentially metacity unmaps the windows when they are sent to
++  * another workspace or minimized. This prevents clients from
++  * getting screenshots of these windows (for display in task switchers
++  * for example).
++  *
++  * By using these functions, it is possible to capture a pixmap
++  * of the current state of the window and save it into a property on the
++  * window itself (and conversely, destroy that pixmap and the property
++  * when not needed anymore).
++  * The interested clients can then read the property on unmapped windows
++  * and retrieve the pixmap for their own use.
++  */
++
++#ifndef META_CAPTURE_H_
++#define META_CAPTURE_H_
++
++#include "types.h"
++
++/**
++  * Activates window redirection on all screens on the display, so that
++  * we can use NameWindowPixmap to capture window pixmaps.
++  *
++  * \param screen The display where to enable redirection
++  */
++void capture_enable_redirection_display (MetaDisplay *display);
++
++/**
++  * Disables window redirection on all screens on the display.
++  *
++  * \param screen The display where to disable redirection
++  */
++void capture_disable_redirection_display (MetaDisplay *display);
++
++/**
++  * Activates window redirection on the screen.
++  * This needs the composite extension to be enabled on the screen.
++  *
++  * \param screen The screen where to enable redirection
++  */
++void capture_enable_redirection_screen (MetaScreen *screen);
++
++/**
++  * Disables window redirection on the screen.
++  *
++  * \param screen The screen where to disable redirection
++  */
++void capture_disable_redirection_screen (MetaScreen *screen);
++
++/**
++  * Gets a pixmap of the current state of window, then
++  * save it into a custom property (_METACITY_WINDOW_CAPTURE) on
++  * the window itself.
++  * Note that the pixmap is still owned by the server and needs
++  * to be destroyed when not needed anymore (typically when the
++  * window is mapped again or is destroyed) by calling capture_cleanup_for_window.
++  *
++  * \param window The window to capture and save the pixmap for.
++  */
++void capture_create_for_window(MetaWindow *window);
++
++/**
++  * If the window has the _METACITY_WINDOW_CAPTURE property, then free the
++  * pixmap stored into it and delete the property too.
++  * Always use this to cleanup windows where you called capture_create_for_window
++  * when you don't need the capture anymore or when the window is destryed to
++  * avoid pixmap leaks.
++  *
++  * \param  window The window where to clean up the capture.
++  */
++void capture_cleanup_for_window(MetaWindow *window);
++
++#endif
+Index: metacity-2.30.3/src/core/display.c
+===================================================================
+--- metacity-2.30.3.orig/src/core/display.c	2011-04-14 13:01:25.531592982 +0200
++++ metacity-2.30.3/src/core/display.c	2011-04-14 13:01:28.699553155 +0200
+@@ -48,6 +48,7 @@
+ #include "bell.h"
+ #include "effects.h"
+ #include "compositor.h"
++#include "capture.h"
+ #include <X11/Xatom.h>
+ #include <X11/cursorfont.h>
+ #ifdef HAVE_SOLARIS_XINERAMA
+@@ -723,6 +724,8 @@
+      the code */
+   if (meta_prefs_get_compositing_manager ())
+     enable_compositor (the_display, FALSE);
++  else if (meta_prefs_get_capture_before_unmap())
++    capture_enable_redirection_display(the_display);
+    
+   meta_display_grab (the_display);
+   
+@@ -924,6 +927,11 @@
+ 
+   if (display->compositor)
+     meta_compositor_destroy (display->compositor);
++
++  /* Cycle through all the screens and if in any of them the
++     "capture before unmap" feature was enabled, disable it.
++  */
++  capture_disable_redirection_display(display);
+   
+   g_free (display);
+   the_display = NULL;
+Index: metacity-2.30.3/src/core/prefs.c
+===================================================================
+--- metacity-2.30.3.orig/src/core/prefs.c	2011-04-14 13:01:28.295558234 +0200
++++ metacity-2.30.3/src/core/prefs.c	2011-04-14 13:02:15.962958972 +0200
+@@ -65,7 +65,6 @@
+ #define KEY_WORKSPACE_NAME_DIRECTORY "/apps/metacity/workspace_names"
+ #define KEY_WORKSPACE_NAME_PREFIX "/apps/metacity/workspace_names/name_"
+ 
+-
+ #ifdef HAVE_GCONF
+ static GConfClient *default_client = NULL;
+ static GList *changes = NULL;
+@@ -100,6 +99,7 @@
+ static gboolean force_fullscreen = TRUE;
+ static gboolean hide_decorator_tooltip = FALSE;
+ static gboolean show_maximized_titlebars = TRUE;
++static gboolean capture_before_unmap = FALSE;
+ 
+ static MetaVisualBellType visual_bell_type = META_VISUAL_BELL_FULLSCREEN_FLASH;
+ static MetaButtonLayout button_layout;
+@@ -425,6 +425,11 @@
+       &show_maximized_titlebars,
+       FALSE,
+     },
++    { "/apps/metacity/general/capture_before_unmap",
++      META_PREF_CAPTURE_BEFORE_UNMAP,
++      &capture_before_unmap,
++      FALSE,
++    },
+     { NULL, 0, NULL, FALSE },
+   };
+ 
+@@ -1785,6 +1790,9 @@
+ 
+     case META_PREF_SHOW_MAXIMIZED_TITLEBARS:
+       return "META_PREF_SHOW_MAXIMIZED_TITLEBARS";
++
++    case META_PREF_CAPTURE_BEFORE_UNMAP:
++      return "CAPTURE_BEFORE_UNMAP";
+     }
+ 
+   return "(unknown)";
+@@ -2735,6 +2743,12 @@
+   return compositing_manager;
+ }
+ 
++gboolean
++meta_prefs_get_capture_before_unmap (void)
++{
++  return capture_before_unmap;
++}
++
+ guint
+ meta_prefs_get_mouse_button_resize (void)
+ {
+Index: metacity-2.30.3/src/core/screen-private.h
+===================================================================
+--- metacity-2.30.3.orig/src/core/screen-private.h	2010-09-04 18:09:53.000000000 +0200
++++ metacity-2.30.3/src/core/screen-private.h	2011-04-14 13:01:28.707553054 +0200
+@@ -133,6 +133,9 @@
+ 
+   /* Managed by compositor.c */
+   gpointer compositor_data;
++
++  /* Managed by capture.c */
++  gboolean capture_enabled;
+ };
+ 
+ MetaScreen*   meta_screen_new                 (MetaDisplay                *display,
+Index: metacity-2.30.3/src/core/screen.c
+===================================================================
+--- metacity-2.30.3.orig/src/core/screen.c	2010-09-04 18:09:53.000000000 +0200
++++ metacity-2.30.3/src/core/screen.c	2011-04-14 13:01:28.711553004 +0200
+@@ -585,6 +585,11 @@
+   
+   screen->stack = meta_stack_new (screen);
+ 
++  /* This will be set to TRUE later if we are configured for
++     capture and if we actually manage to enable window
++     redirection for this screen. */
++  screen->capture_enabled = FALSE;
++
+   meta_prefs_add_listener (prefs_changed_callback, screen);
+ 
+ #ifdef HAVE_STARTUP_NOTIFICATION
+Index: metacity-2.30.3/src/core/util.c
+===================================================================
+--- metacity-2.30.3.orig/src/core/util.c	2010-09-04 18:09:53.000000000 +0200
++++ metacity-2.30.3/src/core/util.c	2011-04-14 13:01:28.715552954 +0200
+@@ -321,6 +321,8 @@
+       return "COMPOSITOR";
+     case META_DEBUG_EDGE_RESISTANCE:
+       return "EDGE_RESISTANCE";
++    case META_DEBUG_CAPTURE:
++      return "CAPTURE";
+     }
+ 
+   return "WM";
+Index: metacity-2.30.3/src/core/window.c
+===================================================================
+--- metacity-2.30.3.orig/src/core/window.c	2011-04-14 13:01:25.171597508 +0200
++++ metacity-2.30.3/src/core/window.c	2011-04-14 13:01:28.727552803 +0200
+@@ -45,6 +45,7 @@
+ #include "constraints.h"
+ #include "compositor.h"
+ #include "effects.h"
++#include "capture.h"
+ 
+ #include <X11/Xatom.h>
+ #include <string.h>
+@@ -974,6 +975,10 @@
+   
+   meta_verbose ("Unmanaging 0x%lx\n", window->xwindow);
+ 
++  /* Avoid leaking server side the captured pixmaps when
++     the windows to which they belong are closed */
++  capture_cleanup_for_window(window);
++
+   if (window->display->compositor)
+     meta_compositor_free_window (window->display->compositor, window);
+   
+@@ -1471,6 +1476,9 @@
+     
+   if (!showing)
+     {
++      /* Capture the window pixmap before starting the minimize effect */
++      capture_create_for_window (window);
++
+       gboolean on_workspace;
+ 
+       on_workspace = meta_window_located_on_workspace (window, 
+@@ -1518,6 +1526,10 @@
+   else
+     {
+       meta_window_show (window);
++
++      /* After the window has completely finished showing, destroy
++         the captured pixmap and clean the window property */
++      capture_cleanup_for_window (window);
+     }
+ }
+ 
+Index: metacity-2.30.3/src/core/xprops.c
+===================================================================
+--- metacity-2.30.3.orig/src/core/xprops.c	2010-09-04 18:09:53.000000000 +0200
++++ metacity-2.30.3/src/core/xprops.c	2011-04-14 13:01:28.727552803 +0200
+@@ -554,6 +554,20 @@
+   return TRUE;
+ }
+ 
++static gboolean
++pixmap_from_results (GetPropertyResults *results,
++                     Pixmap             *pixmap_p)
++{
++  if (!validate_or_free_results (results, 32, XA_PIXMAP, TRUE))
++    return FALSE;
++
++  *pixmap_p = *(Pixmap*) results->prop;
++  XFree (results->prop);
++  results->prop = NULL;
++
++  return TRUE;
++}
++
+ #ifdef HAVE_XSYNC
+ static gboolean
+ counter_from_results (GetPropertyResults *results,
+@@ -590,6 +604,23 @@
+ }
+ 
+ gboolean
++meta_prop_get_pixmap (MetaDisplay *display,
++                      Window       xwindow,
++                      Atom         xatom,
++                      Pixmap      *pixmap_p)
++{
++  GetPropertyResults results;
++
++  *pixmap_p = None;
++
++  if (!get_property (display, xwindow, xatom, XA_PIXMAP,
++                     &results))
++    return FALSE;
++
++  return pixmap_from_results (&results, pixmap_p);
++}
++
++gboolean
+ meta_prop_get_cardinal (MetaDisplay   *display,
+                         Window         xwindow,
+                         Atom           xatom,
+Index: metacity-2.30.3/src/include/prefs.h
+===================================================================
+--- metacity-2.30.3.orig/src/include/prefs.h	2011-04-14 13:01:28.299558183 +0200
++++ metacity-2.30.3/src/include/prefs.h	2011-04-14 13:02:15.294967371 +0200
+@@ -62,7 +62,8 @@
+   META_PREF_RESIZE_WITH_RIGHT_BUTTON,
+   META_PREF_FORCE_FULLSCREEN,
+   META_PREF_HIDE_DECORATOR_TOOLTIP,
+-  META_PREF_SHOW_MAXIMIZED_TITLEBARS
++  META_PREF_SHOW_MAXIMIZED_TITLEBARS,
++  META_PREF_CAPTURE_BEFORE_UNMAP
+ } MetaPreference;
+ 
+ typedef void (* MetaPrefsChangedFunc) (MetaPreference pref,
+@@ -121,6 +122,8 @@
+ gboolean    meta_prefs_get_compositing_manager (void);
+ gboolean    meta_prefs_get_force_fullscreen  (void);
+ 
++gboolean    meta_prefs_get_capture_before_unmap (void);
++
+ /**
+  * Sets whether the compositor is turned on.
+  *
+Index: metacity-2.30.3/src/include/util.h
+===================================================================
+--- metacity-2.30.3.orig/src/include/util.h	2010-09-04 18:09:53.000000000 +0200
++++ metacity-2.30.3/src/include/util.h	2011-04-14 13:01:28.731552752 +0200
+@@ -72,7 +72,8 @@
+   META_DEBUG_RESIZING        = 1 << 18,
+   META_DEBUG_SHAPES          = 1 << 19,
+   META_DEBUG_COMPOSITOR      = 1 << 20,
+-  META_DEBUG_EDGE_RESISTANCE = 1 << 21
++  META_DEBUG_EDGE_RESISTANCE = 1 << 21,
++  META_DEBUG_CAPTURE         = 1 << 22
+ } MetaDebugTopic;
+ 
+ void meta_topic_real      (MetaDebugTopic topic,
+Index: metacity-2.30.3/src/include/xprops.h
+===================================================================
+--- metacity-2.30.3.orig/src/include/xprops.h	2010-09-04 18:09:53.000000000 +0200
++++ metacity-2.30.3/src/include/xprops.h	2011-04-14 13:01:28.731552752 +0200
+@@ -111,6 +111,10 @@
+                                       Window         xwindow,
+                                       Atom           xatom,
+                                       Window        *window_p);
++gboolean meta_prop_get_pixmap        (MetaDisplay   *display,
++                                      Window         xwindow,
++                                      Atom           xatom,
++                                      Pixmap        *pixmap_p);
+ gboolean meta_prop_get_cardinal      (MetaDisplay   *display,
+                                       Window         xwindow,
+                                       Atom           xatom,
+Index: metacity-2.30.3/src/metacity.schemas.in.in
+===================================================================
+--- metacity-2.30.3.orig/src/metacity.schemas.in.in	2011-04-14 13:01:28.347557580 +0200
++++ metacity-2.30.3/src/metacity.schemas.in.in	2011-04-14 13:02:42.246628506 +0200
+@@ -337,6 +337,26 @@
+     </schema>
+ 
+     <schema>
++      <key>/schemas/apps/metacity/general/capture_before_unmap</key>
++      <applyto>/apps/metacity/general/capture_before_unmap</applyto>
++      <owner>metacity</owner>
++      <type>bool</type>
++      <default>false</default>
++      <locale name="C">
++        <short>Capture Before Unmap</short>
++        <long>
++          Determines whether or not before a window is unmapped (e.g. when
++          it is sent to another workspace or minimized) a pixmap of the
++          current state of the window is captured and stored in a property
++          on the window itself. This allows interested clients (e.g.
++          workspace switchers) to be able to display previews of any window.
++          Note that this is incompatible with compositing_manager and
++          will be ignored if compositing_manager is enabled.
++        </long>
++      </locale>
++    </schema>
++
++    <schema>
+       <key>/schemas/apps/metacity/general/audible_bell</key>
+       <applyto>/apps/metacity/general/audible_bell</applyto>      
+       <owner>metacity</owner>

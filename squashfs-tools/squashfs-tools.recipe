@@ -1,0 +1,23 @@
+#
+# Copyright (c) rPath, Inc.
+#               The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SquashfsTools(CPackageRecipe):
+    name = 'squashfs-tools'
+    version = '4.2'
+
+    buildRequires = [ 'zlib:devel', 'lzo:devel', 'xz:devel' ]
+
+    def setup(r):
+        r.macros.version = r.version.replace('-', '_')
+        r.macros.subdir = 'squashfs-tools'
+        r.addArchive('http://downloads.sourceforge.net/squashfs/squashfs%(version)s.tar.gz')
+        r.Environment('XZ_SUPPORT', '1')
+        r.Environment('LZO_SUPPORT', '1')
+        r.Environment('LZMA_XZ_SUPPORT', '1')
+        r.Make(dir='%(subdir)s')
+        r.Install('%(subdir)s/mksquashfs', '%(essentialsbindir)s/', mode=0755)
+        r.Install('%(subdir)s/unsquashfs', '%(sbindir)s/', mode=0755)

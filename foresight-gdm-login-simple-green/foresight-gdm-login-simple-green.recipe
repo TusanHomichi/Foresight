@@ -1,0 +1,15 @@
+# Foresight GDM Login Simple Green (GDM login theme)
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ForesightGdmLoginSimpleGreen(RedirectRecipe):
+    name = 'foresight-gdm-login-simple-green'
+    version = '0'
+
+    # Package no longer used
+    # Contents in the tarball are available at https://github.com/foresight/gdm-login-simple-green
+    def setup(r):
+        r.addRemoveRedirect()

@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+#               2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class XercesC(AutoPackageRecipe):
+    name = 'xerces-c'
+    version = '3.1.1'
+
+    buildRequires = [ 'autoconf:runtime', 'libstdc++:devel',
+                      'curl:devel', 'icu:devel', 'openssl:devel', ]
+
+    def unpack(r):
+        r.addArchive('http://www.bitlib.net/mirror/apache.org//xerces/c/3/sources/')
+
+        r.MakeDirs('_docs')
+        r.Copy('samples/', '_docs/')
+
+    def configure(r):
+        r.macros.cflags += ' -fno-strict-aliasing'
+        r.macros.cxxflags += ' -fno-strict-aliasing'
+        cfgArgs = '--disable-static --disable-pretty-make '
+        if Arch.x86:
+            cfgArgs += ' --disable-sse2'
+        r.Configure(cfgArgs)
+
+
+    def policy(r):
+        # we don't want this ...
+        r.Remove('%(bindir)s', recursive = True)

@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GummiBoot(CPackageRecipe):
+    name = 'gummiboot'
+    version = '29'
+    buildRequires = [ 'gnu-efi:devel', 'libxslt:runtime',
+                      'pkgconfig:devel', 'util-linux:devel',
+                      'automake:runtime', 'autoconf:runtime',
+                      'docbook-xsl:data',
+                  ]
+
+    def setup(r):
+        r.addGitSnapshot('git://anongit.freedesktop.org/gummiboot', 
+                         tag = r.version)
+
+        r.Run('./autogen.sh')
+        r.Configure('--libexecdir=%(prefix)s/lib')
+        r.Make('V=1')
+        r.MakeInstall()
+
+        postScript = """#!/bin/bash\n
+        %(bindir)s/gummiboot update >/dev/null 2>&1
+        """ % r.macros
+
+        r.ScriptPostInstall(contents=postScript)
+        r.ScriptPostUpdate(contents=postScript)

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+#               2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class KeyutilsRecipe(CPackageRecipe):
+    name = 'keyutils'
+    version = '1.4'
+
+    def setup(r):
+        r.addArchive('http://people.redhat.com/~dhowells/keyutils/')
+        args = (" NO_ARLIB=1 LIBDIR=%(essentiallibdir)s "
+                " USRLIBDIR=%(libdir)s ") 
+        r.macros.cflags += ' -Wall'
+        r.Make(args)
+        r.MakeInstall(args)

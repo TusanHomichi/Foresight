@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class libexo(XfcePackageRecipe):
+
+    name = 'libexo'
+    version = '0.10.2'
+    sourcename = 'exo'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'perl-URI:perl', 'perl:lib', 'pygtk:devel', 'w3c-libwww:devel',
+        'desktop-file-utils:runtime', 'libnotify:devel', 'libxfce4ui:devel',
+        'libxfce4util:devel', 'perl:devel', 'python:devel','pygobject:runtime'
+    ])
+
+    def install(r):
+        XfcePackageRecipe.install(r)
+        if Arch.x86_64:
+            r.Move('/usr/lib/python2.6/site-packages/*',
+                   '%(libdir)s/python2.6/site-packages', allowNoMatch = True)

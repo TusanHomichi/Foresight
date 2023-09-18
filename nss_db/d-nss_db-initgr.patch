@@ -1,0 +1,254 @@
+diff -up ./src/db-initgroups.c.initgr ./src/db-initgroups.c
+--- a/src/db-initgroups.c.initgr	2011-04-21 13:37:34.913687000 -0400
++++ b/src/db-initgroups.c	2011-04-21 14:13:11.826667000 -0400
+@@ -0,0 +1,192 @@
++/* Initgroups handling in nss_db module.
++   Copyright (C) 2011 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public License as
++   published by the Free Software Foundation; either version 2 of the
++   License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public
++   License along with the GNU C Library; see the file COPYING.LIB.  If not,
++   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.  */
++
++#include <alloca.h>
++#include <ctype.h>
++#include <errno.h>
++#include <grp.h>
++#include <paths.h>
++#include <stdbool.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/param.h>
++
++#include "nss_db.h"
++
++/* Declared in glibc's include/grp.h.  */
++extern int _nss_files_parse_grent (char *line, struct group *result,
++                                   void *data, size_t datalen, int *errnop);
++
++
++enum nss_status
++_nss_db_initgroups_dyn (const char *user, gid_t group, long int *start,
++			long int *size, gid_t **groupsp, long int limit,
++			int *errnop)
++{
++  DB *db = NULL;
++  DB_ENV *dbenv = NULL;
++
++  /* Open the database.  */
++  enum nss_status status = internal_setent (_PATH_VARDB "group.db", &db,
++					    &dbenv);
++  if (status == NSS_STATUS_SUCCESS)
++    {
++      unsigned int entidx = 0;
++
++      size_t linelen = 1024;
++      void *line = alloca (linelen);
++      bool line_use_malloc = false;
++
++      size_t buflen = 1024;
++      void *buffer = alloca (buflen);
++      bool buffer_use_malloc = false;
++
++      size_t alloca_used = linelen + buflen;
++
++      gid_t *groups = *groupsp;
++
++      while (1)
++	{
++	  char buf[20];
++	  DBT key;
++
++	  key.size = snprintf (key.data = buf, sizeof buf, "0%u", entidx++);
++	  key.flags = 0;
++
++	  DBT value;
++	  value.flags = 0;
++	  int err = db->get (db, NULL, &key, &value, 0);
++	  if (err)
++	    {
++	      if (err != DB_NOTFOUND)
++		{
++		  if (err > 0)
++		    *errnop = err;
++		  status = NSS_STATUS_UNAVAIL;
++		}
++	      break;
++	    }
++
++	  /* We need a copy of the value we can modify.  */
++	  if (linelen < value.size)
++	    {
++	      size_t newlinelen = MAX (2 * linelen, value.size);
++
++	      if (line_use_malloc 
++		  || ! __libc_use_alloca (alloca_used + newlinelen))
++		{
++		  void *newline = realloc (line_use_malloc ? line : NULL,
++					   newlinelen);
++		  if (newline == NULL)
++		    {
++		      *errnop = ENOMEM;
++		      status = NSS_STATUS_TRYAGAIN;
++		      goto out;
++		    }
++		  line = newline;
++		  linelen = newlinelen;
++		  line_use_malloc = true;
++		}
++	      else
++		{
++		  line = extend_alloca (line, linelen, newlinelen);
++		  alloca_used += newlinelen;
++		}
++	    }
++
++	  /* Copy and find beginning.  */
++	  char *p = memcpy (line, value.data, value.size);
++	  while (isspace (*p))
++	    ++p;
++
++	  struct group grp;
++	  while ((err = _nss_files_parse_grent (p, &grp, buffer, buflen,
++						errnop)) == -1)
++	    {
++	      size_t newbuflen = MAX (2 * buflen, value.size);
++	      if (buffer_use_malloc 
++		  || ! __libc_use_alloca (alloca_used + newbuflen))
++		{
++		  void *newbuf = realloc (buffer_use_malloc ? buffer : NULL,
++					  newbuflen);
++		  if (newbuf == NULL)
++		    {
++		      *errnop = ENOMEM;
++		      status = NSS_STATUS_TRYAGAIN;
++		      goto out;
++		    }
++		  buffer = newbuf;
++		  buflen = newbuflen;
++		  buffer_use_malloc = true;
++		}
++	      else
++		{
++		  buffer = extend_alloca (buffer, buflen, newbuflen);
++		  alloca_used += newbuflen;
++		}
++	    }
++
++	  if (err > 0 && grp.gr_gid != group)
++	    for (char **m = grp.gr_mem; *m != NULL; ++m)
++	      if (strcmp (*m, user) == 0)
++		{
++		  /* Matches user.  Insert this group.  */
++		  if (*start == *size)
++		    {
++		      /* Need a bigger buffer.  */
++		      if (limit > 0 && *size == limit)
++			/* We reached the maximum.  */
++			goto out;
++
++		      long int newsize;
++		      if (limit <= 0)
++			newsize = 2 * *size;
++		      else
++			newsize = MIN (limit, 2 * *size);
++
++		      gid_t *newgroups = realloc (groups,
++						  newsize * sizeof (*groups));
++		      if (newgroups == NULL)
++			{
++			  *errnop = ENOMEM;
++			  status = NSS_STATUS_TRYAGAIN;
++			  goto out;
++			}
++		      *groupsp = groups = newgroups;
++		      *size = newsize;
++		    }
++
++		  groups[*start] = grp.gr_gid;
++		  *start += 1;
++		  
++		  break;
++		}
++	}
++
++    out:
++      if (buffer_use_malloc)
++	free (buffer);
++      if (line_use_malloc)
++	free (line);
++
++      internal_endent (&db, &dbenv);
++    }
++
++  return status;
++}
+--- a/src/Makefile.am.initgr	2011-04-21 13:43:11.698540000 -0400
++++ b/src/Makefile.am	2011-04-21 14:12:27.750429000 -0400
+@@ -11,14 +11,15 @@ localedir = $(datadir)/locale
+ 
+ noinst_HEADERS = db-compat.h netgroup.h nss_db.h
+ 
+-INCLUDES = @DB_CFLAGS@ -D_GNU_SOURCE \
++INCLUDES = @DB_CFLAGS@ -D_GNU_SOURCE -std=gnu99 \
+ 	-I../intl -DLOCALEDIR=\"$(localedir)\"
+ 
+ EXTRA_DIST = libnss_db.map
+ 
+ slib_LTLIBRARIES = libnss_db.la
+ libnss_db_la_SOURCES = db-alias.c db-ethers.c db-netgrp.c db-grp.c db-proto.c \
+-	db-pwd.c db-rpc.c db-service.c db-spwd.c db-compat.c db-open.c
++	db-pwd.c db-rpc.c db-service.c db-spwd.c db-compat.c db-open.c \
++	db-initgroups.c
+ EXTRA_libnss_db_la_SOURCES = libnss_db.map db-XXX.c \
+ 	files-ethers.c files-grp.c files-parse.c files-proto.c files-pwd.c \
+ 	files-rpc.c files-service.c files-spwd.c
+--- a/src/nss_db.h.initgr	2011-04-21 13:37:16.346212000 -0400
++++ b/src/nss_db.h	2011-04-21 14:22:05.644573000 -0400
+@@ -31,4 +31,25 @@ extern enum nss_status internal_setent (
+ /* Close the database *DBP.  */
+ extern void internal_endent (DB **dbp, DB_ENV **dbenvp);
+ 
++
++/* The following are defined in glibc in include/alloca.h.  */
++extern int __libc_alloca_cutoff (size_t size) __attribute__ ((const));
++#define PTHREAD_STACK_MIN 16384
++#define __libc_use_alloca(size) \
++  (__builtin_expect ((size) <= PTHREAD_STACK_MIN / 4, 1)		      \
++		     || __libc_alloca_cutoff (size))
++#if defined __i386__ || defined __x86_64__
++# define extend_alloca(buf, len, newlen) \
++  (__typeof (buf)) ({ size_t __newlen = (newlen);			      \
++                      char *__newbuf = alloca (__newlen);		      \
++                      if (__newbuf + __newlen == (char *) buf)		      \
++                        len += __newlen;				      \
++                      else						      \
++                        len = __newlen;					      \
++                      __newbuf; })
++#else
++# define extend_alloca(buf, len, newlen) \
++  alloca (((len) = (newlen)))
++#endif
++
+ #endif	/* nss_db.h */
+--- a/src/libnss_db.map.initgr	2011-04-26 15:31:20.775659000 -0400
++++ b/src/libnss_db.map	2011-04-26 15:31:42.134332000 -0400
+@@ -14,6 +14,7 @@
+     _nss_db_setaliasent; _nss_db_setetherent; _nss_db_setgrent;
+     _nss_db_setnetgrent; _nss_db_setprotoent; _nss_db_setpwent;
+     _nss_db_setrpcent; _nss_db_setservent; _nss_db_setspent;
++    _nss_db_initgroups_dyn;
+   local:
+     *;
+ };

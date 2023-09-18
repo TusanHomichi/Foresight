@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SdlBall(CPackageRecipe):
+    name = 'sdl-ball'
+    version = '1.0'
+ 
+    buildRequires = ['Mesa:devel', 'SDL:devel', 'SDL_image:devel', 'SDL_ttf:devel', 'libstdc++:devel', 'desktop-file-utils:runtime', 'SDL_mixer:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/sdl-ball/')
+      #  r.addArchive('bg.tar.bz2',dir='%(datadir)s/sdl-ball/data/gfx/')
+        r.Replace('-lGL','-L%(libdir)s/xorg.mesa.3d/ -lGL','Makefile')
+      # r.Replace('define DATADIR "data/"','define DATADIR "%(datadir)s/sdl-ball/data/"','main.cpp')
+      #  r.Install('data/','%(datadir)s/sdl-ball/data/')
+        r.Install("themes",'%(datadir)s/sdl-ball/')
+        r.Make("DATADIR=%(datadir)s/sdl-ball/themes/")
+        r.Install('sdl-ball','%(bindir)s/')
+        r.addSource('sdl-ball.desktop')
+        r.Desktopfile('sdl-ball.desktop')

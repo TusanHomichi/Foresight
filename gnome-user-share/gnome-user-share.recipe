@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomeUserShare(GnomePackageRecipe):
+    name = 'gnome-user-share'
+    version = '2.30.2'
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime',
+                      'desktop-file-utils:runtime', 'gnome-bluetooth:devel',
+                      'httpd:runtime', 'libcanberra:devel',
+                      'libnotify:devel', 'nautilus:devel',
+                      'rarian:runtime', 'rarian:devel', 'unique:devel' ]

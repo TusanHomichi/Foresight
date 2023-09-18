@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2008-2011  The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UshareRecipe(AutoPackageRecipe):
+    name = 'ushare'
+    version = '1.1a'
+    buildRequires = ['libupnp:devel', 'pkgconfig:devel', 'chkconfig:runtime',]
+
+    def unpack(r):
+        r.addArchive('http://ushare.geexbox.org/releases/')
+        r.addPatch('101-ushare-upnp-build-fix.patch',
+                   'ushare-conf.patch',
+                   'ushare-error.patch')
+        
+        # Use the fedora-style init file instead
+        # of the debian-style
+        r.addSource('ushare.init', dest="scripts/ushare")
+
+    def configure(r):
+        r.ManualConfigure(' --prefix=%(prefix)s --bindir=%(bindir)s --sysconfdir=%(sysconfdir)s'
+                          ' --enable-debug --localedir=%(datadir)s/locale')
+
+    def policy(r):
+        r.UtilizeUser("ushare", "%(initdir)s/ushare")
+        r.MakeDirs('%(localstatedir)s/lib/%(name)s/')
+        r.SetModes('%(localstatedir)s/lib/%(name)s', 0770)
+        r.Ownership('ushare', 'ushare', '%(localstatedir)s/lib/%(name)s')
+

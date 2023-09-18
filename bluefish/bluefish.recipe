@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2008 - 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bluefish(AutoPackageRecipe):
+    name = 'bluefish'
+    version = '2.2.4'
+
+    packageSummary = 'Bluefish is a powerful editor targeted towards programmers and webdesigners'
+    packageDescription = 'Bluefish is a powerful editor targeted towards programmers and webdesigners, with many options to write websites, scripts and programming code. Bluefish supports many programming and markup languages, and it focuses on editing dynamic and interactive websites.'
+
+    buildRequires = [
+        'aspell:devel', 
+        'desktop-file-utils:runtime', 
+        'enchant:devel', 
+        'esound:devel', 
+        'expat:devel',  
+        'gdk-pixbuf:runtime',
+        'gettext:runtime', 
+        'gnome-keyring:devel', 
+        'gnome-vfs:devel', 
+        'gtk:devel', 
+        'gucharmap:devel', 
+        'intltool:runtime', 
+        'libart_lgpl:devel', 
+        'libbonobo:devel', 
+        'libbonoboui:devel', 
+        'libgnomecanvas:devel', 
+        'libgnome:devel', 
+        'libgnomeui:devel', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libxml2:devel', 
+        'libxml2:runtime', 
+        'man:runtime', 
+        'pcre:devel', 
+        'pkgconfig:devel', 
+        'popt:devel', 
+        'pygobject:python', 
+        'pygtk:python',
+        'python:devel', 
+        'sgml-common:config', 
+        'shared-mime-info:runtime', 
+            ]
+
+    def unpack(r):
+        r.addArchive('http://www.bennewitz.com/bluefish/stable/source/')
+    def configure(r):
+        r.Configure('--disable-update-databases --with-gtk2 --disable-xml-catalog-update')

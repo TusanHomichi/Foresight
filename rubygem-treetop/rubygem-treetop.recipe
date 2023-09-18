@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Treetop(RubygemPackageRecipe):
+
+    name = 'rubygem-treetop'
+    version = '1.4.10'
+

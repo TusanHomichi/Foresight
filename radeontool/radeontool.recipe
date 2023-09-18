@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class RADeonTool(RPMPackageRecipe, CPackageRecipe):
+    name = 'radeontool'
+    version = '1.5'
+    rpmRelease = '3.fc9'
+    rpmPatches = [ 'radeontool-1.5.diff',
+                   'radeontool-fix-option-handling.diff',
+                   'radeontool-get-rid-of-lspci.diff' ]
+    
+    buildRequires = [ 'pkgconfig:devel', 'pciutils:devel', 'zlib:devel']
+
+    def setup(r):
+        r.unpack()
+        r.Run('%(cc)s %(cflags)s -o radeontool radeontool.c -lpci -lz')
+        r.Install('radeontool', '%(sbindir)s/', mode = 0755)

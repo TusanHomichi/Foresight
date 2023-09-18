@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class xfce4PowerManager(XfcePackageRecipe):
+
+    name = 'xfce4-power-manager'
+    version = '1.2.0'
+    subtree = 'apps'
+
+    buildRequires = [
+        'libnotify:devel', 'libxfce4util:devel', 'libXrandr:devel',
+        'libxfce4ui:devel', 'xfce4-panel:devel', 'xfconf:devel'
+    ]

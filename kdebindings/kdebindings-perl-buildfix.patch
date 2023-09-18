@@ -1,0 +1,10 @@
+--- kdebindings--kdebindings/perl/kdeui/src/CMakeLists.txt.orig	2010-08-23 14:19:08.041962001 +0400
++++ kdebindings--kdebindings/perl/kdeui/src/CMakeLists.txt	2010-08-23 14:32:16.536962003 +0400
+@@ -46,6 +46,7 @@
+     COMPILE_FLAGS ${PERL_CXX_FLAGS} )
+ target_link_libraries(kperlpluginfactory
+     ${KDE4_KDECORE_LIBS}
++    ${PERL_INCLUDE_PATH}/../auto/DynaLoader/DynaLoader.a
+     ${PERL_LIBRARY}
+     ${PERL_LIBS}
+     )

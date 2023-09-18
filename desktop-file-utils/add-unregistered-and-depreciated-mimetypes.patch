@@ -1,0 +1,14 @@
+diff -r 263bfe3b9101 src/mimeutils.c
+--- a/src/mimeutils.c	Tue Aug 23 14:28:15 2011 +0200
++++ b/src/mimeutils.c	Tue Aug 23 14:32:31 2011 +0200
+@@ -41,6 +41,10 @@
+ /* Not registered with IANA, but used on a free desktop */
+ static const char *known_fdo_media_types[] = {
+   "inode", "x-content", "x-scheme-handler",
++  /* workaround https://bugzilla.gnome.org/show_bug.cgi?id=619303 */
++  "zz-application",
++  "app",
++  "x-directory",
+   /* The chemical media type was never really proposed to IANA, but is
+    * well-known and in use by various applications out there. There are
+    * also some guidelines to not abuse it.

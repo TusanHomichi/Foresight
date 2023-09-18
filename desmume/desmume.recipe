@@ -1,0 +1,8 @@
+class DeSmuME(RedirectRecipe):
+    name = 'desmume'
+    version = '0'
+ 
+ 
+    def setup(r):
+        r.addRemoveRedirect()
+

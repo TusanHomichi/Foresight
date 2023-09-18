@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Desktopcouch(PackageRecipe):
+
+    name = 'desktopcouch'
+    version = '0.6.1'
+
+    buildRequires = ['python-setuptools:python', 'avahi:python', 'dbus-python:python', 'gettext:runtime', 'gnome-python-desktop:python', 'intltool:runtime', 'pygobject:python', 'pygtk:python', 'python-twisted:python', 'python:bin', 'python:devel', 'pyxdg:python', 'python-simplejson:python', 'python-distutils-extra:python',]
+
+    def setup(r):
+        r.addArchive('http://www.launchpad.net/%(name)s/trunk/%(version)s/+download/')
+        r.PythonSetup(data = '--install-data=%(prefix)s')
+        r.Remove('/usr/lib*/python*/site-packages/*egg-info', recursive = True)

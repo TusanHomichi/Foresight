@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TangerineIconTheme(CPackageRecipe):
+    name = 'tangerine-icon-theme'
+    version = '0.26'
+ 
+    buildRequires = ['ImageMagick:devel', 'ImageMagick:runtime', 'gettext:runtime', 'gtk:runtime', 'intltool:runtime', 'pkgconfig:devel', 'autoconf:runtime', 'automake:runtime', 'libtool:devel', 'libtool:runtime', 'intltool:devel', 'gettext:devel', 'gettext:runtime', 'glib:devel', 'icon-naming-utils:runtime', 'icon-naming-utils:devellib']
+ 
+    def setup(r):
+        r.addArchive('https://launchpad.net/ubuntu/jaunty/+source/tangerine-icon-theme/0.26.debian-3/+files/tangerine-icon-theme_0.26.debian.orig.tar.gz')
+        r.Configure(configureName='autogen.sh')
+        r.Make()
+        r.MakeInstall()
+
+        # Remove some logos
+        r.Remove('%(datadir)s/icons/Tangerine/*/places/distributor-logo.{svg,png}')
+        r.Remove('%(datadir)s/icons/Tangerine/*/places/gnome-main-menu.{svg,png}')
+        r.Remove('%(datadir)s/icons/Tangerine/*/places/novell-button.{svg,png}')
+        r.Remove('%(datadir)s/icons/Tangerine/*/places/start-here.{svg,png}')

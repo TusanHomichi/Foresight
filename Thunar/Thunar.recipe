@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Thunar(XfcePackageRecipe):
+
+    name = 'Thunar'
+    version = '1.6.3'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'gamin:devel',
+        'libexif:devel', 'libexo:devel', 'libjpeg:devel',
+        'libxfce4util:devel', 'pcre:devel', 'startup-notification:devel',
+        'xfce4-panel:devel', 'libexo:runtime', 'xfconf:devel', 'xfconf:runtime',
+        'libnotify:devel', 'libxfce4ui:devel', 'udev:devel', 'gudev:devel'
+    ]

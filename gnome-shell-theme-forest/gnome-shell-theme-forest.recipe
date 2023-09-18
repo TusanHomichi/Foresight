@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GnomeShellThemeForest(PackageRecipe):
+    name = 'gnome-shell-theme-forest'
+    version = '0.1'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('theme-forest.tar.gz', dir='%(datadir)s/gnome-shell/theme/')

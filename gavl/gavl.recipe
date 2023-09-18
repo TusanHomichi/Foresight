@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gavl(CPackageRecipe):
+    name = 'gavl'
+    version = '1.2.0'
+ 
+    buildRequires = ['libpng:devel', 'zlib:devel', 'python:bin']
+ 
+    def setup(r):
+        r.addArchive('http://garr.dl.sourceforge.net/sourceforge/gmerlin/')
+        r.Configure('--without-doxygen')
+        r.Make()
+        r.MakeInstall()

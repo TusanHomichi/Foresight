@@ -1,0 +1,11 @@
+diff -upNr gpar2-0.3.orign/gpar2.h gpar2-0.3/gpar2.h
+--- gpar2-0.3.orign/gpar2.h	2005-11-23 18:09:22.000000000 +0100
++++ gpar2-0.3/gpar2.h	2008-02-09 12:02:05.000000000 +0100
+@@ -2,6 +2,7 @@
+ #define GPAR2_H
+ 
+ #include <dlfcn.h>
++#include <libintl.h>
+ 
+ #include <gtkmm.h>
+ #include <iostream>

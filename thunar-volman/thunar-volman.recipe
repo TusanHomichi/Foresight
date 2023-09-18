@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class thunarVolman(XfcePackageRecipe):
+
+    name = 'thunar-volman'
+    version = '0.8.0'
+
+    buildRequires = [
+        'libexo:devel', 'Thunar:devel', 'udev:devel', 'gudev:devel',
+        'libnotify:devel', 'libxfce4ui:devel',
+    ]

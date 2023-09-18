@@ -1,0 +1,48 @@
+=== modified file 'src/grail-inserter.c'
+--- a/src/grail-inserter.c	2011-03-28 20:04:13 +0000
++++ b/src/grail-inserter.c	2011-03-30 15:37:59 +0000
+@@ -146,7 +146,7 @@
+ 
+ 	grail_mask_foreach(i, gin->used, sizeof(gin->used)) {
+ 		struct slot_state *s = &gin->state[i];
+-		if (!s->nclient || s->priority < discard[s->slice])
++		if (!s->nclient || s->priority < discard[s->slice] && !s->sent)
+ 			gin_gid_discard(ge, s->id);
+ 	}
+ 
+@@ -169,12 +169,13 @@
+ 		struct slot_state *s = &gin->state[i];
+ 		struct gesture_event ev;
+ 		grail_mask_set(gin->types, s->type);
+-		if (s->priority < hold[s->slice])
++		if (s->priority < hold[s->slice] && !s->sent)
+ 			continue;
+ 		while (!gebuf_empty(&s->buf)) {
+ 			gebuf_get(&s->buf, &ev);
+ 			gin_send_event(ge, s, &ev, frame);
+ 		}
++		s->sent = 1;
+ 	}
+ 
+ 	grail_mask_foreach(i, gin->used, sizeof(gin->used)) {
+@@ -203,6 +204,7 @@
+ 		s->slice = 0;
+ 	}
+ 	s->timeout = 0;
++	s->sent = 0;
+ 	s->id = gin->gestureid++ & MAX_GESTURE_ID;
+ 	s->status = GRAIL_STATUS_BEGIN;
+ 	s->nclient = 0;
+
+=== modified file 'src/grail-inserter.h'
+--- a/src/grail-inserter.h	2011-03-28 20:04:11 +0000
++++ b/src/grail-inserter.h	2011-03-30 15:37:20 +0000
+@@ -39,6 +39,7 @@
+ 	int priority;
+ 	int slice;
+ 	int timeout;
++	int sent;
+ 	int id;
+ 	int status;
+ 	int nclient;
+

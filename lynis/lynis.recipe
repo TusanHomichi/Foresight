@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+#                     
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class lynis(CPackageRecipe):
+    name = 'lynis'
+    version = '1.3.0'
+
+
+    def setup(r):
+        r.addArchive('http://www.rootkit.nl/files/')
+
+        r.MakeDirs('%(sysconfdir)s/%(name)s')
+        r.Install('default.prf', '%(sysconfdir)s/%(name)s/', mode = 0644)
+
+        r.Install('lynis', '%(bindir)s/')
+        
+        r.Install('lynis.8', '%(mandir)s/man8/', mode = 0644)
+        r.Install('include/*', '%(datadir)s/%(name)s/include/')
+        r.Install('plugins/*', '%(datadir)s/%(name)s/plugins/', mode = 0644)
+        r.Install('db/*', '%(datadir)s/%(name)s/db/', mode = 0644)

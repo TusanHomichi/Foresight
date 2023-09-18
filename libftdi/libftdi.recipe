@@ -1,0 +1,25 @@
+class LIBftdi(AutoPackageRecipe):
+    name = 'libftdi'
+    version = '0.17'
+ 
+    buildRequires = ['doxygen:runtime', 'libstdc++:devel', 'libusb:devel', 'python:devel', 'swig:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://www.intra2net.com/de/produkte/opensource/ftdi/TGZ/')
+        r.addPatch('libftdi-0.17-bind-typo.patch')
+
+    def configure(r):
+        r.Configure('--enable-python-binding --enable-libftdipp --disable-static')
+
+    def policy(r):
+        r.Install('doc/man/man3/*.3', '%(mandir)s/man3/', mode=0644)
+        # Cleanup examples
+        r.Remove('%(bindir)s/simple')
+        r.Remove('%(bindir)s/bitbang')
+        r.Remove('%(bindir)s/bitbang2')
+        r.Remove('%(bindir)s/bitbang_ft2232')
+        r.Remove('%(bindir)s/bitbang_cbus')
+        r.Remove('%(bindir)s/find_all')
+        r.Remove('%(bindir)s/find_all_pp')
+        r.Remove('%(bindir)s/baud_test')
+        r.Remove('%(bindir)s/serial_read')

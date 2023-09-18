@@ -1,0 +1,25 @@
+class Nexuiz(PackageRecipe):
+    name = 'nexuiz'
+    version = '252'
+    buildRequires = ['alsa-lib:devel', 'glibc:devel', 'libX11:devel', 'libXext:devel', 'libXpm:devel', 'libXxf86dga:devel', 'libXxf86vm:devel', 'libstdc++:devel', 'perl:devel', 'perl:runtime', 'unzip:runtime', 'desktop-file-utils:runtime']
+        
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/%(name)s-%(version)s.zip')
+        # user contributed map pack, contains single player campaign
+        # contents live in ./data/ so are covered by the r.Move statement
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/nexmappack_r2.zip')
+        r.Move('data', '%(datadir)s/Nexuiz/')
+        r.Move('Docs', '%(datadir)s/Nexuiz/')
+        if Arch.x86_64:
+            r.Install('nexuiz-linux-x86_64-sdl', '%(bindir)s/nexuiz-linux-x86_64-sdl')
+            r.Install('nexuiz-linux-x86_64-dedicated', '%(bindir)s/nexuiz-linux-x86_64-dedicated')
+        else:
+            r.Install('nexuiz-linux-686-sdl', '%(bindir)s/nexuiz-linux-686-sdl')
+            r.Install('nexuiz-linux-686-dedicated', '%(bindir)s/nexuiz-linux-686-dedicated')
+        
+        r.addSource('nexuiz')
+        r.Install('nexuiz', '%(bindir)s/nexuiz', mode=0755)
+        r.addSource('Nexuiz.png')
+        r.Install('Nexuiz.png', '%(datadir)s/pixmaps/Nexuiz.png')
+        r.addSource('nexuiz.desktop')
+        r.Desktopfile('nexuiz.desktop')

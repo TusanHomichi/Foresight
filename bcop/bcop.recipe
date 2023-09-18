@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BCop(AutoPackageRecipe):
+    name = 'bcop'
+    version = '0.8.4'
+
+    buildRequires = [ 'pkgconfig:devel', 'autoconf:runtime',
+                      'automake:runtime', 'libxslt:devel']
+
+    def unpack(r):
+        r.macros.name = 'compiz-%(name)s'
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/')
+
+    def policy(r):
+        r.Requires('libxslt:runtime', '%(bindir)s/bcop')
+        r.Requires('util-linux:runtime', '%(bindir)s/bcop')

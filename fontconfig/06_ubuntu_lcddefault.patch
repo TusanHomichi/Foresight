@@ -1,0 +1,53 @@
+diff -r 2f1a63090000 conf.d/11-lcd-filter-lcddefault.conf
+--- /dev/null   Thu Jan 01 00:00:00 1970 +0000
++++ b/conf.d/11-lcd-filter-lcddefault.conf  Thu Mar 19 15:15:48 2009 -0400
+@@ -0,0 +1,11 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<!-- conf.d/lcd-filter-lcddefault.conf -->
++<fontconfig>
++<!--  Use lcddefault as default for LCD filter -->
++  <match target="font">
++    <edit mode="assign" name="lcdfilter">
++      <const>lcddefault</const>
++    </edit>
++  </match>
++</fontconfig>
+diff -r b644807518ff conf.d/Makefile.am
+--- a/conf.d/Makefile.am	Thu Mar 19 15:05:18 2009 -0400
++++ b/conf.d/Makefile.am	Thu Mar 19 15:08:38 2009 -0400
+@@ -32,6 +32,7 @@
+ 	10-sub-pixel-vbgr.conf \
+ 	10-sub-pixel-vrgb.conf \
+ 	10-unhinted.conf \
++	11-lcd-filter-lcddefault.conf \
+ 	20-fix-globaladvance.conf \
+ 	20-unhint-small-vera.conf \
+ 	25-unhint-nonlatin.conf \
+@@ -53,6 +54,7 @@
+ 	90-synthetic.conf
+ 
+ CONF_LINKS = \
++	11-lcd-filter-lcddefault.conf \
+ 	20-fix-globaladvance.conf \
+ 	20-unhint-small-vera.conf \
+ 	30-urw-aliases.conf \
+diff -r b644807518ff conf.d/Makefile.in
+--- a/conf.d/Makefile.in	Thu Mar 19 15:05:18 2009 -0400
++++ b/conf.d/Makefile.in	Thu Mar 19 15:08:38 2009 -0400
+@@ -237,6 +237,7 @@
+ 	10-sub-pixel-vbgr.conf \
+ 	10-sub-pixel-vrgb.conf \
+ 	10-unhinted.conf \
++	11-lcd-filter-lcddefault.conf \
+ 	20-fix-globaladvance.conf \
+ 	20-unhint-small-vera.conf \
+ 	25-unhint-nonlatin.conf \
+@@ -258,6 +259,7 @@
+ 	90-synthetic.conf
+ 
+ CONF_LINKS = \
++	11-lcd-filter-lcddefault.conf \
+ 	20-fix-globaladvance.conf \
+ 	20-unhint-small-vera.conf \
+ 	30-urw-aliases.conf \

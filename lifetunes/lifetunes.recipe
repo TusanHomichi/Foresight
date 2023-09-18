@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lifetunes(PackageRecipe):
+    name = 'lifetunes'
+    version = '0.4'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'gst-python:python', 'pygobject:python', 
+        'pygtk:python', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('http://www.bashterritory.com/lifetunes/releases/', dir='%(datadir)s/')
+        r.Move('%(datadir)s/lifetunes-%(version)s/', '%(datadir)s/lifetunes/')
+        r.Symlink('%(datadir)s/lifetunes/lifetunes', '%(bindir)s/lifetunes')
+        r.addSource('lifetunes.desktop')
+        r.Desktopfile('lifetunes.desktop')

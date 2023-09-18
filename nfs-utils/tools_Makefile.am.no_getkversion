@@ -1,0 +1,9 @@
+--- tools/Makefile.am.jau	2006-07-07 20:04:32.000000000 -0400
++++ tools/Makefile.am	2006-11-06 09:55:32.000000000 -0500
+@@ -1,5 +1,5 @@
+ ## Process this file with automake to produce Makefile.in
+ 
+-SUBDIRS = getiversion getkversion locktest rpcdebug rpcgen nlmtest
++SUBDIRS = locktest rpcdebug rpcgen nlmtest
+ 
+ MAINTAINERCLEANFILES = Makefile.in

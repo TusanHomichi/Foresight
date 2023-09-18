@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class DBusPython(AutoPackageRecipe):
+
+    name = 'dbus-python'
+    version = '0.84.0'
+    buildRequires = [ 
+            'dbus-glib:devel', 
+            'dbus:devel', 
+            'glib:devel',
+            'pkgconfig:devel', 
+            'Pyrex:runtime', 
+            'python:devel',
+            'libxml2:python', 
+            'python-setuptools:python', 
+            'pygobject:python', 
+            'docutils:runtime' 
+                ]
+
+    def unpack(r):
+        r.addArchive('http://dbus.freedesktop.org/releases/dbus-python/')
+
+    def policy(r):
+        r.macros.pyver = Python.majversion
+        r.Move('/usr/lib/python%(pyver)s/site-packages/*', '%(libdir)s/python%(pyver)s/site-packages/')

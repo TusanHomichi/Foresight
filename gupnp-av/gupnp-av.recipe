@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GupnpAv(AutoPackageRecipe):
+    name = 'gupnp-av'
+    version = '0.10.2'
+ 
+    buildRequires = ['gupnp:devel', 'gtk-doc:runtime', 'pkgconfig:devel', 'xz:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.heanet.ie/mirrors/gnome/sources/gupnp-av/0.10/')

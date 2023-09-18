@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class pdfshuffler(BuildPackageRecipe):
+    name = 'pdfshuffler'
+    version = '0.5.1'
+
+    buildRequires = [ 'python:devel', 'python-setuptools:python',
+        'pyPdf:python', 'pygtk:python', 'gettext:runtime', 'desktop-file-utils:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://voxel.dl.sourceforge.net/sourceforge/pdfshuffler/')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+
+        # /usr/bin/pdfshuffler should be a wrapper, not an implementation...
+        r.Requires('pygtk:python', '%(bindir)s/pdfshuffler')
+        r.Requires('pyPdf:python', '%(bindir)s/pdfshuffler')

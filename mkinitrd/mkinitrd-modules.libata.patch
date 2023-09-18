@@ -1,0 +1,16 @@
+--- mkinitrd/mkinitrd-6.0.45/mkinitrd	2008-04-21 12:53:20.000000000 -0500
++++ mkinitrd-6.0.45.libata/mkinitrd	2008-04-21 12:48:01.000000000 -0500
+@@ -1264,6 +1264,13 @@
+     findmodule -dasd_fba_mod
+ fi
+ 
++if [ -f /lib/modules/$kernel/modules.libata ]; then
++    MODS="$MODS $(cat /lib/modules/$kernel/modules.libata |sed -e 's/.ko//')"
++    for m in $MODS; do
++        findmodule $m
++    done
++fi
++
+ # Loopback root support
+ # loopdev : device or nfs server:path file is on
+ # looppath : filename

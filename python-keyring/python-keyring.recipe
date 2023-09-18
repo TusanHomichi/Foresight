@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonKeyring(PackageRecipe):
+
+    name = 'python-keyring'
+    version = '0.5'
+
+    buildRequires = [
+            'python-setuptools:python', 
+            'dbus:devel', 
+            'glib:devel', 
+            'libgnome-keyring:devel', 
+            'python:devel',
+            'PyQt4:python', 
+            'gnome-python-desktop:python'
+                ]
+
+    def setup(r):
+        r.addArchive('http://bitbucket.org/kang/python-keyring-lib/get/%(version)s.tar.gz')
+        r.PythonSetup(data='--install-data=%(prefix)s')

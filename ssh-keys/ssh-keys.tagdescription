@@ -1,0 +1,7 @@
+datasource args
+file %(taghandlerdir)s/%(name)s
+include %(sysconfdir)s/ssh/keys\.d/.*\.pub$
+implements files update
+implements files preupdate
+implements files preremove
+implements handler update

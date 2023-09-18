@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class mousepad(XfcePackageRecipe):
+
+    name = 'mousepad'
+    version = '0.3.0'
+    subtree = 'apps'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'libxfce4util:devel', 
+        'dbus-glib:runtime', 'dbus-glib:devel', 'dbus:devel', 'libexo:runtime',
+        'gettext:runtime', 'libtool:runtime', 'xfce4-dev-tools:runtime',
+        'automake:runtime', 'autoconf:runtime', 'gtksourceview:devel',
+        'intltool:runtime', 'intltool:devel', 'pkgconfig:devel'
+    ]

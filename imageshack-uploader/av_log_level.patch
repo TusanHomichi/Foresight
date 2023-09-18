@@ -1,0 +1,21 @@
+diff -rupN imageshack-uploader-2.2.0/ffmpeg_fas.c imageshack-uploader-2.2.0_mod/ffmpeg_fas.c
+--- imageshack-uploader-2.2.0/ffmpeg_fas.c	2009-10-11 22:01:26.000000000 +0200
++++ imageshack-uploader-2.2.0_mod/ffmpeg_fas.c	2009-10-11 22:06:18.000000000 +0200
+@@ -116,7 +116,7 @@ void fas_set_logging (fas_boolean_type l
+       SHOW_ERROR_MESSAGES = 1;
+       SHOW_WARNING_MESSAGES = 1;
+ #ifndef _WIN32
+-      av_log_level = AV_LOG_INFO;
++      av_log_set_level(AV_LOG_INFO);
+ #endif
+     }
+   else 
+@@ -124,7 +124,7 @@ void fas_set_logging (fas_boolean_type l
+       SHOW_ERROR_MESSAGES = 0;
+       SHOW_WARNING_MESSAGES = 0;
+ #ifndef _WIN32
+-      av_log_level = AV_LOG_QUIET;
++      av_log_set_level(AV_LOG_QUIET);
+ #endif
+     }  
+ }

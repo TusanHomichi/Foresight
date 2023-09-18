@@ -1,0 +1,10 @@
+--- lightspark/lightspark-0.5.4.1/src/scripting/toplevel/toplevel.h	2012-02-02 09:53:28.000000000 +0100
++++ lightspark/lightspark-0.5.4.1/src/scripting/toplevel/toplevel-copy.h	2012-02-23 14:55:43.000000000 +0100
+@@ -30,6 +30,7 @@
+ #include "scripting/abcutils.h"
+ #include "Boolean.h"
+ #include "Error.h"
++#include <math.h>
+ 
+ namespace lightspark
+ {

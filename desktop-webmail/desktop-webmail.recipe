@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DesktopWebmail(AutoPackageRecipe):
+    name = 'desktop-webmail'
+    version = '002'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'gtk:runtime', 'intltool:runtime', 'pango:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://edge.launchpad.net/desktop-webmail/trunk/002/+download/')

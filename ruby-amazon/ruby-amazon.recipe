@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RubyAmazon(AutoPackageRecipe):
+    name = 'ruby-amazon'
+    version = '0.9.2'
+
+    packageSummary = 'Ruby/Amazon is a Ruby language library that allows programmatic access to the popular Amazon Web site'
+    packageDescription = 'Ruby/Amazon is a Ruby language library that allows programmatic access to the popular Amazon Web site via the REST (XML over HTTP) based Amazon Web Services. In addition to the original amazon.com site, the amazon.co.uk, amazon.de, amazon.fr, amazon.ca, and amazon.co.jp properties are also supported.'
+ 
+    buildRequires = ['ruby:runtime']
+ 
+    def setup(r):
+	r.addArchive('http://www.caliban.org/files/ruby/%(name)s-%(version)s.tar.gz')
+
+        r.Run('ruby setup.rb config')
+        r.Run('ruby setup.rb setup')
+        r.Run('ruby setup.rb install --prefix=%(destdir)s')

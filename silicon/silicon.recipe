@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Silicon(CPackageRecipe):
+    name = 'silicon'
+    version = '1.8.1'
+ 
+    buildRequires = [
+        'DeviceKit-disks:runtime', 
+        'ccache:lib', 
+        'cdrkit:runtime', 
+        'cmake:runtime', 
+        'desktop-file-utils:runtime', 
+        'dvd+rw-tools:runtime', 
+        'hal:runtime', 
+        'libstdc++:devel', 
+        'mkisofs:runtime', 
+        'phonon:devel', 
+        'pkgconfig:devel', 
+        'polkit:runtime', 
+        'qt4-core:devellib', 
+        'qt4-gui:devellib', 
+        'qt4-qt3support:devellib', 
+        'qt4-sql:devellib', 
+        'qt4-sql:mysql', 
+        'qt4-sql:odbc', 
+        'qt4-sql:psql', 
+        'qt4-sql:sqlite', 
+        'qt4:devel', 
+        'taglib:devel'
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://getsilicon.org/download/silicon-%(version)s-src.tar.gz')
+        r.Replace('Icon=/usr/share/pixmaps/silicon', 'Icon=/usr/share/pixmaps/silicon.png', 'Files/silicon.desktop')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

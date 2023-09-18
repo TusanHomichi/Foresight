@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class tig(AutoPackageRecipe):
+    name = 'tig'
+    version = '1.2'
+
+    buildRequires = [
+        'asciidoc:runtime',
+        'docbook-utils-pdf:runtime',
+        'ncurses:devel',
+        'xmlto:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://jonas.nitro.dk/tig/releases/')
+
+    def makeinstall(r):
+        r.MakeInstall('install install-doc')

@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2009 - 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class libdbusmenu(AutoPackageRecipe):
+    name = 'libdbusmenu'
+    version = '12.10.2'
+    buildRequires = [
+        'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel',
+        'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel',
+        'gtk:devel', 'intltool:runtime', 'json-glib:devel', 'libxml2:devel',
+        'pango:devel', 'pkgconfig:devel', 'dbus-python:python', 'python:devel',
+        'vala:runtime', 'gtk-doc:runtime', 'gnome-doc-utils:runtime',
+        'gnome-doc-utils:devel', 'gobject-introspection:devel', 'gtk3:devel', 
+        'valgrind:devel', 
+    ]
+ 
+    def unpack(r):
+#        r.addBzrSnapshot('lp:dbusmenu')#,revision=r.version[1:])
+        r.addArchive('http://launchpad.net/dbusmenu/12.10/%(version)s/+download/')
+        r.Replace('-Werror','','libdbusmenu-glib/Makefile.in')
+        r.disableParallelMake()
+
+    def configure(r):
+        #r.Configure(configureName='autogen.sh')
+        r.Configure(' --disable-static' 
+                    ' --disable-scrollkeeper'
+                    ' --with-gtk=2'
+                    ' --enable-introspection=yes')
+
+    def policy(r):
+        r.PackageSpec('libdbusmenu-gtk','.*[Gg]tk.*')
+        r.PackageSpec('libdbusmenu-qt','.*qt.*')
+        r.PackageSpec('libdbusmenu-glib','.*[Gg]lib.*')
+        r.PackageSpec('libdbusmenu-glib','.*doc.*')

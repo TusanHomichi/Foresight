@@ -1,0 +1,139 @@
+#
+# Copyright (c) 2011 the Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Gtk3(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'gtk3'
+    version = '3.6.4'
+    rpmRelease = '1.fc18'
+    tarballName = 'gtk+-%(version)s.tar.xz'
+    rpmPatches = [  ]
+
+    buildRequires = [ 'atk:devel',
+                      'pango:devel',
+                      'at-spi2-atk:devel', 
+                      'pango:devellib',
+                      'glib:devel',
+                      'libtiff:devel',
+                      'libjpeg:devel',
+                      'libpng:devel',
+                      'pkgconfig:devel',
+                      'freetype:devel',
+                      'fontconfig:devel',
+                      'zlib:devel',
+                      'cairo:devel',
+                      'indent:runtime',
+                      'libtool:runtime',
+                      'perl:runtime',
+                      'libX11:devel',
+                      'libXcursor:devel',
+                      'libXext:devel',
+                      'libXfixes:devel',
+                      'libXi:devel',
+                      'libXinerama:devellib',
+                      'libXrandr:devel',
+                      'libXrender:devel',
+                      'libXt:devel',
+                      'libXau:devel',
+                      'libXdmcp:devel',
+                      'libXrandr:devel',
+                      'libICE:devel',
+                      'libSM:devel',
+                      'gettext:runtime',
+                      'gcc-c++:runtime',
+                      'cups:devel',
+                      'openssl:devel',
+                      'expat:devel',
+                      'automake:runtime',
+                      'autoconf:runtime',
+                      'docbook-utils:runtime',
+                      'gtk-doc:devel',
+                      'glib:runtime',
+                      'perl:runtime',
+                      'libXcomposite:devel',
+                      'libXdamage:devel',
+                      'intltool:runtime',
+                      'gtk-doc:runtime',
+                      'python:devel',
+                      'jasper:devel',
+                      'gnutls:devel',
+                      'gobject-introspection:devel',
+                      'gdk-pixbuf:devel',
+                      'gdk-pixbuf:runtime',
+                      'gtk:devel',
+                      ]
+
+    rpmSources = ['im-cedilla.conf']
+
+    def configure(r):
+        if Arch.x86:
+            r.macros.isaBits = '32'
+        else:
+            r.macros.isaBits = '64'
+
+        # setup some macros to make the taghandler work properly
+        r.macros.fieldnum = str(len(r.macros.datadir.split('/'))+2)
+
+        r.Configure(' --enable-gtk2-dependency '
+                    ' --disable-schemas-compile '
+                    ' --enable-xkb '
+                    ' --enable-xinerama '
+                    ' --enable-xrandr '
+                    ' --enable-xfixes '
+                    ' --enable-xcomposite'
+                    ' --enable-xdamage '
+                    ' --enable-x11-backend ')
+
+    def makeinstall(r):
+        r.MakeInstall('RUN_QUERY_IMMODULES_TEST=false')
+        r.Install('im-cedilla.conf', '%(sysconfdir)s/X11/xinit/xinput.d/im-cedilla.conf')
+
+    def policy(r):
+        r.MakeDirs('%(sysconfdir)s/gtk-3.0')
+
+	r.MakeDirs('%(sysconfdir)s/gtk-3.0/3.0.0')
+
+        r.macros.queryloaders = '%(bindir)s/gdk-pixbuf-query-loaders-%(host)s'
+        r.macros.loadersfile = '%(sysconfdir)s/gtk-3.0/3.0.0/gdk-pixbuf.loaders'
+
+        r.macros.queryimmodules = '%(bindir)s/gtk-query-immodules-3.0-%(host)s'
+        r.macros.immodulesfile = '%(sysconfdir)s/gtk-3.0/%(host)s/gtk.immodules'
+
+        # separate query modules for multilib installation
+        r.Move('%(bindir)s/gtk-query-immodules-3.0', '%(bindir)s/gtk-query-immodules-3.0-%(isaBits)s')
+        r.ComponentSpec('lib', '%(bindir)s/gtk-query-immodules-3.0-%(isaBits)s')
+
+        r.Create('%(libdir)s/gtk-3.0/3.0.0/immodules.cache')
+        r.InitialContents('%(libdir)s/gtk-3.0/3.0.0/immodules.cache')
+        
+        r.MakeDirs('%(libdir)s/gtk-3.0/modules')
+        r.MakeDirs('%(libdir)s/gtk-3.0/immodules')
+        r.ExcludeDirectories(exceptions='%(libdir)s/gtk-3.0/immodules')  
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/gtk-3.0/3.0.0')
+
+        # :runtime can be installed only once, :lib has multilib, so
+        # move de-collided paths into :lib where they belong
+        r.ComponentSpec('lib',
+                        '%(libdir)s/libgdk-x11-.*.so')
+
+        # r.Doc('docs', 'examples')
+        r.ComponentSpec('doc', '%(datadir)s/gtk-.*/demo/')
+
+        # these pkg-config files have Requires: statements
+        r.Requires('atk:devel', '%(libdir)s/pkgconfig/gtk.*pc')
+        r.Requires('gdk-pixbuf:devel', '%(libdir)s/pkgconfig/gtk.*pc')
+        r.Requires('gdk-pixbuf:runtime', '%(tagdescriptiondir)s/gdk-pixbuf-loader')
+        r.Requires('pango:devel', '%(libdir)s/pkgconfig/gdk-x11.*pc',
+                                  '%(libdir)s/pkgconfig/gdk-2.0.pc')
+
+
+        # modules require tag handlers being run in order to be loaded
+        r.Requires('gtk:runtime',
+                   r'%(libdir)s/gtk-[^/]*/[^/]*/(loaders|immodules)/[^/]*\.so')
+
+        r.ScriptPreErase('%(name)s:lib', contents="#!/bin/bash\n %(bindir)s/gtk-query-immodules-3.0-%(isaBits)s --update-cache" % r.macros)
+        r.ScriptPostInstall('%(name)s:lib', contents="#!/bin/bash\n %(bindir)s/gtk-query-immodules-3.0-%(isaBits)s --update-cache" % r.macros)
+        r.ScriptPostUpdate('%(name)s:lib', contents="#!/bin/bash\n %(bindir)s/gtk-query-immodules-3.0-%(isaBits)s --update-cache" % r.macros)

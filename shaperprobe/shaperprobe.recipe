@@ -1,0 +1,15 @@
+import datetime
+class ShaperProbe(AutoPackageRecipe):
+
+    buildRequires = [ ]
+
+    name = 'shaperprobe'
+    version = datetime.date.today().strftime("%Y.%m.%d")
+
+
+    def setup(r):
+        # http://www.cc.gatech.edu/~partha/diffprobe
+        # http://www.cc.gatech.edu/~partha/diffprobe/shaperprobe.html
+        r.addArchive('http://www.cc.gatech.edu/~partha/diffprobe/%(name)s.tgz')
+        r.Make()
+        r.Install('prober', '%(bindir)s/', mode = 0755) 

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libsepol(CPackageRecipe):
+    name = 'libsepol'
+    version = '2.1.4'
+
+    buildRequires = []
+
+    def setup(r):
+        r.addArchive('http://userspace.selinuxproject.org/releases/20120216/')
+        r.Make()
+        r.MakeInstall('LIBDIR=%(destdir)s%(libdir)s'
+                      ' SHLIBDIR=%(destdir)s%(libdir)s')
+        # src/Makefile creates broken symlink
+        r.Remove('%(libdir)s/libsepol.so')
+        r.Symlink('%(libdir)s/libsepol.so.1', '%(libdir)s/libsepol.so')

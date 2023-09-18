@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class glpng(CPackageRecipe):
+
+    name = 'glpng'
+    version = '3122008'
+
+    buildRequires = [ 'Mesa:devel', 'cmake:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXau:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXft:devel', 'libXi:devel', 'libXinerama:devel', 'libXpm:devel', 'libXrandr:devel', 'libXrender:devel', 'libXt:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel', 'libpng:devel', 'zlib:devel' ]
+
+    def setup(r):
+        r.addGitSnapshot('git://repo.or.cz/glpng.git')
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+	r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.CMake()
+        r.Make()
+        r.MakeInstall()
+

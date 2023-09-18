@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ardentryst(PackageRecipe):
+    name = 'ardentryst'
+    version = '1.71'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'pygame:python', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/ardentryst/1.71 Comet/%(name)s%(version)s.tar.gz')
+	r.Copy('ardentryst','%(bindir)s/ardentryst')
+	r.Copy('icon.png','%(datadir)s/pixmaps/ardentryst.png')
+        r.Desktopfile('Ardentryst.desktop')
+	r.Move('*','%(datadir)s/games/ardentryst/')
+	r.Requires('pygame:python','%(bindir)s/ardentryst')
+

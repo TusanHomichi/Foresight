@@ -1,0 +1,75 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+loadSuperClass('kdepackage')
+class kdeCorePackageRecipe(kdePackageRecipe):
+
+    name = 'kdecorepackage'
+    version = datetime.date.today().strftime("%Y%m%d")
+
+    module = None
+    modules = None
+
+    enableFinal = False
+
+    abstractBaseClass = True
+
+    def unpack(r):
+
+        if r.module is None:
+            r.module = r.name
+
+        r.macros.module = r.module
+
+        r.macros.repository = 'svn://anonsvn.kde.org/home/kde'
+        if '+' in r.version:
+            r.macros.release = r.version.split('+', 1)[0]
+            r.macros.revision = r.version.rsplit('+', 1)[1].lstrip('r')
+            r.addSvnSnapshot('%(repository)s/branches/KDE/%(major_version)s/%(module)s', revision='%(revision)s')
+            r.addSource('changelog.svn', dir='%(thisdocdir)s/')
+        else:
+            r.addArchive('mirror://kde//stable/%(version)s/src/')
+
+        cmd = 'macro_ensure_out_of_source_build'
+        r.Replace((cmd, '# '+cmd), (cmd.upper(), '# '+cmd), 'CMakeLists.txt', allowNoChange=True)
+
+    def makeinstall(r):
+
+        if r.modules:
+
+            for module in r.modules:
+                if type(module) == type(""):
+                    moduleName = module
+                    moduleSubDirs = (module, )
+                else:
+                    moduleName, moduleSubDirs = module[0], module[1:]
+
+                for moduleSubDir in moduleSubDirs:
+                    r.MakeInstall(dir=moduleSubDir, package=moduleName)
+
+                    # deal with kdebase/apps/{konsole,doc/konsole}
+                    docs = 'doc/' + moduleSubDir
+                    if '/' in moduleSubDir:
+                        t = moduleSubDir.rfind('/')
+                        docs = moduleSubDir[:t] + '/doc/' + moduleSubDir[t+1:]
+                    r.MakeInstall(
+                        dir=docs, skipMissingDir=True, package=moduleName
+                    )
+
+            r.MakeInstall(package='%s-orphans' % r.name)
+            r.Run('cat %(destdir)s/../_MANIFESTS_/%(name)s-orphans.0.manifest')
+            r.Run('[ "$(cat %(destdir)s/../_MANIFESTS_/%(name)s-orphans.0.manifest | grep -v ".bak\$" | wc -l)" -eq 0 ]')
+
+        else:
+            r.MakeInstall()
+
+    def postPolicy(r):
+
+        r.AutoDoc(exceptions='/\.svn/')
+        r.RemoveNonPackageFiles('.*\.bak')
+
+        kdePackageRecipe.postPolicy(r)
+

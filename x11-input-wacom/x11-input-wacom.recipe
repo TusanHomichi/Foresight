@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class X11InputWacom(RedirectRecipe):
+    name = 'x11-input-wacom'
+    version = '0'
+
+    def setup(r):
+        r.addRedirect('xf86-input-wacom')

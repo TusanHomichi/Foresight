@@ -1,0 +1,42 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeEdu(kdeCorePackageRecipe):
+
+    name = 'kdeedu'
+    version = '4.6.1'
+
+    buildRequires = [
+        'attica:devel', 'boost:devel', 'eigen2:devel', 'gmm:devel', 'gsl:devel',
+        'kdebase-workspace:devel', 'libspectre:devel', 'libusb:devel',
+        'libxml2:devel', 'libxslt:devel', 'Mesa:devel', 'ncurses:devel',
+        'pykde:python', 'python:devel', 'readline:devel', 'python-simplejson:python'
+    ]
+
+    modules = [
+        'blinken',
+        'cantor',
+        'kalgebra',
+        'kalzium',
+        'kanagram',
+        'kbruch',
+        'kgeography',
+        'khangman',
+        'kig',
+        'kiten',
+        'klettres',
+        'kmplot',
+        'kstars',
+        'ktouch',
+        'kturtle',
+        'kwordquiz',
+        'marble',
+        'parley',
+        'rocs',
+        'step',
+        ('libkdeedu', 'libkdeedu', 'cmake', 'data'),
+    ]
+

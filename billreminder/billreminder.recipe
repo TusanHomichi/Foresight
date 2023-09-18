@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Billreminder(AutoPackageRecipe):
+    name = 'billreminder'
+    version = '0.4.0'
+    packageSummary = "Get reminded about your bills or else..."
+    packageDescription = "BillReminder is a desktop application that allows you to schedule reminders for upcoming scheduled bills."
+
+    buildRequires = [
+        'GConf:runtime',
+        'SQLAlchemy:python',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'gettext:runtime',
+        'gtk:runtime',
+        'intltool:runtime',
+        'perl:runtime',
+        'pycairo:python',
+        'pygobject:python',
+        'pygtk:python',
+        'python-sqlite:python',
+        'python:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/%(name)s/0.4/')

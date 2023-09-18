@@ -1,0 +1,26 @@
+diff -up Miro-2.5.2/platform/gtk-x11/plat/renderers/xinerenderer.py.orig Miro-2.5.2/platform/gtk-x11/plat/renderers/xinerenderer.py
+--- Miro-2.5.2/platform/gtk-x11/plat/renderers/xinerenderer.py.orig	2009-08-04 01:32:18.000000000 -0400
++++ Miro-2.5.2/platform/gtk-x11/plat/renderers/xinerenderer.py	2009-08-04 01:36:20.000000000 -0400
+@@ -247,8 +247,8 @@ class AudioRenderer(Renderer):
+         Renderer.on_eos(self)
+ 
+ def movie_data_program_info(movie_path, thumbnail_path):
+-    if os.path.exists(resources.path('../../../lib/miro/xine_extractor')):
+-        path = resources.path('../../../lib/miro/xine_extractor')
++    if os.path.exists(resources.path('/usr/libexec/xine_extractor')):
++        path = resources.path('/usr/libexec/xine_extractor')
+         return ((path, movie_path, thumbnail_path), None)
+     else:
+         logging.error("xine_extractor cannot be found.")
+diff -up Miro-2.5.2/platform/gtk-x11/setup.py.orig Miro-2.5.2/platform/gtk-x11/setup.py
+--- Miro-2.5.2/platform/gtk-x11/setup.py.orig	2009-08-04 01:32:05.000000000 -0400
++++ Miro-2.5.2/platform/gtk-x11/setup.py	2009-08-04 01:35:39.000000000 -0400
+@@ -673,7 +673,7 @@ data_files += [
+      [os.path.join(platform_dir, 'miro.1.gz')]),
+     ('/usr/share/man/man1',
+      [os.path.join(platform_dir, 'miro.real.1.gz')]),
+-    ('/usr/lib/miro/',
++    ('/usr/libexec//',
+      [os.path.join(platform_dir, 'xine/xine_extractor')]),
+ ]
+ 

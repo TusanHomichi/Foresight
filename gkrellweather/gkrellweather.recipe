@@ -1,0 +1,26 @@
+class Recipe(CPackageRecipe):
+    name = 'gkrellweather'
+    version = '2.0.7'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+        'freetype:devel', 'gkrellm:devel', 'glib:devel', 'glibc:devel',
+        'gtk:devel', 'libpng:devel', 'pango:devel', 'zlib:devel',
+        'perl-URI:perl', 'perl-HTTP-Cookies:perl', 'perl:lib', 'expat:devel',
+        'perl:devel', 'pkgconfig:devel']
+
+    def setup(r):
+        r.addArchive('http://kmlinux.fjfi.cvut.cz/~makovick/gkrellm/%(name)s-%(version)s.tgz')
+        r.addSource('GrabWeather', dest = '%(datadir)s/gkrellm2/')
+
+        # plugin will complain loudly every fifteen minutes without this. :-P
+        # understood that it's hardcoded, but so is the gkrellweather plugin
+        r.Symlink('%(datadir)s/gkrellm2/GrabWeather',
+                  '/usr/local/bin/GrabWeather')
+
+        r.Make()
+        # make install strategy for this package is exceptionally specific
+        # and therefore doesn't package well. fall back to manual install.
+        r.Install('gkrellweather.so', '%(libdir)s/gkrellm2/plugins/')
+
+        r.Requires('gkrellm:runtime',
+                   '%(libdir)s/gkrellm2/plugins/gkrellweather.so')

@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# chkconfig: 2345 85 15
+# description: saves and restores alsa mixer levels
+
+# source function library
+. /etc/init.d/functions
+
+alsactl=%(sbindir)s/alsactl
+asoundcfg=%(sysconfdir)s/asound.state
+
+restore_mixer() {
+	echo -n $"Restoring ALSA mixer levels: "
+        if [ ! -r $asoundcfg ]; then
+                echo "Warning: No mixer config in $asoundcfg, you have to unmute your card."
+        elif [ -x $alsactl ]; then
+                CARDS="$(cat /proc/asound/cards | awk '/: / { print $1 }')"
+                for CARDNUM in ${CARDS}
+                do
+                        [ -e /dev/snd/controlC0 ] || sleep 2
+                        [ -e /dev/snd/controlC0 ] || sleep 2
+                        [ -e /dev/snd/controlC0 ] || sleep 2
+                        [ -e /dev/snd/controlC0 ] || sleep 2
+                        $alsactl -f $asoundcfg restore ${CARDNUM}
+                done
+        else
+                echo "ERROR: Cannot find alsactl"
+                return 1
+        fi
+
+        echo
+        return 0
+}
+
+save_mixer() {
+	echo -n $"Saving ALSA mixer levels: "
+        if [ -x $alsactl ]; then
+                $alsactl -f $asoundcfg store
+                val=$?
+                echo
+                return $val
+        else
+                echo "ERROR: Cannot find alsactl."
+                return 1
+        fi
+}
+
+case "$1" in
+  start)
+	restore_mixer
+	RETVAL=$?
+	[ $RETVAL = 0 ] && touch /var/lock/subsys/alsamixer
+	;;
+  stop)
+	save_mixer
+	RETVAL=$?
+	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/alsamixer
+	;;
+  restart|reload|condrestart)
+	save_mixer
+	restore_mixer
+	RETVAL=$?
+	[ $RETVAL = 0 ] && touch /var/lock/subsys/alsamixer
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|condrestart}"
+	exit 1
+esac
+
+exit $RETVAL

@@ -1,0 +1,11 @@
+--- setup-2.5.53/profile.nox	2006-08-16 13:33:18.000000000 -0400
++++ setup-2.5.53/profile	2006-08-16 13:33:27.000000000 -0400
+@@ -26,6 +26,8 @@
+ 	pathmunge /usr/local/sbin
+ fi
+ 
++pathmunge /usr/X11R6/bin after
++
+ # No core files by default
+ ulimit -S -c 0 > /dev/null 2>&1
+ 

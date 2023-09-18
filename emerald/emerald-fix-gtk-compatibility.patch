@@ -1,0 +1,43 @@
+From bc53f574ccc06a5366ccb8c8f0fa558836e68d00 Mon Sep 17 00:00:00 2001
+From: Sam Spilsbury <smspillaz@gmail.com>
+Date: Sun, 14 Mar 2010 14:15:13 +0000
+Subject: [PATCH] Fix GTK+ Compatability
+
+---
+diff --git a/libengine/themer.c b/libengine/themer.c
+index e17bca8..277b61d 100644
+--- a/libengine/themer.c
++++ b/libengine/themer.c
+@@ -461,7 +461,7 @@ gboolean get_bool(SettingItem * item)
+ }
+ gdouble get_float(SettingItem * item)
+ {
+-    if(!strcmp(GTK_OBJECT_TYPE_NAME(item->widget),"GtkSpinButton")) {
++    if(!strcmp(G_OBJECT_TYPE_NAME(item->widget),"GtkSpinButton")) {
+          return gtk_spin_button_get_value((GtkSpinButton *)item->widget);
+     }
+     else {
+@@ -647,7 +647,7 @@ void set_bool(SettingItem * item, gboolean b)
+ }
+ void set_float(SettingItem * item, gdouble f)
+ {
+-    if(!strcmp(GTK_OBJECT_TYPE_NAME(item->widget),"GtkSpinButton")) {
++    if(!strcmp(G_OBJECT_TYPE_NAME(item->widget),"GtkSpinButton")) {
+          gtk_spin_button_set_value((GtkSpinButton *)item->widget, f);
+     } 
+     else {
+diff --git a/src/main.c b/src/main.c
+index 5acfe03..e8dba53 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -3757,7 +3757,7 @@ static void show_tooltip(const char *text)
+ 
+ static void hide_tooltip(void)
+ {
+-    if (GTK_WIDGET_VISIBLE(tip_window))
++    if (gtk_widget_get_visible(tip_window))
+ 	g_get_current_time(&tooltip_last_popdown);
+ 
+     gtk_widget_hide(tip_window);
+--
+cgit v0.8.3.1-30-gff3a

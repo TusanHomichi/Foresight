@@ -1,0 +1,21 @@
+commit c7ac044820d119ce927b405d0586c5db8291cb82
+Author: William Jon McCann <jmccann@redhat.com>
+Date:   Tue Jul 14 12:03:05 2009 -0400
+
+    Set buttons_have_icons=false by default
+    
+    http://bugzilla.gnome.org/show_bug.cgi?id=583352
+
+diff --git a/schemas/desktop_gnome_interface.schemas.in.in b/schemas/desktop_gnome_interface.schemas.in.in
+index 44034f7..0983f99 100644
+--- a/schemas/desktop_gnome_interface.schemas.in.in
++++ b/schemas/desktop_gnome_interface.schemas.in.in
+@@ -76,7 +76,7 @@
+       <applyto>/desktop/gnome/interface/buttons_have_icons</applyto>
+       <owner>gnome</owner>
+       <type>bool</type>
+-      <default>true</default>
++      <default>false</default>
+       <locale name="C">
+         <short>Buttons Have Icons</short>
+         <long>Whether buttons may display an icon in addition to the button text.</long>

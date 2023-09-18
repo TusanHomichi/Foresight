@@ -1,0 +1,50 @@
+--- gcc/gcc-4.1.1-20070105/libjava/Makefile.am	2007-09-11 15:00:28.000000000 -0500
++++ gcc-4.1.1-20070105.java/libjava/Makefile.am	2007-09-12 09:51:55.000000000 -0500
+@@ -333,7 +333,7 @@
+ 	touch -r $$JARDIR.stamp `find $$JARDIR -type d`; \
+ 	cd $$JARDIR; \
+ 	find gnu java javax org | LC_ALL=C sort \
+-	  | $(JAR) -cfM@E \
++	  | ../../../../fastjar/fastjar -cfM@E \
+ 	    ../../libgcj-$(gcc_version).jar || exit; \
+ 	cd -; \
+ 	rm -rf $$JARDIR $$JARDIR.stamp
+@@ -347,11 +347,11 @@
+ 	[ $$javasrcdir/ChangeLog -nt $$JARDIR.stamp ] \
+ 	    && touch -r $$javasrcdir/ChangeLog $$JARDIR.stamp; \
+ 	cd $$JARDIR || exit 1; \
+-	$(JAR) -xf ../$<; \
++	../../../fastjar/fastjar -xf ../$<; \
+ 	rm -rf META-INF; \
+ 	find -type f | xargs touch -r ../$$JARDIR.stamp; \
+ 	find -type d | xargs touch -r ../$$JARDIR.stamp; \
+-	find * | LC_ALL=C sort | $(JAR) -cfM@E ../$@ || exit 1; \
++	find * | LC_ALL=C sort | ../../../fastjar/fastjar -cfM@E ../$@ || exit 1; \
+ 	cd ..; \
+ 	rm -rf $$JARDIR $$JARDIR.stamp
+ 
+--- gcc/gcc-4.1.1-20070105/libjava/Makefile.in	2007-09-11 15:00:29.000000000 -0500
++++ gcc-4.1.1-20070105.java/libjava/Makefile.in	2007-09-12 09:52:37.000000000 -0500
+@@ -9253,7 +9253,7 @@
+ 	touch -r $$JARDIR.stamp `find $$JARDIR -type d`; \
+ 	cd $$JARDIR; \
+ 	find gnu java javax org | LC_ALL=C sort \
+-	  | $(JAR) -cfM@E \
++	  | ../../../../fastjar/fastjar -cfM@E \
+ 	    ../../libgcj-$(gcc_version).jar || exit; \
+ 	cd -; \
+ 	rm -rf $$JARDIR $$JARDIR.stamp
+@@ -9267,11 +9267,11 @@
+ 	[ $$javasrcdir/ChangeLog -nt $$JARDIR.stamp ] \
+ 	    && touch -r $$javasrcdir/ChangeLog $$JARDIR.stamp; \
+ 	cd $$JARDIR || exit 1; \
+-	$(JAR) -xf ../$<; \
++	../../../fastjar/fastjar -xf ../$<; \
+ 	rm -rf META-INF; \
+ 	find -type f | xargs touch -r ../$$JARDIR.stamp; \
+ 	find -type d | xargs touch -r ../$$JARDIR.stamp; \
+-	find * | LC_ALL=C sort | $(JAR) -cfM@E ../$@ || exit 1; \
++	find * | LC_ALL=C sort | ../../../fastjar/fastjar -cfM@E ../$@ || exit 1; \
+ 	cd ..; \
+ 	rm -rf $$JARDIR $$JARDIR.stamp
+ 

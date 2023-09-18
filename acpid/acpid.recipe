@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Acpid(RPMPackageRecipe,CPackageRecipe):
+    name = 'acpid'
+    version = '2.0.5'
+    rpmRelease = '1.fc14'
+    rpmPatches = [ 'acpid-2.0.2-makefile.patch']
+    rpmSources = [ 'acpid.init',
+                   'acpid.video.conf',
+                   'acpid.power.conf',
+                   'acpid.power.sh']
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.Make()
+
+        r.MakeDirs('%(bindir)s/')
+        r.MakeInstall()
+        r.MakeDirs('%(sysconfdir)s/acpi/events', mode=0755)
+        r.MakeDirs('%(sysconfdir)s/acpi/actions', mode=0755)
+
+        r.Install('acpid.video.conf', '%(sysconfdir)s/acpi/events/videoconf', mode = 0644)
+        r.Install('acpid.power.conf', '%(sysconfdir)s/acpi/events/powerconf', mode = 0644)
+        r.Install('acpid.power.sh', '%(sysconfdir)s/acpi/actions/power.sh', mode = 0755)
+
+        r.Install('acpid.init', '%(initdir)s/acpid', mode = 0755)
+
+        r.Install('samples', '%(thisdocdir)s/')
+        r.Create('%(localstatedir)s/log/acpid', mode=0640)
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/acpi/(actions|events)')
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.Requires('psmisc:runtime', '%(sysconfdir)s/init\.d/acpid')

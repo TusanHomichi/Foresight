@@ -1,0 +1,13 @@
+class Nine15Resoltion(CPackageRecipe):
+    name = '915resolution'
+    version = '0.5.3'
+    buildRequires = [ 'chkconfig:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://www.geocities.com/stomljen/')
+        r.addSource('915resolution.init',
+                    dest='%(initdir)s/915resolution', mode=0755)
+        r.addSource('915resolution.sysconfig',
+                    dest='%(sysconfdir)s/sysconfig/915resolution', mode=0644)
+        r.Make('clean 915resolution')
+        r.Install('915resolution', '%(sbindir)s/')

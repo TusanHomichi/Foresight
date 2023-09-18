@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class UserClamav(UserInfoRecipe):
+
+   name = "info-clamav"
+   version = "1"
+
+   def setup(r):
+        r.User('clamav', 111, shell='%(essentialbindir)s/false', comment='Clam AntiVirus')

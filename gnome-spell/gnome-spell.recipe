@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage.recipe')
+class GnomeSpell(GnomePackageRecipe):
+    name = 'gnome-spell'
+    version = '1.0.8'
+
+    buildRequires = [ 'aspell:devel', 'aspell:runtime', 'atk:devel',
+        'gal:devel', 'GConf:devel',
+        'glib:devel', 'gnome-vfs:devel', 'intltool:runtime',
+        'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+        'libglade:devel', 'libgnomecanvas:devel', 'libgnome:devel',
+        'libgnomeui:devel', 'libxml2:devel', 'ORBit2:devel',
+        'pango:devel', 'popt:devel', 'cairo:devel', 'gettext:runtime',
+        'fontconfig:devel', 'freetype:devel', 'gnome-keyring:devel',
+        'libpng:devel', 'perl:runtime' ]

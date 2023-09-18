@@ -1,0 +1,1131 @@
+diff --git a/configure.in.in b/configure.in.in
+index 1349a50..3b02473 100644
+--- a/configure.in.in
++++ b/configure.in.in
+@@ -5,8 +5,8 @@ dnl
+ dnl ***************************
+ dnl *** Version information ***
+ dnl ***************************
+-m4_define([gtk_xfce_engine_version_major], [2])
+-m4_define([gtk_xfce_engine_version_minor], [9])
++m4_define([gtk_xfce_engine_version_major], [3])
++m4_define([gtk_xfce_engine_version_minor], [0])
+ m4_define([gtk_xfce_engine_version_micro], [0])
+ m4_define([gtk_xfce_engine_version_nano],  []) dnl leave this empty to have no nano version
+ m4_define([gtk_xfce_engine_version_build], [@REVISION@])
+@@ -126,15 +126,19 @@ themes/kde2/gtk-2.0/Makefile
+ themes/kde2/Makefile
+ themes/light/Makefile
+ themes/light/gtk-2.0/Makefile
++themes/light/gtk-3.0/Makefile
+ themes/orange/gtk-2.0/Makefile
+ themes/orange/Makefile
+ themes/redmondxp/gtk-2.0/Makefile
+ themes/redmondxp/Makefile
+ themes/saltlake/gtk-2.0/Makefile
++themes/saltlake/gtk-3.0/Makefile
+ themes/saltlake/Makefile
+ themes/smooth/gtk-2.0/Makefile
++themes/smooth/gtk-3.0/Makefile
+ themes/smooth/Makefile
+ themes/stellar/gtk-2.0/Makefile
++themes/stellar/gtk-3.0/Makefile
+ themes/stellar/Makefile
+ themes/winter/gtk-2.0/Makefile
+ themes/winter/Makefile
+diff --git a/themes/b5/Makefile.am b/themes/b5/Makefile.am
+index 157ddb0..60ad9a8 100644
+--- a/themes/b5/Makefile.am
++++ b/themes/b5/Makefile.am
+@@ -1,3 +1,4 @@
+-SUBDIRS = gtk-2.0
++SUBDIRS = $(GTK_SUBDIRS)
++DIST_SUBDIRS = gtk-2.0 gtk-3.0
+ themedir = $(datadir)/themes/Xfce-b5
+ 
+diff --git a/themes/b5/gtk-3.0/Makefile.am b/themes/b5/gtk-3.0/Makefile.am
+new file mode 100644
+index 0000000..ee99671
+--- a/dev/null
++++ b/themes/b5/gtk-3.0/Makefile.am
+@@ -0,0 +1,5 @@
++themedir = $(datadir)/themes/Xfce-b5/gtk-3.0
++theme_DATA = gtk.css
++
++EXTRA_DIST = $(theme_DATA)
++
+diff --git a/themes/b5/gtk-3.0/gtk.css b/themes/b5/gtk-3.0/gtk.css
+new file mode 100644
+index 0000000..80a3060
+--- a/dev/null
++++ b/themes/b5/gtk-3.0/gtk.css
+@@ -0,0 +1,193 @@
++
++@define-color fg_active #525051;
++@define-color fg_insensitive #525051;
++@define-color fg_normal #000000;
++@define-color fg_prelight #000000;
++@define-color fg_selected #000000;
++
++@define-color bg_active #dddbde;
++@define-color bg_insensitive #dddbde;
++@define-color bg_normal #dddbde;
++@define-color bg_prelight #efedef;
++@define-color bg_selected #b7b5b8;
++
++@define-color base_active #dddbde;
++@define-color base_insensitive #d6d4d6;
++@define-color base_normal #ffffff;
++@define-color base_prelight #efedef;
++@define-color base_selected #b7b5b8;
++
++@define-color text_active #000000;
++@define-color text_insensitive #000000;
++@define-color text_normal #000000;
++@define-color text_prelight #000000;
++@define-color text_selected #000000;
++
++* {
++    engine: xfce;
++
++    -xfce-smooth-edge: true;
++
++    -GtkButton-default-border        : 0;
++    -GtkButton-default-outside-border: 0;
++    -GtkButton-default-spacing       : 5;
++    -GtkWidget-focus-line-width      : 1;
++    -GtkWidget-focus-padding         : 0;
++    -GtkCheckButton-indicator-size   : 14;
++    -GtkMenuBar-shadow-type          : out;
++    -GtkMenuItem-selected-shadow-type: out;
++    /*GtkPaned::handle_full_size     : 1*/
++    -GtkRange-slider-width           : 11;
++    -GtkRange-stepper-size           : 11;
++    -GtkRange-stepper-spacing        : 0;
++    -GtkRange-trough-border          : 0;
++    -GtkScrollbar-min-slider-length  : 20;
++    -GtkToolbar-shadow-type          : out;
++    -GtkWidget-interior-focus        : 1;
++
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++*:active {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++*:insensitive {
++    color: @fg_insensitive;
++    background-color: @bg_insensitive;
++    border-color: shade(@bg_insensitive, 0.7);
++}
++
++*:hover {
++    color: @fg_prelight;
++    background-color: @bg_prelight;
++    border-color: shade(@bg_prelight, 0.7);
++}
++
++*:selected {
++    color: @fg_selected;
++    background-color: @bg_selected;
++    border-color: shade(@bg_selected, 0.7);
++}
++
++.view, .entry {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:active, .entry:active {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:insensitive, .entry:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:hover, .entry:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:selected, .entry:selected {
++    color: @text_selected;
++    background-color: @base_selected;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.check, .radio {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:active, .radio:active {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:insensitive, .radio:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: @fg_insensitive;
++}
++
++.check:hover, .radio:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: @fg_prelight;
++}
++
++.check:selected, .radio:selected {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: @fg_active;
++}
++
++.cell {
++    color: @text_normal;
++}
++
++.cell:active {
++    color: @text_active;
++}
++
++.cell:insensitive {
++    color: @text_insensitive;
++}
++
++.cell:hover {
++    color: @text_prelight;
++}
++
++.cell:selected {
++    color: @text_selected;
++}
++
++/*
++.spinbutton {
++    color: @fg_normal;
++    background-color: @bg_normal;
++}
++*/
++
++.progressbar {
++    background-color: @bg_prelight;
++}
++
++.trough {
++    background-color: @bg_active;
++}
++
++.notebook {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++.notebook:active {
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.slider {
++    color: #525051;
++
++    border-width: 1 1;
++}
++
++.slider:active {
++    background-color: #f0ebef;
++}
++
+diff --git a/themes/light/Makefile.am b/themes/light/Makefile.am
+index c8959af..4224b9d 100644
+--- a/themes/light/Makefile.am
++++ b/themes/light/Makefile.am
+@@ -1,3 +1,4 @@
+-SUBDIRS = gtk-2.0
++SUBDIRS = $(GTK_SUBDIRS)
++DIST_SUBDIRS = gtk-2.0 gtk-3.0
+ themedir = $(datadir)/themes/Xfce-light
+ 
+diff --git a/themes/light/gtk-3.0/Makefile.am b/themes/light/gtk-3.0/Makefile.am
+new file mode 100644
+index 0000000..60f0b49
+--- a/dev/null
++++ b/themes/light/gtk-3.0/Makefile.am
+@@ -0,0 +1,5 @@
++themedir = $(datadir)/themes/Xfce-light/gtk-3.0
++theme_DATA = gtk.css
++
++EXTRA_DIST = $(theme_DATA)
++
+diff --git a/themes/light/gtk-3.0/gtk.css b/themes/light/gtk-3.0/gtk.css
+new file mode 100644
+index 0000000..8cdd2be
+--- a/dev/null
++++ b/themes/light/gtk-3.0/gtk.css
+@@ -0,0 +1,201 @@
++
++@define-color fg_active #000000;
++@define-color fg_insensitive #c5c5be;
++@define-color fg_normal #000000;
++@define-color fg_prelight #000000;
++@define-color fg_selected #000000;
++
++@define-color bg_active #d4d4cd;
++@define-color bg_insensitive #ededdd;
++@define-color bg_normal #ededdd;
++@define-color bg_prelight #f5f5dd;
++@define-color bg_selected #bcb4cf;
++
++@define-color base_active #e5e5e5;
++@define-color base_insensitive #e5e5e5;
++@define-color base_normal #ffffff;
++@define-color base_prelight #f5f5dd;
++@define-color base_selected #bcb4cf;
++
++@define-color text_active #000000;
++@define-color text_insensitive #000000;
++@define-color text_normal #000000;
++@define-color text_prelight #000000;
++@define-color text_selected #000000;
++
++* {
++    engine: xfce;
++
++    -xfce-smooth-edge: true;
++
++    -GtkButton-default-border        : 0;
++    -GtkButton-default-outside-border: 0;
++    -GtkButton-default-spacing       : 5;
++    -GtkWidget-focus-line-width      : 1;
++    -GtkWidget-focus-padding         : 0;
++    -GtkCheckButton-indicator-size   : 14;
++    -GtkMenuBar-shadow-type          : out;
++    -GtkMenuItem-selected-shadow-type: in;
++    /*GtkPaned::handle_full_size     : 1*/
++    -GtkRange-slider-width           : 15;
++    -GtkRange-stepper-size           : 15;
++    -GtkRange-stepper-spacing        : 0;
++    -GtkRange-trough-border          : 0;
++    -GtkScrollbar-min-slider-length  : 20;
++    -GtkToolbar-shadow-type          : out;
++    -GtkWidget-interior-focus        : 1;
++
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++*:active {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++*:insensitive {
++    color: @fg_insensitive;
++    background-color: @bg_insensitive;
++    border-color: shade(@bg_insensitive, 0.7);
++}
++
++*:hover {
++    color: @fg_prelight;
++    background-color: @bg_prelight;
++    border-color: shade(@bg_prelight, 0.7);
++}
++
++*:selected {
++    color: @fg_selected;
++    background-color: @bg_selected;
++    border-color: shade(@bg_selected, 0.7);
++}
++
++.view, .entry {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:active, .entry:active {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:insensitive, .entry:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:hover, .entry:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:selected, .entry:selected {
++    color: @text_selected;
++    background-color: @base_selected;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.check, .radio {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:active, .radio:active {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:insensitive, .radio:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: @fg_insensitive;
++}
++
++.check:hover, .radio:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: @fg_prelight;
++}
++
++.check:selected, .radio:selected {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: @fg_active;
++}
++
++.cell {
++    color: @text_normal;
++}
++
++.cell:active {
++    color: @text_active;
++}
++
++.cell:insensitive {
++    color: @text_insensitive;
++}
++
++.cell:hover {
++    color: @text_prelight;
++}
++
++.cell:selected {
++    color: @text_selected;
++}
++
++/*
++.spinbutton {
++    color: @fg_normal;
++    background-color: @bg_normal;
++}
++*/
++
++.progressbar {
++    background-color: @bg_prelight;
++
++    border-width: 1 1;
++}
++
++.trough {
++    background-color: @bg_active;
++}
++
++.notebook {
++    color: @fg_active;
++    background-color: #d4d4ce;
++    border-color: shade(@bg_active, 0.7);
++}
++
++.notebook:active {
++    color: @fg_normal;
++    background-color: #f8f8ef;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.button {
++    background-color: #f8f8ef;
++}
++
++.button:active {
++    background-color: #cfcfc4;
++}
++
++.button:insensitive {
++    background-color: #f8f8ef;
++}
++
++.button:hover {
++    background-color: #f5f5dd;
++}
++
+diff --git a/themes/saltlake/Makefile.am b/themes/saltlake/Makefile.am
+index 5740d80..574c715 100644
+--- a/themes/saltlake/Makefile.am
++++ b/themes/saltlake/Makefile.am
+@@ -1,3 +1,4 @@
+-SUBDIRS = gtk-2.0
++SUBDIRS = $(GTK_SUBDIRS)
++DIST_SUBDIRS = gtk-2.0 gtk-3.0
+ themedir = $(datadir)/themes/Xfce-saltlake
+ 
+diff --git a/themes/saltlake/gtk-3.0/Makefile.am b/themes/saltlake/gtk-3.0/Makefile.am
+new file mode 100644
+index 0000000..5002c1e
+--- a/dev/null
++++ b/themes/saltlake/gtk-3.0/Makefile.am
+@@ -0,0 +1,5 @@
++themedir = $(datadir)/themes/Xfce-saltlake/gtk-3.0
++theme_DATA = gtk.css
++
++EXTRA_DIST = $(theme_DATA)
++
+diff --git a/themes/saltlake/gtk-3.0/gtk.css b/themes/saltlake/gtk-3.0/gtk.css
+new file mode 100644
+index 0000000..46f40c5
+--- a/dev/null
++++ b/themes/saltlake/gtk-3.0/gtk.css
+@@ -0,0 +1,190 @@
++
++@define-color fg_active #000000;
++@define-color fg_insensitive #717170;
++@define-color fg_normal #000000;
++@define-color fg_prelight #000000;
++@define-color fg_selected #ffffff;
++
++@define-color bg_active #cdcdc9;
++@define-color bg_insensitive #e4e4e0;
++@define-color bg_normal #e4e4e0;
++@define-color bg_prelight #ccc9c5;
++@define-color bg_selected #3f993f;
++
++@define-color base_active #e5e5e5;
++@define-color base_insensitive #e4e4e0;
++@define-color base_normal #ffffff;
++@define-color base_prelight #ccc9c5;
++@define-color base_selected #ccc9c5;
++
++@define-color text_active #000000;
++@define-color text_insensitive #000000;
++@define-color text_normal #000000;
++@define-color text_prelight #000000;
++@define-color text_selected #000000;
++
++* {
++    engine: xfce;
++
++    -xfce-smooth-edge: false;
++
++    -GtkButton-default-border        : 0;
++    -GtkButton-default-outside-border: 0;
++    -GtkButton-child-displacement-x  : 1;
++    -GtkButton-child-displacement-y  : 1;
++    -GtkButton-default-spacing       : 5;
++    -GtkWidget-focus-line-width      : 1;
++    -GtkWidget-focus-padding         : 0;
++    -GtkCheckButton-indicator-size   : 14;
++    -GtkMenuBar-shadow-type          : etched-in;
++    /*GtkPaned::handle_full_size     : 1*/
++    -GtkRange-slider-width           : 15;
++    -GtkRange-stepper-size           : 15;
++    -GtkRange-trough-border          : 0;
++    -GtkScrollbar-min-slider-length  : 20;
++    -GtkWidget-interior-focus        : 1;
++
++    border-width: 2 2;
++
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++*:active {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++*:insensitive {
++    color: @fg_insensitive;
++    background-color: @bg_insensitive;
++    border-color: shade(@bg_insensitive, 0.7);
++}
++
++*:hover {
++    color: @fg_prelight;
++    background-color: @bg_prelight;
++    border-color: shade(@bg_prelight, 0.7);
++}
++
++*:selected {
++    color: @fg_selected;
++    background-color: @bg_selected;
++    border-color: shade(@bg_selected, 0.7);
++}
++
++.view, .entry {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:active, .entry:active {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:insensitive, .entry:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:hover, .entry:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:selected, .entry:selected {
++    color: @text_selected;
++    background-color: @base_selected;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.check, .radio {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:active, .radio:active {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:insensitive, .radio:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: @fg_insensitive;
++}
++
++.check:hover, .radio:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: @fg_prelight;
++}
++
++.check:selected, .radio:selected {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: @fg_active;
++}
++
++.cell {
++    color: @text_normal;
++}
++
++.cell:active {
++    color: @text_active;
++}
++
++.cell:insensitive {
++    color: @text_insensitive;
++}
++
++.cell:hover {
++    color: @text_prelight;
++}
++
++.cell:selected {
++    color: @text_selected;
++}
++
++/*
++.spinbutton {
++    color: @fg_normal;
++    background-color: @bg_normal;
++}
++*/
++
++.progressbar {
++    background-color: @bg_prelight;
++
++    border-width: 1 1;
++}
++
++.trough {
++    background-color: @bg_active;
++}
++
++.notebook {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++.notebook:active {
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.menuitem {
++    border-width: 1 1;
++}
++
+diff --git a/themes/smooth/Makefile.am b/themes/smooth/Makefile.am
+index c1f126f..c1ffd2d 100644
+--- a/themes/smooth/Makefile.am
++++ b/themes/smooth/Makefile.am
+@@ -1,3 +1,4 @@
+-SUBDIRS = gtk-2.0
++SUBDIRS = $(GTK_SUBDIRS)
++DIST_SUBDIRS = gtk-2.0 gtk-3.0
+ themedir = $(datadir)/themes/Xfce-smooth
+ 
+diff --git a/themes/smooth/gtk-3.0/Makefile.am b/themes/smooth/gtk-3.0/Makefile.am
+new file mode 100644
+index 0000000..b40191e
+--- a/dev/null
++++ b/themes/smooth/gtk-3.0/Makefile.am
+@@ -0,0 +1,5 @@
++themedir = $(datadir)/themes/Xfce-smooth/gtk-3.0
++theme_DATA = gtk.css
++
++EXTRA_DIST = $(theme_DATA)
++
+diff --git a/themes/smooth/gtk-3.0/gtk.css b/themes/smooth/gtk-3.0/gtk.css
+new file mode 100644
+index 0000000..9321849
+--- a/dev/null
++++ b/themes/smooth/gtk-3.0/gtk.css
+@@ -0,0 +1,183 @@
++
++@define-color fg_active #000000;
++@define-color fg_insensitive #969696;
++@define-color fg_normal #000000;
++@define-color fg_prelight #000000;
++@define-color fg_selected #000000;
++
++@define-color bg_active #c2c2be;
++@define-color bg_insensitive #c2c2be;
++@define-color bg_normal #c2c2be;
++@define-color bg_prelight #f2f2ee;
++@define-color bg_selected #a5abba;
++
++@define-color base_active #a5abba;
++@define-color base_insensitive #ffffff;
++@define-color base_normal #ffffff;
++@define-color base_prelight #eaeaea;
++@define-color base_selected #a5abba;
++
++@define-color text_active #000000;
++@define-color text_insensitive #000000;
++@define-color text_normal #000000;
++@define-color text_prelight #000000;
++@define-color text_selected #000000;
++
++* {
++    engine: xfce;
++
++    -xfce-smooth-edge: true;
++
++    -GtkButton-default-border        : 0;
++    -GtkButton-default-outside-border: 0;
++    -GtkButton-default-spacing       : 5;
++    -GtkWidget-focus-line-width      : 1;
++    -GtkWidget-focus-padding         : 0;
++    -GtkCheckButton-indicator-size   : 14;
++    -GtkMenuItem-selected-shadow-type: out;
++    /*GtkPaned::handle_full_size     : 1*/
++    -GtkRange-slider-width           : 15;
++    -GtkRange-stepper-size           : 15;
++    -GtkRange-stepper-spacing        : 0;
++    -GtkRange-trough-border          : 0;
++    -GtkScrollbar-min-slider-length  : 20;
++    -GtkWidget-interior-focus        : 1;
++
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++*:active {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++*:insensitive {
++    color: @fg_insensitive;
++    background-color: @bg_insensitive;
++    border-color: shade(@bg_insensitive, 0.7);
++}
++
++*:hover {
++    color: @fg_prelight;
++    background-color: @bg_prelight;
++    border-color: shade(@bg_prelight, 0.7);
++}
++
++*:selected {
++    color: @fg_selected;
++    background-color: @bg_selected;
++    border-color: shade(@bg_selected, 0.7);
++}
++
++.view, .entry {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:active, .entry:active {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:insensitive, .entry:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:hover, .entry:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:selected, .entry:selected {
++    color: @text_selected;
++    background-color: @base_selected;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.check, .radio {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:active, .radio:active {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:insensitive, .radio:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: @fg_insensitive;
++}
++
++.check:hover, .radio:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: @fg_prelight;
++}
++
++.check:selected, .radio:selected {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: @fg_active;
++}
++
++.cell {
++    color: @text_normal;
++}
++
++.cell:active {
++    color: @text_active;
++}
++
++.cell:insensitive {
++    color: @text_insensitive;
++}
++
++.cell:hover {
++    color: @text_prelight;
++}
++
++.cell:selected {
++    color: @text_selected;
++}
++
++/*
++.spinbutton {
++    color: @fg_normal;
++    background-color: @bg_normal;
++}
++*/
++
++.progressbar {
++    background-color: @bg_prelight;
++
++    border-width: 1 1;
++}
++
++.trough {
++    background-color: @bg_active;
++}
++
++.notebook {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++.notebook:active {
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
+diff --git a/themes/stellar/Makefile.am b/themes/stellar/Makefile.am
+index edcdf64..bba10a1 100644
+--- a/themes/stellar/Makefile.am
++++ b/themes/stellar/Makefile.am
+@@ -1,3 +1,4 @@
+-SUBDIRS = gtk-2.0
++SUBDIRS = $(GTK_SUBDIRS)
++DIST_SUBDIRS = gtk-2.0 gtk-3.0
+ themedir = $(datadir)/themes/Xfce-stellar
+ 
+diff --git a/themes/stellar/gtk-3.0/Makefile.am b/themes/stellar/gtk-3.0/Makefile.am
+new file mode 100644
+index 0000000..7dbdf59
+--- a/dev/null
++++ b/themes/stellar/gtk-3.0/Makefile.am
+@@ -0,0 +1,5 @@
++themedir = $(datadir)/themes/Xfce-stellar/gtk-3.0
++theme_DATA = gtk.css
++
++EXTRA_DIST = $(theme_DATA)
++
+diff --git a/themes/stellar/gtk-3.0/gtk.css b/themes/stellar/gtk-3.0/gtk.css
+new file mode 100644
+index 0000000..a893bd4
+--- a/dev/null
++++ b/themes/stellar/gtk-3.0/gtk.css
+@@ -0,0 +1,192 @@
++
++@define-color fg_active #000000;
++@define-color fg_insensitive #4e4f56;
++@define-color fg_normal #000000;
++@define-color fg_prelight #000000;
++@define-color fg_selected #ffffff;
++
++@define-color bg_active #9ba0b0;
++@define-color bg_insensitive #9ba0b0;
++@define-color bg_normal #aeb2c3;
++@define-color bg_prelight #aeb2c3;
++@define-color bg_selected #b24d7a;
++
++@define-color base_active #888ca0;
++@define-color base_insensitive #969bb4;
++@define-color base_normal #fcfcf0;
++@define-color base_prelight #b24d7a;
++@define-color base_selected #b24d7a;
++
++@define-color text_active #000000;
++@define-color text_insensitive #747474;
++@define-color text_normal #000000;
++@define-color text_prelight #000000;
++@define-color text_selected #ffffff;
++
++* {
++    engine: xfce;
++
++    -xfce-smooth-edge: true;
++    -xfce-grip-style: disabled;
++
++    -GtkButton-default-border        : 5;
++    -GtkButton-default-outside-border: 6;
++    -GtkButton-default-spacing       : 5;
++    -GtkWidget-focus-padding         : 0;
++    -GtkCheckButton-indicator-size   : 14;
++    -GtkMenuItem-selected-shadow-type: in;
++    /*GtkPaned::handle_full_size     : 1*/
++    -GtkRange-slider-width           : 12;
++    -GtkRange-stepper-size           : 12;
++    -GtkRange-stepper-spacing        : 0;
++    -GtkRange-trough-border          : 0;
++    -GtkScrollbar-min-slider-length  : 20;
++    -GtkToolbar-shadow-type          : out;
++    /*GtkWidget::focus-line-pattern  : "\0"*/
++    -GtkWidget-focus-line-width      : 2;
++    -GtkWidget-interior-focus        : 0;
++    -GtkWidget-internal-padding      : 2;
++
++    border-width: 1 1;
++
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++*:active {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++*:insensitive {
++    color: @fg_insensitive;
++    background-color: @bg_insensitive;
++    border-color: shade(@bg_insensitive, 0.7);
++}
++
++*:hover {
++    color: @fg_prelight;
++    background-color: @bg_prelight;
++    border-color: shade(@bg_prelight, 0.7);
++}
++
++*:selected {
++    color: @fg_selected;
++    background-color: @bg_selected;
++    border-color: shade(@bg_selected, 0.7);
++}
++
++.view, .entry {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:active, .entry:active {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:insensitive, .entry:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:hover, .entry:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.view:selected, .entry:selected {
++    color: @text_selected;
++    background-color: @base_selected;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.check, .radio {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:active, .radio:active {
++    color: @text_normal;
++    background-color: @base_normal;
++    border-color: @fg_normal;
++}
++
++.check:insensitive, .radio:insensitive {
++    color: @text_insensitive;
++    background-color: @base_insensitive;
++    border-color: @fg_insensitive;
++}
++
++.check:hover, .radio:hover {
++    color: @text_prelight;
++    background-color: @base_prelight;
++    border-color: @fg_prelight;
++}
++
++.check:selected, .radio:selected {
++    color: @text_active;
++    background-color: @base_active;
++    border-color: @fg_active;
++}
++
++.cell {
++    color: @text_normal;
++}
++
++.cell:active {
++    color: @text_active;
++}
++
++.cell:insensitive {
++    color: @text_insensitive;
++}
++
++.cell:hover {
++    color: @text_prelight;
++}
++
++.cell:selected {
++    color: @text_selected;
++}
++
++/*
++.spinbutton {
++    color: @fg_normal;
++    background-color: @bg_normal;
++}
++*/
++
++.progressbar {
++    background-color: @bg_prelight;
++}
++
++.trough {
++    background-color: @bg_active;
++}
++
++.notebook {
++    color: @fg_active;
++    background-color: @bg_active;
++    border-color: shade(@bg_active, 0.7);
++}
++
++.notebook:active {
++    color: @fg_normal;
++    background-color: @bg_normal;
++    border-color: shade(@bg_normal, 0.7);
++}
++
++.menu:hover {
++    color: #FFFFFF;
++    background-color: #9BA0B0;
++}
++
+--
+cgit 

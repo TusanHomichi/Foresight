@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mlt(AutoPackageRecipe):
+    name = 'mlt'
+    version = '0.7.8'
+ 
+    buildRequires = ['SDL:devel', 'SDL_image:devel', 'ffmpeg:devel', 'frei0r-plugins:devel', 'glib:devel', 'gtk:devel', 'jack:devel',  'libX11:devel', 'ladspa_sdk:devel', 'libdv:devel', 'libexif:devel', 'libquicktime:devel', 'libsamplerate:devel', 'libstdc++:devel', 'libvorbis:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'python:devel', 'qt4:devel', 'qt4-core:devellib', 'qt4-gui:devellib', 'ruby:devellib', 'ruby:runtime', 'sox:devel', 'swig:runtime', 'which:runtime', 'libXext:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/mlt/mlt/mlt-%(version)s.tar.gz')
+
+    def configure(r):
+	r.Configure('--prefix=%(prefix)s --libdir=%(libdir)s --disable-sse2 --disable-mmx --enable-gpl --disable-avformat --enable-core --enable-dgraft --enable-dv --enable-effectv --enable-feeds --enable-gtk2 --enable-jackrack --enable-kdenlive --enable-kino --disable-luma --enable-linsys --enable-melt --enable-motion-est --enable-normalize --enable-oldfilm --enable-plus --enable-qimage --enable-resample --enable-sdl --enable-sox --enable-vmfx --enable-vorbis --enable-xine --enable-xml --avformat-shared=%(prefix)s --avformat-swscale --enable-shared --qimage-libdir=%(libdir)s --qimage-includedir=%(includedir)s --swig-languages=python')
+
+    def makeinstall(r):
+	r.MakeInstall()
+	r.Install('src/swig/python/%(name)s.py', '%(libdir)s/python2.6/site-packages/', mode=0644)
+	r.Install('src/swig/python/_%(name)s.so', '%(libdir)s/python2.6/site-packages/', mode=0755)
+
+	#only needed with swig-lagnuages=ruby
+	#r.Install('src/swig/ruby/play.rb', '%(libdir)s/ruby/site_ruby/', mode=0755)
+	#r.Install('src/swig/ruby/thumbs.rb', '%(libdir)s/ruby/site_ruby/', mode=0755)
+	#r.Install('src/swig/ruby/%(name)s.so', '%(libdir)s/ruby/site_ruby/', mode=0755)
+	

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libimobiledevice(AutoPackageRecipe):
+    name = 'libimobiledevice'
+    version = '1.0.6'
+ 
+    buildRequires = ['glib:devel', 'gnutls:devel', 'libgcrypt:devel', 'libplist:devel', 'libstdc++:devel', 'libtasn1:devel', 'libxml2:devel', 'pkgconfig:devel', 'python:devel', 'swig:runtime', 'usbmuxd:devel', 'libgpg-error:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.libimobiledevice.org/downloads/')
+
+    def configure(r):
+        r.Configure()
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'), 'libtool')
+
+    def policy(r):
+        r.Requires('usbmuxd:runtime', '%(bindir)s/ideviceimagemounter')

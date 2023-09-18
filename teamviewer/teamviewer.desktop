@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=TeamViewer
+Comment=TeamViewer Remote Control Application
+Exec=/usr/bin/teamviewer
+Icon=/opt/teamviewer8/tv_bin/desktop/teamviewer.png
+Type=Application
+Categories=Network;WebDevelopment;
+

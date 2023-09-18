@@ -1,0 +1,13 @@
+diff -up rdate-1.4/rdate.c.debug rdate-1.4/rdate.c
+--- rdate-1.4/rdate.c.debug	2012-03-13 13:28:35.320499753 +0100
++++ rdate-1.4/rdate.c	2012-03-13 13:34:10.997139486 +0100
+@@ -322,6 +322,9 @@ int main(int argc, char *argv[])
+ 	}
+     }
+ 
++  if (hosts)
++    free(hosts);
++
+   if(!nhosts)
+     usage(1);
+   else if (!retval && !success)

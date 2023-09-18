@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2010 rPath, Inc.
+#               2006-2010 The Foresight Linux Project
+#               2009-2010 Sony Pictures ImageWorks
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pexpect(CPackageRecipe):
+    name = 'pexpect'
+    version = '2.3'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.PythonSetup()

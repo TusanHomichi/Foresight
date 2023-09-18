@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cherokee(CPackageRecipe):
+    name = 'cherokee'
+    version = '1.2.101'
+    packageSummary = "Cherokee is a very fast, flexible and easy to configure Web Server."
+    packageDescription = "Cherokee is a very fast, flexible and easy to configure Web Server. It supports the widespread technologies nowadays: FastCGI, SCGI, PHP, CGI, SSI, TLS and SSL encrypted connections, Virtual hosts, Authentication, on the fly encoding, Load Balancing, Apache compatible log files, Data Base Balancing, Reverse HTTP Proxy, Traffic Shaper, Video Streaming and much more."
+ 
+    buildRequires = ['PIL:python', 'bzip2:devel', 'chkconfig:runtime', 'gettext:runtime', 'intltool:runtime', 'mysql:devel', 'openldap:devel', 'openssl:devel', 'pam:devel', 'pcre:devel', 'python:devel', 'zlib:devel', 'PyYAML:python', 'ffmpeg:devel']
+ 
+    def setup(r):
+      r.macros.majversion = '.'.join(r.version.split('.')[:2])
+      r.addArchive('http://www.cherokee-project.com/download/%(majversion)s/%(version)s/%(name)s-%(version)s.tar.gz')
+      r.addPatch('cherokee-1.2.101-ffmpeg0.11.patch')
+      r.addSource('cherokee-init')
+      r.Configure('--enable-os-string="Foresight Linux"')
+      r.Make()
+      r.MakeInstall()
+      r.Copy('cherokee-init', '%(initdir)s/cherokee', mode=0755)

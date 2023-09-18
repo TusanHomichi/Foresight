@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SuperTuxKart(AutoPackageRecipe):
+    name = 'supertuxkart'
+    version = '0.6.2'
+
+    buildRequires = ['Mesa:devel', 'SDL:devel', 'desktop-file-utils:runtime', 'freealut:devel', 'freeglut:devel', 'libogg:devel', 'libstdc++:devel', 'libvorbis:devel', 'openal:devel', 'plib:devel', 'gettext:runtime']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/supertuxkart/%(name)s-%(version)s-src.tar.bz2')

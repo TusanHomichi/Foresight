@@ -1,0 +1,15 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mftrace(AutoPackageRecipe):
+    name = 'mftrace'
+    version = '1.2.17'
+ 
+    buildRequires = ['autotrace:runtime', 'python:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://lilypond.org/download/sources/mftrace/')

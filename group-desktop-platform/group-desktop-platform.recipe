@@ -1,0 +1,5502 @@
+
+# Copyright (c) 2004-2011 rPath, Inc.
+#               2006-2013 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+import datetime
+class GroupDesktopPlatform(GroupRecipe):
+    name = 'group-desktop-platform'
+    realVersion = '2.5.5'
+    stamp = datetime.date.today().strftime("%Y.%m.%d")
+    version =  '%s+%s' % (realVersion,stamp)
+
+    autoResolve = True
+
+    Flags.local_tools = True
+    depCheck = True
+    # we handle this on the group-{gnome,lxde,xfce,dist}-dist stage
+    checkPathConflicts = False
+
+    checkOnlyByDefaultDeps = False
+    requireLatest = True
+
+    x86_64rplGroupsFlavorString = 'is: x86 x86_64'
+    x86_64FlavorString = 'is: x86_64'
+    x86FlavorString  = 'is: x86'
+    x86rplGroupsFlavorString = x86FlavorString
+
+    rPathVersionStr = None
+
+    supDocComponents = [ 'supdoc', ]
+    develComponents  = [ 'build-tree', 'devellib', 'devel', 'develdoc']
+    docComponents  = [ 'supdoc', 'doc']
+    localeComponents  = [ 'locale']
+
+    rplGroups = [ 'group-base',
+                  'group-bootable',
+                  'group-core',
+                  'group-printing',
+                  'group-text-tools',
+                  'group-devel',
+                  'group-text-devel',
+                  'group-os-devel',
+                  ]
+
+    kdegroups = [
+        'group-kde',
+    ]
+
+    xfcegroups = [
+        'group-xfce',
+        'group-xfce-core',
+        'group-xfce-devel',
+        'group-xfce-apps',
+        'group-xfce-extras',
+    ]
+
+    lxdegroups = [
+        'group-lxde',
+        'group-lxde-core',
+        'group-lxde-apps',
+        'group-lxde-extras',
+    ]
+
+    rplLabel = 'foresight.rpath.org@rpl:2-qa'           # was previously rplLabel = 'conary.rpath.com@rpl:2-qa'
+    rplLabelCompat = 'foresight.rpath.org@rpl:1-compat' # was previously rplLabelCompat = 'conary.rpath.com@rpl:1-compat'
+
+    compatLabel = 'foresight.rpath.org@fl:2-compat'
+    rplGroupUmbrella = 'group-os=' + rplLabel + '[%s]'
+
+    if Arch.x86_64:
+        rplGroupUmbrella = rplGroupUmbrella % x86_64rplGroupsFlavorString
+        # we need the one bellow to make sure choices in compat32 are allways
+        # in sync with one in x86_64
+        rplGroupUmbrellaCompat32 = 'group-os=' + rplLabel + '[%s]'
+        rplGroupUmbrellaCompat32 = rplGroupUmbrellaCompat32 % x86rplGroupsFlavorString
+    else:
+        rplGroupUmbrella = rplGroupUmbrella % x86rplGroupsFlavorString
+
+    def flCreateGroup(r, name, parentGroup=None, depCheck=False,
+                      byDefault=True, checkOnlyByDefaultDeps=True,
+                      autoResolve = False, checkPathConflicts=None):
+        # creates group named 'name', adds it to the toplevel group,
+        # and sets the current group to that name.  calls to r.add()
+        # will use the current group by default.
+
+        # note: byDefault applies to whether the group is included by
+        # default in its parent group, not whether the troves in
+        # the group are added by default. (use the setByDefault() command
+        # to get that)
+
+        # get all the the default for the new group from its parent group.
+        if parentGroup:
+            r.setDefaultGroup(parentGroup)
+        r.createGroup(name, autoResolve=autoResolve, depCheck=depCheck,
+                      checkOnlyByDefaultDeps=checkOnlyByDefaultDeps,
+                      byDefault=byDefault,  checkPathConflicts=checkPathConflicts)
+
+        # we drop supDocComponents inconditionally
+        r.removeComponents(r.supDocComponents,
+                           name)
+        if parentGroup:
+            r.addNewGroup(name, groupName=parentGroup, byDefault=byDefault)
+        r.setDefaultGroup(name)
+
+    def rplAddGroup(r, name, groupName, flavor = None, recurse=True):
+        if not flavor:
+            if Arch.x86_64:
+                flavor = r.x86_64rplGroupsFlavorString
+            else:
+                flavor = r.x86rplGroupsFlavorString
+
+        # copyScripts = True gives interesting errors...
+        # has to do with group recursion
+        r.addCopy(name, groupName=groupName, flavor=flavor,
+                  flatten=False,
+                  searchPath = r.rplGroupUmbrella,
+                  recurse = recurse)
+
+        # we drop supDocComponents inconditionally
+        r.removeComponents(r.supDocComponents,
+                           groupName)
+        r.setByDefault(True, groupName=groupName)
+
+
+    def flAddTroves(r, troves, **kwargs):
+        for trove in troves:
+            r.flAdd(trove, **kwargs)
+
+    def flAdd(r, name, components = None, source=None, versionStr=None,
+              groupName=None, flavor=None, byDefault=True, singleArch=False):
+
+        searchPath = (r.foresightLinuxLabel)
+
+        if not versionStr:
+            versionStr = r.foresightLinuxLabel
+
+        if isinstance(name, tuple):
+            # This allows us to put troves created with PackageSpec into
+            # lists where each trove is added iteratively, and still specify
+            # an explicit source.
+            name, source = name
+
+        if not versionStr:
+            requireLatest = True
+        else:
+            requireLatest = False
+
+        if not flavor:
+            if Arch.x86_64:
+                flavor = r.x86_64rplGroupsFlavorString
+            else:
+                flavor = r.x86rplGroupsFlavorString
+
+        #  first, we add the trove, normally
+        r.add(name,
+              components = components,
+              versionStr = versionStr,
+              source=source,
+              groupName=groupName,
+              flavor=flavor,
+              byDefault=byDefault,
+              searchPath=searchPath,
+              requireLatest = requireLatest
+              )
+
+        # second, we check if that trove is already in any of the upstream, pre-built,
+        # groups, we use, and - there - we replace it.
+        if Arch.x86_64 and not name == 'anaconda' and not singleArch:
+
+            r.replace(name,
+                      groupName='group-compat32',
+                      allowNoMatch=True,
+                      newVersionStr = versionStr,
+                      newFlavor = r.x86FlavorString,
+                      searchPath=searchPath,
+                      )
+
+        if not singleArch:
+            for g in r.rplGroups:
+                r.replace(name,
+                          newVersionStr = versionStr,
+                          groupName = g,
+                          newFlavor=flavor,
+                          searchPath=searchPath,
+                          allowNoMatch=True)
+
+    # for replacing stuff also in compat32
+    def flReplace(r, name, groupName=None, flavor=None):
+        if not flavor:
+            if Arch.x86_64:
+                flavor = r.x86_64FlavorString
+            else:
+                flavor = r.x86FlavorString
+
+        r.replace(name, groupName=groupName, newFlavor=flavor)
+
+        if Arch.x86_64:
+
+            r.replace(name,
+                      groupName='group-compat32',
+                      allowNoMatch=True,
+                      newFlavor=r.x86FlavorString)
+
+    def rplAdd(r, name, versionStr=None, groupName=None, components=None, byDefault=True, flavor = None, source = None):
+
+        if not flavor:
+            if Arch.x86_64:
+                flavor = r.x86_64FlavorString
+            else:
+                flavor = r.x86FlavorString
+
+        if not versionStr:
+            versionStr = r.rplLabel
+
+        searchPath = (r.rplGroupUmbrella)
+
+        if isinstance(name, tuple):
+            # This allows us to put troves created with PackageSpec into
+            # lists where each trove is added iteratively, and still specify
+            # an explicit source.
+            name, source = name
+
+        if Arch.x86_64:
+            flavor32 = r.x86FlavorString
+            r.replace(name,
+                      newVersionStr = versionStr,
+                      groupName='group-compat32',
+                      newFlavor=flavor32,
+                      allowNoMatch=True,
+                      searchPath=searchPath
+                      )
+
+        r.add(name,
+              source = source,
+              versionStr = versionStr,
+              components = components,
+              groupName = groupName,
+              flavor = flavor,
+              byDefault = byDefault,
+              searchPath = searchPath
+              )
+
+        # in the case when we are not using tip of what is in rpl groups...
+        if versionStr:
+            for g in r.rplGroups:
+                r.replace(name,
+                          newVersionStr = versionStr,
+                          groupName = g,
+                          newFlavor=flavor,
+                          allowNoMatch=True,
+                          searchPath=searchPath
+                          )
+
+    def setup(r):
+        r.foresightLinuxLabel = r.macros.buildlabel
+        r.foresightLinuxKernelLabel = r.macros.buildlabel + '-kernel'
+
+        r.conaryVersion = r.macros.buildlabel
+
+        # PreUpdateScript for migrating firefox and alsa needs to
+        # be attached to group-core to execute on migrations from
+        # fl:1 (since it runs on update, not install, and the
+        # group-desktop-common group does not exist on fl:1) and
+        # to group-desktop-common to ensure that it executes at
+        # the right time on fl:2 alpha updates.  This second
+        # link (group-desktop-common) is needed only if group-core
+        # has not changed contents, so in a few weeks it can be
+        # removed, and can certainly be removed before fl:2 is final.
+        r.addPreUpdateScript('fl2-core-pre-update.script',
+                             groupName = 'group-base')
+        r.addPreUpdateScript('fl2-core-pre-update.script',
+                             groupName = 'group-core')
+        r.addPreUpdateScript('fl2-core-pre-update.script',
+                             groupName = 'group-desktop-common')
+        # Attempt to work around pam changes.  This should not
+        # be needed for final migrations, as pam and authconfig
+        # are set up the same on :1 and :2
+        r.addPostUpdateScript('fl2-core-post-update.script',
+                             groupName = 'group-core')
+        # work around flakeyness in nspluginwrapper
+        r.addPostUpdateScript('fl2-mozilla-update.script',
+                             groupName = 'group-mozilla')
+        # work around for lm_sensors update bug
+        r.addPostUpdateScript('fl2-gnome-dist-update.script',
+                             groupName = 'group-gnome-dist')
+
+        # making sure a user who is trying to install -devel-groups
+        # doesn't get them stripped due to the excludeTroves default
+        # settings we have in stock non devel installs
+        for edition in ['gnome', 'kde', 'lxde', 'xfce']:
+            r.addPreUpdateScript('fl2-devel-groups-pre-update.script',
+                                 groupName = 'group-' + edition + '-dist-devel')
+            r.addPreUpdateScript('fl2-devel-groups-pre-update.script',
+                                 groupName = 'group-' + edition + '-devel')
+
+
+        r.setSearchPath(r.foresightLinuxLabel, r.compatLabel,
+                        r.rplGroupUmbrella, r.foresightLinuxKernelLabel, r.rplLabelCompat)
+
+        # Create a out shell group for all the belong to (no parent)
+        r.flCreateGroup('group-world')
+
+        r.addNewGroup('group-desktop-platform', groupName='group-world')
+
+        r.flCreateGroup('group-supported-stuff-extra', parentGroup='group-desktop-platform')
+        # here goes everything that isn't fit for any other group but _is_ in our labels
+        # devel groups skel
+        for ed in ['gnome', 'kde', 'lxde', 'xfce']:
+            r.flCreateGroup('group-%s-devel' % ed, parentGroup='group-desktop-platform',
+                            depCheck=False, autoResolve = False, checkPathConflicts=True
+                            )
+            # rPL's group-devel is copied non recursivelly in order to avoid copying of group-rails
+            r.rplAddGroup('group-devel', groupName='group-%s-devel' % ed, recurse=False)
+            # remaining devel groups bellow
+            for g in ['group-os-devel', 'group-text-devel', ]:
+                r.rplAddGroup(g, groupName='group-%s-devel' % ed, recurse=True)
+
+        # group-factories from group-devel is now added manually due to the non recursion above
+        r.rplAddGroup('group-factories', groupName='group-supported-stuff-extra', recurse=True)
+
+        # common bits
+        r.flCreateGroup('group-desktop-common', parentGroup='group-desktop-platform')
+        # bits from rpl that ship by default
+        for i in r.rplGroups:
+            if i not in [ 'group-devel', 'group-os-devel', 'group-text-devel', ]:
+                r.rplAddGroup(i, groupName='group-desktop-common')
+
+        if Arch.x86_64:
+            r.rplAddGroup('group-compat32', groupName='group-desktop-common')
+
+        # the real show beguins here
+        r.flCreateGroup('group-desktop-common-extras', parentGroup='group-desktop-platform')
+
+        # we don't ship those anymore
+        r.remove('perl-libwww-perl', groupName='group-devel')
+        r.remove('perl-HTML-Entities', groupName='group-devel')
+        # we follow conventions here now
+        r.remove('squashfs', groupName='group-text-devel')
+        r.flAdd('squashfs-tools', groupName='group-devel')
+
+        for i in r.rplGroups:
+            # we rely on polkit now
+            r.remove('PolicyKit', groupName=i)
+            # overrided by python-simplejson in our side
+            r.remove('simplejson', groupName=i)
+            r.remove('cpufrequtils', r.rplLabel, groupName = i)
+            # superceeded by perl-IO-Compres
+            r.remove('perl-Compress-Zlib', r.rplLabel, groupName = i)
+            # overrided by  iscsi-initiator-utils 
+            r.remove('open-iscsi', r.rplLabel, groupName = i)
+            # gone. we use plain libelf (from elfutils) now
+            r.remove('libelf-lgpl', r.rplLabel, groupName = i)
+            # 
+            r.remove('libdhcp6client', r.rplLabel, groupName = i)
+            r.remove('libdhcp4client', r.rplLabel, groupName = i)
+
+            # overrided by nss-pam-ldapd
+            r.remove('nss_ldap', r.rplLabel, groupName = i)
+
+        r.remove('xf86-video-i810:devellib', groupName='group-devel')
+        r.remove('xf86-video-via:devellib', groupName='group-devel')
+        # deprecated. now in gtk
+        r.remove('gail', groupName='group-devel')
+        # deprecated. now in mono
+        r.remove('monodoc', groupName='group-devel')
+        # replaced by ptlib
+        r.remove('pwlib', groupName='group-devel')
+
+
+        # we want more terminfo than rpl:2 ships
+        r.rplAdd('ncurses:supterminfo', groupName='group-core')
+
+        # get rid of the last reference to the rPL rails stack. outdated.
+        # we 'd have our own with proper naming
+        r.remove('group-rails', r.rplLabel, groupName='group-devel')
+        r.remove('rake', groupName='group-devel')
+
+        # kernel
+        if Arch.x86:
+            kernelFlavor = 'kernel.smp,!kernel.pae is: x86(i486,i586,i686)'
+        elif Arch.x86_64:
+            kernelFlavor = 'kernel.smp'
+
+        kVersion = r.foresightLinuxKernelLabel+'/3.10.48-1-1'
+        r.replace('kernel', kVersion, newFlavor = kernelFlavor)
+
+        # libs we want in all editions
+        #
+
+        ##
+        r.flAdd('libcap', groupName = 'group-desktop-common')
+        r.flAdd('nfs-utils', groupName = 'group-desktop-common', source = 'nfs-utils')
+        # FL-2518
+        r.rplAdd('cyrus-sasl', groupName = 'group-desktop-common')
+        r.flAdd('openssl', groupName = 'group-desktop-common')
+        r.flAdd('ca-certificates', groupName = 'group-desktop-common')
+        ##
+        r.flAdd('qt', groupName='group-desktop-common')
+
+        r.flAdd('qt4', groupName='group-desktop-common')
+        r.flAdd('qt4-core', groupName='group-desktop-common', source = 'qt4')
+        r.flAdd('qt4-gui', groupName='group-desktop-common', source = 'qt4')
+        r.flAdd('qt4-sql', groupName='group-desktop-common', source = 'qt4')
+        r.flAdd('qt4-qt3support', groupName='group-desktop-common', source = 'qt4')
+
+        r.flAdd('gtk', groupName='group-desktop-common')
+        r.flAdd('gtk3', groupName='group-desktop-common')
+        r.flAdd('gdk-pixbuf', groupName='group-desktop-common')
+
+        r.flAdd('pango', groupName='group-desktop-common')
+        r.flAdd('pangox-compat', groupName='group-desktop-common')
+
+        # fl specific variations
+        r.flAdd('glibc', groupName = 'group-desktop-common')
+        r.flAdd('binutils', groupName = 'group-desktop-common')
+        r.flAdd('libcgroup', groupName = 'group-core')
+        r.flAdd('module-init-tools', groupName = 'group-core')
+        # we want to support iscsi byDefault
+        r.flAdd('iscsi-initiator-utils', groupName = 'group-core')
+
+        r.flAdd('tcl', groupName = 'group-desktop-common')
+        r.flAdd('tk', groupName = 'group-desktop-common')
+        r.flAdd('expect', groupName = 'group-desktop-common')
+
+        # hack; this has only :devel
+        # we just don't want it implicitly resolved
+        r.flAdd('userspace-kernel-headers', groupName = 'group-desktop-common')
+
+        r.flAdd('hwdata', groupName = 'group-desktop-common')
+        r.flAdd('acpid', groupName = 'group-desktop-common')
+
+        # migration from mkinitrd to dracut
+        for t in [ 'dracut', 'dracut-network', 'dracut-tools',]:
+            r.flAdd(t, groupName = 'group-desktop-common', source = 'dracut')
+        r.flAdd('mkinitrd', groupName = 'group-desktop-common', source = 'dracut')
+        r.flAdd('dracut-fips', groupName = 'group-desktop-common', source = 'dracut', byDefault = False)
+        r.flAdd('grubby', groupName = 'group-desktop-common')
+
+        r.flAdd('shadow', groupName = 'group-desktop-common')
+        r.flAdd('sysvinit', groupName = 'group-desktop-common')
+        r.flAdd('initscripts', groupName = 'group-desktop-common')
+        r.flAdd('initscripts-debugmode', groupName = 'group-desktop-common', source='initscripts', byDefault=False)
+        r.flAdd('libpng', groupName='group-desktop-common')
+
+        r.flAdd('bootman', groupName = 'group-desktop-common')
+
+        r.flAdd('iw', groupName = 'group-desktop-common')
+
+        r.flAdd('authconfig', groupName='group-desktop-common')
+        r.flAdd('bash', groupName='group-desktop-common')
+        # XXX until we get new bash and a bash completion that works with it
+        # r.flAdd('bash-completion', groupName='group-desktop-common')
+
+        r.flAdd('nasm', groupName='group-desktop-common')
+        r.flAdd('tzdata', groupName='group-desktop-common')
+
+        r.flAdd('passwd', groupName='group-desktop-common')
+        r.flAdd('pam', groupName='group-desktop-common')
+
+        # r.flAdd('pam-keyring', groupName='group-desktop-common')
+
+        r.flAdd('lvm2', groupName='group-desktop-common')
+        r.flAdd('device-mapper', groupName='group-desktop-common', source ='lvm2')
+        r.flAdd('mdadm', groupName='group-desktop-common')
+
+        r.flAdd('device-mapper-multipath', groupName='group-desktop-common')
+        r.flAdd('kpartx', groupName='group-desktop-common', source ='device-mapper-multipath')
+
+        r.flAdd('dvd+rw-tools', groupName='group-desktop-common')
+        r.flAdd('cdrkit', groupName='group-desktop-common', source = 'cdrkit')
+        r.flAdd('cdda2wav', groupName='group-desktop-common', source = 'cdrkit')
+        r.flAdd('mkisofs', groupName='group-desktop-common', source = 'cdrkit')
+        # FAKE pkg below. allows a clean migration path.
+        # works like an Obsoletes.
+        r.flAdd('cdrtools', groupName='group-desktop-common', source = 'cdrkit')
+
+
+        # we need to explicitly reference rPL's perl
+        r.rplAdd('perl', groupName='group-desktop-common')
+
+        # superceedes rpl's nss_ldap
+        r.flAdd('nss-pam-ldapd', groupName='group-core')
+        
+        # Simple editor
+        r.flAdd('nano', groupName='group-desktop-common')
+
+        # we need a newer syslinux
+        for x in ('extlinux', 'pxelinux', 'syslinux'):
+            r.flAdd(x, groupName='group-desktop-common', source = 'syslinux')
+
+        # we ship util-linux-ng, but keep old naming
+        r.flAdd('tar', groupName='group-desktop-common')
+        r.flAdd('util-linux', groupName='group-desktop-common')
+        r.flAdd('util-linux-extras', groupName='group-desktop-common', source = 'util-linux', byDefault = False)
+        r.flAdd('utempter', groupName='group-desktop-common')
+        r.flAdd('iptables', groupName='group-desktop-common')
+        r.flAdd('btrfs-progs', groupName='group-desktop-common')
+        r.flAdd('xfsprogs', groupName='group-desktop-common')
+        r.flAdd('setarch', groupName='group-desktop-common', source = 'util-linux', byDefault = True)
+        # util-linux(-ng) expects a recent enough coreutils to behave
+        r.flAdd('coreutils', groupName='group-desktop-common')
+        # mktemp now comes from coreutils. we pkgSpec it not to break anything
+        r.flAdd('mktemp', groupName='group-desktop-common', source = 'coreutils')
+
+        r.flAdd('microcode_ctl', groupName='group-desktop-common', source = 'coreutils')
+
+        # 4k / GPT support
+        r.flAdd('gdisk', groupName='group-desktop-common')
+
+        # 3G modem support.
+        r.flAdd('usb_modeswitch', groupName='group-desktop-common')
+        r.flAdd('usb_modeswitch-data', groupName='group-desktop-common')
+
+        # we should include samba... people do actually share files
+        r.flAdd('samba', groupName='group-desktop-common')
+        r.flAdd('samba-client', groupName='group-desktop-common', source = 'samba')
+        r.flAdd('samba-server', groupName='group-desktop-common', source = 'samba')
+
+        r.flAdd('bzip2', groupName='group-core')
+
+        # our ruby
+        r.flAdd('ruby', groupName='group-devel')
+        r.flAdd('rubygems', groupName='group-devel')
+
+        r.flAdd('perl-HTML-Parser', groupName='group-devel')
+
+        r.replace('distro-release', r.foresightLinuxLabel)
+
+        # freedesktop.org xdg stuff
+        r.flAdd('xdg-user-dirs', groupName='group-desktop-common')
+        r.flAdd('xdg-user-dirs-gtk', groupName='group-desktop-common')
+        r.flAdd('xdg-utils', groupName='group-desktop-common')
+        r.flAdd('pyxdg', groupName='group-desktop-common')
+        # end of freedesktop.org xdg stuff
+
+        # need for abiword/OOO/koffice
+        r.flAdd('libwpd', groupName='group-desktop-common')
+
+        r.flAdd('icu', groupName='group-desktop-common')
+
+        r.flAdd('ilmbase', groupName='group-desktop-common')
+        r.flAdd('OpenEXR', groupName='group-desktop-common')
+
+        # albeit HP is doing it's best to kill its PC/printer
+        # biz there a ton of HP printers around. makes sense
+        # having support for them out of the box.
+        r.flAdd('hplip', groupName='group-desktop-common')
+
+        # nice pretty fonts
+        r.flAdd('font-fixed-terminus', groupName='group-desktop-common')
+        r.flAdd('font-fixed-terminus-console', groupName='group-desktop-common')
+
+        # qt4 bindings for python
+#        r.flAdd('PyQt4', groupName='group-desktop-common', byDefault=False)
+#        r.flAdd('QScintilla2', groupName='group-desktop-common', byDefault=False)
+
+        # override rPL in order to fetch our metadata package policy hooks
+        r.flAdd('conary-policy-foresight', groupName='group-devel')
+
+        # package to override configs for developers
+        r.flAdd('foresight-conary-config-devel', groupName='group-devel')
+        # Configs to set the installLabelPath for 2-qa and 2-devel users
+        r.flAdd('foresight-conary-config-2-qa', groupName='group-devel', byDefault=False)
+        r.flAdd('foresight-conary-config-2-devel', groupName='group-devel', byDefault=False)
+
+        # we  need newer versions than the ones in rPL-2
+        r.flAdd('pkgconfig', groupName='group-devel')
+        r.flAdd('flex', groupName='group-devel')
+        r.flAdd('bison', groupName='group-devel')
+        r.flAdd('dmraid', groupName='group-desktop-common')
+        r.flAdd('zlib', groupName='group-desktop-common')
+        r.flAdd('man', groupName='group-desktop-common')
+        r.flAdd('autofs', groupName='group-desktop-common')
+        r.flAdd('popt', groupName='group-desktop-common')
+        r.flAdd('db', groupName='group-desktop-common')
+        r.flAdd('userspace-kernel-headers', groupName = 'group-devel')
+        r.flAdd('libnl', groupName = 'group-devel')
+        r.flAdd('automake', groupName = 'group-devel')
+        r.flAdd('autoconf', groupName = 'group-devel')
+        r.flAdd('libtool', groupName = 'group-devel')
+        r.flAdd('elfutils', groupName = 'group-devel')
+        r.flAdd('sqlite', groupName = 'group-devel')
+
+        # our own gcc
+        r.flAdd('gcc', source='gcc', groupName = 'group-devel')
+        r.flAdd('gcc-c++', source='gcc', groupName = 'group-devel')
+        r.flAdd('gcc-fortran', source='gcc', groupName = 'group-devel')
+        r.remove('gcc-java', groupName = 'group-devel')
+        r.flAdd('gcc-objc', source='gcc', groupName = 'group-devel')
+        r.flAdd('libgcc', source='gcc', groupName = 'group-devel')
+        r.flAdd('libstdc++', source='gcc', groupName = 'group-devel')
+        r.flAdd('libgomp', source='gcc', groupName = 'group-devel')
+        r.flAdd('libmudflap', source='gcc', groupName = 'group-devel')
+        # deps of gcc
+        r.flAdd('mpfr', groupName = 'group-devel')
+        r.flAdd('cloog', groupName = 'group-devel')
+        r.flAdd('glpk', groupName = 'group-devel')
+        r.flAdd('gprolog', groupName = 'group-devel')
+        r.flAdd('ppl', groupName = 'group-devel')
+        r.flAdd('gmp', groupName = 'group-devel')
+        #
+        r.flAdd('gdb', groupName = 'group-devel')
+        r.flAdd('fdupes', groupName = 'group-devel')
+        r.flAdd('sysprof', groupName = 'group-devel')
+
+        # 'fixes' FL-2088 on our side  while CNY-3143 not properly resolved
+        r.flAdd('expat', groupName = 'group-devel')
+
+        # a lot of stock userland expect it to handle encrypted media
+        r.flAdd('cryptsetup', groupName='group-desktop-common')
+
+        r.flAdd('python-keyutils', groupName='group-desktop-common')
+
+        # Firefox with gnome support wants it
+        r.flAdd('GConf', groupName='group-desktop-common')
+
+        # we need this. otherwise no crypted mail in our gfx MUAs
+        r.rplAdd('pinentry-gtk-2', groupName='group-desktop-common')
+
+        # Branding
+        r.flAdd('branding', groupName='group-desktop-common')
+
+        # Generic Xorg configurator
+        r.flAdd('xconfigurator', groupName='group-desktop-common')
+
+        # Generi print config
+        r.flAdd('cups', groupName='group-desktop-common')
+        r.flAdd('system-config-printer', groupName='group-desktop-common')
+        r.flAdd('pycups', groupName='group-desktop-common')
+        r.flAdd('pysmbc', groupName='group-desktop-common')
+        r.flAdd('notify-python', groupName='group-desktop-common')
+        r.flAdd('hal-cups-utils', groupName='group-desktop-common')
+
+        r.flAdd('tmpwatch', groupName='group-desktop-common')
+
+        r.flCreateGroup('group-drivers', parentGroup='group-core')
+
+        #
+        r.flAdd('linux-firmware', groupName='group-drivers')
+        r.flAdd('b43-firmware', source='broadcom-wl', groupName='group-drivers')
+
+        # this is a cheap hack to avoid redirects hell
+        for p in ['userspace-kernel-firmware',
+                  'rt61pci-firmware',
+                  'rt71pci-firmware',
+                  #'rt2860-firmware',
+                  #'rt2870-firmware',
+                  'rtl8192se-firmware',
+                  #'ipw2100-fw',
+                  #'ipw2200-fw',
+                  'iwlwifi-100-ucode',
+                  'iwlwifi-1000-ucode',
+                  'iwlwifi-3945-ucode',
+                  'iwlwifi-4965-ucode',
+                  'iwlwifi-5000-ucode',
+                  'iwlwifi-5150-ucode',
+                  'iwlwifi-6000-ucode',
+                  'iwlwifi-6050-ucode',
+                  # this one had come from rPL
+                  'qla-firmware',]:
+            r.flAdd(p, source = 'linux-firmware', byDefault=False, groupName='group-drivers')
+
+        for p in [ 'ipw2100-fw',
+                   'ipw2200-fw',
+                   ]:
+            r.flAdd(p, source = p, groupName='group-drivers')
+
+
+        #
+        # end of firmware
+        # r.flAdd('rt2860-kernel', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers')
+        # r.flAdd('rt2870-kernel', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers')
+
+        # only for thinkpad users
+        # XXX having it here with byDefault=False results with it's Requires being pulled by updateall (!!!)
+        # r.flAdd('tp_smapi-kernel', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers', byDefault = False)
+        #
+
+        # byDefault = False, as native linux wireless drivers are supposed to work
+        # we ship this as a fallback
+        r.add('ndiswrapper-kernel', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers', byDefault = False)
+        r.add('ndiswrapper', groupName='group-drivers', byDefault = False)
+
+        # byDefault = False, as in-kernel broadcom drivers are generally prefered
+        # we ship this as a fallback
+        r.add('broadcom-wl-kmod', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers', byDefault = False)
+        r.add('broadcom-wl', groupName='group-drivers', byDefault = False)
+
+        # wireless-next tree ; byDefault=False, but usefull to have
+        # until upstreams gets things sorted...
+        # r.add('compat-wireless-next-kmod', groupName='group-drivers', byDefault = False)
+
+        # those  below are ALLWAYS byDefault=False
+        if Arch.x86_64:
+            r.add('nvidia', flavor='is: x86 x86_64', groupName='group-drivers', byDefault = False)
+            r.add('ati-fglrx', flavor='is: x86 x86_64', groupName='group-drivers', byDefault = False)
+        else:
+            r.add('nvidia', groupName='group-drivers', byDefault = False)
+            r.add('ati-fglrx', groupName='group-drivers', byDefault = False)
+
+        r.add('nvidia-kernel', versionStr =  r.foresightLinuxKernelLabel, groupName='group-drivers', byDefault = False)
+        r.add('ati-fglrx-kernel', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers', byDefault = False)
+
+        r.add('bbswitch-kmod', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers', byDefault = False)
+
+        #  vbox needs to be bumped
+        r.add('virtualbox-kernel', versionStr = r.foresightLinuxKernelLabel, groupName='group-drivers', byDefault = False)
+
+        r.add('kvm', groupName='group-drivers')
+        #
+        r.add('perf', kVersion, groupName='group-devel')
+        r.add('cpupower-tools', kVersion, groupName='group-drivers')
+        #
+
+        #
+        # Alsa/pulseaudio/sound bloc
+        #
+
+        # Alsa sound system
+        # FIXME: research about utility of having alsa-firmware
+        r.flAdd('info-audio')
+        r.flAdd('alsa-plugins')
+        r.flAdd('alsa-lib')
+        r.flAdd('alsa-utils')
+        r.flAdd('alsa-oss')
+        # end of Alsa pack
+
+        # device related info packages
+        r.flAdd('info-powerdev', groupName='group-desktop-common')
+        r.flAdd('info-plugdev', groupName='group-desktop-common')
+        r.flAdd('info-netdev', groupName='group-desktop-common')
+
+        # needed for polkit
+        r.flAdd('info-desktop_admin_r', groupName='group-desktop-common')
+        r.flAdd('info-desktop_user_r', groupName='group-desktop-common')
+
+        # pulseaudio & associates {info-pulse,info-pulse-access,info-pulse-rt,libatomic_ops}
+        r.flAdd('info-pulse', groupName='group-desktop-common')
+        r.flAdd('info-pulse-rt', groupName='group-desktop-common')
+        # r.flAdd('info-rtkit', groupName='group-desktop-common')
+        r.flAdd('info-pulse-access', groupName='group-desktop-common')
+        r.flAdd('libatomic_ops', groupName='group-desktop-common', source = 'gc')
+
+        r.flAdd('pulseaudio', groupName='group-desktop-common')
+        # r.flAdd('rtkit', groupName='group-desktop-common')
+        r.flAdd('esound', groupName='group-desktop-common')
+
+        # r.flAdd('paprefs', groupName='group-desktop-common', byDefault=False)
+        # r.flAdd('pavucontrol', groupName='group-desktop-common', byDefault=False)
+        # r.flAdd('pavumeter', groupName='group-desktop-common', byDefault=False)
+        # r.flAdd('padevchooser', groupName='group-desktop-common', byDefault=False)
+        # r.flAdd('libao-pulse', groupName='group-desktop-common', byDefault=False)
+
+        r.flAdd('libsamplerate', groupName='group-desktop-common')
+        r.flAdd('libsndfile',  groupName='group-desktop-common')
+        r.flAdd('info-jackuser', groupName='group-desktop-common')
+        r.flAdd('jack', groupName='group-desktop-common')
+        r.flAdd('portaudio', groupName='group-desktop-common')
+
+        # end off pulseaudio & associates
+
+        r.flAdd('gstreamer', groupName='group-desktop-common')
+        r.flAdd('SDL', groupName='group-desktop-common')
+        r.flAdd('SDL_mixer', groupName='group-desktop-common')
+
+
+        #
+        # end of Alsa/pulseaudio/sound bloc
+        #
+
+        # free multimedia codecs/libraries
+        r.flAdd('aalib', groupName='group-desktop-common')
+        r.flAdd('celt', groupName='group-desktop-common')
+        r.flAdd('libao', groupName='group-desktop-common')
+        r.flAdd('libcaca', groupName='group-desktop-common')
+        r.flAdd('libogg', groupName='group-desktop-common')
+        r.flAdd('libshout', groupName='group-desktop-common')
+        r.flAdd('libtheora', groupName='group-desktop-common')
+        r.flAdd('libvorbis', groupName='group-desktop-common')
+        r.flAdd('schroedinger', groupName='group-desktop-common')
+        r.flAdd('speex', groupName='group-desktop-common')
+        r.flAdd('vorbis-tools', groupName='group-desktop-common')
+
+        # other free media codecs
+        r.flAdd('fribidi', groupName='group-desktop-common')
+
+        # gst-plugins-base demands it
+        r.flAdd('cdparanoia', groupName='group-desktop-common')
+
+
+        # wanted/expected for gdm Xsession plumbing
+        r.flAdd('xterm', groupName='group-desktop-common')
+
+        r.rplAdd('info-wheel', groupName='group-desktop-common')
+        r.flReplace('sudo')
+        r.flReplace('setup')
+
+        r.flAdd('info-kvm', groupName='group-desktop-common')
+        r.flAdd('info-bitlbee', groupName='group-desktop-common')
+
+        r.flAdd('info-polkituser', groupName='group-desktop-common')
+        r.flAdd('ConsoleKit', groupName='group-desktop-common')
+        r.flAdd('udev', groupName='group-desktop-common')
+        r.flAdd('acl', groupName='group-desktop-common')
+        r.flAdd('usbutils', groupName='group-desktop-common')
+        r.flAdd('dbus', groupName='group-desktop-common')
+        r.flAdd('dbus-glib', groupName='group-desktop-common')
+        r.flAdd('dbus-x11', groupName='group-desktop-common', source='dbus')
+        r.flAdd('dbus-sharp', groupName='group-desktop-common')
+        r.flAdd('ndesk-dbus', groupName='group-desktop-common')
+        r.flAdd('ndesk-dbus-glib', groupName='group-desktop-common')
+        r.flAdd('hal', groupName='group-desktop-common')
+        r.flAdd('hal-info', groupName='group-desktop-common')
+        r.flAdd('smbios', groupName='group-desktop-common')
+        r.flAdd('polkit', groupName='group-desktop-common')
+###        r.flAdd('PackageKit', groupName='group-desktop-common')
+        r.flAdd('openvpn', groupName='group-desktop-common')
+        r.flAdd('vpnc', groupName='group-desktop-common')
+        r.flAdd('pptpclient', groupName='group-desktop-common')
+        r.flAdd('laptop-detect', groupName='group-desktop-common')
+        # This contains service ordering information, useful for all foresight editions
+        r.flAdd('foresight-services', groupName='group-desktop-common')
+
+        # needed for thunbails, etc
+        r.flAdd('ImageMagick', groupName='group-desktop-common')
+
+        #  bluetooth pack
+        r.flAdd('bluez-firmware', groupName='group-desktop-common')
+        r.flAdd('bluez-hcidump', groupName='group-desktop-common')
+        r.flAdd('bluez', groupName='group-desktop-common')
+        r.flAdd('obexd', groupName='group-desktop-common')
+        r.flAdd('libbtctl', groupName='group-desktop-common')
+        r.flAdd('openobex', groupName='group-desktop-common')
+        r.flAdd('obex-data-server', groupName='group-desktop-common')
+        # end of bluetooth pack
+
+        r.rplAdd('info-bin', groupName='group-desktop-common')
+
+        r.rplAdd('info-nobody', groupName='group-desktop-common')
+        r.rplAdd('mailx', groupName='group-desktop-common')
+
+        r.flAdd('nss', groupName='group-desktop-common')
+        r.flAdd('nspr', groupName='group-desktop-common')
+
+        r.flAdd('mono', groupName='group-desktop-common')
+
+        # we want our craptastic interactive=True configs to be easily
+        # overridable by folks building on top of us :)
+        # third party spins on top of our groups may want to just override this
+        r.flAdd('foresight-conary-config', groupName = 'group-core')
+
+        r.flAdd('dbus-python', groupName='group-desktop-common')
+        r.flAdd('perl-Net-DBus', groupName='group-desktop-common')
+
+        r.flAdd('flac', groupName='group-desktop-common')
+
+        #Placeholder trove that anaconda looks for in setting the default runlevel
+        r.add('xorg-x11', 'foresight.rpath.org@fl:1', groupName='group-desktop-common')
+
+        r.flAdd('nas', groupName='group-desktop-common')
+        r.flAdd('unixODBC', groupName='group-desktop-common')
+        r.flAdd('doxygen', groupName='group-desktop-common')
+        r.flAdd('doxywizard', groupName='group-desktop-common', source = 'doxygen', byDefault=False)
+        r.flAdd('unzip', groupName='group-desktop-common')
+        r.flAdd('libdvdcss', groupName='group-desktop-common')
+
+        # oot points that a vnc client is a good thing to ship stock...
+        r.flAdd('vinagre', groupName='group-supported-stuff-extra', byDefault=True)
+
+        # rpl's one is too old
+        r.flAdd('python-sqlite', groupName='group-desktop-common')
+
+        r.flCreateGroup('group-internet', parentGroup='group-desktop-common')
+
+        # r.flAdd('gizmo', groupName='group-internet',  flavor='is: x86', singleArch=True, byDefault=False)
+        r.flAdd('skype', groupName='group-internet',  flavor='is: x86', singleArch=True)
+        r.flAdd('transmission', groupName='group-internet')
+        r.flAdd('google-talk-plugin', groupName='group-internet')
+
+        r.flCreateGroup('group-mozilla', parentGroup='group-supported-stuff-extra')
+        r.flAdd('flashplayer', groupName='group-mozilla', byDefault=True)
+        # Need an update, don't work today
+        # r.flAdd('moonlight', groupName='group-mozilla')
+        # r.flAdd('moonshine', groupName='group-mozilla')
+        r.flAdd('firefox', groupName='group-mozilla', byDefault=True)
+        r.flAdd('firefox-package-search', groupName='group-mozilla', byDefault=True)
+        r.flAdd('firefox-rpathwiki-search', groupName='group-mozilla', byDefault=True)
+        r.flAdd('firefox-duckduckdo-search', groupName='group-mozilla', byDefault=False)
+
+        r.flAdd('google-earth', groupName='group-mozilla', byDefault=False)
+
+        # r.flAdd('libflashsupport', groupName='group-mozilla')
+        if Arch.x86_64:
+        #    r.flAdd('libflashsupport', flavor='is: x86', groupName='group-mozilla',
+        #            singleArch=True, components = ['lib'])
+            r.flAdd('nspluginwrapper', groupName='group-mozilla', singleArch=True)
+
+        r.flAdd('nss', groupName='group-internet')
+        r.flAdd('nspr', groupName='group-internet')
+        r.flAdd('thunderbird', groupName='group-mozilla', byDefault=False)
+        r.flAdd('xulrunner', groupName='group-internet')
+        r.flAdd('libpurple', groupName='group-internet', source='pidgin')
+
+        # pidgin pack
+        r.flCreateGroup('group-pidgin', parentGroup='group-supported-stuff-extra')
+        r.flAdd('pidgin', groupName='group-pidgin')
+        r.flAdd('pidgin-plugin_pack', groupName='group-pidgin')
+        r.flAdd('pidgin-encryption', groupName='group-pidgin')
+        r.flAdd('pidgin-libnotify', groupName='group-pidgin')
+        r.flAdd('pidgin-webkit', groupName='group-pidgin')
+        r.flAdd('libotr', groupName='group-pidgin')
+        r.flAdd('pidgin-otr', groupName='group-pidgin')
+        r.flAdd('pidgin-sipe', groupName='group-pidgin')
+        # end of pidgin pack
+
+        # E17 / Enlightenment pack
+        for trv in [ 'enlightenment',
+                     'ecore',
+                     'echievements',
+                     'e-dbus',
+                     'edbus',
+                     'edje',
+                     'eet',
+                     'eeze',
+                     'efm-nav',
+                     'efreet',
+                     'eina',
+                     'eio',
+                     'elementary',
+                     'embryo',
+                     'emotion',
+                     'enjoy',
+                     'engage',
+                     'enki',
+                     'enlil',
+                     'envision',
+                     'epdf',
+                     'ethumb',
+                     'etrophy',
+                     'evas-generic-loaders',
+                     'evas',
+                     'expedite',
+                     'terminology', ]:
+            r.flAdd(trv, groupName='group-supported-stuff-extra')
+        # end of enlightenment pack
+
+        # telepathy goodness
+        r.flCreateGroup('group-telepathy', parentGroup='group-supported-stuff-extra')
+        r.flAdd('telepathy-mission-control', groupName='group-telepathy')
+        # bindings
+        r.flAdd('telepathy-glib', groupName='group-telepathy')
+        r.flAdd('telepathy-sharp', groupName='group-telepathy')
+        r.flAdd('telepathy-python', groupName='group-telepathy')
+        # connection managers
+        r.flAdd('telepathy-gabble', groupName='group-telepathy')
+        r.flAdd('telepathy-idle', groupName='group-telepathy')
+        r.flAdd('telepathy-salut', groupName='group-telepathy')
+        r.flAdd('telepathy-butterfly', groupName='group-telepathy')
+        r.flAdd('telepathy-logger', groupName='group-telepathy')
+        r.flAdd('telepathy-sofiasip', groupName='group-telepathy')
+        r.flAdd('telepathy-sunshine', groupName='group-telepathy')
+        # IM
+        r.flAdd('empathy', groupName='group-telepathy')
+        r.flAdd('empathy-theme-foresight', groupName='group-telepathy')
+        # farsight framework
+        r.flAdd('telepathy-farsight', groupName='group-telepathy')
+        r.flAdd('farsight2', groupName='group-telepathy')
+        r.flAdd('papyon', groupName='group-telepathy')
+        r.flAdd('folks', groupName='group-telepathy')
+        # end of telepathy goodness
+
+        # fuse
+        r.flAdd('fuse',  groupName='group-desktop-common')
+
+        # ntfs-3g
+        r.flAdd('ntfs-3g', groupName='group-desktop-common')
+        r.flAdd('exfat-utils', groupName='group-desktop-common')
+        r.flAdd('ntfsprogs', groupName='group-desktop-common', source = 'ntfs-3g')
+
+        # monitoring tools
+        r.flAdd('conky', groupName='group-desktop-common-extras')
+        r.flAdd('htop', groupName='group-desktop-common-extras')
+
+        # graphics
+        r.flAdd('gimp', groupName='group-desktop-common')
+        r.flAdd('gutenprint', groupName='group-desktop-common')
+        r.flAdd('inkscape', groupName='group-desktop-common-extras')
+        r.flAdd('vsdviewer', groupName='group-desktop-common-extras')
+        r.flAdd('libwmf', groupName='group-desktop-common-extras') # dep for gimp
+        r.flAdd('libexif', groupName='group-desktop-common') # dep for gimp and f-spot
+        r.flAdd('libjpeg',  groupName='group-desktop-common')
+
+        r.flAdd('unrar', groupName='group-desktop-common')
+        r.flAdd('rar', groupName='group-desktop-common')
+        r.flAdd('p7zip', groupName='group-desktop-common')
+
+        # burning libs
+        r.flAdd('libisofs', groupName='group-desktop-common') # dep for xfburn and brasero
+        r.flAdd('libburn', groupName='group-desktop-common') # dep for xfburn and brasero
+
+        r.flAdd('icedtea-jre', groupName='group-desktop-common', source='icedtea-jdk')
+        r.flAdd('icedtea-web', groupName='group-desktop-common', byDefault = False)
+        r.flAdd('icedtea-jdk', groupName='group-devel', source='icedtea-jdk')
+
+        r.flCreateGroup('group-gnome-extras', parentGroup='group-desktop-platform', depCheck=False)
+
+        r.flCreateGroup('group-gnome', parentGroup='group-desktop-platform', depCheck=False)
+        r.flCreateGroup('group-kde', parentGroup='group-desktop-platform', depCheck=False)
+
+
+        # stock indicator stuff
+        for i in [
+                   'libindicator',
+                   'libindicate', 
+                   # 'libappindicator', moved to extras group
+                   'libunity',
+                   'libzeitgeist',
+                   # 'indicator-applet',
+                   'indicator-messages',
+                   # 'indicator-application',
+                   # 'indicator-appmenu',
+                   # 'indicator-datetime',
+                   'indicator-me',
+                   'indicator-session',
+                   #'indicator-sound',
+                   ('libdbusmenu', 'libdbusmenu'),
+                   ('libdbusmenu-glib','libdbusmenu'),
+                   ('libdbusmenu-gtk','libdbusmenu'),
+                   'libgwibber',
+                   'appmenu-gtk',
+                   'mtdev',
+                   'ido',
+                   'dee',
+                   'bamf',
+                   'json-glib',
+                   'utouch-evemu',
+                   'utouch-frame',
+                   'utouch-geis',
+                   'utouch-grail',
+                   'xapian-core',
+                   'ubuntu-light-themes',
+                   'ubuntu-mono-icon-theme',
+                   'unity-asset-pool',
+                   'folks',
+                   ]:
+            r.flAdd(i, groupName='group-desktop-common')
+        r.flAdd(('libdbusmenu-gtk', 'libdbusmenu'),groupName = 'group-gnome')
+        # gnome only for now
+        for p in [ 'indicator-application',
+                   'indicator-appmenu',
+                   'indicator-datetime',
+                   'indicator-applet',
+                  ]:
+            r.flAdd(p, groupName = 'group-gnome')
+
+        for p in [ 'zeitgeist-datahub',
+                   'unity-place-applications',
+                   ]:
+            r.flAdd(p, groupName = 'group-desktop-common', byDefault=False)
+
+        r.flAdd('gdm-user-switch-applet', groupName='group-desktop-common', source = 'gdm')
+
+        # default gnome .wav
+        r.flAdd('gnome-audio', groupName='group-gnome')
+
+        r.flAdd('usermode', groupName='group-desktop-common')
+        r.flAdd(('usermode-gtk', 'usermode'), groupName='group-gnome')
+
+        r.flAdd('libgksu', groupName='group-gnome')
+        r.flAdd('gksu', groupName='group-gnome')
+
+        r.flAdd('polkit-gnome', groupName='group-gnome')
+###        r.flAdd('gnome-packagekit', groupName='group-gnome')
+
+        r.flAdd('gnome-bluetooth', groupName='group-gnome')
+        r.flAdd('gnome-user-share', groupName='group-gnome')
+
+        r.flAdd('graphviz-gnome', groupName='group-gnome', source='graphviz')
+
+        r.flAdd('gnome-do', groupName='group-gnome')
+        r.flAdd('do-plugins', groupName='group-gnome')
+
+        #
+        # codecs we don't ship by default
+        # XXX FIXME
+        # we _should_ ship this as byDefault=False _but_ given the nature of CNY-3238 and the fact
+        # that it seems that due to it this group is messing with a clean upgrade(all) path in 2-qa
+        # the 'reasonable' thing to do now (in order for things to move forward) is to just ship it
+        # byDefault=True
+        # XXX FIXME
+        r.flCreateGroup('group-codecs', parentGroup='group-desktop-common', byDefault=True, depCheck=False)
+        # r.flCreateGroup('group-codecs', parentGroup='group-desktop-platform', byDefault=False, depCheck=False)
+        r.flAdd('gst-plugins-ugly', groupName='group-codecs')
+        r.flAdd('gst-plugins-ffmpeg', groupName='group-codecs')
+        r.flAdd('ffmpeg', groupName='group-codecs')
+        r.flAdd('openjpeg', groupName='group-codecs')
+        r.flAdd('libquicktime', groupName='group-codecs')
+
+        #deps for gst-plugins-ugly
+        r.flAdd('libmpeg2', groupName='group-codecs')
+        r.flAdd('a52dec', groupName='group-codecs')
+        r.flAdd('libdc1394', groupName='group-codecs')
+        r.flAdd('libdvdread', groupName='group-codecs')
+        r.flAdd('gst-plugins-bad', groupName='group-codecs')
+        #deps for gst-plugins-bad
+        r.flAdd('libmms', groupName='group-codecs')
+        r.flAdd('mjpegtools', groupName='group-codecs')
+        r.flAdd('faac', groupName='group-codecs')
+        r.flAdd('faad2', groupName='group-codecs')
+        r.flAdd('lame', groupName='group-codecs')
+        r.flAdd('libid3tag', groupName='group-codecs')
+        r.flAdd('libmpcdec', groupName='group-codecs')
+        r.flAdd('libmad', groupName='group-codecs')
+        r.flAdd('xvidcore', groupName='group-codecs')
+
+        r.flAdd('gecko-mediaplayer', groupName='group-codecs')
+
+        #deps for mplayer not included above
+        r.flAdd('libdv', groupName='group-codecs')
+
+        #dep for amarok
+        r.flAdd('xine-lib', groupName='group-codecs')
+
+        r.flAdd('libsexy', groupName='group-gnome')
+
+        r.flAdd('libgalago', groupName='group-gnome')
+        r.flAdd('galago-sharp', groupName='group-gnome')
+        r.flAdd('gtk-sharp', groupName='group-gnome')
+        r.flAdd('gnome-sharp', groupName='group-gnome')
+        r.flAdd('gnome-desktop-sharp', groupName='group-gnome')
+        r.flAdd('gecko-sharp', groupName='group-gnome')
+        r.flAdd('tomboy', groupName='group-gnome')
+        r.flAdd('nautilus-open-terminal', groupName='group-gnome')
+        r.flAdd('nautilus-sendto', groupName='group-gnome')
+
+        r.flAdd('liferea', groupName='group-gnome')
+        r.flAdd('filezilla', groupName='group-gnome-extras')
+        r.flAdd('pan', groupName='group-gnome-extras')
+###        r.flAdd('xchat-gnome', groupName='group-gnome')
+
+        # evolution et al.
+        r.flAdd('evolution', groupName='group-gnome')
+        # XXX until we bump indicator stack
+        # r.flAdd('evolution-indicator', groupName='group-gnome')
+        r.flAdd('evolution-data-server', groupName='group-gnome')
+        r.flAdd('evolution-exchange', groupName='group-gnome')
+        r.flAdd('evolution-webcal', groupName='group-gnome')
+        r.flAdd('gnome-pilot', groupName='group-gnome')
+        r.flAdd('pilot-link', groupName='group-gnome')
+        r.flAdd('gnome-spell', groupName='group-gnome')
+
+        # some basic productivity tools
+	# shoulden't be shipped as default, most end users do not need this and make 
+	# gnome environment smaller.
+        # r.flAdd('dia', groupName='group-gnome')
+        # r.flAdd('inkscape', groupName='group-gnome')
+
+        ## NetworkManager
+        r.flAdd('NetworkManager', groupName='group-desktop-common')
+        r.flAdd('ModemManager', groupName='group-desktop-common')
+        r.flAdd('mobile-broadband-provider-info', groupName='group-desktop-common')
+        r.flAdd('wpa_supplicant', groupName='group-desktop-common')
+        r.flAdd('wireless-tools', groupName='group-desktop-common')
+        r.flAdd('ppp', groupName='group-desktop-common')
+        r.flAdd('network-manager-applet', groupName='group-gnome')
+        r.flAdd('network-manager-applet', groupName='group-kde') # There's no KDE/QT UI for the version we ship
+        r.flAdd('NetworkManager-OpenVPN', groupName='group-desktop-common')
+        r.flAdd('NetworkManager-vpnc', groupName='group-desktop-common')
+        r.flAdd('NetworkManager-pptp', groupName='group-desktop-common')
+        r.flAdd('NetworkManager-openconnect', groupName='group-desktop-common')
+        r.flAdd('rfkill', groupName='group-desktop-common')
+        r.flAdd('libvirt', groupName='group-desktop-common')
+        r.flAdd('libvirt-client', groupName='group-desktop-common')
+        r.flAdd('dnsmasq', groupName='group-desktop-common')
+
+        r.flAdd('dhclient', source='dhcp', groupName='group-desktop-common')
+        r.flAdd('dhcp', source='dhcp', groupName='group-supported-stuff-extra')
+
+        ## theming / goodlooking stuff
+        r.flAdd('gtk-theme-foresight', groupName='group-desktop-common')
+        r.flAdd('human-cursors-theme', groupName='group-desktop-common')
+        r.flAdd('tango-icon-theme', groupName='group-desktop-common')
+        r.flAdd('tango-icon-theme-extras', groupName='group-desktop-common')
+
+        r.flAdd('sound-theme-freedesktop', groupName='group-desktop-common')
+
+        # this way groups will behave (!)
+        r.flAdd('plymouth', groupName='group-desktop-common')
+
+        # we will have to keep ours, turned bogus ones to avoid CNY-3000
+        # otherwise on update rPL ones will be picked (if we drop
+        # from groups and / or  redirect to NIL ...)
+        r.flAdd('splashy', groupName='group-desktop-common')
+        r.flAdd('splashy-theme', groupName='group-desktop-common')
+
+        ## inotify bits
+        r.flAdd('libnotify', groupName='group-desktop-common')
+
+        ## 3d desktop stuff
+        # compiz is now only in gnome edition
+
+        r.flAdd('compiz', groupName='group-supported-stuff-extra', byDefault=False)
+
+        r.flAdd('compiz-gnome', groupName='group-supported-stuff-extra', source='compiz', byDefault=False)
+
+        r.flAdd('bcop', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('compizconfig', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('simple-ccsm', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('libcompizconfig', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('compizconfig-python', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('compizconfig-backend-gconf', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('compiz-fusion-plugins-main', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('compiz-fusion-plugins-extra', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('compiz-fusion-plugins-unsupported', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('emerald', groupName='group-supported-stuff-extra', byDefault=False)
+        r.flAdd('emerald-themes', groupName='group-supported-stuff-extra', byDefault=False)
+
+        ## theme engines
+        r.flAdd('gtk-engine-murrine', groupName='group-gnome')
+        r.flAdd('gtk-nodoka-engine', groupName='group-gnome')
+        r.flAdd('gtk-engine-ubuntulooks', groupName='group-gnome')
+        r.flAdd('theme-engine-sun-nimbus', groupName='group-gnome')
+        r.flAdd('gtk-aurora-engine', groupName='group-gnome')
+        r.flAdd('gtk-equinox-engine', groupName='group-gnome')
+        r.flAdd('gnome-themes-extras', groupName='group-gnome')
+        r.flAdd('moblin-gtk-engine', groupName='group-gnome')
+
+        ## graphics tools
+        r.flAdd('f-spot', groupName='group-gnome')
+
+        r.flAdd('graphviz', groupName='group-devel')
+        r.flAdd('graphviz-mono', groupName='group-devel', source='graphviz')
+        r.flAdd('graphviz-ruby', groupName='group-devel', source='graphviz')
+        # r.flAdd('graphviz-lua', groupName='group-devel', source='graphviz')
+        #r.flAdd('graphviz-java', groupName='group-desktop-common-devel', source='graphviz')
+        #r.flAdd('graphviz-guile', groupName='group-desktop-common-devel', source='graphviz')
+        r.flAdd('graphviz-perl', groupName='group-devel', source='graphviz')
+#        r.flAdd('graphviz-tcl', groupName='group-devel', source='graphviz')
+
+        # foresight build related stuff
+        r.flAdd('foresight-recipes', groupName='group-devel')
+
+        ## brasero bits
+        r.flAdd('brasero', groupName='group-gnome')
+
+        #
+        # foresight gnome stack
+        #
+        # the bits below are automatically generated from  gnome f.d.o jhbuild xml files
+        # [http://ftp.gnome.org/pub/GNOME/teams/releng/...]
+        # plz do not remove  them, or alter order if you don't know what you are doing ;)
+        #
+        # FIXME: I need to script  a smart way of parse what is strict userland and what is
+        # strict group-devel-gnome stuff
+
+        # FIXME: make tests to check/handle handle pkgs listed below when they are pkgSpeced
+
+
+        #  MISSING   'libcolorblind', 'opencdk', - xchat
+
+        #  gnome external modules (xulrunner is in group-internet). the others for now remain here
+
+        # avahi, hal  and dbus are PkgSpeced
+        # r.flAdd('hal-gnome', groupName='group-gnome')
+        r.flAdd('dbus-x11', groupName='group-gnome', source='dbus')
+        r.rplAdd('info-avahi', groupName='group-gnome')
+        r.flAdd('avahi-glib', groupName='group-gnome', source='avahi')
+        r.flAdd('avahi-sharp', groupName='group-gnome', source='avahi')
+        r.flAdd('libcanberra', groupName='group-gnome')
+
+        #  meta-gnome-core
+        for g in [
+            'gnome-desktop',
+            'gnome-panel',
+            'gnome-panel-layout',
+            'gnome-session',
+            'gnome-terminal',
+            'gnome-applets',
+            'libical',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-nautilus
+        for g in [
+            'nautilus',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-devel-tools
+        for g in [
+            'glade',
+            'gconf-editor',
+            'devhelp',
+            'gtk-doc',
+            'intltool',
+            ]:
+            r.flAdd(g, groupName='group-gnome-devel')
+
+        #  meta-gnome-python
+        for g in [
+            'pygtk',
+            'gnome-python',
+            'gnome-python-desktop',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-c++
+        for g in [
+            'atkmm',
+            'gtkmm',
+            'libgnomeuimm',
+            'gnome-vfsmm',
+            'gtksourceviewmm',
+            'libxml++',
+            ]:
+            r.flAdd(g, groupName='group-gnome-devel')
+
+        #  meta-gnome-accessibility
+        for g in [
+            'dasher',
+            'gnome-mag',
+            'gok',
+            'gnome-speech',
+            'orca',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-devel-platform-upcoming-deprecations
+        for g in [
+            'ORBit2',
+            'audiofile',
+            'esound',
+            'libIDL',
+            'libart_lgpl',
+            'libbonobo',
+            'libbonoboui',
+            'libgnome',
+                ('libgnome-background', 'libgnome'),
+            'libgnomecanvas',
+            'libgnomeui',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-devel-platform
+        for g in [
+            'GConf',
+            'dconf',
+            'at-spi',
+            'atk',
+            'glib',
+            'glib-networking',
+            'gnome-mime-data',
+            'gnome-vfs',
+            'gvfs',
+            'gnome-disk-utility',
+            # deprecated by gvfs-mount from gvfs
+            # 'gnome-mount',
+            'gtk',
+            # 'gtk-doc',
+            # 'intltool',
+            'libglade',
+            'libxml2',
+            'libxslt',
+            'pango',
+            'gsettings-desktop-schemas',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-desktop-upcoming-deprecations
+        for g in [
+            'libgnomeprint',
+            'libgnomeprintui',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-desktop-suite
+        for g in [
+            'alacarte',
+            'gnome-control-center',
+            'mousetweaks',
+            'gpointing-device-settings',
+            'gnome-settings-daemon',
+            'deskbar-applet',
+            'ekiga',
+            'eog',
+            'evince',
+            'pdfmod',
+            'evolution-data-server',
+            'evolution',
+            'evolution-exchange',
+            'evolution-webcal',
+            'file-roller',
+            'gcalctool',
+            'gdm',
+            'gedit',
+            'gnome-backgrounds',
+            'gnome-doc-utils',
+            'gnome-games',
+            'gnome-icon-theme',
+            'gnome-keyring',
+            'libgnome-keyring',
+            'gnome-netstatus',
+            'gnome-nettool',
+            'gnome-media',
+            'gnome-menus',
+            'gnome-main-menu',
+            'libslab',
+            'gnome-shutdown',
+            'gnome-power-manager',
+            'gnome-screensaver',
+            'gnome-system-monitor',
+            'gnome-system-tools',
+            'gnome-themes',
+            'gnome-themes-standard',
+            'gnome-user-docs',
+            'gnome-utils',
+            #'gnome-volume-manager', #DEPRECATED  in 2.26
+            'gstreamer',
+            'gst-plugins-base',
+            'gst-plugins-good',
+            'gtk-engines',
+            'gtkhtml',
+            'gtksourceview',
+            'gucharmap',
+            'libgnomekbd',
+            'libgtop',
+            'liboobs',
+            'librsvg',
+            'libsoup',
+            'libproxy',
+            # ('libproxy-gnome', 'libproxy'),
+            # ('libproxy-networkmanager', 'libproxy'),
+            ('libproxy-mozjs', 'libproxy'),
+            ('libproxy-webkit', 'libproxy'),
+            'libwnck',
+            'metacity',
+            'seahorse',
+            'seahorse-plugins',
+            'tomboy',
+            'totem',
+            'vino',
+            'vte',
+            'yelp',
+            'zenity',
+            'hamster-applet',
+            'gnome-timer-applet',
+            ('poppler', 'poppler'),
+            ('poppler-glib', 'poppler'),
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-bindings-c++
+        for g in [
+            'glibmm',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-bindings-c++
+        for g in [
+            'libglademm',
+            'gconfmm',
+            'libgnomecanvasmm',
+            'libgnomemm',
+            ]:
+            r.flAdd(g, groupName='group-gnome-extras')
+
+        #  meta-gnome-bindings-python
+        for g in [
+            'pygobject',
+            'pyorbit',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #  meta-gnome-admin
+        for g in [
+            'pessulus',
+            'sabayon',
+            ]:
+            r.flAdd(g, groupName='group-gnome-extras')
+
+        #  meta-gnome-proposed
+        for g in [
+            'pygtksourceview',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        # upstream gnome required dependencies
+        for g in [
+            'rarian',
+            'libxklavier',
+#            'libcolorblind',
+            'system-tools-backends',
+#            'opencdk',
+            'icon-naming-utils',
+            ('libXft', 'xorg-libs'),
+            #'camorama',
+            'cheese',
+            'enchant',
+            'libdaemon',
+            'fontconfig',
+            'hicolor-icon-theme',
+            'dbus',
+            'cairomm',
+            'avahi',
+            'hal',
+            'libgcrypt',
+            'gnome-vfs-monikers',
+            'libcroco',
+            'liboil',
+            'guile',
+            'libgsf',
+            'autogen',
+            'opal',
+            'cairo',
+            'libgpg-error',
+            'dbus-glib',
+            'iso-codes',
+            'startup-notification',
+            'libtasn1',
+            'xdg-user-dirs',
+            'gob2',
+            'libmusicbrainz',
+            'libmusicbrainz3',
+            'pycairo',
+            'libsigc++',
+            'libgnomecups',
+            'gamin',
+            'shared-mime-info',
+            'libnotify',
+            'notify-osd',
+            ]:
+            r.flAdd(g, groupName='group-gnome')
+
+        #r.flAdd('gnome-cups-manager', groupName='group-gnome')
+        r.flAdd('foresight-user-guide', groupName='group-gnome')
+        r.flAdd('gnutls', groupName='group-gnome')
+        r.rplAdd('lzo', groupName='group-gnome')
+
+        # FIXME
+        # we will want in the future to extend the tag handlers
+        # to call desktop-file-install   --vendor=foresight ...
+        r.flAdd('desktop-file-utils', groupName='group-desktop-common')
+
+        #
+        # end of 'default' f.d.o gnome stuff.
+        #
+
+        #
+        # 'closures' section
+        #
+
+        r.flAdd('gnome-python-extras', groupName='group-devel')
+        for t in ['libgda', 'libgda-java',
+                  'libgda-mysql', 'libgda-postgres',
+                  'libgda-sqlite', 'libgda-tools',]:
+            r.flAdd(t, source = 'libgda', groupName='group-devel')
+
+        # nautilus wants it
+        r.flAdd('exempi', groupName='group-gnome')
+
+        # needed for evince
+        r.flAdd('djvulibre', groupName='group-gnome')
+
+        # complement for gedit
+        r.flAdd('gedit-plugins', groupName='group-gnome')
+
+        # complement for gnome-games
+        r.flAdd('gnome-games-extra-data', groupName='group-gnome')
+
+        # needed by cairo
+        r.flAdd('glitz', groupName='group-gnome')
+
+        # needed by gimp and f-spot
+        r.flAdd('libgtkhtml', groupName='group-gnome')
+
+        # needed at least by pygtk
+        r.flAdd('python-numeric', groupName='group-gnome')
+
+        # needed at least by eog
+        r.flAdd('lcms', groupName='group-gnome')
+
+        # needed at least by tomboy
+        r.flAdd('gmime', groupName='group-gnome')
+        r.flAdd('gtkspell', groupName='group-gnome')
+
+        # needed for hal
+        r.flAdd('smbios', groupName='group-gnome')
+        r.flAdd('hal-info', groupName='group-gnome')
+        r.flAdd('ConsoleKit', groupName='group-gnome')
+
+#        r.flAdd('DeviceKit', groupName='group-desktop-common')
+        r.flAdd('DeviceKit-power', groupName='group-desktop-common')
+        r.flAdd('DeviceKit-disks', groupName='group-desktop-common')
+        r.flAdd('parted', groupName='group-desktop-common')
+        r.flAdd('libatasmart', groupName='group-desktop-common')
+        r.flAdd('eggdbus', groupName='group-desktop-common')
+
+        # media tools
+        r.flAdd('banshee', groupName='group-gnome')
+        r.flAdd('banshee-community-extensions', groupName='group-gnome')
+        r.flAdd('hal-sharp', groupName='group-gnome') # dep for banshee
+        r.flAdd('ipod-sharp', groupName='group-gnome') # dep for banshee
+        r.flAdd('podsleuth', groupName='group-gnome') # dep for banshee
+        r.flAdd('mono-zeroconf', groupName='group-gnome') # dep for banshee
+        r.flAdd('libgphoto2-sharp', groupName='group-gnome') # needed by banshee for mtp support
+        r.flAdd('libgphoto2', groupName='group-gnome') # needed by f-spot
+
+        # r.flAdd('beagle', groupName='group-gnome', byDefault=False)
+        r.rplAdd('info-beagleindex', groupName='group-gnome')
+
+        r.flAdd('gtksourceview-sharp', groupName='group-gnome-devel') #dep for monodevelop
+        r.flAdd('libgdiplus', groupName='group-gnome-devel') #dep for monodevelop
+        r.flAdd('mono-addins', groupName='group-gnome-devel') #dep for monodevelop
+        r.flAdd('mono-tools', groupName='group-gnome-devel')
+        r.flAdd('mono-basic', groupName='group-gnome-devel')
+        r.flAdd('monodevelop', groupName='group-gnome-devel')
+        r.flAdd('meld', groupName='group-gnome-devel')
+        r.flAdd('rarian', groupName='group-gnome-devel')
+        r.flAdd('gnome-build', groupName='group-gnome-devel')
+        r.flAdd('valgrind', groupName='group-gnome-devel')
+        r.flAdd('anjuta', groupName='group-gnome-devel')
+        r.flAdd('stetic', groupName='group-gnome-devel')
+        r.flAdd('PyYAML', groupName='group-gnome-devel')
+        r.flAdd('gnome-common', groupName='group-gnome-devel')
+        r.flAdd('vala', groupName='group-gnome-devel')
+        r.flAdd('gobject-introspection',groupName='group-gnome-devel')
+        r.flAdd('lua',groupName='group-gnome-devel')
+
+        # translation stuff
+        r.flAdd('poedit', groupName='group-gnome-devel')
+
+        # needed at least by evolution
+        r.flAdd('gal', groupName='group-gnome')
+
+
+        # needed at least by beagle
+        r.flAdd('evolution-sharp', groupName='group-gnome')
+        r.flAdd('gsf-sharp', groupName='group-gnome')
+
+        # needed by pwlib at least
+        r.flAdd('libavc1394', groupName='group-gnome')
+        r.flAdd('libdv', groupName='group-gnome')
+        r.flAdd('libraw1394', groupName='group-gnome')
+
+        # needed at least by gst-plugins-good
+        r.flAdd('speex', groupName='group-gnome')
+
+        # needed at least by gnome-compiz-manager
+        r.flAdd('gob2', groupName='group-gnome')
+
+        #
+        r.flAdd('freetype', groupName='group-gnome')
+
+        r.flAdd('libelf', groupName='group-devel')
+
+        # get group-gnome-devel usefull by default...
+        #
+        r.flAdd('gmime', groupName='group-gnome-devel')
+        r.flAdd('gnome-common', groupName='group-gnome-devel')
+        r.flAdd('gnome-doc-utils', groupName='group-gnome-devel')
+        r.flAdd('gtk-doc', groupName='group-gnome-devel')
+        r.flAdd('gtkspell', groupName='group-gnome-devel')
+
+        # end of group-gnome
+        #
+
+        #
+        # xfce block
+        #
+
+        # Create group-xfce, which all other xfce groups become children of
+        r.flCreateGroup('group-xfce', parentGroup='group-desktop-platform', depCheck=False)
+        r.flCreateGroup('group-xfce-core', parentGroup='group-xfce', depCheck=False)
+        xfce = [
+            'gtk-xfce-engine',
+            'xfce-foresight-theme',
+            'libexo',
+            'garcon',
+            'libxfce4util',
+            'libxfce4ui',
+            'mousepad',
+            # 'leafpad',
+            'orage',
+            #move to supported-extra... use file-roller for now.
+            #'xarchiver',
+            'file-roller',
+            'tumbler',
+            'Thunar',
+            'thunar-volman',
+            'thunar-archive-plugin',
+            'thunar-media-tags-plugin',
+            'xfce4-appfinder',
+            'rodent-icon-theme',
+            'xfce4-mixer',
+            'xfce4-panel',
+            'xfce4-session',
+            'xfce4-notifyd',
+            'xfce4-power-manager',
+            'xfconf',
+            'xfce4-settings',
+            'xfce-terminal',
+            'xfdesktop',
+            'xfwm4',
+            'xfwm4-themes',
+            'xfce4-volumed',
+            'xfce4-indicator-plugin',
+            'xfce4-wallpapers',
+            'libcanberra',
+            'xscreensaver' ]
+
+        for p in xfce:
+            r.flAdd(p, groupName='group-xfce-core')
+
+        # these aren't xfce packages, but are needed
+        gnomepackages = [
+            'gamin',
+            'gtk-engines',
+            'gtk-engine-murrine',
+            'gdm',
+            'gnome-session',
+            'libgnome-background',
+            'gnome-settings-daemon', # needed by gdm
+            'hicolor-icon-theme',
+###            'gnome-packagekit',
+            'polkit-gnome',
+            'network-manager-applet',
+            'shared-mime-info',
+            'indicator-messages',
+            'libproxy',
+            # ('libproxy-gnome', 'libproxy'),
+            # ('libproxy-networkmanager', 'libproxy'),
+            ('libproxy-mozjs', 'libproxy'),
+            ('libproxy-webkit', 'libproxy'),
+            'firefox',
+            'firefox-package-search',
+            'firefox-rpathwiki-search',
+        ]
+
+        for p in gnomepackages:
+            r.flAdd(p, groupName='group-xfce')
+        r.addNewGroup('group-mozilla', groupName='group-xfce')
+
+        # satisfy dependencies
+        for p in [
+            # seahorse deps
+            'libgnomeui',
+            'libgnome',
+            # abiword deps
+            'enchant',
+            'gucharmap',
+            'libgnomeprint', # hopefully removed with abiword 2.8
+            'libgnomeprintui', # hopefully removed with abiword 2.8
+            'psiconv',
+            'python-keybinder',
+            'libwmf',
+            'wv',
+            # misc
+            'libcddb',
+            'libcdio',
+            'libsexy',
+            'librsvg', # cheese, abiword, gdm, ...
+            'glitz',
+            'gst-plugins-base', # exaile, totem, parole
+            'gst-plugins-good',
+            # gdm
+            'iso-codes',
+            'at-spi',
+            'gnome-icon-theme',
+            ]:
+            r.flAdd(p, groupName='group-xfce')
+
+        r.flCreateGroup('group-xfce-apps', parentGroup='group-xfce', depCheck=False)
+        # some other applications we want, might go in different groups later.
+        for p in [
+            'bogofilter',
+            'claws-mail',
+            'libarchive',
+            'ekiga',
+            'evince',
+            'goffice',
+            'gnumeric',
+            'abiword',
+            'abiword-docs',
+            'seahorse',
+            'seahorse-plugins',
+            'gigolo', 'gvfs', 'gnome-disk-utility',
+            ]:
+            r.flAdd(p, groupName='group-xfce-apps')
+
+        # multimedia applications for xfce edition.
+        for p in [
+            'pulseaudio-xfce',
+            'pragha',
+            'ristretto',
+            'cheese',
+            'parole',
+            'xfburn',
+            ]:
+            r.flAdd(p, groupName='group-xfce-apps')
+        # end of group-xfce-apps
+
+        for p in [
+            'geany',
+            'geany-plugins',
+            'glade',
+            #'xfce4-vala',
+            'xfce4-dev-tools',
+            ]:
+            r.flAdd(p, groupName='group-xfce-devel')
+
+        r.flCreateGroup('group-xfce-extras', parentGroup='group-xfce', depCheck=False)
+        # packages not installed by default
+        for p in [
+            # goodies
+            #'xfce4-cddrive-plugin', #not building atm
+            #'xfce4-cellmodem-plugin',#not building atm
+            'xfce4-clipman-plugin',
+            'xfce4-cpugraph-plugin',
+            'xfce4-dict',
+            'xfce4-fsguard-plugin',
+            #'xfce4-genmon-plugin',
+            'xfce4-modemlights-plugin',
+            'xfce4-notes-plugin',
+            'xfce4-places-plugin',
+            'xfce4-quicklauncher-plugin',
+            'xfce4-radio-plugin',
+            'xfce4-screenshooter-plugin',
+            #'xfce4-sensors-plugin',
+            'xfce4-smartbookmark-plugin',
+            'xfce4-taskmanager',
+            'xfce4-systemload-plugin',
+            #'xfce4-volstatus-icon',
+            'xfce4-wavelan-plugin',
+            'xfce4-weather-plugin',
+            'xfce4-xfapplet-plugin',
+            'xfce4-xkb-plugin',
+            'xfswitch-plugin',
+            #'xfprint',#deprexiated
+            # 3rd party apps
+            'tracker',
+            ]:
+            r.flAdd(p, groupName='group-xfce-extras')
+
+        # end of xfce block
+
+        #
+        # lxde block
+        #
+
+        # Create group-lxde, which all other lxde groups become children of
+        r.flCreateGroup('group-lxde', parentGroup='group-desktop-platform', depCheck=False)
+        r.flCreateGroup('group-lxde-core', parentGroup='group-lxde', depCheck=False)
+        lxde = [
+            'file-roller',
+            'gpicview',
+            'libfm',
+            'lxappearance',
+            'lxde-common',
+            'lxpanel',
+            'lxmenu-data',
+            'lxrandr',
+            'lxsession',
+            'lxsession-edit',
+            'lxshortcut',
+            'lxtask',
+            'lxkb-config',
+            'menu-cache',
+            'openbox',
+            'pcmanfm',
+            'volumeicon',
+            'libcanberra',
+            'gksu',
+            'lxmed',
+                ]
+
+        for p in lxde:
+            r.flAdd(p, groupName='group-lxde-core')
+
+        # these aren't lxde packages, but are needed
+        gnomepackages = [
+            'gamin',
+            'gtk-engines',
+            'gtk-engine-murrine',
+            'theme-greenland', # lets keep this, as some still wants to use it as default
+            'theme-absolute',
+            'lxdm',
+            'notify-osd',
+            'udev-notify',
+            'gnome-session', 
+            'gnome-colors',
+            'gnome-terminal',
+            'gnome-power-manager',
+            'libgnome-background',
+            'hicolor-icon-theme',
+            'human-icon-theme',
+            'polkit-gnome',
+            'network-manager-applet',
+            'shared-mime-info',
+            'indicator-messages',
+            'libproxy',
+            # ('libproxy-gnome', 'libproxy'),
+            # ('libproxy-networkmanager', 'libproxy'),
+            ('libproxy-mozjs', 'libproxy'),
+            ('libproxy-webkit', 'libproxy'),
+            'xscreensaver',
+            'pavucontrol',
+            'flashplayer',
+            'nspluginwrapper',
+            'gnome-system-tools',
+            'metacity',
+        ]
+
+        for p in gnomepackages:
+            r.flAdd(p, groupName='group-lxde')
+
+        # satisfy dependencies
+        for p in [
+            # misc
+            'libcddb',
+            'libcdio',
+            'libsexy',
+            'librsvg', # cheese, abiword, gdm, ...
+            'glitz',
+            'gst-plugins-base', # exaile, totem, parole
+            'gst-plugins-good',
+            # gdm
+            'iso-codes',
+            'at-spi',
+            'gnome-icon-theme',
+            'system-tools-backends',
+            'pyudev',
+            'liboobs',
+            'yelp', # Needed for foresight-user-guide
+            'gnome-doc-utils', # Needed by yelp, to make foresight-user-guide to work 
+
+            ]:
+            r.flAdd(p, groupName='group-lxde')
+
+        r.flCreateGroup('group-lxde-apps', parentGroup='group-lxde', depCheck=False)
+        # some other applications we want, might go in different groups later.
+        for p in [
+            'chromium',
+            'thunderbird',
+            'gvfs', 'gnome-disk-utility',
+            'hsqldb',
+            'openoffice.org',
+            'openoffice.org-base',
+            'openoffice.org-calc',
+            'openoffice.org-draw',
+            'openoffice.org-impress',
+            'openoffice.org-math',
+            'openoffice.org-writer',
+            'medit',
+            'clipit',
+            'galculator',
+            'jmtpfs',
+            'darktable',
+            'mypaint',
+            'qbittorrent', 
+            ]:
+            r.flAdd(p, groupName='group-lxde-apps')
+
+        r.flAdd('adobe-reader', groupName='group-lxde-apps', flavor='is: x86', singleArch=True)
+
+        # multimedia applications for lxde edition.
+        for p in [
+            'pulseaudio',
+            'pulseaudio-lxde',
+            'pragha',
+            'mplayer',
+            'smplayer',
+            'guvcview',
+            'silicon',
+            'media-player-info',
+            'gnome-utils',
+            ]:
+            r.flAdd(p, groupName='group-lxde-apps')
+
+        # end of group-lxde-apps
+        #
+        # end of lxde block
+        #
+
+        #
+        # kde block
+        #
+
+        def kdeAdd(r, troves, source=None, groupName=None, byDefault=True):
+            if groupName is None:
+                groupName = 'group-kde'
+            r.flAddTroves(troves, groupName=groupName, byDefault=byDefault)
+
+
+        # kde core libs and apps
+        kdeAdd(r, [
+            'kdelibs',
+            'kdepimlibs',
+            'kdebase-runtime',
+            'kdebase-workspace',
+            'kdeplasma-addons',
+            'phonon-backend-gstreamer',
+            ]
+        )
+
+        # kde extras
+        kdeAdd(r, [
+            #'amarok',
+            'choqok',
+            'kdevelop',
+            'kdevplatform',
+            'kile',
+            'kphotoalbum',
+            'ktorrent',
+            'quassel',
+            'smb4k',
+            ]
+        )
+
+        kdeAdd(r, [
+            'karbon',
+            'kplato',
+            'krita',
+            'kpresenter',
+            'kspread',
+            'kword',
+            'koffice-common',
+            ], source='koffice'
+        )
+
+        kdeAdd(r, [
+            'dolphin',
+            'kdepasswd',
+            'kdeplasma',
+            'kdialog',
+            'keditbookmarks',
+            'kfind',
+            'konqueror',
+            'konsole',
+            'kwrite',
+            ], source='kdebase'
+        )
+
+        kdeAdd(r, [
+            'smokegen',
+            'kimono',
+            'korundum',
+            'kross-python',
+            'perl-qt',
+            'perl-kde',
+            'pykde',
+            'qtruby',
+            'qyoto',
+            'smoke',
+            ], source='kdebindings'
+        )
+
+        kdeAdd(r, [
+            'kaccessible',
+            'kmag',
+            'kmousetool',
+            'kmouth',
+            'kdeaccessibility-color-schemes',
+            'kdeaccessibility-icon-themes',
+            ], source='kdeaccessibility'
+        )
+
+        kdeAdd(r, [
+            'kuser',
+            'kcron',
+            'ksystemlog',
+            'system-config-printer-kde',
+            ], source='kdeadmin'
+        )
+
+        kdeAdd(r, [
+            'kdeartwork-aurorae',
+            'kdeartwork-emoticons',
+            'kdeartwork-desktopthemes',
+            'kdeartwork-icon-themes',
+            'kdeartwork-color-schemes',
+            'kdeartwork-kwin-styles',
+            'kscreensaver-extra',
+            'kdeartwork-sounds',
+            'kdeartwork-styles',
+            'kdeartwork-wallpapers',
+            ], source='kdeartwork'
+        )
+
+        kdeAdd(r, [
+            'blinken',
+            'cantor',
+            'kalgebra',
+            'kalzium',
+            'kanagram',
+            'kbruch',
+            'kgeography',
+            'khangman',
+            'kig',
+            'kiten',
+            'klettres',
+            'kmplot',
+            'kstars',
+            'ktouch',
+            'kturtle',
+            'kwordquiz',
+            'libkdeedu',
+            'marble',
+            'parley',
+            'rocs',
+            'step',
+            ], source='kdeedu'
+        )
+
+        kdeAdd(r, [
+            'bomber',
+            'bovo',
+            'granatier',
+            'kajongg',
+            'kapman',
+            'katomic',
+            'kbattleship',
+            'kblackbox',
+            'kblocks',
+            'kbounce',
+            'kbreakout',
+            'kdiamond',
+            'kfourinline',
+            'kgoldrunner',
+            'kigo',
+            'killbots',
+            'kiriki',
+            'kjumpingcube',
+            'klickety',
+            'klines',
+            'kmahjongg',
+            'kmines',
+            'knetwalk',
+            'kolf',
+            'kollision',
+            'konquest',
+            'kpat',
+            'kreversi',
+            'kshisen',
+            'ksirk',
+            'kspaceduel',
+            'ksquares',
+            'ksudoku',
+            'ktron',
+            'ktuberling',
+            'kubrick',
+            'libkdegames',
+            'libkmahjongg',
+            'lskat',
+            'palapeli',
+            ], source='kdegames'
+        )
+
+        kdeAdd(r, [
+            'gwenview',
+            'kamera',
+            'kcolorchooser',
+            'kgamma',
+            'kolourpaint',
+            'kruler',
+            'ksaneplugin',
+            'ksnapshot',
+            'okular',
+            'kdegraphics-svgpart',
+            'kdegraphics-thumbnailers',
+            'libkdcraw',
+            'libkexiv2',
+            'libkipi',
+            'libksane',
+            'strigi-analyzer-graphics',
+            ], source='kdegraphics'
+        )
+
+        kdeAdd(r, [
+            'dragonplayer',
+            'juk',
+            'kio-plugins-multimedia',
+            'kmix',
+            'libkcddb',
+            'libkcompactdisc',
+            # 'ffmpegthumbs',
+            'mplayerthumbs',
+            ], source='kdemultimedia'
+        )
+
+        kdeAdd(r, [
+            'kdnssd',
+            'kget',
+            'kopete',
+            'kppp',
+            'krdc',
+            'krfb',
+            'kdenetwork-filesharing',
+            ], source='kdenetwork'
+        )
+
+        kdeAdd(r, [
+            'akonadiconsole',
+            'akregator',
+            'blogilo',
+            'kabcclient',
+            'kaddressbook',
+            'kalarm',
+            'kdepim-runtime',
+            'kjots',
+            'kleopatra',
+            'kmail',
+            'kmail-plugins-pim',
+            'knode',
+            'knotes',
+            'konsolekalendar',
+            'kontact',
+            'korganizer',
+            'kresources',
+            'ktimetracker',
+            'libkdepim',
+            'libkleo',
+            'libkpgp',
+            'libksieve',
+            'strigi-analyzer-pim',
+            ], source='kdepim'
+        )
+
+        kdeAdd(r, [
+            'cervisia',
+            'dolphin-plugins-sdk',
+            'okteta',
+            'kaddressbook-plugin-kdeaccounts',
+            'kapptemplate',
+            'kate',
+            'kcachegrind',
+            'kdesdk-scripts',
+            'kio-plugins-sdk',
+            'kmtrace',
+            'kompare',
+            'kpartloader',
+            'kprofilemethod',
+            'kstartperf',
+            'kuiviewer',
+            'strigi-analyzer-sdk',
+            'umbrello',
+            ], source='kdesdk', groupName='group-kde-devel'
+        )
+
+        kdeAdd(r, [
+            'amor',
+            'kteatime',
+            'ktux',
+            ], source='kdetoys'
+        )
+
+        kdeAdd(r, [
+            'ark',
+            'filelight',
+            'kcalc',
+            'kcharselect',
+            'kdf',
+            'kfloppy',
+            'kgpg',
+            'kremotecontrol',
+            'ktimer',
+            'kwallet',
+            'printer-applet-kde',
+            'superkaramba',
+            'sweeper',
+            ], source='kdeutils'
+        )
+
+        kdeAdd(r, [
+            'kfilereplace',
+            'kimagemapeditor',
+            'klinkstatus',
+            'kommander',
+            ], source='kdewebdev'
+        )
+
+        # try to fix isos/migrate
+        kdeAdd(r, [
+            'akonadi',
+            'chmlib',
+            'dbus',
+            'exiv2',
+            'ffmpeg',
+            'fontconfig',
+            'glib',
+            'gnokii',
+            'libgpg-error',
+            'libgphoto2',
+            'libical',
+            'libspectre',
+            'libvncserver',
+            'libxml2',
+            'libxslt',
+            'libzip',
+            'poppler',
+            ('poppler-glib', 'poppler'),
+            ('poppler-qt4', 'poppler'),
+            'PyQt4',
+            'qca2',
+            'qca2-ossl',
+            'qimageblitz',
+            'QScintilla2',
+            'soprano',
+            'strigi',
+            'taglib',
+            'x264',
+            # ('libproxy-kde', 'libproxy'),
+            ],
+        )
+
+        # end of kde block
+
+        r.flAdd('guile', groupName = 'group-devel')
+        r.flAdd('asciidoc', groupName = 'group-devel')
+        r.flAdd('quilt', groupName = 'group-devel')
+        r.rplAdd('xorg-cf-files', groupName = 'group-devel')
+
+        # docbook stuff. we want more recent stuff than rPL's
+        r.flAdd('docbook-dtds', groupName = 'group-devel')
+        r.flAdd('docbook-utils', groupName = 'group-devel')
+        r.remove('docbook-utils-pdf', groupName = 'group-devel')
+        r.remove('linuxdoc-tools', groupName = 'group-devel')
+        r.flAdd('docbook-xsl', groupName = 'group-devel')
+
+        # FIXME: should _not_ be needed (but otherwise breaks groups)
+        # to be fixed properly later
+        if Arch.x86_64:
+            for p in [ 'openslp', 'lzo',
+                       'perl', 'giflib',
+                       'DirectFB',
+                       'gd',
+                       ]:
+                r.add( p + ':lib', groupName='group-compat32',
+                       flavor = r.x86FlavorString,
+                       searchPath = r.rplGroupUmbrellaCompat32)
+
+            #  special case
+            r.add( 'DirectFB:lib-core',
+                   groupName='group-compat32',
+                   flavor = r.x86FlavorString,
+                   searchPath = r.rplGroupUmbrellaCompat32)
+
+            for p in [ 'Mesa', 'libvdpau', 'libva', 'vdpau-video', 'libXxf86vm', 'libexif', 'audit',
+                       'libgphoto2' ,'libXtst', 'postgresql', 'libogg',
+                       'parted', 'xcb-util',
+                       # x86 gtk engines
+                       'gtk-aurora-engine',
+                       'gtk-engine-murrine',
+                       'gtk-engines',
+                       'gtk-engine-ubuntulooks',
+                       'gtk-equinox-engine',
+                       'gtk-nodoka-engine',
+                       'gtk-xfce-engine',
+                       'openssl',
+                       'theme-engine-sun-nimbus',
+                       'moblin-gtk-engine',
+                       'at-spi', 'nss', 'gtk',
+                       'gdk-pixbuf', 'gtk3',
+                       'sysfsutils',
+                       ]:
+                r.add( p + ':lib', groupName='group-compat32',
+                       flavor = r.x86FlavorString,
+                       searchPath = r.foresightLinuxLabel)
+
+
+        # rPath core toolset
+        r.flAdd('conary', versionStr=r.conaryVersion, groupName='group-desktop-common')
+        r.flAdd('conary-repository', versionStr=r.conaryVersion, groupName='group-devel', source = 'conary')
+        r.flAdd('conary-web-common', versionStr=r.conaryVersion, groupName='group-devel')
+        r.flAdd('conary-build', versionStr=r.conaryVersion, groupName='group-devel', source = 'conary')
+        # it's not obvious that conary-vacuumdb should be installed byDefault; OTOH the target audience
+        # for it are preciselly those who have installed the full development groups. so we are leaving
+        # it installed byDefault for now.
+        r.flAdd('conary-vacuumdb', versionStr=r.conaryVersion, groupName='group-devel', source = 'conary')
+
+        r.flAdd('conary-policy', groupName='group-devel')
+        for rbuild in [ 'decorator', 'rpath-common', 'rpath-xmllib',
+                        'rpath-product-definition', 'rbuild', 'rbuilder-client',
+                        'robj', 'xobj', 'conary-rest', 'python-restlib']:
+            r.flAdd(rbuild, groupName='group-devel')
+        r.flAdd('rmake', groupName='group-devel')
+        r.flAdd('rmake-proxy', groupName='group-devel', byDefault=False, source = 'rmake')
+        r.flAdd('rmake-repos', groupName='group-devel', byDefault=False, source = 'rmake')
+        r.flAdd('rmake-node', groupName='group-devel', byDefault=False, source = 'rmake')
+        r.flAdd('rmake-multinode-server', groupName='group-devel', byDefault=False, source = 'rmake')
+
+        r.flAdd('conary-proxy', groupName='group-devel')
+        r.flAdd('memcached', groupName='group-devel')
+        r.flAdd('httpd', groupName='group-devel')
+
+        r.flAdd('flimage', groupName='group-devel')
+        r.flAdd('blastbits', groupName='group-devel')
+        #
+        r.flAdd('debugedit', groupName='group-devel')
+
+        # the ones below should (had) be(en) in group-devel from rpl...
+        # More group-devel stuff that we need for anaconda
+        r.flAdd('elementtree', groupName='group-devel')
+        r.flAdd('neon', groupName='group-devel')
+        r.rplAdd('gd', groupName='group-devel')
+        r.rplAdd('htmlview', groupName='group-devel')
+        r.flAdd('kid', groupName='group-devel')
+
+        # more group-devel stuff
+        r.remove('python:test', groupName='group-world')
+
+        r.flAdd('bzr', groupName='group-devel')
+        r.flAdd('bzrtools', groupName='group-devel')
+        r.flAdd('ConfigObj', groupName='group-devel')
+        r.flAdd('scons', groupName='group-devel')
+        # ermo: presumably, people who install a -devel system will want contexts by default?!
+        r.flAdd('foresight-contexts', groupName='group-devel')
+
+        #
+        # our own xorg stack
+
+        r.flCreateGroup('group-xorg', parentGroup='group-desktop-common', depCheck=False)
+
+        r.flAdd('xorg-server', groupName='group-xorg')
+        r.flAdd('system-config-keyboard', groupName='group-xorg')
+        r.flAdd('font-util', groupName='group-xorg')
+        r.flAdd('monitor-edid', groupName='group-xorg')
+
+        ## packages built by xorg-utils
+
+        utils = [ 'gccmakedep',
+                  'imake',
+                  'xorg-cf-files',
+                  'lndir',
+                  'makedepend',
+                  ]
+
+        for p in utils:
+            r.flAdd(p, source='xorg-utils', groupName='group-devel')
+
+        ## end of packages built by xorg-utils
+
+        r.flAdd('xtrans', groupName='group-devel')
+
+        ## packages built by xorg-proto
+        proto  = [ 'util-macros',
+                   # 'applewmproto',
+                   'bigreqsproto',
+                   'compositeproto',
+                   'damageproto',
+                   'dmxproto',
+                   'dri2proto',
+                   'evieext',
+                   'fixesproto',
+                   'fontcacheproto',
+                   'fontsproto',
+                   'glproto',
+                   'inputproto',
+                   'kbproto',
+                   'libpthread-stubs',
+                   'printproto',
+                   'randrproto',
+                   'recordproto',
+                   'renderproto',
+                   'resourceproto',
+                   'scrnsaverproto',
+                   'trapproto',
+                   'videoproto',
+                   'vncproto',
+                   # 'windowswmproto',
+                   'xcb-proto',
+                   'xcliplistproto',
+                   'xcmiscproto',
+                   'xextproto',
+                   'xf86bigfontproto',
+                   'xf86dgaproto',
+                   'xf86driproto',
+                   'xf86miscproto',
+                   'xf86rushproto',
+                   'xf86vidmodeproto',
+                   'xineramaproto',
+                   'xproto',
+                   ]
+        for p in proto:
+            # r.flAdd(p, source='xorg-proto', groupName='group-devel')
+            r.flAdd(p, source='xorg-proto', groupName='group-xorg')
+
+        ## end of list of packages built by xorg-proto
+
+        r.flAdd('xcursor-themes', groupName='group-xorg', source='xorg-apps')
+        r.flAdd('xkeyboard-config', groupName='group-xorg')
+        r.flAdd('xorg-sgml-doctools', groupName='group-devel')
+
+        ## packages built by xorg-libs
+
+        libs = [ 'libdmx',
+            'libFS',
+            'liblbxutil',
+            'liboldX',
+            'libpciaccess',
+            'libvnc',
+            # 'libWindowsWM',
+            'libXaw',
+            'libXcliplist',
+            'libXcomposite',
+            'libXcursor',
+            'libXdamage',
+            'libXevie',
+            'libXfont',
+            'libXfontcache',
+            'libXft',
+            'libXinerama',
+            'libxkbui',
+            'libXprintAppUtil',
+            'libXrandr',
+            'libXres',
+            'libXScrnSaver',
+            'libXTrap',
+            'libXtst',
+            'libXvMC',
+            'libXxf86dga',
+            'libXxf86misc',
+            'libXxf86vm',
+            'xbitmaps',
+            'xcb-util', ]
+
+        for p in libs:
+            r.flAdd(p, source='xorg-libs', groupName='group-xorg')
+
+
+        ## end of packages built by xorg-libs
+
+        r.flAdd('pixman', groupName='group-xorg')
+        r.flAdd('libfontenc', groupName='group-xorg')
+        r.flAdd('libICE', groupName='group-xorg')
+        r.flAdd('libSM', groupName='group-xorg')
+        r.flAdd('libX11', groupName='group-xorg')
+        r.flAdd('libXau', groupName='group-xorg')
+        r.flAdd('libxcb', groupName='group-xorg')
+        r.flAdd('libXdmcp', groupName='group-xorg')
+        r.flAdd('libXext', groupName='group-xorg')
+        r.flAdd('libXfixes', groupName='group-xorg')
+        r.flAdd('libxkbfile', groupName='group-xorg')
+        r.flAdd('libXmu', groupName='group-xorg')
+        r.flAdd('libXp', groupName='group-xorg')
+        r.flAdd('libXi', groupName='group-xorg')
+        r.flAdd('libXpm', groupName='group-xorg')
+        r.flAdd('libXprintUtil', groupName='group-xorg')
+        r.flAdd('libXrender', groupName='group-xorg')
+        r.flAdd('libXt', groupName='group-xorg')
+        r.flAdd('libXv', groupName='group-xorg')
+        r.flAdd('Mesa', groupName='group-xorg')
+        r.flAdd('libvdpau', groupName='group-xorg')
+        r.flAdd('libva', groupName='group-xorg')
+        r.flAdd('vdpau-video', groupName='group-xorg')
+        r.flAdd('MesaGLw', groupName='group-xorg', byDefault = False)
+
+        # tricky. we need to explicitly install Mesa:lib{x86}
+        if Arch.x86_64:
+                r.flAdd('Mesa:lib', flavor='is: x86', groupName='group-xorg')
+
+        r.flAdd('glx-utils', source='mesa-demos', groupName='group-xorg')
+        r.flAdd('libdrm', groupName='group-xorg')
+        r.flAdd('pm-utils', groupName='group-xorg')
+        r.flAdd('radeontool', groupName='group-xorg')
+        r.flAdd('vbetool', groupName='group-xorg')
+        r.flAdd('libx86', groupName='group-xorg')
+
+        ## packages built by xorg-apps
+
+        apps = [ 'appres',
+                 'bdftopcf',
+                 'beforelight',
+                 'bitmap',
+                 'editres',
+                 'fonttosfnt',
+                 'fslsfonts',
+                 'fstobdf',
+                 'iceauth',
+                 'ico',
+                 'lbxproxy',
+                 'listres',
+                 'luit',
+                 'mkcomposecache',
+                 'mkfontdir',
+                 'mkfontscale',
+                 'oclock',
+                 'proxymngr',
+                 'rendercheck',
+                 'rgb',
+                 'rstart',
+                 'scripts',
+                 'sessreg',
+                 'setxkbmap',
+                 'showfont',
+                 'smproxy',
+                 'twm',
+                 'viewres',
+                 'x11perf',
+                 'xauth',
+                 'xbacklight',
+                 'xbiff',
+                 'xcalc',
+                 'xclipboard',
+                 'xclock',
+                 'xcmsdb',
+                 'xcompmgr',
+                 'xconsole',
+                 'xcursorgen',
+                 'xcursor-themes',
+                 'xdbedizzy',
+                 'xditview',
+                 'xdm',
+                 'xdpyinfo',
+                 'xedit',
+                 'xev',
+                 'xeyes',
+                 'xf86dga',
+                 'xfd',
+                 'xfindproxy',
+                 'xfontsel',
+                 'xfs',
+                 'xfsinfo',
+                 'xfwp',
+                 'xgamma',
+                 'xgc',
+                 'xhost',
+                 'xinit',
+                 'xinput',
+                 'xkbcomp',
+                 'xkbevd',
+                 'xkbprint',
+                 'xkbutils',
+                 'xkill',
+                 'xload',
+                 'xlogo',
+                 'xlsatoms',
+                 'xlsclients',
+                 'xlsfonts',
+                 'xmag',
+                 'xman',
+                 'xmessage',
+                 'xmh',
+                 'xmodmap',
+                 'xmore',
+                 'xplsprinters',
+                 'xpr',
+                 'xprehashprinterlist',
+                 'xprop',
+                 'xrandr',
+                 'xrdb',
+                 'xrefresh',
+                 'xrestop',
+                 'xrx',
+                 'xset',
+                 'xsetmode',
+                 'xsetpointer',
+                 'xsetroot',
+                 'xsm',
+                 'xstdcmap',
+                 'xtrap',
+                 'xvidtune',
+                 'xvinfo',
+                 'xwd',
+                 'xwininfo',
+                 'xwud',
+                 ]
+
+        for p in apps:
+            r.flAdd(p, source='xorg-apps', groupName='group-xorg')
+
+        ## end of packages built by xorg-apps
+
+        # r.flCreateGroup('group-xorg-fonts', parentGroup='group-xorg', depCheck=False)
+        ## packages built by xorg fonts
+        fonts = [  'encodings',
+                   'font-adobe-100dpi',
+                   'font-adobe-75dpi',
+                   'font-adobe-utopia-100dpi',
+                   'font-adobe-utopia-75dpi',
+                   'font-adobe-utopia-type1',
+                   'font-alias',
+                   'font-arabic-misc',
+                   'font-bh-100dpi',
+                   'font-bh-75dpi',
+                   'font-bh-lucidatypewriter-100dpi',
+                   'font-bh-lucidatypewriter-75dpi',
+                   'font-bh-ttf',
+                   'font-bh-type1',
+                   'font-bitstream-100dpi',
+                   'font-bitstream-75dpi',
+                   'font-bitstream-speedo',
+                   'font-bitstream-type1',
+                   'font-cronyx-cyrillic',
+                   'font-cursor-misc',
+                   'font-daewoo-misc',
+                   'font-dec-misc',
+                   'font-ibm-type1',
+                   'font-isas-misc',
+                   'font-jis-misc',
+                   'font-micro-misc',
+                   'font-misc-cyrillic',
+                   'font-misc-ethiopic',
+                   'font-misc-meltho',
+                   'font-misc-misc',
+                   'font-mutt-misc',
+                   'font-schumacher-misc',
+                   'font-screen-cyrillic',
+                   'font-sony-misc',
+                   'font-sun-misc',
+                   'font-winitzki-cyrillic',
+                   'font-xfree86-type1',
+                   ]
+
+        for p in fonts:
+            r.flAdd(p, source='xorg-fonts', groupName='group-xorg')
+
+        ## end of packages built by xorg-fonts
+
+        # extra fonts we ship
+        r.flAdd('urw-fonts', groupName='group-xorg')
+        r.flAdd('liberation-fonts-ttf', groupName='group-xorg')
+        r.flAdd('msttcorefonts', groupName='group-xorg')
+        r.rplAdd('bitstream-vera-fonts', groupName='group-xorg')
+
+        r.flAdd('charis-fonts', groupName='group-xorg')
+        r.flAdd('gentium-fonts', groupName='group-xorg')
+
+        r.flAdd('dejavu-fonts-ttf', groupName='group-xorg')
+        r.flAdd('ubuntu-font-family', groupName='group-xorg')
+
+        # r.flCreateGroup('group-xorg-fonts-extra', parentGroup='group-xorg', depCheck=False, byDefault=False)
+        r.flAdd('sazanami-font', groupName='group-supported-stuff-extra')
+        r.flAdd('wqy-zenhei', groupName='group-supported-stuff-extra') # Chinese font
+
+#        r.flCreateGroup('group-xorg-drivers', parentGroup='group-xorg', depCheck=False)
+
+        ## packages built by xorg-drivers-input
+        inputDrivers = [ 'xf86-input-acecad',
+                         'xf86-input-aiptek',
+                         'xf86-input-elographics',
+                         'xf86-input-evdev',
+                         'xf86-input-fpit',
+                         'xf86-input-hyperpen',
+                         'xf86-input-jamstudio',
+                         'xf86-input-joystick',
+                         'xf86-input-keyboard',
+                         'xf86-input-mouse',
+                         'xf86-input-mutouch',
+                         'xf86-input-penmount',
+                         'xf86-input-synaptics',
+                         'xf86-input-vmmouse',
+                         'xf86-input-void',
+                         'xf86-input-wacom',
+            ]
+
+        for p in inputDrivers:
+            r.flAdd(p, source='xorg-driver-input', groupName='group-xorg')
+        ## end of packages built by xorg-drivers-input
+        r.flAdd('xf86-input-mtrack', groupName='group-xorg')
+        ## packages built by xorg-drivers-video
+
+        videoDrivers = [ 'xf86-video-apm',
+                         'xf86-video-ark',
+                         'xf86-video-ast',
+                         'xf86-video-ati',
+                         'xf86-video-chips',
+                         'xf86-video-cirrus',
+                         'xf86-video-dummy',
+                         'xf86-video-fbdev',
+                         'xf86-video-glint',
+                         'xf86-video-i128',
+                         'xf86-video-i740',
+                         'xf86-video-intel',
+                         'xf86-video-mach64',
+                         'xf86-video-mga',
+                         'xf86-video-neomagic',
+                         'xf86-video-newport',
+                         'xf86-video-nv',
+                         'xf86-video-r128',
+                         'xf86-video-rendition',
+                         'xf86-video-s3',
+                         'xf86-video-s3virge',
+                         'xf86-video-savage',
+                         'xf86-video-siliconmotion',
+                         'xf86-video-sis',
+                         'xf86-video-sisusb',
+                         'xf86-video-tdfx',
+                         'xf86-video-tga',
+                         'xf86-video-trident',
+                         'xf86-video-tseng',
+                         'xf86-video-v4l',
+                         'xf86-video-vesa',
+                         'xf86-video-vmware',
+                         'xf86-video-voodoo',
+                         #
+                         'xf86-video-radeonhd',
+                         'xf86-video-unichrome',
+                         'xf86-video-nouveau',
+                         'xf86-video-ivtv',
+                         'xf86-video-intel-legacy',
+                         'xf86-video-xgi',
+                         'xf86-video-xgixp',
+                         ]
+
+        for p in videoDrivers:
+            r.flAdd(p, source='xorg-driver-video', groupName='group-xorg')
+
+        #Cheap hack for now to get around CNY-3000
+        r.flAdd('xf86-video-i810', source='xorg-driver-video', groupName='group-xorg')
+
+        ## end of packages built by xorg-drivers-video
+
+        #
+        #   end of our xorg stack
+        #
+
+        r.flAdd('cmake', groupName='group-devel')
+        # Deps for cmake
+        r.flAdd('xmlrpc-c', groupName='group-devel')
+
+        # remainings
+        # FL-2551
+        r.flCreateGroup('group-tryton', parentGroup='group-supported-stuff-extra')
+        for p in [ 'trytond_party_siret',
+                   'trytond_product_cost_fifo',
+                   'trytond_sale_price_list',
+                   'trytond_analytic_account',
+                   'trytond_account_invoice',
+                   'tryton',
+                   'trytond_analytic_sale',
+                   'trytond_sale',
+                   ('trytond', 'trytond'),
+                   ('trytond-backend-mysql', 'trytond'),
+                   ('trytond-backend-sqlite', 'trytond'),
+                   ('trytond-backend-postgresql', 'trytond'),
+                   'trytond_project_plan',
+                   'trytond_account_statement',
+                   'trytond_stock_forecast',
+                   'trytond_account_invoice_line_standalone',
+                   'trytond_company',
+                   'trytond_timesheet',
+                   'trytond_account_product',
+                   'trytond_currency',
+                   'trytond_purchase_invoice_line_standalone',
+                   'trytond_project_revenue',
+                   'trytond_purchase',
+                   'trytond_product_cost_history',
+                   'trytond_project',
+                   'trytond_google_translate',
+                   'trytond_dashboard',
+                   'trytond_calendar_classification',
+                   'trytond_product_price_list',
+                   'trytond_party_vcarddav',
+                   'trytond_stock_product_location',
+                   'trytond_stock_location_sequence',
+                   'trytond_calendar_scheduling',
+                   'trytond_company_work_time',
+                   'trytond_account',
+                   'trytond_product',
+                   'trytond_stock_inventory_location',
+                   'trytond_stock_supply',
+                   'trytond_stock_supply_day',
+                   'trytond_calendar_todo',
+                   'trytond_analytic_invoice',
+                   'trytond_country',
+                   'trytond_account_invoice_history',
+                   'trytond_calendar',
+                   'trytond_party',
+                   'trytond_ldap_authentication',
+                   'trytond_google_maps',
+                   'trytond_stock',
+                   'trytond_analytic_purchase',
+                   'trytond_ldap_connection']:
+             r.flAdd(p, groupName='group-tryton')
+
+
+        # get around the CNY-3238 mess
+        # ## Various deps that would be  byDefault=False
+
+        # FIXME
+        commonDeps = [
+            'akonadi',
+            'attica',
+            'automoc',
+            ('avahi-qt4', 'avahi'),
+            ('avahi-tools', 'avahi'),
+            'cddb-py',
+            'chmlib',
+            'commoncpp',
+            'eigen2',
+            'exiv2',
+            'ffmpeg',
+            'giver',
+            'glew',
+            'gmm',
+            'gnokii',
+            'gnome-mplayer',
+            'gourmet',
+            'GraphicsMagick',
+            'gsl',
+            'gsm',
+            'gst-python',
+            'gthumb',
+            'gtk-chtheme',
+            'imlib2',
+            'libassuan',
+            'libdvdnav',
+            'libetpan',
+            'libgphoto2',
+            'libical',
+            # 'libindicate-qt',
+            'libiodbc',
+            'libopenraw',
+            ('libopenraw-gnome', 'libopenraw'),
+            'libopensync',
+            'libpqxx',
+            'libspectre',
+            'libssh',
+            'libssh2',
+            'libvncserver',
+            'libzip',
+            ('llvm', 'llvm'),
+            ('clang', 'llvm'),
+            ('clang-analyzer', 'llvm'),
+            'mplayer-codecs',
+            'mplayer',
+            'mutagen', 'notify-python', 'python-ctypes',
+            'mysql-embedded',
+            'opencv',
+            'OpenGTL',
+            'oxygen-icon-theme',
+            'PokerTH',
+            'polkit-qt-1',
+            'poppler',
+            'poppler-data',
+            ('poppler-glib', 'poppler'),
+            ('poppler-qt4', 'poppler'),
+            ('poppler-qt', 'poppler'),
+            'qca2',
+            'qca2-ossl',
+            'qimageblitz',
+            'qt4',
+            ('qt4-core', 'qt4'),
+            ('qt4-gui', 'qt4'),
+            ('qt4-qt3support', 'qt4'),
+            ('qt4-sql', 'qt4'),
+            'rapidsvn',
+            'raptor',
+            'rasqal',
+            'redland',
+            'reportlab',
+            'shared-desktop-ontologies',
+            'soprano',
+            'strigi',
+            ('svncpp', 'rapidsvn'),
+            'taglib',
+            'taglib-extras',
+            'transcode',
+            'wv2',
+            'wxWidgets',
+            'wxPython',
+            'x264',
+            'xz',
+            'grantlee',
+            'perl-List-MoreUtils',
+        ]
+        for p in commonDeps:
+            # get around the CNY-3238 mess
+            # r.flAdd(p, groupName='group-desktop-common', byDefault=False)
+            r.flAdd(p, groupName='group-supported-stuff-extra')
+
+        # fonts from ... fonts-ttf-google-directory
+        for d in [ 'bangers',
+                   'shadowsintolight',
+                   'buda',
+                   'modernantiqua',
+                   'siamreap',
+                   'artifika',
+                   'sortsmillgoudy',
+                   'copse',
+                   'caudex',
+                   'monofett',
+                   'miltonian',
+                   'luckiestguy',
+                   'felltypes',
+                   'bentham',
+                   'holtwoodonesc',
+                   'kameron',
+                   'josefinslab',
+                   'kaffeesatz',
+                   'orbitron',
+                   'quattrocentosans',
+                   'nunito',
+                   'coda',
+                   'ptsans',
+                   'overtherainbow',
+                   'nixieone',
+                   'zeyada',
+                   'wallpoet',
+                   'terminaldosislight',
+                   'bayon',
+                   'giveyouglory',
+                   'lekton',
+                   'specialelite',
+                   'sueellenfrancisco',
+                   'jura',
+                   'meddon',
+                   'anonymouspro',
+                   'ezrasil',
+                   'novaoval',
+                   'leaguescript',
+                   'gravitasone',
+                   'battambang',
+                   'indieflower',
+                   'kenia',
+                   'droidarabickufi',
+                   'droidserifthai',
+                   'nanumgothic',
+                   'thegirlnextdoor',
+                   'tangerine',
+                   'syncopate',
+                   'novacut',
+                   'dangrek',
+                   'gfsneohellenic',
+                   'michroma',
+                   'smythe',
+                   'josefin',
+                   'bevan',
+                   'ultra',
+                   'cabinsketch',
+                   'permanentmarker',
+                   'judson',
+                   'mako',
+                   'justmeagaindownhere',
+                   'nothingyoucoulddo',
+                   'istok',
+                   'taprom',
+                   'cherrycreamsoda',
+                   'droidarabicnaskh',
+                   'droidsansthai',
+                   'khmer',
+                   'podkova',
+                   'lobstertwo',
+                   'asset',
+                   'bigshotone',
+                   'irishgrover',
+                   'reeniebeanie',
+                   'siemreap',
+                   'moul',
+                   'sniglet',
+                   'moulpali',
+                   'waitingforthesunrise',
+                   'oldstandard',
+                   'cabin',
+                   'gfsdidot',
+                   'dawningofanewday',
+                   'maidenorange',
+                   'pecita',
+                   'comingsoon',
+                   'cardo',
+                   'freehand',
+                   'molengo',
+                   'loveyalikeasister',
+                   'josefinsans',
+                   'raleway',
+                   'geo',
+                   'suwannaphum',
+                   'fontdinerswanky',
+                   'sunshiney',
+                   'unifrakturmaguntia',
+                   'philosopher',
+                   'crimson',
+                   'play',
+                   'dancingscript',
+                   'bokor',
+                   'crushed',
+                   'jsmath',
+                   'corben',
+                   'allerta',
+                   'vollkorn',
+                   'nanumbrushscript',
+                   'lora',
+                   'unifrakturcook',
+                   'brawler',
+                   'architectsdaughter',
+                   'anton',
+                   'content',
+                   'nanummyeongjo',
+                   'hanuman',
+                   'radley',
+                   'sixcaps',
+                   'limelight',
+                   'schoolbell',
+                   'gentium',
+                   'coveredbyyourgrace',
+                   'neucha',
+                   'walterturncoat',
+                   'novascript',
+                   'medievalsharp',
+                   'thabit',
+                   'ruslandisplay',
+                   'neuton',
+                   'cuprum',
+                   'droid',
+                   'preahvihear',
+                   'francoisone',
+                   'shanti',
+                   'lato',
+                   'sigmarone',
+                   'irishgrowler',
+                   'gloriahallelujah',
+                   'didactgothic',
+                   'novamono',
+                   'cedarvillecursive',
+                   'aclonica',
+                   'paytoneone',
+                   'chenla',
+                   'lobster',
+                   'varela',
+                   'miama',
+                   'craftygirls',
+                   'opensans',
+                   'kranky',
+                   'nobile',
+                   'lovedbytheking',
+                   'unkempt',
+                   'swankyandmoomoo',
+                   'gruppo',
+                   'metrophobic',
+                   'angkor',
+                   'playfairdisplay',
+                   'amaranth',
+                   'inconsolata',
+                   'kristi',
+                   'quattrocento',
+                   'pacifico',
+                   'megrim',
+                   'goudybookletter1911',
+                   'carterone',
+                   'calligraffiti',
+                   'kreon',
+                   'mountainsofchristmas',
+                   'tenorsans',
+                   'odormeanchey',
+                   'annieuseyourtelescope',
+                   'ptserif',
+                   'candal',
+                   'novasquare',
+                   'puritan',
+                   'merriweather',
+                   'cantarell',
+                   'vibur',
+                   'expletussans',
+                   'arimo',
+                   'astloch',
+                   'allan',
+                   'novaround',
+                   'rocksalt',
+                   'mavenpro',
+                   'novaslim',
+                   'bowlbyonesc',
+                   'nanumpenscript',
+                   'nanumgothiccoding',
+                   'labelleaurore',
+                   'damion',
+                   'slackey',
+                   'hammersmithone',
+                   'newscycle',
+                   'cousine',
+                   'novaflat',
+                   'wireone',
+                   'justanotherhand',
+                   'gentiumbasic',
+                   'homemadeapple',
+                   'muli',
+                   'andikabasic',
+                   'ubuntu',
+                   'redressed',
+                   'tinos',
+                   'arvo',
+                   'chewy',
+                   'vt323',
+                   'metal',
+                   'koulen',
+                   'goblinone',
+                   'oswald',
+                   'rokkitt',
+                   'patrickhand',
+                   'ebgaramond',]:
+            r.flAdd('font-truetype-' + d,
+                  groupName='group-supported-stuff-extra')
+
+        # io/load gen/perf pack
+        for p in [ 'fio',
+                   'lmbench',
+                   'bonnie++',
+                   'iometer',
+                   'iogen',
+                   ]:
+            r.flAdd(p, groupName='group-supported-stuff-extra')
+
+        for p in [
+           'vnc',
+            # java reqs
+            'ant',
+            'xalan-j',
+            'xerces-j',
+            'xerces-c',
+            'Sablot',
+            'agg',
+            'openmotif',
+            # mono bindings...
+            'evolution-sharp',
+            'galago-sharp',
+            'gecko-sharp',
+            # 'gnome-desktop-sharp',
+            'gnome-keyring-sharp',
+            'gnome-sharp',
+            'gsf-sharp',
+            'gtk-sharp',
+            'gtksourceview-sharp',
+            'gtkspell-sharp',
+            'hal-sharp',
+            'ipod-sharp',
+            'libgphoto2-sharp',
+            'notify-sharp',
+            'taglib-sharp',
+            'libgpod',
+            'eyeD3',
+            'papi',
+            #
+            'iasl',
+            'wv',
+            'libmtp',
+            'fontforge',
+            'freeglut',
+            'gtk-vnc',
+            'vinagre',
+            'lirc',
+            'libirman',
+            'goocanvas',
+            'libgmail',
+            'pygoocanvas',
+            'python-dateutil',
+            'vobject',
+            'docutils',
+            'perl-Locale-gettext',
+            'vala',
+            'openbox',
+            # 'obconf',
+            'obmenu',
+            'gajim',
+            'billreminder',
+            'gtk-recordmydesktop',
+            'Cheetah',
+            'powertop',
+            'libmad',
+            'psiconv',
+            'Pyrex',
+            'pwcrypt',
+            'gnome-specimen',
+            'cabextract',
+            'dynamite',
+            'orange',
+            'libsynce',
+            'unshield',
+            'avidemux',
+            'ipython',
+            'rhythmbox',
+            'loudmouth',
+            'opera',
+            'audacity',
+            'tasque',
+            'thoggen',
+            ('wireshark','wireshark'),
+            ('tshark','wireshark'),
+            'info-wireshark',
+            'tsclient',
+            'gtkglext',
+            'lyx',
+            'glipper',
+            'nautilus-actions',
+            'mzscheme',
+            'rdesktop',
+            'tightvnc',
+            'gnome-rdp',
+            'tsclient',
+            # sword + frontends
+            'sword',
+            'xiphos',
+            #
+            'firestarter',
+            'id3lib',
+            'likewise-open',
+            'libgssglue',
+            'easytag',
+            'python-alsaaudio',
+            'weechat',
+            'bsddb3',
+            'Miro',
+            'net6',
+            'obby',
+            'gobby',
+            'sobby',
+            'sexy-python',
+            'glabels',
+            'irssi',
+            'dvgrab',
+            'kino',
+            'libiec61883',
+            'libquicktime',
+            'alltray',
+            'easytag',
+            'foobillard',
+            'dia',
+            'planner',
+            'ufraw',
+            'mozilla-filesystem',
+            # 'desktop-data-model',
+            'hippo-canvas',
+            'xulrunner-1.8-compat',
+            'gtksourceview-1.0-compat',
+            'babl',
+            'sane-backends',
+            'gegl',
+            # 'gnome-scan',
+            'monsoon',
+            'monotorrent',
+            'mono-nat',
+            # need a refresh
+            # 'cairo-dock',
+            # ('cairo-dock-plugins', 'cairo-dock-plugins'),
+            # ('cairo-dock-plug-ins-xfce', 'cairo-dock-plugins'),
+            'gtk-vnc',
+            'dvda-author',
+            'dvdauthor',
+            ('libvirt', 'libvirt'),
+            ('libvirt-client', 'libvirt'),
+            'virtinst',
+            'virt-manager',
+            'virt-viewer',
+            'js',
+            #'amarok',
+            'terminator',
+            'clutter',
+            'clutter-gtk',
+            'clutter-gst',
+#            'pyclutter',
+            'libmikmod',
+            'dnsmasq',
+            'latencytop',
+            'pilot-link',
+            'pypanel',
+            'python-xlib',
+            'vanilla-dmz-cursor-theme',
+            'vanilla-dmz-aa-cursor-theme',
+            'yasm',
+            'libcddb',
+            'libcdio',
+            'parcellite',
+            #'wesnoth', use gameway repo
+            'libtar',
+            # commented out for now, need to get the deps right
+            #'PyOpenGL',
+            'SDL_Pango',
+            'SDL_gfx',
+            'SDL_ttf',
+            #'compiz-check',
+            #'conky',
+            #'dvgrab',
+            #'extremetuxracer',
+            'freealut',
+            'gbrainy',
+            #'ghex',
+            'ghostscript',
+            ('ghostscript-gtk', 'ghostscript'),
+            #'gnome-commander',
+            #'griffith',
+            #'hotwire-ssh',
+            #'htop',
+            #'kino',
+            #'libiec61883',
+            #'libmspack',
+            #'libpaper',
+            #'libquicktime',
+            'openal',
+            #'pdftk',
+            #'perl-ExtUtils-CBuilder',
+            'perl-File-BaseDir',
+            'perl-File-DesktopEntry',
+            'perl-File-MimeInfo',
+            'perl-Module-Build',
+            #'perl-PathTools',
+            #'plib',
+            #'pygame',
+            #'pyrenamer',
+            #'reportlab',
+            #'smpeg',
+            #'tuxpaint',
+            #'tuxpaint-stamps',
+            #'tuxpaint-ttf',
+            #'tuxtype2',
+            #'tvtime',
+            'foresight-wallpapers-zinden',
+            'WebKit',
+            'midori',
+            'pywebkitgtk',
+            'geoclue',
+            'gwibber',
+            'pycurl',
+            'paramiko',
+            'bzr-svn',
+#            'netbook-launcher', #netbook
+            #### 'ume-launcher', #netbook <<< FIXME needs to be bumped to a version that works with clutter 1.x1;5C
+#            'maximus', #netbook
+#            'go-home-applet', #netbook
+#            'window-picker-applet', #netbook
+#            'desktop-switcher', #netbook
+#            'liblauncher', #netbook
+#            'clutk', #netbook
+#            'wncksync', #netbook, not yet used
+            'libfakekey',
+            'supertux',
+            'supertuxkart',
+            'tuxmath',
+            't4k_common',
+            'pioneers',
+#            'cuyo', #moving to gameway
+            'recordmydesktop',
+            'wavpack',
+            'libcddb',
+            'libcdio',
+            'smplayer',
+            'check',
+#            'bitlbee',
+            'nautilus-dropbox',
+            'thunar-dropbox',
+            'soundtouch',
+            'unique',
+            'gtkunique',
+            'tclap',
+            'pitivi',
+            'gnonlin',
+            'SILLY',
+            'CEGUI',
+            'smc',
+            'espeak',
+            'aspell-es',
+            'aspell-sv',
+            'aspell-pl',
+            'libcanberra',
+            'pangomm',
+            'ptlib',
+            'seahorse-plugins',
+            'pastebinit',
+            'guake',
+            'sshfs',
+            'gftp',
+            'gnuplot',
+            'gnuplot-py',
+            'gnucash',
+            'aqbanking', # dep for gnucash
+            'guile', # dep for gnucash
+            'gwenhywfar', # dep for gnucash
+            'perl-Crypt-SSLeay', # dep for gnucash
+            'perl-Finance-Quote', # dep for gnucash
+            'perl-Finance-QuoteHist', # dep for gnucash
+            'ktoblzcheck', # dep for gnucash
+            'libgsf', # dep for gnucash
+            'libofx', # dep for gnucash
+            'slib', # dep for gnucash
+            'libchipcard', # dep for gnucash
+            'perl-HTML-TableExtract', # dep for gnucash
+            'cryptsetup',
+            'luks-tools',
+            'lensfun',
+            'preload',
+            'gmpc-last.fm',
+            'gmpc',
+            'libmpd',
+            'scribus',
+            'tangerine',
+            'daap-sharp',
+            'pidgin-microblog',
+            'matplotlib',
+            'pondus',
+            'ruby-gnome2',
+            'adns',
+            'adns-python',
+            'smpeg',
+            'lua',
+            'gnuchess',
+            'gnucap',
+            # 'gcompris', We have it in gameway from now on
+            'trash-cli',
+            'Cheetah',
+
+            # bellow stuff rebuilt due to py26 jump
+            # FIXME... source = needs to be filled ...
+            'ConfigObj',
+            'python-markdown',
+            'cmemcache',
+            'libmemcache',
+            'Editra',
+            'Elixir',
+            'Miro',
+            'MySQL-python',
+            'PIL',
+            'PyGreSQL',
+            'PyOpenGL',
+            'PyPAM',
+            'PyQt',
+            'PyXML',
+            'PyYAML',
+            'Pyrex',
+            'SQLAlchemy',
+            'WebKit',
+            'adns-python',
+            'alacarte',
+            'amiconfig',
+            'python-argparse',
+            'ark',
+            'asciidoc',
+            'at-spi',
+            'audit',
+            'avahi',
+            'avahi-glib',
+            'avahi-qt3',
+            'avahi-qt4',
+            'avahi-sharp',
+            'avahi-tools',
+            'beagle',
+            'billreminder',
+            'boost',
+            'bsddb3',
+            'bzr',
+            'bzr-svn',
+            'cElementTree',
+            'cervisia',
+            'cherokee',
+            'christine',
+            'coherence',
+            'compizconfig',
+            'compizconfig-python',
+            'conduit',
+            'cracklib',
+            'd-feet',
+            'dbus-python',
+            'decorator',
+            'deluge',
+            'deskbar-applet',
+            'devhelp',
+            'dia',
+            'displayconfig-gtk',
+            'dnspython',
+            'docutils',
+            'doxygen',
+            'dpaster',
+            'elementtree',
+            'emacs',
+            'emesene',
+            'emesene-unsupported-plugins',
+            'eog',
+            'epdb',
+            'epiphany',
+            'epiphany-extensions',
+            'eyeD3',
+            'firefox-adblock-plus',
+            'firefox-cookiesafe',
+            'firefox-downthemall',
+            'firefox-firebug',
+            'firefox-greasemonkey',
+            'firefox-itsalltext',
+            'firefox-linkification',
+            'firefox-noscript',
+            'firefox-treestyletab',
+            'fusion-icon',
+            'gajim',
+            'gamin',
+            'gaphor',
+            # 'gcompris', We have it in gameway repo from now on
+            'gdata-python',
+            'gedit',
+            'gedit-plugins',
+            'gettext',
+            'glib',
+            'gnome-applets',
+            'gnome-commander',
+            'gnome-desktop',
+            'gnome-doc-utils',
+            'gnome-games',
+            'gnome-menus',
+            'gnome-python',
+            'gnome-python-desktop',
+            'gnome-python-extras',
+            'gnome-shutdown',
+            'gnome-specimen',
+            'gnumeric',
+            'gourmet',
+            'griffith',
+            'grubtobootman',
+            'gst-python',
+            'gstreamer',
+            'gtk',
+            'gtk-doc',
+            'gtk-recordmydesktop',
+            'gtk-vnc',
+            # 'gtkpod', enable as soon we have Anjuta 3.*
+            'gtksourceview',
+            'guake',
+            'gvim',
+            'hal',
+            'hamster-applet',
+            'hotwire-ssh',
+            'hplip',
+            'inkscape',
+            'ipython',
+            'iso-codes',
+            'kvm',
+            'lcms',
+            'lcms2',
+            'libata-migrate',
+            'libevent',
+            'libexo',
+            'libgmail',
+            'libgpod',
+            'libgsf',
+            'libieee1284',
+            'libpurple',
+            'librsvg',
+            'libuser',
+            'libxml2',
+            'libxslt',
+            'lifetunes',
+            'listen',
+            'lxml',
+            'lxml-html-soupparser',
+            'lyx',
+            'm2crypto',
+            'mailman',
+            'matplotlib',
+            'medit',
+            'meld',
+            ('mercurial','mercurial'),
+            ('mercurial-hgk','mercurial'),
+#            'mkinitrd',
+            'mod_python',
+            'mod_wsgi',
+            # 'mugshot', # dead upstream
+            'mutagen',
+            'mx',
+            'newt',
+            'notify-python',
+            'numpy',
+            'obexftp',
+            'obmenu',
+            'openbox',
+            'orca',
+            'paramiko',
+            'pastebinit',
+            'pessulus',
+            'pidgin',
+##            'pigment',
+##            'pigment-python',
+            'pilot-link',
+            'pitivi',
+            'planner',
+            'pondus',
+            ('postgresql', 'postgresql'),
+            ('postgresql-contrib', 'postgresql'),
+            ('postgresql-server', 'postgresql'),
+            'pspp', 'plotutils',
+            'postr',
+            'pyOpenSSL',
+
+            'pycairo',
+#            'pyclutter',
+            'pycrypto',
+            'pygame',
+            'pygobject',
+            'pygoocanvas',
+            'pygtk',
+            'pygtksourceview',
+            'pymsn',
+            'pyorbit',
+            'pypanel',
+            'pyparted',
+            'pyrenamer',
+            'python-alsaaudio',
+            'python-cssutils',
+            'python-ctypes',
+            'python-daap',
+            'python-dateutil',
+            'python-distutils-extra',
+            'python-feedparser',
+            'python-hashlib',
+            'python-inotify',
+            'python-numeric',
+            'python-pgsql',
+            'python-setuptools',
+            'python-sqlite',
+            'python-twisted',
+            'python-twitter',
+            'python-virtualenv',
+            'python-xlib',
+            'python-zopeinterface',
+            'pytube',
+            'pyxdg',
+            'pyxf86config',
+            'reportlab',
+            'revelation',
+            'rope',
+            'ropevim',
+            'ropemode',
+            'ropeide',
+            'rpath-common',
+            'rpath-product-definition',
+            'rpath-xmllib',
+            'sabayon',
+            'scgi',
+            'scons',
+            'screenlets',
+            'scribus',
+            'sexy-python',
+            'sgmlop',
+            'simple-ccsm',
+            'python-simplejson',
+            'sip',
+            'soundconverter',
+            'spe',
+            ('subversion', 'subversion'),
+            ('subversion-gnome', 'subversion'),
+            ('subversion-kde', 'subversion'),
+            ('mod_dav_svn', 'subversion'),
+            'superkaramba',
+            'swig',
+            ('switchdesk','switchdesk'),
+            ('switchdesk-gui','switchdesk'),
+            'terminator',
+            ('tetex', 'tetex'),
+            ('tetex-afm', 'tetex'),
+            ('tetex-dvips', 'tetex'),
+            ('tetex-fonts', 'tetex'),
+            ('tetex-latex', 'tetex'),
+            ('tetex-xdvi', 'tetex'),
+            'textflow',
+            'totem',
+            'translate-toolkit',
+            'twill',
+            'umbrello',
+            'urlgrabber',
+            ('vim', 'vim'),
+            ('vim-minimal',  'vim'),
+            'virt-manager',
+            'virtinst',
+            'vobject',
+            'vsdviewer',
+            'vte',
+            'wbarconf',
+            'weechat',
+            'wesnoth',
+            'whaawmp',
+            'wine-doors',
+            'wireshark',
+            'xchat-gnome',
+            'xulrunner',
+            'gnome-bluetooth',
+            # 'keyjnote', << deps in pdftk who wants gcc-java...
+            'libbtctl',
+            'spe',
+            'wxGlade',
+            'wxPython',
+            'authconfig',
+            'authconfig-gtk',
+            'authconfig-tui',
+            # 'booty',
+            # 'pyblock',
+            'e2fsprogs',
+            'firstboot',
+            'kudzu',
+            'libx86',
+            'pciutils',
+            'pm-utils',
+            'pykickstart',
+            'radeontool',
+            'rhpl',
+            'rhpxl',
+            'system-config-date',
+            'system-config-display',
+            'system-config-users',
+            'system-config-keyboard',
+            'system-config-printer',
+            'pycups',
+            'vbetool',
+            'quodlibet',
+            'gimp-lqr-plugin',
+            'liblqr-1',
+            'ufraw',
+            'griffith',
+            'polib',
+            'gtkparasite',
+            'gnome-keyring-manager', # deprecated
+            'boto',
+            'BeautifulSoup',
+##            'amsn',
+            'boo',
+            ('django', 'django'),
+            ('django-db-mysql', 'django'),
+            ('django-db-postgres', 'django'),
+            ('django-db-sqlite3', 'django'),
+            'django-contact-form',
+            'django-evolution',
+            'django-notification',
+            'django-authopenid',
+            'django-pagination',
+            'django-markup',
+            'django-tagging',
+            'Genshi',
+            'simdock',
+            'devilspie',
+            'libtorrent-rasterbar',
+            'info-vboxusers',
+            'info-nm-openconnect',
+            'moonlight',
+            'moonshine',
+            'editmoin',
+            'cython',
+            # 'python-evas',
+            # 'python-ecore',
+            # 'python-edje',
+            # 'python-etk',
+            'libast',
+            'eterm',
+            'nautilus-image-converter',
+            'libConfuse',
+            'tilda',
+            'bluefish',
+            'gobject-introspection',
+            'libffi',
+            'community-themes',
+            'human-theme',
+            'human-icon-theme',
+            'tangerine-icon-theme',
+            # pulled in for calibre
+            'python-ClientForm',
+            'python-mechanize',
+            'help2man',
+            'calibre',
+            'vagalume',
+            'imagination',
+            'pidgin-facebookchat',
+            'ogmrip',
+            'bluefish',
+            'freeciv',
+            'fbreader',
+            'libunibreak',
+            'cssc',
+            'gnash',
+            'xchat',
+            # gpa - the Gnu Privacy Assistant, a GnuPG frontend
+            'gpa',
+            'gpgme',
+            'perl-ExtUtils-Depends',
+            'perl-ExtUtils-PkgConfig',
+            'wicd',
+            'perl-Glib',
+            'perl-Cairo',
+            'perl-Gtk2',
+            'perl-Pango',
+            'perl-Gtk2-TrayIcon',
+            'boa-constructor',
+            'easygui',
+            'jsonrpclib',
+            'pep8',
+            'pyssh',
+            'poster',
+            'twill',
+            'kodos',
+            'stardict',
+            'gtranslator',
+            'mtpaint',
+            'perl-Gtk2-Spell',
+            'Zim',
+            'iftop',
+            'scrot',
+            # 'eel', # DEPRECATED in gnome-2.26 (keeping it here until we bump all recipes that still dep in it)
+            'mtd-utils', # needed for jffs2 support
+            'truecrypt',
+            'cdrdao',
+            'python-mako',
+            'ImageMagick',
+            'resynthesizer',
+            'picasa',
+            ('sun-jre', 'sun-jdk'),
+            ('sun-jdk', 'sun-jdk'),
+            ('sun-java-webplugin', 'sun-jdk'),
+
+            ('icedtea-jdk', 'icedtea'),
+            ('icedtea-jre', 'icedtea'),
+            'icedtea-web',
+
+            'biopython',
+            'matchbox-keyboard',
+            'uriparser',
+            'pdfshuffler',
+            'pyPdf',
+            'lxc',
+            'gphoto2',
+            'pygooglechart',
+            'sox',
+            'pylint',
+            'pylzma',
+            'logilab-common',
+            'logilab-astng',
+            'sqlalchemy-migrate',
+            'pysvn',
+            'libv4l',
+            'screen',
+            'libharu',
+            'prozilla',
+            'hotwire',
+            'blastbits',
+            'ccrtp',
+            'commoncpp',
+            'libzrtpcpp',
+            'twinkle',
+            'moserial',
+            'portaudio',
+            'libftdi',
+            'deja-dup',
+            'duplicity',
+            'pidgin-tlen',
+            'chromium-bsu',
+            'glpng',
+            'ftgl',
+            'linuxvideoconverter',
+            'gnac',
+            # 3D, Games and Physics
+            'ode',
+            'cal3d',
+            'mingus',
+            'soya3d',
+            'sweethome3d',
+            'tabu-audio-player',
+            'rdiff-backup',
+            'backintime',
+            'pidgin-musictracker',
+            'libopus',
+            'vlc',
+            'rapid-photo-downloader',
+            'pyexiv2',
+            'bareftp',
+            'sqlite',
+            'autoconf213',
+            'gpodder',
+            'gtkdatabox',
+            'klavaro',
+            'sphinxbase',
+            'pocketsphinx',
+            'gnome-voice-control',
+            # 'nexuiz', use gameway repo
+            'opentumblr-client',
+            'xz',
+            'log4net',
+            'nini',
+            'smartirc4net',
+            'smuxi',
+            'SDL_sound',
+            'physfs',
+            'libsigc++-1',
+            'pyusb',
+            'kupfer',
+            'cinelerra',
+            'synergy',
+            'libgee',
+            'gssdp',
+            'gupnp',
+            'gupnp-av',
+            'gupnp-ui',
+            'gupnp-vala',
+            'gupnp-tools',
+            'gupnp-igd',
+            'gupnp-dlna',
+            'rygel',
+            'gst-rtsp-server',
+            'gcstar',
+            'flock',
+            'chromium',
+            'depot_tools',
+            'homebank',
+            'allegro',
+            'nitrogen',
+            'libnice',
+            'tunctl',
+            'arista',
+            'vcdimager',
+            'libytnef',
+            'ytnef',
+            'papyon',
+            'openjpeg',
+            'pdfmod',
+            'libchamplain',
+            'libspectre',
+            'jasper',
+            'ffmpegthumbnailer',
+            #'mediatomb',
+            'xfig',
+            'transfig',
+            'json-glib',
+#            'gnome-shell',
+#            'gnome-shell-theme-forest',
+#            'gjs',
+#            'mutter',
+            'curl',
+            'txt2man',
+            't1utils',
+            'tor',
+            'info-tor',
+            'solfege',
+            'TiMidity',
+            'vidalia',
+            'nfoview',
+            'unetbootin',
+            'mtools',
+            'zmugfs',
+            'zmugjson',
+            'python-cpio',
+            'eject',
+            'python-kiwi',
+            'acetoneiso',
+            'bake',
+            'nted',
+            'fluidsynth',
+            'libsmf',
+            'denemo',
+            'nethack',
+            'devede',
+            'asunder',
+            'chardet',
+            'python-iniparse',
+            'gavl',
+            'libdvbpsi',
+            'gmerlin-avdecoder',
+            'wxsvg',
+            'mpgtx',
+            'libgdata', #new buildreq for totem to make youtube plugin to work
+            'libepc', #totem buildreq
+            'gmyth',
+            'db',
+            #('db4-java', 'db'),
+            'exaile',
+            'libmodplug',
+            'jgoodies-forms',
+            'jgoodies-looks',
+            'ant',
+            'scala',
+            'eclipse-sdk',
+            'fuse-python',
+            'info-davfs2',
+            'davfs2',
+            'font-opentype-inconsolata',
+            ('font-fixed-terminus', 'font-fixed-terminus'),
+            ('font-fixed-terminus-console', 'font-fixed-terminus'),
+            'webkit-sharp',
+            'rssowl',
+            'theme-bamboo-zen',
+            'launchy',
+            'blueman',
+            'jam',
+            'isomaster',
+            'gecko-mediaplayer',
+            'whaawmp',
+            'gparted',
+            'TaskCoach',
+            'bauble',
+            'mpd',
+            'gmpc-plugins',
+            'libnxml',
+            'gimmix',
+            'libmicrohttpd',
+            'gqview',
+            'hyena',
+            'libcue',
+            'seamonkey',
+            'mp4v2',
+            'zziplib',
+            'wildmidi',
+            'gpac',
+            'info-mpd',
+            'dstat',
+            'libmcs',
+            'libmowgli',
+            'audacious',
+            'audacious-plugins',
+            'hsqldb',
+            'blogbridge',
+            'python-musicbrainz2',
+            'chromaprint',
+            'picard',
+            'libpar2',
+            'gpar2',
+            'pam_usb',
+            'pmount',
+            'pdfedit',
+            'python-tunepimp',
+            'guayadeque',
+            'cscope',
+            'pycscope',
+            'perl-Mail-IMAPClient',
+            'perl-Authen-SASL',
+            'perl-Authen-NTLM',
+            'perl-IO-Socket-SSL',
+            'perl-Digest-HMAC',
+            'perl-Net-SSLeay',
+            'perl-Term-ReadKey',
+            'perl-HTML-Tree',
+            'perl-File-Slurp',
+            'perl-HTTP-Cache-Transparent',
+            'perl-PerlIO-gzip',
+            'perl-SOAP-Lite',
+            'perl-HTML-Parser',
+            'perl-Mail-SpamAssassin',
+            'perl-XML-Parser',
+            'perl-XML-SAX',
+            'perl-HTTP-Cookies',
+            # 'perl-HTML-Entities',
+            'perl-Term-ProgressBar',
+            'perl-WWW-Mechanize',
+            'perl-Term-ReadKey',
+            'perl-XML-Writer',
+            'perl-version',
+            'xmltv',
+            'gnome-paint',
+            # trove bellow blocked due to CNY-3485
+            # 'perl-Digest-MD5',
+            'imapsync',
+            'tree',
+            ('git', 'git'),
+            ('gitweb', 'git'),
+            ('git-svn', 'git'),
+            'radiotray',
+            'flaw',
+            ('pcre', 'pcre'),
+            ('pcre-c++', 'pcre'),
+            'netpbm',
+
+            ('mysql', 'mysql'),
+            ('mysql-server', 'mysql'),
+            ('mysql-bench', 'mysql'),
+
+            ('mysql_55', 'mysql_55'),
+            ('mysql_55-server', 'mysql_55'),
+            ('mysql_55-bench', 'mysql_55'),
+
+            'perl-Time-HiRes',
+            'perl-Digest-SHA',
+            'perl-Net-DNS-Resolver-Programmable',
+            'perl-Encode-Detect',
+            'perl-ExtUtils-CBuilder',
+            'perl-IO-Socket-INET6',
+            'perl-Mail-SPF',
+            'perl-NetAddr-IP',
+            'icecast',
+            'camorama',
+            'emacs',
+            'scim', 'scim-anthy', 'scim-pinyin', 'scim-tables',
+            'anthy', 'ibus', 'ibus-pinyin', 'ibus-anthy',
+            'bogofilter',
+            'balsa',
+            'libesmtp',
+            'giggle',
+            'subtitleeditor',
+            'gstreamermm',
+            'volti',
+            'pyalsaaudio',
+            'theme-showtime',
+            'c-ares',
+            'znc',
+            'ladspa_sdk', # buildreq for sox
+            'lives',
+            'lm_sensors',
+            'sensors-applet',
+            'banshee-community-extensions',
+            'cppunit', # Buildreq for filezilla
+            # 'ardour',
+            'lv2core', #buildreqs for ardour
+            'slv2',
+            'frei0r-plugins', #buildreqs for openshot
+            'mlt',
+            'python-httplib2', #requires by openshot
+            'python-oauth2',
+            'openshot',
+            #'imageshack-uploader',
+            'blender',
+            ('blenderplayer', 'blender'),
+            'gngeo', # neogeo emulator
+            'xgngeo',
+            'pidgin-embeddedvideo',
+            'gdata-sharp',
+            'parano',
+            'smv-encode',
+            # 'pino', Add it again as soon its buildable with vala
+            'grisbi',
+            'rpm',
+            'hg-forest',
+            'plib',
+            'openscenegraph',
+            'SimGear',
+            # flightgear is in gameway now
+            # 'flightgear',
+            'DevIL',
+            # bellow need massaging for newer boost
+            'spring',
+            # 'pekwm_menu_tools',
+            # 'gnome-js-common',
+            # 'seed',
+            # 'pycg',
+            'Beaker',
+            'podofo',
+            'pike',
+            'nettle',
+            'libtelepathy', # deprecated
+            'telepathy-haze', # -butterfly preferred
+            'swfdec',
+            'swfdec-gnome',
+            'gtg',
+            'pybugz',
+            'rrdtool',
+            'GeoIP',
+#            'ethos',
+           # php
+            ('php', 'php'),
+            ('php-cgi', 'php'),
+            ('php-enchant', 'php'),
+            ('php-gd', 'php'),
+            ('php-imap', 'php'),
+            ('php-intl', 'php'),
+            ('php-mcrypt', 'php'),
+            ('php-mysql', 'php'),
+            ('php-mysqli', 'php'),
+            ('php-pgsql', 'php'),
+            ('php-soap', 'php'),
+            ('php-xsl', 'php'),
+            # /php
+            'libdbi',
+            'libdc1394',
+            'monodevelop-boo',
+            # until bumped or vtg building sanely with current gtk3
+            # 'monodevelop-vala',
+            'rubrica',
+            'griffith',
+            'w3m',
+            'libupnp',
+            'eiskaltdcpp',
+            'freedcpp',
+            'linuxdcpp',
+            'libxdg-basedir',
+            'libggz',
+            # 'ggz-server',
+            'ggz-client-libs',
+            'ggz-gtk-client',
+            'corkscrew',
+            'amaya',
+            'asio', #dep for vdrift
+            'libpano13', #dep for hugin
+            'hugin',
+            'sofia-sip', #dep for telepathy-sofiasip
+            'telepathy-sofiasip',
+            'fox',
+            'gmusicbrowser',
+            'sonata',
+            'python-mpd',
+            'google-gadgets',
+            ('google-gadgets-gnome','google-gadgets'),
+            ('google-gadgets-kde', 'google-gadgets'),
+            'virtaal',
+            'translate-toolkit',
+            'libvoikko',
+            'malaga',
+            'mozvoikko',
+            'suomi-malaga',
+            'tmispell-voikko',
+            'liblastfm',
+            'cinepaint',
+            # Dead package upstream
+            #'gossip',
+            'gphpedit',
+            'image-exiftool',
+            'fotoxx',
+            'lapack',
+           # atlas bellow conflicts with lapack
+           #            'atlas',
+            'libusbx',
+            'libimobiledevice',
+            'usbmuxd',
+            'info-usbmuxd',
+            'libplist',
+            'ifuse',
+            ('PackageKit','PackageKit'),
+            ('PackageKit-command-not-found','PackageKit'),
+            'gnome-packagekit',
+            'yawn',
+            ('virtualbox-ose',  'virtualbox-ose'),
+            ('virtualbox-guest', 'virtualbox-ose'),
+            'libvisual',
+            'libass',
+            'libmimic',
+            'twolame',
+            'keyutils',
+            'perl-libintl-perl',
+            'perl-Event',
+            'lsdvd',
+            'xnoise',
+            'noip',
+            'info-noip',
+            'googlecl',
+            'MyPasswordSafe',
+            'impressive',
+            'zsh',
+            'flickrnet',
+            'id3v2',
+            'gnome-subtitles',
+            'sshmenu',
+            'ailurus',
+            'wvdial',
+            'wvstreams',
+            'usb_modeswitch',
+            'usb_modeswitch-data',
+            'sip-communicator',
+            'kaa-base',
+            'kaa-metadata',
+            'libraw',
+            'gexiv2',
+            'shotwell',
+            'simple-scan',
+            ('jiranemo','jiranemo'),
+            ('pyjira', 'jiranemo'),
+            'rfkill',
+            'quesoglc',
+            'python-keyring',
+            'i7z',
+            ('i7z-gui', 'i7z'),
+            'tcsh',
+            'docbook-utils-pdf',
+            'libdmapsharing',
+            'lynx',
+            'dosbox',
+            # 'padevchooser',
+            'pavucontrol',
+            'pavumeter',
+            'paprefs',
+            'pulseaudio-equalizer',
+            'pgbouncer',
+            'fribid',
+            'jd',
+            'psycopg2',
+            'python-txpostgres',
+            'python-wokkel',
+            'pywbem',
+            'webunit',
+            'open-vm-tools',
+            'mozplugger',
+            ('gpxe-bootimgs','gpxe'),
+            ('gpxe-roms','gpxe'),
+            ('gpxe-roms-qemu','gpxe'),
+            'seabios',
+            'vgabios',
+            'byobu',
+            'libgsasl',
+            'openconnect',
+            'libvdpau',
+            'pyxmpp',
+            'pexpect',
+            'perl-Data-UUID',
+            'perl-Math-Interpolate',
+            'perl-GD',
+            'perl-Email-Date-Format',
+            'perl-Devel-StackTrace',
+            'perl-MailTools',
+            'perl-JSON-XS',
+            'perl-YAML-Syck',
+            'perl-Filesys-Statvfs',
+            'perl-YAML',
+            'perl-Proc-ProcessTable',
+            'perl-CGI-Application',
+            'perl-Tk',
+            'perl-JSON-DWIW',
+            'perl-Term-Prompt',
+            'perl-Bit-Vector',
+            'perl-Class-MethodMaker',
+            'perl-JSON',
+            'perl-Apache-DBI',
+            'perl-Scalar-List-Utils',
+            'perl-AppConfig',
+            'perl-JSON-Any',
+            'perl-MIME-Lite',
+            'perl-tidy',
+            'fping',
+            'iotop',
+            'enum',
+            'jzlib',
+            'damnvid',
+            # 'steadyflow', bad supported, no need to have it in groups right now
+            'mcpp',
+            'bmon',
+            'epydoc',
+            'autokey',
+            'dbusmenu-qt',
+            'libktorrent',
+            'qjson',
+            'qoauth',
+            'perl-Class-Data-Inheritable',
+            'perl-Class-DBI',
+            'perl-ExtUtils-XSBuilder',
+            'perl-GD-Graph-sparklines',
+            'perl-HTML-Template',
+            'perl-HTML-Template-Expr',
+            'perl-libapreq2',
+            'perl-Parse-RecDescent',
+            'perl-XML-RSS',
+            'mod_perl',
+            'perl-Clone',
+            'perl-UNIVERSAL-moniker',
+            'perl-SQL-Abstract',
+            'perl-Class-DBI-AsForm',
+            'perl-Time-Piece',
+            'perl-DateTime-Format-Mail',
+            'perl-DateTime-Locale',
+            'perl-Class-Trigger',
+            'perl-DateTime',
+            'perl-Params-Validate',
+            ('nscd', 'glibc'),
+            ('glibc-utils', 'glibc'),
+            'libdiscid',
+            'faenza-icon-theme',
+            'oxygen-icon-theme',
+            'augeas',
+            'netcf',
+            'python-keybinder',
+            'hotot',
+            'daemon',
+            'perl-Class-Singleton',
+            'perl-DateTime-TimeZone',
+            'perl-DateTime-Format-W3CDTF',
+            'perl-Devel-NYTProf',
+            'perl-XML-Checker',
+            'perl-XML-Filter-DetectWS',
+            'perl-XML-Filter-Reindent',
+            'perl-XML-Filter-SAXT',
+            'perl-XML-Handler-Composer',
+            'perl-XML-Handler-PrintEvents',
+            'perl-XML-RegExp',
+            'perl-XML-UM',
+            'perl-XML-XQL',
+            'perl-IO-Compress',
+            'perl-Compress-Raw-Zlib',
+            'perl-IO-stringy',
+            ('perl-XML-DOM', 'perl-XML-DOM'),
+            # making sure that perl-libxml-enno
+            # is properly overrided
+            ('perl-libxml-enno', 'perl-XML-DOM'),
+            'pyfacebook',
+            'perl-Mail-Sendmail',
+            'perl-Text-CSV',
+            'streamripper',
+            'pyatspi',
+            'perl-Archive-Zip',
+            'perl-Net-SMTP-SSL',
+            'spotify',
+            'faenza-variants-icon-theme',
+            'dates',
+            'pdsh',
+            'python-xlwt',
+            'folks',
+            'adeskbar',
+            'theme-oxygen',
+            'theme-elementary',
+            'googsystray',
+            'libxmi',
+            'fwbuilder',
+            'iconfig',
+            'iperf',
+            'gmerlin',
+            'nemiver',
+            'mail-notification',
+            'Fabric',
+            'python-ssh',
+            'desktopcouch',
+            ('lemon', 'sqlite'),
+            'libdnet',
+            'tolua++',
+            'info-ushare',
+            'ushare',
+            'agave',
+            'tivion',
+            'libvpx',
+            'memcached',
+            'python-memcached',
+            'libmemcached',
+            'pylibmc',
+            'metacam',
+            'autopano-sift-C',
+            'redis',
+            'hiredis',
+            'info-redis',
+            'python-redis',
+            'python-hiredis',
+            'python-stdnet',
+            'libmodman',
+            ('heimdall', 'heimdall'),
+            ('heimdall-frontend', 'heimdall'),
+            'gsoap',
+            'remmina',
+            'remmina-plugins',
+            'freerdp',
+            'deadbeef',
+            'shutter',
+            ('mongodb', 'mongodb'),
+            ('info-mongod', 'mongodb'),
+            'perl-Gnome2',
+            'perl-Gnome2-Canvas',
+            'perl-Gnome2-GConf',
+            'perl-Gnome2-VFS',
+            'perl-Gtk2-ImageView',
+            'perl-HTTP-Response-Encoding',
+            'perl-X11-Protocol',
+            'perl-Goo-Canvas',
+            'perlmagick',
+            'jdownloader',
+            'pygeoip',
+            'geos',
+            'tinyxml',
+            'nvidia-cg-toolkit',
+            'fmodex',
+            'libsquish',
+            'panda3d',
+            ('uwsgi', 'uwsgi'),
+            ('mod_uwsgi', 'uwsgi'),
+            'zeitgeist',
+            'libzeitgeist',
+            'libgtkhotkey',
+            'python-rdflib',
+            'synapse',
+            'freerdp',
+            'remmina',
+            'remmina-plugins',
+            'libtorrent',
+            'rtorrent',
+            'theme-greenland',
+            'cherrytree',
+            'lshw',
+            'libbluray',
+            'rtmpdump',
+            'libnfs',
+            'libcec',
+            'xbmc',
+            'm17n-lib',
+            'm17n-db',
+            'uim',
+            'activemq',
+            'rubygem-activesupport',
+            'rubygem-builder',
+            'rubygem-i18n',
+            'rubygem-mocha',
+            'rubygem-rack',
+            'rubygem-rake',
+            'rubygem-tzinfo',
+            'bash-completion',
+            'pysmell',
+            'erlang',
+            'macchanger',
+            'crystalspace3d',
+            'rest',
+            'last.fm',
+            'geda',
+            'fuppes',
+            'nedit',
+            'dirac',
+            'pv',
+            'cgkit',
+            'hdf5',
+            'pyflakes',
+            'libwmf',
+            'pytz',
+            'ccache',
+            'media-template',
+            'robotframework',
+            'robotframework-sshlibrary',
+            'skype-call-recorder',
+            'hgnested',
+            'nant',
+            'SparkleShare',
+            'docky',
+            'oniguruma',
+            'mc',
+            'slang',
+            'aria2',
+            'mutt',
+            'gio-sharp',
+            'python-github',
+            'python-github2',
+            'python-dulwich',
+            'irrlicht',
+            'mtpfs',
+            'orc',
+            'pydot',
+            'pyparsing',
+            'jd',
+            'ots',
+            'flashbake',
+            'dbus-sharp-glib',
+            'openproj',
+            'pyudev',
+            'udev-notify',
+            'hdparm',
+            'lftp',
+            'instantbird',
+            ('nmap', 'nmap'),
+            ('nmapfe', 'nmap'),
+            'umplayer',
+            'remind',
+            'info-nut',
+            'nut',
+            'make',
+            'roxterm',
+            'stjerm',
+            'cmus',
+            'tmux',
+            'grip',
+            'xmpppy',
+            'python-munkres',
+            'jinja2',
+            'werkzeug',
+            'flask',
+            'Unidecode', # beets needs unidecode
+            'beets',
+            'b43-fwcutter',
+            'shaperprobe',
+            'perl-Audio-Scrobbler',
+            'pianobar',
+            'perl-Config-IniFiles',
+            'qjackctl',
+            'qsynth',
+            'tomate',
+            'libtalloc',
+            'm4',
+            ('mesa-demos', 'mesa-demos'),
+            ('glx-utils', 'mesa-demos'),
+            'gnomecc',
+            'gyachi',
+            'gmpc-libnotify',
+            'msmtp',
+            'postler',
+            ('imsettings', 'imsettings'),
+            ('imsettings-lxde', 'imsettings'),
+            ('imsettings-xfce', 'imsettings'),
+            'im-chooser',
+            'gtkhtml4',
+            'webkit-gtk3',
+            'libgxps',
+            'protobuf',
+            'keepassx',
+            'SDL_image',
+            'osmo',
+            'sqlautocode',
+            'libmpg123',
+            'springlobby',
+            'theme-foresight-grey',
+            'sound-juicer',
+            'bugzilla',
+            'tixati',
+            'msr-tools',
+            'garmintools',
+            'jthread',
+            'teamviewer',
+            'gpsbabel',
+            'meanwhile',
+            'sysfsutils',
+            'libidn',
+            'log4cxx',
+            'hunspell',
+            'live555',
+            #'mediatomb',
+            #'info-mediatomb',
+            'Paver',
+            'dockbarx',
+            'transmageddon',
+            'fuseiso',
+            'rednotebook',
+            ('openssl-scripts', 'openssl'),
+            'nautilus',
+            # 'nautilus-elementary',
+            'ctags',
+            'mythtv',
+            ('mythtv-backend', 'mythtv'),
+            ('mythtv-frontend', 'mythtv'),
+            'minus-uploader',
+            'itstool',
+            'keepnote',
+            'heldenviewer',
+            'scribes',
+            'eg',
+            'xarchiver', #TODO: drop or revive someday
+            'libxfcegui4',#replaced by ...4ui, but needed for compatibility
+            'leafpad',
+            'pyaudio',
+            'sqlalchemy',
+            'anki',
+            'transcoder',
+            'handbrake',
+            'bino',
+            'tornado',
+            'ario',
+            'libmpdclient',
+            'sbcl',
+            'ocaml',
+            'smalltalk',
+            ('xpra', 'xpra'),
+            ('parti', 'xpra'),
+            ('wimpiggy', 'xpra'),
+            'winswitch',
+            'gnome-pie',
+            'eog-plugins',
+            # some deps for (next) anaconda,
+            # iscsi-initiator-utils will replace open-iscsi from rpl:2-qa
+            'iscsi-initiator-utils',
+            'isomd5sum',
+            'grubby',
+            'dogtail',
+            'nose',
+            'python-virtualenvwrapper',
+            'pinpoint',
+            'octave',
+            'testdisk',
+            'ufw',
+            'gufw',
+            'hdf',
+            'expect',
+            ('expectk', 'tk'),
+            'WordNet',
+            # 'eclipse-wtp-wst',
+            # 'eclipse-gef',
+            # 'eclipse-emf',
+            # #'eclipse-android',
+            # 'eclipse-cdt',
+            # 'eclipse-epic',
+            # 'eclipse-subclipse',
+            'cnijfilter-common',
+            'cnijfilter-ip2600',
+            'ddrescue',
+            'maxima',
+            'dvdbackup',
+            'pyneighborhood',
+            'cgit',
+            'winff',
+            'fuzemux',
+            'video4fuze',
+            'bchunk',
+            'media-player-info',
+            'figlet',
+            # bellow looks stale upstream. 
+            # dep of monodevelop-vala
+            # 'vtg',
+            'gtk-sharp-beans',
+            'gkeyfile-sharp',
+            'xplanet',
+            'xplanetfx',
+            'clamav',
+            'info-clamav',
+            'pygpgme',
+            'google-ctemplate',
+            'mysql-workbench',
+            ('nfs-utils', 'nfs-utils'),
+            ('nfs-client', 'nfs-utils'),
+            ('nfs-server', 'nfs-utils'),
+            'libtirpc',
+            'rpcbind', 
+            'box2d',
+            'gmtk',
+            'celt051',
+            'spice-protocol',
+            'sysstat',
+            'procps',
+            'texi2html',
+            'polly',
+            'gudev-sharp',
+            'python-socks',
+            'Pygments',
+            'umefont',
+            'vlgothic',
+            'dejima-mincho',
+            'hanazono',
+            'ipamonafont',
+            'sawarabi-gothic',
+            'sawarabi-mincho',
+            'sazanami',
+            'ttf-mikachan',
+            'babel',
+            'turpial',
+            'python-zmq',
+            'zeromq',
+            'pymedia',
+            'groovewalrus',
+            'google-earth',
+            'ettercap',
+            'libnet',
+            'hping3',
+            'arp-scan',
+            'guitarix',
+            'playitslowly',
+            ('gzip','gzip'),
+            ('gzip-extras','gzip'),
+            'prelink',
+            'icoutils',
+            'nload',
+            'cogl',
+            'libappindicator',
+            'libpcap',
+            'tcpdump',
+            'info-ntop',
+            'ntop',
+            'fslint',
+            'bootchart',
+            ('gt', 'gt'),
+            ('soundfont-utils', 'gt'),
+            'fluid-soundfont',
+            'dssi',
+            'rosegarden',
+            'csound',
+            'libircclient',
+            ('texinfo', 'texinfo'),
+            ('info', 'texinfo'),
+            ('install-info', 'texinfo'),
+            'lilypond',
+            'mftrace',      # dep for lilypond
+            'autotrace',    # dep for lilypond
+            'miniupnpc',
+            'python-poppler-qt4',   # dep for frescobaldi
+            'frescobaldi',
+            'task',
+            'gtypist',
+            'ranger',
+            'tea',
+            'lmms',
+            'libbsd',
+            'glyr', # needed by pragha
+            'clint',
+            'git-python',
+            'legit',
+            '389-ds-base',
+            'mozldap',
+            'svrcore',
+            'kdiff3',
+            'p11-kit',
+            ('proftpd', 'proftpd'),
+            ('proftpd-ldap', 'proftpd'),
+            ('proftpd-mysql', 'proftpd'),
+            ('proftpd-postgres', 'proftpd'),
+            ('proftpd-utils', 'proftpd'),
+            ('proftpd-wrap', 'proftpd'),
+            'mhash',
+            'nginx',
+            'info-nginx',
+            'pcmanfm',
+            ('MAKEDEV', 'MAKEDEV'),
+            ('dev', 'MAKEDEV'),
+            ('samba-swat', 'samba'),
+            'python-webob',
+            'mosh',
+            'perl-IO-Tty',
+            'ec2-api-tools',
+            'ec2-ami-tools',
+            'dropbox',
+            'libp11',
+            'opensc',
+            'openct',
+            'pcsc-lite',
+            'grive',
+            'json-c',
+            'libsepol',
+            'libselinux',
+            'python-nss',
+            'linphone',
+            'libosip',
+            'libeXosip2',
+            'spacefm',
+            'dspam',
+            'xmms2',
+            'lxmusic',
+            'python-jsonschema',
+            'link-grammar',
+            'python-validictory',
+            'coverage',
+            'python-mock',
+            'portmidi',
+            'sublime-text',
+            'geeqie',
+            'pidgin-autoresize',
+            'python-suds',
+            'python-pyasn1',
+            'python-pyasn1-modules',
+            'python-plumbum',
+            'python-pbs',
+            'xvidcap',
+            'feh',
+            'pwgen',
+            'python-pysphere',
+            'python-six',
+            # 'mixxx',
+            'enet', # dependency for speed-dreams
+            'luajit',
+            'love',
+            # puppet ...
+            'info-puppet',
+            'ruby-shadow',
+            'facter',
+            'rubygem-json',
+            'rubygem-bundler',
+            'rubygem-stomp',
+            'rubygem-systemu',
+            ('puppet-server', 'puppet'),
+            ('puppet', 'puppet'),
+            ('mcollective-client', 'mcollective'),
+            ('mcollective', 'mcollective'),
+            #
+            'cachefilesd',
+            'flowblade',
+            'pithos',
+            'gogglesmm',
+            'libechonest',
+            'quazip',
+            #'jreen', # will enable as soon its built in fdev
+            #'tomahawk', # will enable as soon its in
+            'silicon',
+            'patch',
+            'wget',
+            'gwget',
+            'libwebp',
+            'mupdf',
+            'jbig2dec',
+            'girara', # needed by zathura
+            'zathura',
+            'zathura-pdf-poppler', # plugin for zathura
+            'lesstif',
+            'xlockmore',
+            'mypaint',
+            'termit',
+            'libtommath',
+            'libnl3',
+            'python-daemon',
+            'python-lockfile',
+            'python-setproctitle',
+            'jmtpfs',
+            'puddletag',
+            'moc',
+            'jumanji',
+            'hydrogen',
+            'bullet', 
+            'photo',
+            'libconfig',
+            'lldpad',
+            'tig',
+            'fossil',
+            'ansible',
+            'nodejs',
+            'chrpath', 
+            'darktable',
+            'flickcurl',
+            'lensfun',
+            'simpleburn',
+            'cmatrix',
+            'flashbench',
+            'rabbitvcs',
+            'fonts-adobe-sourcecodepro',
+            'lxdm',
+            'guvcview',
+            'bzip2',
+            'bitlbee',
+            'lxappearance-obconf',
+            'mcelog',
+            'compton',
+            'python-otrace',
+            'nacl-toolchain-newlib',
+            'nss-pam-ldapd',
+            'info-ldap',
+            'info-nslcd',
+            'decibel-audio-player',
+            'info-postdrop',
+            'info-postfix',
+            'postfix',
+            'libiptcdata',
+            'lightmediascanner',
+            'pdksh',
+            'glances',
+            'psutil',
+            'rdate',
+            'python-jsonpickle',
+            'libnfsidmap',
+            'librpcsecgss',
+            # ceph block
+            ('gc', 'gc'),
+            ('libatomic_ops', 'gc'),
+            ('ceph', 'ceph'),
+            ('ceph', 'ceph-libcephfs'),
+            ('ceph', 'ceph-fuse'),
+            ('ceph', 'ceph-radosgw'),
+            'cryptopp',
+            'fcgi',
+            'gperftools',
+            'leveldb',
+            'libaio',
+            'libedit',
+            'libunwind',
+            'snappy',
+            'xsane',
+            # /ceph block
+            'gnu-efi',
+            'efibootmgr',
+            'gummiboot',
+            'nss_db', 
+            'bumblebee',
+            'primus',
+            'VirtualGL',
+            ('libjpeg-turbo', 'libjpeg-turbo'),
+            ('turbojpeg', 'libjpeg-turbo'),
+            'ngrep',
+            'mbpfan',
+
+            'stfl', # dep for newsbeuter
+            'newsbeuter',
+            'dotconf',
+            'flite',
+            'speech-dispatcher',
+            # 'flimage',
+            'grsync',
+            'gnupg',
+            'ssh-keys',
+            'racket',
+            'apr',
+            'apr-util',
+            'csync2',
+            'lsyncd',
+            'vobcopy',
+            'harfbuzz',
+            'at-spi2-atk',
+            'at-spi2-core',
+            'exfat-utils',
+            'giflib',
+            'dash',
+            'winexe',
+            'goffice',
+            'compat-goffice',
+            'libogg',
+            'dvdrip',
+            'lynis',
+            'sed',
+            # deprecated but we keep it referenced for now
+            'indicator-messages',
+            'joe',
+            'python-workerpool',
+            'python-gunicorn',
+            'python-pycparser',
+            'python-cffi',
+            'python-ply',
+            'calcurse',
+            'pidgin-sipe',
+            'xchm', 
+            'minidlna',
+            'most',
+            ('jed', 'jed'),
+            ('xjed', 'jed'),
+            ('rgrep', 'jed'),
+            'poweriso',
+            'furiusisomount',
+            'quota',
+            'libnfnetlink',
+            'dialog',
+            'vte3',
+            'altyo',
+            'python-certifi',
+            'python-requests',
+            'mysql-connector-c++', 
+            'vsqlite++',
+            'python-progressbar',
+            'python-gcp',
+            'springseed',
+            'txt2tags',
+            'flush',
+            'hexchat',
+            'squirrel',
+            'simple-mtpfs',
+            'udisks2',
+            'python-sandman',
+            'nzbget',
+            'srm',
+            'npapi-vlc',
+            ]:
+            r.flAdd(p, groupName='group-supported-stuff-extra')
+
+        r.rplAdd('perl-XML-Dumper', groupName='group-supported-stuff-extra')
+        r.rplAdd('perl-Archive-Tar', groupName='group-supported-stuff-extra')
+        r.rplAdd('perl-Text-Diff', groupName='group-supported-stuff-extra')
+        r.rplAdd('ypserv', groupName='group-supported-stuff-extra')
+        r.rplAdd('vsftpd', groupName='group-supported-stuff-extra')
+        r.rplAdd('xinetd', groupName='group-supported-stuff-extra')
+        r.rplAdd('tftp-server', groupName='group-supported-stuff-extra', source = 'tftp')
+        r.rplAdd('tftp', groupName='group-supported-stuff-extra', source = 'tftp')
+        # FL-2684
+        r.rplAdd('sendmail', groupName='group-supported-stuff-extra')
+        r.rplAdd('sendmail-cf', groupName='group-supported-stuff-extra')
+        # not part of rPL stock groups and we want it
+        # in particular the memcached conary-proxy needs it stock
+        r.flAdd('mod_ssl', groupName='group-supported-stuff-extra')
+
+        # single arch troves
+        r.flAdd('playonlinux', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True)
+
+        r.flAdd('wine', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True, source = 'wine')
+        r.flAdd('wine-gecko', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True, source = 'wine')
+        r.flAdd('wine-mono', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True, source = 'wine')
+
+        r.flAdd('avast', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True)
+        r.flAdd('google-appinventor', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True)
+        r.flAdd('psyco', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True)
+        r.flAdd('adobe-reader', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True)
+        r.flAdd('sopcast', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True)
+        r.flAdd('multibit', groupName='group-supported-stuff-extra', flavor='is: x86', singleArch=True)
+
+
+        # for thinkpad users ...
+        for p in [ 'hdapsd',
+                   'thinkhdaps',
+                   ]:
+            r.flAdd(p, groupName='group-supported-stuff-extra')
+        #
+
+
+        # pkgSpec pkgs
+        r.flAdd('emacs', groupName='group-supported-stuff-extra', source = 'emacs')
+        # r.flAdd('emacs-leim', groupName='group-supported-stuff-extra', source = 'emacs')
+
+        # until RPL-2554 is solved...
+        r.flAdd('libmspack', groupName='group-supported-stuff-extra')
+
+
+        def addOpenOfficeOrg(desktopType='gnome', targetGroup='group-gnome-dist'):
+            # OpenOffice.org iceberg
+            # we want all to appear in searchPath...
+            OOObase = [
+                # XXX we shouldn't have to reference hsqldb here, but if we do not
+                # some java deps it provides are found by OOO from an older, badly
+                # packaged version of blogbridge
+                'hsqldb',
+                'openoffice.org',
+                'openoffice.org-base',
+                'openoffice.org-calc',
+                'openoffice.org-draw',
+                'openoffice.org-impress',
+                'openoffice.org-math',
+                #                    'openoffice.org-mono',
+                'openoffice.org-writer'
+                ]
+
+            # pre-made packs for gnome/kde users pleasure...
+            # r.flCreateGroup('group-ooo-gnome', parentGroup='group-supported-stuff-extra')
+            # r.flCreateGroup('group-ooo-kde', parentGroup='group-supported-stuff-extra')
+
+            for p in OOObase:
+                r.flAdd(p, groupName=targetGroup, source='openoffice.org')
+
+            if desktopType == 'kde':
+                r.flAdd('openoffice.org-kde', groupName=targetGroup, source='openoffice.org')
+            elif desktopType == 'gnome':
+                r.flAdd('openoffice.org-gnome', groupName=targetGroup, source='openoffice.org')
+
+            # i18n
+
+            OOOi18nDocLangs = [
+                'br',
+                'cs',
+                'cy',
+                'da',
+                'de',
+                'es',
+                'et',
+                'fr',
+                'he',
+                'hu',
+                'it',
+                'ja',
+                'km',
+                'ko',
+                'nl',
+                'pa-IN',
+                'pl',
+                'pt-BR',
+                'ru',
+                'rw',
+                'sv',
+                'vi',
+                'zh-CN',
+                'zh-TW',
+                ]
+
+            OOOi18nLangs = [
+                'bg',
+                'bn',
+                'ca',
+                'cs',
+                'da',
+                'de',
+                'dz',
+                'el',
+                'es',
+                'et',
+                'eu',
+                'fi',
+                'fr',
+                'gl',
+                'hi',
+                'hu',
+                'it',
+                'ja',
+                'ko',
+                'mr',
+                'nb',
+                'nl',
+                'nn',
+                'nso',
+                'pl',
+                'pt-BR',
+                'pt',
+                'ru',
+                'si',
+                'sk',
+                'sl',
+                'sv',
+                'tr',
+                'uk',
+                'zh-CN',
+                'zh-TW',
+                ]
+
+            # r.flCreateGroup('group-ooo-locales', parentGroup='group-supported-stuff-extra')
+            for l in OOOi18nLangs:
+                r.flAdd('openoffice.org-locale-' + l, groupName='group-supported-stuff-extra', source='openoffice.org')
+                # r.flAdd('openoffice.org-locale-' + l, groupName='group-ooo-locales', source='openoffice.org')
+
+            #        for l in OOOi18nDocLangs:
+            #            r.flAdd('openoffice.org-doc-' + l, groupName='group-ooo-locales', source='openoffice.org')
+
+
+            kdel10nlangs = ['ar',
+                'bg',
+                'ca',
+#                'ca@valencia',
+                'cs',
+                'da',
+                'de',
+                'el',
+                'en_GB',
+                'es',
+                'et',
+                'eu',
+                'fi',
+                'fr',
+                'ga',
+                'gl',
+                'gu',
+                'he',
+                'hi',
+                'hr',
+                'hu',
+                'ia',
+                'id',
+                'is',
+                'it',
+                'ja',
+                'kk',
+                'km',
+                'kn',
+                'ko',
+                'lt',
+                'lv',
+                'mai',
+                'nb',
+                'nds',
+                'nl',
+                'nn',
+                'pa',
+                'pl',
+                'pt',
+                'pt_BR',
+                'ro',
+                'ru',
+                'sk',
+                'sl',
+                'sr',
+                'sv',
+                'th',
+                'tr',
+                'uk',
+                'wa',
+                'zh_CN',
+                'zh_TW'
+                  ]
+
+            for l in kdel10nlangs:
+                r.flAdd('kde-l10n-' + l, groupName='group-supported-stuff-extra', source='kde-l10n')
+
+
+        # final housekeeping
+
+        # FIXME: this is freak. r.add(..., component=['lib'], flavor = is: x86) installs
+        # remaining components with byDefault=False
+        # obviously this messes everything, as conary still tries to resolve them...
+        # and checkPathConflicts complains loudly
+        if Arch.x86_64:
+            legacyArchGroups = ['group-compat32',] #  'group-desktop-platform-compat32']
+            for g in legacyArchGroups:
+                r.removeComponents( [ 'devel', 'python', 'doc', 'data',
+                                      'runtime', 'test', 'perl',
+                                      'bin', 'tk', 'emacs',
+                                      'supdoc', 'locale', 'config', 'devellib' ],
+                                    groupName=g)
+
+
+        # add our python (2.6)
+        r.flAdd('python', groupName='group-desktop-common')
+        r.flAdd('idle', groupName='group-desktop-common', source = 'python')
+
+        # FALLback python-2.4
+        # this way we don't need to worry about iLP... as 2.4 will be allways available, as fallback
+        r.add('python:runtime', versionStr = r.compatLabel, groupName='group-desktop-common', flavor = '~!bootstrap,ipv6,readline,ssl,tcl,tk')
+        r.add('python:lib', versionStr = r.compatLabel, groupName='group-desktop-common', flavor = '~!bootstrap,ipv6,readline,ssl,tcl,tk')
+        if Arch.x86_64:
+            r.add( 'python:lib', versionStr = r.compatLabel, groupName='group-compat32',
+                   flavor = '~!bootstrap,ipv6,readline,ssl,tcl,tk is: x86')
+
+        #  FIXME: understand why we need this, as python:bin[x86] shouldn't get pulled in first place...
+        if Arch.x86_64:
+            r.remove('python:bin', groupName = 'group-desktop-common', flavor = '~!bootstrap,ipv6,readline,ssl,tcl,tk is: x86')
+            r.remove('python:runtime', groupName = 'group-desktop-common', flavor = '~!bootstrap,ipv6,readline,ssl,tcl,tk is: x86')
+
+
+        #
+        # Everything below here define 'official' foresight editions (gnome,kde,xfce,etc)
+
+        # Define GNOME Edition
+        r.flCreateGroup('group-gnome-dist', parentGroup='group-desktop-platform',
+                        # closures will handled in a single pass at the parent group
+                        # that contains all -dist{,-*} groups
+                        checkOnlyByDefaultDeps=True,
+                        depCheck=False,
+                        autoResolve=True,
+                        # no need to do checkPathConflicts here. will be done on dist-devel
+                        # which has all of this group
+                        checkPathConflicts=False)
+
+        r.addNewGroup('group-desktop-common', groupName='group-gnome-dist')
+        r.addNewGroup('group-gnome',  groupName='group-gnome-dist')
+        r.addNewGroup('group-mozilla',  groupName='group-gnome-dist')
+        r.addNewGroup('group-pidgin',  groupName='group-gnome-dist')
+        r.remove('httpd',  groupName='group-gnome-dist')
+        r.remove('php',  groupName='group-gnome-dist')
+        addOpenOfficeOrg(desktopType='gnome', targetGroup='group-gnome-dist')
+
+        # Define KDE Edition
+        r.flCreateGroup('group-kde-dist', parentGroup='group-desktop-platform',
+                        # closures will handled in a single pass at the parent group
+                        # that contains all -dist{,-*} groups
+                        checkOnlyByDefaultDeps=True,
+                        depCheck=False,
+                        autoResolve=True,
+                        # no need to do checkPathConflicts here. will be done on dist-devel
+                        # which has all of this group
+                        checkPathConflicts=False)
+        r.addNewGroup('group-desktop-common', groupName='group-kde-dist')
+        r.addNewGroup('group-kde', groupName='group-kde-dist')
+
+        addOpenOfficeOrg(desktopType='kde', targetGroup='group-kde-dist')
+        r.addNewGroup('group-mozilla', groupName='group-kde-dist')
+        r.addNewGroup('group-desktop-common-extras', groupName='group-kde-dist')
+
+        # Define XFCE Edition
+        r.flCreateGroup('group-xfce-dist', parentGroup='group-desktop-platform',
+                        # closures will handled in a single pass at the parent group
+                        # that contains all -dist{,-*} groups
+                        checkOnlyByDefaultDeps=True,
+                        depCheck=False,
+                        autoResolve=True,
+                        # no need to do checkPathConflicts here. will be done on dist-devel
+                        # which has all of this group
+                        checkPathConflicts=False)
+        r.addNewGroup('group-desktop-common', groupName='group-xfce-dist')
+        r.addNewGroup('group-xfce', groupName='group-xfce-dist')
+        r.addNewGroup('group-pidgin', groupName='group-xfce-dist')
+        # This is a hack to make xfce edition have Xfce as default login
+        # after installation, by creating a .dmrc for new users.
+        r.flAdd('xfce-default-session', groupName='group-xfce-dist')
+
+        # Define LXDE Edition
+        r.flCreateGroup('group-lxde-dist', parentGroup='group-desktop-platform',
+                        # closures will handled in a single pass at the parent group
+                        # that contains all -dist{,-*} groups
+                        checkOnlyByDefaultDeps=True,
+                        depCheck=False,
+                        autoResolve=True,
+                        # no need to do checkPathConflicts here. will be done dist-devel
+                        # which has all of this group
+                        checkPathConflicts=False)
+
+        r.addNewGroup('group-desktop-common', groupName='group-lxde-dist')
+        r.addNewGroup('group-lxde', groupName='group-lxde-dist')
+        r.addNewGroup('group-pidgin', groupName='group-lxde-dist')
+
+        r.remove('group-mozilla', groupName = 'group-lxde-dist')
+        r.remove('lftp', groupName = 'group-lxde-dist')
+        r.remove('gutenprint', groupName = 'group-lxde-dist')
+        r.remove('gimp', groupName = 'group-lxde-dist')
+	r.remove('transmission', groupName='group-lxde-dist')
+
+
+        # XXX order key
+        def trimStockGroups(groupName, ed):
+            def ignoreGroup(groupName):
+                if groupName in ['group-supported-stuff-extra',
+                                 'group-rails',
+                                 'group-compat32',
+                                 ]:
+                    return True
+                elif groupName.find('devel') > 0:
+                    return True
+                else:
+                    return False
+
+            def componentCleanup(source, ed):
+                # we devel{,lib} clean current group
+                dest = 'group-supported-stuff-extra'
+                if ed != None:
+                    dest = 'group-' + ed +'-devel'
+                    default = True
+                    # avoids {ati-fglrx,nvidia}:devel{,lib}
+                    # files clash
+                    if source == 'group-drivers':
+                        default = False
+                    r.copyComponents(r.develComponents,
+                                     source,
+                                     dest,
+                                     byDefault=default)
+                else:
+                    r.removeComponents(r.develComponents,
+                                       source)
+                    r.removeComponents(r.supDocComponents,
+                                       source)
+
+            if not ignoreGroup(groupName):
+                componentCleanup(groupName, ed )
+                # we check groups bellow current group
+                groupList = r.getChildGroups(groupName)
+                for g in groupList:
+                    if not ignoreGroup(g[0].name):
+                        trimStockGroups(g[0].name, ed)
+
+        # :devel{,lib} stuff in group-{gnome,kde,lxde,xfce}-dist
+        # gets copyed to group-{gnome,kde,lxde,xfce}-dist-devel
+        # but not erased as we have inner groups that belong
+        # to more than one -dist group
+
+        for edition in ['gnome', 'kde', 'lxde', 'xfce']:
+            # this isn't needed with recent conary releases anymore and dropping it lightens -dist{,-*} groups a lot
+            # r.addNewGroup('group-supported-stuff-extra',  groupName='group-%s-dist' % edition, byDefault=False)
+            r.flCreateGroup('group-' + edition + '-dist-devel', parentGroup='group-desktop-platform',
+                            # closures will handled in a single pass at the parent group
+                            # that contains all -dist{,-*} groups
+                            depCheck=False,
+                            checkOnlyByDefaultDeps=True,
+                            autoResolve=True,
+                            # this checkPathConflicts will catch any collision that arises in the plain
+                            # -dist groups
+                            checkPathConflicts=True)
+            r.addNewGroup('group-'+ edition + '-devel', groupName='group-' + edition + '-dist-devel' )
+            r.addNewGroup('group-'+ edition + '-dist', groupName='group-' + edition + '-dist-devel')
+
+            # we do not have a simple way to get each 'group-'+ edition + '-devel' closed as those
+            # are created too soon. (and ence tried to get closed before all stuff getting referenced)
+            # so we keep things consistent by having each of them to require the matching
+            # 'group-' + edition + '-dist-devel'
+            r.Requires('group-' + edition + '-dist-devel', groupName= 'group-'+ edition + '-devel')
+
+
+        # now we scan all groups
+        # under our group 'tree' that are not -devel ones
+        # nor are group-supported-stuff-extra
+        # and we erase all :devel stuff we find
+        for g in r.getChildGroups('group-desktop-platform'):
+            trimStockGroups(g[0].name, None)
+
+
+# vi: set ts=4 sts=4 sw=4 expandtab:

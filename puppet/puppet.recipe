@@ -1,0 +1,72 @@
+
+class Puppet(AutoPackageRecipe):
+    name = 'puppet'
+    version = '2.7.23'
+    buildRequires = [ 'chkconfig:runtime', 'ruby:runtime', 'facter:runtime',
+                      'python:devel',]
+
+    def setup(r):
+        r.addArchive('http://downloads.puppetlabs.com/%(name)s/')
+        r.addPatch('0001-9167-Do-not-sent-tagmail-reports-if-no-changes.patch')
+        r.addSource('puppetstoredconfigclean.rb')
+
+        # puppet-queue.conf is more of an example, used for stompserver
+        r.Move('conf/puppet-queue.conf', 'examples/etc/puppet/')
+
+        r.Run('ruby install.rb --destdir=%(destdir)s --quick --no-rdoc --sitelibdir=%(libdir)s/ruby/site_ruby/1.8')
+
+        for d, p in [('%(sysconfdir)s/puppet/manifests', 0755),
+                     ('%(datadir)s/%(name)s/modules', 0755),
+                     ('%(localstatedir)s/lib/puppet', 0755),
+                     ('%(localstatedir)s/run/puppet',0755),
+                     ('%(localstatedir)s/log/puppet', 0750),]:
+            r.MakeDirs(d, mode = p)
+
+        r.Install('conf/redhat/client.sysconfig', '%(sysconfdir)s/sysconfig/puppet', mode = 0644)
+        r.Install('conf/redhat/client.init', '%(initdir)s/puppet', mode = 0755)
+        r.Install('conf/redhat/server.sysconfig', '%(sysconfdir)s/sysconfig/puppetmaster', mode = 0644)
+        r.Install('conf/redhat/server.init', '%(initdir)s/puppetmaster', mode = 0755)
+        r.Install('conf/redhat/fileserver.conf', '%(sysconfdir)s/puppet/fileserver.conf', mode = 0644)
+        r.Install('conf/redhat/puppet.conf', '%(sysconfdir)s/puppet/puppet.conf', mode = 0644)
+        r.Install('conf/redhat/logrotate', '%(sysconfdir)s/logrotate.d/puppet', mode = 0644)
+
+        for ff in [ 'puppetmasterd.conf', 'puppetca.conf', 'puppetd.conf']:
+            fff = '%%(sysconfdir)s/puppet/%s' %ff
+            r.Create(fff)
+            r.InitialContents(fff)
+
+        r.Install('ext/', '%(datadir)s/%(name)s')
+        r.Install('puppetstoredconfigclean.rb', '%(datadir)s/%(name)s/ext/')
+
+        r.SetModes('%(localstatedir)s/log/puppet', 0750)
+        r.Ownership('puppet', 'puppet', '%(localstatedir)s/run/puppet')
+        r.Ownership('puppet', 'puppet', '%(localstatedir)s/lib/puppet')
+        
+        # # fixme pkg vim and emacs stuff
+
+        r.ExcludeDirectories(exceptions = [ '%(localstatedir)s/run/puppet',               
+                                            '%(localstatedir)s/lib/puppet',
+                                            '%(sysconfdir)s/puppet/manifests',
+                                            '%(datadir)s/puppet/modules',
+                                            ])
+        # # server bits
+        r.PackageSpec('%(name)s-server',
+                      '%(sbindir)s/puppetmasterd',
+                      '%(sbindir)s/puppetrun',
+                      '%(sbindir)s/puppetqd',
+                      '%(initdir)s/puppetmaster',
+                      '%(sysconfdir)s/puppet/fileserver.conf',
+                      '%(sysconfdir)s/puppet/manifests',
+                      '%(sysconfdir)s/sysconfig/puppetmaster',
+                      '%(sysconfdir)s/puppet/puppetmasterd.conf',
+                      '%(mandir)s/man8/puppet-kick.*',
+                      '%(mandir)s/man8/puppet-master.*',
+                      '%(mandir)s/man8/puppet-queue.*',
+                      '%(mandir)s/man8/puppetmasterd.*',
+                      '%(mandir)s/man8/puppetqd.*',
+                      '%(mandir)s/man8/puppetrun.*',)
+        # runtime dep
+        r.Requires('ruby-shadow:lib', '%(sbindir)s/.*')
+
+        
+

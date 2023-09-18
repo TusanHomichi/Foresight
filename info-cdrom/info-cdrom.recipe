@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2009 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class InfoCdrom(GroupInfoRecipe):
+    name = 'info-cdrom'
+    version = '1'
+
+    def setup(r):
+        r.Group('cdrom', 11)

@@ -1,0 +1,7 @@
+loadSuperClass('rubygempackage')
+class RackSsl(RubygemPackageRecipe):
+
+    name = 'rubygem-rack-ssl'
+    version = '1.3.2'
+
+    buildRequires = ['rubygem-rake:runtime']

@@ -1,0 +1,34 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Tor(AutoPackageRecipe):
+    name = 'tor'
+    version = '0.2.4.20'
+    packageSummary = "Tor is free software and an open network that helps you defend against a form of network surveillance"
+    packageDescription = "Tor is free software and an open network that helps you defend against a form of network surveillance that threatens personal freedom and privacy, confidential business activities and relationships, and state security known as traffic analysis."
+
+    buildRequires = [ 'asciidoc:runtime',
+        'chkconfig:runtime',
+        'krb5:devel',
+        'libevent:devel',
+        'openssl:devel',
+        'openssl:runtime',
+        'zlib:devel',
+          ]
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://tor.eff.org/dist/')
+        r.addSource('tor.init', dest='%(initdir)s/tor', mode=0755)
+
+    def configure(r):
+        r.Configure('--enable-geoip-stats')
+
+    def policy(r):
+        r.UtilizeUser('tor', '%(initdir)s/tor')
+        r.UtilizeGroup('tor', '%(initdir)s/tor')

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libgsasl(AutoPackageRecipe):
+
+    name = 'libgsasl'
+    version = '1.5.1'
+
+    buildRequires = ['e2fsprogs:devel', 'gettext:runtime', 'intltool:runtime', 'krb5:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libidn:devel']
+
+    def unpack(r):
+        r.addArchive('ftp://alpha.gnu.org/pub/gnu/gsasl/')

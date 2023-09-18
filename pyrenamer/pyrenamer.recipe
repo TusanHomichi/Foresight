@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyRenamer(AutoPackageRecipe):
+    name = 'pyrenamer'
+    version = '0.5.0'
+
+    buildRequires = ['GConf:runtime', 'desktop-file-utils:runtime', 'gnome-python:python', 
+        'intltool:runtime', 'pkgconfig:devel', 'pygobject:python', 'pygtk:python', 'gettext:runtime', 
+        'perl:runtime', 'python:devel', 'GConf:devel', 'perl-XML-Parser:perl', 'pygtk:devel']
+
+    def unpack(r):
+        r.addArchive('http://www.infinicode.org/code/%(name)s/')

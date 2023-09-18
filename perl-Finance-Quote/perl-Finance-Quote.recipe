@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('cpanpackage.recipe')
+class PerlFinanceQuote(CPANPackageRecipe):
+    name = 'perl-Finance-Quote'
+    version = '1.17'
+
+    buildRequires = [
+        'perl-Crypt-SSLeay:perl',
+        'perl-HTML-Parser:perl',
+        'perl-HTML-TableExtract:perl',
+        'perl:lib',
+        'perl-HTTP-Cookies:perl',
+        'perl-URI:perl',
+	'perl:devel',
+    ]
+
+    def post(r):
+        r.Requires('perl-Crypt-SSLeay:perl', 'DWS\.pm$')
+        r.Requires('perl-Crypt-SSLeay:perl', 'Tiaacref\.pm$')
+

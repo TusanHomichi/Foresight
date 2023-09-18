@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xlockmore(CPackageRecipe):
+    name = 'xlockmore'
+    version = '5.40'
+ 
+    buildRequires = [
+        'ImageMagick:devel', 
+        'Mesa:devel', 
+        'audiofile:devel', 
+        'cairo:devel', 
+        'esound:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'ftgl:devel', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXext:devel', 
+        'libXinerama:devel', 
+        'libXmu:devel', 
+        'libXpm:devel', 
+        'libstdc++:devel', 
+        'pam:devel', 
+        'pkgconfig:devel',
+        'atk:devel', 
+        'gdk-pixbuf:devel', 
+        'gtk:devel', 
+        'lesstif:devel', 
+        'pango:devel',
+        'desktop-file-utils:runtime',
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://www.tux.org/~bagleyd/xlock/xlockmore-5.40/')
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d'
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.macros.cflags += ' -I/usr/include/FTGL'
+        r.Configure('--with-crypt --enable-pam --enable-syslog --disable-setuid')
+        r.Make()
+
+        r.Install('xlock/xlock', '%(bindir)s/', mode=0755)
+        r.Install('xmlock/xmlock', '%(bindir)s/', mode=0755)
+        r.Install('xglock/xglock', '%(bindir)s/', mode=0755)
+        r.Install('xlock/xlock.man', '%(mandir)s/man1/xlock.1', mode=0644)
+        r.Install('xlock/XLock.ad', '%(libdir)s/X11/app-defaults/XLock', mode=0644)
+        r.Install('xmlock/XmLock.ad', '%(libdir)s/X11/app-defaults/XmLock', mode=0644)
+
+        r.addSource('pam.d')
+        r.addSource('xlock.desktop')
+        r.Install('pam.d', '%(sysconfdir)s/pam.d/xlock')
+        r.Desktopfile('xlock.desktop')

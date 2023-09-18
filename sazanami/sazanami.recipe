@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sazanami(PackageRecipe):
+    name = 'sazanami'
+    version = '20040629'
+
+    packageSummary = 'Sazanami Japanese TrueType font, Gothici and Mincho'
+
+    buildRequires=[
+        'fontconfig:runtime',
+        'mkfontdir:runtime',
+        ]
+
+    def setup(r):
+        r.addArchive('http://osdn.dl.sourceforge.jp/efont/10087/')
+        r.Install('%(name)s-gothic.ttf', '%(datadir)s/fonts/%(name)s/')
+        r.Install('%(name)s-mincho.ttf', '%(datadir)s/fonts/%(name)s/')

@@ -1,0 +1,47 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Audacious(AutoPackageRecipe):
+    name = 'audacious'
+    version = '3.3.4'
+
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'dbus-glib:devel',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gtk3:devel',
+        'intltool:runtime',
+        'libICE:devel',
+        'libmcs:devel',
+        'libmowgli:devel',
+        'libsamplerate:devel',
+        'libSM:devel',
+        'libxml2:devel',
+        'ncurses:runtime',
+        'pango:devel',
+        'pkgconfig:devel',
+        'zlib:devel',
+        ]
+
+    packageSummary = 'Audacious is an advanced audio player'
+    packageDescription = 'Audacious is an advanced audio player. It is free, lightweight, based on GTK2, runs on Linux and many other *nix platforms and is focused on audio quality and supporting a wide range of audio codecs. Its advanced audio playback engine is considerably more powerful than GStreamer. Audacious is a fork of Beep Media Player (BMP), which itself forked from XMMS.'
+
+    def unpack(r):
+        r.addArchive('http://distfiles.audacious-media-player.org/')
+
+    def configure(r):
+        r.Configure('--enable-chardet --disable-dependency-tracking --disable-gtk3 --with-buildstamp="Foresight Linux"')
+
+    def policy(r):
+        r.Requires('audacious-plugins:lib', '%(bindir)s/audacious')

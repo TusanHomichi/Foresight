@@ -1,0 +1,13 @@
+class IWLwifi3945(PackageRecipe):
+
+    name = 'iwlwifi-3945-ucode'
+    version = '15.32.2.9'
+
+    def setup(r):
+        dURL = 'http://www.intellinuxwireless.org/iwlwifi/downloads/'
+        # we keep providing old firmware, for ppl running older kernels
+        for f in ('%(version)s', '15.28.1.8', '2.14.4'):
+            r.addArchive( dURL + 'iwlwifi-3945-ucode-%s.tgz' % f)
+        r.Install('../iwlwifi-*/*.ucode', '/lib/firmware/', mode = 0644)
+        r.Flavor(exceptions='/lib/firmware/.*')
+

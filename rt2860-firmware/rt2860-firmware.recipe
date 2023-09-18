@@ -1,0 +1,27 @@
+class RT2860FW(PackageRecipe):
+
+    name = 'rt2860-firmware'
+    version = '2.1.2.0'
+
+    buildRequires = [ 'unzip:runtime' ]
+
+    def setup(r):
+        # upstream has a changed URLs...
+        srpm = 'ftp://fr2.rpmfind.net/linux/rpmfusion/free/fedora/development/source/SRPMS/rt2860-kmod-2.1.2.0-3.fc13.7.src.rpm'
+        r.addArchive('2009_0521_RT2860_Linux_STA_V2.1.2.0.tgz',
+                     rpm = srpm)
+
+        # Needed for WPA2 support (RFBZ #664)
+        r.Replace('HT_DisallowTKIP=1', 'HT_DisallowTKIP=0', 'RT2860STA.dat') 
+
+        r.Create('%(sysconfdir)s/modprobe.d/blacklist-rt2800pci.conf', contents="""
+# This file comes with RPMFusion's rt2860 package.
+# As of kernel 2.6.33, the module that comes with the kernel gets
+# loaded for this device and it stops the device from working. So...
+blacklist rt2800pci 
+""", mode = 0644)
+
+        r.Move('RT2860STA.dat', '%(sysconfdir)s/Wireless/RT2860STA/', mode = 0644)
+        r.Flavor(exceptions='%(sysconfdir)s/.*')
+        r.Config(exceptions='%(sysconfdir)s/.*')
+        r.ComponentSpec('lib', '.*')

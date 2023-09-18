@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2011 Foresight Linux Project
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nut(CPackageRecipe):
+    name = 'nut'
+    version = '2.6.4'
+    buildRequires = [
+        'asciidoc:runtime',
+        'chkconfig:runtime',
+        'dbus-glib:devel',
+        'glib:devel',
+        'hal:devel',
+        'libusb:devel',
+        'lm_sensors:devel',
+        'neon:devel',
+        'net-snmp:devel',
+        'openssl:devel',
+        'pkgconfig:runtime',
+        'tcp_wrappers:devel',
+        'zlib:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('http://www.networkupstools.org/source/%(major_version)s/'
+                     'nut-%(version)s.tar.gz') # non-404 error for .bz2
+        r.macros.nutcfg = '%(sysconfdir)s/ups/'
+        r.Configure('--sysconfdir=%(nutcfg)s '
+                    '--with-statepath=%(localstatedir)s/state/ups '
+                    '--with-drvpath=%(essentialsbindir)s/ '
+                    '--enable-shared '
+                    '--with-user=nut '
+                    '--with-group=nut ')
+        r.Replace('# chkconfig: 2345 31 89',
+                  '# chkconfig: - 31 89', 'scripts/RedHat/upsmon')
+        r.Replace('# chkconfig: 2345 30 90',
+                  '# chkconfig: - 30 90', 'scripts/RedHat/upsd')
+        r.Replace('nutmon', 'nut', 'scripts/RedHat/u*')
+        for f in ('upsd', 'upsmon'):
+            r.Install('scripts/RedHat/'+f, '%(initdir)s/'+f, mode=0700)
+        r.Install('scripts/RedHat/ups', '%(sysconfdir)s/sysconfig/ups')
+        r.Install('conf/ups.conf.sample', '%(nutcfg)s/ups.conf')
+        for f in ('upsd.conf', 'upsd.users'):
+            r.Install('conf/%s.sample'%f, '%(nutcfg)s'+f, mode=0640)
+            r.Ownership('root', 'nut', '%(nutcfg)s'+f)
+        for f in ('upsmon.conf', 'upssched.conf'):
+            r.Install('conf/%s.sample'%f, '%(nutcfg)s'+f, mode=0640)
+            r.Ownership('root', 'nut', '%(nutcfg)s'+f)
+        r.UtilizeUser('nut', 'nut','%(sysconfdir)s/init.d/ups.conf')
+        r.AutoDoc('.*\.txt')
+        r.Make()
+        r.MakeInstall()
+        r.Remove('%(nutcfg)s/*.sample')
+        r.MakeDirs('%(localstatedir)s/state/ups', mode=0700)
+        r.Ownership('nut', 'nut', '%(localstatedir)s/state/ups')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/state/ups')

@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gmime(AutoPackageRecipe):
+    name = 'gmime'
+    version = '2.4.11'
+
+    buildRequires = [  'gtk:devel', 'glib:devel', 'gtk-sharp:devellib',
+                       'gtk-sharp:cil', 'gtk-sharp:lib', 'mono:lib',
+                       'coreutils:runtime', 'gawk:runtime', 'mono:devellib',
+                       'mono:data', 'mono:cil', 'gtk-sharp:runtime',
+                       'mono:config', 'mono:runtime', 'mono:devel',
+                       'pkgconfig:devel', 'zlib:devel', 'gettext:runtime', 'gettext:devel',
+                       'which:runtime', 'docbook-utils:runtime', 'gettext:data', 'gtk-doc:devel',
+                       'automake:runtime', 'autoconf:runtime', 'libtool:runtime',
+                       'gtk-doc:runtime', 'gpgme:devel', 'libgpg-error:devel',
+
+                       ]
+
+    def unpack(r):
+        r.macros.majversion = '.'.join(r.version.split('.')[0:2])
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/%(name)s/%(majversion)s/')
+        r.addPatch('libdir.patch')
+
+
+    def configure(r):
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Configure('--enable-mono --program-prefix=%(name)s --disable-static')
+
+
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

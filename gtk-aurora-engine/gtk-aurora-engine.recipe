@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkAuroraEngine(AutoPackageRecipe):
+    name = 'gtk-aurora-engine'
+    version = '1.5'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'glitz:devel', 'gtk:devel', 'libX11:devel',
+                      'libXrender:devel', 'libpng:devel', 'libxcb:devel',
+                      'pango:devel', 'pkgconfig:devel', 'xcb-util:devel',
+                      'zlib:devel'
+                      ]
+
+    def setup(r):
+        r.addArchive('http://gnome-look.org/CONTENT/content-files/56438-aurora-1.5.1.tar.bz2')
+        r.addArchive('aurora-gtk-engine-%(version)s.tar.gz', sourceDir = '../')
+        r.addArchive('Aurora.tar.bz2', sourceDir = '../', dir = '%(datadir)s/themes/')
+        
+        r.Configure('--enable-animation', dir = '../aurora-%(version)s')
+        r.Make(dir = '../aurora-%(version)s')
+        r.MakeInstall(dir = '../aurora-%(version)s')

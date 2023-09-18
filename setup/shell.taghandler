@@ -1,0 +1,65 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in 
+    files)
+	case $action in
+	    update)
+		for shell in "$@"; do
+		    if ! grep $shell /etc/shells >/dev/null 2>&1 ; then
+			echo "$shell" >> /etc/shells
+		    fi
+		done
+		;;
+	    remove)
+		exp=
+		for shell in "$@"; do
+		    if [ -z "${exp}" ] ; then
+			exp="\\(${shell}"
+		    else
+			exp="${exp}\\|${shell}"
+		    fi
+		done
+		if [ -n "${exp}" ] ; then
+		    exp="${exp}\\)"
+		    # / needs to be prefixed with \ so / in path not magic
+		    exp=${exp//\//\\\/}
+		    sed -i -e "/${exp}/d" /etc/shells
+		fi
+		;;
+             *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    handler)
+	case $action in
+	    update)
+		for shell in "$@"; do
+		    if ! grep $shell /etc/shells >/dev/null 2>&1 ; then
+			echo "$shell" >> /etc/shells
+		    fi
+		done
+		;;
+             *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;
+	esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+esac
+
+exit 0

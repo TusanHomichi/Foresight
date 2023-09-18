@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('binarypackage')
+class Springseed(BinaryPackageRecipe):
+    name = 'springseed'
+    version = '1.0.2'
+ 
+    buildRequires = ['GConf:devel', 'alsa-lib:devel', 'atk:devel', 'binutils:runtime', 'cairo:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXcomposite:devel', 'libXdamage:devel', 'libXext:devel', 'libXfixes:devel', 'libXrandr:devel', 'libXrender:devel', 'libgcc:devellib', 'libstdc++:devel', 'pango:devel', 'udev:devel']
+ 
+    def setup(r):
+        r.macros.site = 'http://springseed.s3.amazonaws.com/dl'
+
+        dist = [
+            ('springseed_1.0.2_i386.deb', Arch.x86),
+            ('springseed_1.0.2_amd64.deb', Arch.x86_64),
+        ]
+        for (deb, arch) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/', use=(arch==True))
+
+

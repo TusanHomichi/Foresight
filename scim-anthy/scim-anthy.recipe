@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ScimAnthy(AutoPackageRecipe):
+    name='scim-anthy'
+    version='1.2.4'
+    buildRequires=['scim:devel', 'anthy:devel', 'gtk:devel', 'libstdc++:devel',
+'libXrender:devel', 'libX11:devel', 'cairo:devel', 'pango:devel', 'atk:devel',
+'expat:devel', 'pango:devel', 'freetype:devel', 'glib:devel', 'pkgconfig:devel',
+'libpng:devel', 'fontconfig:devel', 'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')

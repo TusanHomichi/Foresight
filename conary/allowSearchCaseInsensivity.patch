@@ -1,0 +1,35 @@
+diff -r 951719b749e3 conary/cmds/search.py
+--- a/conary/cmds/search.py	Fri Mar 16 13:39:47 2012 +0100
++++ b/conary/cmds/search.py	Fri Mar 16 14:20:22 2012 +0100
+@@ -27,14 +27,19 @@
+     def search(self, item):
+         import re
+         l = []
++        flag = 0
++        if self.searchIgnoreCase:
++            flag = re.I
++        reObj = re.compile(item, flag)
+         for troveTup in self.troveTups:
+-            if re.match(item, troveTup[0]):
++            if reObj.match(troveTup[0]):
+                 l.append(troveTup)
+ 
+         return sorted(l)
+ 
+     def __init__(self, client):
+         log.debug("loading system model cache");
++        self.searchIgnoreCase = client.cfg.searchIgnoreCase
+ 
+         troveCache = trovecache.TroveCache(None)
+         troveCache.load(client.cfg.dbPath + '/modelcache')
+diff -r 951719b749e3 conary/conarycfg.py
+--- a/conary/conarycfg.py	Fri Mar 16 13:39:47 2012 +0100
++++ b/conary/conarycfg.py	Fri Mar 16 14:20:22 2012 +0100
+@@ -621,6 +621,7 @@
+     root                  =  (CfgPath, '/')
+     recipeTemplateDirs    =  (CfgPathList, ('~/.conary/recipeTemplates',
+                                             '/etc/conary/recipeTemplates'))
++    searchIgnoreCase   =  (CfgBool,True)
+     showLabels            =  CfgBool
+     showComponents        =  CfgBool
+     searchPath            =  CfgSearchPath

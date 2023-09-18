@@ -1,0 +1,21 @@
+diff -Nur gnome-screensaver-0.0.19/data/gnome-screensaver.schemas.in gnome-screensaver-0.0.19.new/data/gnome-screensaver.schemas.in
+--- gnome-screensaver-0.0.19/data/gnome-screensaver.schemas.in	2005-10-12 17:25:17.000000000 +0200
++++ gnome-screensaver-0.0.19.new/data/gnome-screensaver.schemas.in	2005-11-14 23:34:20.000000000 +0100
+@@ -21,7 +21,7 @@
+       <applyto>/apps/gnome-screensaver/mode</applyto>
+       <owner>gnome-screensaver</owner>
+       <type>string</type>
+-      <default>blank-only</default>
++      <default>random</default>
+       <locale name="C">
+         <short>Screensaver selection mode</short>
+         <long>
+@@ -41,7 +41,7 @@
+       <owner>gnome-screensaver</owner>
+       <type>list</type>
+       <list_type>string</list_type>
+-      <default>[]</default>
++      <default>[antinspect,antspotlight,atunnel,blinkbox,braid,bubble3d,circuit,cubestorm,deco,distort,endgame,engine,fiberlamp,fireworx,flipflop,flipscreen3d,flurry,flyingtoasters,fuzzyflakes,galaxy,gears,gflux,glblur,gleidescope,glknots,glmatrix,glslideshow,glsnake,gltext,hypertorus,jigglypuff,lavalite,metaballs,mirrorblob,moebius,molecule,morph3d,penrose,pipes,polyhedra,polytopes,popsquares,pulsar,queens,ripples,shadebobs,sierpinski3d,slidescreen,sonar,spheremonics,stonerview,superquadrics,swirl,xlyap]</default>
+       <locale name="C">
+         <short>Screensaver themes</short>
+         <long>

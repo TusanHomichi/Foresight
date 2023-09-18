@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libselinux(CPackageRecipe):
+    name = 'libselinux'
+    version = '2.1.9'
+
+    buildRequires = [ 'libsepol:devel', 'python:devel', 'swig:runtime', ]
+
+    def setup(r):
+        r.addArchive('http://userspace.selinuxproject.org/releases/20120216/')
+        r.Replace('shell pkg-config', 'shell python-config', 'src/Makefile')
+        r.Make()
+        r.Make('pywrap LIBDIR=%(libdir)s')
+        r.MakeInstall('LIBDIR=%(destdir)s%(libdir)s'
+                      ' SHLIBDIR=%(destdir)s%(libdir)s')
+        r.MakeInstall('LIBDIR=%(destdir)s%(libdir)s'
+                      ' SHLIBDIR=%(destdir)s%(libdir)s',
+                      installtarget='install-pywrap')
+        # src/Makefile creates broken symlink
+        r.Remove('%(libdir)s/libselinux.so')
+        r.Symlink('%(libdir)s/libselinux.so.1', '%(libdir)s/libselinux.so')
+

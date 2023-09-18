@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SDL(AutoPackageRecipe):
+    name = 'SDL'
+    version = '1.2.15'
+
+
+    buildRequires = [ 'nasm:runtime', 'alsa-lib:devel',
+                      'glibc:devel[!bootstrap]', 'glib:devel', 'pkgconfig:devel',
+                      'libXt:devel', 'libX11:devel', 'libXrandr:devel', 'libICE:devel',
+                      'libSM:devel', 'Mesa:devel', 'libusb:devel', 'libXext:devel',
+                      'libXrender:devel', 'DirectFB:lib-core', 'audiofile:devel', 'esound:devel',
+                      'pulseaudio:devel', 'zlib:devel', 'DirectFB:devel', 'libmikmod:devel']
+
+
+    def unpack(r):
+        r.addArchive('http://www.libsdl.org/release/')
+        r.addPatch('SDL-1.2.12-multilib.patch')
+        r.addSource('SDL_config.h')
+
+    def configure(r):
+        r.Configure( '--disable-video-svga '
+                     '--disable-video-ggi '
+                     '--disable-video-aalib '
+                     '--disable-debug '
+                     '--enable-sdl-dlopen '
+                     '--enable-dlopen '
+                     '--enable-esd-shared '
+                     '--enable-pulseaudio-shared '
+                     '--enable-alsa '
+                     '--disable-nas '
+                     '--disable-rpath ')
+
+    def policy(r):
+        if Arch.x86:
+            r.Move('%(includedir)s/SDL/SDL_config.h', '%(includedir)s/SDL/SDL_config-i386.h')
+        else:
+            r.Move('%(includedir)s/SDL/SDL_config.h', '%(includedir)s/SDL/SDL_config-x86_64.h')
+
+        r.Install('SDL_config.h', '%(includedir)s/SDL/SDL_config.h', mode = 0644)
+
+        r.Doc('WhatsNew', 'docs.html', 'docs/html/*', 'docs/index.html')
+
+# Fixing fife game engine that needs it
+	r.Symlink("%(libdir)s/pkgconfig/sdl.pc", "%(libdir)s/pkgconfig/SDL.pc")

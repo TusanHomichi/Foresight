@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('gnomepackage')
+class Vte3(GnomePackageRecipe):
+    buildRequires = [ 'atk:devel', 'fontconfig:devel', 'freetype:devel',
+        'ncurses:devel', 'pango:devel','pygtk:devel', 'pygobject:devel',
+        'python:devel', 'glib:devel', 'cairo:devel', 'pygobject:runtime',
+        'libpng:devel', 'gettext:runtime', 'perl:runtime', 'libXft:devel', 
+        'pango:devel', 'gtk3:devel', 'libbsd:devel']
+
+    name = 'vte3'
+    version = '0.34.7'
+
+    externalArchive = 'http://download.gnome.org/sources/vte/0.34/vte-%(version)s.tar.xz'
+
+
+    # FIXME: look back at glx
+    extraConfig = ('--enable-shared --enable-static --disable-gtk-doc --with-gtk=3.0 '
+                  '--libexecdir=%(libdir)s/%(name)s --without-glX')
+
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        r.Remove('%(bindir)s/vte')
+        r.Remove('%(libdir)s/vte/gnome-pty-helper')
+        r.SetModes('/etc/profile.d/vte.sh', 0755)

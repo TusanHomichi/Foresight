@@ -1,0 +1,22 @@
+--- initscripts-upstart--rpl-8.81.2/rc.d/init.d/halt.broken	2008-10-15 21:11:31.000000000 +0200
++++ initscripts-upstart--rpl-8.81.2/rc.d/init.d/halt	2009-08-30 02:55:28.000000000 +0200
+@@ -85,7 +85,18 @@
+ chmod 600 /var/lib/random-seed
+ action $"Saving random seed: " dd if=/dev/urandom of=/var/lib/random-seed count=1 bs=512 2>/dev/null
+ 
+-[ -x /sbin/hwclock ] && action $"Syncing hardware clock to system time" /sbin/hwclock --systohc
++# Have Foresight Linux honour the /etc/sysconfig/clock settings (#FL-1588).
++# According to RH docs, "false", "no", "true" and "yes" are valid values.
++# We're defaulting to localtime to avoid confusing ill-informed users.
++CLOCK_FORMAT="--localtime"
++if [ -f /etc/sysconfig/clock ]; then
++    UTC="no"
++    . /etc/sysconfig/clock
++    if [ $UTC == "true" -o $UTC == "yes" ]; then 
++        CLOCK_FORMAT="--utc"
++    fi
++fi
++[ -x /sbin/hwclock ] && action $"Syncing hardware clock to system time" /sbin/hwclock --systohc $CLOCK_FORMAT
+ 
+ # Try to unmount tmpfs filesystems to avoid swapping them in.  Ignore failures.
+ tmpfs=$(awk '$2 ~ /^\/($|proc|dev)/ { next; }

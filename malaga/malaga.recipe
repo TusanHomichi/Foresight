@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Malaga(AutoPackageRecipe):
+    name = 'malaga'
+    version = '7.12'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'install-info:runtime', 'ncurses:devel', 'pango:devel', 'pkgconfig:devel', 'readline:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://home.arcor.de/bjoern-beutel/malaga/')
+
+    def configure(r):
+	r.Configure('--with-readline')
+
+    def makeinstall(r):
+	r.MakeInstall('DESTDIR=%(destdir)s INSTALL_INFO=/sbin/install-info INSTALL="install -p"')
+	r.SetModes('%(libdir)s/libmalaga.so*', 0755)

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Playitslowly(PackageRecipe):
+    name = 'playitslowly'
+    version = '1.4.0'
+ 
+    buildRequires = ['pygobject:python', 'pygtk:python', 
+                     'python-simplejson:python', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('http://29a.ch/%(name)s/')
+        r.PythonSetup()

@@ -1,0 +1,102 @@
+#
+# Copyright (c) 2006-2010 rPath, Inc.
+#               2010-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class Django(PackageRecipe):
+
+    buildRequires = [
+        'MySQL-python:python',
+        'PIL:python',
+        'PyYAML:python',
+        'cmemcache:python',
+        'coreutils:runtime',
+        'mod_python:python',
+        'mx:python',
+        'psycopg2:python',
+        'python-ctypes:python',
+        'python-markdown:python',
+        'python-setuptools:python',
+        'python-sqlite:python',
+        'python:devel',
+        'python-simplejson:python',
+        'docutils:python',
+        'numpy:python'
+
+        # django doesn't really need ipython.
+        # If present, ipython will be used as a prettier shell.
+        #'ipython:python',
+    ]
+
+    name = 'django'
+    version = '1.5'
+
+    def setup(r):
+        r.macros.archive_name = 'Django'
+        r.macros.pyver = Python.majversion
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+
+        r.addArchive('http://pypi.python.org/packages/source/D/Django/')
+        r.Run('python setup.py build')
+        r.Run('python setup.py install --root=%(destdir)s')
+
+        if Arch.x86_64:
+            # Hack to deal with locales in non-libdir on x86_64 -- do
+            # not move only conf/locale, because that leads to mixed
+            # pure/impure python
+            r.Move('%(prefix)s/lib/python%(pyver)s/site-packages/django',
+                   '%(sitepkgs)s/')
+            r.Move('%(prefix)s/lib/python%(pyver)s/site-packages/Django*', 
+                   '%(sitepkgs)s/')
+
+        # Deal with locale directory which happens to be in :python
+        r.MakeDirs('%(datadir)s/locale')
+        r.Copy('%(sitepkgs)s/django/conf/locale/*',
+               '%(datadir)s/locale/')
+        r.Remove(r.glob('%(sitepkgs)s/django/conf/locale/*/LC_MESSAGES'), recursive=True)
+        r.Remove(r.glob('%(datadir)s/locale/*.py*'))
+        r.Remove(r.glob('%(datadir)s/locale/*/*.py*'))
+
+        #r.Symlink('%(datadir)s/locale/', '%(sitepkgs)s/django/conf/locale')
+        r.Requires('django:locale',
+            '%(sitepkgs)s/django/contrib/localflavor/.*',
+            '%(sitepkgs)s/django/middleware/locale/.*')
+
+
+        # Break out cache backends
+        # Memcache
+        r.PackageSpec('django-cache-memcached',
+            '%(sitepkgs)s/django/core/cache/backends/memcached.py.*')
+
+
+        # Break out database backends
+        # SQLite 3
+        r.PackageSpec('django-db-sqlite3',
+            '%(sitepkgs)s/django/db/backends/sqlite3/.*')
+        r.Requires('sqlite:runtime',
+            '%(sitepkgs)s/django/db/backends/sqlite3/client.py')
+
+        # MySQL
+        r.PackageSpec('django-db-mysql',
+            '%(sitepkgs)s/django/db/backends/mysql/.*',
+            '%(sitepkgs)s/django/contrib/gis/db/backends/mysql/.*',
+            )
+        r.Requires('mysql:runtime',
+            '%(sitepkgs)s/django/db/backends/mysql/client.py')
+
+        # PostgreSQL - PsycoPG v2
+        r.PackageSpec('django-db-postgres',
+            '%(sitepkgs)s/django/db/backends/postgresql/.*',
+            '%(sitepkgs)s/django/db/backends/postgresql_psycopg2/.*',
+            '%(sitepkgs)s/django/contrib/gis/db/backend/postgis/.*')
+        r.Requires('postgresql:runtime',
+            '%(sitepkgs)s/django/db/backends/postgresql/client.py')
+
+        # disable deps that break packagespec; they will work out
+        # for real use cases due to the inverse deps
+        r.Requires(exceptions='%(sitepkgs)s/django/contrib/gis/db/backend/__init__.*')
+        r.Requires(exceptDeps=('%(sitepkgs)s/django/contrib/gis/models.py.*',
+                               '.*postgis.*'))

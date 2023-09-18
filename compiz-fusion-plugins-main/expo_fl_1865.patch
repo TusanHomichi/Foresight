@@ -1,0 +1,51 @@
+From: Danny Baumann <dannybaumann@web.de>
+Date: Fri, 21 Nov 2008 11:00:10 +0000 (+0100)
+Subject: Don't allow movement of windows that are not supposed to be moved.
+X-Git-Url: http://gitweb.compiz-fusion.org/?p=fusion%2Fplugins%2Fexpo;a=commitdiff_plain;h=f97a9fa6f0ad578f674d1f248bd7bef90e3260e0;hp=c7aea3906ce6fff791bd2ef1de8a48ee5e02723e
+
+Don't allow movement of windows that are not supposed to be moved.
+---
+
+diff --git a/expo.c b/expo.c
+index 46fa27b..30814db 100644
+--- a/src/expo/expo.c
++++ b/src/expo/expo.c
+@@ -1571,10 +1571,6 @@ expoDonePaintScreen (CompScreen * s)
+ 			continue;
+ 		}
+ 
+-		if (!(w->type & (CompWindowTypeNormalMask |
+-				 CompWindowTypeFullscreenMask)))
+-		    continue;
+-
+ 		xOffset = s->hsize * s->width;
+ 		yOffset = s->vsize * s->height;
+ 
+@@ -1596,6 +1592,18 @@ expoDonePaintScreen (CompScreen * s)
+ 		if (!inWindow)
+ 		    continue;
+ 
++		/* make sure we never move windows we're not allowed to move */
++		if (!w->managed)
++		    w = NULL;
++		else if (!(w->actions & CompWindowActionMoveMask))
++		    w = NULL;
++		else if (w->type & (CompWindowTypeDockMask |
++				    CompWindowTypeDesktopMask))
++		    w = NULL;
++
++		if (!w)
++		    break;
++
+ 		es->dndState  = DnDDuring;
+ 		es->dndWindow = w;
+ 
+@@ -1612,7 +1620,7 @@ expoDonePaintScreen (CompScreen * s)
+ 	    }
+ 	    else
+ 	    {
+-		/* no window was hovered */
++		/* no (movable) window was hovered */
+ 		es->dndState = DnDNone;
+ 	    }
+ 

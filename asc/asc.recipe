@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Asc(AutoPackageRecipe):
+    name = 'asc'
+    version = '2.2.0.0'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'libsigc++-1:devel', 'SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'SDL_sound:devel', 'boost:devel', 'bzip2:devel', 'expat:devel', 'freetype:devel', 'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'perl:runtime', 'physfs:devel', 'pkgconfig:devel', 'zlib:devel', 'zip:runtime']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/asc-hq/%(name)s-%(version)s.tar.bz2')
+        r.addSource('asc.desktop')
+        r.addSource('asc.png')
+        r.Desktopfile('asc.desktop')
+	r.Move('asc.png', '/usr/share/games/asc/asc.png')

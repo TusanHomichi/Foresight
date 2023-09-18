@@ -1,0 +1,22 @@
+loadSuperClass('rpmpackage')
+class Libtirpc(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libtirpc'
+    version = '0.2.1'
+   
+    buildRequires = [ 'automake:runtime', 
+                      'autoconf:runtime',
+                      'libtool:runtime',
+                      'pkgconfig:runtime',
+                      'pkgconfig:devel',
+                      'libgssglue:devel',
+                      ] 
+    isRHEL = True
+    rhel_url = 'ftp://ftp.redhat.com/redhat/linux/enterprise/6Server/en/os/SRPMS/libtirpc-0.2.1-3.el6.src.rpm'
+    rpmRelease = '3.el6'
+    rpmPatches = ['libtirpc-0.2.1-rc4.patch','libtirpc-0.2.1-udp-multihome.patch']
+
+    def configure(r):
+        r.macros.cflags += '  '
+        r.Run('sh autogen.sh')
+        r.Run('autoreconf -fisv')
+        r.Configure('--enable-gss=no')

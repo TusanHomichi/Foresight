@@ -1,0 +1,16 @@
+#
+# Copyright 2009 - 2012, Foresight Linux
+#
+loadSuperClass('xfcepackage.recipe')
+class ristretto(XfcePackageRecipe):
+
+    name = 'ristretto'
+    version = '0.6.3'
+    subtree = 'apps'
+    
+    buildRequires =  [
+        'perl-XML-Parser:perl', 'libxfce4util:devel', 
+        'libxfce4ui:devel', 'libexif:devel', 'dbus-glib:devel',
+        'intltool:runtime', 'desktop-file-utils:runtime', 'xfconf:runtime',
+        'xfconf:devel', 'libexo:devel',
+    ] 

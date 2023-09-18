@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Pithos(PackageRecipe):
+
+    name = 'pithos'
+    tag = '07dcbd86a1'
+    version = '0.3.17' + '+' + tag + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [
+        'python-setuptools:python',
+        'dbus-python:python', 
+        'desktop-file-utils:runtime', 
+        'gst-python:python', 
+        'notify-python:python', 
+        'pygobject:python', 
+        'pygtk:python', 
+        'python-keybinder:python', 
+        'python:devel', 
+        'pyxdg:python',
+        'python-distutils-extra:python',
+            ]
+
+    def setup(r):
+        r.addGitSnapshot('https://github.com/kevinmehall/pithos.git',
+                         tag = r.tag)
+        r.PythonSetup(data='--install-data=%(prefix)s')

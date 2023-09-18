@@ -1,0 +1,180 @@
+#
+# Copyright (c) 2008 Lance Haig.
+#               2008-2013 The Foresight Linux Project 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class LibVirt(RPMPackageRecipe,AutoPackageRecipe):
+    buildRequires = [ 'iptables:runtime', 
+                      'libxml2:devel', 
+                      'libxml2:runtime', 
+                      'libxslt:runtime', 
+                      'ncurses:devel', 
+                      'readline:devel', 
+                      'sysfsutils:devel', 
+                      'zlib:devel',
+                      #'xen:devel', # enable this on rpl2 for xen support
+                      'gnutls:devel',
+                      'gnutls:runtime',
+                      'cyrus-sasl:devel',
+                      'cyrus-sasl:runtime',
+                      'parted:devel',
+                      'parted:devellib',
+                      'parted:runtime',
+                      'pkgconfig:devel',
+                      'polkit:devel',
+                      'avahi:devel',
+                      'bridge-utils:runtime',
+                      'cyrus-sasl:devel',
+                      'dbus:devel',
+                      'python:devel',
+                      'readline:devel',
+                      'polkit:runtime', 
+                      'polkit:devel', 
+                      'gcc-c++:runtime', 
+                      'kvm:runtime', 
+                      'iscsi-initiator-utils:runtime',
+                      'gettext:runtime', 
+                      'intltool:runtime', 
+                      'chkconfig:runtime',
+                      'dnsmasq:runtime',
+                      'nfs-client:runtime',
+                      'hal:devel', 'udev:runtime',
+                      'module-init-tools:runtime',
+                      'lvm2:runtime',
+                      'info-kvm:group',
+                      'automake:runtime',
+                      'autoconf:runtime',
+                      'cvs:runtime',
+                      'libtool:runtime',
+                      'libtool:devel',
+                      'curl:devel',
+                      'device-mapper:devel',
+                      'openssl:devel',
+		      'libgcrypt:devel',
+                      'lxc:devel',
+                      'libnl:devel',
+                      'libpciaccess:devel',
+                      'udev:devel',
+                      'libgpg-error:devel',
+                      'audit:devel',
+                      'virtualbox-ose:devel',
+                      'augeas:devel', 'augeas:runtime',
+                      'libxslt:devel', 'netcf:devel',
+                      'util-linux:devel',
+                      'libpcap:devel', 'yajl:devel',
+                      'attr:devel', 'fuse:devel',
+                      ]
+
+    name = 'libvirt'
+    version = '1.0.3'
+    rpmRelease = '1.fc19'
+    rpmPatches = [ ]
+    
+    def configure(r):
+        config =  (' --with-libvirtd --with-init-script=redhat --with-sasl'
+                   ' --with-polkit --with-hal'
+                   ' --with-vbox --without-selinux'
+                   ' --with-avahi --with-gnu-ld --with-lxc'
+                   ' --without-xen --with-qemu --with-python --without-phyp'
+                   ' --without-capng --with-netcf --with-esx'
+                   ' --with-storage-lvm --with-storage-iscsi --with-storage-disk --with-storage-mpath'
+                   ' --with-remote-pid-file=%(localstatedir)s/run/libvirtd.pid '
+                   ' --prefix=%(prefix)s --localstatedir=%(localstatedir)s --libdir=%(libdir)s'
+                   ' --with-qemu-user=root --with-qemu-group=root' )
+
+        r.Run('autoreconf -fi')
+        r.ManualConfigure(config)
+
+    def policy(r):
+
+        for d in [ '%(localstatedir)s/run/%(name)s', 
+                   '%(sysconfdir)s/libvirt/qemu/networks/autostart',
+                   '%(localstatedir)s/log/libvirt',
+                   '%(localstatedir)s/log/libvirt/qemu',
+                   '%(localstatedir)s/lib/%(name)s/images',
+                   '%(localstatedir)s/lib/%(name)s/boot', 
+                   '%(localstatedir)s/cache/%(name)s',
+                   '%(localstatedir)s/cache/%(name)s/qemu',
+                   '%(sysconfdir)s/%(name)s',
+                   '%(datadir)s/lib/libvirt/dnsmasq'
+                   ]:
+            r.MakeDirs(d)
+            r.ExcludeDirectories(exceptions = d)
+
+        for d in [ '%(libdir)s/%(name)s/drivers',
+                   '%(libdir)s/%(name)s/connection-driver',
+                   '%(localstatedir)s/lib/%(name)s/.*',
+                   '%(localstatedir)s/run/%(name)s/.*',
+                   ]:
+            r.ExcludeDirectories(exceptions = d)
+
+        # set perms right
+        r.SetModes('%(sysconfdir)s/%(name)s/', 0700)
+
+        for d in ('libvirt/qemu', 'libvirt/qemu/networks', 'libvirt/qemu/autostart'):
+            dir = '%(sysconfdir)s/' + d
+            r.MakeDirs(dir)
+            r.SetModes(dir, 0700)
+
+        r.SetModes('%(localstatedir)s/lib/%(name)s/images/', 0711)
+        r.SetModes('%(localstatedir)s/lib/%(name)s/boot/', 0711)
+        r.SetModes('%(localstatedir)s/cache/%(name)s/', 0700)
+
+        for d in [ 'run/%(name)s/qemu/',
+                   'lib/%(name)s/qemu/', 
+                   'lib/%(name)s/lxc/', 
+                   'cache/%(name)s/qemu/',
+                   'lib/%(name)s/network/', 
+#                   'lib/%(name)s/iptables/',
+#                   'lib/%(name)s/iptables/filter/', 
+#                   'lib/%(name)s/iptables/nat/',
+                   'log/%(name)s/',
+                   'log/%(name)s/qemu/']:
+            r.SetModes('%(localstatedir)s/' + d, 0700)
+
+        r.SetModes('%(libexecdir)s/libvirt_parthelper', 0755)
+        r.SetModes('%(sbindir)s/libvirtd', 0755)
+
+
+
+        # We don't want to install /etc/libvirt/qemu/networks in the package directly
+        # because if the admin wants to delete the default network completely, we don't
+        # want to end up re-incarnating it on every conary upgrade.
+        r.MakeDirs('%(datadir)s/libvirt/networks')
+        r.SetModes('%(datadir)s/lib/libvirt/dnsmasq/', 0700)
+
+        r.Copy('%(sysconfdir)s/libvirt/qemu/networks/default.xml', '%(datadir)s/libvirt/networks/default.xml')
+        r.Remove('%(sysconfdir)s/libvirt/qemu/networks/default.xml')
+        r.Remove('%(sysconfdir)s/libvirt/qemu/networks/autostart/default.xml')
+        # Strip auto-generated UUID - we need it generated per-install
+        r.Run('sed -i -e "/<uuid>/d" %(destdir)s%(datadir)s/libvirt/networks/default.xml')
+
+        # We want to install the default network for initial conary installs
+        # or on the first upgrade from a non-network aware libvirt only.
+        # We check this by looking to see if the daemon is already installed
+        # thru a taghandler
+
+        r.addSource('%(name)s_uuidgen.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/%(name)s_uuidgen')
+        r.addSource('%(name)s_uuidgen.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/%(name)s_uuidgen', mode=0755)
+
+        r.Requires('file: %(bindir)s/virsh', '%(taghandlerdir)s/%(name)s_uuidgen')
+        r.Requires('file: %(sbindir)s/dnsmasq', '%(bindir)s/virsh')
+        r.Requires('netcf:runtime', '%(name)s:runtime')
+        r.Requires('gettext:runtime', '%(initdir)s/libvirt-guests')
+
+        r.TagSpec('%(name)s_uuidgen', '%(bindir)s/virsh')
+
+        # Client files
+        r.PackageSpec("%(name)s-client", '%(mandir)s/man1/virsh\.1.*')
+        r.PackageSpec("%(name)s-client", '%(mandir)s/man1/virt-xml-validate\.1.*')
+        r.PackageSpec("%(name)s-client", '%(bindir)s/virsh')
+        r.PackageSpec("%(name)s-client", '%(bindir)s/virt-xml-validate')
+        r.PackageSpec("%(name)s-client", '%(libdir)s/lib.*\.so\..*')
+        r.PackageSpec("%(name)s-client", '%(datadir)s/locale/.*')
+        r.PackageSpec("%(name)s-client", '%(datadir)s/%(name)s/schemas/.*')
+        r.PackageSpec("%(name)s-client", '%(sysconfdir)s/sasl2/libvirt.conf')

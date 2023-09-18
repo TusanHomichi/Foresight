@@ -1,0 +1,19 @@
+--- udev-notify/lp:udev-notify--/src/pyudev/monitor.py	2012-03-26 23:24:45.000000000 +0200
++++ udev-notify/lp:udev-notify--/src/pyudev/copy-monitor.py	2012-07-12 18:13:27.000000000 +0200
+@@ -247,6 +247,13 @@
+         with closing(select.epoll()) as notifier:
+             notifier.register(self, select.EPOLLIN)
+             while True:
+-                events = notifier.poll()
+-                if events:
+-                    yield self.receive_device()
++                try:
++                    events = notifier.poll()
++                except IOError as e:
++                    if e.errno == 4:    # EINTR generated on resume from suspend
++                        pass
++                    else:
++                        raise
++                else:
++                    if events:
++                        yield self.receive_device()

@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Spe(PackageRecipe):
+    name = 'spe'
+    version = 'r346'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'PIL:python', 'python-ctypes:python', 
+        'python:devel', 'python:tk', 'wxPython:python']
+ 
+    def setup(r):
+        r.addSvnSnapshot('svn://svn.berlios.de/python/spe/trunk/_spe', dir='%(datadir)s/')
+        
+        # Rename the folder because the app expects it to be _spe.
+        r.Move('%(datadir)s/spe--_spe', '%(datadir)s/_spe')
+
+        # Remove the wxGlade folder as it is unused. 
+        # To get wxGlade install the wxGlade package. Might need to add it as a r.Requires()
+        r.Remove('%(datadir)s/_spe/plugins/wxGlade', recursive=True)
+        r.CompilePython('%(datadir)s/_spe')
+        
+        # Create a link to the file in /usr/bin.
+        r.Symlink('%(datadir)s/_spe/SPE.pyw', '%(bindir)s/spe')
+
+        # Make sure that there is a menu entry for the app.
+        r.addSource('spe.desktop')
+        r.Desktopfile('spe.desktop')

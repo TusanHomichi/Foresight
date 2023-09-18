@@ -1,0 +1,11 @@
+--- configure.ac.orig	2008-04-05 09:08:41.000000000 +0300
++++ configure.ac	2008-04-05 09:09:34.000000000 +0300
+@@ -20,7 +20,7 @@
+ IT_PROG_INTLTOOL([0.35.0])
+ 
+ dnl AM_PATH_PYTHON_VERSION(2.4, 2.4.0, 2.5, 2.5.0)
+-AM_PATH_PYTHON_VERSION(2.5, 2.5.0)
++AM_PATH_PYTHON_VERSION(2.4, 2.4.4)
+ 
+ PKG_CHECK_MODULES(TIMEVAULT, pygobject-2.0 pygtk-2.0 gnome-python-2.0 nautilus-python notify-python dbus-python)
+ 

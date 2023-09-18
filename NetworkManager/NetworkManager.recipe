@@ -1,0 +1,106 @@
+#
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+loadSuperClass('gnomepackage')
+loadRecipe('ppp') # for proper pppd_plugin_dir
+class NetworkManager(GnomePackageRecipe):
+    name = "NetworkManager"
+    # stamp = datetime.date.today().strftime("%Y.%m.%d")
+    version = '0.8.6'
+    # version =  '%s+%s' % (realVersion,stamp)
+    buildRequires = [
+        'GConf:devel',
+        'chkconfig:runtime',
+        'dbus-glib:devellib',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'e2fsprogs:devel',
+        'gnome-keyring:devel',
+        'hal:devel',
+        'iproute:runtime',
+        'iptables:runtime',
+        'libgcrypt:devel',
+        'libglade:devel',
+        'libgpg-error:devel',
+        'libnl:devel',
+        'libnotify:devel',
+        'nspr:devel',
+        'nss:devel',
+        'pango:devel',
+        'polkit:devel',
+        'polkit:runtime',
+        'popt:devel',
+        'ppp:devel',
+        'udev:devel',
+        'gudev:devel',
+        'udev:lib',
+        'util-linux:devel',
+        'util-macros:devel',
+        'wireless-tools:devel',
+        'libsoup:devel',
+        'automake:runtime',
+        'autoconf:runtime',
+        ]
+
+    extraConfig = (
+        ' --disable-static'
+        ' --with-distro=redhat'
+        ' --with-dhclient=yes'
+        ' --with-dhcpcd=no'
+        ' --with-crypto=nss'
+        ' --enable-polkit=yes'
+        ' --with-system-ca-path=%(sysconfdir)s/pki/tls/certs'
+        ' --enable-more-warnings=no'
+        ' --with-pppd-plugin-dir=%(libdir)s/pppd/' + Ppp.version
+        )
+
+    patches = [
+        'explain-dns1-dns2.patch',
+        ]
+
+    configureName = './autogen.sh'
+
+    def unpack(r):
+        r.addGitSnapshot('git://anongit.freedesktop.org/NetworkManager/NetworkManager',
+                         branch = 'NM_0_8', tag = 'b5bcb9f28a21715d0eaf46835140c80174a636b0')
+
+        for p in r.patches:
+            r.addPatch(p)
+
+    def policy(r):
+        r.addSource('NetworkManager.conf')
+
+        # create a VPN directory
+        r.MakeDirs('%(sysconfdir)s/NetworkManager/VPN')
+        r.ExcludeDirectories(exceptions=[ '%(sysconfdir)s/NetworkManager/VPN',
+                                          '%(datadir)s/gnome-vpn-properties',
+                                          '%(sysconfdir)s/%(name)s/dispatcher.d',
+                                          '%(localstatedir)s/lib/%(name)s',])
+                                         
+        # create a keyfile plugin system settings directory
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/%(name)s/system-connections')
+
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/run/%(name)s')
+ 
+        # not sure if these are needed
+        r.MakeDirs('%(sysconfdir)s/NetworkManager/dispatcher.d')
+        r.MakeDirs('%(datadir)s/gnome-vpn-properties')
+        r.MakeDirs('%(localstatedir)s/lib/NetworkManager')
+
+        r.Requires('libnl:lib', '%(sbindir)s/NetworkManager')
+        r.Requires('wpa_supplicant:runtime', '%(sbindir)s/NetworkManager')
+        r.Requires('ModemManager:runtime', '%(sbindir)s/NetworkManager')
+        r.Requires('mobile-broadband-provider-info:data', '%(sbindir)s/NetworkManager')
+        # NetworkManager and network-manager-applet need to share protocol
+        # NetworkManager has been known to change protocol in a
+        # minor version update (0.8.2 -> 0.8.4, for instance).
+        r.macros.protver = '.'.join(r.version.split('.')[0:3])
+        r.ComponentProvides('%(protver)s')
+ 
+        r.Install('NetworkManager.conf', '%(sysconfdir)s/%(name)s/')
+ 
+        r.Install('test/.libs/nm-online', '%(bindir)s/', mode = 0755)

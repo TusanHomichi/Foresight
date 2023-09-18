@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Papi(AutoPackageRecipe):
+    name = 'papi'
+    version = '1.0_beta'
+ 
+    buildRequires = ['file:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/openprinting/')
+        #r.addSvnSnapshot('https://openprinting.svn.sourceforge.net/svnroot/openprinting/trunk')
+        #r.Run('./autogen.sh')
+
+    def configure(r):
+        r.Configure('--without-apache')
+
+    def makeinstall(r):
+        AutoPackageRecipe.makeinstall(r)
+        #for file in 'add-modify-printer', 'printer-query', 'print-test', 'ipp', 'printers-list', 'remove-printer':
+        #    r.Move('%(datadir)s/examples/bin/' + file, '%(bindir)s/')
+
+    def policy(r):
+        r.Remove('%(datadir)s/examples', recursive=True)

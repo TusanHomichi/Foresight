@@ -1,0 +1,13 @@
+class poedit(AutoPackageRecipe):
+    name = 'poedit'
+    version = '1.4.6.1'
+
+    buildRequires = ['aspell:devel', 'atk:devel', 'cairo:devel', 'db:devel',
+'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel',
+'freetype:devel', 'glib:devel', 'gtk:devel', 'gtk:runtime', 'gtkspell:devel',
+'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libstdc++:devel',
+'pango:devel', 'pkgconfig:devel', 'wxWidgets:devel', 'wxWidgets:runtime',
+'zlib:devel']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')

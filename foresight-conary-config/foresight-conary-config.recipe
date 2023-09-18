@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Foresightconaryconfig(PackageRecipe):
+    name = 'foresight-conary-config'
+    version = '2'
+
+    def setup(r):
+        r.addSource('rc_conary', dest='%(sysconfdir)s/conary/config.d/foresight')
+        r.addSource('kernel.conaryrc', dest='%(sysconfdir)s/conary/config.d/kernel')
+
+        # FIXME: find a better way, if any
+        r.addSource('fcc.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/fcc')
+        r.addSource('fcc.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/fcc', mode=0755)
+
+        # we rely in presence of distro-release in advance of calling
+        # the post script, in order to spot running label
+        r.Requires('distro-release:runtime', '%(sysconfdir)s/conary/config.d/foresight')
+        # so that tag-handler is run
+        r.Requires('foresight-conary-config:runtime', '%(sysconfdir)s/conary/config.d/foresight')
+
+        r.TagSpec('fcc', '%(sysconfdir)s/conary/config.d/foresight')
+        # avoids conary generating a bonus .conflicts file on update
+        r.InitialContents('%(sysconfdir)s/conary/config.d/foresight')

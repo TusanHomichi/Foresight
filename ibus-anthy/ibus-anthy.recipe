@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IbusAnthy(AutoPackageRecipe):
+    name = 'ibus-anthy'
+    version = '1.2.1'
+ 
+    buildRequires = [
+        'anthy:devel',
+        'gettext:runtime',
+        'ibus:python',
+        'intltool:runtime',
+        'pkgconfig:devel',
+        'pygobject:python',
+        'pygtk:python',
+        'python:devel',
+        'swig:runtime',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://ibus.googlecode.com/files/')

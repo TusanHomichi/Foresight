@@ -1,0 +1,6 @@
+loadSuperClass('cpanpackage.recipe')
+class TermReadKey(CPANPackageRecipe):
+    name = 'perl-TermReadKey'
+    version = '2.30'
+
+    buildRequires = ['gcc:devel','gcc:runtime','glibc:devel']

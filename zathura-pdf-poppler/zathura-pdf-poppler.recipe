@@ -1,0 +1,29 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ZathuraPdfPoppler(AutoPackageRecipe):
+    name = 'zathura-pdf-poppler'
+    version = '0.2.1'
+ 
+    buildRequires = [
+        'girara:devel',
+        'poppler:devel',
+        'poppler-glib:devel',
+        'zathura:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://pwmt.org/projects/zathura/plugins/download/zathura-pdf-poppler-%(version)s.tar.gz')
+
+    def make(r):
+        r.Make('ZATHURA_GTK_VERSION=2 WITH_SQLITE=1 LIBDIR=%(libdir)s')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

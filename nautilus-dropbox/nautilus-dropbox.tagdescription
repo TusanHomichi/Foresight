@@ -1,0 +1,6 @@
+file          %(taghandlerdir)s/nautilus-dropbox
+name          nautilus-dropbox
+include       %(libdir)s/nautilus/extensions-2.0/libnautilus-dropbox.so
+implements    files preupdate
+implements    files preremove
+implements    files update

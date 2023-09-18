@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2009-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Papyon(PackageRecipe):
+
+    name = 'papyon'
+    version = '0.5.5'
+
+    buildRequires = [
+        'cElementTree:python',
+        'gst-python:python',
+        'pyOpenSSL:python',
+        'python-setuptools:python',
+        'python:devel',
+        'sip:python',
+        'farsight2:python',
+        'pygobject:python'
+        ]
+
+    def setup(r):
+        r.addArchive('http://www.freedesktop.org/software/papyon/releases/')
+        # don't use '__file__', since conary uses 'execfile' to run setup
+        r.addPatch('file-not-defined.patch')
+        r.addPatch("https://bugs.freedesktop.org/attachment.cgi?id=53291")
+        r.PythonSetup()
+    #    r.Move('%(libdir)s/python2.6/site-packages/tests', 
+    #           '%(libdir)s/python2.6/site-packages/%(name)s/')

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tls(AutoPackageRecipe):
+    name = 'tls'
+    version = '1.6'
+ 
+    buildRequires = ['openssl:devel', 'tcl:runtime','tcl:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/tls/%(name)s%(version)s-src.tar.gz')

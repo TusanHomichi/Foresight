@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2006-2010 rPath, Inc.
+# All rights reserved
+#
+
+class Tora(AutoPackageRecipe):
+    name = 'tora'
+    version = '2.1.0'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'fontconfig:devel',
+        'freetype:devel', 'glib:devel', 'install-info:runtime',
+        'libICE:devel', 'libpng:devel', 'libSM:devel', 'libstdc++:devel',
+        'libX11:devel', 'libXext:devel', 'libXinerama:devel',
+        'libXrandr:devel', 'libXrender:devel', 'openssl:devel',
+        'pcre:devel', 'QScintilla2:devel', 'qt4-core:devellib',
+        'qt4:devel', 'qt4-gui:devellib', 'qt4-sql:devellib', 'zlib:devel',
+    ]
+
+    use_oracle = False
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/tora/')
+
+    def configure(r):
+        extraConfig = '--without-kde'
+        if not r.use_oracle:
+            extraConfig += ' --without-oracle'
+
+        r.Configure(extraConfig)

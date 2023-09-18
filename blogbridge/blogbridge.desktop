@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=BlogBridge
+Comment=Robust RSS Reader
+Exec=/opt/blogbridge/blogbridge-6.7/blogbridge.sh
+Icon=blogbridge
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Network;

@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Flickcurl(AutoPackageRecipe):
+    name = 'flickcurl'
+    version = '1.22'
+ 
+    buildRequires = [ 'chrpath:runtime', 'curl:devel',
+                      'libxml2:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://download.dajobe.org/%(name)s/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+
+    def policy(r): 
+        for f in [ 'flickcurl',
+                   'flickrdf',]:
+            r.Run('chrpath --delete %%(destdir)s/%%(bindir)s/%s' % f)

@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GTKSourceView(GnomePackageRecipe):
+
+    buildRequires = [
+        'gtk:devel',
+        'gnome-vfs:devel',
+        'libxml2:devel',
+        'perl:runtime',
+        'gtk-doc:runtime',
+        'libgnomeprint:devel',
+        'libgnomeprintui:devel',
+        'gettext:runtime',
+        'glib:runtime',
+        'atk:devel',
+        'cairo:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'glib:devel',
+        'libart_lgpl:devel',
+        'libpng:devel',
+        'pango:devel',
+        'gtk-doc:runtime',
+        'python:devel',
+        'gobject-introspection:devel',
+        ]
+
+    name = 'gtksourceview'
+    version = '2.11.2'
+    extraConfig = (' --disable-gtk-doc --disable-static '
+                   # XXX FIXME 
+                   # understand why it breaks
+                   ' --enable-introspection=no')
+
+    def policy(r):
+        r.Remove('%(datadir)s/gtksourceview-2.0/language-specs/check.sh')
+        r.Remove('%(datadir)s/gtksourceview-2.0/language-specs/convert.py')

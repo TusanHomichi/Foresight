@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Unetbootin(CPackageRecipe):
+    name = 'unetbootin'
+    version = '608'
+ 
+    buildRequires = ['make:runtime', 'qt4:devel', 'libgcc:devellib', 'libstdc++:devel', 'desktop-file-utils:runtime', 'gcc:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/unetbootin/UNetbootin/%(version)s/unetbootin-source-%(version)s.tar.gz')
+	r.mainDir('../unetbootin')
+    	r.addAction('lupdate-qt4 unetbootin.pro')
+    	r.Run('lrelease-qt4 unetbootin.pro')
+    	r.Run('qmake-qt4')
+    	r.Make()
+	r.Install('unetbootin', '%(bindir)s/', mode = 0755)
+	r.Install('unetbootin_*.qm', '%(datadir)s/unetbootin/', mode = 0644)
+	r.Requires('mtools:runtime', '%(bindir)s/unetbootin')
+#	r.Run("sed -i '/^Version/d' unetbootin.desktop")
+#	r.Run("sed -i '/\[en_US\]/d' unetbootin.desktop")
+#	r.Run("sed -i 's|/usr/bin/unetbootin|unetbootin|g' unetbootin.desktop")
+#	r.Run(''--vendor="" --remove-category=Application --dir=%(datadir)s/applications', unetbootin.desktop')
+        r.addSource('unetbootin.desktop')
+        r.addSource('usb.png')
+	r.Desktopfile('unetbootin.desktop')
+	r.Move('usb.png', '%(datadir)s/pixmaps/')

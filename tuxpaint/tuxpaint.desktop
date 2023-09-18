@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=Tux Paint
+Type=Application
+Exec=tuxpaint
+Icon=tuxpaint.png
+Terminal=false
+Comment=Tux Paint: a drawing program for children.
+Comment[ca]=Tux Paint: un programa de dibuix per a nens petits.
+Comment[de]=Tux Paint: ein Malprogramm für (kleine) Kinder.
+Comment[es]=Tux Paint: un programa de dibujo para niños chicos.
+Comment[fi]=Tux Paint: on piirto-ohjelma pienille lapsille.
+Comment[fr]=Tux Paint: est un programme de dessin pour les jeunes enfants.
+Comment[hu]=Tux Paint: rajzprogram gyermekeknek.
+Comment[nl]=Tux Paint: een tekenprogramma voor kinderen.
+Comment[pt]=Tux Paint: um programa de desenho para crianças.
+Comment[sv]=Tux Paint: ett ritprogram för yngre barn.
+Categories=Education;Graphics;KidsGame;

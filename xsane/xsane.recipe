@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class XSane(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'xsane'
+    version = '0.998'
+    rpmRelease = '12.fc18'
+    rpmPatches = [
+                   'xsane-0.995-close-fds.patch',
+                   'xsane-0.995-xdg-open.patch',
+                   'xsane-0.996-no-eula.patch',
+                   'xsane-0.997-ipv6.patch',
+                   'xsane-0.997-no-file-selected.patch',
+                   'xsane-0.997-off-root-build.patch',
+                   'xsane-0.998-desktop-file.patch',
+                   'xsane-0.998-libpng.patch',
+                   'xsane-0.998-man.patch',
+                   'xsane-0.998-preview-selection.patch',
+                   'xsane-0.998-preview-window-size.patch',
+                   'xsane-0.998-wmclass.patch',
+                   'xsane-0.998-xsane_update_param-crash.patch']
+
+
+    buildRequires = [ 
+            'atk:devel',
+            'cairo:devel',
+            'desktop-file-utils:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gtk:devel', 
+            'lcms:devel',
+            'libieee1284:devel', 
+            'libjpeg:devel', 
+            'libpng:devel', 
+            'libtiff:devel',
+            'libusb:devel', 
+            'libX11:devel', 
+            'libXext:devel', 
+            'libXrender:devel', 
+            'pango:devel',
+            'pkgconfig:devel',
+            'sane-backends:devel', 
+            'zlib:devel', 
+                ]
+
+    def configure(r):
+
+        r.Configure('--enable-gtk2 --enable-gimp2 --enable-png'
+            ' --enable-tiff --enable-jpeg')
+
+

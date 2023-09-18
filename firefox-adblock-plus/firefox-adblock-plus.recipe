@@ -1,0 +1,7 @@
+loadSuperClass('firefox-addon')
+class AdblockPlus(FirefoxAddonRecipe):
+    name = 'firefox-adblock-plus'
+    version = '2.3.1'
+    fileId = '206960'
+    fileURI = 'https://addons.mozilla.org/firefox/downloads/file/206960/adblock_plus-%(version)s-fx+tb+fn+sm.xpi'
+    # dl page: https://addons.mozilla.org/en-US/firefox/addons/versions/1865

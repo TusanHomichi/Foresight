@@ -1,0 +1,23 @@
+[Desktop Entry]
+Encoding=UTF-8
+StartupNotify=true
+Name=avast! Antivirus
+Name[cs]=Antivirus avast!
+Name[po]=Antivírus avast!
+Name[fi]=avast! Antivirus
+Name[bg]=avast! Антивирус
+GenericName=Antivirus
+GenericName[cs]=Antivir
+GenericName[po]=Antivírus
+GenericName[fi]=Antivirus
+GenericName[bg]=Антивирус
+Comment=Scan for viruses
+Comment[cs]=Hledat viry
+Comment[po]=Escanear por vírus
+Comment[fi]=Tarkista
+Comment[bg]=Провери за вируси
+Exec=avastgui
+Terminal=false
+Type=Application
+Icon=/usr/lib/avast4workstation/share/avast/icons/avast-appicon.png
+Categories=Application;Utility;Security;

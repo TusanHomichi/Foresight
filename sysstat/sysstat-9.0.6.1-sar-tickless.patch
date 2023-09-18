@@ -1,0 +1,78 @@
+diff -up sysstat-9.0.6.1/pr_stats.c.tl2 sysstat-9.0.6.1/pr_stats.c
+--- sysstat-9.0.6.1/pr_stats.c.tl2	2009-09-12 20:59:04.000000000 +0200
++++ sysstat-9.0.6.1/pr_stats.c	2010-10-07 16:05:51.000000000 +0200
+@@ -110,15 +110,50 @@ __print_funct_t print_cpu_stats(struct a
+ 				if (!g_itv) {
+ 					/* Current CPU is offline */
+ 					printf("      0.00      0.00      0.00"
+-					       "      0.00      0.00      0.00");
++					       "      0.00      0.00");
+ 					if (DISPLAY_CPU_ALL(a->opt_flags)) {
+ 						printf("      0.00      0.00      0.00");
+ 					}
++					if (scc->cpu_user    + scc->cpu_nice   + scc->cpu_sys   +
++						scc->cpu_iowait  + scc->cpu_idle   + scc->cpu_steal +
++						scc->cpu_hardirq + scc->cpu_softirq == 0) {
++						/* cpu is offline */
++						printf("      0.00");
++					} else {
++						/* if the CPU is tickless  then
++						    there is no change in CPU values but the sum of
++						    values is not null */
++						printf("    100.00");
++					}
+ 					printf("\n");
+ 					continue;
+ 				}
+ 			}
+-			
++			float c_idle = 0;
++			/* set the idle value */
++			if (scc->cpu_user    + scc->cpu_nice   + scc->cpu_sys   +
++				scc->cpu_iowait  + scc->cpu_idle   + scc->cpu_steal +
++				scc->cpu_hardirq + scc->cpu_softirq == 0) {
++				/* cpu is offline */
++				c_idle = 0;
++			} else {
++				if (scc->cpu_user    + scc->cpu_nice   + scc->cpu_sys   +
++					scc->cpu_iowait  + scc->cpu_idle   + scc->cpu_steal +
++					scc->cpu_hardirq + scc->cpu_softirq == 
++					scp->cpu_user    + scp->cpu_nice   + scp->cpu_sys   +
++					scp->cpu_iowait  + scp->cpu_idle   + scp->cpu_steal +
++					scp->cpu_hardirq + scp->cpu_softirq) {
++					 /* if the CPU is tickless  then
++					    there is no change in CPU values but the sum of values is not null */
++					c_idle = 100;
++				} else {
++				if (scc->cpu_idle < scp->cpu_idle)
++					c_idle = 0;
++				else
++					c_idle = ll_sp_value(scp->cpu_idle,   scc->cpu_idle,   g_itv);
++				}
++			}
++
+ 			if (DISPLAY_CPU_DEF(a->opt_flags)) {
+ 				printf("    %6.2f    %6.2f    %6.2f    %6.2f    %6.2f    %6.2f\n",
+ 				       ll_sp_value(scp->cpu_user,   scc->cpu_user,   g_itv),
+@@ -128,9 +163,7 @@ __print_funct_t print_cpu_stats(struct a
+ 						   g_itv),
+ 				       ll_sp_value(scp->cpu_iowait, scc->cpu_iowait, g_itv),
+ 				       ll_sp_value(scp->cpu_steal,  scc->cpu_steal,  g_itv),
+-				       scc->cpu_idle < scp->cpu_idle ?
+-				       0.0 :
+-				       ll_sp_value(scp->cpu_idle,   scc->cpu_idle,   g_itv));
++				       c_idle);
+ 			}
+ 			else if (DISPLAY_CPU_ALL(a->opt_flags)) {
+ 				printf("    %6.2f    %6.2f    %6.2f    %6.2f    %6.2f    %6.2f"
+@@ -144,9 +177,7 @@ __print_funct_t print_cpu_stats(struct a
+ 				       ll_sp_value(scp->cpu_hardirq, scc->cpu_hardirq, g_itv),
+ 				       ll_sp_value(scp->cpu_softirq, scc->cpu_softirq, g_itv),
+ 				       ll_sp_value(scp->cpu_guest,   scc->cpu_guest,   g_itv),
+-				       scc->cpu_idle < scp->cpu_idle ?
+-				       0.0 :
+-				       ll_sp_value(scp->cpu_idle,    scc->cpu_idle,    g_itv));
++				       c_idle);
+ 			}
+ 		}
+ 	}

@@ -1,0 +1,45 @@
+# vim: ts=4 sw=4 expandtab ai
+#
+# Copyright (c) 2009 Erik Southworth <erik.southworth@gmail.com>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Geany(PackageRecipe):
+    name = 'geany'
+    version = '1.24.1'
+    archive = 'http://download.geany.org/'
+
+    buildRequires = [
+        'atk:devel', 'binutils:runtime', 'cairo:devel',
+        'debugedit:runtime', 'desktop-file-utils:runtime',
+        'diffutils:runtime', 'elfutils:runtime', 'expat:devel',
+        'file:runtime', 'fontconfig:devel', 'freetype:devel',
+        'gcc-c++:runtime', 'gcc:devel', 'gcc:devellib', 'gcc:lib',
+        'gcc:runtime', 'gettext:runtime', 'glibc:runtime', 'glib:devel',
+        'gtk:devel', 'intltool:runtime',
+        'libgcc:devellib', 'libpng:devel', 'libstdc++:devel',
+        'libX11:devel', 'libXrender:devel', 'make:runtime',
+        'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel',
+        'which:runtime', 'zlib:devel',
+    ]
+
+    def setup(r):
+        r.macros.homepage = r.packageHomepage
+        r.addArchive(r.archive)
+        r.ManualConfigure(' --prefix=%(prefix)s --libdir=%(libdir)s', configureName='waf configure')
+        r.Make(makeName='./waf')
+        r.Run('./waf --destdir=%(destdir)s install')
+
+    def policy(r):
+        r.Licenses('GPLv2')
+
+        r.Description(
+            shortDesc=r.packageSummary,
+            longDesc =r.packageDescription)
+    packageHomepage = 'http://www.geany.org/'
+    packageSummary = 'Geany - A fast and lightweight IDE'
+    packageDescription = \
+        """Geany is a small and lightweight integrated development
+           environment. It was developed to provide a small and
+           fast IDE. Homepage: %(homepage)s"""

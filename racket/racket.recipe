@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Racket(AutoPackageRecipe):
+    name = 'racket'
+    version = '5.3.3'
+ 
+    buildRequires = [ 'libffi:devel','freetype:devel','openjpeg:devel',
+                      'pango:devel','libpng:devel','openssl:devel',
+                      'libXaw:devel','libXft:devel','Mesa:devel',
+                      'libX11:devel','libXrender:devel','cairo:devel',
+                      'gtk:devel'] 
+ 
+    def unpack(r):
+        r.addArchive('http://download.racket-lang.org/installers/%(version)s/%(name)s/%(name)s-%(version)s-src-unix.tgz')
+        r.mainDir('%(name)s-%(version)s/src')
+
+    def configure(r):
+        r.Configure('--enable-shared', objDir = 'build')
+
+    def make(r):
+        r.Make(dir = 'build')
+
+    def makeinstall(r):
+        r.MakeInstall(dir = 'build')
+

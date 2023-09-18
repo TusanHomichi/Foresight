@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BombonoDvd(PackageRecipe):
+    name = 'bombono-dvd'
+    version = '1.0.2'
+ 
+    buildRequires = [ ]
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/bombono/')
+        r.disableParallelMake()
+        r.Make('PREFIX=%(prefix)s', makeName='scons')
+	r.Make('DESTDIR=%(destdir)s PREFIX=%(prefix)s install', makeName='scons')
+

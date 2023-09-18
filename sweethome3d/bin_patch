@@ -1,0 +1,15 @@
+--- SweetHome3D	2011-02-13 22:53:59.000000000 +0100
++++ SweetHome3D_diff	2011-03-12 18:25:05.194203009 +0100
+@@ -1,10 +1,8 @@
+ #!/bin/sh
+ 
+ # Retrieve Sweet Home 3D directory
+-PROGRAM=`readlink "$0"`
+-if [ "$PROGRAM" = "" ]; then
+-  PROGRAM=$0
+-fi
++PROGRAM=
++
+ PROGRAM_DIR=`dirname "$PROGRAM"`
+ 
+ # Run Sweet Home 3D

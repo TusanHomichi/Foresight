@@ -1,0 +1,79 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2013 The Foresight Linux Project
+#               2011-2013 Openfiler Ltd.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Elfutils(CPackageRecipe):
+    name = 'elfutils'
+    version = '0.154'
+    
+    buildRequires = [ 'bison:runtime',
+                      'flex:runtime',
+                      'm4:runtime',
+                      'sharutils:runtime',
+                      'gettext:runtime',
+                      'intltool:runtime',
+                      'zlib:devel',
+                      'bzip2:devel', ]
+
+    if Use.bootstrap:
+        buildRequires += [ 'gcc-c++[cross,!gcc.core]',
+                           'gcc[cross,!gcc.core]',
+                           ]
+    else:
+        buildRequires += [ 'gcc-c++:runtime',
+                           'xz:devel', ]
+
+    patches = [ 'elfutils-robustify.patch',
+                # 'elfutils-portability.patch',
+                'elfutils-0.154-binutils-pr-ld-13621.patch',
+                'elfutils-0.154-xlatetom-835877.patch',
+                'elfutils-0.154-dwz.patch',
+                ]
+
+    def setup(r):
+        r.addArchive('http://fedorahosted.org/releases'
+                     '/e/l/%(name)s/%(version)s/')
+
+        for p in r.patches:
+            r.addPatch(p)
+
+	r.macros.bdir = 'build-%(target)s' %r.macros
+
+        # FIXME -D__NO_INLINE__  to go away when we rebootstrap against new toolchain
+        r.macros.cflags += ' -D__NO_INLINE__ -fexceptions '
+
+        # eu-strip, etc
+        r.Configure(' --program-prefix=eu-'
+                    ' COMPAT_CONFIG_FLAGS=--disable-werror ',
+                    objDir='%(bdir)s')
+        r.Replace('-Werror', '',
+                  '*/Makefile*',
+                  allowNoChange=True)
+
+        r.Make('AR=%(target)s-ar', dir='%(bdir)s')
+        r.MakeInstall('AR=%(target)s-ar', dir='%(bdir)s')
+        
+        if not Use.bootstrap:
+            r.TestSuite('%(bdir)s', 'check')
+        
+        r.Remove('%(bindir)s/eu-ld',)
+        
+        # accomodate slightly different library names
+        r.ComponentSpec('lib', '.*-.*\.so')
+        # XXX we 're keeping in fl:2* libelf naming
+        # in f3 tree it _may_ get called elfutils-libelf
+        # in order to mimic the stock behaviour elsewhere
+        r.PackageSpec('libelf',
+        # r.PackageSpec('elfutils-libelf',
+                      '%(libdir)s/libelf.*',
+                      '%(includedir)s/libelf.*',
+                      '%(includedir)s/gelf.h',
+                      '%(includedir)s/nlist.h')
+        # we want *ibelf:devel to req elfutils:devel 
+        r.Requires('libelf:devel', 'elfutils:devel')
+

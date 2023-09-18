@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MonodevelopBoo(AutoPackageRecipe):
+    name = 'monodevelop-boo'
+    version = '2.2'
+ 
+    buildRequires = [
+        'boo:cil',
+        'boo:devellib',
+        'boo:runtime',
+        'gettext:runtime',
+        'gnome-sharp:cil',
+        'gnome-sharp:devellib',
+        'gtk-sharp:cil',
+        'gtk-sharp:devellib',
+        'gtksourceview-sharp:cil',
+        'gtksourceview-sharp:devellib',
+        'mono:cil',
+        'mono:devel',
+        'mono-addins:devellib',
+        'mono-addins:cil',
+        'monodevelop:devellib',
+        'pkgconfig:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.novell.com/pub/mono/sources/monodevelop-boo/')
+
+    def configure(r):
+        r.ManualConfigure('--prefix=%(prefix)s --config=RELEASE')

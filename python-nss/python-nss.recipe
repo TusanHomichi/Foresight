@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonNSS(CPackageRecipe):
+    name = 'python-nss'
+    version = '0.12'
+
+    buildRequires = [
+        'nspr:devel',
+        'nss:devel',
+        'python:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('ftp://ftp.mozilla.org/pub/mozilla.org/security/python-nss/releases/PYNSS_RELEASE_0_12_0/src/')
+        # patch by upstream author not yet integrated into upstream, so should
+        # go away at next upstream release
+        r.addPatch('http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/dev-python/python-nss/files/python-nss-0.12-rsapssparams.patch?revision=1.1')
+        r.PythonSetup('install')

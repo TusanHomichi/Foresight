@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Acetoneiso(CPackageRecipe):
+    name = 'acetoneiso'
+    version = '2.2.1'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'libstdc++:devel', 'qt4-core:devellib', 'qt4-gui:devellib', 'qt4:devel']
+
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/acetoneiso/%(name)s_%(version)s.tar.gz')
+	r.Run('qmake-qt4', dir = 'acetoneiso')
+        r.Replace('####### Output directory', 'INSTALL_ROOT = %(destdir)s', 'acetoneiso/Makefile')
+	r.Make(dir = 'acetoneiso')
+	r.MakeInstall(dir = 'acetoneiso')
+	r.Requires('kommander:runtime', '%(bindir)s/acetoneiso')
+	r.Requires('p7zip:runtime', '%(bindir)s/acetoneiso')

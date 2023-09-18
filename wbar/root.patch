@@ -1,0 +1,38 @@
+diff -Naur wbar-1.3.3.orig/Makefile wbar-1.3.3/Makefile
+--- wbar-1.3.3.orig/Makefile	2008-01-24 13:55:46.000000000 -0500
++++ wbar-1.3.3/Makefile	2008-01-24 14:24:57.000000000 -0500
+@@ -18,27 +18,19 @@
+ 	#strip $(@)
+ 
+ install: $(TARGET)
+-	if [ "`whoami`" != "root" ]; then \
+-		echo "You must be root to install"; \
+-		exit 1; \
+-	fi
+-
+-	install -d $(PREFIX)
++	mkdir -p $(DESTDIR)/$(PREFIX)
+ 	awk '{if($$1 ~ /i:/ || ($$1 ~ /t:/ && NR<4)) print $$1" $(PREFIX)/"$$2; else print $$0;}' \
+-		./dot.wbar > $(PREFIX)/dot.wbar
+-	cp -a ./iconpack $(PREFIX)/iconpack
++		./dot.wbar > $(DESTDIR)/$(PREFIX)/dot.wbar
++	cp -a ./iconpack $(DESTDIR)/$(PREFIX)/iconpack
+ 
+ 	#ln -fs $(PREFIX)/iconpack/comic.ttf $(PREFIX)/iconpack/wbar.nuvoux/font.ttf
+ 	#ln -fs $(PREFIX)/iconpack/comic.ttf $(PREFIX)/iconpack/wbar.ice/font.ttf
+-	ln -fs $(PREFIX)/iconpack/comic.ttf $(PREFIX)/iconpack/wbar.osx/font.ttf
+-	
+-	install ./wbar /usr/bin
++	mkdir -p $(DESTDIR)/$(PREFIX)/iconpack/wbar.osx
++	cp $(DESTDIR)/$(PREFIX)/iconpack/comic.ttf $(DESTDIR)/$(PREFIX)/iconpack/wbar.osx/font.ttf
++	mkdir -p $(DESTDIR)/usr/bin
++	install ./wbar $(DESTDIR)/usr/bin/
+ 
+ uninstall:
+-	if [ "`whoami`" != "root" ]; then \
+-		echo "You must be root to install"; \
+-		exit 1; \
+-	fi
+ 
+ 	rm -rf $(PREFIX)
+ 	rm -f /usr/bin/wbar

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Comment=Aqualung is a music player for the GNU/Linux operating system
+Terminal=false
+Exec=aqualung
+Icon=aqualung
+Name=Aqualung
+Categories=AudioVideo;Player;

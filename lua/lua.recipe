@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class lua(CPackageRecipe):
+    name = 'lua'
+    version = '5.1.4'
+
+    buildRequires = [ 'ncurses:devel', 'readline:devel', ]
+
+    def setup(r):
+        r.addArchive('http://www.lua.org/ftp/')
+        # Odd Makefile arrangement doesn't honor flags we pass in
+	r.Replace('^CFLAGS=', 'CFLAGS= -fPIC ', 'src/Makefile')
+        r.Make('INSTALL_TOP=%(prefix)s linux')
+        r.MakeInstall('INSTALL_TOP=%(destdir)s%(prefix)s')
+	r.Install('etc/lua.pc', '%(libdir)s/pkgconfig/')

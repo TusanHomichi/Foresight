@@ -1,0 +1,21 @@
+--- mod_python-3.1.4/src/requestobject.c.orig  2007-03-25 23:15:46.000000000 -0500
++++ mod_python-3.1.4/src/requestobject.c       2007-03-25 23:16:17.000000000 -0500
+@@ -421,7 +421,7 @@
+     if (! self->request_rec->read_length) {
+
+         /* then do some initial setting up */
+-        rc = ap_setup_client_block(self->request_rec, REQUEST_CHUNKED_ERROR);
++        rc = ap_setup_client_block(self->request_rec, REQUEST_CHUNKED_DECHUNK);
+         if(rc != OK) {
+             PyObject *val = PyInt_FromLong(rc);
+             if (val == NULL)
+@@ -519,7 +519,7 @@
+     if (! self->request_rec->read_length) {
+
+         /* then do some initial setting up */
+-        rc = ap_setup_client_block(self->request_rec, REQUEST_CHUNKED_ERROR);
++        rc = ap_setup_client_block(self->request_rec, REQUEST_CHUNKED_DECHUNK);
+
+         if(rc != OK) {
+             PyObject *val = PyInt_FromLong(rc);
+

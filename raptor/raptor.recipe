@@ -1,0 +1,25 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Raptor(AutoPackageRecipe):
+
+    name = 'raptor'
+    version = '2.0.7'
+
+    buildRequires = [
+        'curl:devel', 'dmalloc:devel', 'expat:devel', 'flex:runtime', 'icu:devel',
+        'libxml2:devel', 'libxslt:devel', 'm4:runtime', 'openssl:devel',
+        'perl:runtime', 'pkgconfig:devel', 'w3c-libwww:devel', 'zlib:devel', 
+        'gtk-doc:runtime', 'yajl:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://download.librdf.org/source/%(name)s2-%(version)s.tar.gz')
+        r.Replace('"/lib /usr/lib', '"%(lib)s %(libdir)s', 'configure')
+
+    def configure(r):
+        r.Configure('--prefix=%(prefix)s --disable-static --with-icu-config=%(bindir)s/icu-config'
+                    ' --enable-release')
+

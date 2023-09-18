@@ -1,0 +1,13 @@
+class IWLwifi4965(PackageRecipe):
+
+    name = 'iwlwifi-4965-ucode'
+    version = '228.61.2.24'
+
+    def setup(r):
+        # intel site unreacheable
+        dURL = '' # http://www.intellinuxwireless.org/iwlwifi/downloads/'
+        for f in ('228.57.1.21', '%(version)s'):
+            r.addArchive( dURL + '%s-%s.tgz' % (r.name, f))
+        r.Install('../iwlwifi-*/*.ucode', '/lib/firmware/', mode = 0644)
+
+        r.Flavor(exceptions='/lib/firmware/.*')

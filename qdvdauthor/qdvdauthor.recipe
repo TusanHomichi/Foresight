@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class qdvdauthor(CPackageRecipe):
+    name = 'qdvdauthor'
+    version = '1.8.0'
+
+    buildRequires = [
+        'SDL:devel', 'alsa-lib:devel', 'jack:devel',
+        'libX11:devel', 'libXext:devel', 'libstdc++:devel', 'qt:devel',
+        'xine-lib:devel', 'zlib:devel',
+    ]
+    # FIXME: package latest jhead and build against system jhead
+
+    def setup(r):
+        r.addArchive('http://internap.dl.sourceforge.net/sourceforge/qdvdauthor/')
+        # cvc refresh whenever updating the version, or any other time
+        # these non-versioned files might be updated :(
+        r.addArchive('http://qdvdauthor.sourceforge.net/data/buttons.tar.bz2',
+                     dir='%(maindir)s')
+        r.addArchive('http://qdvdauthor.sourceforge.net/data/alpha_trans.tar.bz2',
+                     dir='%(maindir)s')
+
+        r.Run('QTDIR=/usr ./configure -n'
+              ' --prefix=%(destdir)s%(prefix)s --system-path=%(prefix)s')
+        r.Run('QTDIR=/usr ./configure -n --install')
+
+        # Move binaries out of /usr/share
+        r.Move('/usr/share/qdvdauthor/plugins', '%(libdir)s/qdvdauthor/')
+        r.Move('/usr/share/qdvdauthor/lib', '%(libdir)s/qdvdauthor/')
+        r.Symlink('%(libdir)s/qdvdauthor/plugins', '/usr/share/qdvdauthor/')
+        r.Symlink('%(libdir)s/qdvdauthor/lib', '/usr/share/qdvdauthor/')
+
+        # Unfortunately, the binary might try to look up the files by
+        # their non-UTF-8 encoded name...
+        r.NonUTF8Filenames(exceptions='/usr/share/qdvdauthor/buttons/')

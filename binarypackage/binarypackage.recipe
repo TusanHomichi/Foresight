@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BinaryPackageRecipe(PackageRecipe):
+    name = 'binarypackage'
+    version = '1.0'
+
+    archive = None
+
+    def unpack(r):
+        """
+        Hook for unpacking the archive; works by default only if
+        r.archive has been set in the subclass.  Each subclass needs
+        to either define the r.archive string along with r.name
+        and r.version, or it needs to implement its own r.unpack()
+        method.
+        """
+        if not r.archive:
+            raise BinaryPackageError('Define either the r.archive string'
+                                     ' or the r.unpack() method')
+        r.addArchive(r.archive, dir='/')
+
+    def disableSourcePolicy(r):
+        r.AutoDoc(exceptions='.*')
+        r.EnforceSonameBuildRequirements(exceptions='.*')
+        r.EnforceJavaBuildRequirements(exceptions='.*')
+        r.EnforceCILBuildRequirements(exceptions='.*')
+        r.EnforceConfigLogBuildRequirements(exceptions='.*')
+        # Note that perl and python runtime requirement CANNOT
+        # be discovered without listing them as runtime requirements,
+        # so it is important not to disable
+        # r.Enforce{Perl,Python}BuildRequirements
+
+    def disableStrip(r):
+        """
+        Default to not stripping; allow override in subclasses with:
+
+        def disableStrip(r): pass
+        """
+        r.Strip(exceptions='.*')
+
+    def disableContentModification(r):
+        """
+        Default to not modifying various things in %(builddir)s where
+        the changes do not affect Conary packaging.
+        """
+        r.RemoveNonPackageFiles(exceptions='.*')
+        r.NormalizeCompression(exceptions='.*')
+        r.NormalizeManPages(exceptions='.*')
+
+    def policy(r):
+        """
+        Contentless hook for adding additional policy in subclasses.
+        """
+        pass
+
+    def setup(r):
+        if r.__class__.__name__ == 'BinaryPackageRecipe':
+            return
+        if 'conary.rpath.com@rpl:' in r.macros.buildlabel:
+            raise BinaryPackageError(
+                'Please commit binary packages on labels other than %s'
+                % r.macros.buildlabel
+            )
+        r.unpack()
+        r.disableSourcePolicy()
+        r.disableContentModification()
+        r.disableStrip()
+        r.policy()
+
+class BinaryPackageError(Exception): pass

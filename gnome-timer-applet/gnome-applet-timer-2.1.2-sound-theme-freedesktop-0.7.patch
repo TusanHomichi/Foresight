@@ -1,0 +1,8 @@
+--- timer-applet-2.1.2/src/timerapplet/config.py.orig	2009-10-30 12:43:11.000000000 +0100
++++ timer-applet-2.1.2/src/timerapplet/config.py	2009-10-30 12:48:24.000000000 +0100
+@@ -36,4 +36,4 @@
+ POPUP_MENU_FILE_PATH = path.join(RESOURCES_DIR, 'TimerApplet.xml')
+ ICON_PATH = path.join(IMAGES_DIR, 'timer-applet.png')
+ PRESETS_PATH = path.expanduser('~/.gnome2/timer-applet/presets.xml')
+-DEFAULT_SOUND_PATH = '/usr/share/sounds/gtk-events/clicked.wav'
++DEFAULT_SOUND_PATH = '/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga'

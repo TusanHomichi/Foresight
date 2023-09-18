@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lapack(CPackageRecipe):
+    name = 'lapack'
+    version = '3.2.1'
+
+    buildRequires = ['gcc-fortran:devellib', 'gcc-fortran:runtime']
+
+    def unpack(r):
+        r.addArchive('http://www.netlib.org/lapack/')
+        #r.addArchive('http://www.netlib.org/lapack/manpages.tgz')
+	
+    def build(r):
+	r.Copy('make.inc.example', 'make.inc')
+	r.Make('cleanlib')
+	r.Make('blaslib OPTS="$RPM_OPT_FLAGS -O3 -funroll-all-loops -fPIC" NOOPT="$RPM_OPT_FLAGS -O0 -fPIC"')
+	r.Move('blas_LINUX.a', 'libblas_pic.a')
+	r.MakeDirs('tmp')
+	r.Run('cd tmp; ar x ../libblas_pic.a')
+	r.Run('gfortran -shared -Wl,-soname=libblas.so.3 -o libblas.so.%(version)s tmp/*.o')
+	r.Symlink('libblas.so.%(version)s', 'libblas.so')
+	r.Remove('tmp')
+
+	r.Make('cleanlib')
+	r.Make('blaslib OPTS="$RPM_OPT_FLAGS -O3 -funroll-all-loops" NOOPT="$RPM_OPT_FLAGS -O0"')
+	r.Move('blas_LINUX.a', 'libblas.a')
+
+	r.Make('cleanlib')
+	r.Make('lapacklib OPTS="$RPM_OPT_FLAGS -O3 -funroll-all-loops -fPIC" NOOPT="$RPM_OPT_FLAGS -O0 -fPIC"')
+	r.Move('lapack_LINUX.a', 'liblapack_pic.a')
+	r.MakeDirs('tmp')
+	r.Run('cd tmp; ar x ../liblapack_pic.a')
+	r.Run('gfortran -shared -Wl,-soname=liblapack.so.3 -o liblapack.so.%(version)s tmp/*.o -L. -lblas')
+	r.Symlink('liblapack.so.%(version)s', 'liblapack.so')
+	r.Remove('tmp')
+
+	r.Make('cleanlib')
+	r.Make('lapacklib OPTS="$RPM_OPT_FLAGS -O3 -funroll-all-loops" NOOPT="$RPM_OPT_FLAGS -O0"')
+	r.Move('lapack_LINUX.a', 'liblapack.a')
+
+    def install(r):
+	r.Install('libblas.a', '%(libdir)s/', mode=0644)
+	r.Install('libblas_pic.a', '%(libdir)s/', mode=0644)
+	r.Install('liblapack.a', '%(libdir)s/', mode=0644)
+	r.Install('liblapack_pic.a', '%(libdir)s/', mode=0644)
+	r.Install('libblas.so.%(version)s', '%(libdir)s/', mode=0755)
+	r.Symlink('libblas.so.%(version)s', '%(libdir)s/libblas.so.3')
+	r.Symlink('libblas.so.%(version)s', '%(libdir)s/libblas.so')
+
+	r.Install('liblapack.so.%(version)s', '%(libdir)s/', mode=0755)
+	r.Symlink('liblapack.so.%(version)s', '%(libdir)s/liblapack.so.3')
+	r.Symlink('liblapack.so.%(version)s', '%(libdir)s/liblapack.so')
+
+    def setup(r):
+	r.unpack()
+	r.build()
+	r.install()

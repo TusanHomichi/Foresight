@@ -1,0 +1,9 @@
+class libjpeghack4xbmcBreackage(PackageRecipe):
+
+    name = 'libjpeg-hack4xbmcBreackage'
+    version = '0.0.1'
+    buildRequires=[ ]
+
+    def setup(r):
+	r.addSource('jpegint.h')
+	r.Install('jpegint.h', '%(includedir)s/', mode = 0644)

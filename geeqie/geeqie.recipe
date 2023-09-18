@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Geeqie(AutoPackageRecipe):
+    name = 'geeqie'
+    version = '1.0'
+ 
+    buildRequires = [
+            'atk:devel', 
+            'cairo:devel', 
+            'desktop-file-utils:runtime', 
+            'doxygen:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gdk-pixbuf:devel', 
+            'gdk-pixbuf:runtime', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gnome-doc-utils:runtime', 
+            'graphviz:runtime', 
+            'gtk:devel', 
+            'intltool:runtime', 
+            'lcms:devel', 
+            'libpng:devel', 
+            'libstdc++:devel', 
+            'pango:devel', 
+            'pkgconfig:devel',
+            'util-linux:runtime',
+            'libxml2:runtime',
+            'libxslt:runtime',
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/geeqie/geeqie/geeqie-1.0/geeqie-%(version)s.tar.gz')

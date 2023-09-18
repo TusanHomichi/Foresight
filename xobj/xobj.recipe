@@ -1,0 +1,14 @@
+loadInstalled('python')
+class XObj(PackageRecipe):
+    name = 'xobj'
+    tag = 'e06ac095de7e'
+    version = '0_%s' % tag
+
+    buildRequires = [
+        'make:runtime', 'util-linux:runtime', 'lxml:python', 'python:devel',
+    ]
+
+    def setup(r):
+        r.addMercurialSnapshot('http://hg.rpath.com/xobj', tag=r.tag)
+        r.Make(dir='py')
+        r.MakeInstall()

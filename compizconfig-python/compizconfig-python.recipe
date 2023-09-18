@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CompizCfgPython(AutoPackageRecipe):
+    name = 'compizconfig-python'
+    version = '0.8.4'
+
+    buildRequires = ['compiz:devel', 'gettext:runtime', 'libxml2:devel',
+                     'perl:runtime', 'pkgconfig:devel', 'zlib:devel',
+                     'autoconf:runtime', 'automake:runtime', 'libtool:runtime',
+                     'libtool:devel', 'glib:devel', 'intltool:runtime',
+                     'intltool:devel', 'Mesa:devel', 'GConf:devel',
+                     'gettext:devel','libxslt:devel', 
+                     'Pyrex:runtime', 'libcompizconfig:devel', 
+                     'libICE:devel', 'libSM:devel', 'libX11:devel',
+                     'libXcomposite:devel', 'libXdamage:devel', 'libXext:devel',
+                     'libXfixes:devel', 'libXinerama:devellib', 'libXrandr:devel',
+                     'libXrender:devel', 'libpng:devel', 'startup-notification:devel', 
+                     'python:devel',  'pycairo:python', 'pygobject:python', 'pygtk:python'
+                     ]
+
+    def unpack(r):
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+

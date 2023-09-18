@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class AlsaPlugins(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'alsa-plugins'
+    version = '1.0.26'
+    # http://koji.fedoraproject.org/koji/packageinfo?packageID=4882
+    rpmRelease = '1.fc16'
+
+    buildRequires = [ 'alsa-lib:devel', 'dbus:devel', 'jack:devel',
+                      'libsamplerate:devel', 'pkgconfig:devel', 'pulseaudio:devel',
+                      'ffmpeg:devel', 'speex:devel' ] 
+
+    if Use.builddocs:
+        buildRequires.append('doxygen:runtime')
+
+    def configure(r):
+        for i in [ 'jack.conf',
+                   'pcm-oss.conf',
+                   'speex.conf',
+                   'samplerate.conf',
+                   'upmix.conf',
+                   'vdownmix.conf',
+                   'arcamav.conf', 
+                   'maemo.conf']:
+            r.addSource(i,rpm = r.srpm, mode  = 0644, dest = '%(sysconfdir)s/alsa/pcm/')
+
+        r.addPatch('alsa-plugins-1.0.25-ffmpeg-0.11-obsolete-avcodec_init.patch')
+        r.addPatch('alsa-plugins-1.0.25-ffmpeg-0.11-renamed-CH_LAYOUT-defs-v2.patch')
+        r.addSource('pulse-default.conf',rpm = r.srpm, mode  = 0644, dest = '%(sysconfdir)s/alsa/')
+        r.Configure(' --disable-static --with-speex=lib')
+                   #  ' --enable-maemo-plugin --enable-maemo-resource-manager ' )
+
+    def make(r):
+        r.Make()
+        if Use.builddocs:
+            r.Make('doc')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        if Use.builddocs:
+            r.Doc('doc/doxygen/*')
+
+        # Removing the maemo plugins
+        # FIXME research about this
+        r.Remove('%(libdir)s/alsa-lib/libasound_module_ctl_dsp_ctl.so')
+        r.Remove('%(libdir)s/alsa-lib/libasound_module_pcm_alsa_dsp.so')
+
+    def policy(r):
+        r.Requires('soname: %(libdir)s/alsa-lib/libasound_module_conf_pulse.so', '%(sysconfdir)s/alsa/pulse-default.conf')
+        r.Requires('soname: %(libdir)s/alsa-lib/libasound_module_ctl_pulse.so', '%(sysconfdir)s/alsa/pulse-default.conf')
+        r.Requires('soname: %(libdir)s/alsa-lib/libasound_module_pcm_pulse.so', '%(sysconfdir)s/alsa/pulse-default.conf')

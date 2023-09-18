@@ -1,0 +1,44 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Bleachbit(AutoPackageRecipe):
+
+    name = 'bleachbit'
+    version = '0.9.6'
+
+    buildRequires = [
+                    'desktop-file-utils:runtime',
+                    'gettext:runtime',
+                    'gnome-python:python',
+                    'make:runtime',
+                    'notify-python:python',
+                    'pygtk:python',
+                    'python:devel',
+                    'python-setuptools:python',
+                    'python-simplejson:python',
+                    'usermode:runtime',
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/bleachbit/bleachbit/%(version)s/')
+        r.addPatch('prefix.patch')
+        
+    def make(r):
+        r.Make('-C po local') 
+        r.PythonSetup('build')
+        r.Run("""grep -l os=.windows. cleaners/*xml | xargs rm -f""")
+        r.Remove('%(name)s/Windows.py')
+
+    def makeinstall(r):
+        r.MakeInstall('DESTDIR=%(destdir)s prefix=%(prefix)s')
+#        r.Desktopfile('%(name)s.desktop', vendor='Foresight')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

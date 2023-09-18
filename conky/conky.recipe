@@ -1,0 +1,82 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Conky(AutoPackageRecipe):
+    name = 'conky'
+    version = '1.9.0'
+ 
+    buildRequires = [
+		'wireless-tools:devel', 
+		'expat:devel', 
+		'fontconfig:devel', 
+            	'freetype:devel', 
+		'glib:devel', 
+		'libX11:devel', 
+		'libXau:devel', 
+            	'libXdamage:devel', 
+		'libXdmcp:devel', 
+		'libXext:devel', 
+		'libXfixes:devel', 
+            	'libXft:devel', 
+		'libXrender:devel', 
+		'libxslt:runtime', 
+		'pkgconfig:devel', 
+            	'zlib:devel', 
+		'alsa-lib:devel', 
+		'lua:devel', 
+		'ncurses:devel',
+                'cairo:devel',
+                'curl:devel',
+                'imlib2:devel',
+                'libxml2:devel',
+                'openssl:devel',
+                'tolua++:devel',
+                'tolua++:runtime',
+                'atk:devel',
+                'audacious:devel',
+                'dbus-glib:devel',
+                'dbus:devel',
+                'gdk-pixbuf:devel',
+                'gtk:devel',
+                'libmcs:devel',
+                'libmowgli:devel',
+                'pango:devel'
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/conky/conky/%(version)s/')
+        r.addPatch('conky-1.9.0-nobool.patch')
+        
+    def configure(r):
+        r.Configure(' --prefix=%(prefix)s '
+                    ' --sysconfdir=%(sysconfdir)s'
+                    ' --enable-audacious'
+                    ' --enable-alsa'
+                    ' --enable-wlan'
+                    ' --enable-imlib2'
+                    ' --enable-lua'
+                    ' --enable-lua-cairo'
+                    ' --enable-lua-imlib2'
+                    ' --enable-curl'
+                    ' --enable-rss'
+                    ' --enable-ibm'
+                    ' --enable-mpd'
+                    ' --disable-moc'
+                    ' --enable-weather-xoap'
+                    ' --disable-ncurses')
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+        def makeinstall(r):
+            r.MakeInstall()
+            r.Install('extras/vim/syntax/conkyrc.vim', '%(datadir)s/vim/vimfiles/syntax/', mode=0644)
+            r.Install('extras/vim/ftdetext/conkyrc.vim', '%(datadir)s/vim/vimfiles/ftdetect/', mode=0644)
+
+        def policy(r):
+            r.Remove('%(sysconfdir)s/%(name)s/conky_no_x11.conf')

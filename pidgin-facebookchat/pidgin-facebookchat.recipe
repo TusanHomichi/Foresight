@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginFacebookchat(CPackageRecipe):
+    name = 'pidgin-facebookchat'
+    version = '1.47'
+ 
+    buildRequires = ['libpurple:devel']
+ 
+    def setup(r):
+        r.addArchive('http://pidgin-facebookchat.googlecode.com/files/pidgin-facebookchat-source-%(version)s.tar.bz2')
+        r.addPatch('not-insane-anymore.patch')
+        if Arch.x86:
+            r.Make('libfacebook.so')
+        if Arch.x86_64:
+            r.Make('libfacebook64.so')
+        r.MakeInstall()
+
+        if Arch.x86:
+            r.Remove('/usr/lib64', recursive=True)
+        if Arch.x86_64:
+            r.Remove('/usr/lib', recursive=True)

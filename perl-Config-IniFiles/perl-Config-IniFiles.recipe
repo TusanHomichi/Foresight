@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlConfigInifiles(CPANPackageRecipe):
+    name = 'perl-Config-IniFiles'
+    version = '2.66'
+    buildRequires = [ 'perl:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://search.cpan.org/CPAN/authors/id/S/SH/SHLOMIF/Config-IniFiles-%(version)s.tar.gz')

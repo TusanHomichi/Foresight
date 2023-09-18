@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Gnomevfsmm(GnomePackageRecipe):
+    name = 'gnome-vfsmm'
+    version = '2.26.0'
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'glib:devel',
+                      'glibmm:devel', 'gnome-vfs:devel', 'libsigc++:devel',
+                      'libstdc++:devel', 'm4:runtime', 'perl:runtime',
+                      'doxygen:runtime' ]
+
+    # FIXME: find a way NOT to build docs

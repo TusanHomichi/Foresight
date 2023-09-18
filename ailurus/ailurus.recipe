@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ailurus(CPackageRecipe):
+    name = 'ailurus'
+    version = '10.10.3'
+ 
+    buildRequires = [
+            'desktop-file-utils:runtime', 
+            'gettext:runtime', 
+            'intltool:runtime', 
+            'python-setuptools:python', 
+            'python-distutils-extra:python', 
+            'python:devel'
+                ]
+ 
+    def setup(r):
+        #r.addGitSnapshot('http://github.com/homerxing/Ailurus.git', tag='a184acc619c5')
+        r.addArchive('http://ailurus.googlecode.com/files/')
+        r.PythonSetup(data='--install-data=%(prefix)s')

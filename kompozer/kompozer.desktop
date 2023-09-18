@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Kompozer
+GenericName=kompozer
+Comment=Edit HTML files
+Exec=/opt/kompozer/kompozer/kompozer
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=/opt/kompozer/kompozer/icons/mozicon256.png
+Categories=Development;

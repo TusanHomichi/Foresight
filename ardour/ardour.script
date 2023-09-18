@@ -1,0 +1,30 @@
+#!/bin/sh
+
+A2DIR=~/.ardour2
+
+if ! test -d $A2DIR; then
+  mkdir -p $A2DIR
+  touch $A2DIR/ardourver2.2
+  touch $A2DIR/ardourver2.5
+else
+  if ! test -a $A2DIR/ardourver2.2; then
+    if test -a $A2DIR/ardour2_ui.rc; then
+      mv -f $A2DIR/ardour2_ui.rc $A2DIR/ardour2_ui.rc.bak
+    fi
+    if test -a $A2DIR/ardour2_ui.conf; then
+      mv -f $A2DIR/ardour2_ui.conf $A2DIR/ardour2_ui.conf.bak
+    fi
+    if test -a $A2DIR/ardour.bindings; then
+      mv -f $A2DIR/ardour.bindings $A2DIR/ardour.bindings.bak
+    fi
+    touch $A2DIR/ardourver2.2
+  fi
+  if ! test -a $A2DIR/ardourver2.5; then
+    if test -a $A2DIR/ardour.bindings; then
+      mv -f $A2DIR/ardour.bindings $A2DIR/ardour.bindings.bak
+    fi
+    touch $A2DIR/ardourver2.5
+  fi
+fi
+
+exec /usr/libexec/ardour2 "$@"

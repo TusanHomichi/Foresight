@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class VdpauVideo(AutoPackageRecipe):
+    name = 'vdpau-video'
+    version = '0.7.3'
+ 
+    buildRequires = [ 'Mesa:devel', 'libX11:devel',
+                      'libvdpau:devel', 'pkgconfig:devel',
+                      'libtool:runtime', 'automake:runtime',
+                      'autoconf:runtime', 'libva:devel',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.splitted-desktop.com/~gbeauchesne/%(name)s/')
+        # adapted from http://patch-tracker.debian.org/package/vdpau-video/0.7.2-1
+        r.addPatch('glx-check.patch')
+
+    def configure(r):
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.Run('autoreconf -fi')
+        r.Configure('--enable-glx')
+
+    def policy(r):
+        r.ComponentSpec('lib', '%(libdir)s/')

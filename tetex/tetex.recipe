@@ -1,0 +1,158 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tetex(CPackageRecipe):
+    name = 'tetex'
+    version = '3.0'
+
+    buildRequires = [ 'bison:runtime', 'desktop-file-utils:runtime',
+        'dialog:runtime', 'ed:runtime', 'flex:runtime', 'fontconfig:runtime',
+        'gcc:devel', 'install-info:runtime', 'libpng:devel', 'libstdc++:devel',
+        'ncurses:devel', 'perl:lib', 'perl-Time-HiRes:perl',
+        'perl-XML-Parser:perl', 'Xaw3d:devel', 'zlib:devel',
+        'perl:runtime', 'autoconf:runtime', 'automake:runtime',
+        'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel',
+        'libXt:devel', 'libXpm:devel', 'libXmu:devel', 'libXaw:devel',
+
+        # FIXME: added as a workaround for rmake
+        'vixie-cron:runtime', ]
+
+    def setup(r):
+        r.macros.cflags += ' -fPIC'
+
+        r.addArchive('ftp://cam.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/tetex-src-%(version)s.tar.gz')
+        r.addArchive('http://mirror.datapipe.net/gentoo/distfiles/tetex-%(version)s-gentoo.tar.gz')
+        r.addArchive('ftp://cam.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/tetex-texmf-%(version)s.tar.gz',
+                     dir='%(maindir)s/texmf')
+        r.addSource('texmf.cron')
+        r.addSource('xdvi.desktop', macros=True)
+        r.addSource('texpackagesource.tagdescription', macros=True,
+            dest='%(tagdescriptiondir)s/texpackagesource')
+        r.addSource('texdata.tagdescription', macros=True,
+            dest='%(tagdescriptiondir)s/texdata')
+        r.addSource('texpackagesource.taghandler', macros=True, mode=0755,
+            dest='%(taghandlerdir)s/texpackagesource')
+        r.addSource('texdata.taghandler', macros=True, mode=0755,
+            dest='%(taghandlerdir)s/texdata')
+
+        r.addPatch('tetex-3.0-fmtutil-in.diff')
+        r.addPatch('tetex-3.0-texmf-in.diff', macros=True)
+
+        srpm2 = 'http://updates.redhat.com/enterprise/4WS/en/os/SRPMS/tetex-2.0.2-22.0.1.EL4.8.src.rpm'
+        r.addPatch('CVE-2007-0104.patch')
+        # CVE-2007-0650 RPL-1036
+        r.addPatch('https://bugzilla.redhat.com/bugzilla/attachment.cgi?id=147214')
+        # RPL-1609
+        r.addPatch('tetex-2.0.2-CVE-2005-3193.patch', rpm=srpm2)
+        # RPL-1604
+        r.addPatch('tetex-2.0.2-CVE-2007-3387.patch', rpm=srpm2)
+        # RPL-1926 CVE-2007-4352 CVE-2007-5392 CVE-2007-5393
+        r.addPatch('xpdf-3.00-Stream.cc-multiple-vulnerabilities.patch')
+        # RPL-1928 CVE-2007-5935 CVE-2007-5936 CVE-2007-5937
+        r.addPatch('https://bugs.gentoo.org/attachment.cgi?id=135312&action=view')
+        # still RPL-1928... this is a backport of
+        # https://bugs.gentoo.org/attachment.cgi?id=135310&action=view
+        r.addPatch('tetex-3.0-dviljk-security-fixes.patch')
+        # RPL-1972 CVE-2007-4033
+        r.addPatch('http://viewcvs.gentoo.org/viewcvs.py/*checkout*/gentoo-x86/media-libs/t1lib/files/t1lib-5.0.2-SA26241_buffer_overflow.patch?rev=1.1', dir='libs/t1lib')
+
+        r.addAction('sed -i -e "/mktexlsr/,+3d" -e "s/\(updmap-sys\)/\1 --nohash/" Makefile.in');
+
+        r.Configure(
+              '--bindir=%(bindir)s'
+              ' --datadir=%(builddir)s'
+              ' --with-system-wwwlib'
+              ' --with-libwww-include=%(includedir)s/w3c-libwww'
+              ' --with-system-ncurses'
+              ' --with-system-pnglib'
+              ' --without-texinfo'
+              ' --without-dialog'
+              ' --without-texi2html'
+              ' --with-system-zlib'
+              ' --disable-multiplatform'
+              ' --with-epsfwin'
+              ' --with-mftalkwin'
+              ' --with-regiswin'
+              ' --with-tektronixwin'
+              ' --with-unitermwin'
+              ' --with-ps=gs'
+              ' --enable-ipc'
+              ' --with-etex'
+              ' --with-xdvik --with-oxdvik'
+              ' --with-xdvi-x-toolkit=xaw3d')
+
+        r.Make('texmf=%(destdir)s%(datadir)s/texmf')
+
+        r.Install('texmf', '/usr/share/')
+        r.MakePathsInstall('texmf=%(destdir)s%(datadir)s/texmf '
+                           ' bindir=%(destdir)s%(bindir)s')
+
+        r.AutoDoc('PROBLEMS', 'PROJECTS', 'HEIR', 'NOTES', 'CHANGES.type1')
+        r.Install('texmf.cron', '%(sysconfdir)s/cron.daily/', mode=0755)
+        r.Requires('tmpwatch:runtime', 'texmf.cron')
+        r.Desktopfile('xdvi.desktop')
+
+        r.Remove('{%(essentialbindir)s,%(bindir)s}/readlink')
+
+        r.MakeDirs('%(cachedir)s/fonts{,/pk,/source,/tfm}', mode=01777)
+
+        r.Symlink('tex', '%(bindir)s/virtex')
+        r.Symlink('pdfetex', '%(bindir)s/pdftex')
+        r.Symlink('pdftex', '%(bindir)s/pdfvirtex')
+        r.Symlink('pdfetex', '%(bindir)s/latex')
+        r.Symlink('tex', '%(bindir)s/virtex')
+
+        r.InitialContents('.*/ls-R')
+        r.InitialContents(r'%(datadir)s/.*/.*\.(e?fmt|mem|oft|base)')
+
+        r.PackageSpec('tetex-latex',
+                      '%(datadir)s/texmf/tex/latex/',
+                      '%(datadir)s/texmf/web2c/.*latex.*',
+                      '%(mandir)s/man1/latex.*',
+                      '%(infodir)s/latex.*',
+                      '%(bindir)s/latex')
+                      #'%(bindir)s/texexpand')
+        r.DanglingSymlinks(exceptions='%(bindir)s/latex')
+        r.Requires('tetex:runtime', '%(bindir)s/latex')
+        r.PackageSpec('tetex-dvips',
+                      '%(datadir)s/texmf/dvips/',
+                      #'%(datadir)s/texmf/fonts/vf/ptex/',
+                      #'%(datadir)s/texmf/fonts/tfm/jp/',
+                      '%(datadir)s/texmf/metapost/mfpic/dvipsnam.mp',
+                      '%(infodir)s/dvips.*',
+                      '%(mandir)s/man1/(o?dvips|dvired|dvi2fax).*',
+                      '%(bindir)s/(dvi2fax|dvired|.*dvips.*)')
+        r.PackageSpec('tetex-afm',
+                      '%(datadir)s/texmf/fonts/afm/',
+                      '%(bindir)s/(afm2tfm|ttf2afm)',
+                      '%(mandir)s/man1/afm2tfm.*')
+        r.PackageSpec('tetex-xdvi',
+                      #'%(bindir)s/mfw',
+                      '%(bindir)s/.*xdvi.*',
+                      'xdvi.desktop',
+                      '%(mandir)s/man1/o?xdvi.*',
+                      #'%(datadir)s/texmf/pxdvi/',
+                      '%(datadir)s/texmf/xdvi/xdvi.cfg')
+        # make sure this specifier is after any other fonts that need
+        # to go in other packages
+        r.PackageSpec('tetex', '%(datadir)s/texmf/fonts/source/')
+        r.PackageSpec('tetex-fonts', '%(datadir)s/texmf/fonts/')
+
+        r.ExcludeDirectories(exceptions='%(datadir)s/fonts/')
+        r.ExcludeDirectories(exceptions='%(cachedir)s/fonts/')
+        # texmf.cron expects this:
+        r.MakeDirs('%(localstatedir)s/lib/texmf', mode=01777)
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/texmf')
+
+        r.Requires('tetex-fonts:data', '%(bindir)s/')
+        # including the req here creates a dep loop
+        r.CheckDesktopFiles(exceptions='%(datadir)s/applications/')
+
+        r.Requires('/dev/null', '%(taghandlerdir)s/texpackagesource')
+        r.Requires('/dev/null', '%(taghandlerdir)s/texdata')
+
+	r.Remove('%(datadir)s/texmf/doc/*.php')
+	r.Remove('%(datadir)s/texmf/doc/tdphp/*.php')

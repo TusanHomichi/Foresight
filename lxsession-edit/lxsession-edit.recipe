@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LxsessionEdit(AutoPackageRecipe):
+    name = 'lxsession-edit'
+    version = '0.2.0'
+ 
+    buildRequires = [
+            'atk:devel', 
+            'cairo:devel', 
+            'desktop-file-utils:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gdk-pixbuf:devel', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gtk:devel', 
+            'intltool:runtime', 
+            'libpng:devel', 
+            'pango:devel', 
+            'pkgconfig:devel', 
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/lxde/')
+        r.Run('''sed -i 's/^Icon=xfwm4/Icon=session-properties/g' lxsession-edit.desktop.in''')
+    def make(r):
+        r.Run('touch -r po/Makefile po/stamp-it')

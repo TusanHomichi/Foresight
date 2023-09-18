@@ -1,0 +1,27 @@
+class LibID3Tag(AutoPackageRecipe):
+    name = 'libid3tag'
+    version = '0.15.1b'
+
+    buildRequires = ['zlib:devel']
+
+    def unpack(r):
+        r.addArchive("http://internap.dl.sourceforge.net/sourceforge/mad/%(name)s-%(version)s.tar.gz")
+        r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/libid3tag/libid3tag-0.15.1b-fix_overflow.patch')
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-static')
+
+    def policy(r):
+        r.Create('%(libdir)s/pkgconfig/id3tag.pc', contents = """
+prefix=%(prefix)s
+exec_prefix=%(prefix)s
+libdir=%(libdir)s
+includedir=%(includedir)s
+
+Name: id3tag
+Description: ID3 tag library
+Requires:
+Version: %(version)s
+Libs: -L%(libdir)s -lid3tag -lz
+Cflags: -I%(includedir)s
+""", mode = 0644)

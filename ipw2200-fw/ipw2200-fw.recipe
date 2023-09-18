@@ -1,0 +1,7 @@
+class Ipw2200FW(PackageRecipe):
+
+    name = 'ipw2200-fw'
+    version = '3.0'
+
+    def setup(r):
+        r.addArchive('%(name)s-%(version)s.tgz', dir='/lib/firmware/')

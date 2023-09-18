@@ -1,0 +1,342 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgApps(RPMPackageRecipe,CPackageRecipe):
+    name = 'xorg-apps'
+    version = '7.6'
+    rpmRelease = '175.2'
+    rpmName = 'xorg-x11'
+    isOPENsuse = True
+    isXOrgFactory = True
+
+    buildRequires = [ 'ncurses:devel', 'libXres:devel','fontconfig:devel', 'freetype:devel', 'libFS:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXScrnSaver:devellib', 'libXTrap:devellib', 'libXau:devel', 'libXaw:devel', 'libXcursor:devel', 'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXfont:devel', 'libXfontcache:devellib', 'libXft:devel', 'libXi:devellib', 'libXinerama:devellib', 'libXmu:devel', 'libXp:devel', 'libXpm:devel', 'libXprintAppUtil:devel', 'libXprintUtil:devel', 'libXrandr:devel', 'libXrender:devel', 'libXt:devel', 'libXtst:devellib', 'libXv:devel', 'libXxf86dga:devellib', 'libXxf86misc:devellib', 'libXxf86vm:devellib', 'libdmx:devellib', 'libfontenc:devel', 'liblbxutil:devel', 'libpng:devel', 'libxkbfile:devel', 'pam:devel', 'zlib:devel', 'flex:runtime', 'krb5-workstation:runtime', 'pkgconfig:devel', 'util-linux:runtime', 'autoconf:runtime', 'automake:runtime', 'util-macros:devel', 'xbitmaps:devel', 'xtrans:devel', 'xproxymanagementprotocol:devel', 'bigreqsproto:devel', 'rsh:runtime', 'expat:devel', 'glproto:devel', 'GConf:devel', 'gtk:devel', 'Mesa:devel', 'ConsoleKit:devel', 'dbus:devel', 'libXScrnSaver:devel', 'libXfontcache:devel', 'libXi:devel', 'libXinerama:devel', 'libXtst:devel', 'libXxf86dga:devel', 'libXxf86misc:devel', 'libXxf86vm:devel', 'libdmx:devel', 'pixman:devel', 'libXcomposite:devel', 'libXdamage:devel', 'man:config', 'openmotif:devel', 'libtool:runtime', 'trapproto:devel', 'xmltex:runtime', 'w3m:runtime', 'which:runtime', 'util-macros', 'bison:runtime', 'byacc:runtime', 'gettext:runtime', 'font-util:devel', 'xcb-util:devel']
+
+    fc_xinit_srpm = 'http://kojipkgs.fedoraproject.org/packages/xorg-x11-xinit/1.0.9/20.fc15/src/xorg-x11-xinit-1.0.9-20.fc15.src.rpm'
+    fc_xdm_srpm = 'http://kojipkgs.fedoraproject.org/packages/xorg-x11-xdm/1.1.10/1.fc16/src/xorg-x11-xdm-1.1.10-1.fc16.src.rpm'
+    fc_xfs_srpm = 'http://kojipkgs.fedoraproject.org/packages/xorg-x11-xfs/1.1.1/2.fc15/src/xorg-x11-xfs-1.1.1-2.fc15.src.rpm'
+    fc_xauth_srpm = 'http://kojipkgs.fedoraproject.org/packages/xorg-x11-xauth/1.0.2/9.fc15/src/xorg-x11-xauth-1.0.2-9.fc15.src.rpm'
+
+    def setup(r):
+        r.addArchive(r.srpm)
+
+       # unpack all
+        r.addAction(""" for p in $(fgrep Source ../%(rpmName)s.spec); do  ARGN=`echo $p | grep \- |  grep -c tar.bz2` ;  if [ "$ARGN" = 1 ]; then  (cd ../; ARG=`echo $p ` ; mv $ARG %(name)s-%(version)s/; cd %(name)s-%(version)s; tar xjf "$ARG"; rm -rf "$ARG"  );   fi  done """)
+
+        # normalize dir names
+        r.addAction(""" ls | grep X11R7.0 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.0//2'| /bin/sh """)
+        r.addAction(""" ls | grep X11R7.1 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.1//2'| /bin/sh """)
+
+        r.addAction(""" ls |   awk '{print("mv "$1" "$1)}' | sed 's/-[.0-9]*$//' | /bin/sh """)
+
+
+        apps = [ 'appres',
+                 'bdftopcf',
+                 'beforelight',
+                 'bitmap',
+                 'editres',
+                 'fonttosfnt',
+                 'fslsfonts',
+                 'fstobdf',
+                 'iceauth',
+                 'ico',
+                 'lbxproxy',
+                 'listres',
+                 'luit',
+                 'mkcomposecache',
+                 'mkfontdir',
+                 'mkfontscale',
+                 'oclock',
+                 'proxymngr',
+                 'rendercheck',
+                 'rgb',
+                 'rstart',
+                 'scripts',
+                 'sessreg',
+                 'setxkbmap',
+                 'showfont',
+                 'smproxy',
+                 'twm',
+                 'viewres',
+                 'x11perf',
+                 'xauth',
+                 'xbacklight',
+                 'xbiff',
+                 'xcalc',
+                 'xclipboard',
+                 'xclock',
+                 'xcmsdb',
+                 'xcompmgr',
+                 'xconsole',
+                 'xcursorgen',
+                 'xcursor-themes',
+                 'xdbedizzy',
+                 'xditview',
+                 'xdm',
+                 'xdpyinfo',
+                 'xedit',
+                 'xev',
+                 'xeyes',
+                 'xf86dga',
+                 'xfd',
+                 'xfindproxy',
+                 'xfontsel',
+                 'xfs',
+                 'xfsinfo',
+                 'xfwp',
+                 'xgamma',
+                 'xgc',
+                 'xhost',
+                 'xinit',
+                 'xinput',
+                 'xkbcomp',
+                 'xkbevd',
+                 'xkbprint',
+                 'xkbutils',
+                 'xkill',
+                 'xload',
+                 'xlogo',
+                 'xlsatoms',
+                 'xlsclients',
+                 'xlsfonts',
+                 'xmag',
+                 'xman',
+                 'xmessage',
+                 'xmh',
+                 'xmodmap',
+                 'xmore',
+                 'xplsprinters',
+                 'xpr',
+                 'xprehashprinterlist',
+                 'xprop',
+                 'xrandr',
+                 'xrdb',
+                 'xrefresh',
+                 'xrestop',
+                 'xrx',
+                 'xset',
+                 'xsetmode',
+                 'xsetpointer',
+                 'xsetroot',
+                 'xsm',
+                 'xstdcmap',
+                 'xtrap',
+                 'xvidtune',
+                 'xvinfo',
+                 'xwd',
+                 'xwininfo',
+                 'xwud',
+            ]
+
+        patches = [
+            # srpm patchnumber (for reference), patch, level, package (dir)
+            ['Patch2', 'lbxproxy.diff', -1, 'lbxproxy'],
+            ['Patch3', 'proxymngr.diff', -1, 'proxymngr'],
+            ['Patch4', 'rstart.diff', -1, 'rstart'],
+
+            ['Patch7', 'xinit.diff', -1, 'xinit'],
+            ['Patch8', 'xsm.diff', -1, 'xsm'],
+
+            ['Patch24', 'xauth-1.0.2.diff', -1, 'xauth'],
+            ['Patch46', 'xfd.diff', -1, 'xfd'],
+            ['Patch48', 'mkfontscale-skip_symlinks.diff', 1, 'mkfontscale'],
+            ['Patch54', 'xinit-client-session.patch', -1, 'xinit'],
+
+            ['Patch56', 'xdm-consolekit.diff', -1, 'xdm'],
+            ['Patch61', 'twm-sig11.diff', -1, 'twm'],
+            ['Patch62', 'twm-suse.diff', -1, 'twm'],
+            ['Patch63', 'xauth-tolerant-hostname-changes.diff', -1, 'xauth'],
+            ['Patch65', 'xdm-tolerant-hostname-changes.diff', -1, 'xdm'],
+            # 66 - xinit-suse.diff is suse  specific. 
+            # ['Patch67', 'xinit-tolerant-hostname-changes.diff', 1, 'xinit'], # aplied manually bellow (deps in 66 which we don't do)
+            ['Patch69', 'xrdb-traditional-cpp.diff', -1, 'xrdb'],
+            ['Patch674733', 'xrdb-Create-shell-escape-safe-cpp-options-in-the-non-path-bnc674733.patch', -1, 'xrdb'],
+            ]
+
+
+        for n, p, l, d in patches:
+            if l <> -1:
+                r.addPatch(p, dir = d, level = l, rpm= r.srpm )
+            else:
+                r.addPatch(p, dir = d, rpm= r.srpm )
+
+
+        ## now some assorted RH patches, as we are the natural evolution of them
+
+        # xdm
+        for p in ['xdm-1.0.1-redhat-xdm-config-fix.patch',
+                  'xdm-1.0.5-sessreg-utmp-fix-bug177890.patch',
+                  'xdm-1.1.10-libdl.patch',
+                  # 'xdm-1.1.10-add-audit-event.patch',
+]:
+            r.addPatch(p, rpm = r.fc_xdm_srpm, dir = 'xdm')
+
+        # supposed to get us same results as xinit-tolerant-hostname-changes.diff above
+        r.Replace('\#ifdef\ __APPLE__\n',
+                  '\nexport XAUTHLOCALHOSTNAME=`hostname`\n#ifdef __APPLE__\n',
+                  'xinit/startx.cpp')
+
+        r.Environment('PKG_CONFIG_PATH',
+                      '%(destdir)s/%(libdir)s/pkgconfig:%(libdir)s/pkgconfig')
+        r.macros.optflags += ' -fno-strict-aliasing '
+
+        for d in apps:
+            options = ''
+            if d == 'xdm':
+                options  = (' --disable-static  --disable-xprint '
+                            ' --with-pixmapdir=%(datadir)s/xdm/pixmaps '
+                            ' --with-pam '
+                            # ' --with-libaudit ' 
+                            ' --with-xdmconfigdir=%(sysconfdir)s/X11/xdm  '
+                            ' --with-xdmscriptdir=%(sysconfdir)s/X11/xdm ')
+
+                r.Run(""" sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES/' configure.ac """, dir = d)
+                r.Run('autoreconf -fi', dir = d)
+            elif d in [ 'lbxproxy' , 'proxymngr', 'rstart', 'scripts', 'x11perf', 'xcursorgen',
+                        'xinit', 'xset', 'xsm', ] :
+                r.Run('autoreconf -fi ', dir = d)
+            elif d == 'xcursor-themes':
+                options = ' XCURSORGEN=%(destdir)s/usr/bin/xcursorgen '
+            elif d in ['xfs', 'lbproxy', 'rstart', 'x11perf', 'xedit', 'xinit', 'xsm', 'scripts', 'sessreg', 'beforelight',]: 
+                options = ' --disable-devel-docs '
+                r.Run('cd %s; autoreconf -fi' % d)
+            elif d == 'luit':
+                options = '--with-localealiasfile=%(datadir)s/X11/locale/locale.alias'
+            elif d == 'xrdb':
+                options = '--with-cpp=%(bindir)s/cpp'
+
+            options += ' --sysconfdir=%(sysconfdir)s/ '
+            r.Configure(options, dir = d, preConfigure = 'PATH=$PATH:%(destdir)s/%(bindir)s')
+
+            if d == 'xinit':
+                r.Make('XINITDIR=%(sysconfdir)s/X11/xinit', dir = d)
+                r.addSource('ck-xinit-session.c', rpm = r.fc_xinit_srpm, dir = d)
+                r.addSource('xinit-compat.desktop', rpm = r.fc_xinit_srpm, dir = d)
+                r.Run('%(cc)s -o ck-xinit-session `pkg-config --cflags ck-connector` %(cflags)s ck-xinit-session.c `pkg-config --libs ck-connector`', dir = d)
+                r.Install(d + '/ck-xinit-session', '%(bindir)s', mode = 0755, package = d)
+                r.Install(d + '/xinit-compat.desktop', '%(datadir)s/xsessions/xinit-compat.desktop', mode = 0755, package = d)
+            elif d == 'xfs':
+                r.Make('configdir=%(sysconfdir)s/X11/fs', dir = d)
+            else:
+                r.Make(dir = d)
+
+            if d == 'xinit':
+                r.MakeInstall('XINITDIR=%(destdir)s/etc/X11/xinit DESTDIR=%(destdir)s', dir = d,
+                              package = d)
+            elif d == 'xfs':
+                r.MakeInstall('configdir=%(destdir)s%(sysconfdir)s/X11/fs DESTDIR=%(destdir)s', dir = d,
+                              package = d)
+            else:
+                r.MakeInstall('DESTDIR=%(destdir)s', dir = d,
+                              package = d)
+
+            # FIXME: workaround for CNP-87
+            r.PackageSpec(d, '%(thisdocdir)s/'+d+'/')
+
+            if d == 'mkfontdir':
+                r.Requires('mkfontscale:runtime', '%(bindir)s/mkfontdir')
+                r.Requires('chkfontpath:runtime', '%(taghandlerdir)s/x-font')
+                r.Requires('ttmkfdir:runtime', '%(taghandlerdir)s/x-font')
+
+                r.addSource('x-font.tagdescription', macros=True,
+                            dest='%(tagdescriptiondir)s/x-font', package = d)
+                r.addSource('x-font.taghandler', macros=True,
+                            dest='%(taghandlerdir)s/x-font', mode=0755, package = d)
+#            elif d == 'proxymngr':
+#                r.Replace('%(destdir)s', '', '%(sysconfdir)s/X11/proxymngr/pmconfig')
+            elif d == 'mkcomposecache':
+                r.Install('%s/mkallcomposecaches.sh' % d,
+                          '%(sbindir)s/mkallcomposecaches',  package = d)
+            elif d == 'xinit':
+                for f in ['xinitrc-common', 'xinitrc', 'Xclients', 'Xsession']:
+                    r.addSource(f, dest = '%(sysconfdir)s/X11/xinit/',
+                                mode = 0755, package = d, rpm = r.fc_xinit_srpm)
+
+                for f in ['Xmodmap','Xresources']:
+                    r.addSource(f, dest = '%(sysconfdir)s/X11/',
+                                mode = 0644, package = d, rpm = r.fc_xinit_srpm)
+
+                r.addSource('localuser.sh', dest = '%(sysconfdir)s/X11/xinit/xinitrc.d/',
+                            mode = 0644, package = d, rpm = r.fc_xinit_srpm)
+
+                r.addSource('xinit-compat', dest = '%(libexecdir)s/',
+                            mode = 0755, package = d, rpm = r.fc_xinit_srpm)
+
+                r.MakeDirs('%(sysconfdir)s/X11/xinit/Xclients.d', package = d)
+                r.ExcludeDirectories(exceptions = '%(sysconfdir)s/X11/xinit/Xclients.d')
+
+                # FIXME: not sure if needed anymore
+                # r.Symlink('/etc/X11/xinit/xinitrc', '%(sysconfdir)s/skel/.xinitrc.template', package = d)
+
+            elif d =='xfs':
+                # we cannot do a straight  r.addSource as it get 's
+                # overwrited at makeInstall time
+
+                r.addSource('xfs.init', rpm = r.fc_xfs_srpm)
+                r.Install('xfs.init', '%(sysconfdir)s/init.d/xfs',
+                            mode = 0755, package = d)
+
+                # FIXME need to write tag script co create catalog  
+
+                r.addSource('xfs.config', rpm = r.fc_xfs_srpm)
+                r.Install('xfs.config', '%(sysconfdir)s/X11/fs/config',
+                            mode = 0644, package = d)
+	    elif d == 'rstartd':
+		r.Move('%(sysconfdir)s/X11/rstart/rstartd.reali', '%(bindir)s')
+	        r.Replce('%(sysconfdir)s/X11/rstart/rstartd.real', '%(bindir)s/rstartd.real', '%(bindir)s/rstartd')
+		r.PackageSpec('%(bindir)s/rstartd', d)
+            elif d == 'xauth':
+               r.addSource('mkxauth', dest = '%(bindir)s/',
+                            mode = 0755, package = d, rpm = r.fc_xauth_srpm)
+               r.addSource('mkxauth.man', dest = '%(mandir)s/man1/mkxauth.1x',
+                            mode = 0644, package = d, rpm = r.fc_xauth_srpm)
+            elif d == 'xdm':
+                ## FIXME!!! Add a fake xdm init script, in order for X don't 
+                ## go down on updates (as we now rely on prefdm)
+                r.addSource('xdm.init.f', dest = '%(sysconfdir)s/init.d/xdm', 
+                             mode = 0755, package = d)
+                ## 
+                r.addSource('Xsetup_0', dest = '%(sysconfdir)s/X11/xdm/',
+                            mode = 0755, package = d, rpm = r.fc_xdm_srpm)
+
+                r.addSource('xdm.pamd', dest = '%(sysconfdir)s/pam.d/xdm',
+                            mode = 0644, package = d, rpm = r.fc_xdm_srpm)
+                # as we do not have it ...
+                r.Replace('.*selinux.*', '', '%(sysconfdir)s/pam.d/xdm')
+
+                r.Remove('%(sysconfdir)s/X11/xdm/Xsession', recursive = True)
+                r.Symlink('%(sysconfdir)s/X11/xinit/Xsession', '%(sysconfdir)s/X11/xdm/Xsession', package = d)
+                r.DanglingSymlinks(exceptions = '%(sysconfdir)s/X11/xdm/Xsession')
+                r.MakeDirs('%(localstatedir)s/lib/xdm', package = d)
+                r.ExcludeDirectories(exceptions = '%(localstatedir)s/lib/xdm')
+            else:
+                pass
+
+        r.UtilizeUser('xfs', '%(bindir)s/xfs')  # xfs
+        r.TagSpec('initscript', '%(initdir)s/') # xfs
+        r.Requires('which:runtime', '%(sysconfdir)s/init.d/xdm')
+        r.Requires('xinit:runtime', '%(sysconfdir)s/X11/xdm/Xsession')
+        r.Requires('xrdb:runtime', '%(sysconfdir)s/X11/xinit/xinitrc-common')
+        r.Requires('xmodmap:runtime', '%(sysconfdir)s/X11/xinit/xinitrc-common')
+        r.TagSpec('gtk-update-icon-cache', '%(datadir)s/icons/.*') # xcursor-themes
+
+	# 
+	r.Remove('%(destdir)s/%(destdir)s', recursive=True)
+
+        # empty xorg-apps pkg 
+        # CNY-3117
+        for i in  ['xtrapinfo', 'xtrapout', 'xtrapchar', 'xtrapstats', 'xtrapproto', 'xtrapreset', 'xtrapin']:
+            r.PackageSpec('xtrap', '%(mandir)s/man1/' + i + '.1x.gz')
+
+        for i in  ['atobm', 'bmtoa']:
+            r.PackageSpec('bitmap', '%(mandir)s/man1/' + i + '.1.gz')
+        # FIXME - we need to pkg nickle 
+        r.NormalizeInterpreterPaths(exceptions='%(bindir)s/xkeystone')
+
+        # xmh stuff that collides with xbitmaps stuff
+        r.Remove('%(includedir)s/X11/bitmaps/black6')
+        r.Remove('%(includedir)s/X11/bitmaps/box6')
+

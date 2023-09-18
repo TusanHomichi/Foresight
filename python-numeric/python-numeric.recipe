@@ -1,0 +1,9 @@
+class PythonNumeric(CPackageRecipe):
+   buildRequires = [ 'python:runtime', 'python:devel' ]
+	
+   name = "python-numeric"
+   version = "23.1"
+   def setup(r):
+	r.addArchive('http://dl.sf.net/numpy/Numeric-%(version)s.tar.gz')
+	r.Run('python setup.py install --root=%(destdir)s')
+

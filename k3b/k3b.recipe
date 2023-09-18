@@ -1,0 +1,23 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class K3b(kdePackageRecipe):
+
+    name = 'k3b'
+    version = '2.0.2'
+
+    buildRequires = [ ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/k3b/')
+        r.addPatch('k3b-2.0.2-ffmpeg.patch')
+
+    def policy(r):
+
+        r.Requires('cdrdao:runtime', '%(bindir)s/')
+        r.Requires('dvd+rw-tools:runtime', '%(bindir)s/')
+

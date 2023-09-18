@@ -1,0 +1,46 @@
+class Mjpegtools(AutoPackageRecipe):
+    name = 'mjpegtools'
+    version = '1.9.0'
+ 
+    buildRequires = [ 'SDL:devel', 
+                      'atk:devel',
+                      'cairo:devel', 
+                      'expat:devel',
+                      'fontconfig:devel', 
+                      'freetype:devel',
+                      'glib:devel', 
+                      'gtk:devel', 
+                      'libX11:devel', 
+                      'libXrender:devel', 
+                      'libdv:devel', 
+                      'libjpeg:devel', 
+                      'libpng:devel',
+                      'libquicktime:devel', 
+                      'libstdc++:devel', 
+                      'libxcb:devel',
+                      'pango:devel', 
+                      'pixman:devel',
+                      'xcb-util:devel',
+                      'zlib:devel', 
+                      'install-info:runtime',
+                      'libICE:devel',
+                      'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/mjpeg/')
+        for p in ['mjpegtools-1.9.0-gcc44.patch',
+                  'mjpegtools-1.9.0-png-memleak.patch',
+                  'mjpegtools-1.9.0rc1-anytovcd-ffmpegver.patch']:
+            r.addPatch(p)
+
+        r.Replace('ARCHFLAGS=.*', 'ARCHFLAGS=',  'configure*')
+        r.Replace('/lib /usr/lib', '/%(lib)s %(libdir)s', 'configure') # lib64 rpaths
+
+    def configure(r):
+        r.Configure('--disable-dependency-tracking --disable-static')
+        r.disableParallelMake()
+
+
+    def policy(r):
+        # too broken/outdated to be useful in 1.[89].0 (and would come with dep chain)
+        r.Remove('%(bindir)s/mpegtranscode')

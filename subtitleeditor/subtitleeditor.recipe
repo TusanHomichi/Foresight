@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2010 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Subtitleeditor(AutoPackageRecipe):
+    name = 'subtitleeditor'
+    version = '0.38.0'
+
+    summary = 'Gnome Subtitles is a subtitle editor for the GNOME desktop.'
+    packageDescription = """
+It supports the most common
+text-based subtitle formats and allows for subtitle editing, translation and synchronization.
+"""
+ 
+    buildRequires = [
+                'atk:devel', 
+                'cairo:devel', 
+                'cairomm:devel', 
+                'desktop-file-utils:runtime', 
+                'enchant:devel', 
+                'fontconfig:devel', 
+                'freetype:devel', 
+                'gettext:runtime', 
+                'glib:devel', 
+                'glibmm:devel', 
+                'gst-plugins-base:devel', 
+                'gstreamer:devel', 
+                'gstreamer:runtime', 
+                'gstreamermm:devel', 
+                'gtk:devel', 
+                'gtk:runtime', 
+                'gtkmm:devel', 
+                'intltool:runtime', 
+                'libsigc++:devel', 
+                'libstdc++:devel', 
+                'libxml++:devel', 
+                'libxml2:devel', 
+                'pango:devel', 
+                'pangomm:devel', 
+                'pkgconfig:devel', 
+                'gst-plugins-good:lib'
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://download.gna.org/subtitleeditor/0.38/')

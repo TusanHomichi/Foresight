@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfce-core-package.recipe')
+class xfce_mcs_plugins(xfceCorePackage):
+
+    name = 'xfce-mcs-plugins'
+    version = '4.4.2'
+
+    def policy(r):
+
+        xfceCorePackage.policy(r)
+
+        # also installed by xfce4-panel
+        r.Remove('%(datadir)s/icons/hicolor/48x48/apps/xfce-filemanager.png')
+

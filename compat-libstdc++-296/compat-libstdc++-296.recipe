@@ -1,0 +1,7 @@
+loadRecipe('binarypackage=conary.rpath.com@rpl:1')
+class LibStdc296(BinaryPackageRecipe):
+    name = 'compat-libstdc++-296'
+    version = '2.9.6'
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.sunet.se/pub/os/Linux/distributions/fedora/linux/releases/10/Everything/i386/os/Packages/compat-libstdc++-296-2.96-141.i386.rpm', dir='/')

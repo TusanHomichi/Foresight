@@ -1,0 +1,14 @@
+class Live555(CPackageRecipe):
+    name = 'live555'
+    version = '2013.04.08'
+    buildRequires = ['libstdc++:devel']
+    packageSummary = 'Source-code libraries for standards-based RTP/RTCP/RTSP/SIP multimedia streaming, suitable for embedded and/or low-cost streaming applications.'
+    packageDescription = '''This code forms a set of C++ libraries for multimedia streaming, using open standard protocols (RTP/RTCP, RTSP, SIP). These libraries - which can be compiled for Unix (including Linux and Mac OS X), Windows, and QNX (and other POSIX-compliant systems) - can be used to build streaming applications. The libraries are already being used to implement applications such as "the LIVE555 Media Server" (a RTSP server application), "liveCaster" and "playRTPMPEG" (for streaming MP3 audio using RTP/RTCP), and "vobStreamer" (for streaming DVD content using RTP/RTCP/RTSP). The libraries can also be used to stream, receive, and process MPEG, H.264, H.263+, DV or JPEG video, and several audio codecs. They can easily be extended to support additional (audio and/or video) codecs, and can also be used to build basic RTSP or SIP clients and servers, and have been used to add streaming support to existing media player applications, such as "VLC" and "MPlayer". (For some specific examples of how these libraries can be used, see the test programs below.)'''
+    def setup(r):
+        r.addArchive('http://www.live555.com/liveMedia/public/live.%(version)s.tar.gz')
+        r.addSource('install.py')
+        r.Run('sed -i -e "s/\(CPLUSPLUS_FLAGS = .*\)/\1 -Wno-deprecated/" config.linux')
+        if Arch.x86: r.Run('./genMakefiles linux')
+        elif Arch.x86_64: r.Run('./genMakefiles linux-64bit')
+        r.Make()
+        r.Run('python install.py DESTDIR=%(destdir)s includedir=%(includedir)s thisdocdir=%(thisdocdir)s datadir=%(datadir)s bindir=%(bindir)s libdir=%(libdir)s')

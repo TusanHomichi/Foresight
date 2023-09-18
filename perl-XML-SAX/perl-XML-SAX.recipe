@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage.recipe')
+class XMLSAX(CPANPackageRecipe):
+    name='perl-XML-SAX'
+    version='0.14'
+
+    buildRequires = [ 'perl-URI:perl', 'perl-XML-NamespaceSupport:perl', 'perl-HTTP-Cookies:perl', 'perl:devel']
+
+    def unpack(r):
+        CPANPackageRecipe.unpack(r)
+        r.Replace('\-MXML::SAX','\-I\$(DESTINSTALLVENDORLIB) \-MXML::SAX', 'Makefile.PL')
+

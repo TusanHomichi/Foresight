@@ -1,0 +1,69 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Smokekde(CPackageRecipe):
+    name = 'smokekde'
+    version = '4.8.4'
+ 
+    buildRequires = [
+        'attica:devel', 
+        'automoc:runtime', 
+        'cmake:runtime', 
+        'dbus:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'glib:devel', 
+        'kate:devel', 
+        'kdelibs:config', 
+        'kdelibs:devel', 
+        'kdepimlibs:devel', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXScrnSaver:devel', 
+        'libXau:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXdamage:devel', 
+        'libXdmcp:devel', 
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXinerama:devel', 
+        'libXpm:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libXt:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'libpng:devel', 
+        'libstdc++:devel', 
+        'libxkbfile:devel',
+        'okular:devel', 
+        'openssl:devel', 
+        'phonon:devel', 
+        'pkgconfig:devel', 
+        'qt4-core:devellib', 
+        'qt4-gui:devellib', 
+        'qt4-qt3support:devellib', 
+        'qt4-sql:devellib', 
+        'qt4:devel', 
+        'smokegen:devel', 
+        'smokeqt:data', 
+        'smokeqt:devel', 
+        'soprano:data', 
+        'soprano:devel', 
+        'soprano:runtime',
+        'xz:runtime', 
+        'zlib:devel',
+            ]
+
+    def setup(r):
+        r.addArchive('mirror://kde//stable/%(version)s/src/')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

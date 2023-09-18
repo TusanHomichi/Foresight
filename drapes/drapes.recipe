@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Drapes(GnomePackageRecipe):
+
+    buildRequires = [ 'gnome-common:runtime', 'gnome-common:devel', 'GConf:devel', 'GConf:runtime', 'desktop-file-utils:runtime', 'gnome-sharp:devellib', 'gnome-sharp:cil', 'gtk-sharp:devellib', 'gtk-sharp:cil', 'mono:cil', 'mono:devel', 'mono:runtime', 'rarian:runtime', 'rarian:devel', 'gettext:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'gnome-panel:runtime', 'sgml-common:runtime' ]
+
+    name = 'drapes'
+    version = '0.5.2'
+
+    def unpack(r):
+        r.addArchive('http://drapes.mindtouchsoftware.com/release/0.5/')
+        r.addPatch('http://patches.ubuntu.com/by-release/extracted/debian/d/drapes/0.5.2-1/drapes-Makefile.in.patch')
+

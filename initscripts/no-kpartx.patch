@@ -1,0 +1,58 @@
+--- rc.d/rc.sysinit.before	2010-05-19 11:55:26.212305864 +0100
++++ rc.d/rc.sysinit	2010-05-19 11:57:33.641556119 +0100
+@@ -356,14 +356,14 @@
+     init_crypto 0
+ fi
+ 
+-if ! strstr "$cmdline" nompath && [ -f /etc/multipath.conf ] && \
+-		[ -x /sbin/multipath ]; then
+-	modprobe dm-multipath > /dev/null 2>&1
+-	/sbin/multipath -v 0
+-	if [ -x /sbin/kpartx ]; then
+-		/sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -p p" >/dev/null
+-	fi
+-fi
++# if ! strstr "$cmdline" nompath && [ -f /etc/multipath.conf ] && \
++# 		[ -x /sbin/multipath ]; then
++# 	modprobe dm-multipath > /dev/null 2>&1
++# 	/sbin/multipath -v 0
++# 	if [ -x /sbin/kpartx ]; then
++# 		/sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -p p" >/dev/null
++# 	fi
++# fi
+ 
+ if ! strstr "$cmdline" nodmraid && [ -x /sbin/dmraid ]; then
+ 	modprobe dm-mirror >/dev/null 2>&1
+@@ -375,7 +375,8 @@
+ 				continue
+ 			fi
+ 			/sbin/dmraid -ay -i --rm_partitions -p "$dmname" >/dev/null 2>&1
+-			/sbin/kpartx -a -p p "/dev/mapper/$dmname"
++			# we do not ship it YET
++			# /sbin/kpartx -a -p p "/dev/mapper/$dmname"
+ 		done
+ 	fi
+ fi
+--- rc.d/init.d/netfs.before	2010-05-19 11:53:31.401305060 +0100
++++ rc.d/init.d/netfs	2010-05-19 11:55:04.121306408 +0100
+@@ -46,13 +46,13 @@
+ 	    if [ -f /etc/mdadm.conf ]; then
+ 		mdadm -A -s
+ 	    fi
+-	    if [ -f /etc/multipath.conf ] && [ -x /sbin/multipath ]; then
+-	    	modprobe dm-multipath >/dev/null 2>&1
+-		/sbin/multipath -v 0
+-		if [ -x /sbin/kpartx ]; then
+-		       /sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -p p"
+-		fi
+-	    fi
++#	    if [ -f /etc/multipath.conf ] && [ -x /sbin/multipath ]; then
++#	    	modprobe dm-multipath >/dev/null 2>&1
++#		/sbin/multipath -v 0
++#		if [ -x /sbin/kpartx ]; then
++#		       /sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -p p"
++#		fi
++#	    fi
+ 	    if [ -x /sbin/lvm ]; then
+ 		if /sbin/lvm vgscan > /dev/null 2>&1 ; then
+ 		       action $"Setting up Logical Volume Management:" /sbin/lvm vgchange -a y

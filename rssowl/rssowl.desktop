@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=RSSOwl
+Comment=Java based cross-platform RSS Reader
+Exec=/opt/rssowl/rssowl/RSSOwl
+Icon=/opt/rssowl/rssowl/icon.xpm
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Network;

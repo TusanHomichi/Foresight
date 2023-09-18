@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Relatorio(PackageRecipe):
+
+    name = 'relatorio'
+    version = '0.5.4'
+
+    buildRequires = ['python-setuptools:python','PyYAML:python', 'lxml:python', 'pycairo:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/r/%(name)s/')
+        r.PythonSetup()

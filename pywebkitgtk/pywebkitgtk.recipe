@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pywebkitgtk(AutoPackageRecipe):
+    name = 'pywebkitgtk'
+    version = '1.1.8'
+ 
+    buildRequires = ['WebKit:devel', 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'pygtk:devel', 'xcb-util:devel', 'zlib:devel', 'libxml2:devel', 'libxslt:devel', 'gnome-common:devel', 'gnome-common:runtime', 'libtool:runtime', 'libtool:devel', 'python:devel', 'pygobject:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://pywebkitgtk.googlecode.com/files/')
+
+    def make(r):
+        r.Make('PYGTK_CODEGEN=pygobject-codegen-2.0')

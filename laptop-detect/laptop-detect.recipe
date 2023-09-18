@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LaptopDetect(PackageRecipe):
+    name = 'laptop-detect'
+    version = '0.13'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('http://archive.ubuntu.com/ubuntu/pool/main/l/laptop-detect/laptop-detect_%(version)s.2ubuntu1.tar.gz')
+        r.Replace('@VERSION@','%(version)s','laptop-detect.in')
+        r.Install('laptop-detect.in','%(sbindir)s/laptop-detect', mode=0755)
+        r.Install('laptop-detect.8','%(mandir)s/man8/laptop-detect.8')
+        r.Requires('dmidecode:runtime','%(sbindir)s/laptop-detect')

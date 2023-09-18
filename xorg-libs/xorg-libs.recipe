@@ -1,0 +1,112 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgLibs(RPMPackageRecipe,CPackageRecipe):
+    name = 'xorg-libs'
+    version = '7.6'
+    rpmRelease = '60.1'
+    rpmName = 'xorg-x11-libs'
+    isOPENsuse = True
+    isXOrgFactory = True
+
+    buildRequires = ['compositeproto:devel', 'damageproto:devel', 'dmxproto:devel', 'expat:devel', 'fontcacheproto:devel', 'fontconfig:devel', 'fontsproto:devel', 'freetype:devel', 'gperf:runtime', 'inputproto:devel', 'kbproto:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXmu:devel', 'libXp:devel', 'libXpm:devel', 'libXprintUtil:devel', 'libXrender:devel', 'libXt:devel', 'libXv:devel', 'libfontenc:devel', 'libxcb:devel', 'libxkbfile:devel', 'm4:runtime', 'pkgconfig:devel', 'printproto:devel', 'randrproto:devel', 'recordproto:devel', 'scrnsaverproto:devel', 'trapproto:devel', 'videoproto:devel', 'vncproto:devel', 'xcliplistproto:devel', 'xf86dgaproto:devel', 'xf86miscproto:devel', 'xf86vidmodeproto:devel', 'xineramaproto:devel', 'xmlto:runtime', 'xproto:devel', 'zlib:devel','autoconf:runtime','automake:runtime', 'gcc-c++:runtime', 'xtrans:devel', 'libtool:runtime', 'libtool:devel', 'xextproto:devel', 'evieext:devel', 'imake:runtime', 'gccmakedep:runtime', 'ed:runtime', 'resourceproto:devel','resourceproto:devellib', 'xorg-cf-files:data', 'cairo:devel', 'libXi:devel', 'util-macros:devel', 'w3m:runtime']
+
+
+    def setup(r):
+        r.addArchive(r.srpm)
+
+        # unpack all
+        r.addAction(""" for p in $(fgrep Source ../xorg-x11-libs.spec); do  ARGN=`echo $p |  grep -c tar.bz2`;  if [ "$ARGN" = 1 ]; then  (cd ../; ARG=`echo $p ` ; mv $ARG %(name)s-%(version)s/; cd %(name)s-%(version)s; tar xjf "$ARG"; rm -rf "$ARG"  );   fi  done """)
+
+
+        # normalize dir names
+        r.addAction(""" ls | grep X11R7.1 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.1//2'| /bin/sh """)
+        r.addAction(""" ls | grep X11R7.0 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.0//2'| /bin/sh """)
+#        r.addAction(""" ls | grep X11 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R6.9//2'| /bin/sh """)
+
+        r.addAction(""" ls |   awk '{print("mv "$1" "$1)}' | sed 's/-[.0-9]*$//' | /bin/sh """)
+
+        r.macros.optflags += ' -fno-strict-aliasing  '
+
+        libs = [
+            'libdmx',
+            'libFS',
+            'liblbxutil',
+            'liboldX',
+            'libpciaccess',
+            'libvnc',
+            # 'libWindowsWM',
+            'libXaw',
+            'libXcliplist',
+            'libXcomposite',
+            'libXcursor',
+            'libXdamage',
+            'libXevie',
+            'libXfont',
+            'libXfontcache',
+            'libXft',
+            'libXinerama',
+            'libxkbui',
+            'libXprintAppUtil',
+            'libXrandr',
+            'libXres',
+            'libXScrnSaver',
+            'libXTrap',
+            'libXtst',
+            'libXvMC',
+            'libXxf86dga',
+            'libXxf86misc',
+            'libXxf86vm',
+            'xbitmaps',
+            'xcb-util',
+            ]
+
+        patches = [
+            # srpm patchnumber (for reference), patch, level, package (dir)
+            ['Patch2', 'libXft-2.1.7-lcd-filter-2.patch', 1, 'libXft/src'],
+            ['Patch5', 'libxkbui.diff', -1, 'libxkbui'],
+            ['Patch10', 'libXxf86misc-xcb.diff', 0, 'libXxf86misc'],
+            ]
+
+        for n, p, l, d in patches:
+            if l <> -1:
+                r.addPatch(p, dir = d, level = l, rpm= r.srpm )
+            else:
+                r.addPatch(p, dir = d, rpm= r.srpm )
+
+        r.addPatch('U_libXfont_LZW-decompress-fix-for-CVE-2011-2895.patch',
+                   dir = 'libXfont')
+
+        for d in libs:
+            
+            if d in ['libvnc', 'libXcliplist']:
+                r.Run('cd %s; autoreconf -fi' % d)
+            configArgs = ' --disable-static --with-pic --enable-type1  --disable-silent-rules'
+            if d == 'libXvMC':
+                configArgs += ' --sysconfdir=%(sysconfdir)s '
+            elif d in ['libvnc', 'libXcliplist']:
+                r.Run('cd %s; autoreconf -fi' % d)
+            elif d == 'libpciaccess':
+                configArgs += ' --with-pciids-path=%(datadir)s '
+
+            r.Configure(configArgs, dir = d)
+
+            r.Make(dir = d)
+
+            r.MakeInstall('DESTDIR=%(destdir)s', dir = d,
+                          package = d)
+
+            # FIXME: workaround for CNP-87
+            r.PackageSpec(d, '%(thisdocdir)s/'+d+'/')
+
+        # for compatibility reasons
+        r.Symlink('libXaw7.so.7', '%(libdir)s/libXaw8.so.8', package = 'libXaw')
+        r.Symlink('libXaw.so.7',  '%(libdir)s/libXaw.so.8', package = 'libXaw')
+        
+        # FIXME
+        # handle the man pages symlinks that still land
+        # in xorg-libs:devel

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CairoMM(AutoPackageRecipe):
+
+    buildRequires = [ 'cairo:devel', 'doxygen:runtime',
+        'fontconfig:devel', 'freetype:devel', 'libpng:devel',
+        'libstdc++:devel', 'pkgconfig:devel', 'libXau:devel',
+        'libXrender:devel','zlib:devel', 'gcc-c++:runtime',
+        'libICE:devel', 'libSM:devel', 'libX11:devel',
+        'libXdmcp:devel', 'expat:devel' ]
+
+    name = 'cairomm'
+    version = '1.6.0'
+
+    def unpack(r):
+        r.addArchive('http://cairographics.org/releases/')

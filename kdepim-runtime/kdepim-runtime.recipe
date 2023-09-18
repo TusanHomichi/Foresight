@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdePIMRuntime(kdeCorePackageRecipe):
+
+    name = 'kdepim-runtime'
+    version = '4.4.10'
+
+    buildRequires = [
+        'akonadi:devel', 'boost:devel', 'libxml2:devel', 'libxslt:runtime',
+        'shared-desktop-ontologies:devellib', 'strigi:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/kdepim-%(version)s/src/')
+

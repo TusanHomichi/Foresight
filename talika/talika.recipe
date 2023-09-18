@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Talika(CPackageRecipe):
+    name = 'talika'
+    version = 'r.43'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gnome-panel:devel', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libXcomposite:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libwnck:devel', 'pango:devel', 'pkgconfig:devel', 'popt:devel', 'which:runtime', 'gnome-common:runtime']
+ 
+    def setup(r):
+        r.addSvnSnapshot('http://talika.svn.sourceforge.net/svnroot/talika')
+        r.Configure(configureName='./autogen.sh', dir='trunk')
+        r.Make(dir='trunk')
+        r.MakeInstall(dir='trunk')

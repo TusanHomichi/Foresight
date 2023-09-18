@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2009 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Pioneers(AutoPackageRecipe):
+
+    name = 'pioneers'
+    version = '14.1'
+    buildRequires = [
+        'ORBit2:devel',
+        'avahi-glib:devel', 'avahi:devel', 'atk:devel',
+        'cairo:devel',
+        'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel',
+        'gettext:runtime', 'glib:devel', 'gtk:devel',
+        'intltool:runtime',
+        'libbonobo:devel', 'libgnome:devel', 'libnotify:devel', 
+        'librsvg:runtime',
+        'netpbm:runtime',
+        'pango:devel', 'pkgconfig:devel', 'popt:devel',
+        'rarian:devel', 'rarian:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/pio/Source/')
+        r.Replace('LIBNOTIFY_OPTIMAL_VERSION=0\.7\.4', 'LIBNOTIFY_OPTIMAL_VERSION=0.7.3', 'configure')

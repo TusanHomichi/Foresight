@@ -1,0 +1,175 @@
+diff -up sysstat-9.0.6.1/configure.in.opt sysstat-9.0.6.1/configure.in
+--- sysstat-9.0.6.1/configure.in.opt	2010-09-23 18:45:52.000000000 +0200
++++ sysstat-9.0.6.1/configure.in	2010-09-23 18:45:52.000000000 +0200
+@@ -505,6 +505,7 @@ AC_CONFIG_FILES([man/sa2.8:man/sa2.in])	
+ AC_CONFIG_FILES([man/sadc.8:man/sadc.in])	# File must be renamed
+ AC_CONFIG_FILES([man/sadf.1:man/sadf.in])	# File must be renamed
+ AC_CONFIG_FILES([man/sar.1:man/sar.in])		# File must be renamed
++AC_CONFIG_FILES([man/sysstat.5:man/sysstat.in])	# File must be renamed
+ AC_CONFIG_FILES([contrib/isag/isag], [chmod +x contrib/isag/isag]) # Permissions must be changed
+ 
+ AC_OUTPUT(Makefile)
+diff -up sysstat-9.0.6.1/Makefile.in.opt sysstat-9.0.6.1/Makefile.in
+--- sysstat-9.0.6.1/Makefile.in.opt	2010-09-23 18:45:52.000000000 +0200
++++ sysstat-9.0.6.1/Makefile.in	2010-09-23 18:54:52.000000000 +0200
+@@ -48,6 +48,7 @@ ifndef MAN_DIR
+ MAN_DIR = @mandir@
+ endif
+ MAN1_DIR = $(MAN_DIR)/man1
++MAN5_DIR = $(MAN_DIR)/man5
+ MAN8_DIR = $(MAN_DIR)/man8
+ 
+ ifndef DOC_DIR
+@@ -214,10 +215,11 @@ nls/sysstat.pot: $(wildcard *.c)
+ .PHONY: clean distclean install install_base install_all uninstall \
+ 	uninstall_base uninstall_all dist bdist
+ 
+-install_man: man/sadc.8 man/sar.1 man/sadf.1 man/sa1.8 man/sa2.8
++install_man: man/sadc.8 man/sar.1 man/sadf.1 man/sa1.8 man/sa2.8 man/sysstat.5
+ ifeq ($(INSTALL_DOC),y)
+ 	mkdir -p $(DESTDIR)$(MAN1_DIR)
+ 	mkdir -p $(DESTDIR)$(MAN8_DIR)
++	mkdir -p $(DESTDIR)$(MAN5_DIR)
+ 	rm -f $(DESTDIR)$(MAN8_DIR)/sa1.8*
+ 	$(INSTALL_DATA) $(MANGRPARG) man/sa1.8 $(DESTDIR)$(MAN8_DIR)
+ 	rm -f $(DESTDIR)$(MAN8_DIR)/sa2.8*
+@@ -234,6 +236,8 @@ ifeq ($(INSTALL_DOC),y)
+ 	$(INSTALL_DATA) $(MANGRPARG) man/mpstat.1 $(DESTDIR)$(MAN1_DIR)
+ 	rm -f $(DESTDIR)$(MAN1_DIR)/pidstat.1*
+ 	$(INSTALL_DATA) $(MANGRPARG) man/pidstat.1 $(DESTDIR)$(MAN1_DIR)
++	rm -f $(DESTDIR)$(MAN5_DIR)/sysstat.5*
++	$(INSTALL_DATA) $(MANGRPARG) man/sysstat.5 $(DESTDIR)$(MAN5_DIR)
+ ifeq ($(INSTALL_ISAG),y)
+ 	$(INSTALL_DATA) $(MANGRPARG) contrib/isag/isag.1 $(DESTDIR)$(MAN1_DIR)
+ endif
+@@ -246,6 +250,7 @@ ifeq ($(COMPRESS_MANPG),y)
+ 	$(ZIP) $(DESTDIR)$(MAN1_DIR)/iostat.1
+ 	$(ZIP) $(DESTDIR)$(MAN1_DIR)/mpstat.1
+ 	$(ZIP) $(DESTDIR)$(MAN1_DIR)/pidstat.1
++	$(ZIP) $(DESTDIR)$(MAN5_DIR)/sysstat.5
+ ifeq ($(INSTALL_ISAG),y)
+ 	$(ZIP) $(DESTDIR)$(MAN1_DIR)/isag.1
+ endif
+@@ -387,6 +392,7 @@ ifeq ($(INSTALL_DOC),y)
+ 	rm -f $(DESTDIR)$(MAN1_DIR)/iostat.1*
+ 	rm -f $(DESTDIR)$(MAN1_DIR)/mpstat.1*
+ 	rm -f $(DESTDIR)$(MAN1_DIR)/pidstat.1*
++	rm -f $(DESTDIR)$(MAN5_DIR)/sysstat.5*
+ ifeq ($(INSTALL_ISAG),y)
+ 	rm -f $(DESTDIR)$(MAN1_DIR)/isag.1
+ endif
+diff -up sysstat-9.0.6.1/man/sadc.in.opt sysstat-9.0.6.1/man/sadc.in
+--- sysstat-9.0.6.1/man/sadc.in.opt	2010-09-23 18:45:52.000000000 +0200
++++ sysstat-9.0.6.1/man/sadc.in	2010-09-23 18:45:52.000000000 +0200
+@@ -201,6 +201,7 @@ Sebastien Godard (sysstat <at> orange.fr
+ .BR sar (1),
+ .BR sa1 (8),
+ .BR sa2 (8),
+-.BR sadf (1)
++.BR sadf (1),
++.BR sysstat (5)
+ 
+ .I http://pagesperso-orange.fr/sebastien.godard/
+diff -up sysstat-9.0.6.1/man/sysstat.in.opt sysstat-9.0.6.1/man/sysstat.in
+--- sysstat-9.0.6.1/man/sysstat.in.opt	2010-09-23 18:45:52.000000000 +0200
++++ sysstat-9.0.6.1/man/sysstat.in	2010-09-23 18:45:52.000000000 +0200
+@@ -0,0 +1,35 @@
++.TH SYSSTAT 5 "SEPTEMBER 2010" Linux "Linux User's Manual" -*- nroff -*-
++.SH NAME
++sysstat \- sysstat configuration file
++.SH DESCRIPTION
++The
++.B sysstat
++configuration file contains variables which configure sysstat logging.
++It is possible to set these variables:
++.TP
++.B HISTORY
++The number of days the log files will be kept for on the machine,
++then they will be removed.
++The default value is 7.
++
++.TP
++.B COMPRESSAFTER
++The number of log files which should not be compressed,
++older files will be compressed using either gzip of bzip2.
++The default value is 10.
++
++.TP
++.B SADC_OPTIONS
++Options passed to sadc generating regular logs.
++Logging of various additional data can be switched on.  See
++.B sadc
++man page.
++The option is used only when a new log file is created, thus the change does not affect the log file that already exists.
++The default value is "-S DISK".
++
++
++.SH FILES
++.B @SYSCONFIG_DIR@/sysstat
++
++.SH SEE ALSO
++.BR sadc(1)
+\ No newline at end of file
+diff -up sysstat-9.0.6.1/sa1.in.opt sysstat-9.0.6.1/sa1.in
+--- sysstat-9.0.6.1/sa1.in.opt	2009-09-12 20:59:04.000000000 +0200
++++ sysstat-9.0.6.1/sa1.in	2010-09-23 18:45:52.000000000 +0200
+@@ -6,6 +6,7 @@
+ #@(#) sa1: Collect and store binary data in system activity data file.
+ #
+ HISTORY=0
++SADC_OPTIONS="-S DISK"
+ SYSCONFIG_DIR=@SYSCONFIG_DIR@
+ [ -r ${SYSCONFIG_DIR}/sysstat ] && . ${SYSCONFIG_DIR}/sysstat
+ if [ ${HISTORY} -gt 28 ]
+@@ -38,8 +39,8 @@ then
+ # Note: Stats are written at the end of previous file *and* at the
+ # beginning of the new one (when there is a file rotation) only if
+ # outfile has been specified as '-' on the command line...
+-	exec ${ENDIR}/sadc -F -L 1 1 -
++	exec ${ENDIR}/sadc -F -L $SADC_OPTIONS 1 1 -
+ else
+-	exec ${ENDIR}/sadc -F -L $* -
++	exec ${ENDIR}/sadc -F -L $SADC_OPTIONS $* -
+ fi
+ 
+diff -up sysstat-9.0.6.1/sysstat.crond.in.opt sysstat-9.0.6.1/sysstat.crond.in
+--- sysstat-9.0.6.1/sysstat.crond.in.opt	2009-09-12 20:59:04.000000000 +0200
++++ sysstat-9.0.6.1/sysstat.crond.in	2010-09-23 18:45:52.000000000 +0200
+@@ -1,6 +1,6 @@
+ # Run system activity accounting tool every @CRON_INTERVAL@ minutes
+-*/@CRON_INTERVAL@ * * * * @CRON_OWNER@ @SA_LIB_DIR@/sa1 -S DISK 1 1
+-# 0 * * * * @CRON_OWNER@ @SA_LIB_DIR@/sa1 -S DISK @CRON_INTERVAL_SEC@ @CRON_COUNT@ &
++*/@CRON_INTERVAL@ * * * * @CRON_OWNER@ @SA_LIB_DIR@/sa1 1 1
++# 0 * * * * @CRON_OWNER@ @SA_LIB_DIR@/sa1 @CRON_INTERVAL_SEC@ @CRON_COUNT@ &
+ # Generate a daily summary of process accounting at 23:53
+ 53 23 * * * @CRON_OWNER@ @SA_LIB_DIR@/sa2 -A
+ 
+diff -up sysstat-9.0.6.1/sysstat.in.opt sysstat-9.0.6.1/sysstat.in
+--- sysstat-9.0.6.1/sysstat.in.opt	2010-09-23 18:45:52.000000000 +0200
++++ sysstat-9.0.6.1/sysstat.in	2010-09-23 18:45:52.000000000 +0200
+@@ -18,14 +18,13 @@
+ 
+ RETVAL=0
+ SYSCONFIG_DIR=@SYSCONFIG_DIR@
+-SADC_OPTIONS="-S DISK"
+ 
+ # See how we were called.
+ case "$1" in
+   start)
+ 	exitCodeIndicator="$(mktemp /tmp/sysstat-XXXXXX)" || exit 1
+ 	echo -n "Calling the system activity data collector (sadc): "
+-	@SU_C_OWNER@ @QUOTE@ @SA_LIB_DIR@/sa1 --boot ${SADC_OPTIONS} || rm -f ${exitCodeIndicator} @QUOTE@
++	@SU_C_OWNER@ @QUOTE@ @SA_LIB_DIR@/sa1 --boot || rm -f ${exitCodeIndicator} @QUOTE@
+ 
+ 	# Try to guess if sadc was successfully launched. The difficulty
+ 	# here is that the exit code is lost when the above command is
+diff -up sysstat-9.0.6.1/sysstat.sysconfig.in.opt sysstat-9.0.6.1/sysstat.sysconfig.in
+--- sysstat-9.0.6.1/sysstat.sysconfig.in.opt	2009-09-12 20:59:04.000000000 +0200
++++ sysstat-9.0.6.1/sysstat.sysconfig.in	2010-09-23 18:45:52.000000000 +0200
+@@ -8,3 +8,6 @@ HISTORY=@HISTORY@
+ # Compress (using gzip or bzip2) sa and sar files older than (in days):
+ COMPRESSAFTER=@COMPRESSAFTER@
+ 
++# Parameters for system activity collector (see sadc man-page) which
++# are used for the generation of log files
++SADC_OPTIONS="-S DISK"

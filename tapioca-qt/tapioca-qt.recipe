@@ -1,0 +1,27 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage', 'foresight.rpath.org@fl:2-devel')
+class tapiocaQt(CMakePackageRecipe):
+
+    name = 'tapioca-qt'
+    version = '0.14.1+r2066'
+
+    buildRequires = [
+        'fontconfig:devel', 'freetype:devel', 'glib:devel', 'libICE:devel',
+        'libpng:devel', 'libSM:devel', 'libstdc++:devel', 'libX11:devel',
+        'libXcursor:devel', 'libXext:devel', 'libXi:devel', 'libXinerama:devel',
+        'libXrandr:devel', 'libXrender:devel', 'qt4:devel',
+        'telepathy-qt:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        rev = r.version.rsplit('+', 1)[1][1:]
+        r.addSvnSnapshot(
+            'https://tapioca-voip.svn.sourceforge.net/svnroot/tapioca-voip/trunk/tapioca-qt/',
+            revision=rev
+        )
+

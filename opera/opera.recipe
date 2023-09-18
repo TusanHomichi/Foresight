@@ -1,0 +1,47 @@
+#
+# Copyright © 2012-2013 The Foresight Linux Project
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:devel')
+class Opera(BinaryPackageRecipe):
+
+    buildRequires = [ 'desktop-file-utils:runtime', 'shared-mime-info:runtime', 'xz:runtime' ]
+    name = 'opera'
+    version = '12.16'
+
+    def unpack(r):
+
+        r.macros.snapshot = r.version.split('.')[-1]
+        r.macros.site = 'http://ftp.sunet.se/pub/www/browsers/Opera/linux/1216/'
+
+        dist = [
+            ('opera-12.16-1860.i386.rpm', Arch.x86),
+            ('opera-12.16-1860.x86_64.rpm', Arch.x86_64),
+        ]
+        for (rpm, arch) in dist:
+            r.addArchive('%(site)s/'+rpm, dir='/', use=(arch==True))
+
+
+        # Probably better to s/lib/lib64/
+        r.FixupMultilibPaths(exceptions='.*')
+
+
+	# Need fixing, getting these issues:
+	# error: LinkCount: files /usr/share/opera/defaults/license.txt, 
+	# /usr/share/opera/locale/en/license.txt are hard links across directories 
+	# /usr/share/opera/defaults/, /usr/share/opera/locale/en/
+	#
+	# LinkCount: files /usr/share/opera/locale/zh-hk/browser.js, 
+	# /usr/share/opera/locale/zh-tw/browser.js are hard links across directories 
+	# /usr/share/opera/locale/zh-hk/, /usr/share/opera/locale/zh-tw/
+	r.Remove('/usr/share/opera/locale/en/license.txt')
+	r.Remove('/usr/share/opera/defaults/license.txt')
+	r.Remove('/usr/share/opera/locale/zh-cn/browser.js')
+	r.Remove('/usr/share/opera/locale/zh-hk/browser.js')
+        r.Symlink('%(datadir)s/icons/hicolor/48x48/apps/opera-browser.png', '%(datadir)s/pixmaps/opera-browser.png')
+
+        r.Requires(exceptDeps=r'soname\:\ ELF.*\/libcurl\.so\.4\(CURL\_OPENSSL\_3\ SysV\ x8.*\)')
+

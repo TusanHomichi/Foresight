@@ -1,0 +1,17 @@
+class bzflag(CPackageRecipe):
+    buildRequires = [ 'Mesa:devel', 'SDL:devel', 'bind:devel', 'curl:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXi:devel', 'libXxf86vm:devel', 'libstdc++:devel', 'ncurses:devel', 'openssl:devel', 'perl:runtime', 'zlib:devel', 'desktop-file-utils:runtime']
+    name = "bzflag"
+    version = "2.0.10"
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/%(name)s-%(version)s.tar.gz')
+
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+#        r.Run('./autogen.sh')
+        r.Configure('--enable-robots')
+        r.Make()
+        r.MakeInstall()
+        r.Copy('%(datadir)s/bzflag/bzflag-256x256.png', '%(datadir)s/pixmaps/bzflag.png')
+        r.addSource('bzflag.desktop')
+        r.Desktopfile('bzflag.desktop')
+

@@ -1,0 +1,11 @@
+class DevIL(CPackageRecipe):
+    name = 'DevIL'
+    version = '1.7.8'
+ 
+    buildRequires =	['OpenEXR:devel', 'ilmbase:devel', 'install-info:runtime', 'jasper:devel', 'lcms:devel', 'libICE:devel', 'libjpeg:devel', 'libmng:devel', 'libpng:devel', 'libstdc++:devel', 'libtiff:devel', 'pkgconfig:devel', 'zlib:devel', 'SDL:devel', 'binutils:runtime', 'glibc:devel']
+
+    def setup(r):
+       	r.addArchive('http://downloads.sourceforge.net/openil/%(name)s-%(version)s.tar.gz')
+       	r.Configure('--enable-ILUT --enable-ILU')
+       	r.Make()
+       	r.MakeInstall()

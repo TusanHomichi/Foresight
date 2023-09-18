@@ -1,0 +1,17 @@
+loadSuperClass('rubygempackage')
+class ActiveSupport(RubygemPackageRecipe):
+
+    name = 'rubygem-activesupport'
+    version = '3.1.1'
+
+    buildRequires = ['rubygem-rake:runtime',
+                     'rubygem-rack:runtime',
+                     'rubygem-mocha:lib',
+                     'rubygem-i18n:lib',
+                     'rubygem-tzinfo:lib',
+                     'rubygem-builder:lib',
+                     ]
+
+
+    def policy(r):
+        r.Requires('rubygem-i18n:lib', '%(name)s:lib')

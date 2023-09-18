@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2011-2013 Openfiler Ltd
+#               2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('rpmpackage')
+class Mcelog(RPMPackageRecipe, CPackageRecipe):
+    name = 'mcelog'
+    version = '1.0pre3_20120814_2'
+    distroVersion = '6Server'
+    rpmRelease = '0.6.el6'
+    isRHEL = True
+    rpmPatches = [ 'mcelog-initscript.patch',
+                   'mcelog-lockfile.patch',
+                   'mcelog-conf.patch',
+    ]
+
+    buildRequires = [ 'chkconfig:runtime' ]
+ 
+    def setup(r):
+        r.unpack()
+        for patch in [ '7fa99818367a6d17014b36d6f918ad848cbe7ce2', 
+                       '9b7c6e0d107f58f930884d43dba2bc6759e19ade', 
+                       # '049796204e1a1144f1e5b6c162736880f9f1311b', 
+                       'bec51ee686f29abd48c6ee4b67cff72135e80156', 
+                       '87c1d6d737a706fba671805b0f404592d620cc9b', 
+                       '1967a3ad426d51168a27089670af2051432fcc60',
+                       '97f21ce20fd18f4054b68d709902949cd33004ce',
+                       '1ab64030ccfa98d78df997ab20404d6d42054907',
+                       'c688965f5e518094c1e7d992fc3f564db4c09710',
+                       '0f5d0238ca7fb963a687a3c50c96c5f37a599c6b',
+                       '41d095f17ccddd618b234364667867c3c846cb4b',
+                       '33a135af370e3f20d69c874ef44b2e3f5f790c47',
+                       '187b1aec830e053633ddfc1e0b1e4c316c991dfa',
+                       '4622d901eb568094ac417bb4448823d0a36fa296',
+                       'c8246178e8a8955082f923f52d36b2705e3f5b4b'
+                   ]:
+            r.addPatch('https://github.com/andikleen/mcelog/commit/%s.patch' % patch)
+        r.macros.cflags += ' -fpie -pie '
+        r.Make()
+        r.MakeDirs('%(sysconfdir)s/cron.hourly')
+        r.MakeDirs('%(sysconfdir)s/mcelog')
+        r.MakeDirs('%(mandir)s/man8')
+        r.Install('mcelog.conf','%(sysconfdir)s/%(name)s/')
+        r.Install('mcelog','%(sbindir)s/',mode=0755)
+        r.Install('mcelog.cron', '%(sysconfdir)s/cron.hourly/mcelog.cron')
+        r.Install('mcelog.init', '%(initdir)s/mcelogd', mode=0755)
+        r.Install('mcelog.sysconfig', '%(sysconfdir)s/sysconfig/mcelogd')
+        r.Install('mcelog.8', '%(mandir)s/man8/')

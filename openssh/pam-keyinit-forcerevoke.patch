@@ -1,0 +1,9 @@
+diff --git a/contrib/redhat/sshd.pam b/contrib/redhat/sshd.pam
+--- a/contrib/redhat/sshd.pam
++++ b/contrib/redhat/sshd.pam
+@@ -3,4 +3,5 @@
+ account    required     pam_nologin.so
+ account    required     pam_stack.so service=system-auth
+ password   required     pam_stack.so service=system-auth
++session    optional     pam_keyinit.so force revoke
+ session    required     pam_stack.so service=system-auth

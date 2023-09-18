@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007-2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenboxThemes(PackageRecipe):
+    name = 'openbox-themes'
+    version = '0.2'
+
+    def setup(r):
+        # defining a macro for the theme directory
+        r.macros.openboxthemedir = '%(datadir)s/themes'
+        # add the theme source to the theme directory
+        r.addArchive('%(name)s.tar.bz2', dir='%(openboxthemedir)s/') 

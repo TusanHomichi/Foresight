@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class libharu(AutoPackageRecipe):
+    name = 'libharu'
+    version = '2.1.0'
+
+    buildRequires = [
+        'libpng:devel', 'zlib:devel',
+        'python:devel', 'python-ctypes:python',
+    ]
+
+    def unpack(r):
+        r.macros.sitepkgs = Python.sitepkgs
+        # http://libharu.org/
+        r.addArchive('http://libharu.org/files/')
+
+        # python is the extension language I care about, feel free to
+        # add more if appropriate
+        r.Install('if/python/*.py', '%(sitepkgs)s/haru/')
+        r.CompilePython('%(sitepkgs)s/haru/')
+        r.AutoDoc('History.txt')
+        r.Doc('if/python/demo')

@@ -1,0 +1,51 @@
+# HG changeset patch
+# User António Meireles <antonio.meireles@openfiler.com>
+# Date 1344427772 -3600
+# Node ID 1b26e4b4cbb1ff5537abc46cd60c810ccdb1b742
+# Parent  9fb43613b76c986382838c8229ebd3484424fcc8
+turn xz the prefered format for archives, as it is now mainstream enough, and update default base classes accordingly.
+
+diff -r 9fb43613b76c -r 1b26e4b4cbb1 conary/build/defaultrecipes.py
+--- a/conary/build/defaultrecipes.py	Mon Jul 30 12:44:16 2012 -0400
++++ b/conary/build/defaultrecipes.py	Wed Aug 08 13:09:32 2012 +0100
+@@ -77,7 +77,7 @@
+     ===========
+     The C{PackageRecipe} class provides Conary recipes with references to
+     the essential troves which offer Conary's packaging requirements.
+-    (python, sqlite, gzip, bzip2, tar, cpio, and patch)
++    (python, sqlite, xz, gzip, bzip2, tar, cpio, and patch)
+ 
+     Other PackageRecipe classes such as C{AutoPackageRecipe} inherit the
+     functionality offered by C{PackageRecipe}.
+@@ -101,6 +101,7 @@
+     buildRequires = [
+         'bzip2:runtime',
+         'gzip:runtime',
++        'xz:runtime',
+         'tar:runtime',
+         'cpio:runtime',
+         'patch:runtime',
+@@ -717,6 +718,7 @@
+     buildRequires = [
+         'bzip2:runtime',
+         'gzip:runtime',
++        'xz:runtime',
+         'tar:runtime',
+         'cpio:runtime',
+         'patch:runtime',
+diff -r 9fb43613b76c -r 1b26e4b4cbb1 conary/build/source.py
+--- a/conary/build/source.py	Mon Jul 30 12:44:16 2012 -0400
++++ b/conary/build/source.py	Wed Aug 08 13:09:32 2012 +0100
+@@ -183,10 +183,8 @@
+     # marks classes which have source files which need committing
+ 
+ # This provides the set (and order) in which the suffix is guessed
+-# Logically, .tar.xz ought to go first because it is smallest, but we
+-# should wait until it is more prevalent before moving it to the front
+-# of the list; we should also look for instances of .txz
+-DEFAULT_SUFFIXES =  ('tar.bz2', 'tar.gz', 'tbz2', 'tgz', 'tar.xz', 'zip')
++# Logically, .tar.xz ought to go first because it is smallest...
++DEFAULT_SUFFIXES =  ('tar.xz', 'txz', 'tar.bz2', 'tar.gz', 'tbz2', 'tgz', 'zip')
+ 
+ class _Source(_AnySource):
+     keywords = {'rpm': '',

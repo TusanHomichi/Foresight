@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class HicolorIconTheme(BuildPackageRecipe):
+    buildRequires = [ 'gtk:runtime' ]
+
+    name = 'hicolor-icon-theme'
+    version = '0.10'
+
+    def setup(r):
+        r.addArchive('http://icon-theme.freedesktop.org/releases/')
+
+        r.Configure()
+        r.MakeInstall()
+
+        # include empty directories as a place for users to place files
+        r.ExcludeDirectories(exceptions='%(datadir)s/icons/')

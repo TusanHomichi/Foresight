@@ -1,0 +1,12 @@
+diff -urN initscripts-9.12.1/rc.d/rc.sysinit initscripts-9.12.1-with-dm-snap_and_mirror/rc.d/rc.sysinit
+--- initscripts-9.12.1/rc.d/rc.sysinit	2011-09-16 14:08:29.000000000 -0400
++++ initscripts-9.12.1-with-dm-snap_and_mirror/rc.d/rc.sysinit	2011-09-16 14:16:17.000000000 -0400
+@@ -343,6 +343,8 @@
+ # Device mapper & related initialization
+ if ! __fgrep "device-mapper" /proc/devices >/dev/null 2>&1 ; then
+        modprobe dm-mod >/dev/null 2>&1
++       # we need dm-snapshot otherwise  you can't create snapshots without manually loading
++       modprobe dm-snapshot >/dev/null 2>&1
+ fi
+ 
+ if [ -f /etc/crypttab ]; then

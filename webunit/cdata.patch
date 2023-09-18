@@ -1,0 +1,21 @@
+--- a/webunit/HTMLParser.py	2008-09-26 13:24:26.944198618 -0400
++++ b/webunit/HTMLParser.py	2008-09-26 13:25:34.695879262 -0400
+@@ -304,7 +304,8 @@
+         match = tagfind.match(rawdata, i+1)
+         assert match, 'unexpected call to parse_starttag()'
+         k = match.end()
+-        self.lasttag = tag = string.lower(rawdata[i+1:k])
++        tagOrigCase = rawdata[i+1:k]
++        self.lasttag = tag = string.lower(tagOrigCase)
+ 
+         while k < endpos:
+             m = attrfind.match(rawdata, k)
+@@ -338,7 +339,7 @@
+         else:
+             self.handle_starttag(tag, attrs)
+             if tag in self.CDATA_CONTENT_ELEMENTS:
+-                self.set_cdata_mode(tag)
++                self.set_cdata_mode(tagOrigCase)
+         return endpos
+ 
+     # Internal -- check to see if we have a complete starttag; return end

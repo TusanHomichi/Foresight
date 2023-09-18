@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Atkmm(GnomePackageRecipe):
+    name = 'atkmm'
+    version = '2.22.1'
+
+    buildRequires = [ 'glibmm:devel', 'atk:devel', 'perl:runtime',
+                      'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'libpng:devel', 'libsigc++:devel', 'libstdc++:devel', 'pango:devel',
+                      'cairomm:devel', 'm4:runtime', 'expat:devel', 'pangomm:devel',
+                      ]
+
+    extraConfig = ' --enable-static --enable-shared  --disable-demos'

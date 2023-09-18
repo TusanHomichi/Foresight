@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Agave(AutoPackageRecipe):
+    name = 'agave'
+    version = '0.4.4'
+ 
+    buildRequires = [
+        'GConf:devel', 
+        'GConf:runtime', 
+        'ORBit2:devel', 
+        'atk:devel', 
+        'boost:devel',
+        'cairo:devel', 
+        'cairomm:devel', 
+        'cppunit:devel', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gconfmm:devel', 
+        'gettext:runtime', 
+        'git:runtime', 
+        'glib:devel', 
+        'glibmm:devel', 
+        'gnome-doc-utils:devel',
+        'gnome-vfs:devel', 
+        'gtk:devel', 
+        'gtkmm:devel', 
+        'intltool:runtime', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libart_lgpl:devel', 
+        'libbonobo:devel', 
+        'libbonoboui:devel', 
+        'libglade:devel', 
+        'libglademm:devel', 
+        'libgnome:devel', 
+        'libgnomecanvas:devel', 
+        'libgnomeui:devel', 
+        'libsigc++:devel', 
+        'libstdc++:devel', 
+        'libxml2:devel', 
+        'libxslt:runtime',
+        'pango:devel', 
+        'pangomm:devel', 
+        'pkgconfig:devel', 
+        'popt:devel', 
+        'rarian:runtime',
+        'rarian:devel'
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://download.gna.org/colorscheme/releases/')
+    def configure(r):
+        r.addPatch('gcc43.patch')
+        r.Replace('Icon=agave-icon.png','Icon=agave', 'data/agave.desktop.in')
+        r.Replace('Icon=agave-icon.png','Icon=agave', 'data/agave.desktop.in.in')
+        r.Configure()

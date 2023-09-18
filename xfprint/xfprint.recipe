@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class xfprint(XfcePackageRecipe):
+
+    name = 'xfprint'
+    version = '4.6.1'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'cups:devel', 'cups:runtime', 'desktop-file-utils:runtime',
+        'libxfce4util:devel', 'libxfcegui4:devel', 'gnutls:devel',
+        'xfconf:devel'
+    ])

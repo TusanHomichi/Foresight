@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pmount(AutoPackageRecipe):
+    name = 'pmount'
+    version = '0.9.20'
+ 
+    buildRequires = ['dbus:devel', 'gettext:runtime', 'hal:devel', 'intltool:runtime', 'perl:runtime', 'pkgconfig:devel', 'sysfsutils:devel']
+ 
+    def unpack(r):
+	r.addArchive('http://alioth.debian.org/frs/download.php/2057/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--enable-hal')
+
+    def makeinstall(r):
+        for i in [ 'pmount', 'pumount', 'pmount-hal' ]:
+            r.Install('src/%s' % i, '%(bindir)s/', mode=04775)
+            r.Install('man/%s.1' %i, '%(mandir)s/man1/')
+        r.Install('etc/pmount.allow', '%(sysconfdir)s/')
+

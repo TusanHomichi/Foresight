@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class agg(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'agg'
+    version = '2.5'
+    rpmRelease = '6.fc9'
+    tarballName = '%(name)s-free-%(version)s.tar.gz'
+
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime', 'libtool:runtime', 'freetype:devel', 'libstdc++:devel', 'zlib:devel', 'libX11:devel', 'autoconf:runtime','automake:runtime','pkgconfig:devel', 'libxml2:runtime', 'libtool:devel', 'libtool:runtime', 'util-macros:devel', 'pkgconfig:devel', 'SDL:devel',]
+    rpmPatches = [ 'agg-2.4-depends.patch', 'agg-2.5-pkgconfig.patch', ]
+
+
+    def configure(r):
+        r.Run('aclocal; autoheader; autoconf; libtoolize --force; automake --foreign --add-missing --ignore-deps')
+        r.Configure('--disable-static --disable-gpc')
+

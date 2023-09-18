@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class CompatGOffice(GnomePackageRecipe):
+
+    name = 'compat-goffice'
+    version = '0.8.17'
+
+    buildRequires = [ 'GConf:devel', 
+                      'ORBit2:devel',
+                      'atk:devel', 
+                      'cairo:devel', 
+                      'fontconfig:devel',
+                      'freetype:devel', 
+                      'gnome-keyring:devel',
+                      'gnome-vfs:devel', 
+                      'libbonobo:devel',
+                      'libbonoboui:devel', 
+                      'libgnome:devel',
+                      'libgnomecanvas:devel', 
+                      'libgnomeui:devel',
+                      'libpng:devel', 
+                      'popt:devel', 
+                      'glib:devel',
+                      'libgsf:devel', 
+                      'libxml2:devel', 
+                      'pango:devel',
+                      'gtk:devel', 
+                      'libglade:devel', 
+                      'libgnomeprint:devel',
+                      'libart_lgpl:devel', 
+                      'bison:runtime', 
+                      'flex:runtime',
+                      'gettext:runtime', 
+                      'glib:runtime', 
+                      'pcre:devel', 
+                      'pcre:runtime',
+                      'gtk-doc:runtime', 
+                      'librsvg:devel', 
+                      'xz:runtime',
+                      'perl-IO-Compress:perl', 
+                      'perl-Compress-Raw-Zlib:perl', 
+                      'ghostscript:devel',
+    ]
+    # pcre:runtime needed to run pcretest
+    extraConfig = ' --disable-static --disable-dependency-tracking'
+    patches = [ 'goffice-glib.patch', ]
+    
+    def setup(r):
+        r.macros.cflags += " -I%(includedir)s/pcre"
+        r.macros.cppflags += " -I%(includedir)s/pcre"
+        r.macros.name = 'goffice'
+        GnomePackageRecipe.setup(r)
+
+    def postConfigure(r):
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

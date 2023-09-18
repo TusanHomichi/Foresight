@@ -1,0 +1,22 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gsl(AutoPackageRecipe):
+
+    name = 'gsl'
+    version = '1.14'
+
+    buildRequires = [
+        'install-info:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('ftp://ftp.gnu.org/gnu/gsl/')
+
+        # fix for --as-needed ld flag
+        # http://bugs.gentoo.org/show_bug.cgi?id=134063
+        r.addPatch('gsl-as-needed.patch')
+

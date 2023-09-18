@@ -1,0 +1,48 @@
+Index: kdebase-workspace-4.5.80/startkde.cmake
+===================================================================
+--- kdebase-workspace-4.5.80.orig/startkde.cmake	2010-10-27 19:55:06.000000000 +0000
++++ kdebase-workspace-4.5.80/startkde.cmake	2010-11-24 11:50:24.040641003 +0000
+@@ -84,6 +84,35 @@
+ kdehome=$HOME/@KDE_DEFAULT_HOME@
+ test -n "$KDEHOME" && kdehome=`echo "$KDEHOME"|sed "s,^~/,$HOME/,"`
+ 
++# Read LANG and write the country part to kdeglobals
++# de_AT.UTF-8 => Country=at
++# This is necessary because klocale.cpp (kdelibs) does only try to read the value
++# from kdeglobals and then falls back to default instead of triyng to detect it
++
++if [ ! -e $kdehome/share/config/kdeglobals ] || [ ! `grep "Country=" $kdehome/share/config/kdeglobals` ]; then
++  if [ ! $LANG ]; then
++    if [ -e /etc/default/locale ]; then
++      localefile='/etc/default/locale'
++    elif [ -e /etc/environment ]; then
++      localefile='/etc/environment'
++    fi
++    if [ $localefile ]; then
++      locale=`sed -ne 's/^LANG="\(.*\)"$/\1/p' $localefile`
++    fi
++  else
++    locale=$LANG
++  fi
++  if [ $locale ]; then
++    country=`echo $locale | sed -ne 's/^[A-Za-z]*_\([A-Za-z]*\).*$/\1/p'|tr 'A-Z' 'a-z'`
++    if [ ! $country = "" ]; then
++cat >>$kdehome/share/config/kdeglobals <<EOF
++[Locale]
++Country=$country
++EOF
++    fi
++  fi
++fi
++
+ # see kstartupconfig source for usage
+ mkdir -m 700 -p $kdehome
+ mkdir -m 700 -p $kdehome/share
+@@ -101,6 +130,7 @@
+ krandrrc [Screen3]
+ kcmfonts General forceFontDPI 0
+ kdeglobals Locale Language '' # trigger requesting languages from KLocale
++kdeglobals Locale Country ''
+ EOF
+ kstartupconfig4
+ returncode=$?

@@ -1,0 +1,63 @@
+diff --git a/tools/f-spot-import b/tools/f-spot-import
+index 98385b1..34facc0 100755
+--- a/tools/f-spot-import
++++ b/tools/f-spot-import
+@@ -3,22 +3,46 @@
+ udi="$1"
+ #xmessage $udi
+ 
++# check for gvfs mount point using gphoto2
++gvfsuri=`gvfs-ls -c "$udi/"`
++if [ "${gvfsuri:0:10}" = "gphoto2://" ] ; then
++	if [ "${gvfsuri:11:4}" = "usb:" ] ; then
++		# Yield for f-spot since it wants to access the device directly
++		#
++		# Rewrite the uri to something f-spot can handle
++		#
++		bus="${gvfsuri:15:3}"
++		dev="${gvfsuri:19:3}"
++
++		uri="gphoto2:usb:$bus,$dev"
++
++		gvfs-mount --unmount-scheme gphoto2
++		f-spot --import "$uri"
++		exit
++	fi
++	# mounted via gphoto2 not using USB, stay with the plain directory
++	f-spot --import "$udi"
++	exit
++fi
++
+ if [ "$udi" != "${udi#gphoto2:}" ]; then
+ 	# gphoto2, as passed by gvfs/nautilus
+ 	gvfs-mount -u "$udi" || true
+ 	f-spot --import "$udi"
+ 	exit
+ fi
+-mnt=${udi#file://}
+-if [ "$udi" != "$mnt" ]; then
++
++if [ "$udi" != "${udi#file://}" ]; then
+ 	# mount point, as passed by gvfs/nautilus.
+ 	f-spot --import "$udi"
+ 	exit
+ fi
++
+ mount_point=`hal-get-property --udi="$udi" --key=volume.mount_point` || true
+ if [ -n "$mount_point" ]; then
+ 	# USB Mass Storage camera: need to pass f-spot a mount point
+ 	f-spot --import "$mount_point"
++	exit
+ else
+ 	# Some other camera try GPhoto2
+ 
+@@ -27,4 +51,6 @@ else
+ 	uri=`printf gphoto2:[usb:%.3d,%.3d] $bus $dev`
+ 
+ 	f-spot --import "$uri"
++	exit
+ fi
++xmessage "f-spot-import can't handle UDI: \"$udi\""
+-- 
+1.6.0.6
+

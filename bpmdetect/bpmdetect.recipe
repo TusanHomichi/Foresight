@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bpmdetect(PackageRecipe):
+    name = 'bpmdetect'
+    version = '0.6.1'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/bpmdetect/bpmdetect-%(version)s-src.tar.bz2')
+        r.disableParallelMake()
+        r.Make(makeName='scons')
+        r.MakeInstall(makeName='scons')

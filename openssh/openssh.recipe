@@ -1,0 +1,103 @@
+#
+# Copyright (c) rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('openssl=foresight.rpath.org@fl:2-devel')
+class OpenSSH(AutoPackageRecipe):
+    name = 'openssh'
+    version = '6.6p1'
+
+    buildRequires = [ 'openssl:devel', 'atk:devel', 'glib:devel', 'gtk:devel',
+                      'pango:devel', 'zlib:devel', 'xauth:runtime',
+                      'pkgconfig:devel', 'cairo:devel', 'fontconfig:devel',
+                      'freetype:devel', 'libpng:devel', 'groff:runtime',
+                      'net-tools:runtime', 'passwd:runtime', 'procps:runtime',
+                      'shadow:runtime', 'sysstat:runtime', 'sysvinit:runtime',
+                      'util-linux:runtime', 'e2fsprogs:devel', 'krb5:devel',
+                      'tcp_wrappers:devel', 'pam:devel', 'krb5:runtime',
+                      'libgssapi:devel',
+                      'bind:devel', 'libcap:devel',
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://mirror.jmu.edu/pub/OpenBSD/OpenSSH/portable/')
+        r.addPatch('config.patch')
+        r.addPatch('pam-keyinit-forcerevoke.patch')
+
+    def configure(r):
+        # For kerberos
+        r.macros.ldflags += ' -lgssapi_krb5'
+
+        r.Configure('--sysconfdir=%(sysconfdir)s/ssh'
+                    ' --libexecdir=%(libexecdir)s/openssh'
+                    ' --datadir=%(datadir)s/openssh'
+                    ' --with-rsh=%(bindir)s/rsh'
+                    ' --with-default-path=/usr/local/bin:/bin:/usr/bin'
+                    ' --with-superuser-path=/usr/local/sbin:/usr/local/bin'
+                                           ':/sbin:/bin:/usr/sbin:/usr/bin'
+                    ' --with-privsep-path=%(localstatedir)s/empty/sshd'
+                    ' --with-tcp-wrappers --with-pam'
+                    ' --with-kerberos5')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('contrib/redhat/sshd.init', '%(initdir)s/sshd')
+        r.MakeDirs('%(localstatedir)s/empty/sshd', mode=0111)
+        r.SetModes('%(libexecdir)s/openssh/ssh-keysign', 04711)
+        r.SetModes('%(sysconfdir)s/ssh/{sshd_config,moduli}', 0600)
+        r.UtilizeUser('sshd', '%(sbindir)s/sshd')
+
+        r.Install('contrib/ssh-copy-id', '%(bindir)s/ssh-copy-id')
+
+        r.Install('contrib/ssh-copy-id.1', '%(mandir)s/man1/ssh-copy-id.1')
+
+        # fixing install modes
+        r.SetModes('%(bindir)s/*', 0755)
+        r.SetModes('%(mandir)s/*/*', 0644)
+
+        r.Install('contrib/redhat/sshd.pam', '%(sysconfdir)s/pam.d/sshd',
+                  mode=0600)
+
+    def policy(r):
+        r.AutoDoc('OVERVIEW', 'RFC.nroff', 'WARNING.RNG')
+
+        r.PackageSpec('openssh-server',
+                      '%(localstatedir)s/empty/sshd',
+                      '%(libexecdir)s/openssh/sftp-server',
+                      '%(mandir)s/man5/sshd_config\.5.*',
+                      '%(mandir)s/man8/sshd\.8.*',
+                      '%(mandir)s/man8/sftp-server\.8.*',
+                      '%(sysconfdir)s/ssh/sshd_config',
+                      '%(sbindir)s/sshd',
+                      '%(initdir)s/sshd')
+
+        r.PackageSpec('openssh-server', '%(sysconfdir)s/pam.d/sshd')
+
+        r.PackageSpec('openssh-client',
+                      '%(sysconfdir)s/ssh/ssh_config',
+                      '%(bindir)s/ssh',
+                      '%(bindir)s/slogin',
+                      '%(bindir)s/ssh-agent',
+                      '%(bindir)s/ssh-add',
+                      '%(bindir)s/sftp',
+                      '%(bindir)s/ssh-keyscan',
+                      '%(mandir)s/man1/slogin.*',
+                      '%(mandir)s/man1/ssh\.1.*',
+                      '%(mandir)s/man1/ssh-agent.*',
+                      '%(mandir)s/man1/ssh-add.*',
+                      '%(mandir)s/man1/ssh-keyscan.*',
+                      '%(mandir)s/man5/ssh_config.*',
+                      '%(mandir)s/man1/sftp.*')
+
+        # Init script requires ssh-keygen
+        r.Requires('openssh:runtime', '%(initdir)s/sshd')
+
+        # Require same version of openssl as was compiled against.
+        r.Requires('openssl:lib(%s)' % OpenSSL.version,
+                   '%(bindir)s/',
+                   '%(sbindir)s/')
+
+        # Tag init scripts in case the initscript tag desc. is not installed
+        r.TagSpec('initscript', '%(initdir)s/')

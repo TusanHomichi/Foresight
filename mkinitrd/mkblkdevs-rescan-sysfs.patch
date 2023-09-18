@@ -1,0 +1,61 @@
+diff -r 381a1e3e6ca6 nash/hotplug.c
+--- a/nash/hotplug.c	Fri May 22 05:59:02 2009 -0400
++++ b/nash/hotplug.c	Fri May 22 12:44:21 2009 -0400
+@@ -27,6 +27,7 @@
+ #include <sys/mman.h>
+ #include <sys/time.h>
+ #include <sys/prctl.h>
++#include <sys/wait.h>
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <errno.h>
+@@ -590,7 +591,33 @@
+ void
+ nashHotplugKill(nashContext *nc)
+ {
++    int i;
++    struct pollfd pd = {
++        .events = POLLERR | POLLHUP,
++        .revents = 0,
++        .fd = nc->hp_parentfd,
++    };
++
+     if (send_hotplug_message(nc, "die udev die")) {
++        /* try to wait for hotplug to die, for up to 1 second; if
++         * we tell hotplug to die, it might be to avoid racing
++         * with it.  But don't halt the boot process if some
++         * programming error intervenes.
++         */
++        i = poll(&pd, 1, 1000);
++        if (i > 0) {
++            /* hung up */
++            if (!waitpid(nc->hp_child_pid, NULL, WNOHANG)) {
++                nashLogger(nc, NASH_ERROR, "hotplug hung up without dieing\n");
++            }
++        } else if (i == 0) {
++            /* timed out; try killing it and waiting again... */
++            kill(nc->hp_child_pid, SIGINT);
++            poll(&pd, 1, 1000);
++            if (!waitpid(nc->hp_child_pid, NULL, WNOHANG)) {
++                nashLogger(nc, NASH_ERROR, "Failed to kill hotplug\n");
++            }
++        }
+         close(nc->hp_parentfd);
+         nc->hp_parentfd = -1;
+         nc->hp_childfd = -1;
+diff -r 381a1e3e6ca6 nash/nash.c
+--- a/nash/nash.c	Fri May 22 05:59:02 2009 -0400
++++ b/nash/nash.c	Fri May 22 12:44:21 2009 -0400
+@@ -2619,6 +2619,12 @@
+     }
+ 
+     usectospec(15, &timeout);
++    /* mkblkdevs should not actually be needed if all uevents were
++     * handled correctly.  Therefore, calling mkblkdevs should
++     * re-scan sysfs to make sure that all block devices are
++     * found.
++     */
++    _nash_context->devices = NULL;
+     if ((iter = nashBdevIterNewPoll(_nash_context, &timeout)) == NULL)
+         return 1;
+     while (nashBdevIterNext(&iter, &dev) > 0)

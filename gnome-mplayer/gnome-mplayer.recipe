@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class GnomeMplayer(AutoPackageRecipe):
+    name = 'gnome-mplayer'
+    version = '1.0.8'
+    buildRequires = [ 
+        'GConf:runtime', 
+        'ORBit2:devel', 
+        'atk:devel', 
+        'cairo:devel', 
+        'dbus-glib:devel', 
+        'expat:devel', 
+        'freetype:devel', 
+        'glib:devel', 
+        'gnome-vfs:devel', 
+        'gtk:devel', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXrender:devel', 
+        'libart_lgpl:devel', 
+        'libbonoboui:devel', 
+        'libgnomecanvas:devel', 
+        'libgnomeui:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'popt:devel', 
+        'zlib:devel', 
+        'gettext:runtime', 
+        'intltool:runtime',
+        'alsa-lib:devel', 
+        'libnotify:devel', 
+        'libXScrnSaver:devel', 
+        'libgpod:devel', 
+        'nautilus:devel', 
+        'pulseaudio:devel', 
+        'gmtk:devel',
+            ]
+
+    def unpack(r):
+        r.addArchive('http://gnome-mplayer.googlecode.com/files/')        
+
+    def policy(r):
+        r.Requires('mplayer:runtime', '%(bindir)s/%(name)s')
+        # For now, lets remove desktop entry. We got mplayer and gnome got also Totem as default.
+        r.Remove('%(destdir)s/%(prefix)s/share/applications/gnome-mplayer.desktop')

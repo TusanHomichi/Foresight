@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibgdiPlus(AutoPackageRecipe):
+    name = 'libgdiplus'
+    version = '2.6'
+    buildRequires = ['expat:devel', 'fontconfig:devel', 'freetype:devel', 
+                     'gcc-c++:runtime', 'glib:devel', 'libtiff:devel', 'giflib:devel',
+                     'libXrender:devel', 'libexif:devel', 'libjpeg:devel',
+                     'libpng:devel', 'pkgconfig:devel', 'zlib:devel', 'ghostscript:runtime',
+                     'cairo:devel', 'pango:devel', 'pixman:devel', 'xcb-util:devel']
+
+    def unpack(r):
+        r.addArchive('http://www.go-mono.com/sources/%(name)s/')
+
+    def configure(r):
+        r.Configure('--disable-static')

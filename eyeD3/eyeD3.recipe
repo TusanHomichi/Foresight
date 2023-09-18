@@ -1,0 +1,8 @@
+class EyeD3(AutoPackageRecipe):
+    name = "eyeD3"
+    version = "0.6.11"
+
+    buildRequires = ["python:devel"]
+
+    def unpack(r):
+        r.addArchive("http://eyed3.nicfit.net/releases/%(name)s-%(version)s.tar.gz")

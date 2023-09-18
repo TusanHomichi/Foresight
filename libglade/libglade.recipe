@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2004 Specifix, Inc.
+# All rights reserved
+#
+
+loadRecipe('gnomepackage')
+class Libglade(GnomePackageRecipe):
+
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'fontconfig:devel',
+        'fontconfig:runtime',
+        'freetype:devel',
+        'glib:devel',
+        'libpng:devel',
+        'libtool:runtime',
+        'libxml2:devel',
+        'libxml2:lib',
+        'libxml2:runtime',
+        'pango:devel',
+        ]
+   
+    name = 'libglade'
+    version = '2.6.4'
+
+    docs = GnomePackageRecipe.docs
+    docs.append('test-libglade.c')

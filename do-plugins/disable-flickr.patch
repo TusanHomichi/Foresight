@@ -1,0 +1,40 @@
+diff -r ce3cb61eb7e6 Makefile.am
+--- a/Makefile.am	Fri Jan 30 08:57:08 2009 -0500
++++ b/Makefile.am	Fri Jan 30 09:01:17 2009 -0500
+@@ -19,7 +19,6 @@
+ 	Evolution \
+ 	File \
+ 	Firefox \
+-	Flickr \
+ 	GNOME-Dictionary \
+ 	GNOME-Screenshot \
+ 	GNOME-Session \
+diff -r ce3cb61eb7e6 Makefile.in
+--- a/Makefile.in	Fri Jan 30 08:57:08 2009 -0500
++++ b/Makefile.in	Fri Jan 30 09:01:17 2009 -0500
+@@ -256,7 +256,7 @@
+ # Current dir _must_ be processed last; this ensures our repo is built with all the plugins
+ SUBDIRS = po BundledLibraries Alias AptURL Archive Banshee Bibtex \
+ 	Cl.ickable ClawsMail Confluence Del.icio.us DiskMounter \
+-	Emesene EOG-Slideshow Epiphany Evolution File Firefox Flickr \
++	Emesene EOG-Slideshow Epiphany Evolution File Firefox \
+ 	GNOME-Dictionary GNOME-Screenshot GNOME-Session GNOME-Terminal \
+ 	GoogleCalculator GoogleCalendar GoogleContacts GoogleDocs \
+ 	GoogleMaps GoogleSearch ImageShack JIRA Launchpad LocateFiles \
+diff -r ce3cb61eb7e6 configure.ac
+--- a/configure.ac	Fri Jan 30 08:57:08 2009 -0500
++++ b/configure.ac	Fri Jan 30 09:01:17 2009 -0500
+@@ -32,12 +32,11 @@
+ 
+ PKG_CHECK_MODULES([BANSHEE_INDEXER], [banshee-1-collection-indexer >= 1.4.2])
+ PKG_CHECK_MODULES([EVOLUTION_SHARP], [evolution-sharp])
+-PKG_CHECK_MODULES([FLICKRNET], [flickrnet])
+ PKG_CHECK_MODULES([GCONF_SHARP_20], [gconf-sharp-2.0])
+ PKG_CHECK_MODULES([GLADE_SHARP_20], [glade-sharp-2.0])
+ PKG_CHECK_MODULES([GLIB_SHARP_20], [glib-sharp-2.0])
+ PKG_CHECK_MODULES([GNOME_DESKTOP_SHARP_20], [gnome-desktop-sharp-2.0])
+-PKG_CHECK_MODULES([GNOME_KEYRING_SHARP], [gnome-keyring-sharp-1.0])
++PKG_CHECK_MODULES([GNOME_KEYRING_SHARP], [gnome-keyring-sharp])
+ PKG_CHECK_MODULES([GNOME_SHARP_20], [gnome-sharp-2.0])
+ PKG_CHECK_MODULES([GNOME_VFS_SHARP_20], [gnome-vfs-sharp-2.0])
+ PKG_CHECK_MODULES([GTK_SHARP_20], [gtk-sharp-2.0])

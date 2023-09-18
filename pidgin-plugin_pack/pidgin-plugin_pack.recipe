@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2012      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PidginPluginPack(AutoPackageRecipe):
+
+        name = 'pidgin-plugin_pack'
+        version = '2.7.0'
+
+        buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel',
+			  'freetype:devel', 'gettext:runtime', 'glib:devel',
+			  'gtk:devel', 'libXrender:devel', 'pango:devel',
+			  'perl:runtime', 'pidgin:devel', 'pkgconfig:devel',
+			  'zlib:devel', 'perl-XML-Parser:perl',
+			  'aspell:devel', 'gtkspell:devel',
+			  'intltool:runtime', 'json-glib:devel', ]
+
+        def unpack(r):
+		r.macros.name = r.name.replace('_', '-').replace('pidgin', 'purple')
+                r.addArchive('https://www.guifications.org/attachments/download/201/')
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+# allow for debugging
+run ()
+{
+    #echo "$@"
+    #return 0
+    "$@"
+    return $?
+}
+
+
+case $type in 
+    files)
+	# skip input to avoid parent getting SIGPIPE
+	cat >/dev/null
+
+	case $action in
+	    update|remove)
+		run %(essentialsbindir)s/bootman
+		for f in /boot/grub/grub.conf /boot/extlinux/extlinux.conf
+		do
+		    [ -f "$f" ] && run %(essentialsbindir)s/ext3flush "$f"
+		done
+		;;
+	esac
+	;;
+esac
+
+exit 0

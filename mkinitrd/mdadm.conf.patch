@@ -1,0 +1,17 @@
+--- mkinitrd.jau	2008-05-01 15:23:35.000000000 -0400
++++ mkinitrd	2008-05-01 16:02:11.000000000 -0400
+@@ -1561,9 +1561,12 @@
+ 
+ if [ -n "$raiddevices" ]; then
+     inst /sbin/mdadm "$MNTIMAGE"
+-    if [ -f /etc/mdadm.conf ]; then
+-        inst /etc/mdadm.conf "$MNTIMAGE"
++    if [ ! -s /etc/mdadm.conf ]; then
++        MDADM_CONF=`mktemp ${TMPDIR}/mdadm.conf.XXXXXX`
++        /sbin/mdadm --examine --scan --config=partitions >> ${MDADM_CONF}
++        mv -f ${MDADM_CONF} /etc/mdadm.conf
+     fi
++    inst /etc/mdadm.conf "$MNTIMAGE"
+ fi
+ 
+ # FIXME -- this can really go poorly with clvm or duplicate vg names.

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RxvtUnicode(AutoPackageRecipe):
+    name = 'rxvt-unicode'
+    version = '9.02'
+    buildRequires = [
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gcc-c++:runtime',
+        'libX11:devel', 'libXau:devel', 'libXdmcp:devel',
+        'libXft:devel', 'libXrender:devel', 'libxcb:devel',
+        'ncurses:devel',
+        'perl:devel',
+        'perl:runtime',
+        'pkgconfig:devel',
+        'zlib:devel'
+        ]
+
+    def unpack(r):
+        r.addArchive('http://dist.schmorp.de/%(name)s/')

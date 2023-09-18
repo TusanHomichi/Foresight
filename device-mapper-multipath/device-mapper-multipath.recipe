@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2011 THe Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class DeviceMapperMultipath(RPMPackageRecipe,CPackageRecipe):
+    name = 'device-mapper-multipath'
+    version = '0.4.9'
+    rpmRelease = '40.fc19' 
+    buildRequires = [ 'chkconfig:runtime', 'device-mapper:devel',
+                      'libaio:devel', 'ncurses:devel',
+                      'readline:devel' ]
+
+    rpmPatches = [ # '0001-RH-dont_start_with_no_config.patch',
+                   '0002-RH-multipath.rules.patch',
+                   '0003-RH-Make-build-system-RH-Fedora-friendly.patch',
+                   '0004-RH-multipathd-blacklist-all-by-default.patch',
+                   '0005-RH-add-mpathconf.patch',
+                   '0006-RH-add-find-multipaths.patch',
+                   '0007-RH-add-hp_tur-checker.patch',
+                   '0008-RH-RHEL5-style-partitions.patch',
+                   '0009-RH-dont-remove-map-on-enomem.patch',
+                   '0010-RH-deprecate-uid-gid-mode.patch',
+                   '0011-RH-use-sync-support.patch',
+                   '0012-RH-change-configs.patch',
+                   '0013-RH-kpartx-msg.patch',
+                   '0014-RH-dm_reassign.patch',
+                   '0015-RH-selector_change.patch',
+                   '0016-RH-retain_hwhandler.patch',
+                   '0018-RH-remove-config-dups.patch',
+                   '0019-RH-detect-prio.patch',
+                   '0020-RH-netapp-config.patch',
+                   '0021-RH-fix-oom-adj.patch',
+                   '0022-RHBZ-864368-disable-libdm-failback.patch',
+                   '0023-RHBZ-866291-update-documentation.patch',
+                   #'0024-RH-start-multipathd-service-before-lvm.patch',
+                   #'0025-RH-fix-systemd-start-order.patch',
+                   '0026-RH-fix-mpathpersist-fns.patch',
+                   '0027-RH-default-partition-delimiters.patch',
+                   '0028-RH-storagetek-config.patch',
+                   '0029-RH-kpartx-retry.patch',
+                   '0030-RH-early-blacklist.patch',
+                   '0031-RHBZ-882060-fix-null-strncmp.patch',
+                   '0032-RH-make-path-fd-readonly.patch' ]
+    rpmSources = [ 'multipath.conf' ]
+    tarballName = 'multipath-tools-120821.tgz'
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        
+        r.Make('LIB=%(lib)s')
+
+        r.MakeInstall( ' DESTDIR=%(destdir)s '
+                       ' bindir=%(essentialsbindir)s '
+                       ' syslibdir=%(essentiallibdir)s '
+                       ' libdir=%(essentiallibdir)s/multipath '
+                       ' rcdir=%(initdir)s ')
+
+        r.Install('multipath.conf', '%(sysconfdir)s/')
+        r.InitialContents('%(sysconfdir)s/multipath.conf')
+
+        r.MakeDirs('%(sysconfdir)s/multipath')
+
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/multipath')
+
+        r.Doc('multipath.conf.annotated',
+              'multipath.conf.defaults', 'multipath.conf.synthetic')
+
+        r.PackageSpec('kpartx', '.*kpartx.*')

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('svnpackage')
+class PythonEvas(CPackageRecipe):
+    url = 'http://svn.enlightenment.org/svn/e/trunk/BINDINGS/python/python-evas'
+    name = 'python-evas'
+    version = SvnPackageRecipe.getRevision(url)
+
+    buildRequires = ['eet:devel', 'eina:devel', 'evas:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gnutls:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libjpeg:devel', 'openssl:devel', 'python:devel', 'zlib:devel', 'subversion:runtime', 'cython:runtime', 'Pyrex:runtime', 'python-setuptools:python', 'pkgconfig:devel']
+
+
+    def setup(r):
+        r.addSvnSnapshot(r.url)
+        # FIXME: there's probably a way to play by setuptool's rules here
+        r.Replace("instd =", "instd = '%(destdir)s' +", 'setup.py')
+        r.PythonSetup()

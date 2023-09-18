@@ -1,0 +1,10 @@
+class dtach(CPackageRecipe):
+    name = 'dtach'
+    version = '0.8'
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/dtach/dtach/%(version)s/dtach-%(version)s.tar.gz')
+        r.Configure()
+        r.Make()
+        r.Install('dtach', '%(bindir)s/')
+        r.Install('dtach.1', '%(mandir)s/man1/')

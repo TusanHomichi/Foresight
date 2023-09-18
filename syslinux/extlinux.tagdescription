@@ -1,0 +1,5 @@
+datasource stdin
+file %(taghandlerdir)s/extlinux
+include /boot/extlinux/.*
+implements files update
+implements handler preremove

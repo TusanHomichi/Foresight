@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2011-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Roxterm(CPackageRecipe):
+    name = 'roxterm'
+    version = '2.8.3'
+ 
+    buildRequires = [
+            'atk:devel', 
+            'cairo:devel', 
+            'dbus:devel', 
+            'dbus-glib:devel', 
+            'desktop-file-utils:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gdk-pixbuf:devel', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gtk:devel', 
+            'intltool:runtime', 
+            'libglade:devel', 
+            'libICE:devel', 
+            'libpng:devel', 
+            'libSM:devel', 
+            'libtool:runtime',
+            'libX11:devel', 
+            'libxml2:devel', 
+            'libxslt:runtime', 
+            'pango:devel', 
+            'pkgconfig:devel', 
+            'python:runtime',
+            'python-lockfile:python',
+            'vte:devel', 
+            'xmlto:runtime',
+                ]
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/roxterm/')
+        r.Run('python mscript.py configure --prefix=%(prefix)s')
+        r.Run('python mscript.py build')
+        r.Run('python mscript.py install --destdir=%(destdir)s')

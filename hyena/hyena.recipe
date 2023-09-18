@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class HYENA(GnomePackageRecipe):
+
+    name = 'hyena'
+    version = '0.5'
+
+    buildRequires = ['desktop-file-utils:runtime', 'gtk-sharp:cil', 'mono:cil', 'mono:devel', 'mono:runtime', 'gtk-sharp:devellib', 'gnome-sharp:devellib', 'gnome-sharp:cil']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.disableParallelMake()
+
+    def policy(r):
+        r.Replace('@expanded_libdir@', '%(libdir)s', '%(libdir)s/pkgconfig/*.pc', allowNoChange = True)

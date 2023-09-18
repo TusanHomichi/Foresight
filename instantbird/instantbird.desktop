@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Instantbird
+Comment=Instant messenging
+Exec=instantbird
+Icon=instantbird
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Network;

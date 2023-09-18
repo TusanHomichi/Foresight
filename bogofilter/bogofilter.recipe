@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bogofiler(CPackageRecipe):
+    name = "bogofilter"
+    version = "1.2.4"
+
+    buildRequires = [
+            'bison:runtime', 'flex:runtime', 'opensp:runtime', 'perl:runtime',
+            'xmlto:runtime', 'db:devel', 'perl:lib'
+        ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/%(name)s-%(version)s/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+        r.Move("%(sysconfdir)s/%(name)s.cf.example", "%(sysconfdir)s/%(name)s.cf")
+        r.Doc("doc/*.html", dir="doc")
+        r.Doc("doc/integrating*")
+        r.Doc("contrib/*", dir="contrib")
+        r.Doc("AUTHORS", "RELEASE.NOTES", "GETTING.STARTED")

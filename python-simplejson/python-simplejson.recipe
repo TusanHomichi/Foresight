@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonSimplejson(PackageRecipe):
+
+    name = 'python-simplejson'
+    version = '2.3.2'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/s/simplejson/simplejson-%(version)s.tar.gz')
+        r.PythonSetup()

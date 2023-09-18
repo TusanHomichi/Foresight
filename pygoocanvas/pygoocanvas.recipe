@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2007 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class pygoocanvas(GnomePackageRecipe):
+
+    name = 'pygoocanvas'
+    version = '0.14.1'
+
+    buildRequires = [ 'atk:devel',
+                      'cairo:devel',
+                      'expat:devel',
+                      'freetype:devel',
+                      'glib:devel',
+                      'gtk:devel',
+                      'libXrender:devel',
+                      'libxslt:runtime',
+                      'pango:devel',
+                      'pkgconfig:devel',
+                      'zlib:devel',
+                      'python:devel',
+                      'pygobject:devel',
+                      'pygobject:runtime',
+                      'pygtk:devel',
+                      'goocanvas:devel',
+                      'pycairo:devel',
+                      'glibc:devel',
+
+                      'automake:runtime',
+                      'autoconf:runtime',
+                      'libtool:runtime',
+                      ]
+
+    # FIXME - update in tandem with pycairo and goocanvas. python -c 'import goocanvas' MUST not segfault!
+    # https://bugzilla.redhat.com/show_bug.cgi?id=515455
+    # http://bugs.freedesktop.org/show_bug.cgi?id=23073
+    extraConfig = ' --disable-docs '
+
+    patches = ['pygoocanvas-0.14.0-API-change.patch', ]
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+
+        # https://bugzilla.gnome.org/show_bug.cgi?id=576198
+        # reverting the patches, per the 1st comment fixes things for us. 
+        # FIXME - spot why this is happening in 1st place
+        r.addPatch('http://svn.gnome.org/viewvc/pygoocanvas/trunk/acinclude.m4?view=patch&r1=229&r2=228&pathrev=229', extraArgs='-R')
+        r.addPatch('http://svn.gnome.org/viewvc/pygoocanvas/trunk/Makefile.am?view=patch&r1=229&r2=228&pathrev=229', extraArgs='-R')
+        r.Run('autoreconf -fi')

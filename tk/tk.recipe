@@ -1,0 +1,65 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Tk(RPMPackageRecipe,CPackageRecipe):
+    name = 'tk'
+    version = '8.5.9'
+
+    rpmUpVer = '8.5.9'
+    rpmRelease = '3.fc15'
+    externalArchive = 'mirror://sourceforge/tcl/%(name)s%(version)s-src.tar.gz'
+
+    buildRequires = [ 'autoconf:runtime', 'fontconfig:devel', 'freetype:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXext:devel', 'libXft:devel', 'libXrender:devel', 'tcl:devel', 'tcl:runtime' ]
+
+    rpmPatches = [ 'tk8.5-make.patch',
+                   'tk8.5-conf.patch',
+				   'tk-8.5.9-fix-xft.patch',
+				   'tk-seg_input.patch', ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+
+        r.Run('cd unix && autoconf')
+
+        r.Configure(dir='unix')
+        r.Make('TK_LIBRARY=%(datadir)s/%(name)s%(major_version)s', dir='unix')
+
+        r.MakeInstall('INSTALL_ROOT=%(destdir)s'
+                      ' TK_LIBRARY=%(datadir)s/%(name)s%(major_version)s',
+                      dir='unix')
+        r.Symlink('%(bindir)s/wish%(major_version)s', '%(bindir)s/wish')
+        r.Symlink('%(libdir)s/lib%(name)s%(major_version)s.so',
+                  '%(libdir)s/lib%(name)s.so')
+
+        # backward compatible symlink for legacy tcl packages that hardcode
+        # lib path to prefix/lib/%(name)s%(major_version)s
+        r.Symlink('%(datadir)s/%(name)s%(major_version)s',
+                  '%(prefix)s/%(lib)s/%(name)s%(major_version)s')
+
+        # some really ugly header manipulation - required
+        r.Run('''mkdir -p %(destdir)s/%(includedir)s/%(name)s-private/{generic,unix}
+                 find generic unix -name "*.h" -exec cp -p '{}' %(destdir)s/%(includedir)s/%(name)s-private/'{}' ';'
+                 ( cd %(destdir)s/%(includedir)s
+                   for i in *.h ; do
+                     [ -f %(destdir)s/%(includedir)s/%(name)s-private/generic/$i ] && ln -sf ../../$i %(destdir)s/%(includedir)s/%(name)s-private/generic ;
+                   done
+                 )''')
+
+        r.Replace(('%(builddir)s/unix', '%(libdir)s'),
+                  ('%(builddir)s', '%(includedir)s/%(name)s-private'),
+                  '%(destdir)s/%(libdir)s/%(name)sConfig.sh')
+        r.AutoDoc('changes', 'license.terms')
+
+        # 
+        r.macros.protver = '.'.join(r.version.split('.')[0:2])
+        r.ComponentProvides('%(protver)s')
+
+        r.Requires('tcl:devel(%(protver)s)', '%(includedir)s/tk.h')
+        r.Requires('libX11:devel', '%(includedir)s/tk.h')
+
+

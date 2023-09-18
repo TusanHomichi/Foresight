@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2008 Lance Haig.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class VirtManager(RPMPackageRecipe,AutoPackageRecipe):
+
+        name = 'virt-manager'
+        version = '0.9.4'
+        rpmRelease = '3.fc17'
+
+        rpmPatches = [ '0001-virt-manager-Fix-KVM_PACKAGES-substitution-variable.patch',
+		       '0002-domain-Handle-PMSUSPENDED-status.patch',
+		       '0003-browse_local-Fix-choosing-directory-of-F17.patch',
+		       '0007-Add-hidden-test-first-run-switch-for-testing-Package.patch',
+		       '0008-Fix-test-first-run.patch',
+		       '0009-really-fix-kvm-substitution.patch',
+		       '0010-network-Fix-parsing-ip-blocks-with-prefix.patch' ]
+                      
+        buildRequires = ['atk:devel',
+                         'cairo:devel',
+                         'dbus-python:python',
+                         'desktop-file-utils:runtime',
+                         'expat:devel',
+                         'fontconfig:devel',
+                         'freetype:devel',
+                         'gcc-c++:runtime',
+                         'gtk-vnc:python', 
+                         'glib:devel', 
+                         'gnome-python-desktop:python', 
+                         'gnome-python:python', 
+                         'gtk:devel', 
+                         'libX11:devel', 
+                         'libXrender:devel', 
+                         'libpng:devel', 
+                         'libxcb:devel', 
+                         'libxml2:python', 
+                         'pango:devel', 
+                         'perl:runtime', 
+                         'pixman:devel', 
+                         'pkgconfig:devel', 
+                         'pycairo:python', 
+                         'pygobject:runtime',
+                         'pygobject:python', 
+                         'pygtk:python',
+                         'pygtk:lib',
+                         'pygtk:devellib',
+                         'pygtk:devel', 
+                         'python:devel', 
+                         'rarian:devel', 
+                         'rarian:runtime', 
+                         'urlgrabber:python', 
+                         'vte:python', 
+                         'xcb-util:devel', 
+                         'zlib:devel',
+                         'libvirt:python',
+                         'gettext:runtime', 
+                         'intltool:runtime',
+                         'usermode:runtime',
+                         'virtinst:python',
+			 'GConf:runtime',
+			 'libuser:python',
+			 'newt:python',
+                         ]
+
+
+        def configure(r):
+		config  = (# ' --without-tui'
+			   ' --prefix=%(prefix)s'
+			   ' --localstatedir=%(localstatedir)s'
+			   ' --libdir=%(libdir)s'
+			   ' --with-kvm-packages=qemu-system-x86'
+			   )
+		r.ManualConfigure(config)
+		r.Configure(config)
+
+        def policy(r):
+                # Adjust for console-helper magic
+                r.Move('%(bindir)s/%(name)s', '%(sbindir)s/%(name)s')
+                r.Symlink('%(bindir)s/consolehelper', '%(bindir)s/%(name)s')
+
+                r.Requires('libvirt:python', '%(sbindir)s/virt-manager')
+                r.Requires('libvirt:runtime', '%(sbindir)s/virt-manager')
+                r.Requires('virtinst:runtime', '%(sbindir)s/virt-manager')
+                r.Requires('virt-viewer:runtime', '%(sbindir)s/virt-manager')
+                r.Requires('x11-ssh-askpass:runtime', '%(sbindir)s/virt-manager')
+		# XXX get around cpu hog
+		r.Replace('Exec=virt-manager',
+			  'Exec=virt-manager --no-fork',
+			  '%(datadir)s/applications/virt-manager.desktop')

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+<head>
+<title>gwget.git - gwget</title>
+<meta name='generator' content='cgit v0.9.0.3'/>
+<meta name='robots' content='index, nofollow'/>
+<link rel='stylesheet' type='text/css' href='/cgit-data/cgit.css'/>
+<link rel='alternate' title='Atom feed' href='http://pkgs.fedoraproject.org/cgit/gwget.git/atom/gwget-1.0.4-libnotify-0.7.0.patch?h=master' type='application/atom+xml'/>
+</head>
+<body>
+<div id='cgit'><table id='header'>
+<tr>
+<td class='logo' rowspan='2'><a href='/cgit/'><img src='/cgit-data/cgit.png' alt='cgit logo'/></a></td>
+<td class='main'><a href='/cgit/'>index</a> : <a title='gwget.git' href='/cgit/gwget.git/'>gwget.git</a></td><td class='form'><form method='get' action=''>
+<select name='h' onchange='this.form.submit();'>
+<option value='f10'>f10</option>
+<option value='f11'>f11</option>
+<option value='f12'>f12</option>
+<option value='f13'>f13</option>
+<option value='f14'>f14</option>
+<option value='f15'>f15</option>
+<option value='f16'>f16</option>
+<option value='f17'>f17</option>
+<option value='f18'>f18</option>
+<option value='f7'>f7</option>
+<option value='f8'>f8</option>
+<option value='f9'>f9</option>
+<option value='fc6'>fc6</option>
+<option value='master' selected='selected'>master</option>
+</select> <input type='submit' name='' value='switch'/></form></td></tr>
+<tr><td class='sub'>gwget</td><td class='sub right'>Jesse Keating</td></tr></table>
+<table class='tabs'><tr><td>
+<a href='/cgit/gwget.git/'>summary</a><a href='/cgit/gwget.git/refs/'>refs</a><a href='/cgit/gwget.git/log/gwget-1.0.4-libnotify-0.7.0.patch'>log</a><a class='active' href='/cgit/gwget.git/tree/gwget-1.0.4-libnotify-0.7.0.patch'>tree</a><a href='/cgit/gwget.git/commit/gwget-1.0.4-libnotify-0.7.0.patch'>commit</a><a href='/cgit/gwget.git/diff/gwget-1.0.4-libnotify-0.7.0.patch'>diff</a><a href='/cgit/gwget.git/stats/gwget-1.0.4-libnotify-0.7.0.patch'>stats</a></td><td class='form'><form class='right' method='get' action='/cgit/gwget.git/log/gwget-1.0.4-libnotify-0.7.0.patch'>
+<select name='qt'>
+<option value='grep'>log msg</option>
+<option value='author'>author</option>
+<option value='committer'>committer</option>
+<option value='range'>range</option>
+</select>
+<input class='txt' type='text' size='10' name='q' value=''/>
+<input type='submit' value='search'/>
+</form>
+</td></tr></table>
+<div class='path'>path: <a href='/cgit/gwget.git/tree/'>root</a>/<a href='/cgit/gwget.git/tree/gwget-1.0.4-libnotify-0.7.0.patch'>gwget-1.0.4-libnotify-0.7.0.patch</a></div><div class='content'>blob: 9a7ac8ffbd27a413a5fa917ae237b06233526fd0 (<a href='/cgit/gwget.git/plain/gwget-1.0.4-libnotify-0.7.0.patch'>plain</a>)
+<table summary='blob content' class='blob'>
+<tr><td class='linenumbers'><pre><a class='no' id='n1' name='n1' href='#n1'>1</a>
+<a class='no' id='n2' name='n2' href='#n2'>2</a>
+<a class='no' id='n3' name='n3' href='#n3'>3</a>
+<a class='no' id='n4' name='n4' href='#n4'>4</a>
+<a class='no' id='n5' name='n5' href='#n5'>5</a>
+<a class='no' id='n6' name='n6' href='#n6'>6</a>
+<a class='no' id='n7' name='n7' href='#n7'>7</a>
+<a class='no' id='n8' name='n8' href='#n8'>8</a>
+<a class='no' id='n9' name='n9' href='#n9'>9</a>
+<a class='no' id='n10' name='n10' href='#n10'>10</a>
+<a class='no' id='n11' name='n11' href='#n11'>11</a>
+</pre></td>
+<td class='lines'><pre><code>--- gwget-1.0.4.orig/src/systray.c	2009-08-14 19:19:51.000000000 +0200
++++ gwget-1.0.4/src/systray.c	2010-11-06 14:39:22.045465817 +0100
+@@ -224,7 +224,7 @@
+        		if (!notify_is_initted ())
+ 			if (!notify_init ("gwget"))
+ 		               return;
+-       NotifyNotification *notification = notify_notification_new(primary,secondary,icon_name,NULL);
++       NotifyNotification *notification = notify_notification_new(primary,secondary,icon_name);
+        notify_notification_show(notification,NULL);
+ #endif
+ 
+</code></pre></td></tr></table>
+</div> <!-- class=content -->
+<div class='footer'>generated  by cgit v0.9.0.3 at 2012-08-08 16:29:58 (GMT)</div>
+</div> <!-- id=cgit -->
+</body>
+</html>

@@ -1,0 +1,61 @@
+diff --git a/libsexy/sexy-icon-entry.h b/libsexy/sexy-icon-entry.h
+--- a/libsexy/sexy-icon-entry.h
++++ b/libsexy/sexy-icon-entry.h
+@@ -25,8 +25,7 @@
+ typedef struct _SexyIconEntryClass SexyIconEntryClass;
+ typedef struct _SexyIconEntryPriv  SexyIconEntryPriv;
+ 
+-#include <gtk/gtkentry.h>
+-#include <gtk/gtkimage.h>
++#include <gtk/gtk.h>
+ 
+ #define SEXY_TYPE_ICON_ENTRY (sexy_icon_entry_get_type())
+ #define SEXY_ICON_ENTRY(obj) \
+diff --git a/libsexy/sexy-spell-entry.h b/libsexy/sexy-spell-entry.h
+--- a/libsexy/sexy-spell-entry.h
++++ b/libsexy/sexy-spell-entry.h
+@@ -25,7 +25,7 @@
+ typedef struct _SexySpellEntryClass SexySpellEntryClass;
+ typedef struct _SexySpellEntryPriv  SexySpellEntryPriv;
+ 
+-#include <gtk/gtkentry.h>
++#include <gtk/gtk.h>
+ 
+ #define SEXY_TYPE_SPELL_ENTRY            (sexy_spell_entry_get_type())
+ #define SEXY_SPELL_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), SEXY_TYPE_SPELL_ENTRY, SexySpellEntry))
+diff --git a/libsexy/sexy-tooltip.h b/libsexy/sexy-tooltip.h
+--- a/libsexy/sexy-tooltip.h
++++ b/libsexy/sexy-tooltip.h
+@@ -24,7 +24,7 @@
+ typedef struct _SexyTooltip      SexyTooltip;
+ typedef struct _SexyTooltipClass SexyTooltipClass;
+ 
+-#include <gtk/gtkwindow.h>
++#include <gtk/gtk.h>
+ 
+ #define SEXY_TYPE_TOOLTIP            (sexy_tooltip_get_type())
+ #define SEXY_TOOLTIP(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), SEXY_TYPE_TOOLTIP, SexyTooltip))
+diff --git a/libsexy/sexy-tree-view.h b/libsexy/sexy-tree-view.h
+--- a/libsexy/sexy-tree-view.h
++++ b/libsexy/sexy-tree-view.h
+@@ -26,7 +26,7 @@
+ typedef struct _SexyTreeViewClass SexyTreeViewClass;
+ typedef struct _SexyTreeViewPriv  SexyTreeViewPriv;
+ 
+-#include <gtk/gtktreeview.h>
++#include <gtk/gtk.h>
+ 
+ #define SEXY_TYPE_TREE_VIEW            (sexy_tree_view_get_type())
+ #define SEXY_TREE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), SEXY_TYPE_TREE_VIEW, SexyTreeView))
+diff --git a/libsexy/sexy-url-label.h b/libsexy/sexy-url-label.h
+--- a/libsexy/sexy-url-label.h
++++ b/libsexy/sexy-url-label.h
+@@ -24,7 +24,7 @@
+ typedef struct _SexyUrlLabel      SexyUrlLabel;
+ typedef struct _SexyUrlLabelClass SexyUrlLabelClass;
+ 
+-#include <gtk/gtklabel.h>
++#include <gtk/gtk.h>
+ 
+ #define SEXY_TYPE_URL_LABEL (sexy_url_label_get_type())
+ #define SEXY_URL_LABEL(obj) \

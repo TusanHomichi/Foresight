@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AppMenuGtk(AutoPackageRecipe):
+    name = 'appmenu-gtk'
+    version = '0.2.1'
+ 
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                      'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel',
+                      'libdbusmenu-glib:devel', 'libdbusmenu-gtk:devel',
+                      'libpng:devel', 'pango:devel', 'pkgconfig:devel',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/0.2/%(version)s/+download/')
+
+    def configure(r):
+        r.Configure(' --disable-static ')
+
+    def policy(r):
+        r.Move('%(sysconfdir)s/X11/Xsession.d/80appmenu',
+        '%(sysconfdir)s/profile.d/appmenu_proxies.sh', mode = 0755)

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+import datetime
+class Primus(AutoPackageRecipe):
+    name = 'primus'
+    version = '07481761' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = ['libX11:devel', 'libstdc++:devel', 'Mesa:devel']
+ 
+    def setup(r):
+        r.addGitSnapshot('https://github.com/amonakov/primus.git')
+        r.Make()
+        r.Run(''' sed -e "s#^PRIMUS_libGL=.*#PRIMUS_libGL='/usr/\%(libdir)s/primus'#" primusrun ''')
+        r.Install('lib/libGL.so.1', '%(libdir)s/primus/')
+        r.Install('primusrun', '%(bindir)s/', mode=0755)
+        r.Install('primus.bash-completion', '%(datadir)s/bash_completion.d/primusrun')

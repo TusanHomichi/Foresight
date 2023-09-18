@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GentiumFonts(PackageRecipe):
+    name = 'gentium-fonts'
+    version = '1.02'
+
+    buildRequires = ['dos2unix:runtime', 'unzip:runtime', 'fontconfig:config', 'mkfontdir:runtime']
+
+    def setup(r):
+        # scripted download; see http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&item_id=gentium
+        r.addArchive('Gentium_102_W.zip')
+        r.Install('*.TTF', '%(datadir)s/fonts/gentium/')
+        r.Run('dos2unix *.txt')
+        r.AutoDoc(r'.*\.txt')
+

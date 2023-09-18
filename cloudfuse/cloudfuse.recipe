@@ -1,0 +1,9 @@
+class CloudFuse(PackageRecipe):
+    name = 'cloudfuse'
+    version = '0'
+    buildRequires = ['curl:devel', 'diffutils:runtime', 'file:runtime', 'fuse:devel', 'libxml2:devel', 'make:runtime', 'openssl:devel', 'pkgconfig:devel', 'zlib:devel', 'gcc:runtime', 'binutils:runtime']
+    def setup(r):
+        r.addGitSnapshot('git://github.com/redbo/cloudfuse.git')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

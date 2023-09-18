@@ -1,0 +1,24 @@
+#
+# Foresight Linux Template for Python packages Version 0.2 - March 31 2007
+# Feel free to delete those both lines!
+#
+# Copyright (c) 2007 Foresight Linux, [your name]
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class Canta(PackageRecipe):
+
+    name = 'canta'
+    version = '0.2beta6'
+
+    buildRequires = ['python-setuptools:python', 'ConfigObj:python', 'PIL:python', 'gst-python:python', 'mutagen:python', 'pygobject:python', 'pygtk:python', 'python-ctypes:python', 'python-numeric:python', 'python:devel', 'wxPython:python', 'desktop-file-utils:runtime', 'soya3d:python', 'mingus:python']
+
+    def setup(r):
+        r.addArchive('http://cgit.canta-game.org/cgit.cgi/canta/snapshot/canta-0.2-beta6.tar.gz')
+	r.PythonSetup(data='--install-data=%(prefix)s')
+	r.addArchive('http://cgit.canta-game.org/cgit.cgi/canta-media/snapshot/canta-media-0.2-beta6.tar.gz',
+                    dir='%(datadir)s/games/canta/')
+	r.Move('%(datadir)s/games/canta/canta-media-0.2-beta6/themes/', '%(datadir)s/games/canta/media/themes')
+	r.Move('%(datadir)s/games/canta/canta-media-0.2-beta6/songs/', '%(datadir)s/games/canta/media/songs')

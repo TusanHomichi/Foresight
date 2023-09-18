@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class Isomd5sum(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'isomd5sum'
+    version = '1.0.7'
+    #distroVersion = '14'
+    rpmRelease = '1.fc16'
+ 
+    buildRequires = ['popt:devel', 'python:devel']
+
+    def configure(r):
+        pass   

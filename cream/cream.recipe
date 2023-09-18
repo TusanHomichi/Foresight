@@ -1,0 +1,40 @@
+# (c) Pawel Pogorzelski (pawelpogorzelski@gmail.com)
+# (c) Foresight Linux 2008
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+class Cream(PackageRecipe):
+
+    name = 'cream'
+    version = '0.42'
+
+    buildRequires = ['desktop-file-utils:runtime', 'gtk:runtime']
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+	r.MakeDirs('/usr/bin')	
+	r.MakeDirs('/usr/share/applications')	
+	r.MakeDirs('/usr/share/icons')	
+	r.MakeDirs('/usr/share/vim/vim71/cream')	
+	r.MakeDirs('/usr/share/vim/vim71/cream/addons')	
+	r.MakeDirs('/usr/share/vim/vim71/cream/bitmaps')	
+	r.MakeDirs('/usr/share/vim/vim71/cream/docs')	
+	r.MakeDirs('/usr/share/vim/vim71/cream/docs-html')	
+	r.MakeDirs('/usr/share/vim/vim71/cream/filetypes')	
+	r.MakeDirs('/usr/share/vim/vim71/cream/help')	
+	r.MakeDirs('/usr/share/vim/vim71/cream/lang')	
+	r.Copy('creamrc','/usr/share/vim/vim71/cream/')
+	r.Copy('*.vim','/usr/share/vim/vim71/cream/')
+	r.Copy('addons/*','/usr/share/vim/vim71/cream/addons/')
+	r.Copy('bitmaps/*','/usr/share/vim/vim71/cream/bitmaps/')
+	r.Copy('docs/*','/usr/share/vim/vim71/cream/docs/')
+	r.Copy('docs-html/*','/usr/share/vim/vim71/cream/docs-html/')
+	r.Copy('filetypes/*','/usr/share/vim/vim71/cream/filetypes/')
+	r.Copy('help/*','/usr/share/vim/vim71/cream/help/')
+	r.Copy('lang/*','/usr/share/vim/vim71/cream/lang/')
+	r.Copy('cream','%(bindir)s')
+	r.Copy('cream.desktop','/usr/share/applications/')
+	r.Copy('cream.svg','/usr/share/icons/')
+	r.Copy('cream.png','/usr/share/icons/')
+	r.Requires('gvim:runtime','/usr/bin/cream')
+

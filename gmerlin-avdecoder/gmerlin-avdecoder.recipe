@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GmerlinAvdecoder(CPackageRecipe):
+    name = 'gmerlin-avdecoder'
+    version = '1.1.0'
+ 
+    buildRequires = [ 'faac:devel', 'faad2:devel', 'flac:devel', 'gavl:devel', 'gettext:runtime', 'intltool:runtime', 'lame:devel', 'libdca:devel', 'libmad:devel', 'libmpcdec:devel', 'libogg:devel', 'libpng:devel', 'libtheora:devel', 'libtiff:devel', 'libvorbis:devel', 'mjpegtools:devel', 'pkgconfig:devel', 'samba-client:lib', 'speex:devel', 'x264:devel', 'xvidcore:devel', 'zlib:devel',
+                     'libcdio:devel', 
+                     'liboil:devel', 
+                     'schroedinger:devel',
+                     'a52dec:devel', 'libvdpau:devel', 'libXext:devel',]
+ 
+    def setup(r):
+        r.addArchive('http://surfnet.dl.sourceforge.net/sourceforge/gmerlin/')
+        r.Configure('--without-doxygen --disable-libavformat --disable-libavcodec --disable-libpostproc --disable-libswscale')
+        r.Make()
+        r.MakeInstall()
+

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Gnomescan(GnomePackageRecipe):
+
+    name = 'gnome-scan'
+    version = '0.7.2'
+    # only bump this when patch bellow applies cleanly or
+    # when upstream supports babl new api
+
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'babl:devel', 'desktop-file-utils:runtime', 'gegl:devel', 'gimp:devel', 'sane-backends:devel', 'libglade:devel']
+    # patches = ['gnome-scan_babl-0.1.0_api.patch']

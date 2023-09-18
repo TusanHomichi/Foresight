@@ -1,0 +1,11 @@
+--- Configure.jau	2008-05-07 16:24:03.000000000 -0400
++++ Configure	2008-05-07 16:25:07.000000000 -0400
+@@ -1026,7 +1026,7 @@
+ 			}
+ 		}
+ 	LRESOLV:
+-	foreach $lpath ("/lib", "/usr/lib")
++	foreach $lpath ("/lib64", "/usr/lib64", "/lib", "/usr/lib")
+ 		{
+ 		foreach $lext ("a", "so")
+ 			{

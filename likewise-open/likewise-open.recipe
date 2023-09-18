@@ -1,0 +1,115 @@
+#
+# Copyright (c) 2008 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class LikeWiseOPEN(RPMPackageRecipe,CPackageRecipe):
+    name = 'likewise-open'
+    version = '4.0.5'
+
+    rpmRelease = '1'
+    rpmURL='http://archives.likewisesoftware.com/likewise-open/packages/Fedora/8/src/'
+    rpmArchives = ['setup.tar.gz']
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'cups:devel',
+                      'e2fsprogs:devel', 'expat:devel', 'fontconfig:devel',
+                      'freetype:devel', 'glib:devel', 'gtk:devel',
+                      'krb5:devel', 'libX11:devel', 'libXrender:devel',
+                      'libcap:devel', 'libglade:devel', 'libgssapi:devel',
+                      'libpng:devel', 'libxcb:devel', 'libxml2:devel',
+                      'openldap:devel', 'pam:devel', 'pango:devel',
+                      'perl:devel', 'perl:runtime', 'pixman:devel',
+                      'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel',
+                      'chkconfig:runtime'
+                      ]
+
+    def setup(r):
+
+        RPMPackageRecipe.unpack(r)
+
+        r.macros.optflags += ' -O2 -g -fmessage-length=0 -D_FORTIFY_SOURCE=2 '
+        if Arch.x86:
+            r.macros.optflags += ' -D_FILE_OFFSET_BITS=64 -march=i486 '
+        r.macros.cflags += ' -D_GNU_SOURCE '
+
+        r.Configure(' --prefix=%(prefix)s '
+                    ' --libdir=%(libdir)s',
+                    dir = 'centutils')
+
+        r.Configure(' --prefix=%(prefix)s '
+                    ' --with-gtk '
+                    ' --with-libxml2-dir=%(prefix)s'
+                    ' --libdir=%(libdir)s'
+                    ' --libexecdir=%(libdir)s/%(name)s',
+                    dir = 'domainjoin')
+        r.Configure('--prefix=%(prefix)s '
+                    ' --with-fhs '
+                    ' --localstatedir=%(localstatedir)s '
+                    ' --with-configdir=%(sysconfdir)s/samba '
+                    ' --libdir=%(libdir)s '
+                    ' --with-libdir=%(libdir)s/%(name)s '
+                    ' --with-lockdir=/var/lib/%(name)s '
+                    ' --with-logfilebase=/var/log/%(name)s '
+                    ' --with-mandir=%(mandir)s '
+                    ' --with-piddir=/var/run '
+                    ' --with-privatedir=%(sysconfdir)s/samba '
+                    ' --enable-require-wrfile-keytab '
+                    ' --with-ads '
+                    ' --with-pam '
+                    ' --without-readline '
+                    ' --with-included-popt '
+                    ' --with-included-iniparser '
+                    ' --with-shared-modules=idmap_lwopen',
+                    dir = 'samba/source')
+
+        r.Make('SCRIPTDIR="%(libdir)s/%(name)s"')
+
+        r.MakeDirs('%(libdir)s/%(name)s/{idmap,nss_info}')
+        r.MakeDirs('%(sysconfdir)s/logrotate.d')
+        r.MakeDirs('%(sysconfdir)s/{init.d,samba,security}')
+        r.MakeDirs('/var/{lib,log}/%(name)s')
+        r.MakeDirs('%(datadir)s/doc/%(name)s')
+        r.MakeDirs('%(lib)s/security')
+        r.MakeDirs('%(prefix)s/share/likewise-open')
+
+        r.MakeInstall()
+
+        r.Move('%(bindir)s/lwi-domainjoin-cli', '%(bindir)s/domainjoin-cli')
+
+        r.Move('%(bindir)s/domainjoin-gtk', '%(bindir)s/domainjoin-gui')
+
+        for i in ['domainjoin-gtk.glade', 'domainjoin-logo.png', 'likewise-logo.png']:
+            r.Install('domainjoin/domainjoin-gui/gtk/' + i, '%(prefix)s/share/likewise-open/' + i, mode = 0644)
+
+        ## Now manually install the PAM/NSS library
+        r.Install('samba/source/nsswitch/libnss_lwidentity.so', '/%(lib)s/libnss_lwidentity.so.2', mode = 0755)
+        r.Install('samba/source/bin/pam_lwidentity.so', '/%(lib)s/security/pam_lwidentity.so', mode = 0755)
+        r.Install('samba/source/bin/libwbclient.so', '%(libdir)s/libwbclient.so.0.1', mode = 0755)
+
+        r.Symlink('%(libdir)s/libwbclient.so.0.1', '%(libdir)s/libwbclient.so')
+
+        ## cleanup
+        r.Remove('%(libdir)s/%(name)s/security/pam_lwidentity.so')
+        r.Remove('%(libdir)s/%(name)s/libwbclient.so')
+
+        ## Grab the support scripts
+        r.Install('domainjoin/scripts/Centeris.pm', '%(libdir)s/%(name)s/Centeris.pm', mode = 0644)
+
+        for i in ['ConfigureLogin', 'ConfigureShellPrompt',  'gpcron']:
+            r.Install('domainjoin/scripts/' + i, '%(libdir)s/%(name)s/', mode = 0755)
+
+        # install the vendor files ( init script, etc... )
+        r.Install('setup/likewise-open.init', '%(sysconfdir)s/init.d/likewise-open', mode = 0755)
+        r.Install('setup/likewise-open.logrotate', '%(sysconfdir)s/logrotate.d/likewise-open', mode = 0755)
+        r.Install('setup/lwiauthd.conf.default', '%(sysconfdir)s/samba/lwiauthd.conf', mode = 0755)
+        r.Install('setup/pam_lwidentity.conf.default', '%(sysconfdir)s/security/pam_lwidentity.conf', mode = 0755)
+
+        ## Docs
+        r.Install('setup/README.Likewise', '%(thisdocdir)s/', mode = 0644)
+
+        # force libgssglue existence
+        r.Requires('libgssglue:lib','/usr/bin/domainjoin-gui')
+        r.Requires('krb5:devellib','/usr/bin/domainjoin-gui')

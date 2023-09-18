@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Farsight2(AutoPackageRecipe):
+    name = 'farsight2'
+    version = '0.0.29'
+ 
+    buildRequires = [ 'glib:devel', 'gst-plugins-base:devel', 'gstreamer:devel',
+                      'gst-python:devellib', 'gst-python:python', 'gtk-doc:runtime',
+                      'libxml2:devel', 'gssdp:devel', 'gupnp-igd:devel', 'gupnp:devel', 
+                      'libsoup:devel', 'pkgconfig:devel', 'python:bin', 'python:devel',
+                      'zlib:devel', 'pygobject:runtime', 'pygtk:devel', 'libnice:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://farsight.freedesktop.org/releases/farsight2/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+        r.Run(""" sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool """)

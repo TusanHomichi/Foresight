@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+loadSuperClass('gnomepackage')
+class Inkscape(RPMPackageRecipe,GnomePackageRecipe):
+    name = 'inkscape'
+    version = '0.48.4'
+    rpmRelease = '1.fc17'
+    rpmPatches = [
+                   'inkscape-0.48.2-types.patch',
+                   ]
+    tarballName = 'inkscape-%(version)s.tar.bz2'
+
+    buildRequires = [ 'aspell:devel', 'atk:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gcc:devel', 'gc:devel', 'GConf:devel', 'glib:devel',
+                      'glibmm:devel', 'gtk:devel', 'gtkmm:devel', 'gtkspell:devel',
+                      'intltool:runtime', 'libbonobo:devel', 'libpng:devel',
+                      'libsigc++:devel', 'libxml2:devel', 'libxslt:devel', 'ORBit2:devel',
+                      'pango:devel', 'popt:devel', 'zlib:devel', 'expat:devel',
+                      'pkgconfig:devel', 'gnome-vfs:devel', 'desktop-file-utils:runtime',
+                      'python:devel', 'perl:devel', 'libart_lgpl:devel', 'ruby:runtime',
+                      'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel',
+                      'libstdc++:devel', 'perl:runtime', 'gettext:runtime', 'cairo:devel',
+                      'bash:runtime', 'lcms:devel', 'perl-libxml-enno:perl', 'perl:lib',
+                      'glib:runtime', 'cairomm:devel', 'libICE:devel',
+                      'libSM:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel',
+                      'libXft:devel', 'libXrender:devel', 'dos2unix:runtime', 
+                      'poppler-glib:devel', 'poppler:devel', 'boost:devel',
+                      'ImageMagick:devel', 'gsl:devel', 'lxml:python',
+                      'automake:runtime', 'autoconf:runtime', 'numpy:python', 'libgomp:devellib']
+
+    def build(r):
+        #r.Run('./autogen.sh')
+	r.Run('autoreconf -i')
+	r.Run('intltoolize --automake')
+        r.Configure( ' --disable-dependency-tracking '
+                     ' --with-python '
+                     ' --with-perl '
+                     ' --with-gnome-vfs '
+                     ' --with-inkjar '
+                     ' --enable-lcms '
+                     ' --enable-poppler-cairo ')
+        r.Make()
+
+        def policy(r):
+            r.Remove('%(datadir)s/%{name}/extensions/sk2svg.sh')
+            r.Remove('%(datadir)s/%(name)s/extensions/outline2svg.*')
+            r.Remove('%(datadir)s/%(name)s/extensions/outline2svg.*')

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2012 - the Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# 
+loadSuperClass('pypipackage')
+class RedisPy(PyPiPackage,CPackageRecipe):
+    name = 'python-redis'
+    version = '2.4.11'
+    pyname = 'redis'
+
+
+    buildRequires = [ 'python-hiredis:python' ]
+
+    def policy(r):
+        # it's not absolutelly obvious that this should require 
+        # the redis runtime as the redis server may be in another
+        # machine ...
+        # r.Requires('redis:runtime', '%(name)s:python')
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*egg-info', recursive = True)
+
+
+
+

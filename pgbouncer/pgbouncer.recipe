@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2009-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PgBouncer(AutoPackageRecipe):
+    name = 'pgbouncer'
+    version = '1.4.2'
+
+    buildRequires =  [
+        'asciidoc:runtime',
+        'autoconf:runtime',
+        'chkconfig:runtime',
+        'libevent:devel',
+        'xmlto:runtime'
+      ]
+    
+    def unpack(r):
+        r.addArchive('http://pgfoundry.org/frs/download.php/2912/')
+        # Patches found useful for Conary repositories
+        # (from gxti)
+        # https://github.com/markokr/pgbouncer-dev/pull/1
+        r.addPatch('https://github.com/mtharp/pgbouncer-dev/commit/c0c07609da60b1787774d6a627371e4c7cbfefc0.patch')
+        r.addPatch('https://github.com/mtharp/pgbouncer-dev/commit/af322ac89718bbf9bd4973bf5d83879c8b3f40eb.patch')
+        r.addPatch('https://github.com/mtharp/pgbouncer-dev/commit/22c621a2d9434c3e99ef09983f7e1d44fadd675e.patch')
+        # needs review from mkj 
+        # r.addPatch('pgbouncer-ini.patch')
+
+    def make(r):
+        r.Make('V=1')
+
+    def policy(r):
+        r.addSource('pgbouncer.init', dest='%(initdir)s/%(name)s/', mode=0755)
+        r.addSource('pgbouncer.ini', dir='%(sysconfdir)s/', mode = 0644)
+        r.addSource('pgbouncer.sysconfig', dir='%(sysconfdir)s/sysconfig/', mode = 0644)
+
+        # pidfile
+        r.MakeDirs('%(sharedstatedir)s/run/%(name)s')
+        r.Ownership('nobody', 'nobody', '(sharedstatedir)s/run/%(name)s')
+
+        # Make it easy to replace the default config file by not having
+        # a requirement on :config
+        r.ComponentRequires({'config': ()})
+        r.UtilizeUser('postgres', '%(bindir)s/')

@@ -1,0 +1,14 @@
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gnac(AutoPackageRecipe):
+    name = 'gnac'
+    version = '0.2.4.1'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'esound:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gnome-keyring:devel', 'gnome-media:devel', 'gnome-vfs:devel', 'gstreamer:devel', 'gstreamer:runtime', 'gtk:devel', 'gtk:runtime', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'libxcb:devel', 'libxml2:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'popt:devel', 'xcb-util:devel', 'zlib:devel', 'gst-plugins-base:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://dfn.dl.sourceforge.net/sourceforge/gnac/'
+                     '%(name)s-%(version)s.tar.bz2')

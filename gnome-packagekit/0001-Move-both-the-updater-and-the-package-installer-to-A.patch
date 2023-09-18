@@ -1,0 +1,94 @@
+From 423016ef80fec482e15f9113dd64c079602544cd Mon Sep 17 00:00:00 2001
+From: Richard Hughes <richard@hughsie.com>
+Date: Thu, 30 Sep 2010 15:00:14 +0100
+Subject: [PATCH] Move both the updater and the package installer to Applications->System Tools
+
+Also remove some obsolete categories while we're poking around in desktop files.
+---
+ data/gpk-application.desktop.in     |    2 +-
+ data/gpk-install-catalog.desktop.in |    2 +-
+ data/gpk-install-file.desktop.in    |    2 +-
+ data/gpk-log.desktop.in             |    2 +-
+ data/gpk-service-pack.desktop.in    |    2 +-
+ data/gpk-update-viewer.desktop.in   |    2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/data/gpk-application.desktop.in b/data/gpk-application.desktop.in
+index a31e039..6988de1 100644
+--- a/data/gpk-application.desktop.in
++++ b/data/gpk-application.desktop.in
+@@ -5,7 +5,7 @@ Icon=system-software-install
+ Exec=gpk-application
+ Terminal=false
+ Type=Application
+-Categories=GNOME;GTK;System;Settings;
++Categories=GNOME;GTK;System;
+ NotShowIn=KDE;
+ StartupNotify=true
+ 
+diff --git a/data/gpk-install-catalog.desktop.in b/data/gpk-install-catalog.desktop.in
+index 07befc5..b2e28dd 100644
+--- a/data/gpk-install-catalog.desktop.in
++++ b/data/gpk-install-catalog.desktop.in
+@@ -1,7 +1,7 @@
+ [Desktop Entry]
+ _Name=Catalog Installer
+ _Comment=Install a catalog of software on the system
+-Categories=System;X-Red-Hat-Base;X-Fedora;
++Categories=System;
+ Exec=/usr/bin/gpk-install-catalog %F
+ Terminal=false
+ Type=Application
+diff --git a/data/gpk-install-file.desktop.in b/data/gpk-install-file.desktop.in
+index 6e9ede0..4dbb7ae 100644
+--- a/data/gpk-install-file.desktop.in
++++ b/data/gpk-install-file.desktop.in
+@@ -1,7 +1,7 @@
+ [Desktop Entry]
+ _Name=Package Installer
+ _Comment=Install selected software on the system
+-Categories=System;X-Red-Hat-Base;X-Fedora;
++Categories=System;
+ Exec=/usr/bin/gpk-install-local-file %F
+ Terminal=false
+ Type=Application
+diff --git a/data/gpk-log.desktop.in b/data/gpk-log.desktop.in
+index 61461aa..fa7b257 100644
+--- a/data/gpk-log.desktop.in
++++ b/data/gpk-log.desktop.in
+@@ -5,6 +5,6 @@ Icon=gpk-log
+ Exec=gpk-log
+ Terminal=false
+ Type=Application
+-Categories=GNOME;GTK;System;X-Red-Hat-Base;
++Categories=GNOME;GTK;System;
+ StartupNotify=true
+ 
+diff --git a/data/gpk-service-pack.desktop.in b/data/gpk-service-pack.desktop.in
+index 901900e..a39fbe7 100644
+--- a/data/gpk-service-pack.desktop.in
++++ b/data/gpk-service-pack.desktop.in
+@@ -5,6 +5,6 @@ Icon=gpk-service-pack
+ Exec=gpk-service-pack
+ Terminal=false
+ Type=Application
+-Categories=GNOME;GTK;System;X-Red-Hat-Base;
++Categories=GNOME;GTK;System;
+ StartupNotify=true
+ 
+diff --git a/data/gpk-update-viewer.desktop.in b/data/gpk-update-viewer.desktop.in
+index e92f393..b10f5b4 100644
+--- a/data/gpk-update-viewer.desktop.in
++++ b/data/gpk-update-viewer.desktop.in
+@@ -5,7 +5,7 @@ Icon=system-software-update
+ Exec=gpk-update-viewer
+ Terminal=false
+ Type=Application
+-Categories=GNOME;GTK;Settings;System;PackageManager;
++Categories=GNOME;GTK;System;
+ NotShowIn=KDE
+ StartupNotify=true
+ 
+-- 
+1.7.3.4
+

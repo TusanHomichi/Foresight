@@ -1,0 +1,4 @@
+file		%(taghandlerdir)s/tzdata
+implements	files update
+description	time-zone file updates in %(datadir)s/zoneinfo/
+include		%(datadir)s/zoneinfo/.*

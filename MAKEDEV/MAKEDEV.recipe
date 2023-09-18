@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Makedev(RPMPackageRecipe, CPackageRecipe):
+    name = 'MAKEDEV'
+    version = '3.23'
+    rpmRelease = '1.2'
+    # there seems to be no dynamic way to do this...
+    tarballName = 'MAKEDEV-3.23-1.tar.gz'
+
+    def setup(r):
+        r.unpack()
+        r.Make()
+        r.MakeInstall()
+        r.Move('/dev/MAKEDEV', '%(essentialsbindir)s/')
+
+        r.MakeDirs('/dev/shm', '/dev/pts')
+        r.ExcludeDirectories(exceptions='/dev/')
+
+        r.MakeDevices('/dev/null',    'c', 1, 3, 'root', 'root', mode=0666)
+        r.MakeDevices('/dev/zero',    'c', 1, 5, 'root', 'root', mode=0666)
+        r.MakeDevices('/dev/tty',     'c', 5, 0, 'root', 'root', mode=0666)
+        r.MakeDevices('/dev/console', 'c', 5, 1, 'root', 'root', mode=0666)
+
+        r.PackageSpec('dev', '/dev/')
+        r.Provides('file', '/dev/null')
+
+        # make sure all the right groups are installed
+        r.UtilizeGroup('kmem',
+            '%(sysconfdir)s/makedev.d/(00macros|linux-2.6.x)')
+        r.UtilizeGroup('floppy',
+            '%(sysconfdir)s/makedev.d/(00macros|linux-2.6.x)')
+        r.UtilizeGroup('lp',
+            '%(sysconfdir)s/makedev.d/(00macros|linux-2.6.x)')
+        r.UtilizeGroup('tty',
+            '%(sysconfdir)s/makedev.d/(00macros|linux-2.6.x)')
+        r.UtilizeGroup('uucp',
+            '%(sysconfdir)s/makedev.d/(00macros|redhat|linux-2.6.x)')
+        r.UtilizeGroup('disk',
+            '%(sysconfdir)s/makedev.d/(00macros|std|cciss|dac960|ida|linux-2.6.x|redhat)')
+
+        r.addSource('MAKEDEV.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/MAKEDEV')
+        r.addSource('MAKEDEV.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/MAKEDEV', mode=0755)
+
+        # taghandler deps ...
+        r.Requires('coreutils:runtime',
+                   '%(taghandlerdir)s/MAKEDEV') 
+        

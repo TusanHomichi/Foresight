@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009-2013 THe Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadInstalled('glib')
+class _gdk_pixbuf(AutoPackageRecipe):
+
+    buildRequires = [ 'docbook-utils:runtime', 'gettext:runtime', 'glib:devel', 'gtk-doc:runtime',
+                      'intltool:runtime', 'jasper:devel', 'libX11:devel', 'libjpeg:devel',
+                      'libpng:devel', 'libtiff:devel', 'pkgconfig:devel',
+                      'gobject-introspection:devel', 'shared-mime-info:runtime' ]
+
+    name = 'gdk-pixbuf'
+    version = '2.26.5'
+
+    def unpack(r):
+        r.macros.majversion = '.'.join(r.version.split('.')[0:2])
+        r.addArchive('mirror://gnome/%(name)s/%(majversion)s/')
+
+    def configure(r):
+        r.Configure( ' --with-libjasper '
+                     ' --disable-gtk-doc '
+                     ' --with-x11'
+                     ' --with-included-loaders=png '
+                     )
+
+    def makeinstall(r):
+        r.MakeInstall('RUN_QUERY_LOADER_TEST=false')
+
+    def policy(r):
+        r.Create('%(libdir)s/gdk-pixbuf-2.0/2.10.0/loaders.cache')
+        r.InitialContents('%(libdir)s/gdk-pixbuf-2.0/2.10.0/loaders.cache')
+
+        r.Requires('glib:devel', '%(libdir)s/pkgconfig/gdk-pixbuf-xlib.*pc')
+        r.Requires('shared-mime-info:runtime', '%(bindir)s/.*')
+
+        if Arch.x86:
+            r.macros.isaBits = '32'
+        else:
+            r.macros.isaBits = '64'
+
+        r.addSource('gdk-pixbuf-loader.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/gdk-pixbuf-loader-%(isaBits)s')
+        r.addSource('gdk-pixbuf-loader.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/gdk-pixbuf-loader-%(isaBits)s',
+                    mode=0755)
+
+        r.Move('%(bindir)s/gdk-pixbuf-query-loaders', 
+               '%(bindir)s/gdk-pixbuf-query-loaders-%(isaBits)s')
+
+        # otherwise no dice under multilib
+        r.ComponentSpec('lib', '%(bindir)s/gdk-pixbuf-query-loaders-%(isaBits)s',
+                        '%(taghandlerdir)s/gdk-pixbuf-loader-%(isaBits)s',
+                        '%(tagdescriptiondir)s/gdk-pixbuf-loader-%(isaBits)s')
+
+        # taghandler deps ...
+        r.Requires('coreutils:runtime',
+                   '%(taghandlerdir)s/gdk-pixbuf-loader-%(isaBits)s') 
+        r.Requires('%(bindir)s/gdk-pixbuf-query-loaders-%(isaBits)s',
+                   '%(taghandlerdir)s/gdk-pixbuf-loader-%(isaBits)s') 
+
+        # needed to avoid update noise on newer glibs
+        glibReq = 'glib:lib(%s)' % '.'.join(Glib.version.split('.')[0:2])
+        r.Requires(glibReq,
+                   '%(taghandlerdir)s/.*') 
+        

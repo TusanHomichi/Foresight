@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Boa Constructor
+Comment=Editor of Python with wxPython
+Exec=boa
+Icon=boa
+Type=Application
+Categories=Development;Viewer;IDE;
+Encoding=UTF-8

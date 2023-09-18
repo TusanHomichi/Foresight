@@ -1,0 +1,12 @@
+diff --git a/services b/services
+index feb30e7..6f24e1a 100644
+--- a/services
++++ b/services
+@@ -9122,6 +9122,7 @@ pago-services1	30001/tcp			# Pago Services 1
+ pago-services1	30001/udp			# Pago Services 1
+ pago-services2	30002/tcp			# Pago Services 2
+ pago-services2	30002/udp			# Pago Services 2
++csync2          30865/tcp                       # http://oss.linbit.com/csync2/
+ xqosd		31416/tcp			# XQoS network monitor
+ xqosd		31416/udp			# XQoS network monitor
+ tetrinet	31457/tcp			# TetriNET Protocol

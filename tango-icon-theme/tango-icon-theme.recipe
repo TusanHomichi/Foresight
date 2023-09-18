@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IconThemeTango(AutoPackageRecipe):
+    name = "tango-icon-theme"
+    version = "0.8.90"
+
+    buildRequires = [ 'gtk:runtime', 'ImageMagick:runtime', 'gettext:runtime',
+        'icon-naming-utils:runtime', 'perl:runtime', 'pkgconfig:devel',
+        'icon-naming-utils:devellib', 'ImageMagick:devel', 'librsvg:runtime',
+        'librsvg:devel', 'intltool:runtime']
+
+    def unpack(r):
+        r.addArchive('http://tango.freedesktop.org/releases/tango-icon-theme-%(version)s.tar.gz')
+        r.addSource('distributor-logo-scalable.svg', dest='scalable/places/distributor-logo.svg')
+        r.addSource('distributor-logo-scalable.svg', dest='scalable/places/start-here.svg')
+        r.addSource('distributor-logo-16x16.png', dest='16x16/places/distributor-logo.png')
+        r.addSource('distributor-logo-16x16.png', dest='16x16/places/start-here.png')
+        r.addSource('distributor-logo-22x22.png', dest='22x22/places/distributor-logo.png')
+        r.addSource('distributor-logo-22x22.png', dest='22x22/places/start-here.png')
+
+    def configure(r):
+        r.Configure('--enable-png-creation')

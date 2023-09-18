@@ -1,0 +1,206 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('rpmpackage')
+loadRecipe('gnomepackage')
+class Gdm(RPMPackageRecipe,GnomePackageRecipe):
+
+    name = 'gdm'
+    version = '2.32.1'
+    rpmRelease = '1.fc14'
+
+    buildRequires = [ 'libglade:devel',
+                      'pango:devel',
+                      'gtk:devel',
+                      'libgnomeui:devel',
+                      'libgnomecanvas:devel',
+                      'librsvg:devel',
+                      'libxml2:devel',
+                      'fontconfig:devel',
+                      'libgsf:devel',
+                      'libcroco:devel',
+                      'attr:devel',
+                      'rarian:runtime',
+                      'desktop-file-utils:runtime',
+                      'GConf:devel',
+                      'ORBit2:devel', 
+                      'atk:devel', 
+                      'cairo:devel', 
+                      'freetype:devel',
+                      'glib:devel',
+                      'libgnome-keyring:devel',
+                      'gnome-vfs:devel',
+                      'libart_lgpl:devel',
+                      'libbonobo:devel', 
+                      'libbonoboui:devel', 
+                      'libgnome:devel', 
+                      'libpng:devel', 
+                      'popt:devel', 
+                      'tcp_wrappers:devel', 
+                      'gettext:runtime',
+                      'gtk:runtime', 
+                      'perl:runtime', 
+                      'usermode:runtime', 
+                      'zenity:runtime', 
+                      'libX11:devel',
+                      'libXau:devel',
+                      'libXdmcp:devel', 
+                      'libXext:devel',
+                      'libXi:devellib',
+                      'libXinerama:devel', 
+                      'libXrender:devel',
+                      'libdmx:devellib', 
+                      'gnome-doc-utils:devel',
+                      'gnome-doc-utils:runtime', 
+                      'audit:devel', 
+                      'shadow:runtime', 
+                      'automake:runtime', 
+                      'autoconf:runtime', 
+                      'libtool:devel',  
+                      'pkgconfig:devel' , 
+                      'm4:runtime', 
+                      'expat:devel', 
+                      'pam:devel', 
+                      'dbus-glib:runtime', 
+                      'GConf:runtime', 
+                      'xorg-server:runtime', 
+                       'gnome-panel:devel', 
+                      'iso-codes:devellib',
+                      'libxklavier:devel', 
+                      'xdm:runtime', 
+                      'hal:devel', 
+                      'nss:devel', 
+                      'libcanberra:devel',
+                      'DeviceKit-power:devel',
+                      'polkit-gnome:devel', 
+                      'polkit:devel',
+                     
+                     ]
+
+    extraConfig = ' --with-pam-prefix=%(sysconfdir)s'
+    extraConfig += ' --enable-console-helper  --without-selinux --with-console-kit'
+    extraConfig += ' --disable-scrollkeeper --enable-profiling '
+
+    rpmPatches = [ # patch bellow works, but somehow
+                   # Xorg starts eating CPU as hell
+                   # 'plymouth.patch',
+                   
+                        ]
+
+    # FIXME 
+    # rpmSources = ['gdm-pam', 'gdm-autologin-pam', 'gdm-password-pam', 'gdm-smartcard-pam', 'gdm-fingerprint-pam'  ]
+    rpmSources = [ 'gdm-smartcard-16.png',
+                   'gdm-smartcard-48.png',
+                   'gdm-fingerprint-16.png',
+                   'gdm-fingerprint-48.png', 
+
+                   'polkit-gnome-authentication-agent-1.desktop' ]
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+     #   for p in r.fuzzyRpmPatches:
+     #       r.addPatch(p, rpm = r.srpm,extraArgs = '-F3')
+     #
+
+        r.addPatch('logo.patch')
+        r.addPatch('handle_dmrc_not_in_cache_when_migrating.patch')
+        # Correctly give focus to the user chooser on startup
+        # https://bugzilla.gnome.org/show_bug.cgi?id=629310
+        r.addPatch('http://git.gnome.org/browse/gdm/patch/?id=00612f5f8288a37ee5159c969030661d2edd14c4')
+
+        r.Run("autoreconf -fi")
+
+        r.Copy('gdm-smartcard-16.png', 'gui/simple-greeter/plugins/smartcard/icons/16x16/gdm-smartcard.png')
+        r.Copy('gdm-smartcard-48.png', 'gui/simple-greeter/plugins/smartcard/icons/48x48/gdm-smartcard.png')
+        r.Copy('gdm-fingerprint-16.png', 'gui/simple-greeter/plugins/fingerprint/icons/16x16/gdm-fingerprint.png')
+        r.Copy('gdm-fingerprint-48.png', 'gui/simple-greeter/plugins/fingerprint/icons/48x48/gdm-fingerprint.png')
+
+        # evaluate extraConfig's sysconfdir before setting new value
+        r.extraConfig = r.extraConfig % r.macros
+        #r.macros.sysconfdir= '%(sysconfdir)s/X11'
+
+        GnomePackageRecipe.build(r)
+
+        r.MakeDirs('%(sysconfdir)s/gdm/{Init,PreSession,PostSession}')
+
+        GnomePackageRecipe.install(r)
+
+        # create log dir
+        r.MakeDirs('%(localstatedir)s/log/gdm')
+        r.MakeDirs('%(localstatedir)s/run/')
+        r.MakeDirs('%(localstatedir)s/run/gdm/')
+        r.MakeDirs('%(localstatedir)s/run/gdm/greeter')
+        r.ExcludeDirectories(exceptions=[
+            '%(localstatedir)s/log/gdm',
+            '%(localstatedir)s/spool/gdm',
+            '%(localstatedir)s/cache/gdm',
+            '%(localstatedir)s/run/gdm/greeter',
+            '%(sysconfdir)s/gdm/{Init,PreSession,PostSession}',
+            '%(datadir)s/gdm/autostart/LoginWindow',
+            ])
+
+        # remove the gdm Xsession as we're using the xdm one
+        r.Remove('%(sysconfdir)s/gdm/Xsession')
+        # FIXME: came back here to check once i clean xdm side
+        r.Symlink('%(sysconfdir)s/X11/xdm/Xsession', '%(sysconfdir)s/gdm/Xsession')
+
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/lib/gdm')
+        r.SetModes('%(localstatedir)s/lib/gdm', 01770)
+
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/lib/gdm/.gconf.mandatory')
+        r.SetModes('%(localstatedir)s/lib/gdm/.gconf.mandatory', 01750)
+
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/lib/gdm/.gconf.mandatory/*.xml')
+        r.SetModes('%(localstatedir)s/lib/gdm/.gconf.mandatory/*.xml', 01640)
+
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/lib/gdm/.gconf.path')
+        r.SetModes('%(localstatedir)s/lib/gdm/.gconf.path', 01640)
+
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/gdm')
+        r.SetModes('%(localstatedir)s/gdm', 01770)
+
+        r.Ownership('root', 'gdm', '%(localstatedir)s/run/gdm')
+        r.SetModes('%(localstatedir)s/run/gdm', 01777)
+
+        r.Ownership('root', 'gdm', '%(localstatedir)s/cache/gdm')
+        r.SetModes('%(localstatedir)s/cache/gdm', 01755)
+
+
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/run/gdm/greeter')
+        r.SetModes('%(localstatedir)s/run/gdm/greeter', 01755)
+
+
+        r.MakeDirs('%(datadir)s/gdm/autostart/LoginWindow')
+
+        r.PackageSpec('gdm-user-switch-applet',
+            '%(libexecdir)s/gdm-user-switch-applet')
+        r.PackageSpec('gdm-user-switch-applet', 
+            '%(libdir)s/bonobo/servers/GNOME_FastUserSwitchApplet.server')
+        r.PackageSpec('gdm-user-switch-applet', 
+            '%(datadir)s/gnome-2.0/ui/GNOME_FastUserSwitchApplet.xml')
+        # ^^^^^^^^^^^^^^^^^^^^^^^^
+        # gdm-user-switch-applet superceded by indicator applet 
+        # ... which doesn't behave too well atm...
+        #for f in ['%(libexecdir)s/gdm-user-switch-applet', 
+        #          '%(libdir)s/bonobo/servers/GNOME_FastUserSwitchApplet.server', '%(datadir)s/gnome-2.0/ui/GNOME_FastUserSwitchApplet.xml']:
+        #    r.Remove(f)
+
+        r.DanglingSymlinks(exceptions=['%(sysconfdir)s/gdm/Xsession'])
+        r.Requires('xdm:runtime', '%(sysconfdir)s/gdm/Xsession')
+
+        # gnome-keyring hooks
+        # Enforce a sane PAM setup by making sure the user gets a non-merged file
+        r.addSource('gdm.pamd')
+        r.Install('gdm.pamd', '%(sysconfdir)s/pam.d/gdm', mode=0644)
+        r.ComponentSpec('runtime', '%(sysconfdir)s/pam.d/gdm')
+        r.addSource('gdm-autologin.pamd')
+        r.Install('gdm-autologin.pamd', '%(sysconfdir)s/pam.d/gdm-autologin', mode=0644)
+        r.ComponentSpec('runtime', '%(sysconfdir)s/pam.d/gdm-autologin')
+
+        r.Install('polkit-gnome-authentication-agent-1.desktop',
+                  '%(datadir)s/gdm/autostart/LoginWindow/polkit-gnome-authentication-agent-1.desktop')
+
+        for dep in [ 'hal:runtime', 'dbus-x11:runtime', 'dbus:runtime', 'gnome-session:runtime']:
+            r.Requires(dep, '%(name)s:runtime')

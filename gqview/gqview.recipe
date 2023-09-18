@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2006-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+class GQview(AutoPackageRecipe):
+
+    name = 'gqview'
+    version = '2.0.4'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel',
+                      'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'pango:devel',
+                      'pkgconfig:devel', 'pkgconfig:runtime'
+                      ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.addPatch('gqview-2.0.3-desktop.patch')
+        r.addPatch('gqview-2.0.4-editors.patch')
+        r.addPatch('gqview-2.0.4-print-pagesize.patch')

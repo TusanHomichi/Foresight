@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Autofs(CPackageRecipe):
+    name = 'mbpfan'
+    tag = '2b62cf9'
+    stamp = datetime.date.today().strftime("%Y.%m.%d")
+    version = 'git+%s+%s' % (tag, stamp)
+
+    buildRequires = [ 'chkconfig:runtime',
+                      'libstdc++:devel', ]
+
+    def setup(r):
+        r.addGitSnapshot('https://github.com/dgraziotin/Fan-Control-Daemon', 
+                         tag = r.tag)
+        r.Replace(('\(EXE\)\ \/usr\/sbin', '(EXE) %(destdir)s%(sbindir)s/'),
+                  ('\(CONF\)\ \/etc', '(CONF) %(destdir)s%(sysconfdir)s/'),
+                  'Makefile', )
+
+        for d in [ '%(initdir)s', '%(sbindir)s', '%(sysconfdir)s',]:
+            r.MakeDirs(d)
+
+        r.Make()
+        r.MakeInstall()
+
+        r.Install('mbpfan.init.redhat', '%(initdir)s/mbpfan', mode = 0755)

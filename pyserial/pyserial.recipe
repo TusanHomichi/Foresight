@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2005-2010 rPath, Inc.
+# All rights reserved
+#
+
+class PySerial(PackageRecipe):
+    buildRequires = [ 'python:devel', 'python-setuptools:python', ]
+
+    name = 'pyserial'
+    upversion = '2.6'
+    version = upversion.replace('-', '_')
+
+    def setup(r):
+        r.macros.upversion = r.upversion
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+        r.Replace('#! python$', '#!/usr/bin/python%(pyver)s',
+            'serial/*.py',
+            'serial/urlhandler/*.py',
+            allowNoChange=True)
+        r.PythonSetup()

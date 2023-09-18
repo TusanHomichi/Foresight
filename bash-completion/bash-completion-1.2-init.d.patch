@@ -1,0 +1,19 @@
+diff --git a/contrib/service b/contrib/service
+index 9ebd117..6efd7c1 100644
+--- a/contrib/service
++++ b/contrib/service
+@@ -32,9 +32,11 @@ _service()
+     return 0
+ } &&
+ complete -F _service service
+-[ -d /etc/init.d/ ] && complete -F _service -o default \
+-    $(for i in /etc/init.d/*; do
+-    complete -p ${i##*/} &>/dev/null || printf '%s\n' ${i##*/}; done)
++for svc in /etc/init.d/*; do
++    [ ! -x "$svc" ] || complete -p "${svc##*/}" &>/dev/null || \
++        complete -F _service -o default "${svc##*/}"
++done
++unset svc
+ 
+ # Local variables:
+ # mode: shell-script

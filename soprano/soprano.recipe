@@ -1,0 +1,38 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Soprano(CMakePackageRecipe):
+
+    name = 'soprano'
+    version = '2.7.6'
+
+    buildRequires = [
+        'clucene:devel', 'doxygen:runtime', 'graphviz:runtime', 'icedtea-jdk:runtime',
+        'libiodbc:devel', 'libstdc++:devel', 'libX11:devel',
+        'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel',
+        'libXext:devel', 'libXfixes:devel', 'libXft:devel', 'libXi:devel',
+        'libXinerama:devel', 'libXpm:devel', 'libXScrnSaver:devel',
+        'libXt:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel',
+        'qt4:devel', 'raptor:devel', 'rasqal:devel', 'redland:devel',
+        'libXmu:devel', 'libXres:devel', 'libxkbfile:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/soprano/Soprano/%(version)s/')
+        r.addPatch('soprano-rpath-remove.patch')
+
+
+    def policy(r):
+
+        r.Requires(exceptDeps=r'java: info.aduna.*')
+        r.Requires(exceptDeps=r'java: org.springframework.*')
+        r.Requires(exceptDeps=r'java: javax.servlet.*')
+        r.Requires(exceptDeps=r'java: org.apache.commons.*')
+
+        r.Requires(exceptDeps=r'soname: .*libjvm.so.*')
+
+        r.ComponentSpec('devel', '%(bindir)s/onto2vocabularyclass')
+

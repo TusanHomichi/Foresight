@@ -1,0 +1,94 @@
+#
+# Copyright (c) 2004-2004 rPath, Inc.
+#               2007-2011 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class LibGda(GnomePackageRecipe):
+
+    name = 'libgda'
+    version = '4.2.5'
+
+    buildRequires = [ 'bison:runtime','db:devel','flex:runtime',
+                      'gettext:runtime','gamin:devel','glib:devel',
+                      'gtk-sharp:lib','libxml2:devel','libxslt:devel',
+                      'mono:lib','mysql:devel','ncurses:devel',
+                      'openldap:devel','openssl:devel','popt:devel',
+                      'postgresql:devel','readline:devel',
+                      'rarian:runtime', 'sqlite:devel', 
+                      'polkit:devel', 'desktop-file-utils:runtime',
+                      'goocanvas:devel', 'graphviz:devel',
+                      'gtksourceview:devel', 'libgnome-keyring:devel',
+                      'libsoup:devel', 'python:devel',
+                      'reportlab:python', 'icedtea-jdk:runtime',
+                      'unique:devel']
+
+    # disbale ScrollKeeper:
+    extraConfig = (' --disable-scrollkeeper --disable-static'
+                   ' --enable-system-sqlite --with-libsoup '
+                   ' --enable-introspection=no --with-bdb-libdir-name=%(lib)s'
+                   ' --with-mysql --with-postgres --with-mdb --with-java')
+    patches = [ 'libgda-3.0.0-man.patch',
+                'libgda-3.99.8-lib64.patch',
+                'libgda-4.2.4-sqlite3.patch']
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.macros.cflags += ' -I%(includedir)s/mysql'
+
+    def build(r):
+        r.Configure('%s %s' % (r.gnomeExtraConfig, r.extraConfig),
+                    configureName = r.configureName,
+                    preConfigure = r.preConfigure)
+
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+        # workaround to fix linking failure for GI
+        r.Environment('LD_LIBRARY_PATH', '`pwd`/libgda/.libs:`pwd`/libgda-report/.libs:`pwd`/libgda-ui/.libs')
+
+        r.Make(r.makeArgs, preMake=r.preMake)
+
+    def policy(r):
+        r.PackageSpec('%(name)s-tools',
+            '%(datadir)s/gtk-doc/html/gda-browser',
+            '%(bindir)s/gda-browser-4.0',
+            '%(bindir)s/gda-control-center-4.0',
+            '%(datadir)s/applications/gda-browser-4.0.desktop',
+            '%(datadir)s/applications/gda-control-center-4.0.desktop',
+            '%(datadir)s/%(name)s-4.0/icons/hicolor/.*',
+            '%(datadir)s/%(name)s-4.0/pixmaps/gda-browser.*.png',
+            '%(datadir)s/%(name)s-4.0/pixmaps/gda-control-center.*.png',
+            '%(datadir)s/icons/hicolor/.*/apps/gda-control-center.png',
+            '%(datadir)s/gnome/help/gda-browser/.*',
+            '%(datadir)s/pixmaps/gda-browser-4.0.png',)
+        r.PackageSpec('%(name)s-postgres', 
+            '%(libdir)s/libgda-4.0/providers/libgda-postgres.so',
+            '%(datadir)s/libgda-4.0/postgres_specs.*.xml',
+            '%(libdir)s/pkgconfig/libgda-postgres-4.0.pc')
+        r.PackageSpec('%(name)s-mysql', 
+            '%(libdir)s/libgda-4.0/providers/libgda-mysql.so',
+            '%(datadir)s/libgda-4.0/mysql_specs.*.xml',
+            '%(libdir)s/pkgconfig/libgda-mysql-4.0.pc')
+        r.PackageSpec('%(name)s-java', 
+                     '%(libdir)s/libgda-4.0/providers/libgda-jdbc.so',
+                      '%(libdir)s/libgda-4.0/providers/gdaprovider-4.0.jar'
+                      '%(datadir)s/libgda-4.0/jdbc_specs*.xml',
+                      '%(libdir)s/pkgconfig/libgda-jdbc-4.0.pc')
+
+        r.PackageSpec('%(name)s-sqlite', 
+            '%(libdir)s/libgda-4.0/providers/libgda-sqlite.so',
+            '%(datadir)s/libgda-4.0/sqlite_specs.*.xml',
+            '%(libdir)s/pkgconfig/libgda-sqlite-4.0.pc')
+
+        r.Config(exceptions='%(sysconfdir)s/libgda.*/.*.db')
+        r.SetModes('%(bindir)s/gda_trml2pdf/.*', 0644)
+        r.NonBinariesInBindirs(exceptions= '%(bindir)s/gda_trml2pdf/.*')
+        r.NonBinariesInBindirs(exceptions= '%(bindir)s/gda_trml2html/.*')
+        # Cleanup unnecessary, unpackageable files
+        r.Remove('%(sysconfdir)s/libgda-4.0/sales_test.db')

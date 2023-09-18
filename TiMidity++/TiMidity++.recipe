@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Timidity(CPackageRecipe):
+    name = 'TiMidity++'
+    version = '2.13.2'
+    packageSummary = 'TiMidity++ is a software synthesizer.'
+    packageDescription = '''TiMidity++ is a software synthesizer. It can play MIDI files by converting them into PCM waveform data; give it a MIDI data along with digital instrument data files, then it synthesizes them in real-time, and plays. It can not only play sounds, but also can save the generated waveforms into hard disks as various audio file formats.'''
+    buildRequires = ['pkgconfig:devel', 'fontconfig:devel', 'freetype:devel',
+                     'libSM:devel', 'libXt:devel', 'atk:devel', 'gtk:devel',
+                     'alsa-lib:devel', 'libICE:devel', 'elfutils:runtime',
+                     'ncurses:devel', 'gdk-pixbuf:devel', 'libpng:devel',
+                     'libXext:devel', 'libX11:devel', 'cairo:devel',
+                     'pango:devel', 'libXmu:devel', 'glib:devel' ]
+    def setup(r):
+        r.addArchive('mirror://sourceforge/timidity/')
+        r.addSource('timidity.cfg', dir="/usr/share/timidity/")
+        r.Configure('--enable-audio=alsa', '--enable-gtk', '--enable-alsaseq', '--enable-ncurses')
+        r.Make()
+        r.MakeInstall()

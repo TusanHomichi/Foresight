@@ -1,0 +1,136 @@
+From 9c1a98953f25aff7f11af80a073c9c46dee2438c Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Fri, 30 Oct 2009 03:30:42 +0100
+Subject: [PATCH] core-util: introduce FD_CLOEXEC wrappers for open/socket/pipe/accept
+
+---
+ configure.ac              |    2 +-
+ src/pulsecore/core-util.c |   79 +++++++++++++++++++++++++++++++++++++++++++++
+ src/pulsecore/core-util.h |    6 +++
+ 3 files changed, 86 insertions(+), 1 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index d7f55ac..1022a6e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -445,7 +445,7 @@ AC_CHECK_FUNCS_ONCE([lstat])
+ 
+ # Non-standard
+ 
+-AC_CHECK_FUNCS_ONCE([setresuid setresgid setreuid setregid seteuid setegid ppoll strsignal sig2str strtof_l])
++AC_CHECK_FUNCS_ONCE([setresuid setresgid setreuid setregid seteuid setegid ppoll strsignal sig2str strtof_l pipe2 accept4])
+ 
+ AC_FUNC_ALLOCA
+ 
+diff --git a/src/pulsecore/core-util.c b/src/pulsecore/core-util.c
+index 27e09cb..34516ee 100644
+--- a/src/pulsecore/core-util.c
++++ b/src/pulsecore/core-util.c
+@@ -2889,3 +2889,82 @@ const char *pa_get_temp_dir(void) {
+ 
+     return "/tmp";
+ }
++
++int pa_open_cloexec(const char *fn, int flags, mode_t mode) {
++    int fd;
++
++#ifdef O_NOCTTY
++    flags |= O_NOCTTY;
++#endif
++
++#ifdef O_CLOEXEC
++    if ((fd = open(fn, flags|O_CLOEXEC, mode)) >= 0)
++        return fd;
++
++    if (errno != EINVAL)
++        return fd;
++#endif
++
++    if ((fd = open(fn, flags, mode)) < 0)
++        return fd;
++
++    pa_make_fd_cloexec(fd);
++    return fd;
++}
++
++int pa_socket_cloexec(int domain, int type, int protocol) {
++    int fd;
++
++#ifdef SOCK_CLOEXEC
++    if ((fd = socket(domain, type | SOCK_CLOEXEC, protocol)) >= 0)
++        return fd;
++
++    if (errno != EINVAL)
++        return fd;
++#endif
++
++    if ((fd = socket(domain, type, protocol)) < 0)
++        return fd;
++
++    pa_make_fd_cloexec(fd);
++    return fd;
++}
++
++int pa_pipe_cloexec(int pipefd[2]) {
++    int r;
++
++#ifdef HAVE_PIPE2
++    if ((r = pipe2(pipefd, O_CLOEXEC)) >= 0)
++        return r;
++
++    if (errno != EINVAL && errno != ENOSYS)
++        return r;
++#endif
++
++    if ((r = pipe(pipefd)) < 0)
++        return r;
++
++    pa_make_fd_cloexec(pipefd[0]);
++    pa_make_fd_cloexec(pipefd[1]);
++
++    return 0;
++}
++
++int pa_accept_cloexec(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
++    int fd;
++
++#ifdef HAVE_ACCEPT4
++    if ((fd = accept4(sockfd, addr, addrlen, SOCK_CLOEXEC)) >= 0)
++        return fd;
++
++    if (errno != EINVAL && errno != ENOSYS)
++        return fd;
++#endif
++
++    if ((fd = accept(sockfd, addr, addrlen)) < 0)
++        return fd;
++
++    pa_make_fd_cloexec(fd);
++
++    return 0;
++}
+diff --git a/src/pulsecore/core-util.h b/src/pulsecore/core-util.h
+index 9986b14..323fdcb 100644
+--- a/src/pulsecore/core-util.h
++++ b/src/pulsecore/core-util.h
+@@ -28,6 +28,7 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <sys/socket.h>
+ 
+ #ifdef HAVE_SYS_RESOURCE_H
+ #include <sys/resource.h>
+@@ -258,4 +259,9 @@ pa_bool_t pa_run_from_build_tree(void);
+ 
+ const char *pa_get_temp_dir(void);
+ 
++int pa_open_cloexec(const char *fn, int flags, mode_t mode);
++int pa_socket_cloexec(int domain, int type, int protocol);
++int pa_pipe_cloexec(int pipefd[2]);
++int pa_accept_cloexec(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
++
+ #endif
+-- 
+1.6.3.3
+

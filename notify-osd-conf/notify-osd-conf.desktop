@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=NotifyOSD Configuration
+Comment=Tool to configure Ubuntu's notify-osd notification system
+Categories=GNOME;Applications;Utility;Qt
+Exec=notifyconf
+Icon=not

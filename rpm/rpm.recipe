@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2006-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RPM(CPackageRecipe):
+    name = 'rpm'
+    version = '4.9.1.3'
+
+    buildRequires  = [
+        'autoconf:runtime', 'automake:runtime', 'bzip2:devel',
+        'curl:runtime', 'doxygen:runtime',
+        'elfutils:devel', 'file:devel',
+        'gettext:runtime', 'gettext:devel',
+        'gnupg:runtime', 'graphviz:runtime',
+        'intltool:runtime',
+        'libelf:devel', 'libtool:runtime', 'lua:devel',
+        'nss:devel', 'openssh-client:runtime',
+        'perl:devel', 'perl:lib', 'perl:runtime', 'popt:devel',
+        'pkgconfig:devel', 'python:devel',
+        'rsh:runtime', 'unzip:runtime',
+        'xz:devel', 'xz:runtime', 'zlib:devel',
+    ]
+
+    def setup(r):
+        r.macros.rpmdir = '%(prefix)s/lib/rpm'
+        r.macros.mainver = '.'.join(r.version.split('.')[:2])
+        r.macros.viewvc = 'http://cvs.fedoraproject.org/viewvc/devel/rpm'
+
+        # This is a different version than Fedora is using, but see:
+        # http://lists.rpm.org/pipermail/rpm-maint/2008-October/002295.html
+        # http://lists.rpm.org/pipermail/rpm-maint/2008-October/002296.html
+        # http://lists.rpm.org/pipermail/rpm-maint/2008-October/002297.html
+        r.macros.dbdver = '4.6.21'
+
+        r.addArchive('http://rpm.org/releases/rpm-%(mainver)s.x/')
+        r.addPatch('%(viewvc)s/rpm-4.5.90-pkgconfig-path.patch?revision=1.1')
+        r.addPatch('rpm-4.7.1-canonicalvendor.patch')
+        # we package popt separately
+        r.addAction('rm -rf popt')
+
+        r.addArchive('http://download.oracle.com/berkeley-db/'
+                     'db-%(dbdver)s.tar.gz', dir='rpm-%(version)s')
+        r.addAction('ln -s db-%(dbdver)s db')
+
+        r.Automake(autoMakeArgs='-a -c',
+                   preAutoconf='autoheader ; libtoolize --force ;')
+        r.Configure(
+            ' --with-internal-db'
+            ' --disable-sqlite3'
+            ' --with-lua'
+            ' --enable-python'
+            ' --disable-nls --disable-rpath --disable-static'
+            ' --without-selinux --without-apidocs --without-efence'
+            ' --without-javaglue',
+            preConfigure='CPPFLAGS="$(nspr-config --cflags) $(nss-config --cflags)"',
+            )
+        r.Make()
+
+        r.MakeInstall()
+        r.Replace('^#%%_rpmlock_path', '_rpmlock_path', '%(rpmdir)s/macros',
+                  allowNoChange=True)
+
+        r.MakeDirs('%(localstatedir)s/lib/rpm')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/rpm')
+
+        # Conary provides this path
+        r.Remove('%(bindir)s/rpm2cpio')
+
+        r.ComponentSpec('runtime',
+                        '%(prefix)s/lib/rpm/',
+                        '%(localstatedir)s/lib/rpm'
+                        )
+        r.ExcludeDirectories(exceptions='/usr/src/rpm/.*')

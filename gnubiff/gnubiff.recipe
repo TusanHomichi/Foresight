@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gnubiff(AutoPackageRecipe):
+    name = 'gnubiff'
+    version = '2.2.13'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gamin:devel', 'gettext:runtime', 'glib:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'gtk:devel', 'install-info:runtime', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libstdc++:devel', 'libxml2:devel', 'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'popt:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/gnubiff/')

@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class HDAPSD(AutoPackageRecipe):
+
+    name = 'hdapsd'
+    version = '20090401'
+
+    buildRequires = [ 'chkconfig:runtime' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/hdaps/')
+        r.addSource('hdapsd.sysconfig')
+        r.addSource('hdapsd.initd')
+
+    def policy(r):
+        r.Install('hdapsd.sysconfig', '%(sysconfdir)s/sysconfig/hdapsd', mode = 0755)
+        r.Install('hdapsd.initd', '%(initdir)s/hdapsd', mode = 0755)
+        
+        # runtime Requires
+        # kernel kmods 
+        r.Requires('tp_smapi-kernel:lib',
+                   '%(sbindir)s/hdapsd')
+
+        # force install of applet
+        r.Requires('thinkhdaps:runtime', '%(sbindir)s/hdapsd')
+

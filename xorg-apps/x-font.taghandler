@@ -1,0 +1,74 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+# mkfontdir doesn't set umask
+umask 022 
+
+type="$1"
+shift
+action="$1"
+shift
+
+chkfontpath ()
+{
+    # handle missing chkfontpath
+    if [ -f %(sbindir)s/chkfontpath ] ; then
+	%(sbindir)s/chkfontpath $*
+    fi
+}
+
+case $type in 
+    files)
+    case $action in update|remove|preremove)
+	# sort file list from stdin so one-level cache is reliable
+	for file in $(sort); do
+	    thisdir=$(dirname $file)
+
+	    case $file in *.pcf.gz|*.bfd.gz|*.pcf|*.bdf)
+		# .pcf and .bdf files are unscaled fonts
+		if [ "$lastunscaled" != "$thisdir" ] ; then
+		    unscaled="$unscaled $thisdir"
+		fi	
+		lastunscaled=$thisdir
+		;;
+            *.ttf.gz|*.ttf)
+                if [ "$lastttf" != "$thisdir" ] ; then
+                    ttfdir="$ttfdir $thisdir"
+                fi
+                lastttf=$thisdir
+                if [ "$lastscaled" != "$thisdir" ] ; then
+                    scaled="$scaled $thisdir"
+                fi
+                lastscaled=$thisdir
+                ;;
+	    *)
+		# .pfa, .pfb, .spd, .ttf, .gsf are scaled 
+		if [ "$lastscaled" != "$thisdir" ] ; then
+		    scaled="$scaled $thisdir"
+		fi	
+		lastscaled=$thisdir
+		;;
+	    esac
+	done
+
+	for fontdir in $unscaled; do
+	    %(bindir)s/mkfontdir $fontdir || :
+	    chkfontpath -qa $fontdir:unscaled
+	done
+        for fontdir in $ttfdir; do
+            ttmkfdir -d $fontdir -o $fontdir/fonts.scale
+        done
+	for fontdir in $scaled; do
+	    %(bindir)s/mkfontdir $fontdir || :
+	    chkfontpath -qa $fontdir
+	done
+    ;;
+    esac
+;;
+esac
+
+exit 0

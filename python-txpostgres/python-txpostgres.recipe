@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonTxpostgres(PackageRecipe):
+    name = 'python-txpostgres'
+    version = '0.3.0'
+
+    buildRequires = [
+        'psycopg2:python',
+        'python:devel',
+        'python-setuptools:python',
+        'python-twisted:python',
+      ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/t/txpostgres/'
+                'txpostgres-%(version)s.tar.bz2')
+        r.PythonSetup()

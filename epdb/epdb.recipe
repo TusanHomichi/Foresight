@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Epdb(PackageRecipe):
+    name = 'epdb'
+    version = '0.14'
+    tag = '8dd629ee'
+
+    if tag:
+        version += '_' + tag
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addGitSnapshot('https://github.com/sassoftware/epdb.git', tag=r.tag)
+        r.PythonSetup()

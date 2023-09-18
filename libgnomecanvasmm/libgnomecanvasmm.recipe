@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage.recipe')
+class LibGnomeCanvasmm(GnomePackageRecipe):
+    name = 'libgnomecanvasmm'
+    version = '2.26.0'
+    buildRequires = ['atk:devel', 'cairo:devel', 'cairomm:devel', 
+    		  'fontconfig:devel', 'freetype:devel', 'glib:devel', 
+		  'glibmm:devel', 'gtkmm:devel', 'libart_lgpl:devel', 
+		  'libgnomecanvas:devel', 'libpng:devel', 'libsigc++:devel', 
+		  'libstdc++:devel', 'm4:runtime', 'pango:devel' ]

@@ -1,0 +1,23 @@
+# SpaceFM Session File
+
+# THIS FILE IS NOT DESIGNED TO BE EDITED - it will be read and OVERWRITTEN
+
+# If you delete all session* files, SpaceFM will be reset to factory defaults.
+
+[General]
+show_thumbnail=1
+no_execute=1
+
+[Window]
+
+
+[Desktop]
+show_wallpaper=1
+wallpaper=/usr/share/lxde/wallpapers/lxde_green.jpg
+
+[Interface]
+
+[MOD]
+main_terminal-s=gnome-terminal
+gsu_command-s=/usr/bin/gksudo
+editor-s=medit %F

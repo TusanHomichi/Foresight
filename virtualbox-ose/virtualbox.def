@@ -1,0 +1,3 @@
+# VirtualBox defaults file
+SHUTDOWN_USERS="root admin"
+SHUTDOWN=savestate

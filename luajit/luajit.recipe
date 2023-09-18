@@ -1,0 +1,25 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+class Luajit(AutoPackageRecipe):
+    name = 'luajit'
+    version = '2.0.0b' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = []
+
+    def unpack(r):
+        r.addGitSnapshot('http://luajit.org/git/luajit-2.0.git')
+
+    def makeinstall(r):
+        r.MakeInstall('DESTDIR=%(destdir)s PREFIX=%(prefix)s')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

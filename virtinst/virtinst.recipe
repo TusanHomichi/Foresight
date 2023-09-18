@@ -1,0 +1,38 @@
+#
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class VirtInst(RPMPackageRecipe,PackageRecipe):
+
+    name = 'virtinst'
+    version = '0.600.3'
+    rpmName = 'python-virtinst'
+    rpmRelease = '2.fc17'
+    rpmPatches = [ '0001-VirtualDisk-Ignore-path-None-for-permissions-check.patch',
+                   '0002-added-parameter-passed-from-StorageVolume.find_free_.patch',
+                   '0003-osdict-Add-Fedora-18.patch',
+                   '0004-virt-install-Fix-disk-.sparse.patch',
+                   ]
+
+    tarballName = '%(name)s-%(version)s.tar.gz'
+
+    buildRequires = ['libvirt:python', 
+                     'libxml2:python', 
+                     'python:devel', 
+                     'urlgrabber:python',
+                     'python-setuptools:python',
+                     'perl:devel',
+                     'gzip:runtime',
+                     'gettext:runtime']
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.PythonSetup(data = '--install-data=%(prefix)s')
+        r.Replace('/tmp/rmake/builds/virtinst/%(name)s-%(version)s', '/usr/bin/python2.6', '%(destdir)s/%(bindir)s/*', allowNoChange=True)
+        r.Symlink('%(bindir)s/virt-install', '%(sbindir)s/virt-install')
+
+        r.Remove('/usr/lib*/python*/site-packages/*egg-info', recursive = True)

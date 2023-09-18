@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in
+    files)
+        case $action in
+	    update)
+		if [ ! -f %(sysconfdir)s/libvirt/qemu/networks/default.xml ]
+		then
+		    UUID=`/usr/bin/uuidgen`
+		    sed -e "s,</name>,</name>\n  <uuid>$UUID</uuid>,"  < %(datadir)s/libvirt/networks/default.xml > %(sysconfdir)s/libvirt/qemu/networks/default.xml
+		    ln -s ../default.xml %(sysconfdir)s/libvirt/qemu/networks/autostart/default.xml
+		fi
+
+		;;
+#	    remove)
+#		;;
+    esac
+esac
+
+exit 0

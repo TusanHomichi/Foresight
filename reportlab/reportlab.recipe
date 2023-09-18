@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2005-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#  
+
+class ReportLab(CPackageRecipe):
+    buildRequires = ['PIL:python', 'PyYAML:python', 'python:devel',
+        'python-setuptools:python',
+        'freetype:devel', 'python-cssutils:python', 'sgmlop:python']
+    name = 'reportlab'
+    upversion = '2_4'
+    version = upversion.replace('_', '.')
+
+    def setup(r):
+        r.macros.upversion = r.upversion
+        # XXX can be removed when CNY-3325 is fixed
+        r.macros.pyver = '2.6'
+        r.addArchive('http://www.reportlab.org/ftp/ReportLab_%(upversion)s.tar.gz')
+        # Fix python interpreter
+        r.Replace(r"^#!/usr/pkg/bin/python$", "#!/usr/bin/python",
+            "src/reportlab/graphics/barcode/test.py")
+
+        r.PythonSetup()
+
+        # we provide sgmlop as a separate package
+        r.Remove(r.regexp(r"%(libdir)s/.*/sgmlop\.so$"))
+
+        # build docs
+        r.Replace(r"os\.system\(cmd\)$",
+            "import subprocess; os.waitpid(subprocess.Popen(cmd, shell=True, env=dict(PYTHONPATH='%(destdir)s%(libdir)s/python%(pyver)s/site-packages')).pid, 0)",
+            "docs/genAll.py")
+        r.Run("PYTHONPATH=%(destdir)s%(libdir)s/python%(pyver)s/site-packages python docs/genAll.py")
+
+        r.Install("docs/*.pdf", "%(thisdocdir)s/")
+        r.Move('demos/*', '%(thisdocdir)s/demos/')

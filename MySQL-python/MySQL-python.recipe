@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MySQLPython(CPackageRecipe):
+    name = 'MySQL-python'
+    version = '1.2.3'
+
+    buildRequires = [ 'mysql:devel', 'openssl:devel', 'python:devel',
+        'zlib:devel', 'python-setuptools:python', ]
+
+    def setup(r):
+        r.macros.cppflags += ' -I%(includedir)s/mysql'
+        r.macros.ldflags += ' -L%(libdir)s/mysql'
+
+        r.addArchive('mirror://sourceforge/mysql-python/mysql-python/%(version)s/')
+
+        # threadsafe
+        r.Environment('mysqlclient', 'mysqlclient_r')
+
+        r.PythonSetup()
+
+        r.Doc('doc/*')

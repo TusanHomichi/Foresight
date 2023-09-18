@@ -1,0 +1,22 @@
+diff -r 2f1a63090000 conf.d/Makefile.am
+--- a/conf.d/Makefile.am	Thu Mar 19 15:10:29 2009 -0400
++++ b/conf.d/Makefile.am	Thu Mar 19 15:12:27 2009 -0400
+@@ -68,6 +68,7 @@
+ 	65-fonts-persian.conf \
+ 	65-nonlatin.conf \
+ 	69-unifont.conf \
++	70-no-bitmaps.conf \
+ 	80-delicious.conf \
+ 	90-synthetic.conf
+ 
+diff -r 2f1a63090000 conf.d/Makefile.in
+--- a/conf.d/Makefile.in	Thu Mar 19 15:10:29 2009 -0400
++++ b/conf.d/Makefile.in	Thu Mar 19 15:12:27 2009 -0400
+@@ -273,6 +273,7 @@
+ 	65-fonts-persian.conf \
+ 	65-nonlatin.conf \
+ 	69-unifont.conf \
++	70-no-bitmaps.conf \
+ 	80-delicious.conf \
+ 	90-synthetic.conf
+ 

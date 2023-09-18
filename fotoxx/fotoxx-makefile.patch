@@ -1,0 +1,35 @@
+--- Makefile.orig	2010-05-18 00:09:16.000000000 +0200
++++ Makefile	2010-05-18 00:10:18.000000000 +0200
+@@ -5,8 +5,9 @@
+ SOURCE = $(PROGRAM)-$(VERSION).cc
+ 
+ # defaults for parameters that may be pre-defined
+-CXXFLAGS ?= -O3 -g -Wall 
+-LDFLAGS ?= -O3 -g -Wall -rdynamic
++OPTFLAGS = -O3 -g
++CXXFLAGS ?= $(OPTFLAGS) -Wall 
++LDFLAGS ?= $(OPTFLAGS) -Wall -rdynamic
+ PREFIX ?= /usr/local
+ 
+ CFLAGS = $(CXXFLAGS) -c `pkg-config --cflags gtk+-2.0`
+@@ -21,7 +22,7 @@
+ 
+ $(PROGRAM): $(PROGRAM).o zfuncs.o
+ 	@ ./dependencies.sh
+-	$(CXX) $(LFLAGS) -ltiff -o $(PROGRAM) $(PROGRAM).o zfuncs.o
++	$(CXX) -o $(PROGRAM) $(PROGRAM).o zfuncs.o $(LFLAGS) -ltiff
+ 
+ $(PROGRAM).o: $(SOURCE)
+ 	$(CXX) $(CFLAGS) -o $(PROGRAM).o $(SOURCE)		\
+@@ -46,10 +47,7 @@
+ 	@ echo use make manpage to install man page
+ 
+ menu:
+-	cp -f desktop $(DESTDIR)$(DESKTOP)
+-	echo Exec=$(DESTDIR)$(BINDIR)/$(PROGRAM) >> $(DESTDIR)$(DESKTOP)
+-	echo Icon=$(DESTDIR)$(ICONDIR)/$(PROGRAM).png >> $(DESTDIR)$(DESKTOP)
+-	xdg-desktop-menu install $(DESTDIR)$(DESKTOP)
++	install -D desktop $(DESTDIR)/$(DESKTOP)
+ 
+ manpage:
+ 	cp -f doc/$(PROGRAM).man $(PROGRAM).1

@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('rpmpackage')
+class libXt(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libXt'
+    version = '7.6_1.0.9'
+    rpmRelease = '32.1'
+    rpmName = 'xorg-x11-%(name)s'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = [  'autoconf:runtime','automake:runtime','pkgconfig:devel', 
+                       'libICE:devel', 'libSM:devel', 'xproto:devel', 
+                       'libX11:devel', 'libXau:devel', 'libXdmcp:devel',
+                       'libtool:runtime', 'libtool:devel',
+                       'util-macros:devel']
+    rpmPatches = [  'libXt.diff', ]
+    tarballName = '%(name)s-1.0.9.tar.bz2'
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure(' --disable-static --with-pic'
+                    ' --disable-silent-rules ')
+
+
+    def policy(r):
+        r.MakeDirs('%(datadir)s/X11/app-defaults')
+        r.ExcludeDirectories(exceptions='%(datadir)s/X11/app-defaults')
+        for requirement in ('libSM:devel', 'libX11:devel', 'xproto:devel'):
+            r.Requires(requirement, '%(libdir)s/pkgconfig/xt.pc')
+

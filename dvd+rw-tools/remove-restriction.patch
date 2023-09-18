@@ -1,0 +1,26 @@
+--- dvd+rw-tools/dvd+rw-tools-7.1/growisofs_mmc.cpp	2008-03-04 18:47:49.000000000 +0100
++++ dvd+rw-tools/dvd+rw-tools-7.1/growisofs_mmc-1.cpp	2011-08-14 09:02:01.000000000 +0200
+@@ -1639,10 +1639,7 @@
+     blocks = (unsigned int)(size/2048);
+     blocks += 15, blocks &= ~15;
+ 
+-    if (blocks <= split)
+-	fprintf (stderr,":-( more than 50%% of space will be *wasted*!\n"
+-			"    use single layer media for this recording\n"),
+-	exit (FATAL_START(EMEDIUMTYPE));
++
+ 
+     blocks /= 16;
+     blocks += 1;
+@@ -2097,10 +2094,7 @@
+ 		layer_size |= dvd_10[4+14]<<8,
+ 		layer_size |= dvd_10[4+15];
+ 
+-		if (data_size <= layer_size)
+-		    fprintf (stderr,":-( more than 50%% of space will be *wasted*!\n"
+-				    "    use single layer media for this recording\n"),
+-		    exit(FATAL_START(EMEDIUMTYPE)); 
++
+ 	    }
+ 	    if (is_dao && leadout)
+ 		minus_r_reserve_track(cmd,leadout);

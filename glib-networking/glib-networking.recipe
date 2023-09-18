@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class GlibNetworking(AutoPackageRecipe):
+    name = 'glib-networking'
+    version = '2.35.9'
+ 
+    buildRequires = ['glib:devel', 'gnutls:devel', 'gettext:runtime',
+                     'intltool:runtime', 
+                     'libgcrypt:devel', 'libgpg-error:devel', 'libproxy:devel', 
+                     'pkgconfig:devel', 'openssl:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://ftp.gnome.org/pub/gnome/sources/%(name)s/%(major_version)s/')
+
+    def configure(r):
+        r.Configure(' --disable-static --with-libproxy '
+                    ' --with-ca-certificates=%(sysconfdir)s/ssl/certs/ca-bundle.crt')

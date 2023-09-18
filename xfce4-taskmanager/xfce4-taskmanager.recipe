@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007 - 2014 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('xfcepackage')
+class Xfce4Taskmanager(XfcePackageRecipe):
+
+    name = 'xfce4-taskmanager'
+    version = '1.0.1'
+    subtree = 'apps'
+
+    buildRequires = [
+        'libwnck:devel'
+    ] 

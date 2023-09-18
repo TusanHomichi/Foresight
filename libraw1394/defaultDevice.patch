@@ -1,0 +1,12 @@
+diff -r 5c757d7eaa1b src/main.c
+--- a/src/main.c	Mon Feb 23 22:03:22 2009 -0500
++++ b/src/main.c	Mon Feb 23 22:07:03 2009 -0500
+@@ -116,7 +116,7 @@
+ struct ieee1394_handle *ieee1394_new_handle(void)
+ {
+         struct ieee1394_handle *handle;
+-        const char *defaultDevice = "/dev/raw1394";
++        const char *defaultDevice = "/dev/fw0";
+ 
+         handle = malloc(sizeof(struct ieee1394_handle));
+         if (!handle) {

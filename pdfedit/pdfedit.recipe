@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pdfedit(CPackageRecipe):
+    name = 'pdfedit'
+    version = '0.4.3'
+
+    packageSummary = 'Editor for manipulating PDF documents.'
+    packageDescription = 'Free editor for PDF documents. Complete editing of PDF documents is possible with PDFedit. You can change raw pdf objects (for advanced users) or use many gui functions. Functionality can be easily extended using a scripting language (ECMAScript).'
+ 
+    buildRequires = ['boost:devel', 'desktop-file-utils:runtime', 'docbook-utils:runtime', 'docbook-xsl:data', 'freetype', 'libICE:devel', 'libXext:devel', 'libstdc++:devel', 'libxslt:runtime', 'perl:runtime', 'pkgconfig:devel', 'qt:devel', 'zlib:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/pdfedit/')
+	r.addSource('pdfedit.desktop')
+	r.addSource('pdfedit_icon.svg', dest='%(datadir)s/pixmaps/')
+	r.Environment('QTDIR', '%(bindir)s')
+	r.Configure('--enable-release --enable-user-manual')
+	r.Make()
+	r.MakeInstall('INSTALL_ROOT=%(destdir)s')
+
+	r.Desktopfile('pdfedit.desktop')

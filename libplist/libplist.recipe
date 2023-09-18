@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libplist(CPackageRecipe):
+    name = 'libplist'
+    version = '1.3'
+ 
+    buildRequires = ['bzr:runtime', 'cmake:runtime', 'cvs:runtime', 'gcc-c++:runtime', 'glib:devel', 'libstdc++:devel', 'libxml2:devel', 'libxml2:runtime', 'mercurial:runtime', 'openssh:runtime', 'pkgconfig:devel', 'python:devel', 'subversion:runtime', 'swig:runtime', 'valgrind:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://github.com/downloads/JonathanBeck/libplist/')
+        r.disableParallelMake()
+        r.MakeDirs('build')
+        r.Run('cmake -DCMAKE_SKIP_RPATH=TRUE -DCMAKE_INSTALL_PREFIX=%(prefix)s ..', dir='build')
+        r.Make(dir='build')
+        r.MakeInstall(dir='build')

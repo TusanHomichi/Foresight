@@ -1,0 +1,32 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class SystemConfigPrinter(RPMPackageRecipe,AutoPackageRecipe):
+
+    name = 'system-config-printer'
+    version = '1.1.18'
+    rpmRelease = '6.fc11'
+    tarballName = '%(name)s-%(version)s.tar.xz'
+    rpmPatches = [ 'system-config-printer-missing-imports.patch',
+                   'system-config-printer-reconnect-error.patch',
+                   'system-config-printer-downloadable-drivers.patch',
+                   'system-config-printer-JobCancel.patch',
+                   'system-config-printer-asyncipp-traceback.patch']
+
+    buildRequires = [ 'dbus-python:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'intltool:runtime', 'libxml2:python', 'perl:runtime', 'pycairo:python', 'pycups:python', 'python:devel', 'xmlto:runtime', 'notify-python:python', 'pygtk:python', 'sexy-python:python', 'gnome-python-desktop:python', 'xz:runtime' ]
+
+
+    def configure(r):
+        r.Replace('NoDisplay=true','NoDisplay=false','manage-print-jobs.desktop.in')
+        r.Replace('NotShowIn=KDE', 'NotShowIn=KDE;', 'print-applet.desktop.in')
+        r.Configure(' --with-desktop-vendor=foresight ')
+
+    def policy(r):
+        r.Requires('notify-python:python', '%(bindir)s/%(name)s')
+        # from pysmbc
+        r.Requires('soname: %(libdir)s/python2.6/site-packages/smbc.so', '%(bindir)s/%(name)s')
+        # from pycups
+        r.Requires('soname: %(libdir)s/python2.6/site-packages/cups.so', '%(bindir)s/%(name)s')

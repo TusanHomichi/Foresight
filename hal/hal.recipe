@@ -1,0 +1,118 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Hal(RPMPackageRecipe,AutoPackageRecipe):
+    buildRequires = [
+        'expat:devel', 'glib:devel', 'dbus:devel',
+        'hwdata:data', 'libcap:devel', 'popt:devel',
+        'dbus-glib:devellib', 'glibc:devel', 'libusb:devel',
+        'perl-XML-Parser:perl', 'gnome-python:python',
+        'pygtk:python', 'binutils:runtime', 'docbook-utils:runtime',
+        'doxygen:runtime', 'gawk:runtime', 'gettext:runtime',
+        'glibc:runtime', 'perl:runtime', 'pkgconfig:devel',
+        'dbus-glib:devel', 'pygobject:python', 'udev:devel',
+        'smbios:runtime', 'smbios:devel', 'pciutils:devel',
+        'pciutils:devellib', 'gcc-c++:runtime', 'chkconfig:runtime',
+        'zlib:lib', 'zlib:devellib', 'zlib:devel',
+        'e2fsprogs:devel', 'util-linux:devel', 'libv4l:devel',
+        'gperf:runtime', 'parted:devel', 'xmlto:runtime',
+        'automake:runtime', 'autoconf:runtime',
+        'libtool:runtime', 'libtool:devel',
+        ]
+
+    name = 'hal'
+    version = '0.5.14'
+    rpmRelease = '6.fc15'
+    rpmPatches = [ 'hal-change-priority.patch',
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=488177
+                   'hal-remove-dell-killswitch.patch',
+                   # http://lists.freedesktop.org/archives/hal/2009-March/013125.html
+                   'hal-KVM-evdev.patch',
+                   # http://bugs.freedesktop.org/show_bug.cgi?id=22442
+                   'hal-HDAPS-blacklist.patch',
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=523914
+                   'hal-xen-unignore-axes.patch',
+                   # https://bugzilla.redhat.com/show_bug.cgi?id=630859
+                   'probe-input-segfault.patch',
+                   # https://bugs.launchpad.net/ubuntu/+source/hal/+bug/546992
+                   'do_not_check_hal_on_bus.patch',
+                   # http://cgit.freedesktop.org/hal/commit/?id=ae13d96fa2a0612b6000f4b8f6ed9d3564035703
+                   # but fixed to keep the ioctl error reporting intact
+                   # and prior autoconf change it's depending on
+                   # http://cgit.freedesktop.org/hal/commit/?id=8f624253f0135ca77a893ad4e8168f51ef90d4da
+                   'hal-use-at-console.patch',
+                   ]
+
+    rpmSources = [ '05-olpc-detect.fdi' ]
+
+    def configure(r):
+        r.addPatch('hal_only_import_glib_h_directly.patch')
+        r.Replace('linux/videodev.h', 'libv4l1-videodev.h',
+                  'hald/linux/probing/probe-video4linux.c')
+        r.Run("autoreconf -fi")
+        r.Configure( ' --with-initscripts=redhat'
+                     ' --with-os-type=redhat '
+                     ' --with-udev-prefix=%(sysconfdir)s'
+                     ' --disable-docbook-docs '
+
+                     ' --disable-console-kit '
+                     ' --disable-policy-kit'
+                     # 
+                     ' --disable-acpi-ibm '
+                     ' --disable-smbios'
+                     ' --disable-sonypic'
+                     ' --without-cpufreq '
+                     ' --enable-umount-helper '
+                     ' --without-usb-csr'
+                     ' --with-eject=%(bindir)s/eject'
+                     ' --disable-gtk-doc')
+
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+    def policy(r):
+        r.PackageSpec('hal-gnome', '%(datadir)s/%(name)s/device-manager/',
+                      '%(bindir)s/hal-device-manager')
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.Requires('hal-info:data', '%(sbindir)s/hald')
+        r.Requires('ConsoleKit:runtime', '%(sbindir)s/hald')
+        # r.Requires('polkit:runtime', '%(sbindir)s/hald')
+
+        for d in [ '%(datadir)s/hal/fdi/information/20thirdparty',
+                     '%(datadir)s/hal/fdi/information/10freedesktop',
+                     '%(datadir)s/hal/fdi/preprobe/20thirdparty',
+                     '%(datadir)s/hal/fdi/preprobe/10osvendor',
+                     '%(datadir)s/hal/fdi/policy/20thirdparty',
+                     '%(localstatedir)s/run/hald/hald-local',
+                     '%(localstatedir)s/run/hald/hald-runner',
+                     '%(localstatedir)s/cache/hald',
+                     '%(localstatedir)s/lib/hal',
+                     '%(sysconfdir)s/hal/fdi/information',
+                     '%(sysconfdir)s/hal/fdi/preprobe',
+                     '%(sysconfdir)s/hal/fdi/policy',]:
+            r.MakeDirs(d)
+            r.ExcludeDirectories(exceptions = d)
+
+        r.UtilizeUser('haldaemon', r'%(sysconfdir)s/.*/hal\.conf')
+
+        r.SetModes('%(localstatedir)s/cache/hald', 0700)
+        r.SetModes('%(localstatedir)s/run/hald', 0700)
+        r.Ownership('haldaemon','haldaemon', '%(localstatedir)s/cache/hald')
+        r.Ownership('haldaemon','haldaemon', '%(localstatedir)s/run/hald')
+
+        r.Create('%(localstatedir)s/run/hald/acl-list')
+        r.InitialContents('%(localstatedir)s/run/hald/acl-list')
+
+        # deprecated keys
+        r.Copy('fdi/information/10freedesktop/01-deprecated-keys.fdi',
+               '%(datadir)s/hal/fdi/information/10freedesktop/')
+
+
+

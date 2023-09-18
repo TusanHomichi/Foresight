@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGnome2Canvas(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Gnome2-Canvas'
+    version = '1.002'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel', 'libart_lgpl:devel', 'libgnomecanvas:devel', 'libpng:devel', 'pango:devel', 'perl-Gtk2:perl', 'perl:devel', 'perl-ExtUtils-Depends', 'perl-ExtUtils-PkgConfig', 'pkgconfig:runtime', 'pkgconfig:devel', 'perl-Cairo']
+

@@ -1,0 +1,17 @@
+class Recipe(CPackageRecipe):
+    name = 'gkrellmoon'
+    version = '0.6'
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+        'freetype:devel', 'gkrellm:devel', 'glib:devel', 'glibc:devel',
+        'gtk:devel', 'libpng:devel', 'pango:devel', 'zlib:devel',
+        'expat:devel', 'pkgconfig:devel']
+
+    def setup(r):
+        r.addArchive('http://umn.dl.sourceforge.net/sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+
+        r.Make()
+        # Makefile is broken, and it's only installing one file...
+        r.Install('gkrellmoon.so', '%(libdir)s/gkrellm2/plugins/')
+
+        r.Requires('gkrellm:runtime', '%(libdir)s/gkrellm2/plugins/gkrellmoon.so')

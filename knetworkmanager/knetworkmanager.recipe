@@ -1,0 +1,11 @@
+
+loadSuperClass('kdepackage.recipe')
+class kNetworkManager(kdePackageRecipe):
+
+    name = 'knetworkmanager'
+    version = '0.2'
+
+    buildRequires = []
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.kde.org/pub/kde/stable/apps/KDE3.x/network/')

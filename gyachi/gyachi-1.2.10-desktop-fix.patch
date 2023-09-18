@@ -1,0 +1,18 @@
+diff -up gyachi-1.2.10/gyachi.desktop.fix gyachi-1.2.10/gyachi.desktop
+--- gyachi-1.2.10/gyachi.desktop.fix	2011-05-17 11:06:34.890734047 -0400
++++ gyachi-1.2.10/gyachi.desktop	2011-05-17 11:07:06.113908461 -0400
+@@ -1,12 +1,11 @@
+ [Desktop Entry]
+-Encoding=UTF-8
+ Name=GYachE Improved
+ Name[sr]=Усавршени GYachE
+ Comment[de]=Yahoo! Klient
+ Comment[sr]=Програм за Yahoo!
+ Comment=Yahoo! Client
+ Exec=gyachi
+-Icon=gyachi.png
++Icon=gyachi
+ Terminal=false
+ Type=Application
+-Categories=Application;Network;
++Categories=GTK;Network;InstantMessaging;

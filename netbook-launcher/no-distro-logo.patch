@@ -1,0 +1,31 @@
+diff -r 355a9cb4b39b data/Makefile.am
+--- a/data/Makefile.am	Mon Apr 20 16:52:23 2009 -0400
++++ b/data/Makefile.am	Mon Apr 20 16:55:43 2009 -0400
+@@ -7,7 +7,7 @@
+ 	logout-dialog.glade \
+ 	logout-dialog.xml \
+ 	new.svg \
+-	ubuntu.png \
++	distro-logo.png \
+ 	scrollbar.svg \
+ 	shortcutbg.svg \
+ 	shortcuthilight.svg \
+diff -r 355a9cb4b39b src/launcher-app.c
+--- a/src/launcher-app.c	Mon Apr 20 16:52:23 2009 -0400
++++ b/src/launcher-app.c	Mon Apr 20 16:55:43 2009 -0400
+@@ -601,15 +601,6 @@
+                               PANEL_HEIGHT + 5);
+   clutter_actor_show (priv->window);
+ 
+-  /* Ubuntu logo */
+-  priv->ubuntu = launcher_util_texture_new_from_file (PKGDATADIR"/ubuntu.png");
+-  clutter_container_add_actor (CLUTTER_CONTAINER (stage), priv->ubuntu);
+-  clutter_actor_set_anchor_point_from_gravity (priv->ubuntu, 
+-                                               CLUTTER_GRAVITY_NORTH);
+-  clutter_actor_set_position (priv->ubuntu, CSW()/2, 
+-                              PANEL_HEIGHT + PADDING + PANEL_HEIGHT/4);
+-  clutter_actor_show (priv->ubuntu);
+-
+   /* Init the WM interface */
+   priv->wm = launcher_wm_get_default ();
+   g_signal_connect (priv->wm, "show-windec", G_CALLBACK (hide_launcher), app);

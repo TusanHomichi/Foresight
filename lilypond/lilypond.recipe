@@ -1,0 +1,48 @@
+# vim:set ts=4 sw=4 et:
+
+class LilyPond(AutoPackageRecipe):
+    name = 'lilypond'
+    version = '2.16.2'
+
+    buildRequires = [
+                    'bison:runtime',
+                    'expat:devel',
+                    'flex:runtime',
+                    'fontconfig:devel',
+                    'fontconfig:runtime',
+                    'fontforge:runtime',
+                    'freetype:devel',
+                    'gettext:runtime',
+                    'ghostscript:runtime',
+                    'glib:devel',
+                    'gmp:devel',
+                    'guile:devel',
+                    'guile:runtime',
+                    'install-info:runtime',
+                    'libstdc++:devel',
+                    'lxml:python',
+                    'mftrace:runtime',
+                    'pango:devel',
+                    'perl:runtime',
+                    'pkgconfig:devel',
+                    'python:devel',
+                    'rarian:runtime',
+                    't1utils:runtime',
+                    'tetex:runtime',
+                    'texi2html:runtime',
+                    'texinfo:runtime',
+                    'urw-fonts:data',
+                    'zlib:devel',
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://lilypond.org/download/sources/v%(major_version)s/')
+
+    def configure(r):
+        r.Configure('--with-ncsb-dir=%(datadir)s/fonts/default/Type1')
+
+    def make(r):
+        r.Make('all')
+
+    def makeinstall(r):
+        r.MakeInstall('vimdir=%(datadir)s/vim/vim73')

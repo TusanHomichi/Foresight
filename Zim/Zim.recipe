@@ -1,0 +1,38 @@
+#
+# Copyright (c) %(year)s Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Zim(PackageRecipe):
+    name = 'Zim'
+    version = '0.59'
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'gnome-python-extras:python', 
+        'perl-File-BaseDir:perl',
+        'perl-File-MimeInfo:perl',
+        'perl-Glib:perl',
+        'perl-Gtk2-TrayIcon:perl',
+        'perl-Gtk2:perl',
+        'perl-Module-Build:perl',
+        'perl:devel',
+        'perl:perl',
+        'perl:runtime',
+        'pycairo:python', 
+        'pygobject:python', 
+        'pygtk:python', 
+        'pygtksourceview:python',
+        'python-setuptools:python',
+        'python-simplejson:python',
+        'python:devel', 
+        'pyxdg:python', 
+        'shared-mime-info:runtime',
+        'zeitgeist:python',
+     ]
+
+
+    def setup(r):
+        r.addArchive('http://www.zim-wiki.org/downloads/zim-%(version)s.tar.gz')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Andy Grimm (https://issues.rpath.com/)
+#
+
+loadInstalled('python')
+class Zsi(PackageRecipe):
+    name = 'ZSI'
+    version = '2.1_a1'
+    buildRequires = ['python:devel']
+
+    def setup(r):
+        r.macros.altver = r.macros.version.replace('_', '-')
+        r.addArchive('mirror://sourceforge/pywebsvcs/files/%(name)s/%(name)s-%(version)s/%(name)s-%(altver)s.tar.gz')
+        r.PythonSetup()

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=PulseAudio Server
+Comment=Start Pulseaudio
+Exec=pulseaudio -D --high-priority
+Terminal=false
+Type=Application
+Categories=
+GenericName=
+NotShowIn=GNOME;
+

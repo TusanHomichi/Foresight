@@ -1,0 +1,107 @@
+From f25d37bde92cdfc56ebe0f2bb4078d5e7d4f170c Mon Sep 17 00:00:00 2001
+From: Jesse Zhang <zh.jesse@gmail.com>
+Date: Sat, 9 Apr 2011 17:54:59 +0800
+Subject: [PATCH] Do not set the package checkboxes to be selectable if the backend is not able to do UpdatePackages
+
+Backported from commit in master (3430b3a28486becc75a899c5527b3df20d602fcf).
+---
+ src/gpk-update-viewer.c |   34 ++++++++++++++++++++++++++--------
+ 1 files changed, 26 insertions(+), 8 deletions(-)
+
+diff --git a/src/gpk-update-viewer.c b/src/gpk-update-viewer.c
+index 505c423..b328bf0 100644
+--- a/src/gpk-update-viewer.c
++++ b/src/gpk-update-viewer.c
+@@ -76,6 +76,8 @@ struct GpkUpdateViewerPrivate
+ 	GtkWidget		*info_mobile_label;
+ };
+ 
++static PkBitfield roles = 0;
++
+ enum {
+ 	SIGNAL_CLOSE,
+ 	SIGNAL_LAST
+@@ -893,7 +895,8 @@ gpk_update_viewer_progress_cb (PkProgress *progress, PkProgressType type, GpkUpd
+ 		model = gtk_tree_view_get_model (treeview);
+ 
+ 		/* enable or disable the correct spinners */
+-		if (role == PK_ROLE_ENUM_UPDATE_PACKAGES) {
++		if (role == PK_ROLE_ENUM_UPDATE_PACKAGES ||
++		    role == PK_ROLE_ENUM_UPDATE_SYSTEM) {
+ 			path = gpk_update_viewer_model_get_path (model, package_id);
+ 			if (path != NULL) {
+ 				if (info == PK_INFO_ENUM_FINISHED)
+@@ -963,7 +966,8 @@ gpk_update_viewer_progress_cb (PkProgress *progress, PkProgressType type, GpkUpd
+ 		}
+ 
+ 		/* only change the status when we're doing the actual update */
+-		if (role == PK_ROLE_ENUM_UPDATE_PACKAGES) {
++		if (role == PK_ROLE_ENUM_UPDATE_PACKAGES ||
++		    role == PK_ROLE_ENUM_UPDATE_SYSTEM) {
+ 			/* if the info is finished, change the status to past tense */
+ 			if (info == PK_INFO_ENUM_FINISHED) {
+ 				/* clear the remaining size */
+@@ -1230,10 +1234,16 @@ gpk_update_viewer_button_install_cb (GtkWidget *widget, GpkUpdateViewer *update_
+ 	array = gpk_update_viewer_get_install_package_ids (update_viewer);
+ 	package_ids = pk_ptr_array_to_strv (array);
+ 
+-	/* get packages that also have to be updated */
+-	pk_task_update_packages_async (priv->task, package_ids, priv->cancellable,
+-				       (PkProgressCallback) gpk_update_viewer_progress_cb, update_viewer,
+-				       (GAsyncReadyCallback) gpk_update_viewer_update_packages_cb, update_viewer);
++	/* the backend is able to do UpdatePackages */
++	if (pk_bitfield_contain (roles, PK_ROLE_ENUM_UPDATE_PACKAGES)) {
++		pk_task_update_packages_async (priv->task, package_ids, priv->cancellable,
++					       (PkProgressCallback) gpk_update_viewer_progress_cb, update_viewer,
++					       (GAsyncReadyCallback) gpk_update_viewer_update_packages_cb, update_viewer);
++	} else {
++		pk_task_update_system_async (priv->task, priv->cancellable,
++					     (PkProgressCallback) gpk_update_viewer_progress_cb, update_viewer,
++					     (GAsyncReadyCallback) gpk_update_viewer_update_packages_cb, update_viewer);
++	}
+ 
+ 	/* from now on ignore updates-changed signals */
+ 	priv->ignore_updates_changed = TRUE;
+@@ -2572,6 +2582,7 @@ gpk_update_viewer_get_updates_cb (PkClient *client, GAsyncResult *res, GpkUpdate
+ 	PkMessageEnum message_type;
+ 	gchar *text = NULL;
+ 	gboolean selected;
++	gboolean sensitive;
+ 	GtkTreeIter iter;
+ 	GtkTreeIter parent;
+ 	guint i;
+@@ -2640,6 +2651,14 @@ gpk_update_viewer_get_updates_cb (PkClient *client, GAsyncResult *res, GpkUpdate
+ 		egg_debug ("adding: id=%s, text=%s", package_id, text);
+ 		selected = (info != PK_INFO_ENUM_BLOCKED);
+ 
++		/* only make the checkbox selectable if:
++		 *  - we can do UpdatePackages rather than just UpdateSystem
++		 *  - the update is not blocked
++		 */
++		sensitive = selected;
++		if (!pk_bitfield_contain (roles, PK_ROLE_ENUM_UPDATE_PACKAGES))
++			sensitive = FALSE;
++
+ 		/* do we add to a parent? */
+ 		if (ret)
+ 			gtk_tree_store_append (priv->array_store_updates, &iter, &parent);
+@@ -2650,7 +2669,7 @@ gpk_update_viewer_get_updates_cb (PkClient *client, GAsyncResult *res, GpkUpdate
+ 				    GPK_UPDATES_COLUMN_ID, package_id,
+ 				    GPK_UPDATES_COLUMN_INFO, info,
+ 				    GPK_UPDATES_COLUMN_SELECT, selected,
+-				    GPK_UPDATES_COLUMN_SENSITIVE, selected,
++				    GPK_UPDATES_COLUMN_SENSITIVE, sensitive,
+ 				    GPK_UPDATES_COLUMN_CLICKABLE, selected,
+ 				    GPK_UPDATES_COLUMN_RESTART, PK_RESTART_ENUM_NONE,
+ 				    GPK_UPDATES_COLUMN_STATUS, PK_INFO_ENUM_UNKNOWN,
+@@ -3076,7 +3095,6 @@ gpk_update_viewer_get_properties_cb (PkControl *control, GAsyncResult *res, GpkU
+ {
+ 	GError *error = NULL;
+ 	gboolean ret;
+-	PkBitfield roles;
+ 	GpkUpdateViewerPrivate *priv = update_viewer->priv;
+ 
+ 	/* get the result */
+-- 
+1.7.3.4
+

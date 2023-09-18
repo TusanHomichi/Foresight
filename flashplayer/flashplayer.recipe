@@ -1,0 +1,39 @@
+class FlashPlayer(PackageRecipe):
+    name = "flashplayer"
+    version = "11.2.202.359"
+
+    buildRequires = [ 'glibc:devel', 'zlib:devel', 'fontconfig:devel',
+                      'freetype:devel', 'glib:devel', 'gtk:devel',
+                      'libX11:devel', 'libXext:devel', 'libXt:devel',
+                      'libgcc:devellib', 'libstdc++:devel',
+                      'desktop-file-utils:runtime',]
+
+    def setup(r):
+        r.addArchive('http://fpdownload.macromedia.com/get/flashplayer/pdc/%(version)s/install_flash_player_11_linux.i386.tar.gz', use=Arch.x86)
+        r.addArchive('http://fpdownload.macromedia.com/get/flashplayer/pdc/%(version)s/install_flash_player_11_linux.x86_64.tar.gz', use=Arch.x86_64)
+
+        r.Install('../libflashplayer.so','%(libdir)s/mozilla/plugins/')
+        r.Install('../usr/bin/flash-player-properties', '%(bindir)s/', mode = 0755)
+        r.Install('../usr/share/pixmaps/*', '%(datadir)s/pixmaps/', mode = 0644)
+        r.Install('../usr/share/icons/*', '%(datadir)s/icons/', mode = 0644)
+        r.Install('../usr/share/applications/*', '%(datadir)s/applications/', mode = 0644)
+        
+        r.ComponentSpec("runtime", "%(libdir)s/mozilla.*")
+        r.Requires('xulrunner:lib', '%(libdir)s/')
+        r.Requires('mozilla-filesystem:runtime', '%(libdir)s/')
+
+        # to get hw accel
+        r.Requires('libvdpau:lib', '%(libdir)s/')
+
+        r.Create('%(sysconfdir)s/adobe/mms.cfg',
+                 contents = ('# this looks now sane enough, see http://www.nvnews.net/vbulletin/showthread.php?t=177380&page=3...\n'
+                             '# ... specially if using Nvidia cards )\n\n'
+                             '# keeping it off for a while more to get feedback\n'
+                             '# EnableLinuxHWVideoDecode=1')
+                 )
+        # nvidia specific tweaks
+        # http://www.nvnews.net/vbulletin/showthread.php?t=177380&page=3
+        r.Create('%(sysconfdir)s/profile.d/nv_fix_flash.csh', 
+                 contents = 'setenv VDPAU_NVIDIA_NO_OVERLAY 1', mode = 0755)
+        r.Create('%(sysconfdir)s/profile.d/nv_fix_flash.sh', 
+                 contents = 'export VDPAU_NVIDIA_NO_OVERLAY=1', mode = 0755)

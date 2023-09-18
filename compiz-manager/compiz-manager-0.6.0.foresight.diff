@@ -1,0 +1,108 @@
+--- compiz-manager.pristine	2007-10-15 20:10:06.000000000 +0100
++++ compiz-manager	2007-12-31 02:23:58.000000000 +0000
+@@ -26,17 +26,28 @@
+ # started, and start a default plugin and possibly window decorator.
+ # 
+ 
++# differ between LIBDIR for x86, ppc and x86_64
++if [ `uname -m` = x86_64 ];then
++	ARCH_LIB=lib64
++else
++	ARCH_LIB=lib
++fi
+ 
+-COMPIZ_BIN_PATH="/usr/local/bin/" # For window decorators and compiz
+-PLUGIN_PATH="/usr/local/lib/compiz/" 
++COMPIZ_BIN_PATH="/usr/bin/" # For window decorators and compiz
++PLUGIN_PATH="/usr/$ARCH_LIB/compiz/" 
+ GLXINFO="/usr/bin/glxinfo"
+ KWIN="/usr/bin/kwin"
+ METACITY="/usr/bin/metacity"
+-COMPIZ_NAME="compiz" # Final name for compiz (compiz.real) 
++COMPIZ_NAME="compiz.real" # Final name for compiz (compiz.real) 
++LIBDIR=/usr/$ARCH_LIB/
+ 
+ # For Xgl LD_PRELOAD
+-LIBGL_NVIDIA="/usr/lib/nvidia/libGL.so.1.2.xlibmesa"
+-LIBGL_FGLRX="/usr/lib/fglrx/libGL.so.1.2.xlibmesa"
++for driver in $LIBDIR/xorg.nvidia.3d/libGL.so.[0-9] ; do
++        LIBGL_NVIDIA=$driver
++done
++for driver in $LIBDIR/xorg.fglrx.3d/libGL.so.[0.9] ; do
++        LIBGL_FGLRX=$driver
++done
+ 
+ # Minimum amount of memory (in kilo bytes) that nVidia cards need
+ # to be allowed to start
+@@ -45,9 +56,15 @@
+ NVIDIA_SETTINGS="nvidia-settings" # Assume it's in the path by default
+ 
+ # For detecting what driver is in use, the + is for one or more /'s
+-XORG_DRIVER_PATH="/usr/lib/xorg/modules/drivers/+"
++XORG_DRIVER_PATH_OVERLAY="/usr/$ARCH_LIB/xorg/modules/+updates/+drivers/+"
++XORG_DRIVER_PATH="/usr/$ARCH_LIB/xorg/modules/+drivers/+"
+ 
+-FALLBACKWM="${METACITY}"
++# FALLBACKWM should depend on the used desktop
++if [ -n "$KDE_FULL_SESSION" ]; then
++	FALLBACKWM="${KWIN}"
++else
++	FALLBACKWM="${METACITY}"
++fi
+ FALLBACKWM_OPTIONS="--replace $@"
+ 
+ # Driver whitelist
+@@ -65,8 +82,8 @@
+ COMPIZ_PLUGINS=""
+ ENV=""
+ 
+-# Use emerald by default if it exist
+-USE_EMERALD="yes"
++# Don't use emerald by default (to avoid additional requirements)
++USE_EMERALD=${USE_EMERALD:-no}
+ 
+ # No indirect by default
+ INDIRECT="no"
+@@ -249,6 +266,11 @@
+ 	return 0
+ 	fi
+ 	for DRV in ${WHITELIST}; do
++		if egrep -q "Loading ${XORG_DRIVER_PATH_OVERLAY}${DRV}_drv\.so" $LOG &&
++		   ! egrep -q "Unloading ${XORG_DRIVER_PATH_OVERLAY}${DRV}_drv\.so" $LOG; 
++		then
++			return 0
++		fi
+ 		if egrep -q "Loading ${XORG_DRIVER_PATH}${DRV}_drv\.so" $LOG &&
+ 		   ! egrep -q "Unloading ${XORG_DRIVER_PATH}${DRV}_drv\.so" $LOG; 
+ 		then
+@@ -262,14 +284,14 @@
+ # check pciid blacklist
+ have_blacklisted_pciid()
+ {
+-	OUTPUT=$(lspci -n)
++	OUTPUT=$(/sbin/lspci -n)
+ 	for ID in ${BLACKLIST_PCIIDS}; do
+ 		if echo "$OUTPUT" | egrep -q "$ID"; then
+ 			verbose "Blacklisted PCIID '$ID' found \n"
+ 			return 0
+ 		fi
+ 	done
+-	OUTPUT=$(lspci -vn | grep -i VGA)
++	OUTPUT=$(/sbin/lspci -vn | grep -i VGA)
+ 	verbose "Detected PCI ID for VGA: $OUTPUT\n"
+ 	return 1
+ }
+@@ -378,6 +402,13 @@
+ 	verbose "Starting kde-window-decorator\n"
+ 	${COMPIZ_BIN_PATH}kde-window-decorator --replace &
+ 	FALLBACKWM="${KWIN}"
++elif [ -x ${COMPIZ_BIN_PATH}emerald ]; then
++	verbose "Starting emerald\n"
++	${COMPIZ_BIN_PATH}emerald --replace &
++# Abort completely instead of having no window decoration
++elif [ ! -x ${COMPIZ_BIN_PATH}gtk-window-decorator ] && [ ! -x ${COMPIZ_BIN_PATH}kde-window-decorator ] && [ ! -x ${COMPIZ_BIN_PATH}emerald ]; then
++	echo "No decoration manager found. Aborting..."
++	exit 1
+ fi
+ 
+ ${COMPIZ_BIN_PATH}${COMPIZ_NAME} $COMPIZ_OPTIONS "$@" $COMPIZ_PLUGINS || exec $FALLBACKWM $FALLBACKWM_OPTIONS

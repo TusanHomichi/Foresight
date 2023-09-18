@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class Libgnome(RPMPackageRecipe,GnomePackageRecipe):
+
+    buildRequires = [ 'zlib:devel', 'esound:devel', 'glib:devel', 'libbonobo:devel', 'GConf:devel', 'gvfs:devel', 'ORBit2:devel', 'libxslt:devel', 'libxml2:devel', 'perl:runtime', 'intltool:runtime', 'audiofile:devel', 'popt:devel', 'GConf:runtime', 'gettext:runtime', 'gettext:devel', 'glib:runtime', 'gnome-vfs:devel', 'autoconf:runtime','automake:runtime',  'libtool:runtime', 'gtk-doc:runtime', 'gtk-doc:devel', 'libcanberra:devel']
+
+    name = 'libgnome'
+    version = '2.32.1'
+    rpmRelease = '2.fc15'
+
+    rpmPatches= [ 'libgnome-2.11.1-scoreloc.patch',
+                  'libgnome-2.7.2-default-cursor.patch',
+                  'libgnome-2.8.0-default-browser.patch',
+                  'libgnome-2.19.1-default-settings.patch',
+                  'libgnome-2.22.0-default-sound-effects.patch',
+                  # backport from upstream svn
+                  'im-setting.patch',
+                  'libgnome-2.24.1-default-noblink.patch',
+                  ]
+
+    docs = GnomePackageRecipe.docs
+    #docs.remove('COPYING')
+
+    extraConfig = '--disable-gtk-doc --disable-static --disable-esd --disable-gtk-doc-html'
+
+    def unpack(r):
+	r.Environment('GTKDOC_REBASE','%(bindir)s/gtkdoc-rebase')
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('foresight.patch')
+        # Enable buttons_have_icons by default
+        r.addPatch('gnome-bug-583352-revert.patch', extraArgs = '-R')
+        # Enable menus_have_icons by default
+        r.addPatch('set-menus_have_icons-false-by-default.patch', extraArgs = '-R')
+
+    def policy(r):
+        r.PackageSpec('libgnome-background', '%(datadir)s/pixmaps/backgrounds/gnome/background-default.jpg')

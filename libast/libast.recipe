@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('svnpackage')
+class Libast(SvnPackageRecipe):
+    url = 'http://svn.enlightenment.org/svn/e/trunk/eterm/libast'
+    name = 'libast'
+    version = SvnPackageRecipe.getRevision(url)
+
+    buildRequires = ['ctags:runtime', 'curl:devel', 'freetype:devel', 'imlib2:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'pcre:devel', 'zlib:devel', 'automake:runtime', 'autoconf:runtime', 'libtool:runtime', 'libXt:devel']
+
+    def configure(r):
+        r.Run("NOCONFIGURE=true %(builddir)s/autogen.sh")
+        r.Configure()

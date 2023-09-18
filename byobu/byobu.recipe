@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+      
+class Byobu(AutoPackageRecipe):
+    name = 'byobu'
+    version = '5.36'
+
+    buildRequires = [
+        'bash:runtime', 
+        'desktop-file-utils:runtime', 
+        'gettext:runtime',
+        'newt:python', 
+        'python:devel', 
+        'screen:runtime',
+        'python-simplejson:python', 
+            ]
+
+    packageSummary = "Byobu is to GNU Screen what GNOME is to Xorg."
+    packageDescription = """
+    Byobu is a Japanese term for decorative, multi-panel screens that serve as folding
+    room dividers. As an open source project, Byobu is an elegant enhancement of the
+    otherwise functional, plain, practical GNU Screen. 
+    Byobu includes an enhanced profile and configuration utilities for the GNU screen
+    window manager, such as toggle-able system status notifications. 
+
+    See http://launchpad.net/byobu for project details.
+    """
+       
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/trunk/%(version)s/+download/%(name)s_%(version)s.orig.tar.gz')
+        # Change Ubuntu-specific /var/run/screen dir to FL's /tmp/uscreens/ dir
+        # '%(sysconfdir)/%(name)s/socketdir' doesn't work
+        r.Replace('\/var\/run\/screen', '/tmp/uscreens', 'etc/%(name)s/socketdir')
+        r.Copy('usr/share/byobu/pixmaps/byobu.svg', '%(datadir)s/pixmaps/byobu.svg')
+
+    def policy(r):
+        # Avoid /usr/bin/byobu-config being tagged as :devel
+        # r.ComponentSpec('runtime', '%(destdir)s/usr/bin/byobu-config') <- won't work
+        r.ComponentSpec('runtime', '%(bindir)s/%(name)s-config')
+
+        # Make sure that we include /usr/share/doc/byobu/help.txt in the :doc trove
+        # - if we don't, the help text in the menu won't show when selected.
+        r.ComponentSpec('doc', '%(docdir)s/%(name)s/help.txt')
+        
+        r.NonBinariesInBindirs(exceptions='.*')
+

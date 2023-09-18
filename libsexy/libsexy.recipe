@@ -1,0 +1,22 @@
+# Gil Hamlin
+# gil@foresightlinux.com
+# 11th October 2005
+
+class libsexy(CPackageRecipe):
+    buildRequires = [ 'glibc:devel', 'binutils:runtime', 'pkgconfig:devel',
+        'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+        'glib:devel', 'gtk:devel', 'libpng:devel', 'pango:devel', 'zlib:devel',
+        'enchant:devel', 'libxml2:devel', 'gawk:runtime' , 'libXrender:devel',
+        'perl:runtime', 'libXau:devel', 'libX11:devel', 'libXdmcp:devel',
+        'glib:runtime', 'expat:devel' ]
+
+    name = "libsexy"
+    version = "0.1.11"
+
+    def setup(r):
+        r.macros.optflags = "-Os"
+        r.addArchive('http://releases.chipx86.com/%(name)s/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.addPatch('single_include.patch')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

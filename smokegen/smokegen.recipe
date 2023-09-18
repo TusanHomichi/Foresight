@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Smokegen(CPackageRecipe):
+    name = 'smokegen'
+    version = '4.8.3'
+ 
+    buildRequires = [
+        'cmake:runtime', 
+        'libstdc++:devel', 
+        'phonon:devel', 
+        'pkgconfig:devel', 
+        'qt4-core:devellib', 
+        'qt4-gui:devellib', 
+        'qt4-qt3support:devellib', 
+        'qt4-sql:mysql', 
+        'qt4-sql:odbc', 
+        'qt4-sql:psql', 
+        'qt4-sql:sqlite', 
+        'qt4:devel', 
+        'xz:runtime'
+            ]
+ 
+
+    def setup(r):
+        r.addArchive('mirror://kde//stable/%(version)s/src/')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

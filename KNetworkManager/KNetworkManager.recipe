@@ -1,0 +1,62 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('kdepackage')
+class KNetworkManager(kdePackageRecipe):
+
+    name='KNetworkManager'
+    version='0.2r674918'
+
+    buildRequires = [
+        'autoconf:runtime', 'automake:runtime', 'dbus-qt3:devel', 'dbus:devel',
+        'hal:devel', 'libnl:devel', 'NetworkManager:devel'
+    ]
+
+    srpm = (
+        'http://download.opensuse.org/distribution/SL-OSS-factory'
+        '/inst-source/suse/src/NetworkManager-kde-0.2r674918-79.src.rpm'
+    )
+
+    susePatches = [
+        #'knetworkmanager-kde-networkstatus-wstephenson-03.patch',
+        'knetworkmanager-fallback-thoenig-03.patch',
+        'fix-desktop-icon.diff',
+        'knetworkmanager-version-hschaa-01.patch',
+        'knetworkmanager-fixnetworksui-hschaa-01.patch',
+        'knetworkmanager-enablebutton-hschaa-01.patch',
+        'knetworkmanager-show_message-hschaa-01.patch',
+        'knetworkmanager-infodialog_tab-hschaa-01.patch',
+        'r703269.diff',
+        'r703272.diff',
+        'r703275.diff',
+        'r703276.diff',
+        'r703278.diff',
+        'r703279.diff',
+        'r703280.diff',
+        'r690178.diff',
+        'knetworkmanager-dbus_race-hschaa-01.patch',
+        'knetworkmanager-fix_segfault-hschaa-01.patch',
+        'translation_update_hu.patch',
+        'knetworkmanager-fix_corrupted_tray-hschaa-01.patch',
+    ]
+
+    def unpack(r):
+
+        r.addArchive('knetworkmanager-%(version)s.tar.bz2', rpm=r.srpm)
+        r.addSvnSnapshot(
+            'svn://anonsvn.kde.org/home/kde/branches/KDE/3.5/kde-common/admin',
+            dir='knetworkmanager-%(version)s'
+        )
+        r.Run('ln -s %(name)s--admin admin')
+        r.Make('-f admin/Makefile.common')
+
+        for p in r.susePatches:
+            r.addPatch(p, rpm=r.srpm)
+
+        r.extraConf += (
+            ' --with-distro=redhat '
+            ' --with-pptp --with-vpnc --with-openvpn '
+        )
+

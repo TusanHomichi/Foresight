@@ -1,0 +1,23 @@
+
+
+class Fdupes(CPackageRecipe):
+    name = 'fdupes'
+    version = '1.50_PR2'
+
+    def setup(r):
+        r.macros.version = r.macros.version.replace('_', '-')
+        r.addArchive('http://fdupes.googlecode.com/files/')
+        for p in [ '%(name)s-1.50-destdir.patch',
+                   # http://bugs.debian.org/213385
+                   '%(name)s-1.50-compare-file.patch',
+                   # http://bugs.debian.org/447601
+                   '%(name)s-1.50-lfs.patch',
+                   # http://bugs.debian.org/353789
+                   '%(name)s-1.50-typo.patch',
+                   ]:
+            r.addPatch(p)
+
+        r.Make('COMPILER_OPTIONS="%(cflags)s"')
+
+        r.MakeInstall(' BIN_DIR=%(bindir)s '
+                      ' MAN_BASE_DIR=%(mandir)s ')

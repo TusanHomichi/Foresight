@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Folks(AutoPackageRecipe):
+    name = 'folks'
+    version = '0.4.2'
+
+    buildRequires = [
+        'dbus-glib:devel',
+        'dbus:devel',
+        'glib:devel',
+        'gobject-introspection:devel',
+        'libgee:devel',
+        'libxml2:devel',
+        'pkgconfig:devel',
+        'telepathy-glib:devel',
+        'vala:runtime',
+        'gettext:runtime', 'intltool:runtime',
+        ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnome/%(name)s/%(major_version)s/')
+        # disable test which has syntax errors
+        r.Replace('tests', '', 'Makefile.in')

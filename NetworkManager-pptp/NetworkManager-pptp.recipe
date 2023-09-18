@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+loadRecipe('ppp') # for proper pppd_plugin_dir
+loadRecipe('NetworkManager')
+class NetworkManagerPPTP(GnomePackageRecipe):
+
+   name = "NetworkManager-pptp"
+   version = '0.8.6.0'
+
+   buildRequires = [
+        'GConf:devellib',
+        'NetworkManager:devel',
+        'dbus-glib:devel',
+        'dbus-glib:runtime',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'gtk:runtime',
+        'libglade:devel',
+        'libgnome-keyring:devellib',
+        'perl:runtime',
+        'popt:devel',
+        'ppp:devel',
+        'util-macros:devel',
+        ]
+
+   extraConfig = (
+        ' --with-pppd-plugin-dir=%(libdir)s/pppd/' + Ppp.version
+        )
+
+   def policy(r):
+        # NetworkManager has been known to change protocol in a
+        # minor version update (0.8.2 -> 0.8.4, for instance).
+        r.macros.protver = '.'.join(NetworkManager.version.split('.')[0:3])
+        r.Requires('NetworkManager:runtime(%(protver)s)',
+                   '%(libexecdir)s/')

@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class DMRAID(RPMPackageRecipe, CPackageRecipe):
+    name = 'dmraid'
+    version = '1.0.0.rc16'
+    rpmRelease = '3.fc12'
+    buildRequires = [ 'device-mapper:devel', 'zlib:devel' ]
+
+    rpmPatches = [ 'dmraid-1.0.0.rc16-test_devices.patch' ]
+
+    def setup(r):
+        r.macros.sbindir = r.macros.essentialsbindir
+        r.addArchive('%(name)s-%(version)s.tar.bz2', rpm=r.srpm)
+        for patch in r.rpmPatches:
+            r.addPatch(patch, dir='%(version)s', rpm=r.srpm)
+        r.Configure('--disable-static_link --enable-led --enable-intel_led', dir='%(version)s')
+        r.Make(dir='%(version)s')
+        r.MakePathsInstall(dir='%(version)s')
+        r.Link('%(essentialsbindir)s/dmraid.static', '%(essentialsbindir)s/dmraid')
+
+        # If requested, install the libdmraid and libdmraid-events (for dmeventd) DSO
+        r.Install('%(version)s/lib/libdmraid.so', '%(libdir)s/libdmraid.so.%(version)s', mode = 0755)
+        r.Symlink('%(libdir)s/libdmraid.so.%(version)s', '%(libdir)s/libdmraid.so')
+        r.Install('%(version)s/lib/libdmraid-events-isw.so',
+                  '%(libdir)s/libdmraid-events-isw.so.%(version)s', mode = 0755)
+        r.Symlink('%(libdir)s/libdmraid-events-isw.so.%(version)s', '%(libdir)s/libdmraid-events-isw.so')
+
+        # Install logwatch config file and script for dmeventd
+        r.Install('%(version)s/logwatch/dmeventd.conf', '%(sysconfdir)s/logwatch/conf/services/dmeventd.conf', mode = 0644)
+        r.Install('%(version)s/logwatch/dmeventd_cronjob.txt', '%(sysconfdir)s/cron.d/dmeventd-logwatch', mode = 0644)
+        r.Install('%(version)s/logwatch/dmeventd', '%(sysconfdir)s/logwatch/scripts/services/dmeventd', mode = 0755)
+
+        r.Move('%(sysconfdir)s/logwatch/*', '%(sysconfdir)s/log.d/')
+        # stuff above expects to be in logwatch dir, logwatch provides the symlink
+        r.Requires('logwatch:runtime', '%(sysconfdir)s/log.d/.*')
+
+        # Provide convenience link from dmevent_tool
+        r.Symlink('%(essentialsbindir)s/dmevent_tool', '%(essentialsbindir)s/dm_dso_reg_tool')
+        r.Install('%(version)s/include/dmraid/*.h', '%(includedir)s/dmraid/', mode = 0644)

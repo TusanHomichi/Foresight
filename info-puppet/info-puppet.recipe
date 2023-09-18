@@ -1,0 +1,8 @@
+class info_puppet(UserInfoRecipe):
+    name = 'info-puppet'
+    version = '1'
+
+    def setup(r):
+        r.User('puppet', 52, groupid=52, comment='Puppet',
+               homedir='%(localstatedir)s/lib/puppet',
+               shell='%(essentialbindir)s/nologin')

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Asio(AutoPackageRecipe):
+    name = 'asio'
+    version = '1.4.5'
+
+    packageSummary = 'asio is a cross-platform C++ library'
+    packageDescription = 'asio is a cross-platform C++ library for network and low-level I/O programming that provides developers with a consistent asynchronous model using a modern C++ approach.'
+ 
+    buildRequires = ['boost:devel', 'gcc-c++:runtime', 'openssl:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/asio/')

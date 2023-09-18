@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2009-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RapidPhotoDownloader(PackageRecipe):
+    name = 'rapid-photo-downloader'
+    version = '0.4.4'
+ 
+    buildRequires = [
+                'python-setuptools:python', 
+                'dbus-python:python', 
+                'gnome-python:python', 
+                'notify-python:python', 
+                'python:devel', 
+                'gettext:runtime', 
+                'pygtk:python', 
+                'desktop-file-utils:runtime', 
+                'pyexiv2:python',
+                'PIL:python', 
+                'kaa-base:python',
+                'kaa-metadata:python',
+                'pycairo:python',
+                    ]
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/rapid/trunk/%(version)s/+download/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        r.Requires('pyexiv2:python', '%(bindir)s/rapid-photo-downloader')
+        r.Requires('ffmpegthumbnailer:runtime', '%(bindir)s/rapid-photo-downloader')

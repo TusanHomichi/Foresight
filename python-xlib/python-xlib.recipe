@@ -1,0 +1,10 @@
+class PythonXlib(PackageRecipe):
+    name = 'python-xlib'
+    version = '0.14'
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+
+        r.PythonSetup()

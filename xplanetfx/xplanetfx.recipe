@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class Xplanetfx(BinaryPackageRecipe):
+    name = 'xplanetfx'
+    version = '2.4.4'
+ 
+    buildRequires = ['binutils:runtime', 'desktop-file-utils:runtime', 'perl-HTTP-Cookies:perl', 'pycairo:python', 'pygobject:python', 'pygtk:python', 'python:devel']
+ 
+    def unpack(r):
+        r.macros.site = 'http://repository.mein-neues-blog.de:9000/latest'
+
+        dist = [
+            ('xplanetFX.deb'),
+
+        ]
+        for (deb) in dist:
+            r.addArchive('%(site)s/'+deb, dir='/')
+            
+        r.Requires('xplanet:runtime', 'xplanetfx:runtime')

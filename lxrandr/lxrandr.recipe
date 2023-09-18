@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lxrandr(AutoPackageRecipe):
+    name = 'lxrandr'
+    version = '0.1.2'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libpng:devel', 'pango:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/lxde/%(name)s-%(version)s.tar.gz')

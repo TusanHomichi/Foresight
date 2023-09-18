@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TuxpaintConfig(AutoPackageRecipe):
+    name = 'tuxpaint-config'
+    version = '0.0.12'
+    buildRequires = [ 'fltk:devel', 'glibc:devel', 'gcc-c++:runtime', 
+                'libpaper:devel', 'libX11:devel', 'libXext:devel', 
+                'libgcc:devellib', 'libstdc++:devel', 'make:runtime', 'gettext:runtime', 'intltool:runtime' ]
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/tuxpaint/%(name)s-%(version)s.tar.gz')
+        r.Replace(('PREFIX=/usr/local', 'PREFIX=%(prefix)s'),
+		  ('BIN_PREFIX=$(PREFIX)/bin', 'BIN_PREFIX=$(PREFIX)/bin/'),
+		'Makefile')
+#        r.addAction('find . -type d -name CVS | xargs rm -rf')
+        r.Make()
+        r.Install('tuxpaint-config', '%(destdir)s%(prefix)s/bin/')

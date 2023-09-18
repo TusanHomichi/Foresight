@@ -1,0 +1,8 @@
+PERSISTENT_DHCLIENT=YES by default now to make software appliances
+that are primarily network-accessible more reliable in the face of
+transient DHCP server failure. Because PERSISTENT_DHCLIENT=NO
+caused appliance to drop IP address forever in case of DHCP server
+unavailability during lease renew. You can override default by setting
+PERSISTENT_DHCLIENT=NO in /etc/sysconfig/network-interfaces/ifcfg-ethX
+(where X stands for number of desired interface).
+See https://issues.rpath.com/browse/RPL-2442 for details.

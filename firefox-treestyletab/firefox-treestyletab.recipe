@@ -1,0 +1,6 @@
+loadSuperClass('firefox-addon')
+class TreeStyleTab(FirefoxAddonRecipe):
+    name = 'firefox-treestyletab'
+    version = '0.8.2009090201'
+    fileId = '63513'
+    # https://addons.mozilla.org/en-US/firefox/addons/versions/5890

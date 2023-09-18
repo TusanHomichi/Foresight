@@ -1,0 +1,15 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class ListMoreUtils(CPANPackageRecipe):
+
+    name = 'perl-List-MoreUtils'
+    version = '0.30'
+
+    buildRequires = [
+        'perl:devel'
+    ]
+

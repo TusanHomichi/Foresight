@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EclipseSubclipse(CPackageRecipe):
+    name = 'eclipse-subclipse'
+    version = '1.6.18'
+    urlver = '49028'
+
+# use 1.6.** for subversion 1.6.** As we got today
+
+    buildRequires = [
+        'unzip:runtime', 
+        'icedtea-jdk:runtime', 
+        'eclipse-gef:java', 
+        'eclipse-sdk:java',
+        ]
+
+    shortDesc  = 'Subversion support for Eclipse platform'
+    longDesc   = """
+Subclipse is an Eclipse Team Provider plug-in providing support for
+Subversion within the Eclipse IDE.
+"""
+    url        = 'http://subclipse.tigris.org/'
+    licenses   = [ 'EPL-1.0' ]
+    categories = [ 'Development/Utilities' ]
+
+    def setup(r):
+        r.macros.urlver = r.urlver
+        r.addArchive('http://subclipse.tigris.org/files/documents/906/%(urlver)s/'
+                     'site-%(version)s.zip'
+                     , dir='%(name)s-%(version)s')
+
+        r.macros.installdir = r.name.replace('eclipse-', '')
+        r.macros.dropindir = '%(libdir)s/eclipse/dropins/%(installdir)s/eclipse'
+
+        # Features
+        r.Run("""
+find features -type f | while read _feature
+do
+  install -dm755 %(destdir)s/%(dropindir)s/${_feature%%*.jar}
+  cd %(destdir)s/%(dropindir)s/${_feature/.jar}
+  jar xf %(builddir)s/${_feature} || return 1
+  cd - > /dev/null 2>&1
+done""")
+
+        # Plugins
+        r.Run("""
+find plugins -type f | while read _plugin
+do
+  install -Dm644 ${_plugin} %(destdir)s/%(dropindir)s/${_plugin}
+done""")
+
+        r.Requires('eclipse-sdk:runtime', '%(dropindir)s/')
+        r.Requires('eclipse-sdk:java', '%(dropindir)s/')
+        r.Requires('subversion:runtime', '%(dropindir)s/')

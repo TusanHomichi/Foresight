@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Zeromq(AutoPackageRecipe):
+    name = 'zeromq'
+    version = '2.1.11'
+ 
+    buildRequires = ['asciidoc:runtime', 'libstdc++:devel', 'util-linux:devel', 'xmlto:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://download.zeromq.org/')

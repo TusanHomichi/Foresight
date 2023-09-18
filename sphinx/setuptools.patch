@@ -1,0 +1,12 @@
+diff -Naur original/ez_setup.py Sphinx-0.5.1/ez_setup.py
+--- original/ez_setup.py	2009-03-13 22:31:20.000000000 -0400
++++ Sphinx-0.5.1/ez_setup.py	2009-03-13 22:36:14.000000000 -0400
+@@ -14,7 +14,7 @@
+ This file can also be run as a script to install or upgrade setuptools.
+ """
+ import sys
+-DEFAULT_VERSION = "0.6c9"
++DEFAULT_VERSION = "0.6c8"
+ DEFAULT_URL     = "http://pypi.python.org/packages/%s/s/setuptools/" % sys.version[:3]
+ 
+ md5_data = {

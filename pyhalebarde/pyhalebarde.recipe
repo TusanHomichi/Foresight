@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pyhalebarde(PackageRecipe):
+
+    name = 'pyhalebarde'
+    version = '0.2'
+
+    buildRequires = ['python-setuptools:python', 'dbus-python:python', 'python:devel', 'desktop-file-utils:runtime', 'pygame:python']
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/pyhalebarde/0.2/0.2/+download/pyhalebarde_0.2.orig.tar.gz')
+#        r.PythonSetup('--prefix=%(prefix)s')
+        r.Run('./setup.py install --prefix=%(destdir)s/%(prefix)s')
+	r.Requires('pygame:python', '/usr/games/pyhalebarde')

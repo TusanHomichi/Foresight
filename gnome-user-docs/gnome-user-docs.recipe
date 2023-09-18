@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeUserDocs(GnomePackageRecipe):
+    name = 'gnome-user-docs'
+    version = '2.32.0'
+
+    buildRequires = ['rarian:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+        'gettext:runtime', 'which:runtime' ]
+
+    extraConfig = ' --disable-scrollkeeper'

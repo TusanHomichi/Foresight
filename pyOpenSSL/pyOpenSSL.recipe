@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyOpenSSL(CPackageRecipe):
+    name = 'pyOpenSSL'
+    version = '0.10'
+
+    buildRequires = ['python:devel', 'python-setuptools:python',
+                     'glibc:devel', 'openssl:devel']
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+        r.PythonSetup()

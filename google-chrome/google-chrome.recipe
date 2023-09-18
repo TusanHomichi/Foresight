@@ -1,0 +1,64 @@
+# vi: set ts=4 sw=4 sts=4 et :
+#
+# Copyright (c) 2014 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+##
+# TODO:  Discover if Google Chrome's binary distribution is completely
+# redistributable.
+# TODO:  Binary conversion of Google distributed RPMs into conary packages
+# for fl:2 won't work until fl:2 updates to a newer glibc/libstdc++.
+##
+
+class GoogleChrome(CPackageRecipe):
+    name = 'google-chrome'
+    version = '35.0.1616.114'
+
+    #Lots of requires for autodeps.
+    buildRequires = [
+        'alsa-lib:lib', 'cairo:lib', 'cups:lib', 'dbus:lib', 
+        'fontconfig:lib', 'freetype:lib', 'GConf:lib', 
+        'gtk:lib', 'gdk-pixbuf:lib', 'glib:lib',
+        'libXScrnSaver:lib', 'libXtst:lib'
+    ]
+   
+    def setMacros(r):
+        r.macros.upstreamTag = 'stable_current'
+        r.macros.upstreamName = '%(name)s-%(upstreamTag)s' 
+        r.macros.site = 'https://dl.google.com/linux/direct' 
+
+    def unpack(r):
+        dist = [
+            ('%(upstreamName)s_x86_64.rpm', Arch.x86_64),
+            ('%(upstreamName)s_i386.rpm', Arch.x86)
+        ]
+        for (rpm, arch) in dist:
+            r.addArchive('%(site)s/' + rpm, dir='/', use=(arch == True))
+        r.SetModes('/opt/google/chrome/chrome-sandbox', 04755)
+        r.Config(exceptions='/etc/cron.daily/google-chrome')
+            
+
+    def policy(r):
+        r.Requires('file', '/usr/bin/wget')
+        r.Requires('file', '/usr/bin/xdg-user-dirs-gtk-update')
+        r.Requires('file', '/bin/sh')
+        r.Requires('google-chrome-pepperflash:lib', '%(bindir)s/google-chrome-stable')
+        # Let's hope Chrome can use the system supplied libc/libstdc++ pulled in by deps.
+        r.Requires(exceptDeps='soname: ELF64/libc\.so\.6.*', use=Arch.x86_64)
+        r.Requires(exceptDeps='soname: ELF64/libstdc\+\+\.so\.6.*', use=Arch.x86_64)
+        r.ComponentSpec('%(name)s-pepperflash:data', '^.*PepperFlash/.*\.json$')
+        r.ComponentSpec('%(name)s-pepperflash:lib', '^.*PepperFlash/.*\.so$')
+        r.ComponentSpec('runtime', '^.*\.desktop$')
+        r.ComponentSpec('lib', '^.*/chrome/.*\.so$', '^.*/locales/.*$')
+        r.ComponentSpec('data', 
+            '^.*\.dat$', '^.*\.png$', '^.*\.xpm$', '^.*\.pak$', '^.*\/default_apps\/.*$'
+        )
+
+    
+
+    def setup(r):
+        r.setMacros()
+        r.unpack()
+        r.policy()

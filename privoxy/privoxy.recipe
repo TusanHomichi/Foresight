@@ -1,0 +1,31 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Privoxy(AutoPackageRecipe):
+    name = 'privoxy'
+    version = '3.0.19'
+
+    buildRequires = [ 'autoconf:runtime', 'automake:runtime', 'info-privoxy', 'man:runtime', 'pcre:devel', 'docbook-utils:runtime', 'gdb:runtime', 'lynx:runtime', 'openjade:runtime', 'chkconfig:runtime', 'zlib:devel' ]
+
+    def unpack(r):
+#        r.macros.ver = r.version.replace('_', '-')
+        r.addArchive('http://downloads.sourceforge.net/project/ijbswa/Sources/%(version)s (stable)/privoxy-%(version)s-stable-src.tar.gz')
+        r.addPatch('privoxy-3.0.16-chkconfig.patch')
+        r.addPatch('privoxy-3.0.16-configdir.patch')
+
+    def configure(r):
+        r.Run('autoreconf')
+        r.ManualConfigure('--prefix=%(prefix)s --sbindir=%(sbindir)s --localstatedir=%(localstatedir)s --datadir=%(datadir)s --mandir=%(mandir)s --sysconfdir=%(sysconfdir)s/privoxy --docdir=%(docdir)s --enable-dynamic-pcre')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('%(name)s-generic.init', '%(sysconfdir)s/init.d/%(name)s')
+        r.Replace('\$P_USER_SETTINGS', '', '%(sysconfdir)s/init.d/%(name)s', lines=113)
+
+    def policy(r):
+        r.UtilizeUser('privoxy', '%(initdir)s/%(name)s')
+        r.UtilizeGroup('privoxy', '%(initdir)s/%(name)s')
+        r.Ownership('privoxy', 'privoxy', '%(sysconfdir)s/%(name)s/')

@@ -1,0 +1,2 @@
+excludeTroves       []
+excludeTroves       .*:supdoc

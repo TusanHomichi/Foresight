@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class prelink(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'prelink'
+    version = '0.4.6'
+    
+    rpmRelease = '3.fc16'
+    tarballName = 'prelink-20111012.tar.bz2'
+ 
+    buildRequires = ['elfutils:devel', 'libelf:devel']
+
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        srpm = 'http://kojipkgs.fedoraproject.org/packages/prelink/%(version)s/3.fc16/src/prelink-%(version)s-3.fc16.src.rpm'
+        r.addSource('prelink.conf', rpm=srpm)
+        r.addSource('prelink.cron', rpm=srpm)
+        r.addSource('prelink.sysconfig', rpm=srpm)
+
+        r.Configure('')
+        r.Make()
+
+        r.MakeInstall()
+        r.Install('prelink.conf', '%(sysconfdir)s/')
+        r.Install('prelink.cron', '%(sysconfdir)s/cron.daily/prelink')
+        r.Install('prelink.sysconfig',
+                            '%(sysconfdir)s/sysconfig/prelink')
+
+        r.SetModes('%(sysconfdir)s/cron.daily/prelink', 0755)
+        r.SetModes('%(sysconfdir)s/{sysconfig/prelink,prelink.conf}', 0644)

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SReadahead(CPackageRecipe):
+
+    name = 'sreadahead'
+    version = '0.03'
+
+    buildRequires = [ ] 
+
+    def setup(r):
+        r.addArchive('http://sreadahead.googlecode.com/files/')
+        r.Replace('-march=i686', '', 'Makefile')
+        r.Make()
+        r.MakeInstall()
+        r.Install('sreadahead_generate_filelist.sh', '%(bindir)s/')

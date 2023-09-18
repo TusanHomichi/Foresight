@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+class Wallbox(AutoPackageRecipe):
+
+    name = 'wallbox'
+    version = 'c74133c0' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = ['python-setuptools:python', 'dbus-python:python', 'pyfacebook:python', 'pygobject:python', 'pygtk:python', 'python:devel', 'desktop-file-utils:runtime', 'gettext:runtime', 'intltool:runtime', 'pkgconfig:devel']
+
+    def unpack(r):
+        r.addGitSnapshot('http://github.com/yurenju/wallbox.git')
+	r.Configure(configureName='autogen.sh')

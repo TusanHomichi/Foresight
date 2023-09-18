@@ -1,0 +1,10 @@
+class PythonAlsaAudio(AutoPackageRecipe):
+    name = 'python-alsaaudio'
+    version = '0.5'
+
+    buildRequires = [ 'python-setuptools:python', 'alsa-lib:devel', 'glibc:devel', 'python:devel' ]
+
+    def setup(r):
+        r.macros.name = 'pyalsaaudio'
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()

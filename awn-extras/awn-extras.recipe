@@ -1,0 +1,7 @@
+
+class AwnExtras(RedirectRecipe):
+    name = 'awn-extras'
+    version = '0'
+
+    def setup(r):
+        r.addRemoveRedirect()

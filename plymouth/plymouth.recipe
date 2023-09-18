@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2009 Foresight Linux Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Plymouth(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'plymouth'
+    version = '0.8.4'
+    rpmRelease = '0.20110510.2.fc15'
+    # Killing plymouthd solves issues when patch is enabled.
+    # When patch is disabled, users will see a warning on the boot console.
+    # "Warning: dev (tty1) tty->count(4) != #fd's(3) in tty_release_dev"
+    # is shown on my system -- /ermo, 2010-09
+    #rpmPatches = ['lock-tty.patch'] 
+    rpmSources = [ 'boot-duration',
+                   'plymouth-update-initrd',
+                   'plymouth-set-default-plugin',
+                   'charge.plymouth']
+
+    rpmPatches = [ 'fix-frozen-input.patch' ]
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'gtk:devel', 'libX11:devel', 'libXrender:devel', 
+                      'libpng:devel', 'libxcb:devel', 'pango:devel',
+                      'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel',
+                      'zlib:devel', 'atk:devel', 'cairo:devel', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'gtk:devel', 'libX11:devel', 'libXrender:devel',
+                      'libpng:devel', 'libxcb:devel', 'pango:devel',
+                      'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel',
+                      'zlib:devel', 'userspace-kernel-headers:devel',
+                      'libdrm:devel', 'autoconf:runtime', 'automake:runtime',
+                      'intltool:runtime', 'libtool:runtime',]
+
+    def configure(r):
+        r.addPatch('of-text.patch')
+        r.Replace('fade-in', 'of-text', 'src/plymouthd.defaults')
+        r.addSource('plymouth-bootloader.conf',
+                    dest='%(sysconfdir)s/bootloader.d/')
+
+        r.Run('autoreconf')
+        r.Configure( ' --enable-tracing'
+                     ' --disable-tests'
+                     ' --without-default-plugin'
+                     # ' --with-logo=%(datadir)s/pixmaps/system-logo-white.png'
+                     ' --with-background-start-color-stop=0x538422'
+                     ' --with-background-end-color-stop=0x436B1C'
+                     ' --with-background-color=0x69B61D'
+                     ' --disable-gdm-transition'
+                     ' --with-system-root-install'
+                     ' --with-rhgb-compat-link'
+                     #' --with-shutdown-tty=tty1'
+                     ' --without-log-viewer'
+                     ' --with-release-file=%(sysconfdir)s/distro-release'
+                     )
+    def make(r):
+        r.Make('V=1')
+
+    def policy(r):
+        # 
+        r.MakeDirs('%(datadir)s/plymouth/themes/charge')
+        r.Install('charge.plymouth', '%(datadir)s/plymouth/themes/charge/')
+        r.Copy('%(datadir)s/plymouth/themes/glow/{box,bullet,entry,lock}.png',
+               '%(datadir)s/plymouth/themes/charge/')
+
+        # Drop glow
+        r.Remove('%(datadir)s/plymouth/glow/', recursive = True)
+        r.Remove('%(libdir)s/plymouth/glow.so')
+        r.Remove('%(datadir)s/plymouth/themes/glow', recursive = True)
+
+        # Temporary symlink until rc.sysinit is fixed
+        r.Symlink('%(essentialbindir)s/plymouth', '%(bindir)s/')
+        r.Install('boot-duration', '%(datadir)s/plymouth/default-boot-duration')
+        r.Install('boot-duration', '%(localstatedir)s/lib/plymouth')
+
+        # Override plymouth-update-initrd to work dracut or mkinitrd
+        r.Install('plymouth-update-initrd', '%(libexecdir)s/plymouth/plymouth-update-initrd')
+
+        # Add compat script for upgrades
+        r.Install('plymouth-set-default-plugin',' %(sbindir)s/')
+
+        #
+        r.ExcludeDirectories(exceptions = '%(localstatedir)s/run/plymouth')             
+        r.ExcludeDirectories(exceptions = '%(localstatedir)s/spool/plymouth')
+        

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class XDGUD(GnomePackageRecipe):
+    name = 'xdg-user-dirs'
+    version = '0.13'
+    externalArchive='http://user-dirs.freedesktop.org/releases/%(name)s-%(version)s.tar.gz'
+
+    #FL-937 'Projects folder in home directory'
+    patches = ['FL-Projects-folder.patch', 'use-fuzzy.patch']
+
+    def policy(r):
+        r.MakeDirs('%(sysconfdir)s/X11/xinit/xinitrc.d')
+        r.addSource('xdg-user-dirs.sh')
+        r.Install('xdg-user-dirs.sh', '%(sysconfdir)s/X11/xinit/xinitrc.d/', mode = 0755)

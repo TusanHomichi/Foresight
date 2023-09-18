@@ -1,0 +1,22 @@
+diff --git a/ui/main.ui b/ui/main.ui
+index f6abcdb..ea0cfdd 100644
+--- a/ui/main.ui
++++ b/ui/main.ui
+@@ -1,5 +1,5 @@
+ <?xml version="1.0"?>
+-<interface>
++<interface domain="whaawmp">
+   <requires lib="gtk+" version="2.12"/>
+   <object class="GtkAdjustment" id="adjustment1">
+     <property name="upper">110</property>
+diff --git a/ui/preferences.ui b/ui/preferences.ui
+index 8ae88d6..1c69c80 100644
+--- a/ui/preferences.ui
++++ b/ui/preferences.ui
+@@ -1,5 +1,5 @@
+ <?xml version="1.0"?>
+-<interface>
++<interface domain="whaawmp">
+   <object class="GtkAdjustment" id="adjustment1">
+     <property name="upper">100000</property>
+     <property name="lower">0</property>

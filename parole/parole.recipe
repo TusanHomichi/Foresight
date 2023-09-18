@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('xfcepackage')
+class Parole(XfcePackageRecipe):
+    name = 'parole'
+    subtree = 'apps'
+    version = '0.5.4'
+    buildRequires = [
+        'desktop-file-utils:runtime',
+        'gst-plugins-base:devel', 'gstreamer:devel',
+        'libnotify:devel', 'libexo:runtime', 'libxfce4util:devel',
+        'libxml2:devel', 'taglib:devel',
+        'libxfce4ui:devel', 'xfconf:devel'
+    ]

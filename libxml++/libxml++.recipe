@@ -1,0 +1,8 @@
+loadRecipe('gnomepackage')
+class LibXMLPlusPlus(GnomePackageRecipe):
+
+    buildRequires = [ 'libxml2:devel','glib:devel', 'glibmm:devel',
+                      'libsigc++:devel', 'libstdc++:devel', 'doxygen:runtime', 'graphviz:runtime' ]
+
+    name = 'libxml++'
+    version = '2.32.0'

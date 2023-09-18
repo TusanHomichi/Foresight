@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:devel')
+class Keyjnote(BinaryPackageRecipe):
+    name = 'keyjnote'
+    version = '0.10.2'
+ 
+    buildRequires = ['PIL:python', 'PyOpenGL:python',
+            'pygame:python', 'python:devel', 
+            'wxPython:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/keyjnote/KeyJnote-%(version)s.tar.gz')
+        r.addSource('keyjnote', dir='%(bindir)s/')
+        r.SetModes('%(bindir)s/keyjnote', 755)
+        r.macros.pyver = '2.6' 
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+        r.Install('keyjnote.py', '%(sitepkgs)s/')
+        r.CompilePython('%(sitepkgs)s')
+
+    def policy(r):
+        r.Requires('python-ctypes:python', '%(bindir)s/keyjnote')
+        r.Requires('pdftk:runtime', '%(bindir)s/keyjnote')

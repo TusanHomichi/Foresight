@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class ClutterGtk(GnomePackageRecipe):
+
+    name = 'clutter-gtk'
+    version = '1.0.2'
+
+    externalArchive = 'http://www.clutter-project.org/sources/%(name)s/1.0/%(name)s-%(version)s.tar.xz'
+
+    buildRequires = [ 'Mesa:devel', 'gtk:devel', 'clutter:devel', 'expat:devel',
+                      'gobject-introspection:devel', 'gtk3:devel', 'xz:runtime'
+                       ]
+
+    extraConfig = '--disable-gtk-doc --enable-introspection'

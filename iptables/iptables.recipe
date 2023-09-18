@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2004-2013 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Iptables(CPackageRecipe):
+    name = 'iptables'
+    version = '1.4.18'
+
+    buildRequires = [ 'sed:runtime', 'perl:runtime',
+                      'pkgconfig:devel', 'libnfnetlink:devel',
+                      'userspace-kernel-headers:devel',
+                  ]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.addArchive('http://www.netfilter.org/projects/%(name)s/files/')
+
+        r.addSource('iptables.init', dest='%(initdir)s/iptables', mode=0755)
+        r.addSource('iptables-config', dest='%(sysconfdir)s/sysconfig/')
+
+        # r.addPatch('iptables-1.4.9-cloexec.patch')
+        # r.addPatch('iptables-1.4.7-xt_CHECKSUM.patch')
+
+        r.macros.cflags += ' -fno-strict-aliasing '
+        
+        r.Configure(' --enable-devel '
+                    ' --enable-libipq '
+                    ' --bindir=%(essentialbindir)s'
+                    ' --sbindir=%(essentialsbindir)s'
+                    ' --sysconfdir=%(sysconfdir)s'
+                    ' --libdir=%(essentiallibdir)s'
+                    ' --libexecdir=%(essentiallibdir)s'
+                    ' --with-kernel=%(prefix)s'
+                    ' --with-kbuild=%(prefix)s'
+                    ' --with-ksource=%(prefix)s'
+                )
+
+        # Don't use rpath!
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+        r.Remove('include/linux/types.h')
+        r.Make()
+        r.MakeInstall()
+
+        r.Install('include/ip*tables.h', '%(includedir)s/')
+        r.Install('include/iptables/internal.h', '%(includedir)s/iptables/')
+        r.Install('include/libipulog/*.h', '%(includedir)s/libipulog/')
+
+        r.Move('/%(lib)s/pkgconfig', '%(libdir)s/')
+
+        r.Run("sed -e 's;iptables;ip6tables;g' -e 's;IPTABLES;IP6TABLES;g'  < %(destdir)s%(initdir)s/iptables > %(destdir)s%(initdir)s/ip6tables")
+        r.SetModes('%(initdir)s/ip6tables', 0755)
+
+        r.Run("sed -e 's;iptables;ip6tables;g' -e 's;IPTABLES;IP6TABLES;g' < %(destdir)s%(sysconfdir)s/sysconfig/iptables-config > %(destdir)s%(sysconfdir)s/sysconfig/ip6tables-config")
+
+        r.TagSpec('initscript', '%(initdir)s/')
+
+        # create compat symlinks for devel so libs
+        r.MakeDirs('%(libdir)s')
+        r.Run(""" for i in %(destdir)s/%(lib)s/*.so; do
+    ln -s ../../%(lib)s/${i##*/} %(destdir)s%(libdir)s/${i##*/}
+done """)

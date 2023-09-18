@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class M17nDb(AutoPackageRecipe):
+    name = 'm17n-db'
+    version = '1.6.2'
+ 
+    buildRequires = ['gettext:runtime','glibc:locale']
+ 
+    def unpack(r):
+        r.addArchive('http://www.m17n.org/m17n-lib-download/')

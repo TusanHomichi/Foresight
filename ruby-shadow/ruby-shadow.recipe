@@ -1,0 +1,11 @@
+
+class RubyShadow(AutoPackageRecipe):
+    name = 'ruby-shadow'
+    version = '1.4.1'
+    buildRequires = [ 'ruby:runtime', 'ruby:devellib' ]
+
+    def setup(r):
+        r.addArchive('http://ttsky.net/src/')
+        r.Run('ruby extconf.rb --with-cflags="%(cflags)s"')
+        r.Make()
+        r.MakeInstall('sitearchdir=%(destdir)s%(libdir)s/ruby/1.8/')

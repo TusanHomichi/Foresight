@@ -1,0 +1,21 @@
+--- sysvinit-2.86/src/sulogin.c.orig	2008-05-05 19:10:50.000000000 +0300
++++ sysvinit-2.86/src/sulogin.c	2008-05-05 19:10:34.000000000 +0300
+@@ -357,6 +357,18 @@ int main(int argc, char **argv)
+ 	int opt_e = 0;
+ 	pid_t pid, pgrp, ppgrp, ttypgrp;
+ 
++	// if fork() returns error we just ignore it
++	// in parent, we could wait for child to finish, but we'd better
++	//   avoid this, just in case of some bug in splashy_update
++	// in child, we stop splashy
++	if (fork() == 0) {
++		execl("/sbin/splashy_update",
++			"/sbin/splashy_update", "QUIT", NULL);
++		execl("/usr/sbin/splashy_update", // workaround (RPL-2678)
++			"/usr/sbin/splashy_update", "QUIT", NULL);
++		exit(1);
++	}
++
+ 	/*
+ 	 *	See if we have a timeout flag.
+ 	 */

@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+loadSuperClass('rpmpackage')
+class ORBit2(RPMPackageRecipe,GnomePackageRecipe):
+    name = 'ORBit2'
+    version = '2.14.19'
+    rpmRelease = '1.fc14'
+    rpmPatches = ['ORBit2-2.14.3-multilib.patch', 'ORBit2-2.14.3-ref-leaks.patch']
+
+    buildRequires = [ 'libIDL:devel', 'glib:devel', 'popt:devel' ]
+
+    docs = ['AUTHORS', 'COPYING', 'ChangeLog', 'NEWS', 'README', 'TODO']
+
+    def build(r):
+        r.Run('libtoolize --force --copy; aclocal; autoconf')
+        r.Configure('--disable-gtk-doc --enable-purify --disable-static')
+        r.Make()
+        r.MakeInstall()
+
+    def install(r):
+        if Arch.x86:
+            r.macros.wordsize = '32'
+        else:
+            r.macros.wordsize = '64'
+
+        r.Move('%(includedir)s/orbit-2.0/orbit/orbit-config.h', '%(includedir)s/orbit-2.0/orbit/orbit-config-%(wordsize)s.h')
+
+        r.Create('%(includedir)s/orbit-2.0/orbit/orbit-config.h', contents = """
+#ifndef ORBIT_MULTILIB
+#define ORBIT_MULTILIB
+
+#include <bits/wordsize.h>
+
+#if __WORDSIZE == 32
+# include "orbit-config-32.h"
+#elif __WORDSIZE == 64
+# include "orbit-config-64.h"
+#else
+# error "unexpected value for __WORDSIZE macro"
+#endif
+
+#endif 
+""")
+
+        r.ComponentSpec('devel', '%(bindir)s/orbit-idl-2',
+                        '%(bindir)s/ior-decode-2', '%(bindir)s/typelib-dump')
+        r.Requires('indent:runtime', '%(bindir)s/orbit-idl-2')
+        r.Requires('glib:devel', '%(libdir)s/pkgconfig/ORBit-2.0.pc')

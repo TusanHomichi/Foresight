@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MonoDevelop(AutoPackageRecipe):
+    name = 'monodevelop-vala'
+    version = '2.2'
+    buildRequires = [
+		'gtk-sharp:devellib',
+		'gtk-sharp:cil',
+		'gnome-sharp:devellib',
+		'mono-addins:devellib',
+		'mono-addins:cil',
+		'mono:cil',
+		'mono:devel',
+		'mono:runtime',
+		'monodevelop:devellib',
+		'pkgconfig:devel',
+		'vala:runtime',
+        'vtg:devel',
+        'autoconf:runtime', # needed for afrodite patch
+        'automake:runtime' # needed for afrodite patch
+		]
+
+    def unpack(r):
+        r.addArchive ('http://ftp.novell.com/pub/mono/sources/monodevelop-vala/')
+        r.addPatch('md-vala-2.2-libdir.patch')
+        # Can probably be removed when newer version gets in
+        # Can remove all r.Run if afrodite patch not needed
+        r.addPatch('afrodite.patch')
+        r.Run('rm -f configure')
+        r.Run('aclocal')
+        r.Run('autoconf')
+

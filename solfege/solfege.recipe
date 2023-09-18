@@ -1,0 +1,39 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadRecipe('gnomepackage')
+class Solfege(GnomePackageRecipe):
+    name = 'solfege'
+    version = '3.20.8'
+
+    packageSummary = "Solfege is free music education software."
+    packageDescription = "Use it to train your rhythm, interval, scale and chord skills. Solfege - Smarten your ears!"
+ 
+    buildRequires = [
+                    'bzr:runtime',
+                    'desktop-file-utils:runtime',
+                    'gettext:runtime',
+                    'ghostscript:runtime', 
+                    'gnome-doc-utils:runtime', 
+                    'gnome-python-extras:python', 
+                    'guile:devellib',
+                    'librsvg:runtime', 
+                    'libxslt:runtime', 
+                    'lilypond:runtime',
+                    'pkgconfig:devel', 
+                    'pygobject:python', 
+                    'pygtk:devel',
+                    'pygtk:python',
+                    'python:devel', 
+                    'swig:runtime', 
+                    'texinfo:runtime',  
+                    'txt2man:runtime',
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/solfege/solfege-stable/%(version)s/')
+        r.Requires('TiMidity:runtime', '%(bindir)s/solfege')
+        r.Replace('AudioVideo;Audio;', '', 'solfege.desktop')

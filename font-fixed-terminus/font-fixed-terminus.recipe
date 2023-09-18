@@ -1,0 +1,22 @@
+class FontFixedTerminus(AutoPackageRecipe):
+
+
+    name = 'font-fixed-terminus'
+    version = '4.28'
+
+    buildRequires = [ 'bdftopcf:runtime',
+                      'fontconfig:runtime',
+                      'mkfontdir:runtime',
+                      'perl:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://www.is-vn.bg/hamster/terminus-font-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--x11dir=%(datadir)s/fonts/misc')
+
+    def policy(r):
+        r.MakeDirs('/lib/kbd/consolefonts')
+        r.Move('%(datadir)s/consolefonts/*', '/lib/kbd/consolefonts/')
+        r.PackageSpec('font-fixed-terminus-console', '/lib/kbd/consolefonts/.*')
+

@@ -1,0 +1,22 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class HalCupsUtils(AutoPackageRecipe):
+
+    name = 'hal-cups-utils'
+    version = '0.6.19'
+
+    buildRequires = [
+        'cups:devel', 'dbus-glib:devel', 'dbus-python:python', 'dbus:devel',
+        'hal:devel', 'pkgconfig:devel', 'pycups:python', 'python:devel',
+        'system-config-printer:python'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('https://fedorahosted.org/hal-cups-utils/attachment/wiki/ProjectReleases/hal-cups-utils-%(version)s.tar.gz?format=raw')
+
+        r.Replace('lib/cups/backend', '%(lib)s/cups/backend', 'configure')
+

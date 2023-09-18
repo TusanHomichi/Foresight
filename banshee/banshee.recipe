@@ -1,0 +1,131 @@
+#
+# Copyright (c) 2005-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#   make sure to use 'cvc refresh' before building, to get latest hyena
+#
+
+class Banshee(AutoPackageRecipe):
+    name = 'banshee'
+    version = '2.6.2'
+
+    summary = 'Banshee is a multimedia management and playback application for GNOME'
+    packageDescription = """
+Import, organize, and discover new music with Banshee through its simple and powerful interface and wide array of innovative features. Create your own radio stations or listen to a friends' through Last.fm integration; experience automatic cover art fetching as you listen; and easily browse, search, and control your media collection.
+"""
+
+    buildRequires = [
+    	'Mesa:devel', 
+    	'libXcomposite:devel', 
+	    'libXdamage:devel', 
+    	'libXfixes:devel',
+        'GConf:devel',
+        'GConf:runtime',
+        'ORBit2:devel',
+        'atk:devel',
+        'avahi-sharp:cil',
+        'avahi-sharp:devellib',
+        'cairo:devel',
+        'dbus-sharp-glib:cil',
+        'dbus-sharp-glib:devellib',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'gdata-sharp:cil',
+        'gdata-sharp:devellib',
+        'glib:devel',
+        'gnome-sharp:cil',
+        'gnome-sharp:devellib',
+        'gnome-vfs:devel',
+        'gst-plugins-base:devel',
+        'gst-plugins-good:lib',
+        'gstreamer:devel',
+        'gstreamer:runtime',
+        'gtk-sharp:cil',
+        'gtk-sharp:devellib',
+        'gtk-sharp-beans:cil',
+        'gtk-sharp-beans:devellib',
+        'gudev-sharp:devellib',
+        'gudev-sharp:cil',
+        'gudev:devel',
+        'gio-sharp:devellib',
+        'gkeyfile-sharp:cil',
+        'gkeyfile-sharp:devellib',
+        'gtk:devel',
+        'gtk:runtime',
+        'intltool:runtime',
+        'libX11:devel',
+        'libXrandr:devel',
+        'libXrender:devel',
+        'libmtp:devellib',
+        'libpng:devel',
+        'libtool:runtime',
+        'libxcb:devel',
+        'libxml2:devel',
+        'mono-addins:cil',
+        'mono-addins:cil',
+        'mono-addins:devellib',
+        'mono-zeroconf:devellib',
+        'mono:cil',
+        'mono:devel',
+        'mono:runtime',
+        'ndesk-dbus-glib:cil',
+        'ndesk-dbus-glib:devellib',
+        'ndesk-dbus:cil',
+        'ndesk-dbus:devellib',
+        'notify-sharp:cil',
+        'notify-sharp:devellib',
+        'pango:devel',
+        'perl:runtime',
+        'pixman:devel',
+        'pkgconfig:devel',
+        'sqlite:devel',
+        'taglib-sharp:cil',
+        'taglib-sharp:devellib',
+        'xcb-util:devel',
+        'webkit-sharp:cil',
+        'webkit-sharp:devellib',
+        'zlib:devel',
+        'boo:devellib',
+        'boo:cil',
+        # FIXME: clutter is busting it in x86_64 ...
+        # 'clutter:devel', 
+        # XXX seems to induce subtle runtime breackage when available...
+        # 'libXxf86vm:devel',
+        'WebKit:devel', 
+        'libsoup:devel', 
+        # Seems it will conflict files, when activated
+        #'shared-mime-info:runtime',
+        'which:runtime',
+        'gnome-doc-utils:runtime',
+        'intltool:devel',
+        'libgpod:devellib',
+        'xz:runtime',
+        'libgpod:cil',
+        ]
+
+    def unpack(r):
+        #r.macros.tag=r.version.split('+')[-1]
+        r.Environment('MONO_MODULE_LIBS',"%(libdir)s/mono/")
+        # Run cvc refresh before cvc cook
+        # r.addGitSnapshot('git://git.gnome.org/banshee', tag='ab6fbdf03b33fe98f5111bee2cbc1ad4b76528a1')
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/banshee/2.6/')
+
+
+    def configure(r):
+        # enabling clutter support bellow is a good way to induce crashes at startup...
+        # r.Run('./autogen.sh')
+        r.Configure(' --disable-clutter --disable-docs --enable-karma --enable-mtp --with-vendor-build-id="Foresight"'
+                    ' --enable-soundmenu')
+
+    def policy(r):
+        # r.Make('check')
+        r.Requires('mono-addins:cil', '%(bindir)s/%(name)s')
+        r.Requires('libmtp:lib', '%(bindir)s/%(name)s')
+        r.Requires('media-player-info:lib', '%(bindir)s/%(name)s')
+        r.Requires('gkeyfile-sharp:cil', '%(bindir)s/%(name)s')
+        r.Requires('gudev-sharp:cil', '%(bindir)s/%(name)s')
+        r.Remove('%(datadir)s/applications/mimeinfo.cache')

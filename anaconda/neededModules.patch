@@ -1,0 +1,33 @@
+--- scripts/mk-images.pre	2011-02-07 15:21:16.516948000 +0000
++++ scripts/mk-images	2011-02-07 15:22:59.008948000 +0000
+@@ -58,17 +58,21 @@
+ TOPDIR=$(cd $TOPDIR; pwd)
+ 
+ # modules that are needed.  this is the generic "needed for every arch" stuff
+-COMMONMODS="fat vfat nfs sunrpc lockd floppy cramfs loop edd pcspkr squashfs ipv6"
+-USBMODS="ohci-hcd uhci-hcd ehci-hcd hid mousedev usb-storage sd_mod sr_mod ub appletouch"
++COMMONMODS="fat vfat nfs sunrpc lockd floppy cramfs loop edd pcspkr squashfs ipv6 8021q virtio_pci netconsole"
++UMSMODS="ums-jumpshot ums-datafab ums-freecom ums-usbat ums-sddr55 ums-onetouch ums-alauda ums-karma ums-sddr09 ums-cypress"
++USBMODS="$UMSMODS ohci-hcd uhci-hcd ehci-hcd hid mousedev usb-storage sd_mod sr_mod ub appletouch bcm5974"
+ FIREWIREMODS="ohci1394 sbp2 fw-ohci fw-sbp2 firewire-sbp2 firewire-ohci"
+-IDEMODS="ide-cd"
+-SCSIMODS="sr_mod sg st sd_mod scsi_mod iscsi_tcp qla1280 qla2xxx qla4xxx"
+-FSMODS="fat msdos vfat ext2 ext3 reiserfs jfs xfs gfs2 lock_nolock"
+-LVMMODS="dm-mod dm-zero dm-snapshot dm-mirror dm-multipath dm-round-robin dm-emc dm-crypt"
+-RAIDMODS="md raid0 raid1 raid5 raid6 raid456 raid10"
+-SECSTAGE="$RAIDMODS $LVMMODS $FSMODS $IDEMODS $SCSIMODS"
++SDMODS="mmc-block sdhci sdhci-pci"
++IDEMODS="ide-cd ide-cd_mod ide-cs"
++# FIXME force presence of these too, will make SPI happy
++EXTRASCSIMODS="qla1280 qla2xxx qla4xxx megaraid megaraid_mbox megaraid_mm megaraid_sas mptscsih mptctl mptsas scsi_transport_spi "
++SCSIMODS="sr_mod sg st sd_mod scsi_mod iscsi_tcp iscsi_ibft $EXTRASCSIMODS"
++FSMODS="fat msdos vfat ext2 ext3 ext4 reiserfs jfs xfs gfs2 cifs fuse btrfs hfsplus lock_nolock"
++LVMMODS="dm-mod dm-zero dm-snapshot dm-mirror dm-multipath dm-round-robin dm-crypt"
++RAIDMODS="md raid0 raid1 raid10 raid5 raid6 raid456 linear dm-mem-cache dm-region_hash dm-message"
++CRYPTOMODS="aead aes_generic ansi_cprng anubis arc4 authenc blowfish cast5 cast6 cbc ccm chainiv crypto_algapi crypto_api crypto_blkcipher crypto_hash crypto_null cryptomgr ctr deflate des ecb eseqiv gf128mul hmac khazad krng md4 md5 michael_mic rng seqiv serpent sha256 sha512 tcrypt tea tgr192 twofish wp512 xcbc xts"
+ PCMCIASOCKMODS="yenta_socket i82365 tcic pcmcia"
+-INITRDMODS="$USBMODS $FIREWIREMODS $IDEMODS $SCSIMODS $FSMODS $LVMMODS $RAIDMODS $COMMONMODS $PCMCIASOCKMODS =scsi =net"
++INITRDMODS="$USBMODS $FIREWIREMODS $IDEMODS $SCSIMODS $FSMODS $LVMMODS $RAIDMODS $CRYPTOMODS $COMMONMODS $PCMCIASOCKMODS $SDMODS =scsi =net =drm"
+ 
+ # Set, verify, and create paths
+     KERNELPATH=$1

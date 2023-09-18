@@ -1,0 +1,10 @@
+--- videothumbnailer.cpp	2009-06-22 01:13:12.000000000 +0200
++++ videothumbnailer-copy.cpp	2009-09-20 23:04:08.000000000 +0200
+@@ -34,6 +34,7 @@
+ #include <assert.h>
+ #include <algorithm>
+ #include <sys/stat.h>
++#include <errno.h>
+ 
+ using namespace std;
+ 

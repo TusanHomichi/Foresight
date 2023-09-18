@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Scons(PackageRecipe):
+    name = 'scons'
+    version = '2.2.0'
+
+    buildRequires = [ 'python-setuptools:python', 'python:devel', 'python:bin' ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/scons/scons/%(version)s/scons-%(version)s.tar.gz')
+
+        r.PythonSetup(data=(' --install-data=%(prefix)s'
+                            ' --no-version-script'
+                            ' --standalone-lib'
+                            ' --install-scripts=%(bindir)s'))
+
+        r.Remove('%(libdir)s/scons/*.egg-info')

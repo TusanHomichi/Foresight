@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.freedesktop.Avahi
+Exec=/usr/sbin/avahi-daemon 
+User=root

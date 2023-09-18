@@ -1,0 +1,72 @@
+loadSuperClass('fptoolspackage.recipe')
+class ghc(FpToolsPackageRecipe):
+    name = 'ghc'
+    version = '6.4.2'
+
+# Stage 2 bootstrap, which builds haddock from surce
+    Flags.stage2 = False
+
+    if not Flags.stage1:
+    	buildRequires = ['ncurses:devel']
+	if not Flags.stage2:
+        	buildRequires.extend(['haddock:runtime'])
+
+    def unpack(r):
+    	if Flags.stage1:
+    		r.addArchive('http://www.haskell.org/%(name)s/dist/%(version)s/%(name)s-%(version)s-%(target)s.tar.bz2')
+    	else:
+        	r.addArchive('http://www.haskell.org/%(name)s/dist/%(version)s/%(name)s-%(version)s-src.tar.bz2')
+        r.macros.haddockVersion = '0.7'
+        if Flags.stage2:
+        	r.addArchive('http://www.haskell.org/haddock/haddock-%(haddockVersion)s-src.tar.gz', dir='%(name)s-%(version)s')
+        	r.Run('cd %(builddir)s/haddock-%(haddockVersion)s && ./configure && make && cd %(builddir)s && ln -s haddock-%(haddockVersion)s/haddock')
+
+    def configure(r):
+    	extraConfig = ''
+	if Flags.stage1:
+		extraConfig += ' --target %(target)s'
+    	if Flags.stage2:
+    		extraConfig += ' --enable-src-tree-haddock'
+    	r.Configure(extraConfig)
+
+    def makeinstall(r):
+    	r.MakePathsInstall('XMLDocWays="html" ProjectsDontInstall="haddock"', installtarget='install install-docs')
+	r.fixup()
+	r.Symlink('%(libexecdir)s/*', '%(libdir)s/')
+	r.Create('%(tagdescriptiondir)s/ghc-packagedesc', contents="""file          %(taghandlerdir)s/ghc-packagedesc
+name          GHC package installation file
+description   Describes a GHC installation package
+implements    files update
+implements    files preremove
+datasource    stdin
+include       %(datadir)s/ghc-textdb/.*""",
+macros=True)
+	r.Create('%(taghandlerdir)s/ghc-packagedesc', contents=r"""#! /bin/bash -p
+if [ "$2" = "preremove" ]; then
+	while read f; do
+		ghc-pkg unregister `sed -n -e 's|Name: \(.*\)$|\1|Ip' $f` >/dev/null
+	done
+else
+# Update
+	exec xargs -L1 ghc-pkg $2 >/dev/null
+fi
+""", mode=0755)
+
+    def policy(r):
+        r.PackageSpec('ghc-prof', '.*\\.p_hi', '.*_p\\.a')
+# Ugly - can we avoid listing all the files here?
+        r.ComponentSpec('ghc:runtime',
+		'%(libdir)s/cgprof',
+		'%(libdir)s/%(name)s-%(version)s',
+		'%(libdir)s/%(name)s-asm',
+		'%(libdir)s/%(name)s-pkg.bin',
+		'%(libdir)s/%(name)s-split',
+		'%(libdir)s/hsc2hs-bin',
+		'%(libdir)s/unlit')
+	r.Requires('ghc:runtime', '%(libdir)s/%(name)s-%(version)s/imports/GHC/Base.p_hi')
+        r.Requires('gcc:runtime', '%(libexecdir)s/%(name)s-%(version)s')
+        r.Requires('gmp:devel', '%(libexecdir)s/%(name)s-%(version)s')
+	r.Requires('findutils:runtime', '%(taghandlerdir)s/ghc-packagedesc')
+	r.Requires('sed:runtime', '%(taghandlerdir)s/ghc-packagedesc')
+	r.Provides('file', '%(bindir)s/runghc')
+	r.Provides('file', '%(bindir)s/runhaskell')

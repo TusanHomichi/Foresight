@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MatchboxKeyboard(AutoPackageRecipe):
+    name = 'matchbox-keyboard'
+    version = '0.1'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'libXext:devel', 'libXrender:devel', 'libXtst:devel', 'libfakekey:devel', 'libpng:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'zlib:devel', 'gnome-common:runtime', 'gnome-common:devel', 'libtool:devel', 'libtool:runtime', 'inputproto:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://matchbox-project.org/sources/matchbox-keyboard/0.1/')
+
+    def configure(r):
+        r.Configure('--disable-cairo --disable-gtk-im')

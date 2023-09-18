@@ -1,0 +1,11 @@
+diff -u --recursive mkinitrd-6.0.87.orig/nash/Makefile mkinitrd-6.0.87/nash/Makefile
+--- mkinitrd-6.0.87.orig/nash/Makefile	2009-06-16 09:28:38.000000000 +0100
++++ mkinitrd-6.0.87/nash/Makefile	2009-08-25 11:12:55.266004935 +0100
+@@ -34,6 +34,7 @@
+ CFLAGS += -I$(TOPDIR)/nash/include -I$(TOPDIR)/bdevid/include
+ CFLAGS += $(shell pkg-config --cflags libnl-1)
+ 
++LDFLAGS += -Wl,--wrap,open,--wrap,fopen,--wrap,opendir,--wrap,socket,--wrap,pipe,--wrap,mkdir,--wrap,access
+ LDFLAGS += -Wl,-rpath-link,$(TOPDIR)/bdevid:$(TOPDIR)/nash
+ 
+ nash_LIBPATHS = -L$(TOPDIR)/nash -L$(TOPDIR)/bdevid -L/$(LIB)

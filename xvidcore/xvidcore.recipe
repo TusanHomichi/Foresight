@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xvidcore(AutoPackageRecipe):
+    name = 'xvidcore'
+    version = '1.3.2'
+ 
+    buildRequires = ['nasm:runtime', 'yasm:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.xvid.org/downloads/')
+        r.mainDir('%(name)s/build/generic')
+
+    def policy(r):
+        r.Symlink('%(libdir)s/libxvidcore.so.4.3', '%(libdir)s/libxvidcore.so.4')
+        r.Symlink('%(libdir)s/libxvidcore.so.4.3', '%(libdir)s/libxvidcore.so')

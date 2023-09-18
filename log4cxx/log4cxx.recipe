@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Log4cxx(AutoPackageRecipe):
+    name = 'log4cxx'
+    version = '0.10.0'
+ 
+    buildRequires = ['apr-util:devel', 'apr:devel', 'db:devel', 'doxygen:runtime', 'expat:devel', 'graphviz:runtime', 'libstdc++:devel', 'openldap:devel', 'sqlite:devel', 'util-linux:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://apache.mirrors.spacedump.net//logging/log4cxx/%(version)s/apache-log4cxx-%(version)s.tar.gz')
+        r.addPatch('log4cxx-cstring.patch')
+        r.Run(''' sed -i.libdir_syssearch -e  "/sys_lib_dlsearch_path_spec/s|/usr/lib |/usr/lib /usr/lib64 /lib /lib64 |" configure ''')

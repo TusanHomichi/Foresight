@@ -1,0 +1,11 @@
+--- nethack-3.4.3/sys/unix/unixmain.c	2003-12-07 18:39:13.000000000 -0500
++++ nethack-3.4.3-nwc/sys/unix/unixmain.c	2009-10-05 09:05:23.000000000 -0400
+@@ -327,7 +327,7 @@
+ 				  pw = getpwuid(uid);
+ 			      }
+ 			  }
+-			  if (pw && !strcmp(pw->pw_name,WIZARD)) {
++			  if (1) {
+ 			      wizard = TRUE;
+ 			      break;
+ 			  }

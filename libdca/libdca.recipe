@@ -1,0 +1,7 @@
+class libdca(AutoPackageRecipe):
+    name = 'libdca'
+    version = '0.0.5'
+
+    def unpack(r):
+       	r.addArchive('http://download.videolan.org/pub/videolan/%(name)s/%(version)s/%(name)s-%(version)s.tar.bz2')
+        r.macros.cflags += ' -fPIC'

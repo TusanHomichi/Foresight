@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2011 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Clamav(AutoPackageRecipe):
+    name = 'clamav'
+    version = '0.98.1'
+ 
+    buildRequires = ['bzip2:devel', 'chkconfig:runtime', 'dejagnu:runtime', 'doxygen:runtime', 'graphviz:runtime', 'groff:runtime', 'libstdc++:devel', 'libtool:devel', 'ncurses:devel', 'tcl:runtime', 'valgrind:devel', 'zip:runtime', 'zlib:devel']
+ 
+    def configure(r):
+        r.Configure( ' --disable-zlib-check'
+                    ' --disable-clamav'
+                    ) 
+   
+    def policy(r):
+    
+        r.Requires('info-clamav:user', '/etc/conary/userinfo/clamav')
+        r.MakeDirs('%(datadir)s/clamav', mode=0775)
+        r.Ownership('clamav', 'clamav', '%(datadir)s/clamav')
+        r.Ownership('clamav', 'clamav', '%(datadir)s/clamav/')
+        r.Create('%(localstatedir)s/log/clamd.log', mode=0640)
+        r.Ownership('clamav', 'clamav', '%(localstatedir)s/log/clamd.log')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/log/clamd.log')
+
+        r.Create('%(localstatedir)s/log/freshclam.log', mode=0640)
+        r.Ownership('clamav', 'clamav', '%(localstatedir)s/log/freshclam.log')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/log/freshclam.log')
+
+        r.MakeDirs('%(localstatedir)s/run/clamav', mode=0770)
+        r.Ownership('clamav', 'clamav', '%(localstatedir)s/run/clamav')
+
+
+
+    def unpack(r):
+        r.addArchive(
+           'http://downloads.sourceforge.net/project/clamav/clamav/%(version)s/clamav-%(version)s.tar.gz' )
+        #r.addSource('clamd.conf', dest='%(sysconfdir)s/clamd.conf', mode=0644)
+        r.addPatch('clamd.conf.patch')
+        r.addPatch('freshclam.conf.patch')
+        r.Install('etc/clamd.conf.sample', '%(sysconfdir)s/clamd.conf', mode=0644)
+        r.Install('etc/freshclam.conf.sample', '%(sysconfdir)s/freshclam.conf', mode=0644)
+        r.addSource('clamd.init', dest='%(initdir)s/clamd', mode=0755)
+        r.addSource('freshclam.init', dest='%(initdir)s/freshclam', mode=0755)
+        r.addSource('clamassassin', dest='%(bindir)s/clamassassin', mode=0555)
+

@@ -1,0 +1,73 @@
+From 88b72958bebd1770e45a4af2dc9fec75aaf1f2de Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Fri, 30 Oct 2009 04:53:15 +0100
+Subject: [PATCH] tdb: use O_CLOEXEC if available
+
+---
+ src/pulsecore/database-tdb.c |   43 +++++++++++++++++++++++++++++++++--------
+ 1 files changed, 34 insertions(+), 9 deletions(-)
+
+diff --git a/src/pulsecore/database-tdb.c b/src/pulsecore/database-tdb.c
+index b79d283..4e782d6 100644
+--- a/src/pulsecore/database-tdb.c
++++ b/src/pulsecore/database-tdb.c
+@@ -66,6 +66,39 @@ void pa_datum_free(pa_datum *d) {
+     pa_zero(d);
+ }
+ 
++static struct tdb_context *tdb_open_cloexec(
++        const char *name,
++        int hash_size,
++        int tdb_flags,
++        int open_flags,
++        mode_t mode) {
++
++    /* Mimics pa_open_cloexec() */
++
++    struct tdb_context *c;
++
++#ifdef O_NOCTTY
++    open_flags |= O_NOCTTY;
++#endif
++
++#ifdef O_CLOEXEC
++    errno = 0;
++    if ((c = tdb_open(name, hash_size, tdb_flags, open_flags | O_CLOEXEC, mode)))
++        goto finish;
++
++    if (errno != EINVAL)
++        return NULL;
++#endif
++
++    errno = 0;
++    if (!(c = tdb_open(name, hash_size, tdb_flags, open_flags, mode)))
++        return NULL;
++
++finish:
++    pa_make_fd_cloexec(tdb_fd(c));
++    return c;
++}
++
+ pa_database* pa_database_open(const char *fn, pa_bool_t for_write) {
+     struct tdb_context *c;
+     char *path;
+@@ -73,15 +106,7 @@ pa_database* pa_database_open(const char *fn, pa_bool_t for_write) {
+     pa_assert(fn);
+ 
+     path = pa_sprintf_malloc("%s.tdb", fn);
+-    errno = 0;
+-    c = tdb_open(path, 0, TDB_NOSYNC|TDB_NOLOCK,
+-                 (for_write ? O_RDWR|O_CREAT : O_RDONLY)|O_NOCTTY
+-#ifdef O_CLOEXEC
+-                 |O_CLOEXEC
+-#endif
+-                 , 0644);
+-
+-    if (c)
++    if ((c = tdb_open_cloexec(path, 0, TDB_NOSYNC|TDB_NOLOCK, (for_write ? O_RDWR|O_CREAT : O_RDONLY), 0644)))
+         pa_log_debug("Opened TDB database '%s'", path);
+ 
+     pa_xfree(path);
+-- 
+1.6.3.3
+

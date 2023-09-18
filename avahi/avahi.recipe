@@ -1,0 +1,73 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Avahi(CPackageRecipe):
+    name = 'avahi'
+    version = '0.6.28'
+
+    # do not add graphviz:runtime as a build req... it causes a loop:
+    # gnome-vfs -> avahi -> graphviz -> gnome-vfs
+    buildRequires = [ 'dbus:devel', 'doxygen:runtime', 'gdbm:devel',
+        'glib:devel', 'perl:runtime', 'pkgconfig:devel', 'gtk:devel',
+        'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+        'libglade:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel',
+        'zlib:devel', 'expat:devel', 'pygtk:python', 'libXmu:devel',
+        'pygobject:python', 'pycairo:python', 'dbus-python:python', 'gtk-sharp:devellib', 'gtk-sharp:cil',
+        'desktop-file-utils:runtime', 'mono:lib', 'mono:runtime', 'mono:devel', 'mono:cil',
+        'libdaemon:devel', 'qt:devel',
+        'libX11:devel', 'libXext:devel', 'libXrender:devel', 'libXt:devel',
+        'libjpeg:devel', 'libXi:devel', 'libXrandr:devel', 'libXcursor:devel',
+        'libXinerama:devellib', 'libXft:devel', 'libSM:devel', 'Mesa:devel', 'Mesa:devellib',
+        'libICE:devel', 'desktop-file-utils:runtime', 'libstdc++:devel', 'intltool:runtime',
+        'libcap:devel', 'chkconfig:runtime', 'pygobject:devel', 'libXinerama:devel', 'qt4:devel',
+        'python:devel', 'gettext:runtime', 
+    ]
+
+    def setup(r):
+        r.addArchive('http://avahi.org/download/')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+
+        r.Configure(' --with-distro=fedora --enable-qt3 --enable-qt4'
+                    ' --enable-mono --with-avahi-priv-access-group=avahi'
+                    ' --enable-compat-libdns_sd'
+                    # commented for now
+                    # ' --with-autoipd-user=avahi-autoipd --with-autoipd-group=avahi-autoipd'
+                    ' --enable-compat-howl'
+                    ' --disable-gtk3 '
+                    )
+
+        r.Make()
+        r.MakeInstall()
+        r.UtilizeUser('avahi', '%(bindir)s/.*')
+
+        # qt3
+        r.PackageSpec('avahi-qt3', '%(includedir)s/avahi-qt3/')
+        r.PackageSpec('avahi-qt3', '%(libdir)s/libavahi-qt3.*')
+        r.PackageSpec('avahi-qt3', '%(libdir)s/pkgconfig/avahi-qt3.pc')
+
+        # qt4
+        r.PackageSpec('avahi-qt4', '%(includedir)s/avahi-qt4/')
+        r.PackageSpec('avahi-qt4', '%(libdir)s/libavahi-qt4.*')
+        r.PackageSpec('avahi-qt4', '%(libdir)s/pkgconfig/avahi-qt4.pc')
+
+        # glib
+        r.PackageSpec('avahi-glib', '%(includedir)s/avahi-glib/')
+        r.PackageSpec('avahi-glib', '%(libdir)s/libavahi-glib.*')
+        r.PackageSpec('avahi-glib', '%(libdir)s/pkgconfig/avahi-glib.pc')
+
+        # mono
+        r.PackageSpec('avahi-sharp', '%(libdir)s/mono/')
+        r.PackageSpec('avahi-sharp', '%(libdir)s/monodoc/')
+        r.PackageSpec('avahi-sharp', '%(libdir)s/pkgconfig/avahi-sharp.pc')
+
+        # tools for browsing zeroconf shares
+        r.PackageSpec('avahi-tools', '%(bindir)s/.*')
+        r.PackageSpec('avahi-tools', '%(mandir)s/man1/.*')
+        r.PackageSpec('avahi-tools', '%(datadir)s/applications/.*')
+
+        #Need a link to the avahi user
+        r.Requires('info-avahi:user', '%(sbindir)s/avahi-daemon')
+

@@ -1,0 +1,8 @@
+class info_rtkit(UserInfoRecipe):
+    name = 'info-rtkit'
+    version = '1'
+
+    def setup(r):
+        r.User('rtkit', 6667, groupid=6667, comment='RealtimeKit',
+               shell = '/sbin/nologin',
+               homedir='/proc')

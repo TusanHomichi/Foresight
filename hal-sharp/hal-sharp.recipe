@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Halsharp(AutoPackageRecipe):
+    name = 'hal-sharp'
+    version = '20060914'
+    buildRequires = [ 'hal:devel', 'mono:devel', 'automake:runtime', 'mono:runtime', 'mono:cil',
+        'autoconf:runtime', 'pkgconfig:devel', 'dbus:devel', 'dbus-glib:devel',
+        'glib:devel', ]
+
+    def unpack(r):
+        # source obtained by the following command:
+        # svn co svn://svn.myrealbox.com/source/trunk/hal-sharp
+        r.addArchive('http://people.rpath.com/~smithj/')
+        r.Automake(autoMakeArgs='-a')
+

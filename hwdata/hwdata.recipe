@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Hwdata(CPackageRecipe):
+    name = 'hwdata'
+    version = '0.234'
+
+    def setup(r):
+        r.addGitSnapshot('http://git.fedorahosted.org/git/hwdata.git',
+                         tag='e5856be396537253b3add3e513ba8fccd8db4571')
+        r.MakeInstall()
+        r.Config('%(sysconfdir)s/modprobe.d/blacklist.conf')
+        r.ExcludeDirectories(exceptions='%(datadir)s/hwdata/videoaliases')

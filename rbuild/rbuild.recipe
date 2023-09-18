@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2008-2010 rPath, Inc.
+#               2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class rBuild(BuildPackageRecipe):
+    name = 'rbuild'
+    version = '1.2.7'
+    tag = 'a58a68b'
+
+    if tag:
+        version += '_' + tag
+
+    buildRequires = [
+        'python:devel',
+        'rmake:python',
+        'rpath-product-definition:python',
+        'rpath-common:python',
+        'util-linux:runtime',
+    ]
+
+    def setup(r):
+        if r.tag:
+            r.addMercurialSnapshot('https://bitbucket.org/rpathsync/rbuild/',
+                                   tag=r.tag)
+
+        r.Make()
+        r.MakeInstall('lib=%(lib)s')

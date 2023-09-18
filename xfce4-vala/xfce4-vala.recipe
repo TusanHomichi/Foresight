@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2006 - 2008 rPath, Inc.
+# Copyright (c) 2008 - 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('xfcepackage')
+class Xfce4Vala(XfcePackageRecipe):
+
+    name = 'xfce4-vala'
+    version = '4.10.3'
+    subtree = 'bindings'
+
+    buildRequires = ['vala:devel', 'vala:runtime', 'libxfce4util:devel',
+                     'libxfce4ui:devel', 'libexo:devel', 'xfce4-panel:devel', 
+                     'autoconf:runtime', 'automake:runtime', 'which:runtime', 
+                     'xfce4-dev-tools:runtime', 'garcon:devel',
+                    ]
+
+    XfcePackageRecipe.extraConfig += ' --with-vala-api=0.20'
+
+#    def unpack(r):
+#        r.addArchive('http://git.xfce.org/bindings/xfce4-vala/snapshot/xfce4-vala-4.10.2.tar.bz2')
+#        r.Environment('VALA_CFLAGS', '%(includedir)s/vala-0.20')
+#        r.Environment('VALA_LIBS', '%(libdir)s')
+#        r.Run('./autogen.sh')

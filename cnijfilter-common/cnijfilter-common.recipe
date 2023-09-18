@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('binarypackage')
+class CnijfilterCommon(BinaryPackageRecipe):
+    name = 'cnijfilter-common'
+    version = '3.00'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        
+        r.macros.site = 'http://gdlp01.c-wss.com/gds/8/0100001598/01/'
+
+        dist = [
+            ('cnijfilter-common-3.00-1.i386.rpm'),
+        ]
+        for (rpm) in dist:
+            r.addArchive('%(site)s/'+rpm, dir='/')
+

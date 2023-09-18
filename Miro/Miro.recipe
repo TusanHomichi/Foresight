@@ -1,0 +1,80 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2007-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class Miro(CPackageRecipe):
+    name = 'Miro'
+    version = '6.0'
+ 
+    buildRequires = [
+        'PIL:python',
+        'Pyrex:runtime',
+        'WebKit:devel',
+        'atk:devel',
+        'boost:devel',
+        'bsddb3:python',
+        'cairo:devel',
+        'chardet:python',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'ffmpeg:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'glib:devel',
+        'gnome-python-extras:python',
+        'gnome-python:python',
+        'gst-python:python',
+        'gtk:devel',
+        'libX11:devel',
+        'libXrender:devel',
+        'libXv:devel', 
+        'libappindicator:python',
+        'libgcc:devellib',
+        'libpng:devel',
+        'libsoup:devel',
+        'libstdc++:devel',
+        'libtorrent-rasterbar:devel',
+        'libtorrent-rasterbar:python',
+        'libxcb:devel',
+        'mutagen:python',
+        'mx:python',
+        'notify-python:python',
+        'openssl:devel',
+        'pango:devel',
+        'pixman:devel',
+        'pkgconfig:devel',
+        'pycairo:python',
+        'pycurl:python',
+        'pygtk:devel',
+        'python-setuptools:python',
+        'python-simplejson:python',
+        'python-sqlite:python',
+        'python:devel',
+        'pywebkitgtk:python',
+        'shared-mime-info:runtime',
+        'sqlite:devel',
+        'taglib:devel',
+        'taglib:lib',
+        'xcb-util:devel',
+        'xextproto:devel',
+        'xine-lib:devel',
+        'xulrunner:devel',
+        'zlib:devel',
+    ] 
+ 
+    def setup(r):
+        r.addArchive('http://ftp.osuosl.org/pub/pculture.org/miro/src/miro-%(version)s.tar.gz')
+        # r.addPatch('ffmpeg.patch')
+        r.Replace('__file__', 'os.curdir', 'linux/setup.py')
+        r.PythonSetup(dir='linux')
+
+        r.macros.pydir = Python.sitepkgs
+        r.ComponentSpec('test', '%(pydir)s/miro/test/')
+
+        r.Replace('./miro.real', '%(bindir)s/miro.real', '%(bindir)s/miro')
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libtag\.so\.1\(SysV\ x86\)')

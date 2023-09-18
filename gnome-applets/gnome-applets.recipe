@@ -1,0 +1,81 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomeApplets(GnomePackageRecipe):
+
+    buildRequires = [
+        'GConf:devel',
+        'GConf:runtime',
+        'NetworkManager:devellib',
+        'ORBit2:devel',
+        'dbus-glib:devellib',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'docbook-utils:runtime',
+        'gcc-c++:runtime',
+        'gettext:runtime',
+        'glib:runtime',
+        'gnome-desktop:devel',
+        'gnome-doc-utils:runtime',
+        'gnome-icon-theme:devellib',
+        'gnome-panel:devel',
+        'gnome-python-desktop:python',
+        'gnome-python-extras:python',
+        'gnome-python:python',
+        'gst-plugins-base:devel',
+        'gstreamer:devel',
+        'gtk:runtime',
+        'gucharmap:devel',
+        'hal:devel',
+        'intltool:runtime',
+        'libart_lgpl:devel',
+        'libbonobo:devel',
+        'libbonoboui:devel',
+        'libgnome:devel',
+        'libgnomecanvas:devel',
+        'libgtop:devel',
+        'libgweather:devel',
+        'libnotify:devel',
+        'libwnck:devel',
+        'libxklavier:devel',
+        'libxslt:runtime',
+        'perl:lib',
+        'perl:runtime',
+        'polkit-gnome:devel',
+        'polkit:devel',
+        'popt:devel',
+        'pygobject:python',
+        'pygtk:python',
+        'rarian:devel',
+        'rarian:runtime',
+        'startup-notification:devel',
+        'automake:runtime',
+        'autoconf:runtime',
+        'dbus-python:python',
+        'python:devel',
+        'perl:devel',
+        ]
+
+    name = 'gnome-applets'
+    version = '2.32.1.1'
+
+    extraConfig = ' --disable-scrollkeeper --enable-suid=no --enable-mixer-applet --disable-cpufreq'
+    patches = [ 'gnome-applets-2.32.1.1-libnotify-0.7.patch',
+                'gnome-applets-2.32.1.1-dbus-fix.patch' 
+                ]
+    potFileName = '%(name)s-2.0'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.macros.cflags += ' -I%(libdir)s/dbus-1.0/include/ -I%(includedir)s/dbus-1.0/'
+
+        r.Run('intltoolize --force --copy --automake && autoreconf -fi')
+        
+
+    def policy(r):
+        r.Run('echo >> %(destdir)s/etc/gconf/schemas/geyes.schemas')
+

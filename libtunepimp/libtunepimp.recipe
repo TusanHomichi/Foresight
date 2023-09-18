@@ -1,0 +1,28 @@
+class libTunePimp(AutoPackageRecipe):
+
+    name = 'libtunepimp'
+    version = '0.5.3'
+
+    buildRequires = [ 'flac:devel', 'libofa:devel', 'fftw:devel',
+                      'libmusicbrainz:devel', 'libogg:devel', 'python-setuptools:python',
+                      'curl:devel', 'expat:devel', 'libmad:devel', 'taglib:devel',
+                      'libstdc++:devel', 'libtermcap:devel', 'libvorbis:devel',
+                      'readline:devel', 'zlib:devel', 'libmpcdec:devel', 'python:devel',]
+
+    def setup(r):
+        r.macros.base = 'http://ftp.musicbrainz.org/pub/musicbrainz'
+        r.addArchive('%(base)s/%(name)s-%(version)s.tar.gz')
+        r.addPatch('tunepimp-gcc43.patch')
+        r.addPatch('gcc4.4.patch')
+        r.addPatch('mp4v2-1.9.patch')
+
+        # for latest cups
+        r.Replace('\#include\ \<curl\/types.h\>', '', 'lib/protocol.cpp')
+        r.Configure(' --disable-static'
+                    ' --disable-dependency-tracking'
+                    ' --enable-lgpl')
+
+        r.Make('PLUGIN_DIR=%(libdir)s/%(name)s/plugins/')
+        r.MakeInstall('PLUGIN_DIR=%(libdir)s/%(name)s/plugins/')
+
+        r.PythonSetup(dir = 'python')

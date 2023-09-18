@@ -1,0 +1,14 @@
+class WinExe(CPackageRecipe):
+    name = 'winexe'
+    version = '1.00'
+    buildRequires = ['gnutls:devellib', 'cyrus-sasl:devel', 'flex:runtime',
+        'libxslt:runtime', 'perl:runtime', 'pkgconfig:devel', 'python:devel',
+        'util-linux:devel', 'autoconf:runtime', 'automake:runtime',
+        'which:runtime']
+    def setup(r):
+        r.addArchive('mirror://sourceforge/winexe/')
+        r.macros.builddir = '%{builddir)s/source4'
+        r.Run('./autogen.sh', dir='source4')
+        r.Configure('--enable-fhs', dir='source4')
+        r.Make('basics idl bin/winexe', dir='source4')
+        r.Install('source4/bin/winexe', '%(bindir)s/winexe')

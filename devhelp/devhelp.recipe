@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Devhelp(GnomePackageRecipe):
+    name = 'devhelp'
+    version = '2.32.0'
+
+    buildRequires = [ 'atk:devel', 'autoconf:runtime', 'automake:runtime',
+                      'desktop-file-utils:runtime', 'gcc:devel', 'GConf:devel',
+                      'gettext:runtime', 'glib:devel', 'gnome-vfs:devel', 'gtk:devel',
+                      'gtk-doc:runtime', 'intltool:runtime', 'libbonobo:devel',
+                      'libglade:devel', 'libgnomeui:devel', 'libwnck:devel', 'libxml2:devel',
+                      'nspr:devel', 'ORBit2:devel', 'pango:devel', 'xulrunner:devel',
+                      'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'libpng:devel',
+                      'libstdc++:devel', 'GConf:runtime', 'perl:runtime', 'libtool:runtime',
+                      'intltool:runtime', 'intltool:devel', 'python:devel',
+                      'glib:runtime', 'gtk:runtime', 'pygtk:python', 'WebKit:devel', 'unique:devel' ]
+
+    GnomePackageRecipe.extraConfig += ' --disable-static '

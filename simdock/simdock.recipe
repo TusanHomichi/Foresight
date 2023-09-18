@@ -1,0 +1,14 @@
+# Copyright (c) %(year)s Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SimDock(AutoPackageRecipe):
+    name = 'simdock'
+    version = '1.2'
+
+    buildRequires = ['binutils:devellib', 'gcc:devel', 'gcc:devellib', 'libwnck:devel', 'wxWidgets:devel', 'gtk:devellib', 'GConf:devel', 'ORBit2:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'gettext:runtime', 'intltool:runtime', 'libstdc++:devel', 'pkgconfig:devel']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s_%(version)s.tar.gz')
+

@@ -1,0 +1,424 @@
+diff -ruN 4.1.2.orig/40chg.txt 4.1.2/40chg.txt
+--- 4.1.2.orig/40chg.txt	2000-09-19 15:39:22.000000000 -0500
++++ 4.1.2/40chg.txt	2005-09-18 17:24:06.000000000 -0500
+@@ -37,6 +37,7 @@
+ - Added synopsis markup for modern programming languages (e.g, object
+   oriented languages like Java, C++, and IDL)
+ - Renamed DocInfo to PrefaceInfo, ChapterInfo, AppendixInfo, etc.
++  (and ArtHeader to ArticleInfo)
+ - Comment was renamed Remark
+ - InterfaceDefinition was removed
+ 
+diff -ruN 4.1.2.orig/calstblx.dtd 4.1.2/calstblx.dtd
+--- 4.1.2.orig/calstblx.dtd	2000-09-19 15:44:29.000000000 -0500
++++ 4.1.2/calstblx.dtd	2000-08-27 10:19:42.000000000 -0500
+@@ -10,7 +10,7 @@
+      This DTD is based on the CALS Table Model
+      PUBLIC "-//USA-DOD//DTD Table Model 951010//EN"
+ 
+-     $Id: calstblx.dtd,v 1.4 2000/09/19 20:44:29 ndw Exp $
++     $Id: calstblx.dtd,v 1.10 2000/08/27 15:12:41 nwalsh Exp $
+ 
+      Permission to use, copy, modify and distribute the DocBook XML DTD
+      and its accompanying documentation for any purpose and without fee
+diff -ruN 4.1.2.orig/catalog.xml 4.1.2/catalog.xml
+--- 4.1.2.orig/catalog.xml	1969-12-31 18:00:00.000000000 -0600
++++ 4.1.2/catalog.xml	2005-09-18 17:24:06.000000000 -0500
+@@ -0,0 +1,71 @@
++<?xml version='1.0'?>
++<!DOCTYPE catalog PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN" 
++    "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
++
++<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
++
++<!-- ...................................................................... -->
++<!-- XML Catalog data for DocBook XML V4.1.2............................... -->
++<!-- File catalog.xml ..................................................... -->
++
++<!-- Please direct all questions, bug reports, or suggestions for
++     changes to the docbook@lists.oasis-open.org mailing list. For more
++     information, see http://www.oasis-open.org/.
++  -->
++
++<!-- This is the catalog data file for DocBook V4.1.2. It is provided as
++     a convenience in building your own catalog files. You need not use
++     the filenames listed here, and need not use the filename method of
++     identifying storage objects at all.  See the documentation for
++     detailed information on the files associated with the DocBook DTD.
++     See XML Catalogs at http://www.oasis-open.org/committees/entity/ for
++     detailed information on supplying and using catalog data.
++  -->
++
++<!-- ...................................................................... -->
++<!-- DocBook driver file .................................................. -->
++
++<public publicId="-//OASIS//DTD DocBook XML V4.1.2//EN"
++        uri="docbookx.dtd"/>
++<public publicId="-//OASIS//DTD DocBook XML V4.1//EN"
++        uri="docbookx.dtd"/>
++<system systemId="http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"
++        uri="docbookx.dtd"/>
++<system systemId="http://www.oasis-open.org/docbook/xml/4.1/docbookx.dtd"
++        uri="docbookx.dtd"/>
++<system systemId="http://docbook.org/xml/4.1.2/docbookx.dtd"
++        uri="docbookx.dtd"/>
++<system systemId="http://docbook.org/xml/4.1/docbookx.dtd"
++        uri="docbookx.dtd"/>
++
++
++<!-- ...................................................................... -->
++<!-- DocBook modules ...................................................... -->
++
++<public publicId="-//OASIS//DTD DocBook CALS Table Model V4.1.2//EN"
++        uri="calstblx.dtd"/>
++
++  <!-- already included in docbook 4.2
++<public publicId="-//OASIS//DTD XML Exchange Table Model 19990315//EN"
++        uri="soextblx.dtd"/> -->
++
++<public publicId="-//OASIS//ELEMENTS DocBook Information Pool V4.1.2//EN"
++        uri="dbpoolx.mod"/>
++
++<public publicId="-//OASIS//ELEMENTS DocBook Document Hierarchy V4.1.2//EN"
++        uri="dbhierx.mod"/>
++
++<public publicId="-//OASIS//ENTITIES DocBook Additional General Entities V4.1.2//EN"
++        uri="dbgenent.mod"/>
++
++<public publicId="-//OASIS//ENTITIES DocBook Notations V4.1.2//EN"
++        uri="dbnotnx.mod"/>
++
++<public publicId="-//OASIS//ENTITIES DocBook Character Entities V4.1.2//EN"
++        uri="dbcentx.mod"/>
++
++
++<!-- End of catalog data for DocBook XML V4.1.2 ............................. -->
++<!-- ...................................................................... -->
++
++</catalog>
+diff -ruN 4.1.2.orig/ChangeLog 4.1.2/ChangeLog
+--- 4.1.2.orig/ChangeLog	2000-08-12 13:02:00.000000000 -0500
++++ 4.1.2/ChangeLog	2000-08-27 10:19:41.000000000 -0500
+@@ -1,14 +1,31 @@
++2000-08-27  Norman Walsh  <ndw@nwalsh.com>
++
++	* 41chg.txt, readme.txt: Updated descriptions
++
++	* calstblx.dtd, dbcentx.mod, dbgenent.mod, dbhierx.mod, dbnotnx.mod, dbpoolx.mod, docbook.cat: 
++	Updated version numbers
++
++	* docbook.cat: Fixed stupid search-and-replace error in ISO FPIs
++
++	* docbookx.dtd: DocBook XML V4.1.2 released
++
+ 2000-08-12  Norman Walsh  <ndw@nwalsh.com>
+ 
+ 	* 40chg.txt: Updated; changed version number
+ 
++	* 41chg.txt: Added note about renaming dbgenent
++
+ 	* 41chg.txt, readme.txt: Updated; changed version number, release date
+ 
+ 	* calstblx.dtd, dbcentx.mod, dbgenent.ent, dbhierx.mod, dbnotnx.mod, dbpoolx.mod, docbook.cat: 
+ 	Changed version number
+ 
++	* dbgenent.ent, dbgenent.mod: Renamed .ent to .mod
++
+ 	* docbookx.dtd: DocBook XML V4.1.1 released
+ 
++	* docbookx.dtd: Fixed system identifier for dbgenent.ent to dbgenent.mod
++
+ 2000-07-06  Norman Walsh  <ndw@nwalsh.com>
+ 
+ 	* 40chg.txt, 41chg.txt, calstblx.dtd, dbcentx.mod, dbgenent.ent, dbhierx.mod, dbnotnx.mod, dbpoolx.mod, docbook.cat, readme.txt: 
+diff -ruN 4.1.2.orig/dbcentx.mod 4.1.2/dbcentx.mod
+--- 4.1.2.orig/dbcentx.mod	2000-09-19 15:44:29.000000000 -0500
++++ 4.1.2/dbcentx.mod	2005-09-18 17:24:06.000000000 -0500
+@@ -7,7 +7,7 @@
+      Corporation, Norman Walsh, and the Organization for the Advancement
+      of Structured Information Standards (OASIS).
+ 
+-     $Id: dbcentx.mod,v 1.4 2000/09/19 20:44:29 ndw Exp $
++     $Id: dbcentx.mod,v 1.10 2000/08/27 15:12:42 nwalsh Exp $
+ 
+      Permission to use, copy, modify and distribute the DocBook XML DTD
+      and its accompanying documentation for any purpose and without fee
+@@ -52,7 +52,7 @@
+ <![%ISOamsa.module;[
+ <!ENTITY % ISOamsa PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN//XML"
+-"ent/iso-amsa.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsa.ent">
+ %ISOamsa;
+ <!--end of ISOamsa.module-->]]>
+ 
+@@ -60,7 +60,7 @@
+ <![%ISOamsb.module;[
+ <!ENTITY % ISOamsb PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN//XML"
+-"ent/iso-amsb.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsb.ent">
+ %ISOamsb;
+ <!--end of ISOamsb.module-->]]>
+ 
+@@ -68,7 +68,7 @@
+ <![%ISOamsc.module;[
+ <!ENTITY % ISOamsc PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN//XML"
+-"ent/iso-amsc.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsc.ent">
+ %ISOamsc;
+ <!--end of ISOamsc.module-->]]>
+ 
+@@ -76,7 +76,7 @@
+ <![%ISOamsn.module;[
+ <!ENTITY % ISOamsn PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN//XML"
+-"ent/iso-amsn.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsn.ent">
+ %ISOamsn;
+ <!--end of ISOamsn.module-->]]>
+ 
+@@ -84,7 +84,7 @@
+ <![%ISOamso.module;[
+ <!ENTITY % ISOamso PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN//XML"
+-"ent/iso-amso.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamso.ent">
+ %ISOamso;
+ <!--end of ISOamso.module-->]]>
+ 
+@@ -92,7 +92,7 @@
+ <![%ISOamsr.module;[
+ <!ENTITY % ISOamsr PUBLIC
+ "ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN//XML"
+-"ent/iso-amsr.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOamsr.ent">
+ %ISOamsr;
+ <!--end of ISOamsr.module-->]]>
+ 
+@@ -100,7 +100,7 @@
+ <![%ISObox.module;[
+ <!ENTITY % ISObox PUBLIC
+ "ISO 8879:1986//ENTITIES Box and Line Drawing//EN//XML"
+-"ent/iso-box.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISObox.ent">
+ %ISObox;
+ <!--end of ISObox.module-->]]>
+ 
+@@ -108,7 +108,7 @@
+ <![%ISOcyr1.module;[
+ <!ENTITY % ISOcyr1 PUBLIC
+ "ISO 8879:1986//ENTITIES Russian Cyrillic//EN//XML"
+-"ent/iso-cyr1.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOcyr1.ent">
+ %ISOcyr1;
+ <!--end of ISOcyr1.module-->]]>
+ 
+@@ -116,7 +116,7 @@
+ <![%ISOcyr2.module;[
+ <!ENTITY % ISOcyr2 PUBLIC
+ "ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN//XML"
+-"ent/iso-cyr2.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOcyr2.ent">
+ %ISOcyr2;
+ <!--end of ISOcyr2.module-->]]>
+ 
+@@ -124,7 +124,7 @@
+ <![%ISOdia.module;[
+ <!ENTITY % ISOdia PUBLIC
+ "ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+-"ent/iso-dia.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOdia.ent">
+ %ISOdia;
+ <!--end of ISOdia.module-->]]>
+ 
+@@ -132,7 +132,7 @@
+ <![%ISOgrk1.module;[
+ <!ENTITY % ISOgrk1 PUBLIC
+ "ISO 8879:1986//ENTITIES Greek Letters//EN//XML"
+-"ent/iso-grk1.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk1.ent">
+ %ISOgrk1;
+ <!--end of ISOgrk1.module-->]]>
+ 
+@@ -140,7 +140,7 @@
+ <![%ISOgrk2.module;[
+ <!ENTITY % ISOgrk2 PUBLIC
+ "ISO 8879:1986//ENTITIES Monotoniko Greek//EN//XML"
+-"ent/iso-grk2.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk2.ent">
+ %ISOgrk2;
+ <!--end of ISOgrk2.module-->]]>
+ 
+@@ -148,7 +148,7 @@
+ <![%ISOgrk3.module;[
+ <!ENTITY % ISOgrk3 PUBLIC
+ "ISO 8879:1986//ENTITIES Greek Symbols//EN//XML"
+-"ent/iso-grk3.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk3.ent">
+ %ISOgrk3;
+ <!--end of ISOgrk3.module-->]]>
+ 
+@@ -156,7 +156,7 @@
+ <![%ISOgrk4.module;[
+ <!ENTITY % ISOgrk4 PUBLIC
+ "ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN//XML"
+-"ent/iso-grk4.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOgrk4.ent">
+ %ISOgrk4;
+ <!--end of ISOgrk4.module-->]]>
+ 
+@@ -164,7 +164,7 @@
+ <![%ISOlat1.module;[
+ <!ENTITY % ISOlat1 PUBLIC
+ "ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+-"ent/iso-lat1.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOlat1.ent">
+ %ISOlat1;
+ <!--end of ISOlat1.module-->]]>
+ 
+@@ -172,7 +172,7 @@
+ <![%ISOlat2.module;[
+ <!ENTITY % ISOlat2 PUBLIC
+ "ISO 8879:1986//ENTITIES Added Latin 2//EN//XML"
+-"ent/iso-lat2.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOlat2.ent">
+ %ISOlat2;
+ <!--end of ISOlat2.module-->]]>
+ 
+@@ -180,7 +180,7 @@
+ <![%ISOnum.module;[
+ <!ENTITY % ISOnum PUBLIC
+ "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+-"ent/iso-num.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOnum.ent">
+ %ISOnum;
+ <!--end of ISOnum.module-->]]>
+ 
+@@ -188,7 +188,7 @@
+ <![%ISOpub.module;[
+ <!ENTITY % ISOpub PUBLIC
+ "ISO 8879:1986//ENTITIES Publishing//EN//XML"
+-"ent/iso-pub.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOpub.ent">
+ %ISOpub;
+ <!--end of ISOpub.module-->]]>
+ 
+@@ -196,7 +196,7 @@
+ <![%ISOtech.module;[
+ <!ENTITY % ISOtech PUBLIC
+ "ISO 8879:1986//ENTITIES General Technical//EN//XML"
+-"ent/iso-tech.ent">
++"/usr/share/xml/entities/xml-iso-entities-8879.1986/ISOtech.ent">
+ %ISOtech;
+ <!--end of ISOtech.module-->]]>
+ 
+diff -ruN 4.1.2.orig/dbhierx.mod 4.1.2/dbhierx.mod
+--- 4.1.2.orig/dbhierx.mod	2000-09-19 15:44:29.000000000 -0500
++++ 4.1.2/dbhierx.mod	2000-08-27 10:19:42.000000000 -0500
+@@ -7,7 +7,7 @@
+      Corporation, Norman Walsh, and the Organization for the Advancement
+      of Structured Information Standards (OASIS).
+ 
+-     $Id: dbhierx.mod,v 1.4 2000/09/19 20:44:29 ndw Exp $
++     $Id: dbhierx.mod,v 1.12 2000/08/27 15:12:42 nwalsh Exp $
+ 
+      Permission to use, copy, modify and distribute the DocBook XML DTD
+      and its accompanying documentation for any purpose and without fee
+diff -ruN 4.1.2.orig/dbnotnx.mod 4.1.2/dbnotnx.mod
+--- 4.1.2.orig/dbnotnx.mod	2000-09-19 15:44:29.000000000 -0500
++++ 4.1.2/dbnotnx.mod	2000-08-27 10:19:42.000000000 -0500
+@@ -7,7 +7,7 @@
+      Corporation, Norman Walsh, and the Organization for the Advancement
+      of Structured Information Standards (OASIS).
+ 
+-     $Id: dbnotnx.mod,v 1.4 2000/09/19 20:44:29 ndw Exp $
++     $Id: dbnotnx.mod,v 1.10 2000/08/27 15:12:42 nwalsh Exp $
+ 
+      Permission to use, copy, modify and distribute the DocBook XML DTD
+      and its accompanying documentation for any purpose and without fee
+diff -ruN 4.1.2.orig/dbpoolx.mod 4.1.2/dbpoolx.mod
+--- 4.1.2.orig/dbpoolx.mod	2000-09-19 15:44:29.000000000 -0500
++++ 4.1.2/dbpoolx.mod	2000-08-27 10:19:42.000000000 -0500
+@@ -7,7 +7,7 @@
+      Corporation, Norman Walsh and the Organization for the Advancement
+      of Structured Information Standards (OASIS).
+ 
+-     $Id: dbpoolx.mod,v 1.4 2000/09/19 20:44:29 ndw Exp $
++     $Id: dbpoolx.mod,v 1.19 2000/08/27 15:12:42 nwalsh Exp $
+ 
+      Permission to use, copy, modify and distribute the DocBook XML DTD
+      and its accompanying documentation for any purpose and without fee
+diff -ruN 4.1.2.orig/docbook.cat 4.1.2/docbook.cat
+--- 4.1.2.orig/docbook.cat	2000-09-19 15:44:30.000000000 -0500
++++ 4.1.2/docbook.cat	2005-09-18 17:24:06.000000000 -0500
+@@ -16,44 +16,32 @@
+      on supplying and using catalog data.
+   --
+ 
++  -- public identifiers override system identifiers, if both are supplied   --
++OVERRIDE YES
++
+   -- ...................................................................... --
+   -- DocBook driver file .................................................. --
+ 
+ PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbookx.dtd"
++DTDDECL "-//OASIS//DTD DocBook XML V4.1.2//EN" "/usr/share/xml/declaration/xml.dcl"
++
++  -- ...................................................................... --
++  -- Other ways to refer to DocBook XML v4.1.2 ............................ --
++
++PUBLIC "-//OASIS//DTD DocBook XML V4.1//EN" "docbookx.dtd"
++DTDDECL "-//OASIS//DTD DocBook XML V4.1//EN" "/usr/share/xml/declaration/xml.dcl"
+ 
+   -- ...................................................................... --
+   -- DocBook modules ...................................................... --
+ 
+ PUBLIC "-//OASIS//DTD DocBook XML CALS Table Model V4.1.2//EN" "calstblx.dtd"
+-PUBLIC "-//OASIS//DTD XML Exchange Table Model 19990315//EN" "soextblx.dtd"
++  -- already in docbook 4.2 --
++-- PUBLIC "-//OASIS//DTD XML Exchange Table Model 19990315//EN" "soextblx.dtd" --
+ PUBLIC "-//OASIS//ELEMENTS DocBook XML Information Pool V4.1.2//EN" "dbpoolx.mod"
+ PUBLIC "-//OASIS//ELEMENTS DocBook XML Document Hierarchy V4.1.2//EN" "dbhierx.mod"
+ PUBLIC "-//OASIS//ENTITIES DocBook XML Additional General Entities V4.1.2//EN" "dbgenent.mod"
+ PUBLIC "-//OASIS//ENTITIES DocBook XML Notations V4.1.2//EN" "dbnotnx.mod"
+ PUBLIC "-//OASIS//ENTITIES DocBook XML Character Entities V4.1.2//EN" "dbcentx.mod"
+ 
+-  -- ...................................................................... --
+-  -- ISO entity sets ...................................................... --
+-
+-PUBLIC "ISO 8879:1986//ENTITIES Diacritical Marks//EN" "ent/iso-dia.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN" "ent/iso-num.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN" "ent/iso-pub.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES General Technical//EN" "ent/iso-tech.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN" "ent/iso-lat1.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Latin 2//EN" "ent/iso-lat2.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Greek Letters//EN" "ent/iso-grk1.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Monotoniko Greek//EN" "ent/iso-grk2.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Greek Symbols//EN" "ent/iso-grk3.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN" "ent/iso-grk4.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN" "ent/iso-amsa.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN" "ent/iso-amsb.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN" "ent/iso-amsc.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN" "ent/iso-amsn.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN" "ent/iso-amso.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN" "ent/iso-amsr.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Box and Line Drawing//EN" "ent/iso-box.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Russian Cyrillic//EN" "ent/iso-cyr1.ent"
+-PUBLIC "ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN" "ent/iso-cyr2.ent"
+-
+   -- End of catalog data for DocBook XML V4.1.2 ............................. --
+   -- ...................................................................... --
+diff -ruN 4.1.2.orig/docbookx.dtd 4.1.2/docbookx.dtd
+--- 4.1.2.orig/docbookx.dtd	2000-09-19 15:44:30.000000000 -0500
++++ 4.1.2/docbookx.dtd	2000-08-27 10:19:42.000000000 -0500
+@@ -7,7 +7,7 @@
+      Corporation, Norman Walsh, and the Organization for the Advancement
+      of Structured Information Standards (OASIS).
+ 
+-     $Id: docbookx.dtd,v 1.4 2000/09/19 20:44:30 ndw Exp $
++     $Id: docbookx.dtd,v 1.12 2000/08/27 15:15:26 nwalsh Exp $
+ 
+      Permission to use, copy, modify and distribute the DocBook XML DTD
+      and its accompanying documentation for any purpose and without fee

@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class AlsaLib(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'alsa-lib'
+    version = '1.0.26'
+    rpmRelease = '1.fc16'
+    # http://koji.fedoraproject.org/koji/packageinfo?packageID=410
+    rpmPatches = [ 'alsa-lib-1.0.24-config.patch',
+                   'alsa-lib-1.0.14-glibc-open.patch',
+                   'alsa-lib-1.0.16-no-dox-date.patch',
+                   ]
+
+    rpmSources = [ 'asound.conf' ]
+
+    buildRequires = [ 'python:devel' ] #required for buildRequires.append
+    if Use.builddocs:
+        buildRequires.append('doxygen:runtime')
+
+    def configure(r):
+        r.Configure('--disable-aload')
+        # Remove useless /usr/lib64 rpath on 64bit archs
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+
+    def makeinstall(r):
+        r.MakeInstall()
+        # We need the library to be available even before /usr might be mounted
+        r.MakeDirs('/%(lib)s')
+        r.Move('%(libdir)s/libasound.s*', '/%(lib)s/')
+        r.Symlink('../../%(lib)s/libasound.so.2', '%(libdir)s/libasound.so')
+
+        r.AutoDoc('doc/asoundrc.txt')
+        if Use.builddocs:
+            r.Make('doc')
+            r.Doc('doc/doxygen/*')
+
+        # Install global configuration files
+        r.Install('asound.conf', '%(sysconfdir)s/asound.conf', mode = 0644)
+
+        # update Apr/2 - this is not needed anymore, afaict
+        # # Make sure we never _ever_ enable power saving on sound
+        # # until it works properly
+        # # results in choppy sound/dead pulse, too much garbage in 
+        # # logs, etc
+        # # https://bugzilla.redhat.com/show_bug.cgi?id=523284
+        # r.Create('%(sysconfdir)s/modprobe.d/no_power_save_on_hda_intel.conf',
+        #          mode = 0644, 
+        #          contents = """options snd-hda-intel power_save=0 \n""")
+
+    def policy(r):
+        r.Requires('alsa-plugins:config', '%(sysconfdir)s/asound.conf')
+

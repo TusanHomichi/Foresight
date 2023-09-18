@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SqlalchemyMigrate(PackageRecipe):
+
+    name = 'sqlalchemy-migrate'
+    version = '0.5.3'
+
+    packageSummary = "SQLAlchemy Schema Migration Tools"
+    packageDescription = "Schema migration tools for SQLAlchemy, designed to support an agile approach to database design, and make it easier to keep development and production databases in sync, as schema changes are required."
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+        'SQLAlchemy:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://sqlalchemy-migrate.googlecode.com/files/')
+        r.PythonSetup()

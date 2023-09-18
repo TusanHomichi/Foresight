@@ -1,0 +1,12 @@
+diff -ur screen-4.0.1/etc/screenrc screen-4.0.1-lhh/etc/screenrc
+--- screen-4.0.1/etc/screenrc	2003-09-18 12:13:03.000000000 -0400
++++ screen-4.0.1-lhh/etc/screenrc	2003-10-24 12:03:22.000000000 -0400
+@@ -143,6 +143,8 @@
+ # hardstatus alwaysignore
+ # hardstatus alwayslastline "%Lw"
+ 
++hardstatus string "[screen %n%?: %t%?] %h"
++
+ # bind = resize =
+ # bind + resize +1
+ # bind - resize -1

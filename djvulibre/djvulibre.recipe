@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Djvulibre(AutoPackageRecipe):
+    name = 'djvulibre'
+    version = '3.5.22'
+
+    buildRequires = [ 'gtk:runtime', 'kdelibs:devel', 'libjpeg:devel',
+                      'libstdc++:devel', 'libtiff:devel', 'qt:devel',
+                      'libX11:devel', 'libXext:devel',
+                      'libSM:devel', 'libICE:devel', 'libXt:devel',
+                      'imake:runtime', 'libpng:devel',
+                      'zlib:devel', 'libXi:devel', 'libXrender:devel',
+                      'libXrandr:devel', 'libXcursor:devel',
+                      'libXinerama:devellib', 'libXft:devel',
+                      'freetype:devel', 'fontconfig:devel',
+                      'file:runtime', 'xdg-utils:runtime',
+                      'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/djvu/%(name)s-%(version)s.tar.gz')
+        r.disableParallelMake()
+
+    def make(r):
+        # r.Replace(('^hardcode_libdir_flag_spec=.*',
+        #           'hardcode_libdir_flag_spec=""'),
+        #          ('^runpath_var=LD_RUN_PATH',
+        #            'runpath_var=DIE_RPATH_DIE'),
+        #          'libtool')
+
+        r.Make('OPTS="%(optflags)s"')
+
+    def policy(r):
+        # Adapt to firefox
+        r.Move('%(libdir)s/netscape', '%(libdir)s/mozilla')
+        r.ComponentSpec("runtime", "%(libdir)s/mozilla.*")
+        r.Requires('xulrunner:lib', '%(libdir)s/mozilla/plugins.*')
+        r.Requires('mozilla-filesystem:runtime', '%(libdir)s/mozilla/plugins.*')
+        # Fix for the libs to get stripped correctly
+        r.SetModes('%(libdir)s/mozilla/plugins/*', 0755)
+

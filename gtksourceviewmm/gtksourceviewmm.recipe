@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Gtksourceviewmm(GnomePackageRecipe):
+
+    name = 'gtksourceviewmm'
+    version = '2.10.1'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'cairomm:devel',
+'doxygen:runtime', 'fontconfig:devel', 'freetype:devel', 'glib:devel',
+'glibmm:devel', 'gtkmm:devel', 'gtksourceview:devel', 'libpng:devel',
+'libsigc++:devel', 'libstdc++:devel', 'libxml2:devel', 'm4:runtime',
+'pango:devel', 'pangomm:devel', 'perl:runtime', 'pixman:devel']

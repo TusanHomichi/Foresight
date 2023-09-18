@@ -1,0 +1,21 @@
+class Cg(AutoPackageRecipe):
+    name = 'Cg'
+    version = '2.2'
+    buildRequires = [ 'Mesa:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXi:devel', 'libXmu:devel', 'libXt:devel', 'libstdc++:devel' ]
+    def setup(r):
+        r.mainDir('usr')
+        upstreamURL = 'http://developer.download.nvidia.com/cg/%(name)s_%(version)s/' 
+        r.addArchive(upstreamURL+ 'Cg-2.2_February2010_x86.tgz', use=Arch.x86)
+        r.addArchive(upstreamURL+ 'Cg-2.2_February2010_x86_64.tgz', use=Arch.x86_64)
+
+        r.Install('bin/*', '%(bindir)s/')
+        r.Install('include/*', '%(includedir)s/')
+        if Arch.x86_64:
+            r.Install('%(lib)s', '%(exec_prefix)s')
+        if Arch.x86:
+            r.Install('lib', '%(exec_prefix)s')
+
+        r.Install('local/Cg', '%(datadir)s/')
+        r.Install('share/man', '%(datadir)s')
+
+        r.ImproperlyShared(exceptions = '%(datadir)s/%(name)s/.*')

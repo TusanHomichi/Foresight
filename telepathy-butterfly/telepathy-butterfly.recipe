@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2007-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TelepathyButterfly(AutoPackageRecipe):
+
+    name = 'telepathy-butterfly'
+    version = '0.5.15'
+
+    buildRequires = [
+        'dbus-python:python',
+        'pygobject:python',
+        'papyon:python',
+        'python-ctypes:python',
+        'python-setuptools:python',
+        'python:devel',
+        'python:runtime',
+        'telepathy-python:python',
+        'which:runtime',
+        'libproxy:python'
+    ]
+
+    def unpack(r):
+        r.addArchive('http://telepathy.freedesktop.org/releases/%(name)s/')
+        r.addPatch("import.diff")

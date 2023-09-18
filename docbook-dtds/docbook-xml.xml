@@ -1,0 +1,5 @@
+delegatePublic "-//OASIS//ENTITIES DocBook XML"
+delegatePublic "-//OASIS//DTD DocBook XML"
+delegateSystem "http://www.oasis-open.org/docbook/"
+delegateURI "http://www.oasis-open.org/docbook/"
+delegatePublic "ISO 8879:1986"

@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EfiBootMgr(CPackageRecipe):
+    name = 'efibootmgr'
+    version = '0.5.4'
+    buildRequires = [ 'pciutils:devel', 'zlib:devel', ]
+
+    def setup(r):
+        r.addArchive('http://linux.dell.com/%(name)s/permalink/')
+        # taken from RH.
+        for patch in [ 'efibootmgr-0.5.4-support-4k-sectors.patch',
+                       # 
+                       # 'efibootmgr-0.5.4-default-to-grub.patch',
+                       ]:
+            r.addPatch(patch)
+
+        r.Environment('EXTRA_CFLAGS', '%(optflags)s')
+
+        r.Make()
+
+        r.Install('src/%(name)s/%(name)s', '%(sbindir)s/', mode = 0755)
+        r.Install('src/man/man8/%(name)s.8', '%(mandir)s/man8/')

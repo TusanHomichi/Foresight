@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IconThemeTangoExtras(AutoPackageRecipe):
+    name = "tango-icon-theme-extras"
+    version = "0.1.0"
+
+    buildRequires = [ 'gtk:runtime', 'ImageMagick:runtime', 'gettext:runtime',
+        'icon-naming-utils:runtime', 'perl:runtime', 'pkgconfig:devel',
+        'icon-naming-utils:devellib', 'ImageMagick:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://tango-project.org/releases/%(name)s-%(version)s.tar.gz')

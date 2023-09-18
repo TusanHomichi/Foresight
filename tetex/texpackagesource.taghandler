@@ -1,0 +1,49 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+# ignore input
+cat > /dev/null
+
+type="$1"
+shift
+action="$1"
+shift
+
+case $type in 
+    files)
+        case $action in 
+            update|remove)
+                # XXX hack until we have parameterized tags?
+                # just run fmtutil on all the cnf files
+                for cnf in /usr/share/texmf/tex/xmltex/xmltexfmtutil.cnf \
+                           /usr/share/texmf/tex/jadetex/jadefmtutil.cnf \
+                           /usr/share/texmf/web2c/fmtutil.cnf ; do
+                    [ -f  $cnf ] && fmtutil --cnffile $cnf --all &> /dev/null
+                done
+
+                mktexlsr &>/dev/null
+                texconfig-sys init &>/dev/null
+                texconfig-sys confall &>/dev/null
+                texconfig-sys font rw &>/dev/null
+                texconfig-sys font vardir /var/cache/fonts &>/dev/null
+                texconfig-sys font options varfonts &>/dev/null
+                updmap-sys &>/dev/null
+                fmtutil-sys --missing &>/dev/null
+                ;;
+            *)
+                echo "ERROR: taghandler $0 invoked for an action ($action) that is not handled" 1>&2
+                exit 1
+                ;;          
+        esac
+        ;;
+    *)
+        echo "ERROR: taghandler $0 invoked for a type ($type) that is not handled" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

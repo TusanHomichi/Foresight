@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gngeo(AutoPackageRecipe): 
+    name = 'gngeo'
+    version = '0.7'
+
+    buildRequires = [
+        'Mesa:devel',
+        'SDL:devel',
+        'SDL_image:devel',
+        'nasm:runtime',
+        'zlib:devel',
+        ]
+
+    def unpack(r):
+	r.addArchive('http://download.berlios.de/gngeo/')
+
+    def configure(r):
+        if Arch.x86_64:
+            r.Configure(' --disable-i386asm')
+        else:
+            r.Configure()

@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cinepaint(AutoPackageRecipe):
+    name = 'cinepaint'
+    version = '0.25'
+ 
+    buildRequires = ['Mesa:devel', 'OpenEXR:devel', 'atk:devel', 'automake:runtime', 'autoconf:runtime', 'cairo:devel', 'cvs:runtime', 'desktop-file-utils:runtime', 'flex:devel', 'fltk:devel', 'fontconfig:devel', 'freetype:devel', 'gcc-c++:runtime', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'gutenprint:devel', 'ilmbase:devel', 'intltool:runtime', 'lcms:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXinerama:devel', 'libXmu:devel', 'libXpm:devel', 'libXt:devel', 'libXxf86vm:devel', 'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'libtiff:devel', 'libtool:runtime', 'mkfontdir:runtime', 'pango:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+	r.addCvsSnapshot(':pserver:anonymous@cinepaint.cvs.sourceforge.net:/cvsroot/cinepaint', 'cinepaint-project')
+	r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+    def configure(r):
+	r.SetModes('cinepaint/autogen.sh', 0755)
+	r.Run('./autogen.sh', dir='cinepaint')
+	r.Configure('--disable-pygimp', dir='cinepaint')
+
+    def make(r):
+	r.Make(dir='cinepaint')
+
+    def makeinstall(r):
+	r.MakeInstall(dir='cinepaint')

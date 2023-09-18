@@ -1,0 +1,23 @@
+--- Makefile	2011-09-01 00:41:57.000000000 +0200
++++ Makefile	2011-09-27 19:46:30.000000000 +0200
+@@ -40,16 +40,16 @@
+ 
+ ifeq ($(MACHINE),x86_64)
+ 	ARCH=$(MACHINE)
+-	LIBDIR=/usr/lib64
++	LIBDIR=/usr/lib64/gnuefi
+ 	FORMAT=efi-app-x86-64
+ else
+ 	ARCH=ia32
+-	LIBDIR=/usr/lib
++	LIBDIR=/usr/lib/gnuefi
+ 	FORMAT=efi-app-$(ARCH)
+ endif
+ 
+-CRT0=$(LIBDIR)/gnuefi/crt0-efi-$(ARCH).o
+-LDSCRIPT=$(LIBDIR)/gnuefi/elf_$(ARCH)_efi.lds
++CRT0=$(LIBDIR)/crt0-efi-$(ARCH).o
++LDSCRIPT=$(LIBDIR)/elf_$(ARCH)_efi.lds
+ 
+ CFLAGS=-I. -I/usr/include/efi -I/usr/include/efi/$(ARCH) \
+ 		-DEFI_FUNCTION_WRAPPER -fPIC -fshort-wchar -ffreestanding \

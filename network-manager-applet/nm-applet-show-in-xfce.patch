@@ -1,0 +1,9 @@
+diff -r f9842afe317d nm-connection-editor.desktop.in
+--- a/nm-connection-editor.desktop.in	Mon Apr 25 21:52:23 2011 +0200
++++ b/nm-connection-editor.desktop.in	Mon Apr 25 21:54:22 2011 +0200
+@@ -10,4 +10,4 @@
+ X-GNOME-Bugzilla-Product=NetworkManager
+ X-GNOME-Bugzilla-Component=general
+ Categories=GNOME;GTK;Settings;X-GNOME-NetworkSettings;
+-OnlyShowIn=GNOME;
++OnlyShowIn=GNOME;XFCE;

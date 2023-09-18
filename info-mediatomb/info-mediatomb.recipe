@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class info_mediatomb(UserInfoRecipe):
+    name = 'info-mediatomb'
+    version = '1'
+
+    def setup(r):
+        r.Group('mediatomb', preferred_gid=131)
+        r.User('mediatomb', preferred_uid=131, comment='MediaTomb', homedir='/')

@@ -1,0 +1,142 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Vnc(RPMPackageRecipe, CPackageRecipe):
+    name = 'vnc'
+    version = '4.1.2'
+    rpmRelease = '22.fc8'
+
+    buildRequires = [ 'libX11:devel', 'libXext:devel', 'libXtst:devellib',
+                      'libstdc++:devel', 'perl:runtime', 'perl:lib', 'automake:runtime',
+                      'autoconf:runtime', 'libtool:runtime', 'bigreqsproto:devel',
+                      'freetype:devel', 'libXScrnSaver:devel', 'libXTrap:devellib',
+                      'libXau:devel', 'libXcomposite:devel', 'libXdamage:devel',
+                      'libXdmcp:devel', 'libXfixes:devel', 'libXfont:devel',
+                      'libXinerama:devellib', 'libXrandr:devel', 'libXres:devel',
+                      'libXv:devel', 'libXxf86misc:devel', 'libfontenc:devel',
+                      'libxkbfile:devel', 'pkgconfig:devel', 'renderproto:devel',
+                      'resourceproto:devel', 'xcmiscproto:devel', 'xf86bigfontproto:devel',
+                      'xf86dgaproto:devel', 'xf86vidmodeproto:devel', 'xtrans:devel',
+                      'ghostscript:runtime', 'flex:runtime', 'linuxdoc-tools:runtime',
+                      'libXi:devel', 'xorg-server:devel', 'zlib:devel', 'xproto:devel',
+                      'pixman:devel', 'util-macros:devel', 'dbus:devel', 'hal:devel',
+                      'libXtst:devel', 'perl:devel'
+                      ]
+
+    def setup(r):
+        r.macros.upver = r.version.replace('.', '_')
+        r.macros.cflags += ' -I%(includedir)s/xorg -fPIC'
+        r.macros.srcdir = 'vnc-%(upver)s-unixsrc/unix'
+        r.macros.xserverversion = '1.4'
+        r.macros.xsource = 'unix/xorg-server-%(xserverversion)s'
+        # the vnc source is only available by form
+        r.addArchive('http://www.realvnc.com/cgi-bin/download.cgi?product=free4/src/unix&filetype=tar_gz&filever=%(version)s&haveDetails=1&acceptLicense=1')
+        # add the source for X.org. needed to build Xvnc
+        r.addArchive('ftp://ftp.freedesktop.org/pub/xorg/individual/xserver/xorg-server-%(xserverversion)s.tar.bz2', dir='%(srcdir)s')
+
+        r.addPatch('vnc-cookie.patch', rpm=r.srpm)
+        r.addPatch('vnc-gcc4.patch', rpm=r.srpm)
+        r.addPatch('vnc-use-fb.patch', rpm=r.srpm)
+        r.addPatch('vnc-xclients.patch', rpm=r.srpm)
+        r.addPatch('vnc-idle.patch', rpm=r.srpm)
+        r.addPatch('vnc-via.patch', rpm=r.srpm)
+        r.addPatch('vnc-restart.patch', rpm=r.srpm)
+        r.addPatch('vnc-vncpasswd.patch', rpm=r.srpm)
+        r.addPatch('vnc-modular-xorg.patch')
+        r.addPatch('vnc-nohttpd.patch', rpm=r.srpm)
+        r.addPatch('vnc-viewer-reparent.patch', rpm=r.srpm)
+        r.addPatch('vnc-64bit.patch', rpm=r.srpm)
+        r.addPatch('vnc-select.patch', rpm=r.srpm)
+        r.addPatch('vnc-newfbsize.patch', rpm=r.srpm)
+        r.addPatch('vnc-210617.patch', rpm=r.srpm)
+        r.addPatch('vnc-102434.patch', rpm=r.srpm)
+        r.addPatch('vnc-config.patch', rpm=r.srpm)
+        r.addPatch('vnc-render.patch', rpm=r.srpm)
+        r.addPatch('vnc-autotools.patch')
+        r.addPatch('vnc-autotools-compile.patch', rpm=r.srpm)
+        r.addPatch('vnc-always_use_fb.patch', rpm=r.srpm)
+        r.addPatch('vnc-vsnprintf.patch', rpm=r.srpm)
+        r.addPatch('vnc-24bit.patch', rpm=r.srpm)
+        r.addPatch('vnc-noxorg.patch', backup='.jau')
+        r.addPatch('xvnc-xorg-1.4.patch', backup='.jau')
+
+        r.Copy('unix/xc/programs/Xserver/vnc/Xvnc/xvnc.cc',
+               'unix/xc/programs/Xserver/Xvnc.man',
+               'unix/xc/programs/Xserver/vnc/*.{h,cc}',
+               # make a local copy of cfb.h, fb, and fbrop.h that are C++
+               # friendly
+               '%(xsource)s/cfb/cfb.h',
+               '%(xsource)s/fb/{fb.h,fbrop.h}',
+               '%(xsource)s/hw/vnc/')
+        r.Run('cp /usr/include/pixman-1/pixman.h %(xsource)s/hw/vnc/')
+        # make headers C++ friendly
+        r.Replace(('xor', 'c_xor'), ('and', 'c_and'),
+                  '%(xsource)s/hw/vnc/{cfb,fb,fbrop,pixman}.h')
+        # First Build the common area
+        r.Run('autoreconf --install --force', dir='common')
+        r.Configure(dir='common')
+        r.Make(dir='common')
+        # ...then the unix area
+        r.Run('autoreconf --install --force', dir='unix')
+        r.Configure(dir='unix')
+        r.Make(dir='unix')
+        # Build the vnc parts
+        r.Automake(dir='%(xsource)s')
+
+        # now build Xvnc
+        r.Configure(' --disable-xorg'
+                    ' --disable-xnest'
+                    ' --enable-xvfb'
+                    ' --disable-dmx'
+                    ' --disable-xwin'
+                    ' --disable-xephyr'
+                    ' --disable-kdrive'
+                    ' --with-pic'
+                    ' --disable-xorgcfg'
+                    ' --disable-xprint'
+                    ' --disable-static'
+                    ' --disable-composite'
+                    ' --enable-xtrap'
+                    ' --with-xkb-output=%(datadir)s/X11/xkb'
+                    ' --with-rgb-path=%(datadir)s/X11/rgb.txt'
+                    #' --enable-install-libxf86config'
+                    ' --disable-xevie'
+                    ' --disable-dri'
+                    ' --disable-glx'
+                    # No effect?
+                    ' --disable-dependency-tracking'
+                    ' --disable-lbx'
+                    #
+                    ' --disable-xdmcp'
+                    # xcsecurity requires xace
+                    ' --disable-xace'
+                    ' --disable-xcsecurity'
+                    #
+                    ' --with-int10=stub'
+                    ' --with-default-font-path=/usr/share/fonts/misc,/usr/share/fonts/75dpi,/usr/share/fonts/100dpi,/usr/share/fonts/TTF,/usr/share/fonts/Type1',
+                    dir='%(xsource)s')
+        r.Make(dir='%(xsource)s')
+
+        #r.MakeDirs('%(bindir)s', '%(mandir)s/man1',
+        #           '%(x11prefix)s/lib/modules/extensions')
+        r.Make('install DESTDIR=%(destdir)s', dir='common')
+        r.Make('install DESTDIR=%(destdir)s', dir='unix')
+        r.Make('install DESTDIR=%(destdir)s', dir='%(xsource)s/hw/vnc')
+        r.Copy('unix/vncserver', '%(bindir)s/')
+        r.Copy('%(xsource)s/hw/vnc/Xvnc.man', '%(mandir)s/man1/')
+        for f in ('vncviewer/vncviewer',
+                  'vncpasswd/vncpasswd',
+                  'vncconfig/vncconfig',
+                  'vncserver',
+                  'x0vncserver/x0vncserver',):
+            pageName = f.split('/')[-1] + '.1'
+            r.Copy('unix/' + f + '.man', '%(mandir)s/man1/' + pageName,
+                   mode=0444)
+        # XXX - java version, initscript, sysconfig
+        # no icons, desktop files
+        #r.Run('./vncinstall %(destdir)s/%(bindir)s %(destdir)s/%(mandir)s '
+        #      '%(destdir)s%(x11prefix)slib/modules/extensions/', dir='unix')

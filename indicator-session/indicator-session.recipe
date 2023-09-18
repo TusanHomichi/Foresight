@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IndicatorSession(AutoPackageRecipe):
+    name = 'indicator-session'
+    version = '0.2.17'
+ 
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'atk:devel', 'cairo:devel',
+                      'dbus-glib:devel', 'dbus:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime',
+                      'glib:devel', 'gtk:devel', 'intltool:runtime', 'libdbusmenu-glib:devel',
+                      'libdbusmenu-gtk:devel', 'libindicator:devel', 'libpng:devel',
+                      'pango:devel', 'pkgconfig:devel', 'polkit:devel', 'dbus-glib:runtime', ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/indicator-session/0.2/%(version)s/+download/')
+        r.Replace('-Wall -Werror','-Wall','src/Makefile.in')
+
+    def configure(r):
+        r.Configure(' --disable-static ')
+

@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pygooglechart(PackageRecipe):
+
+    name = 'pygooglechart'
+    version = '0.2.1'
+
+    packageSummary = "Python Google Chart"
+    packageDescription = "pygooglechart is a complete Python wrapper for the Google Chart API."
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://pygooglechart.slowchop.com/files/download/')
+        r.PythonSetup()

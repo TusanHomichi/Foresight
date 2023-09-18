@@ -1,0 +1,42 @@
+
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# 
+
+class CrystalSpace3D(AutoPackageRecipe):
+    name = 'crystalspace3d'
+    version = '1.4.0'
+    archive = 'mirror://sourceforge/crystal/crystalspace-src-%(version)s.tar.bz2'
+    licenses = 'GPL'
+    packageHomepage = 'http://www.crystalspace3d.org/'
+    packageSummary  = 'CrystalSpace3D - 3D game engine'
+    packageDescription = \
+             """Crystal Space is a free cross-platform software development
+                kit for realtime 3D graphics, with particular focus
+                on games. Homepage: %(homepage)s"""
+
+    buildRequires = [
+        'alsa-lib:devel', 'doxygen:runtime', 'flex:runtime',
+        'freetype:devel', 'ghostscript:runtime', 'graphviz:runtime',
+        'icedtea-jdk:runtime', 'ImageMagick:runtime', 'libjpeg:devel',
+        'libmng:devel', 'libpng:devel', 'librsvg:runtime', 'libstdc++:devel',
+        'libtool:runtime', 'libvorbis:devel', 'libX11:devel', 'libXaw:devel',
+        'libXext:devel', 'libXt:devel', 'libXxf86vm:devel', 'Mesa:devel',
+        'perl:runtime', 'pkgconfig:devel', 'python:devel', 'SDL:devel',
+        'swig:runtime', 'tetex-dvips:runtime', 'texinfo:runtime',
+        'zlib:devel',
+        ]
+
+    def unpack(r):
+        r.macros.homepage = r.packageHomepage
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.addArchive(r.archive)
+
+    def configure(r):
+        # no cygwin, conary strips debug for us
+        r.Configure('--disable-mno-cygwin --disable-separate-debug-info')
+
+    def policy(r):
+        r.ImproperlyShared(exceptions='%(datadir)s/')
+

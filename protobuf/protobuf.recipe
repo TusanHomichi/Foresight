@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class ProtoBuf(CPackageRecipe):
+    name = 'protobuf'
+    version = '2.4.1'
+
+    buildRequires = [
+        'libstdc++:devel',
+        'python:devel',
+        'python-setuptools:python',
+        'zlib:devel',
+        'autoconf:runtime',
+        'automake:runtime',
+        'libtool:runtime',
+      ]
+
+    def setup(r):
+        r.macros.pyver = Python.majversion
+        r.addArchive('http://%(name)s.googlecode.com/files/')
+        r.Environment('PTHREAD_LIBS', '-lpthread')
+        r.Run('./autogen.sh')
+        # C
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+
+        # Python
+        r.PythonSetup(dir='python')
+        # evil egg magic makes this file unneeded, except that dep detection
+        # on things imported this way fails. BLAAAAAAAAAAAAAAAAAAAAAAAAH.
+        r.Create('%(libdir)s/python%(pyver)s/site-packages/google/__init__.py')
+
+        # Syntax hiliting
+        r.Install('editors/proto.vim', '%(datadir)s/vim/vim71/syntax/')

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class HumanTheme(BuildPackageRecipe):
+    name = 'human-theme'
+    version = '0.28.8'
+ 
+    buildRequires = ['python-setuptools:python', 'gettext:runtime', 'intltool:runtime', 'desktop-file-utils:runtime', 'python-distutils-extra:python', 'python:devel' ]
+ 
+    def setup(r):
+        r.addArchive('http://archive.ubuntu.com/ubuntu/pool/main/h/human-theme/human-theme_%(version)s.tar.gz')
+        r.PythonSetup()
+        r.Move('%(libdir)s/python2.6/site-packages/share/*', '%(datadir)s/')
+        r.Remove('%(datadir)s/themes/Human/cursor.theme')
+
+        # Put an requirement on the icon theme
+        r.Requires('human-icon-theme:data', '%(datadir)s/.*/index.theme')

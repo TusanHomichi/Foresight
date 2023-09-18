@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2005 rpath, Inc.
+# All rights reserved
+#
+
+class Firefox_rBuilder_Search(PackageRecipe):
+    name = 'firefox-rBuilder-search'
+    version = '1.1'
+
+    def setup(r):
+        r.addSource('rBuilder.src', dest='%(libdir)s/firefox/searchplugins/')
+        r.addSource('rBuilder.png', dest='%(libdir)s/firefox/searchplugins/')
+        r.Requires('firefox:runtime',
+                   '%(libdir)s/firefox/searchplugins/rBuilder.src')

@@ -1,0 +1,17 @@
+diff --git a/autogen.sh b/autogen.sh
+index eae2da1..9f755dd 100755
+--- a/autogen.sh
++++ b/autogen.sh
+@@ -30,9 +30,11 @@ fi
+ sed -e "s/@REVISION@/${revision}/g" < "configure.in.in" > "configure.in"
+ 
+ if (type xdt-autogen) >/dev/null 2>&1; then
++  libtoolize -c -f
+   exec xdt-autogen "$@"
+ else
+-  (aclocal &&
++  (libtoolize -c -f &&
++   aclocal &&
+    automake --add-missing --copy --gnu &&
+    autoconf) || exit 1
+ 

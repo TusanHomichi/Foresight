@@ -1,0 +1,101 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class PulseAudio(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'pulseaudio'
+    version  = '2.1'
+    rpmRelease = '5.fc18'
+
+    rpmPatches = [ 'pulseaudio-activation.patch',
+                   '0003-sink-Process-rewind-requests-also-when-suspended.patch',]
+
+    rpmSources = [ 'default.pa-for-gdm']
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'alsa-lib:devel', 'avahi:devel', 'hal:devel', 'libcap:devel', 'liboil:devel', 'libsamplerate:devel', 'libsndfile:devel', 'libtool:devel', 'm4:runtime', 'tcp_wrappers:devel', 'libatomic_ops:devel', 'libtool:runtime', 'autoconf:runtime','automake:runtime', 'gettext:devel', 'polkit:devel', 'bluez:devel', 'gcc-fortran:runtime', 'jack:devel', 'libICE:devel', 'libSM:devel', 'pkgconfig:devel', 'lirc:devel', 'gcc-c++:runtime', 'gdbm:devel', 'speex:devel', 'perl-XML-Parser:perl' ,'intltool:runtime', 'intltool:devel', 'gettext:runtime',  'libXext:devel', 'libXtst:devel', 'openssl:devel', 'udev:devel', 'inputproto:devel', 'libXtst:devel',  'libXi:devel', 'PyQt4:python', 'dbus-python:python', 'fftw:devel', 'json-c:devel', 'orc:devel', 'orc:runtime', 'python:devel', 'sip:python', 'valgrind:devel' ]
+
+    def configure(r):
+        # from pulse git 
+
+        # from ubuntu (gets resume right, hopefully) [I]
+        r.addPatch('pulse-pm-utils-hooks.patch')
+
+        extraConfig = (' --disable-static'
+                       ' --disable-rpath '
+                       ' --with-system-user=pulse '
+                       ' --with-system-group=pulse '
+                       ' --with-access-group=pulse-access '
+                       ' --enable-udev'
+                       ' --disable-hal'
+                       ' --without-fftw '
+                       ' --disable-hal-compat '
+                       # ' --enable-webrtc-aec'
+                   )
+        # kill rpaths...
+        r.Replace('/lib /usr/lib', '/%(lib)s %(libdir)s', 'configure')
+        r.Configure(extraConfig)
+
+    def make(r):
+        r.Make('V=1 LIBTOOL=%(bindir)s/libtool')
+
+        for x in [ 'liboss-util',
+                   'module-oss',
+                   'module-detect',
+                   'module-pipe-sink',
+                   'module-pipe-source',
+                   'module-device-manager',]:
+            r.Remove('%(libdir)s/pulse-%(version)s/modules/' + x + '.so')
+
+        r.Remove('%(bindir)s/start-pulseaudio-kde')
+        r.Remove('%(sysconfdir)s/xdg/autostart/pulseaudio-kde.desktop')
+
+    def policy(r):
+        # configure --disable-static had no effect; delete manually.
+        # FIXME lines bellow bust things for a number of our users
+        # (cannot repro here)
+        
+        #r.Remove('%(libdir)s/*.a', allowNoMatch = True)
+        #r.Remove('%(libdir)s/pulse-%(version)s/modules/*.a', allowNoMatch = True)
+        #for mod in [ 'liboss-util', 'module-oss', 
+        #             'module-detect', 'module-pipe-sink', 
+        #             'module-pipe-source']:
+        #            r.Remove('%(libdir)s/pulse-%(version)s/modules/' + mod + '.so',
+        #                     allowNoMatch = True)
+
+        r.Symlink('%(bindir)s/esdcompat','%(bindir)s/esd')
+        r.UtilizeGroup('pulse', '%(bindir)s/pulseaudio')
+        r.UtilizeGroup('pulse-access', '%(bindir)s/pulseaudio')
+        r.UtilizeGroup('pulse-rt', '%(bindir)s/pulseaudio')
+
+        r.Requires('esound:runtime', '%(bindir)s/esd')
+        r.Requires('flac:lib', '%(bindir)s/pulseaudio')
+        # r.Requires('rtkit:runtime', '%(bindir)s/pulseaudio')
+
+        r.MakeDirs('%(localstatedir)s/lib/pulse')
+        r.SetModes('%(localstatedir)s/lib/pulse', 0700)
+        r.Ownership('pulse', 'pulse', '%(localstatedir)s/lib/pulse')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/pulse')
+
+        r.MakeDirs('%(localstatedir)s/lib/gdm/.pulse/')
+        r.Install('default.pa-for-gdm', '%(localstatedir)s/lib/gdm/.pulse/default.pa', 
+                  # allows for multilib 
+                  package = 'pulseaudio:runtime')
+        # allows for multilib 
+        r.ComponentSpec('runtime', '/lib/udev/.*')
+
+        r.SetModes('%(localstatedir)s/lib/gdm/.pulse', 0700)
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/lib/gdm/.pulse')
+
+        r.SetModes('%(localstatedir)s/lib/gdm/.pulse', 0600)
+        r.Ownership('gdm', 'gdm', '%(localstatedir)s/lib/gdm/.pulse/default.pa')
+
+
+        r.SetModes('%(libexecdir)s/pulse/proximity-helper', 04755)
+
+        # from ubuntu (gets resume right, hopefully) [II]
+        r.Install('01PulseAudio', '%(libdir)s/pm-utils/sleep.d/', mode = 0755)
+        r.Requires('pm-utils:runtime', '%(libdir)s/pm-utils/sleep.d/.*')

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Babl(AutoPackageRecipe):
+
+    name = 'babl'
+    version = '0.1.10'
+
+    buildRequires = ['inkscape:runtime', 'librsvg:runtime', 'pkgconfig:devel', 'vala:runtime']
+    
+    def unpack(r):
+          r.addArchive('ftp://ftp.gimp.org/pub/babl/0.1/')
+
+

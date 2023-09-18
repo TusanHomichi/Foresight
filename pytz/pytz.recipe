@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pytz(PackageRecipe):
+
+    name = 'pytz'
+    version = '2010h'
+
+    buildRequires = ['python-setuptools:python',"python:devel"]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+        r.addPatch('pytz-2010h_zoneinfo.patch')
+        r.PythonSetup()
+        

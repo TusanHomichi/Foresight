@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4QuicklauncherPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-quicklauncher-plugin'
+    version = '1.9.4'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'libxfce4util:devel', 'libxfcegui4:devel', 'xfce4-panel:devel'
+    ] 
+
+    patches = ['xfce4-quicklauncher-plugin-1.9.4-fix-multiscreen.patch',
+               'xfce4-quicklauncher-plugin-1.9.4-save-settings.patch',
+               'xfce4-quicklauncher-plugin-1.9.4-xfce4-panel-4.7.patch',
+               'xfce4-quicklauncher-plugin-1.9.4-xfce4-settings-manager.patch',
+               'xfce4-quicklauncher-plugin-1.9.4-update-translations.patch'
+    ]

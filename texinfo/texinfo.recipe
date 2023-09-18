@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Texinfo(CPackageRecipe):
+    name = 'texinfo'
+    version = '4.13a'
+
+    if Use.bootstrap:
+        keepBuildReqs = True
+        buildRequires = ['binutils[!cross]', 'gcc[!cross]', 'libtermcap:devel',
+                         'zlib:devel']
+        crossRequires = ['glibc:devel', 'userspace-kernel-headers:devel', 'zlib:devel', 'libtermcap:devel']
+    else:
+        buildRequires = [ 'zlib:devel', 'libtermcap:devel', 'gettext:runtime', 'intltool:runtime', 'tetex:runtime']
+        buildRequires += [ 'ncurses:devel' ]
+
+
+    def setup(r):
+        r.addArchive('http://ftp.gnu.org/gnu/texinfo/')
+        #r.addPatch('texinfo-4.3-zlib.patch')
+        r.addSource('info-file.tagdescription', macros=True, dest='%(tagdescriptiondir)s/info-file')
+        r.addSource('info-file.taghandler', macros=True, mode=0755, dest='%(taghandlerdir)s/info-file')
+
+        r.Configure()
+        if Use.bootstrap:
+            # do not build info program to avoid ncurses dependency,
+            # avoiding texinfo->ncurses->gpm->texinfo build loop
+            r.Replace(r'(^SUBDIRS = .* )info (.*)',
+                      r'\1\2', 'Makefile')
+        r.Make()
+        r.MakeInstall()
+        r.Move('%(bindir)s/install-info', '/sbin/')
+        r.Remove('%(datadir)s/texinfo/texinfo.{xsl,dtd}')
+
+        # we want a zero byte info dir; the contents get filled in the first
+        # time the tag handler is run
+        r.Remove('%(infodir)s/dir')
+        r.Create('%(infodir)s/dir')
+        r.InitialContents('%(infodir)s/dir')
+
+        r.Doc('INTRODUCTION')
+
+        # this is the one place that we should NOT delete the directory
+        # when normalizing the info page setup
+        r.NormalizeInfoPages(exceptions = '^%(infodir)s/dir$')
+
+        r.PackageSpec('info',
+            '%(bindir)s/info.*',
+            r'%(infodir)s/info.*\.info.*',
+            r'%(mandir)s/man./info\..*',
+        )
+
+        r.PackageSpec('install-info',
+            '%(taghandlerdir)s/info-file',
+            '%(tagdescriptiondir)s/info-file',
+            '%(infodir)s/dir',
+            '%(essentialsbindir)s/install-info',
+            '%(mandir)s/man1/install-info.*',
+        )
+        # FIXME: remove when/if RPL-1077 is implemented
+        for req in ('/bin/grep', '/bin/rm', '/bin/chown', '/bin/chmod',
+                    '/dev/null'):
+            r.Requires(req, '%(taghandlerdir)s/')

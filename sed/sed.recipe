@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2009-2012 The Foresight Linux Project
+#               2011-2012 Openfiler Ltd.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sed(AutoPackageRecipe):
+    name = 'sed'
+    version = '4.2.1'
+
+    buildRequires = [ 'bison:runtime',
+                      'perl:runtime' ]
+
+    if not Use.bootstrap:
+        buildRequires += ['install-info:runtime',
+                          'acl:devel',] 
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/sed/', keyid='A750566F')
+        r.addSource('http://sed.sourceforge.net/sedfaq.txt')
+
+        for patch in [ 'sed-4.2.1-copy.patch',
+                       'sed-4.2.1-makecheck.patch',
+                       'sed-4.2.1-data-loss.patch',
+                       'sed-4.2.1-fix-0x26-on-RHS.patch',
+                       ]:
+            r.addPatch(patch)
+
+    def configure(r):
+        # we want sed to install into /bin -- store /usr/bin in
+        # stdbindir macro for later
+        r.macros.stdbindir = r.macros.bindir
+        r.macros.bindir= r.macros.essentialbindir
+
+        if not Use.bootstrap:
+            r.Configure('--without-included-regex')
+        else:
+            r.Replace('SUBDIRS = lib po sed doc testsuite',
+                      'SUBDIRS = lib po sed',
+                      'Makefile.{in,am}')
+            r.Configure()
+
+    def make(r):
+        r.Make('AR=%(target)s-ar')
+
+    def policy(r):
+        r.Doc('sedfaq.txt')
+
+        if not Use.bootstrap and not r.isCrossCompiling:
+            r.TestSuite('testsuite', 'make check-TESTS')

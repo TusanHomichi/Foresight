@@ -1,0 +1,8 @@
+class Dante(AutoPackageRecipe):
+    name = 'dante'
+    version = '1.3.2'
+    buildRequires = ['cyrus-sasl:devel', 'e2fsprogs:devel', 'krb5:devel',
+                     'openldap:devel', 'openssl:devel', 'pam:devel',
+                     'python:bin']
+    def unpack(r):
+        r.addArchive('http://www.inet.no/dante/files/')

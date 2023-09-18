@@ -1,0 +1,97 @@
+diff -Naur wbar-1.3.3.orig/dot.wbar wbar-1.3.3/dot.wbar
+--- wbar-1.3.3.orig/dot.wbar	2008-03-01 00:14:22.000000000 -0500
++++ wbar-1.3.3/dot.wbar	2008-03-02 19:55:03.000000000 -0500
+@@ -3,70 +3,38 @@
+ t: iconpack/wbar.osx/font/12
+ c:
+ 
+-i: iconpack/wbar.osx/nautilus.png
+-c: nautilus --no-desktop --browser
+-t: nautilus
+-
+-i: iconpack/wbar.osx/cedega.png
+-c: 
+-t: wine
+-
+ i: iconpack/wbar.osx/firefox.png
+ c: firefox
+ t: firefox
+ 
+-i: iconpack/wbar.osx/thunderbird.png
+-c: thunderbird
+-t: thunderbird
+-
+-i: iconpack/wbar.osx/gearth.png
+-c: 
+-t: gearth
++i: /usr/share/icons/hicolor/48x48/apps/liferea.png
++c: liferea
++t: liferea
++
++i: /usr/share/icons/hicolor/48x48/apps/xchat-gnome.png
++c: xchat-gnome
++t: xchat
++
++i: /usr/share/pixmaps/quodlibet.png
++c: quodlibet
++t: quodlibet
++
++i: /usr/share/icons/Tango/48x48/apps/gnome-terminal.png
++c: gnome-terminal
++t: terminal
+ 
+-i: iconpack/wbar.osx/skype.png
++i: iconpack/wbar.osx/nautilus.png
++c: nautilus --no-desktop --browser
++t: nautilus
++
++i: iconpack/wbar.osx/skype.png
+ c: skype
+ t: skype
+ 
+-i: iconpack/wbar.osx/psi.png
+-c: pidgin
+-t: pidgin
+-
+-i: iconpack/wbar.osx/mlgui.png
+-c: 
+-t: sancho
+-
+-i: iconpack/wbar.osx/ooffice.png
+-c: soffice
+-t: ooffice
+-
+-i: iconpack/wbar.osx/acroread.png
+-c: acroread
+-t: acroread
+-
+-i: iconpack/wbar.osx/beagle.png
+-c: beagle-search
+-t: beagle
++i: /usr/share/pixmaps/gajim.png
++c: gajim
++t: gajim
+ 
+ i: iconpack/wbar.osx/gimp.png
+ c: gimp
+ t: gimp
+-
+-i: iconpack/wbar.osx/picasa.png
+-c: picasa
+-t: picasa
+-
+-i: iconpack/wbar.osx/gqview.png
+-c: gqview
+-t: gqview
+-
+-i: iconpack/wbar.osx/xmms.png
+-c: audacious
+-t: audacious
+-
+-i: iconpack/wbar.osx/gnucash.png
+-c: gnucash
+-t: gnucash
+-
+-i: iconpack/wbar.osx/gmplayer.png
+-c: gmplayer
+-t: gmplayer

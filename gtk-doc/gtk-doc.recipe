@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkDoc(CPackageRecipe):
+    name = 'gtk-doc'
+    version = '1.17'
+
+    buildRequires = [ 'docbook-utils:runtime', 'openjade:runtime',
+                      'libxslt:runtime',  'docbook-xsl:data',
+                      'docbook-dtds:data', 'gawk:runtime', 'libxml2:runtime',
+                      'perl:runtime', 'perl:lib', 'pkgconfig:devel',
+                      'rarian:runtime', 'findutils:runtime', 'perl:devel',
+                      'rarian:devel', 'python:devel',
+                      'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+                      'gettext:runtime',
+                      ]
+
+    # coReqs = [ 'docbook-utils jade /usr/bin/cmp libxslt docbook-style-xsl:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://ftp.gnome.org/pub/GNOME/sources/gtk-doc/%(version)s/gtk-doc-%(version)s.tar.gz')
+        r.Move('doc/README', 'doc/README.docs')
+        r.Configure('--enable-public-id --disable-scrollkeeper')
+        r.Make()
+        r.MakeInstall()
+        r.ComponentSpec('data', '%(datadir)s/gtk-doc/data/')
+        r.AutoDoc()
+        r.Doc('doc/*')
+        r.Requires('openjade:runtime', '%(bindir)s/gtkdoc.*')
+        r.Requires('docbook-utils:runtime', '%(bindir)s/gtkdoc.*')
+        r.Requires('docbook-xsl:data', '%(bindir)s/gtkdoc.*')
+        r.Requires('libxslt:runtime', '%(bindir)s/gtkdoc.*')

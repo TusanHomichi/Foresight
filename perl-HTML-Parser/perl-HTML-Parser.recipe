@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage.recipe')
+class PerlHTMLParser(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-HTML-Parser'
+    version = '3.45'
+    # Do not add perl-libwww-perl as a buildreq as it will create
+    # a build loop.
+    # perl-libwww-perl has been deleted, use perl-HTTP-Cookies:perl instead
+    buildRequires = [ 'perl-HTML-Tagset:perl', 'perl-URI:perl', 'perl-HTTP-Cookies:perl', 'perl:devel'  ]

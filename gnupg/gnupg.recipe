@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GnuPG(AutoPackageRecipe):
+    name = 'gnupg'
+    version = '2.0.9'
+
+    buildRequires = [ 'autoconf:runtime', 'bzip2:devel', 'expect:runtime',
+        'libtermcap:devel', 'libusb:devel', 'openldap:devel', 'readline:devel',
+        'perl:runtime', 'curl:devel', 'e2fsprogs:devel', 'krb5:devel',
+        'openssl:devel', 'libassuan:devel', 'libgcrypt:devel',
+        'libgpg-error:devel', 'libksba:devel', 'pth:devel', 
+        'zlib:devel', 'install-info:runtime', ]
+        #'docbook-utils:runtime',]
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnupg.org/gcrypt/gnupg/', keyid='1CE0C630')
+
+        for p in [# CVE-2010-2547
+                  'gnupg-2.0.9-CVE-2010-2547.patch',
+                  'curl-typefix-1.4.9.patch',
+                  'fix_for_libgcrypt_1_5_0.patch'
+                 ]:
+            r.addPatch(p)
+
+    def configure(r):
+        r.Configure('--disable-rpath --libexecdir=%(libdir)s --with-zlib')
+
+    def policy(r):
+        r.Move('%(datadir)s/gnupg/{faq.html,FAQ}', '%(thisdocdir)s/')
+        r.Symlink('gpg2', '%(bindir)s/gpg')
+        r.Symlink('gpg2.1.gz', '%(mandir)s/man1/gpg.1.gz')
+        r.Requires('pinentry:runtime', '%(bindir)s/gpg2')

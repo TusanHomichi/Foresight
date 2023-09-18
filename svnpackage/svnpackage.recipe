@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import subprocess
+
+class SvnPackageRecipe(AutoPackageRecipe):
+    name = 'svnpackage'
+    version = '1.0'
+    url = None
+
+    buildRequires = ['subversion:runtime']
+
+    @classmethod
+    def getRevision(kls, url):
+        assert os.path.exists("/usr/bin/svn"), \
+                "please add 'subversion:runtime' to buildRequires"
+        svnCommand = ["/usr/bin/svn", "log", "-q", "--limit", "1", url]
+        print svnCommand
+        p = subprocess.Popen(svnCommand, stdout=subprocess.PIPE, env={"HOME": "/tmp/"})
+        data = p.stdout.readlines()[1]
+        p.wait()
+        print data
+        print data.split()[0]
+        if p.returncode != 0:
+            print "svn revision not retrieved for %s\n" % name
+            return
+        revision = data.split()[0]
+        return revision
+
+    def unpack(r):
+        if r.url:
+            r.addSvnSnapshot(r.url)
+        else:
+            print "Please define r.url or override r.unpack()"

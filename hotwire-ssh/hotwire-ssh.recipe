@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MyApp(PackageRecipe):
+    name = 'hotwire-ssh'
+    version = '0.201'
+ 
+    buildRequires = [ 'dbus-python:python', 'gettext:runtime', 'gnome-python:python', 
+        'intltool:runtime', 'pygobject:python', 'pygtk:python', 'python-sqlite:python', 
+        'python:devel', 'vte:python','python-setuptools:python' ]
+ 
+    def setup(r):
+        r.addArchive('http://hotwire-shell.googlecode.com/files/hotwire-ssh-%(version)s.tar.bz2')
+#        r.addSvnSnapshot('http://hotwire-shell.googlecode.com/svn/trunk/', 'hotwire-shell-read-only')
+        r.PythonSetup()
+        r.SetModes('/etc/profile.d/hotwire-ssh.sh', 755)
+        r.SetModes('/etc/profile.d/hotwire-ssh.csh', 755)

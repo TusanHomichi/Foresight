@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Icecast(AutoPackageRecipe):
+    name = 'icecast'
+    version = '2.3.2'
+
+    buildRequires = ['curl:devel', 'libogg:devel', 'libtheora:devel', 'libvorbis:devel', 'libxml2:devel', 'libxslt:devel', 'openssl:devel', 'pkgconfig:devel', 'speex:devel', 'zlib:devel']
+
+    def unpack(r):
+        r.addArchive('http://downloads.xiph.org/releases/icecast/')

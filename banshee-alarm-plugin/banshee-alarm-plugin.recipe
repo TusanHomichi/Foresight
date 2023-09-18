@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BansheeAlarmPlugin(RedirectRecipe):
+    name = 'banshee-alarm-plugin'
+    version = '0'
+ 
+
+ 
+    def setup(r):
+        # from http://code.google.com/p/banshee-unofficial-plugins/
+        # This project is now deprecated in favor of the "Banshee Community Extensions" project, available here : http://gitorious.org/banshee-community-extensions
+        r.addRemoveRedirect()

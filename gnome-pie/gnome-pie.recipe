@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class GnomePie(CPackageRecipe):
+    name = 'gnome-pie'
+    version = '0.5.5'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gnome-menus:devel', 'gtk:devel', 'libX11:devel', 'libXtst:devel', 'libdbusmenu-glib:devel', 'libgee:devel', 'libpng:devel', 'libxml2:devel', 'pango:devel', 'pkgconfig:devel', 'unique:devel', 'vala:runtime', 'cmake:runtime', 'desktop-file-utils:runtime', 'bamf:devel', 'libwnck:devel']
+ 
+    def setup(r):
+        # r.addGitSnapshot('git://github.com/Simmesimme/Gnome-Pie.git')
+        r.addArchive('https://github.com/Simmesimme/Gnome-Pie/archive/v%(version)s.tar.gz')
+        r.CMake('-DCMAKE_INSTALL_PREFIX=%(prefix)s')
+        r.Make()
+        r.MakeInstall()

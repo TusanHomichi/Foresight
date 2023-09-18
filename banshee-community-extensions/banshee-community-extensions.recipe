@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2010 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class BansheeCommunityExtensions(AutoPackageRecipe):
+    name = 'banshee-community-extensions'
+    version = '2.2.0'
+ 
+    buildRequires = [	
+            'GConf:runtime', 
+            'GConf:devel', 
+			'banshee:devellib', 
+			'fftw:devel', 
+			'gettext:runtime', 
+			'glib:devel', 
+			'gnome-sharp:cil', 
+			'gstreamer:devel', 
+			'gtk-sharp:cil', 
+			'intltool:runtime', 
+			'libsamplerate:devel', 
+			'libxml2:devel', 
+			'lirc:devel',
+			'mono-addins:cil', 
+			'mono:devel', 
+			'mono:runtime', 
+			'ndesk-dbus:cil', 
+			'pkgconfig:devel', 
+			'taglib-sharp:cil', 
+			'webkit-sharp:cil',
+			'gst-plugins-base:devel',
+			'webkit-sharp:devellib',
+			'gtk-sharp:devellib',
+			'gnome-sharp:devellib',
+			'sqlite:devel',
+            'libstdc++:devel',
+            'which:runtime',
+            'gnome-doc-utils:runtime',
+            'intltool:devel',
+            'libtool:runtime',
+            'gnome-doc-utils:devel',
+			]
+ 
+    def unpack(r):
+        r.addArchive('http://download.banshee.fm/banshee-community-extensions/%(version)s/')
+
+    def configure(r):
+	r.Configure('--prefix=%(prefix)s --libdir=%(libdir)s --disable-appindicator')

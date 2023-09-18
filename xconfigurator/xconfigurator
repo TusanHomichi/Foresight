@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# xconfigurator:  Setup xorg.conf
+#
+# chkconfig: 345 10 99
+#
+# description: initial setup of xorg.conf
+
+# Source function library.
+. /etc/init.d/functions
+
+case "$1" in
+  start)
+        echo -n $"Starting xconfigurator: "
+        if [ -f /etc/sysconfig/xconfigurator ];
+        then
+                chkconfig xconfigurator off
+                success
+                echo
+        else
+                if grep vesa /etc/X11/xorg.conf >/dev/null 2>&1;
+                then
+                    Xorg -configure :1 >/var/log/xconfigurator.log 2>&1
+                    if [ -e /xorg.conf.new ];
+                    then
+                        cp /etc/X11/xorg.conf /etc/X11/xorg.conf.xconfigurator
+                        mv /xorg.conf.new /etc/X11/xorg.conf
+                        touch /etc/sysconfig/xconfigurator
+                        chkconfig xconfigurator off
+                        success
+                        echo
+                    fi
+                else
+                    success
+                    echo
+                fi
+        fi
+        ;;
+  stop)
+        success
+        echo
+        ;;
+  *)
+        echo "Usage: xconfigurator {start|stop}"
+        exit 1
+        ;;
+esac
+exit 0
+

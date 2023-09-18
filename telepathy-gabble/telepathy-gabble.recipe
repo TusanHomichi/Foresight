@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2007-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class TelepathyGabble(GnomePackageRecipe):
+
+    name = 'telepathy-gabble'
+    version = '0.12.3'
+
+    buildRequires = [
+        'cyrus-sasl:devel',
+        'dbus-glib:runtime',
+        'e2fsprogs:devel',
+        'gnutls:devel',
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+        'libnice:devel',
+        'libsoup:devel',
+        'loudmouth:devel',
+        'sqlite:devellib',
+        'telepathy-glib:devel',
+        ]
+
+    externalArchive ='http://telepathy.freedesktop.org/releases/%(name)s/'
+    extraConfig = ' --with-ca-certificates=%(sysconfdir)s/ssl/certs/ca-bundle.crt '

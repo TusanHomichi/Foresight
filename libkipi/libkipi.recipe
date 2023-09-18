@@ -1,0 +1,15 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class libKIPI(kdePackageRecipe):
+
+    name = 'libkipi'
+    version = '0.1.6'
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/kipi/')
+

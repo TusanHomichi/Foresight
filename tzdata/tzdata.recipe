@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class TZData(RPMPackageRecipe,BuildPackageRecipe):
+    name = 'tzdata'
+    version = '2009h'
+
+    buildRequires = [ 'perl:runtime', ]
+
+    rpmRelease = '2.fc12'
+
+    def setup(r):
+        r.mainDir('tzdata')
+        r.addArchive('tzdata-base-0.tar.bz2', rpm=r.srpm)
+        r.addArchive('tzdata%(version)s.tar.gz', rpm=r.srpm,
+                               dir='tzdata/%(name)s%(version)s')
+        r.addSource('tzdata.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/tzdata')
+        r.addSource('tzdata.taghandler', macros=True, mode=0755,
+                    dest='%(taghandlerdir)s/tzdata')
+
+        r.Run('''sed -e 's|@objpfx@|%(builddir)s/obj/|' \
+                    -e 's|@datadir@|%(datadir)s|' \
+                    -e 's|@install_root@|%(destdir)s|' \
+                    Makeconfig.in > Makeconfig''')
+
+        r.Make()
+        r.MakeInstall()
+        r.LinkCount(exceptions='%(datadir)s/zoneinfo/.*')
+
+        # FIXME: remove when/if RPL-1077 is implemented.
+        for req in ('/usr/sbin/tzdata-update',):
+            r.Requires(req, '%(taghandlerdir)s/')

@@ -1,0 +1,5 @@
+loadSuperClass('pypipackage')
+class PythonMock(PyPiPackage, CPackageRecipe):
+    name = 'python-setproctitle'
+    pyname = 'setproctitle'
+    version = '1.1.6'

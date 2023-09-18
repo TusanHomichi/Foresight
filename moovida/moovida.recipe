@@ -1,0 +1,6 @@
+class Moovida(RedirectRecipe):
+    name = "moovida"
+    version = "0"
+
+    def setup(r):
+        r.addRemoveRedirect()

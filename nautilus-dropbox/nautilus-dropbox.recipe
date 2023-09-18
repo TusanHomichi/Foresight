@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2008-2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NautilusDropbox(CPackageRecipe):
+    name = 'nautilus-dropbox'
+    version = '1.6.2'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'dbus-glib:devel', 
+        'dbus:devel', 'docutils:runtime', 'expat:devel', 'fontconfig:devel',
+        'freetype:devel', 'gcc-c++:runtime', 'glib:devel', 'gtk:devel',
+        'gtk:runtime', 'libX11:devel', 'libXrender:devel', 'libnotify:devel',
+        'libpng:devel', 'libxcb:devel', 'nautilus:devel', 'pango:devel',
+        'pixman:devel', 'pkgconfig:devel', 'pygtk:devel', 'xcb-util:devel',
+        'zlib:devel', 'pygtk:runtime', 'pygtk:python', 'desktop-file-utils:runtime',
+        'nautilus:runtime', 'python:devel', 'pygpgme:python']
+
+
+    def setup(r):
+
+        r.macros.snapshot = r.version.split('.')[-1]
+        r.macros.site = 'http://www.dropbox.com/download?dl=packages/fedora/'
+        r.addSource("nautilus-dropbox.tagdescription", macros=True)
+        r.addSource("nautilus-dropbox.taghandler", macros=True)
+
+        dist = [
+            ('nautilus-dropbox-%(version)s-1.fedora.i386.rpm', Arch.x86),
+            ('nautilus-dropbox-%(version)s-1.fedora.x86_64.rpm', Arch.x86_64),
+        ]
+        for (rpm, arch) in dist:
+            r.addArchive('%(site)s/'+rpm, dir='/', use=(arch==True))
+
+        r.Install("nautilus-dropbox.tagdescription",
+            "%(tagdescriptiondir)s/nautilus-dropbox")
+        r.Install("nautilus-dropbox.taghandler",
+            "%(taghandlerdir)s/nautilus-dropbox", mode=0755)
+
+    def policy(r):
+        r.Requires('%(bindir)s/dropbox','%(taghandlerdir)s/')
+        r.Requires('pygpgme:python', 'nautilus-dropbox:runtime')
+        
+        # Taghandler dependencies
+        r.Requires('coreutils:runtime', '%(taghandlerdir)s/')
+        r.Requires('grep:runtime', '%(taghandlerdir)s/')
+        r.Requires('procps:runtime', '%(taghandlerdir)s/')

@@ -1,0 +1,107 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class XULRunner18Compat(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'xulrunner-1.8-compat'
+    version = '1.8.1.13'
+    isOPENsuse = True
+    rpmRelease = '10'
+    rpmName = 'mozilla-xulrunner181'
+    tarballName = 'xulrunner-source-%(version)s.tar.bz2'
+
+    rpmPatches = ['abuild.patch',
+                  'nss-opt.patch',
+                  'idldir.patch',
+
+                  'mozilla-path_len.patch',
+                  'gcc-undefined-ops.patch',
+                  'nsIPermission.patch',
+                  'rpath.patch',
+                  'system-proxies.patch',
+                  ]
+
+    buildRequires = [
+        'atk:devel', 'autoconf:runtime', 'cairo:devel',
+        'desktop-file-utils:runtime',
+        'doxygen:runtime', 'file:runtime', 'fontconfig:devel', 'freetype:devel',
+        'gcc:devel', 'glib:devel', 'gtk:devel', 'krb5:devel', 'libgcc:devellib',
+        'libICE:devel', 'libIDL:devel', 'libjpeg:devel', 'libpng:devel',
+        'libSM:devel', 'libstdc++:devel', 'libX11:devel', 'libXau:devel',
+        'libXdmcp:devel', 'libXext:devel', 'libXft:devel',
+        'libXinerama:devel', 'libXrender:devel', 'libXt:devel',
+        'makedepend:runtime', 'nspr:devel', 'nss:devel', 'pango:devel',
+        'perl:runtime', 'pkgconfig:devel', 'unzip:runtime', 'zip:runtime',
+        'zlib:devel', 'expat:devel',
+        # gnome-related buildreqs
+        'GConf:devel', 'ORBit2:devel', 'gnome-vfs:devel',
+        'libbonobo:devel', 'libgnome:devel', 'popt:devel',
+        'gnome-keyring:devel', 'libart_lgpl:devel', 'libbonoboui:devel',
+        'libgnomecanvas:devel', 'libgnomeui:devel', 'libxml2:devel',
+        # java
+        'icedtea-jdk:runtime', 'icedtea-jre:runtime', 
+        ]
+
+
+    def configure(r):
+
+        r.addArchive('l10n-%(version)s.tar.bz2', rpm = r.srpm)
+
+        r.addSource('mozconfig', dest='.mozconfig', macros=True)
+
+        r.macros.apiversion='1.8'
+        r.Environment('RPATH', '-Wl,-rpath -Wl,%(libdir)s/xulrunner-%(apiversion)s')
+
+        r.Run(""" sed config/autoconf.mk.in -e 's,\$(MOZ_APP_NAME)-\$(MOZ_APP_VERSION),\$(MOZ_APP_NAME)-%(apiversion)s,g' > config/autoconf.mk.in.in ; cp config/autoconf.mk.in.in config/autoconf.mk.in """)
+
+        r.Configure(' --enable-gnomevfs --enable-gnomeui '
+                    ' --with-java-bin-path=%(libdir)s/jvm/java-1.6.0-openjdk/bin/'
+                    ' --with-java-include-path=%(libdir)s/jvm/java-1.6.0-openjdk/include',
+                    ' --enable-extensions=default,cookie,permissions'
+                    ' --with-system-jpeg'
+                    ' --with-system-png'
+                    ' --with-system-mng'
+                    ' --with-system-zlib'
+                    ' --enable-default-toolkit=gtk2'
+                    ' --enable-xft'
+                    ' --disable-freetype2'
+                    ' --enable-svg'
+                    ' --enable-canvas'
+                    ' --disable-tests'
+                    ' --disable-installer'
+                    ' --enable-pango'
+                    ' --with-system-nspr'
+                    ' --with-system-nss'
+                    ' --enable-system-cairo',
+                    preConfigure='ac_cv_visibility_pragma=no')
+
+    def policy(r):
+        r.Requires('mozilla-filesystem:runtime', '%(libdir)s/')
+
+        # install additional locales
+        r.Run("""
+for locale in $(cat toolkit/locales/all-locales); do
+  make -C toolkit/locales libs-$locale
+  cp dist/xpi-stage/locale-$locale/chrome/$locale.jar     %(destdir)s/%(libdir)s/xulrunner-%(apiversion)s/chrome
+  cp dist/xpi-stage/locale-$locale/chrome/$locale.manifest     %(destdir)s/%(libdir)s/xulrunner-%(apiversion)s/chrome
+done
+""")
+
+        # We use separate nspr & nss
+        r.Remove('%(libdir)s/pkgconfig/xulrunner-nspr.pc')
+        r.Remove('%(libdir)s/pkgconfig/xulrunner-nss.pc')
+
+        r.Requires(exceptDeps='java:.*')
+
+        if Arch.x86: 
+            r.Create('%(sysconfdir)s/ld.so.conf.d/%(name)s32.conf', contents = """
+%(libdir)s/xulrunner-%(apiversion)s/
+ """)
+        else:
+            r.Create('%(sysconfdir)s/ld.so.conf.d/%(name)s64.conf', contents = """
+%(libdir)s/xulrunner-%(apiversion)s/
+ """)
+
+

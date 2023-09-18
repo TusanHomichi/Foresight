@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2009, 2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libmemcached(AutoPackageRecipe):
+    name = 'libmemcached'
+    version = '0.44'
+ 
+    buildRequires = [
+        'cyrus-sasl:devel',
+        'doxygen:runtime',
+        'gcc-c++:runtime',
+        'libevent:devel',
+        'memcached:runtime',
+        'perl:runtime',
+      ]
+ 
+    def unpack(r):
+        # configures to use with sasl but does not link to it, so
+        # consumers can get to sasl symbols:
+        r.macros.ldflags += ' -lsasl2'
+        r.addArchive('http://download.tangent.org/')

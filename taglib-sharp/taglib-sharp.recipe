@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TaglibSharp(AutoPackageRecipe):
+    name    = 'taglib-sharp'
+    version = '2.0.3.7'
+
+    buildRequires = ['mono:cil', 'mono:devel', 'mono:runtime',
+                     'pkgconfig:devel']
+
+    def unpack(r):
+        r.addArchive('http://download.banshee-project.org/taglib-sharp/%(version)s/')
+        r.Replace('pkgconfigdir\ =\ \$\(datadir\)/pkgconfig', 'pkgconfigdir = $(libdir)/pkgconfig', 'Makefile.in')
+        r.Replace('libdir=\${exec_prefix}/lib', 'libdir=%(libdir)s', 'taglib-sharp.pc.in')
+
+    def configure(r):
+        # Build fails with docs enabled
+        r.Configure('--disable-docs')
+
+    def makeinstall(r):
+        # get GACUTILS flags right. probably core issue elsewhere,
+        # as this shouldn't be needed
+        r.MakeInstall('GACUTIL_FLAGS="/package %(name)s /gacdir %(libdir)s /root %(destdir)s%(libdir)s" '
+                      'GACUTIL_POLICY_FLAGS="/package %(name)s /gacdir %(libdir)s /root %(destdir)s%(libdir)s"')
+

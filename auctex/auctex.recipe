@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Auctex(AutoPackageRecipe):
+    name = 'auctex'
+    version = '11.84'
+    buildRequires = [
+        'emacs:runtime', 'ghostscript:runtime', 'install-info:runtime',
+        'make:runtime', 'perl:runtime', 'tetex-dvips:runtime',
+        'tetex-latex:runtime', 'tetex:runtime', 'texi2html:runtime',
+        'texinfo:runtime'
+        ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/%(name)s/')
+        r.MakeDirs('%(prefix)s/share/emacs/site-lisp/site-start.d/')

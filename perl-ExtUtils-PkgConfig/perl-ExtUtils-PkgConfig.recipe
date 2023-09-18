@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PerlExtUtilsPkgConfig(AutoPackageRecipe):
+    name = 'perl-ExtUtils-PkgConfig'
+    version = '1.12'
+    tarname = 'ExtUtils-PkgConfig'
+    buildRequires = ['perl:lib', 'perl:runtime', 'pkgconfig:devel']
+
+    def setup(r):
+        r.macros.tarname = r.tarname
+        r.mainDir('%(tarname)s-%(version)s')
+        r.addArchive('mirror://sourceforge/gtk2-perl/%(tarname)s-%(version)s.tar.gz')
+        r.Run('CFLAGS="%(cflags)s" perl Makefile.PL '
+              ' PREFIX=%(prefix)s INSTALLDIRS=vendor < /dev/null')
+        r.Make()
+        r.MakeInstall('BINDIR=%(destdir)s%(bindir)s'
+                      ' PERL5DIR=%(destdir)s%(libdir)s/perl5/vendor_perl/')

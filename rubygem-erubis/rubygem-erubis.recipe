@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Erubis(RubygemPackageRecipe):
+
+    name = 'rubygem-erubis'
+    version = '2.7.0'
+

@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Beagle(RPMPackageRecipe,CPackageRecipe):
+    name = 'beagle'
+    version = '0.3.9'
+    rpmRelease = '14.fc12'
+    rpmPatches = [ 'beagle-0.3.9-spew.patch',
+                 'beagle-0.3.0-runuser.patch',
+                 'beagle-0.2.15.1-libdir.patch',
+                 'beagle-monodoc.patch',
+                 'beagle-0.3.8-epiphany.patch',
+                 #gmime-2.4
+                 'beagle-0.3.9-gmime24.patch',
+                 #firefox 
+                 'beagle-0.3.8-fx35.patch',
+                 #gnome-desktop
+                 'beagle-0.3.9-libgnome-desktop-soname.patch',
+                 'beagle-0.3.9-openfix.patch']
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel',
+                      'desktop-file-utils:runtime', 'freetype:devel',
+                      'glib:devel', 'gnome-vfs:devel', 'libexif:devel',
+                      'libgnome:devel', 'gtk:devel', 'libpng:devel',
+                      'librsvg:devel', 'libxml2:devel', 'pango:devel',
+                      'zlib:devel', 'gmime:devellib', 'gmime:cil',
+                      'gnome-sharp:devellib', 'gnome-sharp:cil',
+                      'galago-sharp:devellib', 'galago-sharp:cil',
+                      'gsf-sharp:devellib', 'gsf-sharp:cil',
+                      'gtk-sharp:devellib', 'gtk-sharp:cil',
+                      'mono:devel', 'mono:cil', 'gawk:runtime',
+                      'gettext:runtime', 'mono:runtime', 'perl:runtime',
+                      'pkgconfig:devel', 'python:devel', 'pygtk:devel',
+                      'zip:runtime', 'evolution-sharp:devellib',
+                      'evolution-sharp:cil', 'epiphany:devel',
+                      'epiphany:devellib', 'libICE:devel', 'libSM:devel',
+                      'libX11:devel', 'libXrender:devel',
+                      'libXScrnSaver:devel', 'sqlite:devel',
+                      'shared-mime-info:devellib', 'expat:devel',
+                      'intltool:runtime', 'kdelibs:devel',
+                      'ndesk-dbus-glib:devellib', 'ndesk-dbus-glib:cil',
+                      'ndesk-dbus:devellib', 'ndesk-dbus:cil',
+                      'avahi-sharp:devellib', 'xdg-utils:runtime',
+                      'libgsf:devel', 'wv:devel', 'pygtk:python',
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime',
+                      'gcc-c++:runtime', 'taglib-sharp:cil', 'taglib-sharp:devellib',
+                      ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.addSource('sysconfig.beagle')
+
+        r.Environment('MONO_PATH', '%(destdir)s/%(libdir)s/%(name)s')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+
+        r.Configure(' --enable-webservices=yes --enable-sqlite3 --disable-docs --enable-wv1 --disable-googlebackends')
+        r.Make()
+        r.MakeInstall()
+
+        r.UtilizeUser('beagleindex', '%(libexecdir)s/beagle-crawl-system')
+
+        r.MakeDirs('%(localstatedir)s/cache/beagle/indexes')
+        r.Ownership('beagleindex','beagleindex','%(localstatedir)s/cache/beagle/indexes')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/cache/beagle/indexes')
+
+        r.MakeDevices('/dev/inotify','c',10,63,'root','root',0644)
+
+        r.Requires('/bin/awk', '%(taghandlerdir)s/home-user_xattr-user')
+        r.Requires('e2fsprogs:runtime', '%(taghandlerdir)s/home-user_xattr-user')
+        r.Requires('distro-release:runtime', '%(bindir)s/beagled')
+        r.TagSpec('home-user_xattr-user', '%(bindir)s/beagled')
+        r.ComponentSpec('lib','%(libdir)s/beagle/.*.so')
+
+        # Remove the launcher for the config tool, it is available
+        # in the search tool
+        r.Remove('%(datadir)s/applications/beagle-settings.desktop')
+        r.Remove('%(sysconfdir)s/xdg/autostart/beagle-search-autostart.desktop')
+
+        # FL: Have beagled not autostart by default, but make it visible
+        #     in the gnome-session 'Startup Applications' panel -- /ermo
+        r.Replace('\[Desktop Entry\]',
+                  '[Desktop Entry]\nX-GNOME-Autostart-enabled=false',
+                  '%(sysconfdir)s/xdg/autostart/beagled-autostart.desktop')
+        

@@ -1,0 +1,40 @@
+Index: kdebase-workspace-4.6.0a/startkde.cmake
+===================================================================
+--- kdebase-workspace-4.6.0a.orig/startkde.cmake	2011-02-10 14:49:08.000000000 +0000
++++ kdebase-workspace-4.6.0a/startkde.cmake	2011-02-10 15:04:16.052341762 +0000
+@@ -197,6 +197,35 @@
+   unset KLOCALE_LANGUAGES
+ fi
+ 
++# configuration of the gtk2-engines-oxygen if not already set
++
++# First we need to remove previous gtk2-engines-qtcurve config if any
++if [ -e $kdehome/env/gtk2-engines-qtcurve.rc.sh ] && [ ! -e /var/lib/dpkg/info/gtk2-engines-qtcurve.list ] ; then
++  rm -f $kdehome/env/gtk2-engines-qtcurve.rc.sh
++  # We also have to remove .gtkrc-2.0-kde4 since it'll have gtk2-engines-qtcurve config in it
++  if [ -e $HOME/.gtkrc-2.0-kde4 ] ; then
++    rm -f $HOME/.gtkrc-2.0-kde4
++  fi
++fi
++
++if [ -e /var/lib/dpkg/info/gtk2-engines-oxygen.list ] && [ -e /var/lib/dpkg/info/kubuntu-default-settings.list ] ; then
++  # The theme and k-d-s are installed, configuring...
++  if [ ! -e $kdehome/env/gtk2-default-theme.rc.sh ] && [ -e /usr/share/kubuntu-default-settings/gtk2-default-theme.rc.sh ] ; then
++    mkdir -p $kdehome/env
++    cp -f /usr/share/kubuntu-default-settings/gtk2-default-theme.rc.sh $kdehome/env
++    chmod 755 $kdehome/env/gtk2-default-theme.rc.sh
++  fi
++
++  if [ ! -e $HOME/.gtkrc-2.0-kde4 ] && [ -e /usr/share/kubuntu-default-settings/dot-gtkrc-2.0-kde4 ] ; then
++    cp -f /usr/share/kubuntu-default-settings/dot-gtkrc-2.0-kde4 $HOME/.gtkrc-2.0-kde4
++  fi
++else
++  # Either the theme or k-d-s are missing, not forcing the configuration then... 
++  if [ -e $kdehome/env/gtk2-default-theme.rc.sh ] ; then
++    rm -f $kdehome/env/gtk2-default-theme.rc.sh
++  fi
++fi
++
+ # Source scripts found in <localprefix>/env/*.sh and <prefixes>/env/*.sh
+ # (where <localprefix> is $KDEHOME or ~/.kde, and <prefixes> is where KDE is installed)
+ #

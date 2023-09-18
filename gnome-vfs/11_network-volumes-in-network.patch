@@ -1,0 +1,240 @@
+diff -Nur modules.orig/computer-method.c modules/computer-method.c
+--- modules.orig/computer-method.c	2004-08-12 11:08:56.000000000 +0200
++++ modules/computer-method.c	2005-02-09 23:46:57.697485936 +0100
+@@ -260,12 +260,14 @@
+ 	if (gnome_vfs_volume_is_user_visible (volume)) {
+ 		drive = gnome_vfs_volume_get_drive (volume);
+ 		if (drive == NULL) {
++			if (gnome_vfs_volume_get_volume_type (volume) != GNOME_VFS_VOLUME_TYPE_CONNECTED_SERVER) {
+ 			file = computer_file_new (COMPUTER_VOLUME);
+ 			name = gnome_vfs_volume_get_display_name (volume);
+ 			file->file_name = build_file_name (name, ".volume");
+ 			g_free (name);
+ 			file->volume = gnome_vfs_volume_ref (volume);
+ 			computer_file_add (dir, file);
++			}
+ 		} else {
+ 			file = get_drive_file (dir, drive);
+ 			if (file != NULL) {
+@@ -360,10 +362,11 @@
+ 	file->file_name = g_strdup ("Filesystem.desktop");
+ 	computer_file_add (dir, file);
+ 	
++	/*
+ 	file = computer_file_new (COMPUTER_NETWORK_LINK);
+ 	file->file_name = g_strdup ("Network.desktop");
+ 	computer_file_add (dir, file);
+-	
++	*/
+ 	volumes = gnome_vfs_volume_monitor_get_mounted_volumes (monitor);
+ 	drives = gnome_vfs_volume_monitor_get_connected_drives (monitor);
+ 	
+@@ -384,12 +387,14 @@
+ 		if (gnome_vfs_volume_is_user_visible (volume)) {
+ 			drive = gnome_vfs_volume_get_drive (volume);
+ 			if (drive == NULL) {
++				if (gnome_vfs_volume_get_volume_type (volume) != GNOME_VFS_VOLUME_TYPE_CONNECTED_SERVER) {
+ 				file = computer_file_new (COMPUTER_VOLUME);
+ 				name = gnome_vfs_volume_get_display_name (volume);
+ 				file->file_name = build_file_name (name, ".volume");
+ 				g_free (name);
+ 				file->volume = gnome_vfs_volume_ref (volume);
+ 				computer_file_add (dir, file);
++				}
+ 			}
+ 			gnome_vfs_drive_unref (drive);
+ 		}
+diff -Nur modules.orig/network-method.c modules/network-method.c
+--- modules.orig/network-method.c	2004-10-07 17:08:38.000000000 +0200
++++ modules/network-method.c	2005-02-09 23:46:37.620538096 +0100
+@@ -51,6 +51,7 @@
+ 	char *icon;
+ 	char *target_uri;
+         char *filename;
++	gint vol_id;
+ } NetworkLink;
+ 
+ typedef struct {
+@@ -154,7 +155,8 @@
+ static char *
+ get_data_for_link (const char *uri, 
+ 		   const char *display_name, 
+-		   const char *icon)
++		   const char *icon,
++		   gint        vol_id)
+ {
+ 	char *data;
+ 
+@@ -163,10 +165,13 @@
+ 				"Name=%s\n"
+ 				"Type=FSDevice\n"
+ 				"Icon=%s\n"
+-				"URL=%s\n",
++				"URL=%s\n"
++				"%sX-Gnome-Volume=%d\n",
+ 				display_name,
+ 				icon,
+-				uri);
++				uri,
++				vol_id >= 0 ? "" : "#",
++				vol_id);
+ 	return data;
+ }
+ 
+@@ -235,7 +240,8 @@
+ add_link (const char *filename,
+ 	  const char *target_uri,
+ 	  const char *display_name,
+-	  const char *icon)
++	  const char *icon,
++	  gint        vol_id)
+ {
+ 	NetworkLink *link;
+ 
+@@ -244,6 +250,7 @@
+ 	link->target_uri = g_strdup (target_uri);
+ 	link->display_name = g_strdup (display_name);
+ 	link->icon = g_strdup (icon);
++	link->vol_id = vol_id;
+ 
+ 	active_links = g_list_prepend (active_links, link);
+ 	do_link_event (filename,
+@@ -264,7 +271,8 @@
+ 	add_link (filename,
+ 		  link_uri,
+ 		  domain,
+-		  "gnome-fs-network");
++		  "gnome-fs-network",
++		  -1);
+ 	g_free (filename);
+ 	g_free (link_uri);
+ }
+@@ -356,7 +364,8 @@
+ {
+ 	return get_data_for_link (link->target_uri, 
+ 				  link->display_name, 
+-				  link->icon);
++				  link->icon,
++				  link->vol_id);
+ }
+ 
+ /* Call with lock held */
+@@ -477,6 +486,63 @@
+ 
+ }
+ 
++/* functions to handle volumes */
++static char *
++build_volume_filename (GnomeVFSVolume *volume)
++{
++	char *name, *escaped, *ret;
++
++	name = gnome_vfs_volume_get_display_name (volume);
++	escaped = gnome_vfs_escape_string (name);
++	ret = g_strconcat ("volume-", escaped, NULL);
++	g_free(escaped);
++	g_free(name);
++
++	return ret;
++}
++
++static void
++volume_mounted (GnomeVFSVolumeMonitor *monitor,
++		GnomeVFSVolume        *volume,
++		gpointer               user_data)
++{
++	char *volume_file, *volume_uri;
++	char *volume_name, *volume_icon;
++
++	G_LOCK (network);
++	if (gnome_vfs_volume_is_user_visible (volume) &&
++	    gnome_vfs_volume_get_volume_type (volume) == GNOME_VFS_VOLUME_TYPE_CONNECTED_SERVER) {
++		volume_file = build_volume_filename (volume);
++		volume_uri = gnome_vfs_volume_get_activation_uri (volume);
++		volume_name = gnome_vfs_volume_get_display_name (volume);
++		volume_icon = gnome_vfs_volume_get_icon (volume);
++
++		add_link (volume_file, volume_uri,
++			  volume_name, volume_icon,
++			  gnome_vfs_volume_get_id (volume));
++		g_free (volume_icon);
++		g_free (volume_name);
++		g_free (volume_uri);
++		g_free (volume_file);
++	}
++	G_UNLOCK (network);
++}
++
++static void
++volume_unmounted (GnomeVFSVolumeMonitor *volume_monitor,
++		  GnomeVFSVolume        *volume,
++		  gpointer               user_data)
++{
++	char *volume_file;
++
++	G_LOCK (network);
++
++	volume_file = build_volume_filename (volume);
++	remove_link (volume_file);
++	g_free (volume_file);
++
++	G_UNLOCK (network);
++}
+ 
+ static GnomeVFSResult
+ do_open (GnomeVFSMethod *method,
+@@ -1338,6 +1404,8 @@
+ 	GConfClient *gconf_client;
+ 	GnomeVFSURI *uri;
+ 	char *workgroup_uri, *workgroup_escaped, *setting;
++	GnomeVFSVolumeMonitor *monitor;
++	GList *volumes, *l;
+ 	
+ 	gconf_client = gconf_client_get_default ();
+ 
+@@ -1394,10 +1462,43 @@
+ 		add_link ("smblink-root",
+ 			  "smb://",
+ 			  _("Windows Network"),
+-			  "gnome-fs-network");
++			  "gnome-fs-network",
++			  -1);
+ 	}
+ 
+-	
++	/* add non-drive volumes to network:/// folder */
++	monitor = gnome_vfs_get_volume_monitor ();
++	volumes = gnome_vfs_volume_monitor_get_mounted_volumes (monitor);
++	for (l = volumes; l != NULL; l = l->next) {
++		GnomeVFSVolume *volume = l->data;
++
++		if (gnome_vfs_volume_is_user_visible (volume) &&
++		    gnome_vfs_volume_get_volume_type (volume) == GNOME_VFS_VOLUME_TYPE_CONNECTED_SERVER) {
++			gchar *volume_file, *volume_uri;
++			gchar *volume_name, *volume_icon;
++
++			volume_file = build_volume_filename (volume);
++			volume_uri = gnome_vfs_volume_get_activation_uri (volume);
++			volume_name = gnome_vfs_volume_get_display_name (volume);
++			volume_icon = gnome_vfs_volume_get_icon (volume);
++
++			add_link (volume_file, volume_uri,
++				  volume_name, volume_icon,
++				  gnome_vfs_volume_get_id (volume));
++			g_free (volume_icon);
++			g_free (volume_name);
++			g_free (volume_uri);
++			g_free (volume_file);
++		}
++	}
++	g_list_foreach (volumes, (GFunc) gnome_vfs_volume_unref, NULL);
++	g_list_free (volumes);
++
++	g_signal_connect (monitor, "volume_mounted",
++			  G_CALLBACK (volume_mounted), NULL);
++	g_signal_connect (monitor, "volume_unmounted",
++			  G_CALLBACK (volume_unmounted), NULL);
++
+ 	return &method;
+ }
+ 

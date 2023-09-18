@@ -1,0 +1,23 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BashCompletion(AutoPackageRecipe):
+
+    name = 'bash-completion'
+    version = '2.0'
+
+    def unpack(r):
+
+        r.addArchive('http://bash-completion.alioth.debian.org/files/')
+
+        #r.Replace('apache2ctl', 'apachectl', 'contrib/apache2ctl')
+
+
+    def policy(r):
+
+        r.AutoDoc(exceptions='/.*/')
+
+        r.SetModes('%(sysconfdir)s/profile.d/bash_completion.sh', 0755)
+

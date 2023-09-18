@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LxdeCommon(AutoPackageRecipe):
+    name = 'lxde-common'
+    version = '0.5.5'
+ 
+    buildRequires = ['glib:devel', 'gtk:runtime', 'libX11:devel', 'pkgconfig:devel', 'desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/lxde/%(name)s-%(version)s.tar.gz')
+        r.addPatch('foresight-cr.patch')
+        r.addPatch('foresight-panel.patch')
+        r.addPatch('openbox-menu.patch')
+        r.addPatch('theme.patch')
+        r.addPatch('wallpaper.patch')
+        r.addSource('lxde-logout.desktop')
+        r.Desktopfile('lxde-logout.desktop')
+        r.addSource('lxde-desktop-preferences.desktop')
+        r.Desktopfile('lxde-desktop-preferences.desktop')
+        # r.addPatch('autostart.patch')

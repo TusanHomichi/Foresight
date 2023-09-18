@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Ardour
+Exec=ardour2
+Terminal=false
+Type=Application
+Categories=GNOME;AudioVideo;
+Icon=/usr/share/ardour2/icons/ardour_icon_48px.png

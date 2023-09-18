@@ -1,0 +1,22 @@
+# Copyright (c) 2007 Paul Cutler <pcutler>
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage.recipe')
+class Linc(GnomePackageRecipe):
+
+    name = 'linc'
+    version = '1.1.1'
+
+    buildRequires = [ 'pkgconfig:devel', 'glib:devel', 'libtool:runtime' ]
+    extraConfig = ''
+    if Use.ssl:
+        buildRequires.append('openssl:devel')
+    else:
+        extraConfig += ' --without-openssl'
+
+
+    makeArgs = 'LIBTOOL=%(bindir)s/libtool'
+    makeInstallArgs = 'LIBTOOL=%(bindir)s/libtool'

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ChromiumBsu(CPackageRecipe):
+    name = 'chromium-bsu'
+    version = '0.9.14'
+ 
+    buildRequires = ['Mesa:devel', 'SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'desktop-file-utils:runtime', 'expat:devel', 'fontconfig:devel', 'freeglut:devel', 'freetype:devel', 'ftgl:devel', 'gettext:runtime', 'glpng:devel', 'intltool:runtime', 'libICE:devel', 'libstdc++:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/chromium-bsu/%(name)s-%(version)s.tar.gz')
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

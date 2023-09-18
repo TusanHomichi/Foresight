@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Libcgroup(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'libcgroup'
+    version = '0.36.2'
+    rpmRelease = '7.fc14'
+    distroVersion = '14'
+    rpmPatches = [
+        'fedora-config.patch',
+        'fedora-fix-initscripts.patch',
+        'libcgroup-0.36.2-initscripts.patch',
+        'fedora-nochdir.patch',
+        'libcgroup-CVE-2011-1022.patch',
+        'libcgroup-CVE-2011-1006.patch',
+        'libcgroup-0.36.2-comma.patch',
+    ]
+ 
+    packageSummary = 'Tools and libraries to control and monitor control groups'
+
+    buildRequires = [
+        'bison:runtime',
+        'chkconfig:runtime',
+        'flex:runtime',
+        'gcc-c++:runtime',
+        'pam:devel',
+    ]
+ 
+    def configure(r):
+        r.Configure(' --enable-initscript-install '
+                    ' --bindir=%(essentialbindir)s '
+                    ' --sbindir=%(essentialsbindir)s'
+                    ' --libdir=%(libdir)s'
+                    ' --enable-pam-module-dir=%(essentiallibdir)s/security ')
+
+    def makeinstall(r):
+        r.MakeInstall()
+
+        # CONFIG_CGROUP_NS is gone in 3.x plus kernels
+        r.Replace('ns\\t\=\ \/cgroup\/ns\;', '', 'samples/cgconfig.conf')
+
+        # config files are needed for libcgroup to run
+        r.Install('samples/cgred.conf', '%(sysconfdir)s/sysconfig/')
+        r.Install('samples/cgconfig.sysconfig', '%(sysconfdir)s/sysconfig/')
+        r.Install('samples/cgconfig.conf', '%(sysconfdir)s/')
+        r.Install('samples/cgrules.conf', '%(sysconfdir)s/')
+
+        r.InitialContents('%(sysconfdir)s/sysconfig/*')
+        r.InitialContents('%(sysconfdir)s/*.conf')
+
+        r.Move('%(sysconfdir)s/rc.d/init.d/*', '%(initdir)s/')
+
+        r.Move('%(libdir)s/*.so*', '%(essentiallibdir)s/')
+        # check soversion bellow anytime we bump
+        r.Symlink('%(essentiallibdir)s/libcgroup.so.1.0.36', '%(libdir)s/')
+        r.Symlink('%(essentiallibdir)s/libcgroup.so.1', '%(libdir)s/')
+        
+        r.MakeDirs("/cgroup")
+
+    def policy(r):
+        r.SetModes('%(initdir)s/cgconfig', '%(initdir)s/cgred', 0755)
+        r.SetModes('%(essentialbindir)s/cgexec', 04755) # explicitly setuid
+        r.ExcludeDirectories(exceptions="/cgroup")
+

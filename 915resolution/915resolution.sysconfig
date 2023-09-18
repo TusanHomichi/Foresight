@@ -1,0 +1,8 @@
+# 915resolution is a program that reprograms the video BIOS in Intel
+# chips to include different modelines.
+#
+# RESOLUTION="30 1400 1050 24"
+#
+# This reprograms slot 30 with a 1400x1050, 24 bpp mode
+
+RESOLUTION=

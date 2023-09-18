@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoRatings(PackageRecipe):
+
+    name = 'django-ratings'
+    version ="d0ae149d112c7e5f9f40"
+
+    buildRequires = ['python-setuptools:python','django:python', 'python:devel']
+
+    def setup(r):
+        r.addGitSnapshot("http://github.com/dcramer/django-ratings.git")
+        r.PythonSetup()

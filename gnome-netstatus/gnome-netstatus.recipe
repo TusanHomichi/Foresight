@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeNetstatus(GnomePackageRecipe):
+
+    # perl, perl-XML-Parser are needed for intltool
+    buildRequires = [ 'libxml2:devel','perl:runtime', 'perl-XML-Parser', 'popt:devel',       'libgnomeui:devel', 'gnome-panel:devel', 'libglade:devel', 'gtk:devel', 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'glib:runtime', 'gnome-keyring:devel', 'gnome-vfs:devel', 'gtk:runtime', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libpng:devel', 'pango:devel', 'rarian:devel', 'rarian:runtime', 'which:runtime', 'libxslt:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', ]
+
+    name = 'gnome-netstatus'
+    version = '2.28.2'
+
+    extraConfig =' --disable-scrollkeeper'
+
+    docs = GnomePackageRecipe.docs
+    docs.append('TODO')

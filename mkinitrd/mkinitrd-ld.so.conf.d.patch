@@ -1,0 +1,11 @@
+--- mkinitrd.orig	2007-09-28 18:13:44.000000000 +0300
++++ mkinitrd	2007-09-28 18:17:24.000000000 +0300
+@@ -1499,7 +1499,7 @@
+     vecho "Adding dynamic linker configuration files."
+     [ -n "$LD_SO_CONF" ] && inst "$LD_SO_CONF" "$MNTIMAGE" /etc/ld.so.conf
+     mkdir -p $MNTIMAGE/etc/ld.so.conf.d
+-    for x in $(find $LD_SO_CONF_D -type f) ; do
++    test -d $LD_SO_CONF_D && for x in $(find $LD_SO_CONF_D -type f) ; do
+         inst "$x" "$MNTIMAGE" "/etc/ld.so.conf.d/$(basename "$x")"
+     done
+ 

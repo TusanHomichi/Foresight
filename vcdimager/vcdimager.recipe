@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Vcdimager(AutoPackageRecipe):
+    name = 'vcdimager'
+    version = '0.7.24'
+ 
+    buildRequires = ['install-info:runtime', 'libcdio:devel', 'libxml2:devel', 'pkgconfig:devel', 'popt:devel', 'zlib:devel', 'gcc-c++:runtime']
+ 
+    def unpack(r):
+        r.addArchive('ftp://mirrors.kernel.org/gnu/vcdimager/')

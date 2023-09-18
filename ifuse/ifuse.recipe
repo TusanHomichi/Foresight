@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ifuse(AutoPackageRecipe):
+    name = 'ifuse'
+    version = '1.0.0'
+ 
+    buildRequires = ['fuse:devel', 'glib:devel', 'gnutls:devel', 'libimobiledevice:devel', 'libplist:devel', 'libtasn1:devel', 'libxml2:devel', 'pkgconfig:devel', 'usbmuxd:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.libimobiledevice.org/downloads/')

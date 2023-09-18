@@ -1,0 +1,16 @@
+# Copyright 2007, Antonio Meireles, http://sbin.reboot.sh
+
+import datetime
+class GtkMoblinEngine(AutoPackageRecipe):
+
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'pango:devel', 'pkgconfig:devel', 'zlib:devel', 'gnome-common:runtime', 'gnome-common:devel', 'libtool:runtime', 'gettext:runtime', 'gettext:devel']
+
+    name = 'moblin-gtk-engine'
+    version = '1.2.3'
+
+    def unpack(r):
+        r.addArchive('http://git.moblin.org/cgit.cgi/%(name)s/snapshot/')
+
+    def configure(r):
+        r.Configure(' --disable-static', configureName='autogen.sh')
+

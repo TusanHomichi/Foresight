@@ -1,0 +1,11 @@
+--- Miro-2.0/platform/gtk-x11/plat/config.py.videodir	2009-02-09 23:34:54.000000000 -0500
++++ Miro-2.0/platform/gtk-x11/plat/config.py	2009-02-15 23:27:14.803946070 -0500
+@@ -112,7 +112,7 @@
+     value = descriptor.default
+ 
+     if descriptor == prefs.MOVIES_DIRECTORY:
+-        value = os.path.expanduser('~/Movies/Miro')
++        value = os.path.expanduser('~/Videos/Miro')
+ 
+     elif descriptor == prefs.NON_VIDEO_DIRECTORY:
+         value = os.path.expanduser('~/Desktop')

@@ -1,0 +1,25 @@
+diff -Nur gqview-2.0.4-orig/gqview.desktop gqview-2.0.4/gqview.desktop
+--- gqview-2.0.4-orig/gqview.desktop	2006-11-01 00:19:21.000000000 +0100
++++ gqview-2.0.4/gqview.desktop	2008-05-15 22:33:47.000000000 +0200
+@@ -1,5 +1,5 @@
+ [Desktop Entry]
+-Name=GQview
++Name=GQview Image Viewer
+ GenericName=Image Viewer
+ GenericName[et]=Piltide vaatur
+ GenericName[tr]=Resim göstericisi
+@@ -10,12 +10,11 @@
+ Comment[hu]=Képek megjelenítése és rendszerezése
+ Comment[es]=Visualiza y administra imágenes
+ Exec=gqview -r %F
+-Icon=gqview.png
++Icon=gqview
+ Type=Application
+ Terminal=false
+ # Startup notification disabled, since the remote -r switch may not open a new window...
+ #StartupNotify=false
+ #StartupWMClass=gqview
+-Encoding=UTF-8
+-Categories=Application;Graphics;Viewer;
++Categories=Graphics;Viewer;
+ MimeType=application/x-navi-animation;image/bmp;image/x-bmp;image/x-MS-bmp;image/gif;image/x-icon;image/jpeg;image/png;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-cmu-raster;image/x-sun-raster;image/x-tga;image/tiff;image/vnd.wap.wbmp;image/x-xbitmap;image/x-xpixmap;image/svg;image/svg+xml;image/x-png;image/xpm;image/x-ico;image/x-pcx;

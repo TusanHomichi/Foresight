@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks. This file is distributed under the terms of the New BSD License A copy is available at 
+# http://www.opensource.org/licenses/bsd-license.php
+#
+
+loadSuperClass('cpanpackage')
+class PerlXMLFilterDetectWS(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-XML-Filter-DetectWS'
+    version = '0.01'
+    buildRequires = []

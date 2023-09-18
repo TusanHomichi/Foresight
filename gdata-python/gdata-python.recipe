@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GdataPython(BuildPackageRecipe):
+    name = 'gdata-python'
+    version = '2.0.13'
+ 
+    buildRequires = [
+        'cElementTree:python',
+        # Note: django is not needed
+        'python:devel',
+        'python-setuptools:python',
+        'python-twisted:python',
+        'python-simplejson:python',
+        'protobuf:python',
+        ]
+ 
+    def setup(r):
+        r.addArchive('http://gdata-python-client.googlecode.com/files/gdata-%(version)s.tar.gz')
+        # pycrypto 2.1.0 has no test module anymore
+        r.Remove('src/gdata/Crypto/test.py')
+        r.PythonSetup()
+        # hack to fix update woes
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*.egg-info')

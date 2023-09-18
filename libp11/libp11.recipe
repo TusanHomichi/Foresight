@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibP11(AutoPackageRecipe):
+
+    name = 'libp11'
+    version = '0.2.3'
+
+    buildRequires = [
+        'libtool:devel', 'openssl:devel', 'pkgconfig:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://www.opensc-project.org/files/libp11/')
+
+    def configure(r):
+
+        r.Configure('--disable-static')

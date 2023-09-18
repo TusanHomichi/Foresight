@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TrashCli(BuildPackageRecipe):
+    name = 'trash-cli'
+    version = '0.1.10.r55'
+ 
+    buildRequires = ['python-setuptools:python', 'python:devel', 'python-ctypes:python']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/bluetrash/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()
+
+        r.Move('%(bindir)s/empty-trash', '%(bindir)s/trash-empty')
+        r.Move('%(bindir)s/list-trash', '%(bindir)s/trash-list')
+        r.Move('%(bindir)s/restore-trash', '%(bindir)s/trash-restore')

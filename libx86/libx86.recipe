@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2005-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibX6(CPackageRecipe):
+    name = 'libx86'
+    version = '1.1'
+    buildRequires = [ 'pkgconfig:devel', 'pciutils:devel', ]
+
+    def setup(r):
+        r.addArchive('http://www.codon.org.uk/~mjg59/libx86/downloads/')
+        r.Make('BACKEND=x86emu')
+        r.MakeInstall()

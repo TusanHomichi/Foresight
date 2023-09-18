@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kde3package')
+class kde3CorePackageRecipe(kde3PackageRecipe):
+
+    name = 'kde3corepackage'
+    version = '20080308'
+
+    kversion = ''
+
+    modules = []
+
+    buildRequires = ['nas:devel']
+    verify = False
+
+    buildAPIDox = False
+
+    abstractBaseClass = True
+
+    def setup(r):
+
+        r.macros.site = 'mirror://kde/stable'
+
+        if r.kversion:
+            kversion = r.kversion
+        else:
+            kversion = r.version.split('+')[0]
+        r.macros.kversion = kversion
+
+        if r.buildAPIDox:
+            r.buildRequires.extend([ 'doxygen:runtime', 'qt:apidox' ])
+            if not r.name == 'kdelibs3':
+                r.buildRequires.append('kdelibs3:apidox')
+
+        kde3PackageRecipe.setup(r)
+
+    def unpack(r):
+        r.addArchive('%(site)s/%(kversion)s/src/%(origname)s-%(version)s.tar.bz2')
+
+    def build(r):
+
+        r.Configure(r.extraConf)
+
+        r.Make()
+        if r.buildAPIDox:
+            r.Make('apidox')
+            r.MakeInstall(installtarget='install-apidox')
+            r.ComponentSpec('%(name)s:apidox', '%(kdehtmldir)s/en/%(origname)s-apidocs/')
+        if r.modules:
+            for module in r.modules:
+                if type(module) == type(""):
+                    moduleName = module
+                    moduleSubDir = module
+                else:
+                    moduleName, moduleSubDir = module
+
+                r.MakeInstall(dir=moduleSubDir, package=moduleName)
+                r.MakeInstall(dir='doc/'+moduleSubDir, skipMissingDir=True,
+                              package=moduleName)
+        else:
+            r.MakeInstall()
+
+    def postPolicy(r):
+
+        kde3PackageRecipe.postPolicy(r)
+
+        r.AutoDoc(exceptions='/')
+
+        if r.verify:
+            r.MakeInstall(package='%s-orphans' % r.name)
+
+

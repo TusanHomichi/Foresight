@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Copyright (c) 2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class SaneBackends(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'sane-backends'
+    version = '1.0.23'
+    rpmRelease = '7.fc18'
+    rpmPatches = [
+                   'sane-backends-1.0.21-SCX4500W.patch',
+                   'sane-backends-1.0.21-epson-expression800.patch',
+                   'sane-backends-1.0.23-coolscan-multiscan.patch',
+                   'sane-backends-1.0.23-sane-config-multilib.patch',
+                   'sane-backends-1.0.23-soname.patch',
+                   'sane-backends-1.0.23-udev.patch',
+                   'sane-backends-1.0.23-umax-init-error.patch']
+
+    buildRequires = [ 'libjpeg:devel', 'libusbx:devel', 'libusb:devel', 'libieee1284:devel',
+                      'gettext:runtime', 'pkgconfig:devel', 'tetex-dvips:runtime',
+                      'tetex-latex:runtime', 'tetex:runtime', 'libtiff:devel',
+                      'makedepend:runtime', 'libexif:devel', 'libgphoto2:devel',
+                      'libv4l:devel', 'cups:devel', 'net-snmp:devel']
+
+
+    def configure(r):
+        r.Run('echo >> backend/hpsj5s.conf')
+        # FIXME: do not build docs... fails on x86_64 only
+        r.Configure('ac_cv_path_LATEX=no --with-docdir=%(docdir)s/sane-%(version)s'
+                    '--with-gphoto2=%(prefix)s '
+                    ' --disable-locking --disable-rpath --enable-libusb_1_0')
+        r.addPatch('tweak_udev_rules.patch')
+
+
+    def policy(r):
+        r.Replace('664', '666', 'tools/udev/libsane.rules')
+        r.Install('tools/udev/libsane.rules', '%(sysconfdir)s/udev/rules.d/')
+        r.UtilizeGroup('scanner', '%(sysconfdir)s/udev/rules.d/libsane.rules')

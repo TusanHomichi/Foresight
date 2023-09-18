@@ -1,0 +1,117 @@
+#
+# Copyright (c) 2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import tempfile
+from mercurial import hg, ui
+from conary.lib import util
+
+def updateCache(hgui, uri, remote, cacheDir):
+    """Make or update a clone of the given repository."""
+    # Pick a directory to place the clone in. Using the same cache dir as
+    # conary's lookaside means that the recipe load can use it as well.
+    dirPath = uri.split('//', 1)[-1]
+    dirPath = dirPath.replace('/', '_')
+    dirPath = os.path.join(cacheDir, dirPath, 'hg')
+
+    # Create the cache repo if needed.
+    if not os.path.isdir(dirPath):
+        os.makedirs(dirPath)
+    if os.path.isdir(dirPath + '/.hg'):
+        repo = hg.repository(hgui, dirPath)
+    else:
+        repo = hg.repository(hgui, dirPath, create=True)
+
+    repo.pull(remote, force=True)
+
+    # Try to work around weird issue that only happens to the conary tree where
+    # .changectx(new_head) fails even though .heads() clearly shows that the
+    # head exists.
+    repo.invalidate()
+    return repo
+
+RE_VERSION = re.compile('^(\s+)version\s*=.*?$', re.M)
+def mangleVersion(recipe, newVersion):
+    '''
+    Update the recipe's version to reflect any configured pattern.
+    '''
+
+    return RE_VERSION.sub(r'\1version = %r' % (newVersion,), recipe)
+
+
+RE_SOURCE = re.compile(
+    r'''^(\s+)(\S+)\.add(Archive|MercurialSnapshot)\s*\(.*?\).*?$''', re.M | re.S)
+def mangleSource(recipe, sourceData):
+    '''
+    Modify addMercurialSnapshot calls to use the selected revision.
+    '''
+
+    return RE_SOURCE.sub(r'\1\2.addMercurialSnapshot(%r, tag=%r)'
+        % (sourceData['uri'], sourceData['tag']), recipe, count=1)
+
+RE_CLASS = re.compile(
+    r'''^class\s+(\S+)\(''')
+
+class FactoryHgSource(Factory):
+    name = 'factory-hgsource'
+    version = '0'
+
+    def getRecipeClass(self):
+        sourceData = dict([ x.strip().split(' ') for x in self.openSourceFile('source').readlines() ])
+        for key in [ 'uri', 'tag', 'version', 'path' ]:
+            if not sourceData.has_key(key):
+                raise Exception, "%s not defined" % key
+    
+        files = self.getMercurialRecipe(sourceData)
+
+        # Mangle the recipe file
+        recipeFile = [ x for x in files.keys() if x.endswith('.recipe') ][0]
+        files[recipeFile] = mangleVersion(mangleSource(files[recipeFile], sourceData),
+                                          '_'.join([sourceData['version'], sourceData['tag'] ]))
+
+        # XXX - Writing all of the non-recipe files to the checkout directory
+        # does not actually work, for various reasons.  Only the recipe can be 
+        # pulled from the SCM repo here.
+        #
+        # for x in files.keys():
+        #     if not x.endswith('.recipe'):
+        #         open(x, 'w').write(files[x])
+
+        # Interpret the mangled recipe and return it as the factory recipe class
+        exec files[recipeFile]
+        for x in files[recipeFile].split('\n'):
+            m = RE_CLASS.match(x)
+            if m:
+                className = m.groups()[0]
+                eval(className).buildRequires.append('mercurial-conary:python')
+                return eval(className)
+
+        raise Exception, "recipe does not contain a class"
+
+    def getMercurialRecipe(self, sourceData):
+        hgui = ui.ui()
+        cacheDir = tempfile.mkdtemp()
+        repo = updateCache(hgui, sourceData['uri'], 
+                           hg.repository(hgui, sourceData['uri']),
+                           cacheDir)
+        # Pull out and return the recipe file contents.
+        subpath = sourceData['path'].strip('/').split('/')
+        splen = len(subpath)
+
+        files = {}
+        cctx = repo.changectx(sourceData['tag'])
+
+        # Changed named tags to changeset ids
+        sourceData['tag'] = cctx.node().encode('hex')[:12]
+        for filepath in cctx:
+            filename = filepath.split('/')
+            if filename[:splen] == subpath:
+                fctx = cctx.filectx(filepath)
+                newname = '/'.join(filename[splen:])
+                files[newname] = fctx.data()
+        util.rmtree(cacheDir)
+
+        return files
+

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Griffith(CPackageRecipe):
+    name = 'griffith'
+    version = '0.11'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'python:devel', 
+        'MySQL-python:python', 'mx:python', 'PIL:python', 
+        'gnome-python-extras:python', 'pygobject:python', 'pygtk:python', 
+        'python-sqlite:python', 'SQLAlchemy:python', 'python-setuptools:python', 'xz:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/griffith/trunk/0.11/+download/griffith-%(version)s.tar.xz')
+        r.MakeInstall()
+        r.Symlink('/usr/share/griffith/lib/griffith', '%(bindir)s/griffith')
+        r.Requires('reportlab:python', '%(bindir)s/griffith')

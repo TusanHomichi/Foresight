@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2007 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+class ClawsMail(AutoPackageRecipe):
+    name = 'claws-mail'
+    version = '3.10.1'
+    buildRequires = [
+        'aspell:devel',
+        'aspell:runtime',
+        'atk:devel',
+        'bison:runtime',
+        'cairo:devel',
+        'curl:devel',
+        'cyrus-sasl:devel',
+        'db:devel',
+        'dbus:devel',
+        'dbus-glib:devel',
+        'desktop-file-utils:runtime',
+        'docbook-utils-pdf:runtime',
+        'docbook-utils:runtime',
+        'enchant:devel',
+        'expat:devel',
+        'flex:runtime',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gnutls:devel',
+        'gpgme:devel',
+        'gtk:devel',
+        'gtk:runtime',
+        'intltool:runtime',
+        'krb5:devel',
+        'libarchive:devel',
+        'libart_lgpl:devel',
+        'libcanberra:devel',
+        'libdbusmenu-glib:devel',
+        'libetpan:devel',
+        'libgcrypt:devel',
+        'libgdata:devel',
+        'libgpg-error:devel',
+        'libICE:devel',
+    #    'libindicate:devel',
+        'libnotify:devel',
+        'libpng:devel',
+        'libSM:devel',
+        'libsoup:devel',
+        'libX11:devel',
+        'libxml2:devel',
+        'libXrender:devel',
+        'NetworkManager:devel',
+        'openldap:devel',
+        'openssl:devel',
+        'poppler:devel',
+        'poppler-glib:devel',
+        'python:devel',
+        'WebKit:devel',
+        'perl:devel', 
+        'pilot-link:devel', 
+        'startup-notification:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/claws-mail/Claws Mail/%(version)s/')
+
+    def configure(r):
+        extraConfig = (' --enable-gnutls'
+        #              ' --enable-new-addrbook'
+                      ' --disable-perl-plugin')
+        r.macros.cppflags = '%(cppflags)s -I%(prefix)s/kerberos/include/'
+        r.Configure(extraConfig)
+
+    def policy(r):
+        r.Requires('gnupg:runtime', '%(bindir)s/claws-mail')

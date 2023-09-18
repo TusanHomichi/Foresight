@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2013      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SharedMimeInfo(AutoPackageRecipe):
+
+    name = 'shared-mime-info'
+    version = '1.1'
+
+    buildRequires = [ 'gettext:runtime', 'glib:devel', 'intltool:runtime',
+                      'libxml2:devel', 'libxml2:runtime', 'perl-XML-Parser:perl', 
+                      'perl:runtime', 'pkgconfig:devel', 'zlib:devel'
+                  ]
+
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive('http://freedesktop.org/~hadess/')
+        r.addPatch('0001-Remove-sub-classing-from-OO.o-mime-types.patch')
+
+        r.addSource('mime-database.tagdescription', macros=True,
+            dest='%(tagdescriptiondir)s/mime-database')
+        r.addSource('mime-database.taghandler', macros=True, mode=0755,
+            dest='%(taghandlerdir)s/mime-database')
+
+    def configure(r):
+        r.Configure('--disable-update-mimedb')
+
+    def policy(r):
+        r.Doc('shared-mime-info-spec.xml')
+        r.Requires('/dev/null', '%(taghandlerdir)s/mime-database')
+
+        # translations are already in the xml file installed
+        r.Remove('%(datadir)s/locale', recursive = True)
+
+        r.MakeDirs('%(datadir)s/applications/')
+        r.ExcludeDirectories(exceptions = '%(datadir)s/applications')

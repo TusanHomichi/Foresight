@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ffmpeg2theora(AutoPackageRecipe):
+    name = 'ffmpeg2theora'
+    version = '0.29'
+
+    buildRequires = ['ffmpeg:devel', 'libogg:devel', 'libtheora:devel', 'libvorbis:devel', 'pkgconfig:devel', 'zlib:devel',
+                     'scons:runtime', 'libkate:devel']
+    
+
+    def setup(r):
+        r.addArchive('http://v2v.cc/~j/ffmpeg2theora/downloads/')
+        
+        r.Run(""" sed -i 's:pp_mode_t:pp_mode:' src/ffmpeg2theora.c """)
+        r.Run(""" sed -i 's:pp_context_t:pp_context:' src/ffmpeg2theora.c """)
+        r.Run('scons prefix=%(prefix)s destdir=%(destdir)s')
+        r.Run('scons install prefix=%(prefix)s destdir=%(destdir)s')

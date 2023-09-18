@@ -1,0 +1,29 @@
+diff -Naur simple-mtpfs-0.1/udev/99-simple-mtpfs.rules simple-mtpfs-0.1.patched/udev/99-simple-mtpfs.rules
+--- simple-mtpfs-0.1/udev/99-simple-mtpfs.rules	1969-12-31 19:00:00.000000000 -0500
++++ simple-mtpfs-0.1.patched/udev/99-simple-mtpfs.rules	2013-10-14 17:52:28.000000000 -0400
+@@ -0,0 +1,3 @@
++# Automount an MTP device with simple-mtpfs
++ACTION=="add", ENV{ID_MTP_DEVICE}=="1", RUN="/usr/sbin/mountsimple-mtpfs mtp%k"
++ACTION=="remove", ENV{ID_MTP_DEVICE}=="1", RUN="/usr/sbin/umountsimple-mtpfs mtp%k"
+diff -Naur simple-mtpfs-0.1/udev/mountsimple-mtpfs simple-mtpfs-0.1.patched/udev/mountsimple-mtpfs
+--- simple-mtpfs-0.1/udev/mountsimple-mtpfs	1969-12-31 19:00:00.000000000 -0500
++++ simple-mtpfs-0.1.patched/udev/mountsimple-mtpfs	2013-10-14 17:53:48.000000000 -0400
+@@ -0,0 +1,7 @@
++#!/bin/sh
++# Author: Chris Caron <lead2gold@gmail.com>
++# Date: Oct 14th, 2013
++# Description
++# This allows automounting and umounting
++mkdir -p /media/$1
++simple-mtpfs -o allow_other /media/$1 |& logger -t simple-mtpfs
+diff -Naur simple-mtpfs-0.1/udev/umountsimple-mtpfs simple-mtpfs-0.1.patched/udev/umountsimple-mtpfs
+--- simple-mtpfs-0.1/udev/umountsimple-mtpfs	1969-12-31 19:00:00.000000000 -0500
++++ simple-mtpfs-0.1.patched/udev/umountsimple-mtpfs	2013-10-14 22:24:50.000000000 -0400
+@@ -0,0 +1,7 @@
++#!/bin/sh
++# Author: Chris Caron <lead2gold@gmail.com>
++# Date: Oct 14th, 2013
++# Description
++# This allows automounting and umounting
++fusermount -u /media/$1 |& logger -t simple-mtpfs
++rmdir /media/$1

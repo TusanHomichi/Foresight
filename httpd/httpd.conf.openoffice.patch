@@ -1,0 +1,25 @@
+--- httpd-2.2.3/httpd.conf.openoffice	2006-02-03 05:06:08.000000000 -0500
++++ httpd-2.2.3/httpd.conf	2006-12-20 16:53:24.000000000 -0500
+@@ -766,6 +766,22 @@
+ AddType application/x-compress .Z
+ AddType application/x-gzip .gz .tgz
+ 
++# These are for OpenOffice 2 files:
++AddType application/vnd.oasis.opendocument.chart .odc
++AddType application/vnd.oasis.opendocument.database .odb
++AddType application/vnd.oasis.opendocument.formula .odf
++AddType application/vnd.oasis.opendocument.graphics .odg
++AddType application/vnd.oasis.opendocument.graphics-template .otg
++AddType application/vnd.oasis.opendocument.image .odi
++AddType application/vnd.oasis.opendocument.presentation .odp
++AddType application/vnd.oasis.opendocument.presentation-template .otp
++AddType application/vnd.oasis.opendocument.spreadsheet .ods
++AddType application/vnd.oasis.opendocument.spreadsheet-template .ots
++AddType application/vnd.oasis.opendocument.text .odt
++AddType application/vnd.oasis.opendocument.text-master .odm
++AddType application/vnd.oasis.opendocument.text-template .ott
++AddType application/vnd.oasis.opendocument.text-web .oth
++
+ #
+ # AddHandler allows you to map certain file extensions to "handlers":
+ # actions unrelated to filetype. These can be either built into the server

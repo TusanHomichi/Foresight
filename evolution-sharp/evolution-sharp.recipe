@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('evolution')
+loadSuperClass('gnomepackage')
+loadSuperClass('rpmpackage')
+class EvolutionSharp(RPMPackageRecipe,GnomePackageRecipe):
+    name = 'evolution-sharp'
+    version = '0.21.1'
+    rpmRelease = '4.fc12'
+    rpmPatches = [ # GNOME bug #516044
+                   'evolution-sharp-0.11.1-libdir.patch',
+                   # RH bug #221555 / GNOME bug #516044
+                   'evolution-sharp-0.12.1-fix-assembly-dir.patch',
+                   # Stop setting an upper limit on the evolution-data-server version.
+                   'evolution-sharp-0.21.1-fix-retarded-version-check.patch'
+                   ]
+    buildRequires = [ 'dbus:devel', 'gecko-sharp:devellib', 'expat:devel',  'gecko-sharp:cil', 
+                      'gtk-sharp:devellib', 'mono:devel', 'GConf:devel', 'ORBit2:devel',
+                      'atk:devel', 'evolution-data-server:devel', 'evolution:devel',
+                      'glib:devel', 'glibc:devel', 'gnome-vfs:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+                      'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                      'libgnomeprint:devel', 'libgnomeui:devel', 'libxml2:devel',
+                      'pango:devel', 'popt:devel', 'cairo:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gnome-keyring:devel', 'libpng:devel',
+                      'gtk-sharp:lib','gtk-sharp:devellib', 'mono:lib', 'gtk-sharp:runtime',
+                      'gtk-sharp:cil', 'mono:runtime', 'mono:cil',
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime' ]
+
+    def unpack(r):
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        RPMPackageRecipe.unpack(r)
+        r.Run('autoreconf -fi')
+        

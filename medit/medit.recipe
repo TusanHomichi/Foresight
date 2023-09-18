@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2007-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Medit(CPackageRecipe):
+
+    name = 'medit'
+    version = '1.2.0'
+
+    buildRequires = [
+        'atk:devel', 
+        'autoconf:runtime',
+        'automake:runtime',
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'docbook-utils:runtime',
+        'expat:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gamin:devel', 
+        'gdk-pixbuf:devel', 
+        'gdk-pixbuf:runtime', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'libICE:devel', 
+        'libpng:devel', 
+        'libSM:devel', 
+        'libstdc++:devel', 
+        'libtool:runtime',
+        'libX11:devel', 
+        'libXext:devel', 
+        'libxml2:devel', 
+        'libXrender:devel', 
+        'libxslt:runtime',
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'pygobject:python', 
+        'pygtk:python', 
+        'python:devel', 
+        'txt2tags:runtime', 
+        'vte:python',
+            ]
+
+    def setup(r):
+	r.macros.ldflags += ' -L%(libdir)s/ '
+        r.addArchive('https://bitbucket.org/medit/medit/get/%(version)s.tar.gz')
+        r.Run('./autogen.sh')
+        r.Configure(' --prefix=%(prefix)s --enable-dev-mode')
+        r.Run(''' find . -name Makefile | xargs sed -i 's/-Werror//g' ''')
+        r.Make()
+        r.MakeInstall()
+        r.Remove('%(datadir)s/mime/', recursive=True)
+        r.Remove('%(datadir)s/icons/hicolor/icon-theme.cache')
+        r.NonMultilibComponent(exceptions='%(libdir)s/')

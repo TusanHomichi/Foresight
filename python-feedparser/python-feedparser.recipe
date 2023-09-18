@@ -1,0 +1,13 @@
+class PythonFeedParser(AutoPackageRecipe):
+    name = 'python-feedparser'
+    version = '4.1'
+
+    buildRequires = [ 'python-setuptools:python', 'mx:python', 'python:devel', 'unzip:runtime']
+
+    def setup(r):
+        r.macros.name = 'feedparser'
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.zip', dir='%(name)s-%(version)s')
+
+        r.PythonSetup()
+        if Arch.x86_64:
+            r.Move('/usr/lib/python2.6/site-packages/*', '%(libdir)s/python2.6/site-packages/', allowNoMatch = True)

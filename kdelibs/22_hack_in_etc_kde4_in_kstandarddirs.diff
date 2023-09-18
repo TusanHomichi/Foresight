@@ -1,0 +1,27 @@
+In the case of config files, we want a local sysadm dir added as well.
+
+The priorities is as follows:
+
+ - peoples homedir (.kde4)
+ - for config files, /etc/kde4/
+ - what's defined in KDEDIRS
+ - the default install path.
+
+With this patch, we can also install all config files into /usr/ as they just can get
+overridden by adding new files to /etc/kde4 by the sysadm.
+
+Index: kde4libs-4.5.95/kdecore/kernel/kstandarddirs.cpp
+===================================================================
+--- kde4libs-4.5.95.orig/kdecore/kernel/kstandarddirs.cpp	2011-01-04 23:50:41.000000000 -0500
++++ kde4libs-4.5.95/kdecore/kernel/kstandarddirs.cpp	2011-01-04 23:51:21.000000000 -0500
+@@ -1174,6 +1174,10 @@
+                         if ((local || testdir.exists()) && !candidates.contains(path))
+                             candidates.append(path);
+                     }
++                    // UGLY HACK - forward porting Chris CHeney's HACK - Rex Dieter
++                    if ( local && (!strcmp("config", type)))  // local is used as a "homedir marker"
++		        candidates.append(QLatin1String("/etc/kde4/"));
++                    //
+                     local = false;
+                 }
+ 	        else

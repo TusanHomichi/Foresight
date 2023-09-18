@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class StarDict(AutoPackageRecipe):
+    name = 'stardict'
+    version = '3.0.1'
+
+    # 'gucharmap:devellib',
+    buildRequires = ['perl:devel', 'perl-XML-Parser:perl', 'GConf:runtime', 'desktop-file-utils:runtime', 'enchant:devel', 'gettext:runtime', 'gnome-keyring:devel', 'gnome-vfs:devel', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libsigc++:devel', 'libstdc++:devel', 'libxml2:devel', 'pkgconfig:devel', 'popt:devel', 'rarian:runtime', 'espeak:devel']
+
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/stardict/')
+    def configure(r):
+        r.Configure('--disable-gucharmap --disable-festival')

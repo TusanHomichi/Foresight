@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LadspaSwhPlugins(AutoPackageRecipe):
+    name = 'ladspa-swh-plugins'
+    version = '0.4.15'
+
+    buildRequires = ['autoconf:runtime', 'automake:runtime', 'fftw:devel', 'gettext:runtime', 'intltool:runtime', 'pkgconfig:devel', 'libtool:devel', 'libtool:runtime', 'gsm:devellib']
+
+ 
+    def configure(r):
+        r.addArchive('http://plugin.org.uk/releases/0.4.15/swh-plugins-%(version)s.tar.gz')
+	r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/ladspa-swh-plugins/swh-plugins-plugin-Makefile.am.patch')
+	r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/ladspa-swh-plugins/ladspa-swh-plugins-libgsm.patch')
+	r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/ladspa-swh-plugins/swh-plugins-0.4.15-riceitdown.patch')
+	r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/ladspa-swh-plugins/swh-plugins-0.4.15-pic.patch')
+	r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/ladspa-swh-plugins/swh-plugins-0.4.15-fPIC.patch')
+	r.addPatch('http://cvs.fedoraproject.org/viewcvs/*checkout*/devel/ladspa-swh-plugins/swh-plugins-0.4.14-Makefile.in.patch')
+	r.Run('autoreconf -f -i')
+	r.Configure('--disable-static')
+
+
+	

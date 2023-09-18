@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Pciutils(RPMPackageRecipe,CPackageRecipe):
+    name = 'pciutils'
+    version = '3.1.9'
+
+    rpmRelease = '1.fc17'
+    rpmPatches = [ 'pciutils-2.2.1-idpath.patch',
+                   'pciutils-dir-d.patch',
+                   ]
+    rpmSources = ['multilibconfigh']
+
+
+    def setup(r):
+        r.disableParallelMake()
+
+        r.unpack()
+        r.Run(""" sed -i -e 's/^SRC=.*/SRC="http:\/\/pciids.sourceforge.net\/pci.ids"/' update-pciids.sh """)
+
+        r.macros.cflags = ''
+        r.Make('PREFIX=%(prefix)s OPT="%(cflags)s" SHARED="no" ZLIB="no" STRIP=""  IDSDIR="/usr/share/hwdata" PCI_IDS="pci.ids"')
+        r.Move('lib/libpci.a', 'lib/libpci.a.toinstall')
+        r.Make('clean')
+        r.Make('PREFIX=%(prefix)s OPT="%(cflags)s" STRIP="" SHARED="yes"  ZLIB="no" STRIP=""  '
+               'LIBDIR="/%(lib)s"  IDSDIR="/usr/share/hwdata" PCI_IDS="pci.ids"')
+
+        #fix lib vs. lib64 in libpci.pc (static Makefile is used)
+        r.Run("""sed -i "s|^libdir=.*$|libdir=/%(lib)s|" lib/libpci.pc  """)
+
+        for b in ['lspci', 'setpci',]:
+            r.Install(b, '%(essentialsbindir)s/')
+        r.Install( 'update-pciids', '%(sbindir)s/')
+
+        for m in ['lspci.8', 'setpci.8', 'update-pciids.8']:
+            r.Install(m, '%(mandir)s/man8/')
+
+        r.Install('lib/libpci.s*', '%(essentiallibdir)s/')
+        r.Symlink('%(essentiallibdir)s/*.so.*.*.*', '%(libdir)s/libpci.so')
+        r.Install('lib/libpci.a.toinstall', '%(libdir)s/libpci.a')
+
+        r.Install('multilibconfigh', '%(includedir)s/pci/config.h')
+        r.Install('lib/config.h', '%(includedir)s/pci/config.%(lib)s.h')
+        r.Install('lib/{pci,header,types}.h', '%(includedir)s/pci/')
+
+        r.Install('lib/libpci.pc', '%(includedir)s/pkgconfig/')
+

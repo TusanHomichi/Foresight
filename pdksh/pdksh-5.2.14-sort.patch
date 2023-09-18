@@ -1,0 +1,12 @@
+diff -ruN pdksh/pdksh-5.2.14/siglist.sh pdksh-5.2.14.sort/siglist.sh
+--- pdksh/pdksh-5.2.14/siglist.sh	2005-12-22 16:24:33.000000000 -0600
++++ pdksh-5.2.14.sort/siglist.sh	2005-12-22 16:24:53.000000000 -0600
+@@ -23,7 +23,7 @@
+ 	{ QwErTy SIG\1 , "\1", "\2" },\
+ #endif/') > $in
+ $CPP $in  > $out
+-sed -n 's/{ QwErTy/{/p' < $out | awk '{print NR, $0}' | sort +2n +0n |
++sed -n 's/{ QwErTy/{/p' < $out | awk '{print NR, $0}' | sort -n -k 3,3 -k 1,1 |
+     sed 's/^[0-9]* //' |
+     awk 'BEGIN { last=0; nsigs=0; }
+ 	{

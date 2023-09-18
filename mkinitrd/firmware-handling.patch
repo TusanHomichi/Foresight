@@ -1,0 +1,35 @@
+--- mkinitrd.old	2007-06-01 13:59:10.384131677 -0400
++++ mkinitrd	2007-06-01 14:00:58.547040329 -0400
+@@ -70,6 +70,7 @@
+ 
+ IMAGESIZE=8000
+ PRESCSIMODS=""
++FIRMWARE=""
+ fstab="/etc/fstab"
+ 
+ vg_list=""
+@@ -314,6 +315,10 @@
+     # only need to add each module once
+     MODULES="$MODULES $fmPath"
+ 
++    if [ -f /etc/mkinitrd-firmware.d/$modName ] ; then
++        FIRMWARE=" $(cat /etc/mkinitrd-firmware.d/$modName)"
++    fi
++
+     # need to handle prescsimods here -- they need to go _after_ scsi_mod
+     if [ "$modName" = "scsi_mod" ]; then
+         for n in $PRESCSIMODS ; do
+@@ -1246,6 +1251,13 @@
+     installmodule $MODULE
+ done
+ 
++for FW in $FIRMWARE; do
++    if [ -f /lib/firmware/$FW ]; then
++        inst /lib/firmware/$FW $MNTIMAGE/lib/firmware/$FW
++    fi
++done
++
++
+ # mknod'ing the devices instead of copying them works both with and
+ # without devfs...
+ mkdir $MNTIMAGE/dev/mapper

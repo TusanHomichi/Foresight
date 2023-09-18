@@ -1,0 +1,34 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fluidsynth(AutoPackageRecipe):
+    name = 'fluidsynth'
+    version = '1.1.5'
+ 
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'dbus:devel',
+                    'doxygen:runtime',
+                    'jack:devel',
+                    'ladspa_sdk:devel',
+                    'libsndfile:devel',
+                    'ncurses:devel',
+                    'pkgconfig:devel',
+                    'portaudio:devel',
+                    'pulseaudio:devel',
+                    'readline:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/fluidsynth/fluidsynth-%(version)s/')
+
+    def configure(r):
+        r.Configure('--enable-ladspa')
+
+    def make(r):
+        r.Make()
+        r.Make('doxygen -C doc/')

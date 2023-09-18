@@ -1,0 +1,142 @@
+#!/bin/sh
+#
+### BEGIN INIT INFO
+# Provides: dhcpd
+# Default-Start:
+# Default-Stop:
+# Should-Start:
+# Required-Start: $network
+# Required-Stop:
+# Short-Description: Start and stop the DHCP server
+# Description: dhcpd provides the Dynamic Host Configuration Protocol (DHCP)
+#              server.
+### END INIT INFO
+#
+# The fields below are left around for legacy tools (will remove later).
+#
+# chkconfig: - 65 35
+# description: dhcpd provides the Dynamic Host Configuration Protocol (DHCP) \
+#              server
+# processname: dhcpd
+# config: /etc/dhcpd.conf
+# config: /var/lib/dhcpd/dhcpd.leases
+# pidfile: /var/run/dhcpd.pid
+
+. /etc/init.d/functions
+
+RETVAL=0
+
+prog=dhcpd
+dhcpd=/usr/sbin/dhcpd
+lockfile=/var/lock/subsys/dhcpd
+pidfile=/var/run/dhcpd.pid
+statedir=/var/lib/dhcpd
+
+[ -f /etc/sysconfig/dhcpd ] && . /etc/sysconfig/dhcpd
+
+# if the user specified a different config file, make sure we reference it
+findConfig() {
+    for arg in $DHCPDARGS ; do
+        if [ "$found" = 1 ]; then
+            [ -f "$arg" ] && echo "$arg"
+            return
+        fi
+        if [ "$arg" = "-cf" ]; then
+            found=1
+            continue
+        fi
+    done
+    echo "/etc/dhcpd.conf"
+}
+
+conf="$(findConfig "$DHCPDARGS")"
+
+if [ ! -f $statedir/dhcpd.leases ] ; then
+    mkdir -p $statedir
+    touch $statedir/dhcpd.leases
+    [ -x /sbin/restorecon ] && [ -d /selinux ] && /sbin/restorecon $statedir/dhcpd.leases >/dev/null 2>&1
+fi
+
+configtest() {
+    [ -x $dhcpd ] || return 5
+    [ -f $conf ] || return 6
+    $dhcpd -q -t -cf $conf
+    RETVAL=$?
+    return $RETVAL
+}
+
+start() {
+    [ -x $dhcpd ] || return 5
+    [ -f $conf ] || return 6
+
+    pidofproc $prog >/dev/null 2>&1
+    RETVAL=$?
+    [ $RETVAL -eq 0 ] && return $RETVAL
+
+    echo -n $"Starting $prog: "
+    daemon $dhcpd $DHCPDARGS
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && touch $lockfile
+    return $RETVAL
+}
+
+stop() {
+    pidofproc $prog >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        RETVAL=7
+        return $RETVAL
+    fi
+
+    echo -n $"Shutting down $prog: "
+    killproc $prog
+    RETVAL=$?
+
+    [ $RETVAL = 0 ] && success || failure
+    echo
+    [ $RETVAL = 0 ] && rm -f $lockfile
+    return $RETVAL
+}
+
+if [ $# -gt 1 ]; then
+    RETVAL=2
+    exit $RETVAL
+fi
+
+case "$1" in
+    start)
+        start
+        RETVAL=$?
+        ;;
+    stop)
+        stop
+        RETVAL=$?
+        ;;
+    restart|force-reload)
+        stop ; start
+        RETVAL=$?
+        ;;
+    try-restart|reload)
+        RETVAL=3
+        ;;
+    condrestart)
+        if [ -f $lockfile ]; then
+            stop ; start
+            RETVAL=$?
+        fi
+        ;;
+    configtest)
+        configtest
+        RETVAL=$?
+        ;;
+    status)
+        status $dhcpd
+        RETVAL=$?
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|condrestart|configtest|status}"
+        RETVAL=3
+        ;;
+esac
+
+exit $RETVAL

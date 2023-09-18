@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonCtypes(CPackageRecipe):
+
+    name = 'python-ctypes'
+    version = '1.0.1'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+
+        r.addArchive('mirror://sourceforge/ctypes/ctypes-%(version)s.tar.gz')
+
+        r.PythonSetup()
+

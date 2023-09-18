@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class MSRtools(AutoPackageRecipe):
+    name = 'msr-tools'
+    version = '1.2'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('http://www.kernel.org/pub/linux/utils/cpu/msr-tools/')
+        r.Make()
+        for i in ['rd', 'wr']:
+            r.Install(i+'msr', '%(sbindir)s/', mode = 0755)

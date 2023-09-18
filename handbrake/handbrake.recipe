@@ -1,0 +1,100 @@
+#
+# Copyright (c) 2009 -2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Handbrake(CPackageRecipe):
+    name = 'handbrake'
+    tag = '97faf3ef6f'
+    version = '0.9.6' + '+' + tag + '+' + datetime.date.today().strftime("%Y.%m.%d")
+    
+    buildRequires = [ 
+            'atk:devel', 
+            'autoconf:runtime', 
+            'automake:runtime', 
+            'bzip2:devel', 
+            'cairo:devel', 
+            'curl:runtime',
+            'dbus:devel', 
+            'dbus-glib:devel', 
+            'desktop-file-utils:runtime', 
+            'diffutils:runtime',
+            'dmalloc:devel', 
+            'doxygen:runtime', 
+            'enchant:devel', 
+            'expat:devel', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'fribidi:devel', 
+            'gcc:runtime',
+            'GConf:devel', 
+            'gettext:runtime', 
+            'glibc:devel',
+            'glib:devel', 
+            'gnome-keyring:devel', 
+            'gnome-vfs:devel', 
+            'graphviz:runtime', 
+            'gst-plugins-base:devel', 
+            'gstreamer:devel', 
+            'gtk:devel', 
+            'gtkhtml:devel', 
+            'gudev:devel', 
+            'hal:devel', 
+            'intltool:devel', 
+            'intltool:runtime', 
+            'jam:runtime',
+            'libart_lgpl:devel', 
+            'libbonobo:devel', 
+            'libbonoboui:devel', 
+            'libgcc:devellib', 
+            'libglade:devel', 
+            'libgnomecanvas:devel', 
+            'libgnome:devel', 
+            'libgnomeui:devel', 
+            'libICE:devel', 
+            'libnotify:devel', 
+            'libpng:devel', 
+            'libSM:devel', 
+            'libsndfile:devel', 
+            'libsoup:devel', 
+            'libstdc++:devel', 
+            'libtermcap:devel', 
+            'libtool:runtime', 
+            'libX11:devel', 
+            'libxcb:devel', 
+            'libxml2:devel', 
+            'libXrender:devel', 
+            'libxslt:runtime', 
+            'make:runtime', 
+            'nasm:runtime', 
+            'ncurses:devel', 
+            'opensp:runtime',
+            'ORBit2:devel', 
+            'pango:devel', 
+            'pixman:devel', 
+            'pkgconfig:devel', 
+            'popt:devel', 
+            'SDL:devel', 
+            'subversion:runtime', 
+            'sysfsutils:devel',  
+            'texinfo:runtime', 
+            'udev:devel',
+            'userspace-kernel-headers:devel',
+            'WebKit:devel', 
+            'wget:runtime', 
+            'xcb-util:devel', 
+            'yasm:runtime', 
+            'zlib:devel', 
+                      ]
+ 
+    def setup(r):
+        #r.addArchive('http://download.handbrake.fr/handbrake/releases/HandBrake-%(version)s.tar.bz2')
+        r.addGitSnapshot('git://github.com/HandBrake/HandBrake.git',
+                         tag = r.tag)
+        r.ManualConfigure('--prefix=%(prefix)s --disable-gtk-update-checks')
+        r.Make(dir='build')
+        r.Configure('--prefix=%(prefix)s', configureName='autogen.sh', dir='gtk')
+        r.Make(dir='build/gtk')
+        r.MakeInstall(dir='build/gtk')
+#   r.Remove('/usr/share/icons/hicolor/icon-theme.cache')

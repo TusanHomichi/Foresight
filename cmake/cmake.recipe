@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2007 rPath, Inc. 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CMake(AutoPackageRecipe):
+
+    name = 'cmake'
+    version = '2.8.10.2'
+
+    buildRequires = [
+        'curl:devel', 'expat:devel', 'libstdc++:devel', 'libxml2:devel',
+        'ncurses:devel', 'openssl:devel', 'w3c-libwww:devel', 'xmlrpc-c:devel',
+        'zlib:devel', 'bzip2:devel', 'libarchive:devel', 'libxml2:runtime', 
+        'pkgconfig:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://www.cmake.org/files/v%(major_version)s/')
+        r.Replace('/usr/openwin/lib$', '%(libdir)s/xorg.mesa.3d', 'Modules/FindOpenGL.cmake')
+        r.addPatch('cmake-ccmake-del-in-first-column.patch')
+        r.addPatch('cmake-FindPostgreSQL.patch')
+
+    def configure(r):
+        r.macros.threads = re.sub('-j', '', r.macros.parallelmflags)
+        # docdir & mandir should be relative to prefix
+        conf = (
+            '--system-libs '
+            '--prefix=%(prefix)s '
+            '--datadir=/share/%(name)s '
+            '--docdir=/share/doc/%(name)s-%(version)s '
+            '--mandir=/share/man '
+            '--parallel=%(threads)s'
+        )
+
+        r.ManualConfigure(conf)
+
+
+    def policy(r):
+        # :runtime reqs :devel and vice-versa
+        r.Requires('%(name)s:runtime' % r.macros,
+                   '%(name)s:devel' % r.macros)
+        r.Requires('%(name)s:devel' % r.macros ,
+                   '%(name)s:runtime' % r.macros)

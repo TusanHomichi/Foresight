@@ -1,0 +1,28 @@
+#!/bin/bash
+GOOGLEEARTH_DATA_PATH="/opt/google/earth/free/"
+LD_LIBRARY_PATH=/usr/lib64/xorg.nvidia.3d/:/usr/lib/xorg.nvidia.3d/:/usr/lib64/xorg.fglrx.3d/:/usr/lib/xorg.fglrx.3d/:/usr/lib64/xorg.mesa.3d/:/usr/lib/xorg.mesa.3d/:${GOOGLEEARTH_DATA_PATH}:${LD_LIBRARY_PATH}
+
+GTK_IM_MODULE=xim
+QT_IM_MODULE=xim
+GCONV_PATH=%(libdir)s/gconv/
+GDK_PIXBUF_MODULE_FILE=/etc/gtk-2.0/i686-unknown-linux-gnu/gdk-pixbuf.loaders
+GTK_IM_MODULE_FILE=/etc/gtk-2.0/i686-unknown-linux-gnu/gtk.immodules
+GTK_PATH=%(libdir)s/gtk-2.0/
+
+PANGO_RC_FILE="${GOOGLEEARTH_DATA_PATH}/pangorc"
+export GCONV_PATH GDK_PIXBUF_MODULE_FILE GTK_IM_MODULE_FILE GTK_PATH LD_LIBRARY_PATH PANGO_RC_FILE
+export GTK_IM_MODULE QT_IM_MODULE
+
+cd "${GOOGLEEARTH_DATA_PATH}/"
+
+
+# Fix for languages that use , instead of . for separating thousands from hundreds in numbers
+LANGUAGES_AFFECTED="de_DE it_IT"
+SYSTEM_LANGUAGE=`echo ${LANG/.*}`
+if [ `echo ${LANGUAGES_AFFECTED} | grep -c ${SYSTEM_LANGUAGE}` -gt 0 ]; then
+    export LC_NUMERIC=en_US.UTF8
+fi
+
+
+# exec "./googleearth-bin" $*
+exec "./googleearth-bin" --disable-cleanlooks -style GTK  $*

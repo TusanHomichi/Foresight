@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage')
+class eawpats(BinaryPackageRecipe):
+    name = 'eawpats'
+    version = '12'
+    packageSummary = "Patches for TiMidity"
+    packageDescription = "These instruments are used by TiMidity"
+
+    buildRequires = []
+ 
+    def unpack(r):
+	r.macros.ver = r.version.replace('_', '-')
+        r.addArchive('http://mirrors.kernel.org/gentoo/distfiles/%(name)s%(version)s_full.tar.gz',
+			dir='%(datadir)s/soundfonts')
+	r.addSource('timidity.cfg', dir='%(sysconfdir)s')
+	

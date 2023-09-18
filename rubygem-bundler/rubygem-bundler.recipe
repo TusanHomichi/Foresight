@@ -1,0 +1,7 @@
+loadSuperClass('rubygempackage')
+class Bundler(RubygemPackageRecipe):
+
+    name = 'rubygem-bundler'
+    version = '1.2.1'
+    def policy(r):
+        r.NormalizeInterpreterPaths(exceptions='%(libdir)s/ruby/gems/1.8/gems/bundler-%(version)s/lib/bundler/templates/.*')

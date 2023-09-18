@@ -1,0 +1,7 @@
+class GNomeHdapsApplet(RedirectRecipe):
+
+    name = 'gnome-hdaps-applet'
+    version = '0.2.1'
+
+    def setup(r):
+        r.addRemoveRedirect()

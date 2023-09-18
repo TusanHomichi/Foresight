@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2007y rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class LibOtr(AutoPackageRecipe):
+    name = 'libotr'
+    version = '3.2.0'
+
+    buildRequires = ['libgcrypt:lib', 'libgpg-error:lib', 'libgcrypt:devel', 'libgpg-error:devel']
+
+    def unpack(r):
+        r.addArchive('http://www.cypherpunks.ca/otr/')

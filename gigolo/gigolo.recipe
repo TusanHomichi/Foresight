@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2009 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('xfcepackage')
+class Gigolo(XfcePackageRecipe):
+
+    name = 'gigolo'
+    version = '0.4.2'
+    subtree = 'apps'
+#    configureName='autogen.sh'

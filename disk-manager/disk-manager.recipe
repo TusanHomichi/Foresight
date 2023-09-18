@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DiskManager(AutoPackageRecipe):
+
+    buildRequires = [ 'pygobject:python', 'pygtk:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-python-extras:python', 'notify-python:python', 'perl:runtime', 
+                      'intltool:runtime', 'python:devel', 'usermode:runtime' ]
+
+    name = 'disk-manager'
+    version = '1.0.1'
+
+    def unpack(r):
+        r.addArchive('http://flomertens.free.fr/disk-manager/download/source/')
+        r.Replace('2.5', '2.6', 'configure')
+#	r.Replace('gksu','gksudo','data/disk-manager.desktop.in')

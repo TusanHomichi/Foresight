@@ -1,0 +1,19 @@
+diff -r d8cc0400e4c7 scripts/mk-images
+--- a/scripts/mk-images	Fri Aug 06 17:27:00 2010 +0000
++++ b/scripts/mk-images	Thu Aug 12 21:15:57 2010 -0400
+@@ -766,13 +766,13 @@
+ 
+     if [ -n "$EXTRAINITRDPATH" ]; then
+ 	mkdir -p `dirname $EXTRAINITRDPATH`
+-        if [ -n $OMIT_KERNEL ]; then
++        if [ -n "$OMIT_KERNEL" ]; then
+             echo "kernel,copy,KERNEL/boot/vmlinuz,CONTENTS/"$(dirname $EXTRAINITRDPATH)"/vmlinuz,0644" >> $MANIFEST
+             echo "kernel,anacondaScript,mk-modules,KERNEL,CONTENTS,ARCH" >> $MANIFEST
+         fi
+ 	echo "image,cpiogz,$MBD_DIR,$EXTRAINITRDPATH,0644" >> $MANIFEST
+     else
+-        if [ -n $OMIT_KERNEL ]; then
++        if [ -n "$OMIT_KERNEL" ]; then
+             echo "kernel,copy,KERNEL/boot/vmlinuz,CONTENTS/"$(dirname $MBD_FSIMAGE)"/vmlinuz,0644" >> $MANIFEST
+             echo "kernel,anacondaScript,mk-modules,KERNEL,CONTENTS,ARCH" >> $MANIFEST
+         fi

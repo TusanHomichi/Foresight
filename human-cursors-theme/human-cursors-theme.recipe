@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class HumanCursorsTheme(AutoPackageRecipe):
+
+    buildRequires = ['gtk:runtime']
+
+    name = 'human-cursors-theme'
+    version = '0.4'
+
+    def unpack(r):
+        r.addArchive('http://archive.ubuntu.com/ubuntu/pool/main/h/%(name)s/%(name)s_%(version)s.orig.tar.gz')
+
+    def policy(r):
+        r.Symlink('%(datadir)s/icons/Human','%(datadir)s/icons/default')

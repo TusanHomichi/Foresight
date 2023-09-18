@@ -1,0 +1,15 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Grip(AutoPackageRecipe):
+    name = 'grip'
+    version = '3.3.1'
+ 
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'curl:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gnome-vfs:devel', 'gtk:devel', 'intltool:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'libstdc++:devel', 'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'popt:devel', 'vte:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/grip/files/grip/%(version)s/grip-%(version)s.tar.gz')

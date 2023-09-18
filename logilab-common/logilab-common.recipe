@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2009      Foresight Linux
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LogilabCommon(PackageRecipe):
+    name = 'logilab-common'
+    version = '0.50.1'
+
+    buildRequires = [
+        'mx:python',
+        'python-setuptools:python',
+        'python:devel',
+
+        # These are only optionally needed for runtime.
+        # Not require them here to keep its dependencies small.
+        # 'MySQL-python:python',
+        # 'django:python',
+        # 'ipython:python',
+        ]
+
+    def setup(r):
+        r.addArchive('ftp://ftp.logilab.fr/pub/common/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()
+        r.Remove('%(libdir)s/python*/site-packages/logilab/common/test/', recursive = True)

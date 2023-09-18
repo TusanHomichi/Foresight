@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jsonrpclib(PackageRecipe):
+
+    name = 'jsonrpclib'
+    version = '0.0'
+
+    buildRequires = ['python-setuptools:python','python:devel', 'python-simplejson:python']
+
+    def setup(r):
+        r.addArchive('jsonrpclib.tar.gz')
+        r.PythonSetup()

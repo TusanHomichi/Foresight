@@ -1,0 +1,17 @@
+class Insight3D(PackageRecipe):
+    name = 'insight3d'
+    version = '0.3.2'
+    buildRequires = ['gcc:runtime', 'Mesa:devel', 'SDL:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel', 'lapack:devellib', 'libgcc:devellib', 'libpng:devel', 'libstdc++:devel', 'libxml2:devel', 'make:runtime', 'opencv:devel', 'pango:devel', 'gsl:devel']
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/insight3d/insight3d_linux.tar.gz')
+        r.addPatch('basename.patch')
+        r.addPatch('Makefile.patch')
+        r.addPatch('ann_1.1.1_Makefile.patch')
+        r.Run('find -name .svn -print0|xargs -0 rm -rf')
+        r.Remove('README.txt~')
+        r.Make('clean', dir='%(name)s/sift')
+        r.Make('clean', dir='%(name)s/sba')
+        r.Make('realclean', dir='%(name)s/ann_1.1.1')
+        r.Make(dir=r.name)
+        r.Install('%(name)s/insight3d', '%(bindir)s/insight3d')
+        r.Install('%(name)s/example_photoset', '%(datadir)s/%(name)s')

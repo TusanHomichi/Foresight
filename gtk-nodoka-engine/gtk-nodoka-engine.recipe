@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkNodokaEngine(AutoPackageRecipe):
+    name = 'gtk-nodoka-engine'
+    version = '0.7.2'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('https://fedorahosted.org/releases/n/o/nodoka/gtk-nodoka-engine-0.7.2.tar.gz')
+    def configure(r):
+        r.Configure(' --enable-animation')

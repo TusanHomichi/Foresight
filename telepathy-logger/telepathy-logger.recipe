@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TelepathyLogger(AutoPackageRecipe):
+    name = 'telepathy-logger'
+    version = '0.2.10'
+
+    buildRequires = [
+        'dbus-glib:devel',
+        'dbus-glib:runtime',
+        'dbus:devel',
+        'gettext:runtime',
+        'glib:devel',
+        'gnome-doc-utils:devellib',
+        'gtk-doc:runtime',
+        'intltool:runtime',
+        'libICE:devel',
+        'libX11:devel',
+        'libxml2:devel',
+        'libxslt:runtime',
+        'pkgconfig:devel',
+        'sqlite:devel',
+        'telepathy-glib:devel',
+        ]
+
+    def unpack(r):
+        r.addArchive('http://telepathy.freedesktop.org/releases/%(name)s/')

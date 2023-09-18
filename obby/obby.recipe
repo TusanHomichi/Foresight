@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2006 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Obby(AutoPackageRecipe):
+    name = 'obby'
+    version = '0.4.7'
+    buildRequires = [ 'avahi:devel', 'gnutls:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libsigc++:devel', 'libstdc++:devel', 'net6:devel', 'pkgconfig:devel', 'gettext:runtime', 'intltool:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://releases.0x539.de/obby/')
+
+    def configure(r):
+        r.Configure('--with-zeroconf')

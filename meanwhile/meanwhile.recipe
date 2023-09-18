@@ -1,0 +1,13 @@
+class Meanwhile(AutoPackageRecipe):
+    name = 'meanwhile'
+    version = '1.0.2'
+    buildRequires = ['glib:devel', 'pkgconfig:devel', 'doxygen:runtime']
+    packageSummary = 'An Open Re-Implementation of Lotus Sametime (library)'
+    packageDescription = '''The Meanwhile Project is an open implementation of the Lotus Sametime Community Client protocol.
+
+The Meanwhile Project is neither endorsed by, nor affiliated with Lotus or IBM. It is an independent project aiming to fill a space Lotus has left vacant.
+
+It is not within the scope of this project to provide LDAP or SIP functionality, though these technologies are often associated with the usage of Sametime.'''
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s/%(version)s/')
+        r.addPatch('fix_glib_includes.patch')

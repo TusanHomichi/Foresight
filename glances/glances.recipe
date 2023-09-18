@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Glances(PackageRecipe):
+
+    name = 'glances'
+    version = 'a3194f48' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = ['python-setuptools:python', 'python:devel']
+
+    def setup(r):
+        r.addGitSnapshot('https://github.com/nicolargo/glances.git')
+        r.PythonSetup()
+
+        r.Requires('psutil:python', '%(bindir)s/glances')

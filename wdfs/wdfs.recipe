@@ -1,0 +1,22 @@
+#
+# Copyright (c) Foresight Linux, 2009
+# This file is distributed under the terms of the MIT license
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class wdfs(AutoPackageRecipe):
+    name = 'wdfs'
+    version = '1.4.2'
+    packageSummary = 'A FUSE module for accessing WebDAV shares.'
+    packageDescription = """
+    wdfs is a webdav filesystem that makes it possible to mount a webdav share
+    under linux, freebsd and apple mac os x. wdfs has some special features for
+    accessing subversion repositories via webdav. it's based on fuse and neon.
+    """
+     
+    buildRequires = ['fuse:devel', 'neon:devel', 'glib:devel', 'pkgconfig:devel']
+    
+    def unpack(r):
+        r.addArchive('http://noedler.de/projekte/%(name)s/',
+                     '%(name)s-%(version)s.tar.gz')
+	

@@ -1,0 +1,11 @@
+--- setup-2.5.47/services.openvpn	2006-03-27 16:02:44.000000000 -0500
++++ setup-2.5.47/services	2006-03-27 16:03:34.000000000 -0500
+@@ -519,6 +519,8 @@
+ rndc		953/tcp				# rndc control sockets (BIND 9)
+ rndc		953/udp				# rndc control sockets (BIND 9)
+ skkserv		1178/tcp			# SKK Japanese input method
++openvpn         1194/tcp                        # OpenVPN
++openvpn         1194/ucp                        # OpenVPN
+ xtel		1313/tcp			# french minitel
+ support		1529/tcp	prmsd gnatsd	# GNATS, cygnus bug tracker
+ cfinger		2003/tcp			# GNU Finger

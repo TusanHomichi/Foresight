@@ -1,0 +1,33 @@
+--- src/plugins/splash/text/plugin.c.orig	2011-04-13 12:23:58.000000000 +0200
++++ src/plugins/splash/text/plugin.c	2011-04-13 12:23:37.000000000 +0200
+@@ -176,18 +176,26 @@
+ 
+   terminal = ply_text_display_get_terminal (view->display);
+ 
++  /* background color */
+   ply_terminal_set_color_hex_value (terminal,
+                                     PLY_TERMINAL_COLOR_BLACK,
+-                                    0x000000);
++  // default                        0x000000); 
++                                    0x383431); // dark grey
++  /* leftmost progress bar color */
+   ply_terminal_set_color_hex_value (terminal,
+                                     PLY_TERMINAL_COLOR_WHITE,
+-                                    0xffffff);
++  // default                        0xffffff);
++                                    0x8FB124); // darker green
++  /* middle progress bar color */
+   ply_terminal_set_color_hex_value (terminal,
+                                     PLY_TERMINAL_COLOR_BLUE,
+-                                    0x0073B3);
++  // default                        0x0073B3);
++                                    0xABCD2E); // lighter green
++  /* rightmost progress bar color */
+   ply_terminal_set_color_hex_value (terminal,
+                                     PLY_TERMINAL_COLOR_BROWN,
+-                                    0x00457E);
++  // default                        0x00457E);
++                                    0xFFFFFF); // white
+ 
+   ply_text_display_set_background_color (view->display,
+                                          PLY_TERMINAL_COLOR_BLACK);

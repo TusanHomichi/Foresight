@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libcap(CPackageRecipe):
+    name = 'libcap'
+    version = '2.17'
+
+    buildRequires = [ 'attr:devel', 'pam:devel', 'perl:runtime' ]
+
+    def setup(r):
+        r.macros.oldlibcap = 'libcap-1.10'
+
+        r.addArchive('http://www.kernel.org/pub/linux/libs/security/'
+                     'linux-privs/libcap2/')
+
+        # we need a compatibility library (RPL-3137)
+        r.addArchive('http://www.kernel.org/pub/linux/libs/security/'
+                     'linux-privs/kernel-2.4/libcap-1.10.tar.bz2',
+                     dir='%(maindir)s')
+
+        for patch in ( 'libcap-1.10-ia64.patch', 'libcap-1.10-alpha.patch',
+            'libcap-1.10-shared.patch', 'libcap-1.10-userland.patch',
+            'libcap-1.10-useCFLAGSwithCC.patch', ):
+            r.addPatch(patch, dir='%(oldlibcap)s/')
+
+        # we do not have a traditional C compiler!
+        r.Replace(('-Wtraditional', ''),
+                  ('-pedantic', ''),
+                  '%(oldlibcap)s/Make.Rules')
+
+        r.Make('PREFIX=%(prefix)s LIBDIR=%(libdir)s', dir='%(oldlibcap)s')
+        r.Install('%(oldlibcap)s/libcap/libcap.so.1.*', '%(essentiallibdir)s/')
+        r.Symlink('%(essentiallibdir)s/libcap.so.1.*',
+                  '%(essentiallibdir)s/libcap.so.1')
+
+        # Now make the real libcap
+        r.Make('PREFIX=%(prefix)s LIBDIR=%(libdir)s')
+
+        r.MakeInstall(' LIBDIR=%(destdir)s%(essentiallibdir)s'
+                      ' SBINDIR=%(destdir)s%(sbindir)s'
+                      ' INCDIR=%(destdir)s%(includedir)s'
+                      ' MANDIR=%(destdir)s%(mandir)s/'
+                      ' COPTFLAG="%(cflags)s"',
+                        rootVar='FAKEROOT')
+        r.Install('doc/*.3', '%(mandir)s/man3/')

@@ -1,0 +1,57 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class jack(AutoPackageRecipe):
+    name = 'jack'
+    version = '1.9.8'
+
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'celt:devel',
+                    'libsndfile:devel',
+                    'libtermcap:devel',
+                    'dbus-python:python',
+                    'dbus:devel',
+                    'expat:devel',
+                    'libsamplerate:devel',
+                    'glibc:devel',
+                    'portaudio:devel',
+                    'readline:devel',
+                    'doxygen:runtime',
+                    'pkgconfig:devel',
+                    'libstdc++:devel',
+                    'ncurses:devel',
+                    'python:devel',
+                     ]
+
+    def unpack(r):
+        r.addArchive('http://www.grame.fr/~letz/')
+        r.addPatch('jack-audio-connection-kit-no_date_footer.patch', dir='%(name)s-%(version)s')
+        r.addPatch('jack-doxygen-output-dir-fix.patch', dir='%(name)s-%(version)s')
+        r.addPatch('jack-apidoc-only.patch', dir='%(name)s-%(version)s')
+        r.addPatch('jack-realtime-compat.patch', dir='%(name)s-%(version)s')
+        r.addSource('jack-audio-connection-kit-limits.conf')
+        r.addSource('jack-audio-connection-kit-README.Foresight')
+        r.Environment('PREFIX', '%(prefix)s')
+
+    def configure(r):
+        r.ManualConfigure('-j1 --libdir=/%(lib)s --enable-pkg-config-dbus-service-dir --doxygen --classic --dbus --alsa configure', configureName='waf', dir='%(name)s-%(version)s')
+
+    def make(r):
+        r.Make('build', makeName='./waf', dir='%(name)s-%(version)s')
+
+    def makeinstall(r):
+        r.Make('--destdir=%(destdir)s install', makeName='./waf', dir='%(name)s-%(version)s')
+        r.MakeDirs('%(sysconfdir)s/security/limits.d')
+        r.MakeDirs('%(docdir)s/jack-%(version)s/')
+        r.Install('jack-audio-connection-kit-limits.conf', '%(sysconfdir)s/security/limits.d/99-jack.conf')
+        r.Install('jack-audio-connection-kit-README.Foresight', '%(docdir)s/jack-%(version)s/README.Foresight')
+
+    def policy(r):
+        r.UtilizeGroup('jackuser', '%(bindir)s/jackd')
+        r.PackageSpec('%(name)s-dbus', '%(bindir)s/jackdbus')
+        r.PackageSpec('%(name)s-dbus', '%(datadir)s/dbus-1/services/org.jackaudio.service')

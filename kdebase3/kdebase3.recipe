@@ -1,0 +1,113 @@
+#
+# Copyright (c) 2006-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kde3corepackage')
+class kdeBase3(kde3CorePackageRecipe):
+
+    name = 'kdebase3'
+    version = '3.5.9'
+
+    verify = False
+    buildAPIDox = False
+
+    buildRequires = [
+        'alsa-lib:devel', 'audiofile:devel', 'avahi-qt3:devel', 'avahi:devel',
+        'bdftopcf:runtime', 'cups:devel', 'cyrus-sasl:devel', 'dbus-qt3:devel',
+        'dbus:devel', 'desktop-file-utils:runtime', 'e2fsprogs:devel',
+        'esound:devel', 'expat:devel', 'fontconfig:runtime', 'glib:devel',
+        'hal:devel', 'imake:runtime', 'jack:devel', 'kdnssd3-avahi:devel',
+        'libmad:devel', 'libogg:devel', 'libusb:devel', 'libvorbis:devel',
+        'libxkbfile:devel', 'lm_sensors:devel', 'mkfontdir:runtime',
+        'nas:devel', 'ncurses:devel', 'openexr:devel', 'openldap:devel',
+        'openssl:devel', 'pam:devel', 'pcre:devel', 'perl:devel',
+        'samba:devel', 'xorg-cf-files:data', 'xorg-cf-files:lib'
+    ]
+
+    extraConf = kde3CorePackageRecipe.extraConf
+    extraConf += (' --without-java'
+                  ' --with-sudo-kdesu-backend'
+                  ' --with-pam'
+                  ' --with-kdm-pam=kdm'
+                  ' --with-kcp-pam=kcheckpass'
+                  ' --with-kss-pam=kscreensaver')
+
+    # This always should be installed
+    modules = [
+        (name, 'applnk'),
+        (name, 'drkonqi'),
+        (name, 'kdesu'),
+        (name, 'kioslave'),
+        (name, 'l10n'),
+        (name, 'pics'),
+    ]
+
+    # This needed for KDE workspace
+    #modules.extend([
+    #    ('kdebase-workspace', 'applnk'),
+    #    ('kdebase-workspace', 'pics'),
+    #    ('kdebase-workspace', 'kcontrol'),
+    #    ('kdebase-workspace', 'kdesktop'),
+    #    ('kdebase-workspace', 'kicker'),
+    #    ('kdebase-workspace', 'klipper'),
+    #    ('kdebase-workspace', 'kmenuedit'),
+    #    ('kdebase-workspace', 'kpersonalizer'),
+    #    ('kdebase-workspace', 'kscreensaver'),
+    #    ('kdebase-workspace', 'ksmserver'),
+    #    ('kdebase-workspace', 'ksplashml'),
+    #    ('kdebase-workspace', 'ksysguard'),
+    #    ('kdebase-workspace', 'ksystraycmd'),
+    #    ('kdebase-workspace', 'ktip'),
+    #    ('kdebase-workspace', 'kcminit'),
+    #    ('kdebase-workspace', 'kcheckpass'),
+    #    ('kdebase-workspace', 'kwin'),
+    #    ('kdebase-workspace', 'doc/kompmgr'),
+    #])
+
+    modules.extend([
+        ('libkonq3', 'libkonq'),
+        ('kdialog3', 'kdialog'),
+        ('konqueror3', 'konqueror'),
+        ('konqueror3-nsplugins', 'nsplugins'),
+        ('kdcop3', 'kdcop'),
+        #'kappfinder', 'kate', 'libkonq', 'kdm', 'kdcop', 'kdeeject',
+        #'kdepasswd', 'kdeprint', 'kdialog', 'kfind', 'khelpcenter', 'khotkeys',
+        #'knetattach', 'konqueror', 'konsole', 'kpager', 'kxkb',
+        #('konqueror-nsplugins', 'nsplugins'),
+        #('kdm', 'kdmlib'),
+        #('kate', 'doc/kwrite'),
+        #('khelpcenter', 'doc/faq'),
+        #('khelpcenter', 'doc/glossary'),
+        #('khelpcenter', 'doc/kinfocenter'),
+        #('khelpcenter', 'doc/quickstart'),
+        #('khelpcenter', 'doc/userguide'),
+        #('khelpcenter', 'doc/visualdict'),
+    ])
+
+    def postUnpack(r):
+
+        r.addPatch('kdebase-3.5.5-kde-only-menus.patch')
+
+    def postInstall(r):
+
+        r.Ownership('root', 'nobody', '%(bindir)s/kdesud')
+        r.SetModes('%(bindir)s/kdesud', 02755)
+
+        # Conflicts
+        r.Remove('%(bindir)s/ktrash')
+        r.Remove('%(sysconfdir)s/xdg/menus/kde-information.menu')
+
+        r.Remove('%(datadir)s/locale/l10n', recursive=True)
+        r.Remove('%(datadir)s/icons/crystalsvg', recursive=True)
+        r.Remove('%(datadir)s/desktop-directories', recursive=True)
+
+        r.Remove('%(datadir)s/autostart/konqy_preload.desktop')
+        r.Remove('%(datadir)s/icons/hicolor/*/apps/konqueror.*')
+
+    def policy(r):
+
+        r.ExcludeDirectories(exceptions='%(datadir)s/fonts/override')
+        r.ExcludeDirectories(exceptions='%(datadir)s/applnk/Settings/Information')
+        r.ExcludeDirectories(exceptions='%(datadir)s/templates/.source/emptydir')

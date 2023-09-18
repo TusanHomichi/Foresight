@@ -1,0 +1,11 @@
+diff -Naur telepathy-sharp--telepathy-sharp.orig/telepathy-sharp.pc.in telepathy-sharp--telepathy-sharp/telepathy-sharp.pc.in
+--- telepathy-sharp--telepathy-sharp.orig/telepathy-sharp.pc.in	2007-05-01 12:51:44.000000000 -0400
++++ telepathy-sharp--telepathy-sharp/telepathy-sharp.pc.in	2007-11-14 15:53:07.000000000 -0500
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ 
+ Name: Telepathy-sharp
+ Description: Telepathy# - The INdT Telepathy .NET library

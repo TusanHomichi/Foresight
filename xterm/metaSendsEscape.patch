@@ -1,0 +1,11 @@
+diff -r 123e5837248c XTerm.ad
+--- a/XTerm.ad	Sat Jan 05 22:59:59 2008 -0900
++++ b/XTerm.ad	Sat Jan 05 23:00:24 2008 -0900
+@@ -1,6 +1,7 @@
+ ! $XTermId: XTerm.ad,v 1.85 2007/11/26 18:42:37 tom Exp $
+ 
+ *saveLines: 1024
++*metaSendsEscape: True
+ 
+ *SimpleMenu*BackingStore: NotUseful
+ *SimpleMenu*menuLabel.font: -adobe-helvetica-bold-r-normal--*-120-*-*-*-*-iso8859-*

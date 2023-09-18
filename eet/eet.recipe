@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class eet(AutoPackageRecipe):
+    name = 'eet'
+    version = "1.7.5"
+
+    buildRequires = [
+        'libjpeg:devel', 
+        'zlib:devel', 
+        'eina:devel', 
+        'gnutls:devel', 
+        'libgcrypt:devel', 
+        'libgpg-error:devel', 
+        'openssl:devel', 
+        'pkgconfig:devel', 
+        'automake:runtime', 
+        'autoconf:runtime', 
+        'libtool:runtime',
+        'doxygen:runtime',
+            ]
+    def unpack(r):
+        r.addArchive("http://download.enlightenment.org/releases/eet-%(version)s.tar.gz")

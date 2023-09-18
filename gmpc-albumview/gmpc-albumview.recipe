@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GmpcAlbumview(AutoPackageRecipe):
+    name = 'gmpc-albumview'
+    version = '0.19.0'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libmpd:devel', 'pango:devel', 'pkgconfig:devel', 'gmpc:devel']
+ 
+    def unpack(r):
+		r.addArchive('http://download.sarine.nl/Programs/gmpc/%(version)s/%(name)s-%(version)s.tar.gz')

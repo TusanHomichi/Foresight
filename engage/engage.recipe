@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Engage(CPackageRecipe):
+    name = 'engage'
+    version = '2be8fcf2' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [
+        'dbus:devel', 
+        'ecore:devel', 
+        'e-dbus:devel', 
+        'edje:devel', 
+        'edje:runtime', 
+        'eet:devel', 
+        'eeze:devel', 
+        'efreet:devel', 
+        'eina:devel', 
+        'eio:devel', 
+        'elementary:devel', 
+        'emotion:devel', 
+        'enlightenment:devel',
+        'ethumb:devel', 
+        'evas:devel', 
+        'gettext:runtime', 
+        'intltool:runtime', 
+        'libexif:devel', 
+        'pkgconfig:devel',
+        'automake:runtime',
+        'autoconf:runtime', 
+        'libtool:runtime', 
+            ]
+ 
+    def setup(r):
+        r.addGitSnapshot('git://git.enlightenment.fr/vcs/svn/E-MODULES-EXTRA/engage.git')
+        r.Run('./autogen.sh')
+        r.Make()
+        r.MakeInstall()

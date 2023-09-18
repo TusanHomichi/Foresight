@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+#               2010-2013 The Foresight Linux Project
+# All rights reserved
+#
+
+loadSuperClass('gnomepackage')
+class Gamin(GnomePackageRecipe):
+
+    name = 'gamin'
+    version = '0.1.10'
+
+    clearBuildRequires('gtk:devel')
+    buildRequires = [
+        'glib:devel', 'pkgconfig:devel', 'python:devel',
+    ]
+
+    extraConfig = '--disable-debug --with-python'
+    patches = [ 'gamin-0.1.10-gnueabi.patch',
+                'gamin-manape.patch',
+                'gamin-0.1.11-double-lock.patch',
+                ]
+    
+    def postConfigure(r):
+        r.Run('autoreconf -fi')
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

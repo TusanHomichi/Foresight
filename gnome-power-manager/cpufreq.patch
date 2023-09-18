@@ -1,0 +1,12 @@
+diff -Naur gnome-power-manager-2.18.2.orig/data/gnome-power-manager.schemas.in gnome-power-manager-2.18.2/data/gnome-power-manager.schemas.in
+--- gnome-power-manager-2.18.2.orig/data/gnome-power-manager.schemas.in	2007-03-04 12:35:48.000000000 -0500
++++ gnome-power-manager-2.18.2/data/gnome-power-manager.schemas.in	2007-04-26 15:16:58.000000000 -0400
+@@ -6,7 +6,7 @@
+       <applyto>/apps/gnome-power-manager/show_cpufreq_ui</applyto>
+       <owner>gnome-power-manager</owner>
+       <type>bool</type>
+-      <default>false</default>
++      <default>true</default>
+       <locale name="C">
+         <short>If we should show the CPU frequency scaling in the UI</short>
+         <long>If we should show the CPU frequency scaling in the UI. Some people need to configure this for specific systems.</long>

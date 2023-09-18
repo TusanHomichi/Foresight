@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibFprintRecipe(CPackageRecipe):
+    name = 'libfprint'
+    upversion = '0.1.0-pre2'
+    version = upversion.replace('-', '_')
+    buildRequires = [
+        'bzip2:devel', 'cairo:devel', 'djvulibre:devel',
+        'fontconfig:devel', 'freetype:devel',
+        'gdk-pixbuf:devel', 'glib:devel', 'ghostscript:devel', 'graphviz:devel',
+        'ImageMagick:devel', 'jasper:devel',
+        'libICE:devel', 'libjpeg:devel', 'lcms:devel',
+        'libpng:devel', 'librsvg:devel', 'libSM:devel',
+        'libtiff:devel', 'libtool:devel', 'libusbx:devel', 'libX11:devel',
+        'libXext:devel', 'libXt:devel', 'libXv:devel', 'libxml2:devel',
+        'OpenEXR:devel', 'openssl:devel',
+        'pango:devel', 'pkgconfig:devel', 'zlib:devel',
+    ]
+
+    def setup(r):
+        r.macros.upversion = r.upversion
+        r.addArchive('mirror://sourceforge/fprint/%(name)s-%(upversion)s.tar.bz2')
+        r.Configure(" --enable-x11-examples-build --enable-examples-build ")
+        r.Make()
+        r.MakeInstall()
+        #r.Make(dir="examples")
+        #for i in ["enroll","img_capture","verify","verify_live"]:
+        #    r.Install("examples/"+i,"%(bindir)s/")

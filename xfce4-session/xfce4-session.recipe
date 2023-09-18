@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class xfce4Session(XfcePackageRecipe):
+
+    name = 'xfce4-session'
+    version = '4.10.1'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'libxfce4util:devel', 'desktop-file-utils:runtime', 'iceauth:runtime',
+        'libXres:devel', 'libwnck:devel', 'libxfce4ui:devel', 'libexo:runtime',
+        'startup-notification:devel', 'xfconf:devel', 'xfce4-panel:devel',
+        'atk:devel', 'libgnome-keyring:devel'
+    ])
+    patches = ['xfce4-session.xml.patch']
+
+    def setup(r):
+        XfcePackageRecipe.setup(r)
+        r.addSource('themerc', dir='%(datadir)s/themes/Foresight/balou/', mode = 0644)
+        r.addSource('logo.png', dir='%(datadir)s/themes/Foresight/balou/', mode = 0644)
+        r.Remove('%(sysconfdir)s/xdg/autostart/xfce4-tips-autostart.desktop')

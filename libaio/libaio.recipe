@@ -1,0 +1,20 @@
+#
+# Copyright (C) 2006-2007 rPath, Inc
+#               2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html.
+#
+
+class LibAIO(CPackageRecipe):
+    name = 'libaio'
+    version = '0.3.109'
+
+    def setup(r):
+        # upstream MIA
+        # r.addArchive('ftp://ftp.kernel.org/pub/linux/libs/aio/')
+        r.addArchive('http://pkgs.fedoraproject.org/repo/pkgs/libaio/libaio-0.3.109.tar.gz/435a5b16ca6198eaf01155263d855756/')
+        r.addPatch('libaio-install-to-slash.patch')
+        
+        r.Make()
+        r.MakeInstall(' destdir=%(destdir)s prefix=/ libdir=%(libdir)s '
+                      ' usrlibdir=%(libdir)s includedir=%(includedir)s')

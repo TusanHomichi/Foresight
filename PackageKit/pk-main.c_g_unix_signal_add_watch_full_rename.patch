@@ -1,0 +1,24 @@
+diff --git a/src/pk-main.c b/src/pk-main.c
+index 12b26f6..75763c7 100644
+--- a/src/pk-main.c
++++ b/src/pk-main.c
+@@ -271,13 +271,13 @@ main (int argc, char *argv[])
+ 		goto exit_program;
+ 	}
+ 
+-#if GLIB_CHECK_VERSION(2,29,4)
++#if GLIB_CHECK_VERSION(2,29,19)
+ 	/* do stuff on ctrl-c */
+-	g_unix_signal_add_watch_full (SIGINT,
+-				      G_PRIORITY_DEFAULT,
+-				      pk_main_sigint_cb,
+-				      loop,
+-				      NULL);
++	g_unix_signal_add_full (G_PRIORITY_DEFAULT,
++				SIGINT,
++				pk_main_sigint_cb,
++				loop,
++				NULL);
+ #else
+ 	signal (SIGINT, pk_main_sigint_handler);
+ #endif

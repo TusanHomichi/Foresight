@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EmpathyThemeForesight(PackageRecipe):
+    name = 'empathy-theme-foresight'
+    version = '0.1'
+
+    buildRequires = []
+    url = 'http://www.adiumxtras.com'
+ 
+    def setup(r):
+        r.addArchive('foresight.AdiumMessageStyle.tar.gz',
+            dir='src') # put into a specific dir to be able to access the files
+        r.Install('*AdiumMessageStyle', '%(datadir)s/adium/message-styles/')
+

@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lightspark(CPackageRecipe):
+    name = 'lightspark'
+    version = '0.5.4.1'
+ 
+    buildRequires = [ ]
+ 
+    def setup(r):
+        r.macros.lib_suffix = ('', '64')[Arch.x86_64==True]
+        r.addArchive('http://launchpad.net/lightspark/trunk/%(name)s-0.5.4.1/+download/')
+        r.addPatch('include_math.patch')
+
+        r.CMake(' -DCMAKE_INSTALL_PREFIX=%(prefix)s '
+                ' -DCOMPILE_PLUGIN=1 '
+                ' -DCMAKE_BUILD_TYPE=Release '
+                ' -DGNASH_EXE_PATH=/usr/bin/gtk-gnash '
+                ' -DPCRE_INCLUDE_DIR=%(includedir)s/pcre '
+                ' -DAUDIO_BACKEND="pulseaudio sdl" ')
+        r.Make()
+        r.MakeInstall()
+        
+        r.SharedLibrary(subtrees='%(libdir)s/lightspark/')

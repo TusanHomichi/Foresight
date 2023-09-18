@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class Autoconf(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'autoconf213'
+    version = '2.13'
+    rpmRelease = '19.fc11'
+    rpmPatches = [ 'autoconf-2.12-race.patch',
+                   'autoconf-2.13-mawk.patch',
+                   'autoconf-2.13-notmp.patch',
+                   'autoconf-2.13-c++exit.patch',
+                   'autoconf-2.13-headers.patch',
+                   'autoconf-2.13-autoscan.patch',
+                   'autoconf-2.13-exit.patch',
+                   'autoconf-2.13-wait3test.patch',
+                   'autoconf-2.13-make-defs-62361.patch',
+                   'autoconf-2.13-versioning.patch',
+                   'autoconf213-destdir.patch',
+                   'autoconf213-info.patch']
+
+    tarballName = 'autoconf-%(version)s.tar.gz'
+    buildRequires = [ 'm4:runtime', 'perl:runtime', 'install-info:runtime',
+        'perl:lib', 'texinfo:runtime']
+
+    def unpack(r):
+        r.disableParallelMake()
+        RPMPackageRecipe.unpack(r)
+        r.Move('autoconf.texi', 'autoconf213.texi')
+        r.Remove('autoconf.info')
+
+    def configure(r):
+        r.Configure('--program-suffix=-%(version)s')
+
+    def policy(r):
+        r.Remove('%(infodir)s/standards*')
+        r.TestSuite('tests', 'check')
+        r.Requires('m4:runtime', '%(bindir)s/autom4te', '.*\.m4')

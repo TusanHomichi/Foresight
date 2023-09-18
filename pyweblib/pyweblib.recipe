@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyWebLib(PackageRecipe):
+
+    name = 'pyweblib'
+    version = '1.3.8'
+
+    buildRequires = [ 'python-setuptools:python','python:devel' ]
+
+    def setup(r):
+        r.addArchive('http://www.stroeder.com/pylib/PyWebLib/download/')
+        r.PythonSetup()

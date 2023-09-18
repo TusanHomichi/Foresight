@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SimpleCCSM(CPackageRecipe):
+    name = 'simple-ccsm'
+    version = '0.8.4'
+    
+    buildRequires = [ 'compizconfig-python:python', 'compizconfig:python', 'pycairo:python', 'pygobject:python', 'pygtk:python', 'python:devel', 'python-setuptools:python', 'desktop-file-utils:runtime', 'pkgconfig:devel', 'gettext:runtime', 'intltool:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/')
+        r.PythonSetup(data='--install-data %(prefix)s --enableDesktopEffects')

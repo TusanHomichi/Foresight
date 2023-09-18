@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class BoaConstructor(PackageRecipe):
+    name = 'boa-constructor'
+    version = '0.6.1'
+    packageSummary="Python IDE and wxPython GUI Builder"
+    packageDescription="Boa Constructor is a cross platform Python IDE and wxPython GUI Builder. It offers visual frame creation and manipulation, an object inspector, many views on the source like object browsers, inheritance hierarchies, doc string generated html documentation, an advanced debugger and integrated help. Zope support"
+ 
+    buildRequires = ['python:devel', 'unzip:runtime', 'wxPython:python','desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/boa-constructor/%(name)s-%(version)s.src.zip', dir="%(datadir)s/")
+        r.addSource("boa")
+        r.addSource("boa.desktop")
+
+        r.Replace("<boa>","%(datadir)s/%(name)s-%(version)s/Boa.py","boa")
+        r.Install("boa","%(bindir)s/")
+        r.Desktopfile("boa.desktop")
+        r.CompilePython('%(datadir)s/%(name)s-%(version)s/')

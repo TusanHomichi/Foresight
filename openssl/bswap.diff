@@ -1,0 +1,13 @@
+Index: crypto/camellia/cmll_locl.h
+===================================================================
+--- crypto/camellia/cmll_locl.h.orig
++++ crypto/camellia/cmll_locl.h
+@@ -97,7 +97,7 @@ extern "C" {
+ 	(ct)[2] = (u8)((st) >>  8); \
+ 	(ct)[3] = (u8)(st); }
+ 
+-#if (defined (__GNUC__) && (defined(__x86_64__) || defined(__x86_64)))
++#if (defined (__GNUC__) && (defined(__x86_64__) || defined(__x86_64) || defined(i386)))
+ #define CAMELLIA_SWAP4(x) \
+   do{\
+     asm("bswap %1" : "+r" (x));\

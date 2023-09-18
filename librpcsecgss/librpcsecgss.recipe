@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Librpcsecgss(AutoPackageRecipe):
+    name = 'librpcsecgss'
+    version = '0.19'
+    buildRequires = [ 'pkgconfig:devel', 'libgssapi:devel', 'libgssglue:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://www.citi.umich.edu/projects/nfsv4/linux/librpcsecgss/%(name)s-%(version)s.tar.gz')
+
+        for patch in [ 'nfs-utils-lib-1.1.5-warnings.patch',
+                       ]:
+            r.addPatch(patch)
+
+    def configure(r):
+        r.Configure('--disable-static')
+    
+    def make(r):
+        r.Make('all')

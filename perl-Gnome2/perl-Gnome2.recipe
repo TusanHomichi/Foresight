@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGnome2(CPANPackageRecipe, CPackageRecipe):
+    name = 'perl-Gnome2'
+    version = '1.042'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gnome-vfs:devel', 'gtk:devel', 'libICE:devel', 'libSM:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devel', 'pango:devel', 'perl-Gnome2-Canvas:perl', 'perl-Gnome2-VFS:perl', 'perl-Gtk2:perl', 'perl:devel', 'popt:devel', 'perl-ExtUtils-Depends', 'perl-ExtUtils-PkgConfig', 'pkgconfig:runtime', 'pkgconfig:devel', 'perl-Cairo']
+

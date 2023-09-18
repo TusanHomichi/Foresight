@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class Synergy(CPackageRecipe):
+    name = 'synergy'
+    version = '1.3.8'
+    
+    buildRequires = ['graphviz:runtime', 'inputproto:devel', 'kbproto:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXinerama:devel', 'libXtst:devel', 'libstdc++:devel', 'xextproto:devel', 'xineramaproto:devel', 'libtool:runtime', 'cmake:runtime', 'pkgconfig:devel', 'libXt:devel', 'libXi:devel']
+        
+    def setup(r):
+    	r.addArchive('http://synergy.googlecode.com/files/%(name)s-%(version)s-Source.tar.gz')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d '
+        r.Environment('OPENGL_LIBS', '-lGL -lGLU -L%(libdir)s/xorg.mesa.3d/')
+        r.CMake('-DCMAKE_LIBRARY_PATH=%(libdir)s -DCMAKE_INSTALL_PREFIX=%(prefix)s -DCMAKE_INCLUDE_PATH=%(includedir)s')
+        r.Make()
+        r.Install('bin/synergyc', '%(bindir)s/', mode = 0755)
+        r.Install('bin/synergys', '%(bindir)s/', mode = 0755)
+        r.Doc('doc/synergyc.man')
+        r.Doc('doc/synergys.man')

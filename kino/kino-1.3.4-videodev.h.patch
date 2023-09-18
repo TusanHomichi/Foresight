@@ -1,0 +1,11 @@
+--- src/v4l.h.kernel	2011-05-23 03:45:08.000000000 +0200
++++ src/v4l.h	2011-05-23 03:45:43.000000000 +0200
+@@ -40,7 +40,7 @@
+ 
+ #define _DEVICE_H_
+ #define _LINUX_TIME_H
+-#include <linux/videodev.h>
++#include <libv4l1-videodev.h>
+ 
+ #include "displayer.h"
+ 

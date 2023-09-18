@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2008-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class NautilusActions(GnomePackageRecipe,AutoPackageRecipe):
+    name = 'nautilus-actions'
+    version = '3.1.5'
+    buildRequires = [ 
+        'GConf:devel', 
+        'GConf:runtime',
+        'ORBit2:devel', 
+        'desktop-file-utils:runtime',
+        'e2fsprogs:devel', 
+        'nautilus:devel',
+        'unique:devel', 
+        'util-linux:devel',
+        'dbus-glib:runtime', 
+        'libgtop:devel',
+        'xz:runtime',
+                      ]
+
+    extraConfig = ' --disable-scrollkeeper --disable-schemas-install '
+    
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Replace(('\-Wall', ''),
+                  ('\-Werror', ''),
+                  ('\-Wno-overlength-strings', ''), '{configure{,.ac},m4/na-compiler-flags.m4}')

@@ -1,0 +1,66 @@
+From: Danny Baumann <dannybaumann@web.de>
+Date: Fri, 19 Dec 2008 12:57:38 +0000 (+0100)
+Subject: Fix mouse-over-window calculation for sticky windows.
+X-Git-Url: http://gitweb.compiz-fusion.org/?p=fusion%2Fplugins%2Fexpo;a=commitdiff_plain;h=991de5e00758a236b31ee60ed31a7d605a0a76d4;hp=f97a9fa6f0ad578f674d1f248bd7bef90e3260e0
+
+Fix mouse-over-window calculation for sticky windows.
+---
+
+diff --git a/expo.c b/expo.c
+index 30814db..1df50f2 100644
+--- a/src/expo/expo.c
++++ b/src/expo/expo.c
+@@ -1555,12 +1555,15 @@ expoDonePaintScreen (CompScreen * s)
+     case DnDStart:
+ 	{
+ 	    CompWindow *w;
++	    int        xOffset, yOffset;
++
++	    xOffset = s->hsize * s->width;
++	    yOffset = s->vsize * s->height;
+ 
+ 	    for (w = s->reverseWindows; w; w = w->prev)
+ 	    {
+ 		Bool inWindow;
+-		int xOffset, yOffset;
+-		int nx,ny;
++		int  nx, ny;
+ 
+ 		if (w->destroyed)
+ 		    continue;
+@@ -1571,23 +1574,26 @@ expoDonePaintScreen (CompScreen * s)
+ 			continue;
+ 		}
+ 
+-		xOffset = s->hsize * s->width;
+-		yOffset = s->vsize * s->height;
++		if (windowOnAllViewports (w))
++		{
++		    nx = (es->newCursorX + xOffset) % s->width;
++		    ny = (es->newCursorY + yOffset) % s->height;
++		}
++		else
++		{
++		    nx = es->newCursorX - (s->x * s->width);
++		    ny = es->newCursorY - (s->y * s->height);
++		}
+ 
+-		nx = es->newCursorX - (s->x * s->width);
+-		ny = es->newCursorY - (s->y * s->height);
+-		
+ 		inWindow = ((nx >= WIN_X (w)) &&
+ 			    (nx <= WIN_X (w) + WIN_W (w))) ||
+ 		           ((nx >= (WIN_X (w) + xOffset)) &&
+-			    (nx <= (WIN_X (w) + WIN_W (w) +
+-						xOffset)));
++			    (nx <= (WIN_X (w) + WIN_W (w) + xOffset)));
+ 
+ 		inWindow &= ((ny >= WIN_Y (w)) &&
+ 			     (ny <= WIN_Y (w) + WIN_H (w))) ||
+ 		            ((ny >= (WIN_Y (w) + yOffset)) &&
+-		    	     (ny <= (WIN_Y (w) + WIN_H (w) +
+-						 yOffset)));
++		    	     (ny <= (WIN_Y (w) + WIN_H (w) + yOffset)));
+ 
+ 		if (!inWindow)
+ 		    continue;

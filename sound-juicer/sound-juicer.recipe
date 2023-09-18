@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2004 Elliot Peele <elliot@bentlogic.net>
+#               2005-2008 The Foresight Linux Project
+
+loadSuperClass('gnomepackage')
+class SoundJuicer(GnomePackageRecipe):
+    name = 'sound-juicer'
+    version = '2.32.0'
+
+    buildRequires = ['GConf:devel', 'GConf:runtime', 'ORBit2:devel',
+        'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime',
+        'fontconfig:devel', 'freetype:devel', 'gettext:runtime',
+        'glib:devel', 'gnome-keyring:devel', 'gnome-media:devel',
+        'gnome-vfs:devel', 'gst-plugins-base:devel', 'gstreamer:devel',
+        'gstreamer:runtime', 'gtk:runtime', 'hal:devel', 'libart_lgpl:devel',
+        'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel',
+        'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel',
+        'libmusicbrainz3:devel', 'libpng:devel', 'libstdc++:devel',
+        'libxml2:devel', 'pango:devel',
+        'popt:devel', 'rarian:runtime', 'taglib:devel', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+        'perl:runtime','expat:devel','libxslt:runtime', 'brasero:devel', 'libcanberra:devel' ]
+
+
+    extraConfig = '--disable-scrollkeeper'

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+
+class Legit(CPackageRecipe):
+    name = 'legit'
+    version = '9e64b1dad6' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = ['python-setuptools:python', 'python:devel', 'clint:python', 'git-python:python']
+ 
+    def setup(r):
+        r.addGitSnapshot('http://github.com/kennethreitz/legit.git')
+        r.PythonSetup()
+        

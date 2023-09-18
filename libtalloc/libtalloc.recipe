@@ -1,0 +1,19 @@
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libtalloc(AutoPackageRecipe):
+    name = 'libtalloc'
+    version = '2.0.5'
+    buildRequires = [ 'python:devel',
+                      'autoconf:runtime',
+                      'libxslt:devel']
+
+    def unpack(r):
+        r.addArchive('http://samba.org/ftp/talloc/talloc-%(version)s.tar.gz')
+        r.addPatch('0001-Install-python-bindings-in-the-arch-specific-locatio.patch')
+        r.Run('./autogen.sh')
+
+    def configure(r):
+        r.Configure('--disable-rpath --bundled-libraries=NONE')

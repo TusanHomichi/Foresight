@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Liblastfm(CPackageRecipe):
+    name = 'liblastfm'
+    tag = '5b65943abb'
+    version = '1.0.1' + '+' + tag + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = ['fftw:devel', 'libsamplerate:devel', 'libstdc++:devel', 'qt4-core:devellib', 'qt4-sql:devellib', 'qt4:devel',
+                     'ruby:runtime', 'pkgconfig:devel', 'cmake:runtime']
+ 
+    def setup(r):
+        r.addGitSnapshot('https://github.com/eartle/liblastfm.git',
+                         tag = r.tag)
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

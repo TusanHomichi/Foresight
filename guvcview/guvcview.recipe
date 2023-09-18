@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Guvcview(AutoPackageRecipe):
+    name = 'guvcview'
+    version = '1.6.1'
+ 
+    buildRequires = [
+        'SDL:devel', 
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'ffmpeg:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk3:devel', 
+        'intltool:runtime', 
+        'libpng:devel', 
+        'libv4l:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'portaudio:devel', 
+        'pulseaudio:devel', 
+        'udev:devel',
+        'userspace-kernel-headers:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/source/%(name)s-src-%(version)s.tar.gz')

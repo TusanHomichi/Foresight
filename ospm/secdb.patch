@@ -1,0 +1,13 @@
+Index: configure.in
+===================================================================
+--- configure.in	(revision 194)
++++ configure.in	(working copy)
+@@ -160,7 +160,7 @@
+ AC_CHECK_LIB(secdb, chkauthattr,
+              [SECDB_LIBS=-lsecdb
+              AC_DEFINE(HAVE_SECDB,1,[Define to 1 if the libsecdb library is present.])],
+-             [AC_MSG_ERROR([[
++             [AC_MSG_WARN([[
+ ***
+ *** libsecdb was not found. 
+ ]])])

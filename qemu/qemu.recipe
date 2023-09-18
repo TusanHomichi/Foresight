@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Qemu(AutoPackageRecipe):
+    name = 'qemu'
+    version = '0.9.0'
+
+    buildRequires = [ 'SDL:devel', 'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://fabrice.bellard.free.fr/qemu/')
+        r.addPatch("%(name)s-64.patch", use=Arch.x86_64)
+        r.Create('kqemu/Makefile',
+                 contents="#Just a dummy file to get kqemu support to be built")
+        r.addSource('kqemu.h', dir='kqemu')
+
+    def configure(r):
+        extraConfig = ('--enable-kqemu --datadir=%(datadir)s/%(name)s'
+                       ' --interp-prefix=%(datadir)s/%(name)s/%%m'
+                       # needed for gcc4
+                       ' --disable-gcc-check')
+        r.Configure(extraConfig)
+
+    def makeinstall(r):
+        r.MakePathsInstall('datadir=%(destdir)s/%(datadir)s/%(name)s'
+                           ' docdir=%(destdir)s%(thisdocdir)s')
+
+    def policy(r):
+        # qemu ships some ELF files that are the same across
+        # all architectures, so placing them in /usr/share/qemu is fine
+        r.ImproperlyShared(exceptions='%(datadir)s/%(name)s/.*elf')
+        r.Flavor(exceptions='%(datadir)s/%(name)s/.*elf')
+        r.ImproperlyShared(exceptions='%(datadir)s/%(name)s/openbios-.*')
+        r.Flavor(exceptions='%(datadir)s/%(name)s/openbios-.*')

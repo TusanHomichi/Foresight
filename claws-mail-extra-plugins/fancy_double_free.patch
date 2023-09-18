@@ -1,0 +1,11 @@
+--- src/fancy_viewer.c	16 Jun 2009 16:04:35 -0000	1.1.2.11
++++ src/fancy_viewer.c	4 Jul 2009 02:14:49 -0000	1.1.2.12
+@@ -275,8 +275,6 @@
+     webkit_web_view_open(viewer->view, "about:blank");
+     debug_print("fancy_clear_viewer\n");
+     viewer->to_load = NULL;
+-    if(viewer->cur_link)
+-        g_free(viewer->cur_link);
+     vadj = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(viewer->scrollwin));
+     vadj->value = 0.0;
+     g_signal_emit_by_name(G_OBJECT(vadj), "value-changed", 0);

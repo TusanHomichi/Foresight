@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Furiusisomount(PackageRecipe):
+
+    name = 'furiusisomount'
+    version = '0.11.3.1'
+
+    buildRequires = [
+            'desktop-file-utils:runtime',
+            'python-setuptools:python', 
+            'pygobject:python', 
+            'pygtk:python', 
+            'python:devel',
+                ]
+
+    def setup(r):
+        r.addArchive('http://launchpad.net/%(name)s/python/%(version)s/+download/%(name)s_%(version)s.tar.gz')
+        r.addSource('furiusisomount.desktop')
+        r.Run(''' sed -i "2 a\cd /usr/share/%(name)s" %(name)s ''')
+        r.Install('pix/*', '%(datadir)s/%(name)s/pix/', mode=0644)
+        r.Install('res/main_window.glade', '%(datadir)s/%(name)s/res/', mode=0644)
+        r.Install('src/*', '%(datadir)s/%(name)s/src/', mode=0644)
+
+        r.Install('%(name)s', '%(bindir)s/', mode=0755)
+        r.Desktopfile('furiusisomount.desktop')

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Harfbuzz(AutoPackageRecipe):
+    name = 'harfbuzz'
+    version = '0.9.14'
+ 
+    buildRequires = [ 'cairo:devel', 'freetype:devel', 'glib:devel', 
+                      'libstdc++:devel', 'pkgconfig:devel', 'glib:runtime',
+                      'icu:devel', ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.freedesktop.org/software/harfbuzz/release/')
+
+    def configure(r):
+	# our icu-config has weird output (multiline)...                                                                                                              
+        # ... which busts the makefiles - rerouting thru pkg-config                                                                                                   
+        r.Replace('icu-config', 'icu_-config', 'configure')
+        r.Configure('--disable-static')
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

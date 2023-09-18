@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MtDAAPd (AutoPackageRecipe):
+    name = 'mt-daapd'
+    version = '0.2.4.2'
+
+    buildRequires = ['bison:runtime', 'chkconfig:runtime', 'flex:runtime',
+        'gdbm:devel', 'libid3tag:devel', 'libogg:devel', 'libvorbis:devel',
+        'pkgconfig:devel', 'zlib:devel']
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('contrib/mt-daapd', '%(initdir)s/mt-daapd')
+        r.Install('contrib/mt-daapd.playlist', '%(sysconfdir)s/mt-daapd.playlist')
+        r.Install('mt-daapd.conf', '%(sysconfdir)s/mt-daapd.conf')
+
+    def configure(r):
+        r.Configure('--enable-oggvorbis')
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/mt-daapd/')
+        r.addSource('mt-daapd.conf')

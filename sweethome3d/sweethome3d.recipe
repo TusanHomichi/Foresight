@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sweethome3d(PackageRecipe):
+    name = 'sweethome3d'
+    version = '3.1'
+ 
+    buildRequires = [ 'Mesa:devel', 'alsa-lib:devel', 'desktop-file-utils:runtime',
+                      'libX11:devel', 'libXext:devel', 'libXi:devel', 'libXt:devel',
+                      'libXtst:devel', 'sun-jdk:runtime', 'unixODBC:devel']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/sweethome3d/SweetHome3D-%(version)s-linux-x86.tgz',
+                     use=Arch.x86)
+        r.addArchive('mirror://sourceforge/sweethome3d/SweetHome3D-%(version)s-linux-x64.tgz',
+                     use=Arch.x86_64)
+        r.addPatch('bin_patch')
+        r.addSource('sweethome3d.desktop')
+        r.addSource('sweethome3d.png')
+        r.Replace('PROGRAM=','PROGRAM=%(libdir)s/sweethome3d/SweetHome3D','SweetHome3D') 
+        r.Install('*','%(libdir)s/sweethome3d/')
+        r.Symlink('%(libdir)s/sweethome3d/SweetHome3D','%(bindir)s/sweethome3d')
+        r.Install('sweethome3d.desktop','%(datadir)s/applications/')
+        r.Install('sweethome3d.png','%(datadir)s/pixmaps/')
+        if Arch.x86:
+            # pops as a dep just in x86, and busts groups...
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libCg\.so\(SysV\ VERSION\ x86\)')
+            r.Requires(exceptDeps=r'soname\:\ ELF32\/libCgGL\.so\(SysV\ VERSION\ x86\)')
+

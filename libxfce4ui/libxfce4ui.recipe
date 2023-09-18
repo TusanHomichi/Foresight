@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class libxfce4ui(XfcePackageRecipe):
+
+    name = 'libxfce4ui'
+    version = '4.10.0'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'glade:devel', 'libxfce4util:devel', 'libxml2:devel',
+        'startup-notification:devel', 'xfconf:devel'
+    ])
+
+    patches = ['add_error_domain_for_xfce_sm_client.patch']
+
+    extraConfig = ' --enable-gladeui'

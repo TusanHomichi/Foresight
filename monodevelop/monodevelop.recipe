@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class MonoDevelop(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'monodevelop'
+    version = '2.2.2'
+    rpmRelease = '1.fc14'
+    buildRequires = [ 'desktop-file-utils:runtime', 'gecko-sharp:devellib', 'gecko-sharp:cil', 'gettext:runtime', 'gnome-sharp:devellib', 'gnome-sharp:lib', 'gtk-sharp:devellib', 'gtk-sharp:lib', 'gtksourceview-sharp:devellib', 'gtksourceview-sharp:cil', 'intltool:runtime', 'mono:devel', 'mono:lib', 'mono:runtime', 'perl:runtime', 'pkgconfig:devel', 'shared-mime-info:runtime', 'libgdiplus:lib', 'gnome-sharp:cil', 'gtk-sharp:cil', 'gtksourceview-sharp:cil', 'mono-addins:devellib', 'mono-addins:cil', 'mono:cil', 'automake:runtime', 'autoconf:runtime', 'libtool:runtime', 'grep:runtime']
+
+    rpmPatches = [ 'md-2.2-pc.patch',
+                   '%(name)s-2.1.0-unbundle-nunit.patch',
+                   '%(name)s-2.1.0-rmcecildeps.patch',
+                   ]
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Run("""
+sed -i -e 's!$(prefix)/lib/!%(libdir)s/!'    -e 's!${exec_prefix}/lib!%(libdir)s!' configure
+sed -i -e 's!/lib/monodevelop!/%(lib)s/monodevelop!' monodevelop
+sed -i -e 's!$PREFIX/lib/!%(libdir)s/!' mdtool.in
+sed -i -e 's!monodevelop}/lib/!monodevelop}/%(lib)s/!' monodevelop.in
+
+
+find . -name '*.cs' -and      ! \( -name 'GNUCompiler.cs' -or -name 'CProjectConfiguration.cs' \)       | while read f ;
+do
+sed -i -e 's!"lib"!"%(lib)s"!' "$f" 1>/dev/null
+done
+
+find . -name Makefile.in -or -name \*.pc.in        -or -name \*.in -or -name \*.xml        | while read f ;
+         do
+           sed -i -e 's!$(prefix)/lib/!%(libdir)s/!'  -e 's!@prefix@/lib/!%(libdir)s/!' -e 's!/usr/lib/!%(libdir)s/!'  -e 's!${exec_prefix}/lib/!%(libdir)s/!' "$f" 1>/dev/null
+         done
+
+for f in `grep -rl 'NUnit/lib/nunit' \`find . -name 'Makefile.in'\``; do
+    sed -i 's|-r:.*NUnit/lib/nunit.|-r:%(libdir)s/mono/1.0/nunit.|' $f
+done
+
+for f in `grep -rl 'Cecil.dll' \`find . -name 'Makefile.in'\``; do
+    sed -i 's|-r:.*Mono.Cecil.dll|-r:%(cecildll)s|' $f
+done
+
+for f in `grep -rl 'Cecil.Mdb.dll' \`find . -name 'Makefile.in'\``; do
+    sed -i 's|-r:.*Mono.Cecil.Mdb.dll|-r:%(cecilmdbdll)s|' $f
+done
+
+""")
+
+
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure(' --disable-update-mimedb '
+                    ' --disable-update-desktopdb ')
+
+
+    def makeinstall(r):
+        r.MakeInstall("""GACUTIL_FLAGS="/package monodevelop /root %(destdir)s%(libdir)s" """)
+
+    def policy(r):
+        r.Requires('libgdiplus:lib','%(bindir)s/%(name)s')
+
+

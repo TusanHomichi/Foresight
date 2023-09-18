@@ -1,0 +1,29 @@
+#  2007-2011, Antonio Meireles, http://sbin.reboot.sh
+
+
+class GtkNimbus(AutoPackageRecipe):
+
+    buildRequires = [ 'expat:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel',
+                      'gtk:runtime', 'libXrender:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel',
+                      'zlib:devel', 'perl-XML-Parser:perl', 'icon-naming-utils','gnome-common:devel',
+                      'gnome-common:runtime', 'autoconf:runtime', 'automake:runtime', 'libtool:devel',
+                      'libtool:runtime', 'gettext:devel', 'gdk-pixbuf:runtime' ]
+
+    name = 'theme-engine-sun-nimbus'
+    version = '0.1.7'
+
+    def unpack(r):
+        r.addArchive('http://dlc.sun.com/osol/jds/downloads/extras/nimbus/nimbus-%(version)s.tar.bz2')
+
+    def configure(r):
+        r.Configure('--disable-static',
+                    configureName='autogen.sh')
+
+    def policy(r):
+        for x in [ 'dark', 'light',]:
+            r.Remove('%%(datadir)s/themes/nimbus/%s-index.theme' % x)
+        r.Install('index.theme',
+                  '%(datadir)s/themes/nimbus/index.theme')
+        r.Create('%(datadir)s/icons/nimbus/icon-theme.cache')
+        r.InitialContents('%(datadir)s/icons/nimbus/icon-theme.cache')
+

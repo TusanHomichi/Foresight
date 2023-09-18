@@ -1,0 +1,24 @@
+class IWLwifi6k(PackageRecipe):
+
+    name = 'iwlwifi-6000-ucode'
+    version = '9.221.4.1'
+
+    def setup(r):
+        # download site down
+        dURL = ''# http://www.intellinuxwireless.org/iwlwifi/downloads/'
+        for f in ['%(version)s']:
+            r.addArchive( dURL + '%s-%s.tgz' %(r.name, f))
+
+        # WiFi Link 6005 Series Adapters
+        for f in ['17.168.5.2']:
+            r.addArchive( dURL + 'iwlwifi-6000g2a-ucode-%s.tgz' %  f)
+
+        # WiFi Link 6030 Series Adapters
+        for f in ['17.168.5.2']:
+            r.addArchive( dURL + 'iwlwifi-6000g2b-ucode-%s.tgz' % f)
+
+        r.Install('../iwlwifi-*/*.ucode', '/lib/firmware/', mode = 0644)
+
+
+        r.Flavor(exceptions='/lib/firmware/.*')
+

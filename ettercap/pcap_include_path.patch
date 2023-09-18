@@ -1,0 +1,11 @@
+--- ettercap/ettercap/src/ec_send.c	2012-01-03 03:06:34.000000000 +0100
++++ ettercap/ettercap/src/fix_pcap_include_path.patch	2012-01-31 21:47:07.000000000 +0100
+@@ -34,7 +34,7 @@
+ #include <pcap.h>
+ 
+ #if !defined(OS_WINDOWS)
+-#include <pcap/pcap.h>
++#include <pcap.h>
+ #endif
+ #include <libnet.h>
+ 

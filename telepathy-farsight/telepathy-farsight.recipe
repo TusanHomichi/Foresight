@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TelepathyFarsight(AutoPackageRecipe):
+    name = 'telepathy-farsight'
+    version = '0.0.19'
+ 
+    buildRequires = [
+        'dbus-glib:devel',
+        'dbus:devel',
+        'farsight2:devel',
+        'glib:devel',
+        'gst-python:devellib',
+        'gst-python:python',
+        'gstreamer:devel',
+        'gtk-doc:runtime',
+        'libxml2:devel',
+        'pkgconfig:devel',
+        'pygobject:runtime',
+        'pygtk:python',
+        'python:bin',
+        'python:devel',
+        'telepathy-glib:devel',
+        'zlib:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://telepathy.freedesktop.org/releases/telepathy-farsight/')

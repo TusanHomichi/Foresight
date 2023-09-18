@@ -1,0 +1,27 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class QOAuth(AutoPackageRecipe):
+
+    name = 'qoauth'
+    version = '1.0.1'
+
+    buildRequires = [
+        'libstdc++:devel', 'qca2:devel', 'qt4:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://github.com/ayoy/qoauth/tarball/v%(version)s')
+
+    def configure(r):
+        # FIXME: qmake-qt4 doesn't like parallelmflags
+        r.disableParallelMake()
+        r.Environment('INSTALL_ROOT', '%(destdir)s')
+
+        r.Replace('/lib', '/%(lib)s', 'src/pcfile.sh')
+
+        r.Make(makeName='qmake-qt4')
+

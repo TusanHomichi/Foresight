@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+class PAvumeter(GnomePackageRecipe):
+    name = 'pavumeter'
+    version  = '0.9.3'
+    buildRequires = ['gst-plugins-base:devel', 'gstreamer:runtime', 'gstreamer:devel', 'lynx:runtime', 'pulseaudio:devel', 'cairomm:devel', 'desktop-file-utils:runtime', 'glibmm:devel', 'gtkmm:devel', 'libglade:devel', 'libglademm:devel', 'libsigc++:devel']
+
+    externalArchive='http://0pointer.de/lennart/projects/%(name)s/'
+    patches = [ 'menu.patch' ]

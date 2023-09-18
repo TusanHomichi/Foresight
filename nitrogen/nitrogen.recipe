@@ -1,0 +1,8 @@
+class Nitrogen(AutoPackageRecipe):
+    name = 'nitrogen'
+    version = '1.5.2'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'cairomm:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'glibmm:devel', 'gtk:devel', 'gtk:runtime', 'gtkmm:devel', 'libX11:devel', 'libXinerama:devellib', 'libXrender:devel', 'libpng:devel', 'libsigc++:devel', 'libstdc++:devel', 'pango:devel', 'pkgconfig:devel', 'zlib:devel', 'gettext:runtime', 'intltool:runtime']
+
+    def unpack(r):
+        r.addArchive('http://projects.l3ib.org/nitrogen/files/')

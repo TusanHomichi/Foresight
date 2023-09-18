@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class SEAbios(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'seabios'
+    version = '0.6.2'
+    rpmRelease = '3.fc16'
+    rpmPatches = [ 'seabios-0.6.2-build.patch',
+                   'seabios-0.6.2-fix-QXL.patch',
+                   'seabios-do-not-advertise-S4-S3-in-DSDT.patch' ]
+    buildRequires = [ 'iasl:runtime' ]
+
+
+    def setup(r):
+        r.disableParallelMake()
+        RPMPackageRecipe.unpack(r)
+        r.Replace('VERSION=%(version)s.*', 'VERSION=%(version)s', 'Makefile')
+
+        r.Make()
+
+        r.Install('out/bios.bin', '%(datadir)s/seabios/', mode = 0644)
+        # Work around FL-2808
+        r.Provides('file', '%(datadir)s/seabios/bios.bin')

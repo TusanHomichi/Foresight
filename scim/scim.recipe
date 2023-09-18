@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class Scim(GnomePackageRecipe):
+    buildRequires = [ 'glibc:devel', 'atk:devel', 'cairo:devel','pango:devel',
+'fontconfig:devel', 'freetype:devel', 'libstdc++:devel',
+'desktop-file-utils:runtime' ]
+
+    name = 'scim'
+    version = '1.4.7'
+
+    externalArchive = 'mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz'
+
+    def unpack (r):
+        GnomePackageRecipe.unpack(r)
+        r.addSource('scim.sh', dir='%(sysconfdir)s/X11/xinit/xinitrc.d/')

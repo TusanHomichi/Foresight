@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Vor(CPackageRecipe):
+    name = 'vor'
+    version = '0.5.4'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel']
+ 
+    def setup(r):
+        r.addArchive('http://qualdan.com/vor/vor-0.5.4.tar.bz2')
+        r.Make()
+        r.MakeInstall()
+        r.addSource('vor.desktop')
+        r.Desktopfile('vor.desktop')

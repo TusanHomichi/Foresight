@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Pep8(PackageRecipe):
+    name = 'pep8'
+    version = "r3326"
+ 
+    buildRequires = ['python:devel']
+ 
+    def setup(r):
+        r.addSvnSnapshot("http://svn.browsershots.org/trunk/devtools/pep8/")
+        r.Install("pep8.py","%(bindir)s/")

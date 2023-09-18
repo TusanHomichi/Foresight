@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Epdf(AutoPackageRecipe):
+    name = 'epdf'
+    version = '4f02c256' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+ 
+    buildRequires = [
+        'automake:runtime',
+        'autoconf:runtime', 
+        'libtool:runtime', 
+        'doxygen:runtime', 
+        'ecore:devel', 
+        'eina:devel', 
+        'evas:devel', 
+        'freetype:devel', 
+        'libjpeg:devel', 
+        'libstdc++:devel', 
+        'pkgconfig:devel', 
+        'zlib:devel',
+            ]
+ 
+    def setup(r):
+        r.addGitSnapshot('git://git.enlightenment.fr/vcs/svn/PROTO/epdf.git')
+        r.Run('./autogen.sh --prefix=/usr --libdir=%(libdir)s')
+        r.Make()
+        r.MakeInstall()

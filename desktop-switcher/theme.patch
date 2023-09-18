@@ -1,0 +1,21 @@
+diff --git a/src/main.c b/src/main.c
+--- a/src/main.c
++++ b/src/main.c
+@@ -376,7 +376,7 @@
+ 
+   /* Set the theme */
+   error = NULL;
+-  gconf_client_set_string (client, THEME, "Dust", &error);
++  gconf_client_set_string (client, THEME, "Foresight", &error);
+   if (error)
+   {
+     g_warning ("Can't change the theme: %s", 
+@@ -504,7 +504,7 @@
+ 
+   /* Set the theme */
+   error = NULL;
+-  gconf_client_set_string (client, THEME, "Human", &error);
++  gconf_client_set_string (client, THEME, "Foresight", &error);
+   if (error)
+   {
+     g_warning ("Can't change the theme: %s", 

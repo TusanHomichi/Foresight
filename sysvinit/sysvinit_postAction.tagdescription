@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/sysvinit_postAction
+datasource	stdin
+implements	files update
+implements	files remove
+implements	files preremove

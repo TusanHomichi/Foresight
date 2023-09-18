@@ -1,0 +1,12 @@
+--- kdeaccessibility--kdeaccessibility/doc/CMakeLists.txt.orig	2010-08-23 20:43:49.463961999 +0400
++++ kdeaccessibility--kdeaccessibility/doc/CMakeLists.txt	2010-08-23 20:44:00.026961999 +0400
+@@ -5,9 +5,6 @@
+   if(BUILD_kmousetool)
+     add_subdirectory(kmousetool)
+   endif()
+-  if(BUILD_jovie)
+-    add_subdirectory(jovie)
+-  endif()
+ endif(Q_WS_X11)
+ if(BUILD_kmouth)
+   add_subdirectory(kmouth)

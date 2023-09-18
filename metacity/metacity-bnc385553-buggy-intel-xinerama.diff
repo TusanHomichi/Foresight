@@ -1,0 +1,110 @@
+https://bugzilla.novell.com/show_bug.cgi?id=385553
+
+On machines with Intel 915 graphics chipsets and buggy X drivers which
+report an always-on VGA output, Metacity doesn't maximize windows to
+the full size of the display.
+
+This makes Metacity consider two overlapping monitors anchored at (0,
+0) to be a *single* monitor ("clone mode"); it uses the largest
+geometry of the monitors for the screen's purposes.
+
+diff --git a/src/core/screen.c b/src/core/screen.c
+index 419b537..8dffbc2 100644
+--- a/src/core/screen.c
++++ b/src/core/screen.c
+@@ -190,6 +190,87 @@ set_wm_icon_size_hint (MetaScreen *screen)
+ }
+ 
+ static void
++xinerama_screen_info_to_rect (XineramaScreenInfo *info, MetaRectangle *r)
++{
++  r->x      = info->x_org;
++  r->y      = info->y_org;
++  r->width  = info->width;
++  r->height = info->height;
++}
++
++static XineramaScreenInfo
++pick_biggest_geometry (XineramaScreenInfo *infos, int n_infos)
++{
++  long max_pixels;
++  int largest_index;
++  int i;
++
++  max_pixels = 0;
++  largest_index = 0;
++
++  for (i = 0; i < n_infos; i++)
++    {
++      long pixels;
++
++      pixels = (long) infos[i].width * infos[i].height;
++
++      if (pixels > max_pixels)
++	{
++	  max_pixels = pixels;
++	  largest_index = i;
++	}
++    }
++
++  return infos[largest_index];
++}
++
++static void
++sanitize_xinerama_infos (XineramaScreenInfo *infos, int n_infos, int *n_infos_ret)
++{
++  if (n_infos == 2)
++    {
++      /* https://bugzilla.novell.com/show_bug.cgi?id=310208
++       * https://bugzilla.novell.com/show_bug.cgi?id=385553
++       *
++       * The X driver for Intel 915GM chipsets has/had a bug where it would
++       * report that laptops started with a VGA output connected, and most
++       * of the time it defaults to a resolution of 1024x768.  This doesn't
++       * match the resolution of the laptop, which these days is big and fancy.
++       *
++       * Both monitors (the VGA output's and the laptop's) *overlap* in the Xinerama
++       * configuration, since that is how "clone the display" is implemented.
++       * So, we see if there are only two monitors *and* if they intersect --- in
++       * that case, we can be reasonably confident that we can just pick the bigger
++       * monitor, which will be the laptop's display.
++       *
++       * This shouldn't break real setups with "make a big screen out of two monitors",
++       * since those monitors don't overlap in the Xinerama configuration.
++       *
++       * To summarize: in the case of just two overlapping monitors ("laptop
++       * plus cloned external display"), we simulate that we have only *one* monitor.
++       */
++
++      MetaRectangle a, b, dummy;
++
++      xinerama_screen_info_to_rect (infos, &a);
++      xinerama_screen_info_to_rect (infos + 1, &b);
++
++      if (meta_rectangle_intersect (&a, &b, &dummy)
++          && a.x == 0 && a.y == 0
++          && b.x == 0 && b.y == 0)
++        {
++          XineramaScreenInfo biggest;
++
++          biggest = pick_biggest_geometry (infos, n_infos);
++
++          infos[0] = biggest;
++          infos[0].screen_number = 0;
++          *n_infos_ret = 1;
++        }
++    }
++}
++
++static void
+ reload_xinerama_infos (MetaScreen *screen)
+ {
+   MetaDisplay *display;
+@@ -228,6 +309,7 @@ reload_xinerama_infos (MetaScreen *screen)
+       
+       n_infos = 0;
+       infos = XineramaQueryScreens (display->xdisplay, &n_infos);
++      sanitize_xinerama_infos (infos, n_infos, &n_infos);
+ 
+       meta_topic (META_DEBUG_XINERAMA,
+                   "Found %d Xinerama screens on display %s\n",

@@ -1,0 +1,7 @@
+class Flup(PackageRecipe):
+    name = 'flup'
+    version = '1.0.2'
+    buildRequires = ['python:devel', 'python-setuptools:python']
+    def setup(r):
+        r.addArchive('http://www.saddi.com/software/flup/dist/')
+        r.PythonSetup()

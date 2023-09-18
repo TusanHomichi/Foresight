@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class EvolutionIndicator(AutoPackageRecipe):
+    name = 'evolution-indicator'
+    version = '0.2.14'
+ 
+    buildRequires = ['GConf:devel', 'GConf:runtime',
+        'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel',
+        'enchant:devel', 'evolution-data-server:devel', 'evolution:devel',
+        'fontconfig:devel', 'freetype:devel', 'intltool:devel',
+        'gettext:runtime', 'glib:devel', 'gnome-keyring:devel',
+        'gtk:devel', 
+        'intltool:runtime', 'libICE:devel', 'gtkhtml:devel', 'libSM:devel',
+        'libart_lgpl:devel', 'dee:devel', 'libgee:devel', 'libunity:devel',
+        'libcanberra:devel', 'libtool:runtime',
+        'libgnomecanvas:devel', 'autoconf:runtime',
+        'libnotify:devel', 'automake:runtime',
+        'libsoup:devel', 'libxml2:devel',
+        'pango:devel', 'pkgconfig:devel',
+        'python:bin', 'sqlite:devel',
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/evolution-indicator/%(major_version)s.0/%(version)s/+download/evolution-indicator-%(version)s.tar.gz')
+        r.addPatch('http://pkgbuild.com/git/aur.git/plain/evolution-indicator/evolution-indicator-0.2.10-libnotify-0.7.patch')
+        r.addPatch('evolution-indicator_0.2.14-0ubuntu3.diff')
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.Configure('--disable-static')

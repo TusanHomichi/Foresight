@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibShout(AutoPackageRecipe):
+    name = 'libshout'
+    version = '2.3.1'
+
+    buildRequires = ['libogg:devel', 'libtheora:devel', 'libvorbis:devel', 'pkgconfig:devel', 'speex:devel']
+
+    def unpack(r):
+        r.addArchive('http://downloads.us.xiph.org/releases/libshout/')

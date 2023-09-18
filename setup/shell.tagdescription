@@ -1,0 +1,5 @@
+file          %(taghandlerdir)s/shell
+description   Updates the /etc/shells file to list appropriate shells
+implements files update
+implements files remove
+implements handler update

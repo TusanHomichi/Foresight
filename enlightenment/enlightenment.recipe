@@ -1,0 +1,121 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Enlightenment(AutoPackageRecipe):
+    name = 'enlightenment'
+    version = "0.17.1"
+
+    buildRequires = [
+        'alsa-lib:devel', 
+        'curl:devel', 
+        'dbus:devel', 
+        'DeviceKit-disks:runtime',
+        'ecore:devel', 
+        'e-dbus:devel', 
+        'edje:devel', 
+        'edje:runtime', 
+        'eet:devel', 
+        'eet:runtime', 
+        'efreet:devel', 
+        'eina:devel', 
+        'embryo:devel', 
+        'embryo:runtime', 
+        'evas:devel', 
+        'expat:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gettext:runtime', 
+        'gnutls:devel', 
+        'intltool:runtime', 
+        'libICE:devel', 
+        'libX11:devel', 
+        'libXScrnSaver:devel', 
+        'libXcursor:devel', 
+        'libXdamage:devel', 
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXinerama:devel', 
+        'libXp:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libgcrypt:devel', 
+        'libgpg-error:devel', 
+        'libjpeg:devel', 
+        'openssl:devel', 
+        'pam:devel', 
+        'pkgconfig:devel', 
+        'xproto:devel', 
+        'zlib:devel', 
+        'automake:runtime', 
+        'autoconf:runtime', 
+        'libtool:runtime', 
+        'gettext:runtime', 
+        'cvs:runtime', 
+        'libXtst:lib', 
+        'glibc:locale', 
+        'procps:runtime', 
+        'net-tools:runtime', 
+        'doxygen:runtime', 
+        'eeze:devel', 
+        'pm-utils:runtime', 
+        'desktop-file-utils:runtime', 
+        'eio:devel', 
+        'elementary:devel', 
+        'emotion:devel', 
+        'ethumb:devel', 
+        'libexif:devel', 
+        'xcb-util:devel',
+            ]
+
+    def unpack(r):
+        r.addArchive("http://download.enlightenment.org/releases/")
+
+    def configure(r):
+        r.Configure(' --disable-connman'
+                    ' --enable-pam'
+                    ' --disable-static'
+                    ' --enable-mount-udisks'
+                    ' --enable-mount-eeze'
+                    ' --enable-elementary'
+                    ' --enable-elementary'
+                    ' --enable-emotion'
+                    ' --enable-enotify'
+                    ' --enable-systray'
+                    ' --enable-device-udev')
+
+    def policy(r):
+        for req in [ 'e-dbus',
+                     'edje',
+                     'edbus',
+                     'eet',
+                     'eeze',
+                     'efreet',
+                     'elementary',
+                     'embryo',
+                     'emotion',
+                     'ethumb',
+                     'evas',
+                     'expedite', ]:
+            r.Requires(req + ':runtime', '%(bindir)s/enlightenment')
+
+        for req in [ 'ecore',
+                     'eina',
+                     'efm-nav',
+                     'eio',
+                     'engage',
+                     'evas-generic-loaders', ]:
+            r.Requires(req + ':lib', '%(bindir)s/enlightenment')
+
+        r.Requires('gnome-icon-theme:data', '%(bindir)s/enlightenment')
+        r.Requires('gnome-themes-standard:data', '%(bindir)s/enlightenment')
+
+
+        for f in [ 'enlightenment_backlight', 'enlightenment_sys']:
+            r.SetModes('%%(libdir)s/enlightenment/utils/%s' % f, 04555)
+
+        r.SetModes('%(libdir)s/enlightenment/modules/cpufreq/linux-gnu-*/freqset', 04555)
+        
+

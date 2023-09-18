@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Guile(CPackageRecipe):
+    name = 'guile'
+    version = '1.8.6'
+    mver = '1.8'
+
+    buildRequires = [
+        'gettext:runtime', 'gmp:devel', 'gzip:runtime', 'install-info:runtime',
+        'libtool:devel', 'ncurses:devel', 'patch:runtime', 'readline:devel',
+        'tar:runtime', 'texinfo:runtime',
+    ]
+
+    def setup(r):
+        r.macros.mver = r.mver
+        r.addArchive('mirror://gnu/guile/')
+        r.addSource('guile-slib.tagdescription',
+                    dest = '%(tagdescriptiondir)s/guile-slib',
+                    macros = True)
+        r.addSource('guile-slib.taghandler',
+                    dest = '%(taghandlerdir)s/guile-slib',
+                    mode=0755, macros=True)
+        r.addPatch('guile-1.8.4-multilib.patch')
+        r.addPatch('guile-1.8.4-testsuite.patch')
+        r.addPatch('guile-1.8.6-deplibs.patch')
+        r.Configure('--with-threads --disable-static --disable-error-on-warning')
+        r.Make()
+        r.MakeInstall()
+        # symlinks for the slib library
+        r.Create('%(datadir)s/guile/%(mver)s/slibcat')
+        for l in ['slib', ]:
+            r.Symlink('../../' + l, '%(datadir)s/guile/%(mver)s/' + l)
+            r.Requires('slib:data', '%(datadir)s/guile/%(mver)s/' + l)
+            r.DanglingSymlinks(exceptions='%(datadir)s/guile/%(mver)s/' + l)

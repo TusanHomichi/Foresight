@@ -1,0 +1,48 @@
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IcedteaWeb(AutoPackageRecipe):
+    name = 'icedtea-web'
+    version = '1.4.1'
+
+    buildRequires = [ 'atk:devel', 'autoconf:runtime', 'cairo:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel',
+                      'icedtea-jdk:runtime', 'icedtea-jre:runtime', 'libpng:devel',
+                      'libstdc++:devel', 'pango:devel', 'pkgconfig:devel', 'zip:runtime',
+                      'zlib:devel', 'automake:runtime', 'desktop-file-utils:runtime',
+                      'which:runtime', 'xulrunner:devel', 'libxslt:runtime',]
+
+    def unpack(r):
+        r.addArchive('http://icedtea.classpath.org/download/source/')
+        # r.addPatch('icedtea-web-pr1260-remove-gtk-dep.patch')
+        # uncomment after we bump system xulrunner
+        # r.addPatch('icedtea-web-1.1.4-npapi-fix.patch')
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.Configure(' --with-jre-home=$JAVA_HOME/jre '
+                    ' --with-jdk-home=$JAVA_HOME '
+                    ' --libdir=%(libdir)s '
+                    ' --prefix=%(prefix)s')
+
+    def policy(r):
+        r.Move('%(mandir)s/man1/javaws.1',
+               '%(mandir)s/man1/javaws-itweb.1')
+        r.Symlink('%(mandir)s/man1/javaws-itweb.1',
+                  '%(mandir)s/man1/icedtea-web.1')
+
+        r.Install('javaws.png', '%(datadir)s/pixmaps/', mode = 0644)
+        r.Desktopfile('javaws.desktop')
+        r.Desktopfile('itweb-settings.desktop')
+
+        r.Symlink(
+            '%(libdir)s/IcedTeaPlugin.so',
+            '%(libdir)s/mozilla/plugins/libjavaplugin.so')
+        # we do not want it to land in :devellib ...
+        # ... as it would get wipped in regular installs
+        r.ComponentSpec('lib', '%(libdir)s/mozilla/plugins/')
+
+
+

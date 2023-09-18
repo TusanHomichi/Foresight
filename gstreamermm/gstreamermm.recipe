@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Gstreamermm(GnomePackageRecipe):
+
+    name = 'gstreamermm'
+    version = '0.10.8'
+
+    buildRequires = ['doxygen:runtime', 'glibmm:devel', 'graphviz:runtime', 'gst-plugins-base:devel', 'gstreamer:devel', 'libsigc++:devel', 'libxml++:devel']
+
+

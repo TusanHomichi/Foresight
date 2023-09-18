@@ -1,0 +1,28 @@
+#
+# rake.recipe
+#
+class Rake(CPackageRecipe):
+
+    name = 'rake'
+    version = '0.7.3'
+
+    buildRequires = [ 'ruby:runtime', 
+                      'rubygems:runtime']
+
+    def setup(r):
+        # Get the source
+        r.macros.gemName = '%(name)s-%(version)s.gem'
+        r.addSource('http://gems.rubyforge.org/gems/%(gemName)s')
+
+        r.Run('gem install -V '
+              ' --local '
+              ' --install-dir %(destdir)s/%(gemHome)s'
+              ' --force --rdoc '
+              ' %(gemName)s')
+
+        r.Move('%(gemHome)s/bin/*', '%(bindir)s/')
+
+        # XXX: remove this line when Conary has Ruby Dep Support
+        r.Requires('ruby:runtime', '.*/.*\.rb')
+        r.Requires('ruby:runtime', '%(bindir)s/rake' )
+

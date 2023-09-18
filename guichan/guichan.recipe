@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Guichan(CPackageRecipe):
+    name = 'guichan'
+    version = '20090810'
+ 
+    buildRequires = ['Mesa:devel', 'SDL:devel', 'SDL_image:devel', 'libstdc++:devel', 'allegro:devel', 'cmake:runtime', 'libICE:devel', 'libSM:devel', 'libXScrnSaver:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXfixes:devel', 'libXft:devel', 'libXi:devel', 'libXinerama:devel', 'libXpm:devel', 'libXrandr:devel', 'libXrender:devel', 'libXt:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel']
+ 
+    def setup(r):
+        r.addGitSnapshot('git://gitorious.org/guichan/mainline.git')
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+	r.Configure(configureName='./autogen.sh')
+#	r.Configure('--prefix=%(prefix)s')
+	r.CMake()
+	r.MakeInstall()

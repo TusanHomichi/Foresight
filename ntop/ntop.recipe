@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ntop(AutoPackageRecipe):
+    name = 'ntop'
+    version = '4.1.0'
+ 
+    buildRequires = ['GeoIP:devel', 
+            'gdbm:devel', 
+            'libpcap:devel', 
+            'openssl:devel', 
+            'pcre:devel', 
+            'python:devel', 
+            'rrdtool:devel', 
+            'zlib:devel',
+            'chkconfig:runtime',
+            'lm_sensors:devel', 
+            'mysql:devel', 
+            'net-snmp:devel', 
+            'pam:devel',
+            'python-mako:python',
+            'rrdtool:python',
+            'autoconf:runtime',
+            'automake:runtime',
+            'chkconfig:runtime',
+            'gcc-c++:runtime',
+            'libtool:runtime',
+            'wget:runtime',
+            'which:runtime',
+                ]
+
+ 
+    def setup(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://sourceforge.net/projects/ntop/files/ntop/Stable/%(name)s-%(version)s.tar.gz')
+        r.addSource('ntop.conf', dir='%(sysconfdir)s', mode=0644)
+        r.addSource('ntop.init', dest='%(initdir)s/ntop', mode=0755)
+        r.addPatch('ntop-running-user.patch')
+        r.addPatch('ntop-http_c.patch')
+        r.addPatch('ntop-dbfile-default-dir.patch')
+        r.addPatch('ntop-am.patch')
+        r.addPatch('ntop-disable-etter_fingerprint_download.patch')
+
+        r.Create('%(localstatedir)s/lib/ntop/{addressQueue,dnsCache,fingerprint,LsWatch,macPrefix,ntop_pw,prefsCache}.db', mode=0755)
+
+        r.addAction('./autogen.sh --noconfig')
+        r.Configure(' --disable-static --prefix=%(prefix)s')
+
+        r.Replace(('^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH',
+                   'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')
+
+        r.Replace('/usr/local/etc/ntop', '%(datadir)s/ntop', 'globals-defines.h')
+
+        r.Make()
+        r.MakeInstall()
+
+        r.Move('/etc/ntop/*gz', '%(datadir)s/ntop/')
+        r.Move('/etc/ntop/*dat', '%(datadir)s/ntop/')
+        r.Config(exceptions='%(sysconfdir)s/%(name)s/*.{gz,dat}')
+        r.UtilizeUser('ntop', '%(sbindir)s/ntop')
+
+        r.MakeDirs('%(localstatedir)s/lib/ntop/rrd/{flows,graphics,interfaces}')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/ntop/rrd/{flows,graphics,interfaces}')
+
+        # these are not dlopened modules, but -devel cruft
+        r.Remove('%(libdir)s/lib{myrrd,ntop,ntopreport,*Plugin*}.so')
+        # remove empty file
+        r.Remove('%(datadir)s/ntop/html/ntop.html')

@@ -1,0 +1,499 @@
+diff -Naur --exclude='.hg*' rpl/anaconda/dispatch.py fl/anaconda/dispatch.py
+--- rpl/anaconda/dispatch.py	2010-09-15 23:36:21.031274412 +0100
++++ fl/anaconda/dispatch.py	2010-09-15 23:31:53.563274412 +0100
+@@ -89,6 +89,7 @@
+     ("network", ),
+     ("timezone", ),
+     ("accounts", ),
++    ("initialuser", ),
+     ("reposetup", doRepoSetup, ),
+     ("basepkgsel", doBasePackageSelect, ),
+     ("tasksel", ),
+diff -Naur --exclude='.hg*' rpl/anaconda/gui.py fl/anaconda/gui.py
+--- rpl/anaconda/gui.py	2010-09-15 23:36:21.068274412 +0100
++++ fl/anaconda/gui.py	2010-09-15 23:31:53.589274412 +0100
+@@ -72,6 +72,7 @@
+     "network" : ("network_gui", "NetworkWindow"),
+     "timezone" : ("timezone_gui", "TimezoneWindow"),
+     "accounts" : ("account_gui", "AccountWindow"),
++    "initialuser" : ("user_gui", "AccountWindow"),
+     "tasksel": ("task_gui", "TaskWindow"),    
+     "group-selection": ("package_gui", "GroupSelectionWindow"),
+     "confirminstall" : ("confirm_gui", "InstallConfirmWindow"),
+diff -Naur --exclude='.hg*' rpl/anaconda/harddrive.py fl/anaconda/harddrive.py
+--- rpl/anaconda/harddrive.py	2010-09-15 23:36:21.069274412 +0100
++++ fl/anaconda/harddrive.py	2010-09-15 23:31:53.590274412 +0100
+@@ -14,6 +14,7 @@
+ import os
+ import sys
+ import isys
++import iutil
+ import shutil
+ import string
+ 
+diff -Naur --exclude='.hg*' rpl/anaconda/installclasses/foresight.py fl/anaconda/installclasses/foresight.py
+--- rpl/anaconda/installclasses/foresight.py	1970-01-01 01:00:00.000000000 +0100
++++ fl/anaconda/installclasses/foresight.py	2010-09-15 23:31:53.596274412 +0100
+@@ -0,0 +1,32 @@
++#
++# Copyright 2007-2008 Elliot Peele <elliot@bentlogic.net>
++#
++
++from constants import *
++from rhpl.translate import *
++from rpathbase import rPathBaseInstallClass
++
++class InstallClass(rPathBaseInstallClass):
++    hidden = 0
++
++    id = "foresight"
++    name = N_("foresight")
++    pixmap = "rpath-color-graphic-only.png"
++    description = N_("Foresight Linux install type.")
++
++    sortPriority = 40000
++    showLoginChoice = 1
++
++    def setSteps(self, anaconda):
++        rPathBaseInstallClass.setSteps(self, anaconda);
++        anaconda.dispatch.skipStep("accounts")
++        anaconda.dispatch.skipStep("group-selection")
++        if anaconda.isKickstart:
++            anaconda.dispatch.skipStep("initialuser")
++        #anaconda.dispatch.skipStep("postselection")
++        #anaconda.dispatch.skipStep("confirminstall")
++
++    def setDefaultPartitioning(self, partitions, clear = CLEARPART_TYPE_LINUX,
++                               doClear = 1, useLVM = False):
++        rPathBaseInstallClass.setDefaultPartitioning(self, partitions, clear=clear,
++                               doClear=doClear, useLVM=useLVM)
+diff -Naur --exclude='.hg*' rpl/anaconda/installclass.py fl/anaconda/installclass.py
+--- rpl/anaconda/installclass.py	2010-09-15 23:36:21.075274412 +0100
++++ fl/anaconda/installclass.py	2010-09-15 23:31:53.594274412 +0100
+@@ -157,6 +157,7 @@
+ 		 "network",
+ 		 "timezone",
+ 		 "accounts",
++                 "initialuser",
+                  "reposetup",
+                  "basepkgsel",
+ 		 "tasksel",                                  
+@@ -212,6 +213,10 @@
+         if len(availableClasses()) < 2:
+             dispatch.skipStep("installtype", permanent=1)
+ 
++        # skip initial user setup if installing through kickstart
++        if anaconda.isKickstart:
++            dispatch.skipStep('initialuser', permanent=1)
++
+     # called from anaconda so that we can skip steps in the headless case
+     # in a perfect world, the steps would be able to figure this out
+     # themselves by looking at instdata.headless.  but c'est la vie.
+diff -Naur --exclude='.hg*' rpl/anaconda/instdata.py fl/anaconda/instdata.py
+--- rpl/anaconda/instdata.py	2010-09-15 23:36:21.110274412 +0100
++++ fl/anaconda/instdata.py	2010-09-15 23:31:53.600274412 +0100
+@@ -62,6 +62,11 @@
+ 	self.timezone = timezone.Timezone()
+         self.timezone.setTimezoneInfo(self.instLanguage.getDefaultTimeZone())
+         self.users = None
++        self.initialUser = { 'fullname': '',
++                             'name': '',
++                             'isCrypted': False,
++                             'password': '',
++                             'lock': False}
+         self.rootPassword = { "isCrypted": False, "password": "", "lock": False }
+ 	self.auth = "--enableshadow --enablemd5"
+ 	self.desktop = desktop.Desktop()
+@@ -162,10 +167,23 @@
+ 
+         self.users = users.Users()
+ 
+-        # User should already exist, just without a password.
+-        self.users.setRootPassword(self.rootPassword["password"],
+-                                   self.rootPassword["isCrypted"], useMD5,
+-                                   self.rootPassword["lock"])
++        if self.rootPassword['password'] and not self.initialUser['password']:
++            # User should already exist, just without a password.
++            self.users.setRootPassword(self.rootPassword["password"],
++                                       self.rootPassword["isCrypted"], useMD5,
++                                       self.rootPassword["lock"])
++        else:
++            self.users.setRootPassword('', False, useMD5, True)
++
++        # FIXME: This needs a better test, but will work around the problem
++        # for now. Libuser doesn't seem to work correctly when running in
++        # test mode.
++        if not self.anaconda.isKickstart and self.anaconda.rootPath == '/mnt/sysimage':
++            self.users.createUser(self.initialUser['name'],
++                                  password=self.initialUser['password'],
++                                  isCrypted=self.initialUser['isCrypted'],
++                                  fullname=self.initialUser['fullname'],
++                                  root=self.anaconda.rootPath)
+ 
+         if self.anaconda.isKickstart:
+             for svc in self.ksdata.services.disabled:
+diff -Naur --exclude='.hg*' rpl/anaconda/iw/user_gui.py fl/anaconda/iw/user_gui.py
+--- rpl/anaconda/iw/user_gui.py	1970-01-01 01:00:00.000000000 +0100
++++ fl/anaconda/iw/user_gui.py	2010-09-15 23:31:53.664274412 +0100
+@@ -0,0 +1,199 @@
++#
++# user_gui.py: initial user creation dialog
++#
++# Copyright 2000-2007 Red Hat, Inc.
++# Copyright (c) 2007 Elliot Peele <elliot@bentlogic.net>
++#
++# This software may be freely redistributed under the terms of the GNU
++# library public license.
++#
++# You should have received a copy of the GNU Library Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++#
++
++import gtk
++import string
++import gui
++from iw_gui import *
++from rhpl.translate import _, N_
++from flags import flags
++
++def handleCapsLockRelease(window, event, label):
++    if event.keyval == gtk.keysyms.Caps_Lock and event.state & gtk.gdk.LOCK_MASK:
++        if label.get_text() == "":
++            label.set_text(_("<b>Caps Lock is on.</b>"))
++            label.set_use_markup(True)
++        else:
++            label.set_text("")
++
++class AccountWindow(InstallWindow):
++
++    windowTitle = N_("Create Initial User")
++
++    def getNext(self):
++        def passwordError():
++            self.pw.set_text("")
++            self.confirm.set_text("")
++            self.pw.grab_focus()
++            raise gui.StayOnScreen
++
++        def userError():
++            self.user.set_text('')
++            self.user.grab_focus()
++            raise gui.StayOnScreen
++
++        if(not self.__dict__.has_key("pw") or 
++            not self.__dict__.has_key('user')):
++            return None
++
++        fullname = self.fullname.get_text()
++        user = self.user.get_text()
++        pw = self.pw.get_text()
++        confirm = self.confirm.get_text()
++
++        if not user:
++            self.intf.messageWindow(_("Error with User"),
++                                    _("You must enter an inital username."),
++                                    custom_icon="error")
++            userError()
++
++        if not pw or not confirm:
++            self.intf.messageWindow(_("Error with Password"),
++                                    _("You must enter your password "
++                                      "and confirm it by typing it a second "
++                                      "time to continue."),
++                                    custom_icon="error")
++            passwordError()
++
++        if pw != confirm:
++            self.intf.messageWindow(_("Error with Password"),
++                                    _("The passwords you entered were "
++                                      "different.  Please try again."),
++                                    custom_icon="error")
++            passwordError()
++
++        if len(pw) < 6:
++            self.intf.messageWindow(_("Error with Password"),
++                                    _("Your password must be at least "
++                                      "six characters long."),
++                                    custom_icon="error")
++            passwordError()
++
++        allowed = string.digits + string.ascii_letters + string.punctuation + " "
++        for letter in pw:
++            if letter not in allowed:
++                self.intf.messageWindow(_("Error with Password"),
++                                        _("Requested password contains "
++                                          "non-ASCII characters, which are "
++                                          "not allowed."),
++                                        custom_icon="error")
++                passwordError()
++
++        self.initialUser['fullname'] = self.fullname.get_text()
++        self.initialUser['name'] = self.user.get_text()
++        self.initialUser['password'] = self.pw.get_text()
++        self.initialUser['isCrypted'] = False
++        return None
++
++    def setFocus(self, area, data):
++        self.fullname.grab_focus()
++
++    # AccountWindow tag="accts"
++    def getScreen(self, anaconda):
++        self.initialUser = anaconda.id.initialUser
++        self.intf = anaconda.intf
++
++        self.capsLabel = gtk.Label()
++        self.capsLabel.set_alignment(0.0, 0.5)
++
++        self.intf.icw.window.connect("key-release-event",
++                                     lambda w, e: handleCapsLockRelease(w, e,
++                                     self.capsLabel))
++
++        self.passwords = {}
++
++        box = gtk.VBox()
++        box.set_border_width(5)
++
++        hbox = gtk.HBox()
++        pix = gui.readImageFromFile("users.png")
++        if pix:
++            hbox.pack_start(pix, False)
++
++        label = gui.WrappingLabel(_("This is the account that you will use to "
++                                    "login to your computer."))
++        label.set_line_wrap(True)
++        label.set_size_request(350, -1)
++        label.set_alignment(0.0, 0.5)
++        hbox.pack_start(label, False)
++
++        box.pack_start(hbox, False)
++
++        table = gtk.Table(4, 2)
++        table.set_size_request(365, -1)
++        table.set_row_spacings(5)
++        table.set_col_spacings(5)
++
++        fullname = gui.MnemonicLabel(_("Full Name: "))
++        fullname.set_alignment(0.0, 0.5)
++        table.attach(fullname, 0, 1, 0, 1, gtk.FILL, 0, 10)
++        user = gui.MnemonicLabel(_("User Name: "))
++        user.set_alignment(0.0, 0.5)
++        table.attach(user, 0, 1, 1, 2, gtk.FILL, 0, 10)
++        pass1 = gui.MnemonicLabel(_("_Password: "))
++        pass1.set_alignment(0.0, 0.5)
++        table.attach(pass1, 0, 1, 2, 3, gtk.FILL, 0, 10)
++        pass2 = gui.MnemonicLabel(_("_Confirm: "))
++        pass2.set_alignment(0.0, 0.5)
++        table.attach(pass2, 0, 1, 3, 4, gtk.FILL, 0, 10)
++
++        self.fullname = gtk.Entry(128)
++        fullname.set_mnemonic_widget(self.fullname)
++        self.fullname.connect("activate", lambda widget, box=box: box.emit("focus",
++                           gtk.DIR_TAB_FORWARD))
++        self.fullname.connect("map-event", self.setFocus)
++        self.fullname.set_visibility(True)
++
++        self.user = gtk.Entry(128)
++        user.set_mnemonic_widget(self.user)
++        self.user.connect("activate", lambda widget,
++                        box=box: box.emit("focus", gtk.DIR_TAB_FORWARD))
++        self.user.connect("map-event", self.setFocus)
++        self.user.set_visibility(True)
++
++        self.pw = gtk.Entry(128)
++        pass1.set_mnemonic_widget(self.pw)
++        self.pw.connect("activate", lambda widget,
++                        box=box: box.emit("focus", gtk.DIR_TAB_FORWARD))
++        self.pw.connect("map-event", self.setFocus)
++        self.pw.set_visibility(False)
++
++        self.confirm = gtk.Entry(128)
++        pass2.set_mnemonic_widget(self.confirm)
++        self.confirm.connect("activate", lambda widget,
++                             box=box: self.ics.setGrabNext(1))
++        self.confirm.set_visibility(False)
++
++        table.attach(self.fullname,  1, 2, 0, 1, gtk.FILL|gtk.EXPAND, 5)
++        table.attach(self.user,      1, 2, 1, 2, gtk.FILL|gtk.EXPAND, 5)
++        table.attach(self.pw,        1, 2, 2, 3, gtk.FILL|gtk.EXPAND, 5)
++        table.attach(self.confirm,   1, 2, 3, 4, gtk.FILL|gtk.EXPAND, 5)
++        table.attach(self.capsLabel, 1, 2, 4, 5, gtk.FILL|gtk.EXPAND, 5)
++
++        hbox = gtk.HBox()
++        hbox.pack_start(table, False)
++
++        box.pack_start(hbox, False)
++
++        # root password statusbar
++        self.rootStatus = gtk.Label("")
++        wrapper = gtk.HBox(0, False)
++        wrapper.pack_start(self.rootStatus)
++        box.pack_start(wrapper, False)
++
++        if not self.initialUser['isCrypted']:
++            self.pw.set_text(self.initialUser['password'])
++            self.confirm.set_text(self.initialUser['password'])
++
++        return box
+diff -Naur --exclude='.hg*' rpl/anaconda/text.py fl/anaconda/text.py
+--- rpl/anaconda/text.py	2010-09-15 23:36:22.409274412 +0100
++++ fl/anaconda/text.py	2010-09-15 23:31:54.396274412 +0100
+@@ -62,6 +62,7 @@
+                                   "HostnameWindow")),
+     "timezone" : ("timezone_text", "TimezoneWindow"),
+     "accounts" : ("userauth_text", "RootPasswordWindow"),
++    "initialuser" : ("user_text", "InitialUserWindow"),
+     "tasksel": ("task_text", "TaskWindow"),
+     "group-selection": ("grpselect_text", "GroupSelectionWindow"),    
+     "confirminstall" : ("confirm_text", "BeginInstallWindow"),
+diff -Naur --exclude='.hg*' rpl/anaconda/textw/user_text.py fl/anaconda/textw/user_text.py
+--- rpl/anaconda/textw/user_text.py	1970-01-01 01:00:00.000000000 +0100
++++ fl/anaconda/textw/user_text.py	2010-09-15 23:31:54.411274412 +0100
+@@ -0,0 +1,90 @@
++#
++# user_text.py: text mode initial user setup
++#
++# Copyright 2000-2002 Red Hat, Inc.
++# Copyright (c) 2007 Elliot Peele <elliot@bentlogic.net>
++#
++# This software may be freely redistributed under the terms of the GNU
++# library public license.
++#
++# You should have received a copy of the GNU Library Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++#
++
++from snack import *
++from constants_text import *
++from rhpl.translate import _
++
++def has_bad_chars(pw):
++    allowed = string.digits + string.ascii_letters + string.punctuation + " "
++    for letter in pw:
++        if letter not in allowed:
++            return 1
++    return 0
++
++class InitialUserWindow:
++    def __call__ (self, screen, anaconda):
++        toplevel = GridFormHelp(screen, _("Create Initial User"), "rootpw", 1, 3)
++
++        if anaconda.id.initialUser["isCrypted"]:
++            anaconda.id.initialUser["password"] = ""
++
++        fullnameEntry = Entry(24, text = anaconda.id.initialUser['fullname'])
++        userEntry = Entry(24, text = anaconda.id.initialUser['name'])
++        entry1 = Entry(24, password = 1, text = anaconda.id.initialUser["password"])
++        entry2 = Entry(24, password = 1, text = anaconda.id.initialUser["password"])
++        passgrid = Grid (2, 4)
++        passgrid.setField(Label(_('Full Name:')), 0, 0, (0, 0, 1, 0), anchorLeft = 1)
++        passgrid.setField(Label(_('Username:')), 0, 1, (0, 0, 1, 0), anchorLeft = 1)
++        passgrid.setField(Label(_("Password:")), 0, 2, (0, 0, 1, 0), anchorLeft = 1)
++        passgrid.setField(Label(_("Password (confirm):")), 0, 3, (0, 0, 1, 0), anchorLeft = 1)
++        passgrid.setField(fullnameEntry, 1, 0)
++        passgrid.setField(userEntry, 1, 1)
++        passgrid.setField(entry1, 1, 2)
++        passgrid.setField(entry2, 1, 3)
++        toplevel.add(passgrid, 0, 1, (0, 0, 0, 1))
++
++        bb = ButtonBar(screen, (TEXT_OK_BUTTON, TEXT_BACK_BUTTON))
++        toplevel.add(bb, 0, 2, growx = 1)
++
++        while 1:
++            toplevel.setCurrent(userEntry)
++            result = toplevel.run()
++            rc = bb.buttonPressed(result)
++            if rc == TEXT_BACK_CHECK:
++                screen.popWindow()
++                return INSTALL_BACK
++            if len(userEntry.value()) < 3:
++                ButtonChoiceWindow(sceen, _("Username Length"),
++                       _("Your username must be at least 3 charactures in "
++                         "long."),
++                       buttons = [ TEXT_OK_BUTTON ], width = 50)
++            if len(entry1.value()) < 6:
++                ButtonChoiceWindow(screen, _("Password Length"),
++                       _("Your password must be at least 6 characters "
++                         "long."),
++                       buttons = [ TEXT_OK_BUTTON ], width = 50)
++            elif entry1.value() != entry2.value():
++                ButtonChoiceWindow(screen, _("Password Mismatch"),
++                       _("The passwords you entered were different. Please "
++                         "try again."),
++                       buttons = [ TEXT_OK_BUTTON ], width = 50)
++            elif has_bad_chars(entry1.value()):
++                ButtonChoiceWindow(screen, _("Error with Password"),
++                       _("Requested password contains non-ASCII characters, "
++                         "which are not allowed."),
++                       buttons = [ TEXT_OK_BUTTON ], width = 50)
++            else:
++                break
++
++            userEntry.set('')
++            entry1.set('')
++            entry2.set('')
++
++        screen.popWindow()
++        anaconda.id.initialUser['fullname'] = fullnameEntry.value()
++        anaconda.id.initialUser['name'] = userEntry.value()
++        anaconda.id.initialUser["password"] = entry1.value()
++        anaconda.id.initialUser["isCrypted"] = False
++        return INSTALL_OK
+diff -Naur --exclude='.hg*' rpl/anaconda/users.py fl/anaconda/users.py
+--- rpl/anaconda/users.py	2010-09-15 23:36:22.446274412 +0100
++++ fl/anaconda/users.py	2010-09-15 23:31:54.423274412 +0100
+@@ -60,7 +60,7 @@
+ 
+     def createUser (self, name, password=None, isCrypted=False, groups=[],
+                     homedir=None, shell=None, uid=None, lock=False,
+-                    root="/mnt/sysimage"):
++                    fullname=None, root="/mnt/sysimage"):
+         if self.admin.lookupUserByName(name):
+             return None
+ 
+@@ -81,6 +81,9 @@
+         else:
+             userEnt.set(libuser.HOMEDIRECTORY, root + homedir)
+ 
++        if fullname:
++            userEnt.set(libuser.GECOS, fullname)
++
+         if shell:
+             userEnt.set(libuser.LOGINSHELL, shell)
+ 
+@@ -94,7 +97,7 @@
+             if isCrypted:
+                 self.admin.setpassUser(userEnt, password, isCrypted)
+             else:
+-                self.admin.setpassUser(userEnt, cryptPassword(password, True), isCrypted)
++                self.admin.setpassUser(userEnt, cryptPassword(password, True), True)
+ 
+         if lock:
+             self.admin.lockUser(userEnt)
+@@ -107,6 +110,10 @@
+         # Now set the correct home directory to fix up passwd.
+         userEnt.set(libuser.HOMEDIRECTORY, homedir)
+         self.admin.modifyUser(userEnt)
++
++        # Add the user to the wheel group
++        self.addToWheelGroup(name)
++
+         return True
+ 
+     def setRootPassword(self, password, isCrypted, useMD5, lock):
+@@ -121,3 +128,14 @@
+             self.admin.lockUser(rootUser)
+ 
+         self.admin.modifyUser(rootUser)
++
++    def addToWheelGroup(self, name):
++        groupEnt = self.admin.lookupGroupByName('wheel')
++
++        members = groupEnt.get(libuser.MEMBERNAME)
++        if not members:
++           members = []
++
++        members.append(name)
++        groupEnt.set(libuser.MEMBERNAME, members)
++        self.admin.modifyGroup(groupEnt)

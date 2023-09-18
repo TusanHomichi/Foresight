@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Wildmidi(AutoPackageRecipe):
+    name = 'wildmidi'
+    version = '2008051901'
+ 
+    buildRequires = [
+			'alsa-lib:devel', 
+			'libtool:runtime', 
+			'which:runtime', 
+			'autoconf:runtime', 
+			'automake:runtime'
+			]
+ 
+    def unpack(r):
+        r.addArchive('http://wildmidi.sourceforge.net/%(name)s-snapshot-%(version)s.tar.gz')
+	r.Run('./bootstrap')
+	r.Replace("-Werror","","configure")
+	r.Requires('eawpats:config', '%(bindir)s/wildmidi')

@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libgxps(AutoPackageRecipe):
+    name = 'libgxps'
+    version = '20110709+git'
+
+    buildRequires = [
+        'autoconf:runtime',
+        'automake:runtime',
+        'cairo:devel',
+        'freetype:devel',
+        'glib:devel',
+        'gnome-common:devel',
+        'gnome-common:runtime',
+        'libarchive:devel',
+        'libjpeg:devel',
+        'libtiff:devel',
+        'libtool:runtime',
+        'which:runtime',
+    ]
+
+    def unpack(r):
+        r.addGitSnapshot("git://git.gnome.org/libgxps")
+
+    def configure(r):
+        r.Run('./autogen.sh')
+        r.Configure()

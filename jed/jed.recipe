@@ -1,0 +1,46 @@
+#
+# Copyright © 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Jed(CPackageRecipe):
+    name = 'jed'
+    version = '0.99.19'
+    packageSummary = "Jed is a programmable, emacs-like editor. It is written in S-Lang."
+ 
+    buildRequires = [
+        'gpm:devel',
+        'libICE:devel',
+        'libX11:devel',
+        'libXft:devel',
+        'libXt:devel',
+        'ncurses:devel',
+        'pkgconfig:devel',
+        'slang:devel',
+        ]
+ 
+    def setup(r):
+        r.addArchive('ftp://space.mit.edu/pub/davis/%(name)s/v0.99/%(name)s-0.99-19.tar.bz2')
+
+        # This is where fedora sticks stuff
+        r.Configure(' --prefix=%(datadir)s --with-x --with-gtk ')
+        # Won't rmake properly without this?
+	r.disableParallelMake()
+
+        # building multiple targets
+        r.Make('xjed', 'rgrep')
+
+        r.MakeInstall()
+	# install rgrep as well -- it appears to be ignored?
+	r.Install('src/objs/rgrep', '%(bindir)s/')
+
+        # rgrep is a recursive grep implementation
+        r.PackageSpec('rgrep',
+                      '%(bindir)s/rgrep', '%(mandir)s/man1/rgr.*',
+                      '%(datadir)s/jed/doc/txt/rgr.*')
+
+        # Not everyone wants X pulled in
+        r.PackageSpec('xjed',
+                      '%(bindir)s/xjed', '%(bindir)s/gtkjed','%(datadir)s/jed/doc/txt/x.*',
+                      '%(datadir)s/jed/lib/colors/Xjed/.*')

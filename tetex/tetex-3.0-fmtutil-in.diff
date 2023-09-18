@@ -1,0 +1,36 @@
+diff -urN tetex-src-3.0.ORIG/texk/web2c/fmtutil.in tetex-src-3.0/texk/web2c/fmtutil.in
+--- tetex-src-3.0.ORIG/texk/web2c/fmtutil.in    2005-02-06 09:27:46.000000000 +0900
++++ tetex-src-3.0/texk/web2c/fmtutil.in 2005-02-08 22:55:55.000000000 +0900
+@@ -38,7 +38,7 @@
+ 
+ # Change "tex.ini -> bplain.ini" and "- -> language.dat"
+ # if you want babel support in tex:
+-tex		tex		-		-translate-file=cp227.tcx tex.ini
++tex		tex		language.dat	-translate-file=cp227.tcx bplain.ini
+ @PETEX@latex		pdfetex		language.dat	-translate-file=cp227.tcx *latex.ini
+-@PETEX@etex		pdfetex		language.def	-translate-file=cp227.tcx *etex.ini
++@PETEX@etex		etex		language.def	-translate-file=cp227.tcx *etex.ini
+ @PETEX@pdftex		pdfetex		-	-translate-file=cp227.tcx *pdftex.ini
+@@ -55,11 +55,11 @@
+
+ # Change "amstex.ini -> bamstex.ini" and "- -> language.dat"
+ # if you want babel support in amstex:
+-#! amstex	pdfetex		-		-translate-file=cp227.tcx *amstex.ini
++amstex		pdfetex		language.dat	-translate-file=cp227.tcx *bamstex.ini
+
+ # Change "pdfamstex.ini -> pdfbamstex.ini" and "- -> language.dat"
+ # if you want babel support in pdfamstex:
+-#! pdfamstex	pdfetex			-	-translate-file=cp227.tcx *pdfamstex.ini
++pdfamstex	pdfetex		language.dat	-translate-file=cp227.tcx *pdfbamstex.ini
+ 
+ # Context formats:
+ #! cont-cz	pdfetex		cont-usr.tex	-translate-file=cp227.tcx *cont-cz.ini
+@@ -97,7 +97,7 @@
+
+ # Change "eplain.ini -> ebplain.ini" and "- -> language.dat"
+ # if you want babel support in eplain:
+-#! eplain	pdfetex		-	-translate-file=cp227.tcx *eplain.ini
++eplain		pdfetex	language.dat	-translate-file=cp227.tcx *ebplain.ini
+
+
+ # mptopdf utility

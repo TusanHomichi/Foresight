@@ -1,0 +1,10 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=smv_gui
+Name=SMV Encoder
+Icon=/usr/share/smv_gui/smv_gui.png
+Categories=AudioVideo;

@@ -1,0 +1,14 @@
+diff -up ntop/configure.in.sslv3 ntop/configure.in
+--- ntop/configure.in.sslv3	2008-08-07 15:51:41.000000000 +0200
++++ ntop/configure.in	2008-08-07 16:11:18.000000000 +0200
+@@ -214,6 +214,10 @@ AC_ARG_ENABLE(sslwatchdog,
+               ac_enable_sslwatchdog="$enableval",
+               ac_enable_sslwatchdog="no")
+ 
++AC_ARG_ENABLE(sslv3,
++              [  --enable-sslv3              enable ssl v3 support [[default=disabled]]])
++ac_enable_sslv3=${enable_sslv3:-no}
++
+ AC_ARG_WITH(tcpwrap,
+               [  --with-tcpwrap              enable use of TCP Wrapper [[default=disabled]]],
+               ac_enable_tcpwrap="$withval",

@@ -1,0 +1,100 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+# This will conflict with newer versions of glibc that use a different
+# format for the db files (not berkeley db).
+#
+# http://sourceware.org/git/?p=glibc.git;a=commitdiff;h=2666d441c2d8107b1987b869714189af64b954c6
+# http://sourceforge.net/p/nssdb/home/Home/
+#
+# The makedb command here is optional, in that any bindings may be
+# correctly used to create db files that can be read by this version
+# of nss_db, but in the future versions of glibc, the makedb command
+# will be required in order to create the glibc-specific database
+# format that will be required.
+#
+# Therefore, this package should not be included in Foresight Linux 3
+# unless collisions with glibc are somehow resolved.
+
+class Nss_db(AutoPackageRecipe):
+    name = 'nss_db'
+    version = '2.2.3pre1'
+ 
+    buildRequires = [ 'gettext:runtime', 'intltool:runtime',
+                      'autoconf:runtime', 'automake:runtime',
+                      'libtool:runtime', 'gettext:devel', ]
+ 
+    def setup(r):
+        r.macros.dbversion = '4.6.21.NC'
+        r.macros.localstatedir = '%(localstatedir)s/db'
+        r.addArchive('ftp://sources.redhat.com/pub/glibc/old-releases/')
+        r.addArchive('http://download.oracle.com/berkeley-db/db-%(dbversion)s.tar.gz',
+                     dir = '%(name)s-%(version)s')
+        r.addSource('db-getent-Makefile')
+        for patch in [ 'nss_db-2.2.3-external.patch',
+                       'nss_db-2.2.3-automake.patch',
+                       'nss_db-2.2-uniqdb.patch',
+                       'nss_db-2.2.3-selinux.patch',]:
+            r.addPatch(patch)
+        for patch in [ 'nss_db-2.2-db-4.3.patch', 
+                       'nss_db-2.2-enoent.patch',
+                       'nss_db-2.2-initialize.patch',
+                       'nss_db-2.2-order.patch',]:
+            r.addPatch(patch, dir =  'src')
+        r.addPatch('nss_db-2.2-lib64.patch')
+        for patch in [ 'nss_db-2.2-glibc.patch',
+                       'nss_db-2.2-makedb-atomic.patch',]:
+            r.addPatch(patch, dir =  'src')
+        for patch in [  '200-set-db-environment.patch',
+                        'd-nss_db-initgr.patch',
+                        'repeat.patch',]:
+            r.addPatch(patch)
+        r.addAction('cp %(datadir)s/gettext/config.rpath .; rm -f config.guess config.sub ltmain.sh')
+        r.addAction('autoreconf -fi')
+        for patch in [ 'db-4.6.18-glibc.patch',
+                       'patch.4.6.21.1',
+                       'patch.4.6.21.2',
+                       'patch.4.6.21.3',
+                       'patch.4.6.21.4',]:
+            r.addPatch(patch, dir = 'db-%(dbversion)s')
+
+        r.macros.cflags += ' -fno-strict-aliasing'
+        r.Environment('DB_DIR', '%(builddir)s/db_root')
+
+        r.MakeDirs('db-%(dbversion)s/dist/db_build')
+        r.Create('db-%(dbversion)s/dist/db_build/config.cache',
+                 contents = 'db_cv_mutex=UNIX/fcntl')
+
+        r.ManualConfigure(' -C '
+                          ' --disable-compat185'
+                          ' --disable-cryptography '
+                          ' --disable-cxx '
+                          ' --disable-diagnostic '
+                          ' --disable-dump185 '
+                          ' --disable-hash '
+                          ' --disable-java '
+                          ' --disable-queue '
+                          ' --disable-replication '
+                          ' --disable-rpc '
+                          ' --disable-shared '
+                          ' --disable-tcl '
+                          ' --with-pic '
+                          ' --with-uniquename=_nssdb '
+                          ' --prefix=$DB_DIR '
+                          ' --libdir=$DB_DIR/lib',
+                          dir = 'db-%(dbversion)s/dist/', 
+                          objDir = 'db_build/')
+        r.MakeInstall('all DESTDIR=""',
+                      dir = 'db-%(dbversion)s/dist/db_build')
+
+        r.Configure('--with-db=$DB_DIR',
+                    preConfigure = (' CPPFLAGS="%(cppflags)s -I$DB_DIR/include"'
+                                    'LDFLAGS="%(ldflags)s -L$DB_DIR/lib"'))
+        r.Make()
+        r.Install('db-Makefile', '/var/db/Makefile', mode = 0644)
+        r.InitialContents('/var/db/Makefile')
+        r.MakeInstall('MKINSTALLDIRS=$(pwd)/mkinstalldirs')
+        r.Doc('db-getent-Makefile')

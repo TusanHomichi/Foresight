@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SrcHighlight(AutoPackageRecipe):
+    name = 'src-highlight'
+    version = '3.1.5'
+ 
+    buildRequires = [
+    'boost:devel', 'ctags:runtime', 'flex:runtime', 
+    'install-info:runtime', 'libstdc++:devel', 'texi2html:runtime', 'valgrind:runtime'
+    ]
+ 
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/gnu/src-highlite/source-highlight-%(version)s.tar.gz')

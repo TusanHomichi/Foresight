@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class flimage(BuildPackageRecipe):
+    name = 'flimage'
+    version = '021f7d'
+    buildRequires = [ 'python:devel', 
+                      'python-argparse:python',
+                      'python-plumbum:python',
+    ]
+ 
+    def setup(r):
+        # there is no other version, so enforce short hash as version
+        assert(len(r.version) == 6)
+        r.addGitSnapshot('https://github.com/johnsonm/flimage', 
+                         tag = r.version)
+        r.MakeInstall()

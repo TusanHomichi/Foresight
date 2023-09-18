@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SDLMIXer(AutoPackageRecipe):
+    name = 'SDL_mixer'
+    version = '1.2.12'
+
+    buildRequires = [
+        'SDL:devel', 
+        'libmikmod:devel', 
+        'libvorbis:devel',
+        'flac:devel', 
+        'pkgconfig:devel',
+            ]
+
+    def unpack(r):
+        r.addArchive('http://www.libsdl.org/projects/%(name)s/release/')
+
+        def configure(r):
+            r.Configure('--disable-dependency-tracking '
+                        '--disable-static ')

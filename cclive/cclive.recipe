@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cclive(AutoPackageRecipe):
+    name = 'cclive'
+    version = '0.5.8'
+ 
+    buildRequires = ['curl:devel', 'libstdc++:devel', 'openssl:devel', 'pcre-c++:devel', 'pcre:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://cclive.googlecode.com/files/')

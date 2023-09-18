@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Seahorse(GnomePackageRecipe):
+    name = 'seahorse'
+    version = '2.32.0'
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'avahi-glib:devel', 'avahi:devel', 'dbus-glib:runtime', 'desktop-file-utils:runtime', 'epiphany:devel', 'gcc-c++:runtime', 'gedit:devel', 'libgnome-keyring:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'gnupg:runtime', 'gpgme:devel', 'gtksourceview:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel', 'libgnomeui:devel', 'libgpg-error:devel', 'libnotify:devel', 'libsoup:devel', 'nautilus:devel', 'nspr:devel', 'openldap:devel', 'openssh-client:runtime', 'openssh:runtime', 'popt:devel', 'rarian:devel', 'rarian:runtime', 'shared-mime-info:runtime', 'gnome-doc-utils:runtime', 'gnome-doc-utils:devel', 'vala:runtime']
+
+    extraConfig = ' --disable-update-mime-database --disable-scrollkeeper  '
+
+    patches = [ 'seahorse-2.32.0-libnotify-0.7.patch' ] 

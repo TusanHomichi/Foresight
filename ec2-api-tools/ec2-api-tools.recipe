@@ -1,0 +1,54 @@
+class ec2ApiTools(PackageRecipe):
+    name = 'ec2-api-tools'
+    version = '1.5.2.5' # version number only inside archive, cvc refresh to update
+
+    buildRequires = [
+        'unzip:runtime',
+    ]
+
+    def setup(r):
+        r.addArchive('http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip',
+                     keyid='0349E66A')
+
+        r.macros.site = '%(datadir)s/ec2-api-tools'
+        # This isn't particularly packager-friendly
+        r.Install('bin', '%(site)s/')
+        r.Install('lib', '%(site)s/')
+
+        # We want to keep the version number in sync, but the version
+        # is not in the name of the zip file.  This will fail if a
+        # refresh pulls in a new upstream version, in which case,
+        # update the version number to match.
+        r.Run('test $(basename $(pwd)) = %(name)s-%(version)s')
+
+        # Give users a way to find some docs
+        r.Create('%(thisdocdir)s/documentation-url',
+            contents='http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/setting-up-your-tools.html\n')
+
+        r.Create('%(sysconfdir)s/profile.d/ec2-api-tools.sh',
+            contents='EC2_HOME=%(site)s\n'
+                     'export EC2_HOME\n'
+                     'if ! echo ${PATH} | grep -q %(site)s/bin ; then\n'
+                     '    PATH=${PATH}:%(site)s/bin\n'
+                     '    export PATH\n'
+                     'fi\n',
+                     mode=0755)
+        r.Create('%(sysconfdir)s/profile.d/ec2-api-tools.csh',
+            contents='setenv EC2_HOME %(site)s\n'
+                     'if ( "${path}" !~ *%(site)s/bin* ) then\n'
+                     '    set path = ( $path %(site)s/bin )\n'
+                     'endif\n',
+            mode=0755)
+
+        # the license must be included, so ensure that it is
+        r.AutoDoc(r'.*\.(txt|TXT)')
+
+        # It is critical not to provide Java from this package because
+        # nothing else can find it here!  Without this, any java in
+        # this package might override something properly installed on
+        # the system and cause it to be erased (e.g. xalan-j or xerces-j)
+        r.Provides(exceptDeps='java:.*')
+
+        # There is no point in separating out the java bits, since no
+        # other package is expected to depend on them
+        r.ComponentSpec('runtime', '%(site)s/')

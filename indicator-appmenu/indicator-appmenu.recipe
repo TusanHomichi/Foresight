@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IndicatorAppmenu(AutoPackageRecipe):
+    name = 'indicator-appmenu'
+    version = '0.2.1'
+ 
+    buildRequires = [ 'atk:devel', 'bamf:devel', 'cairo:devel',
+                      'fontconfig:devel', 'freetype:devel',
+                      'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel',
+                      'json-glib:devel', 'libX11:devel', 'libdbusmenu-glib:devel',
+                      'libdbusmenu-gtk:devel', 'libdbusmenu:devel', 'libindicator:devel',
+                      'libpng:devel', 'libwnck:devel', 'pango:devel',
+                      'gtk-doc:runtime', 'libxslt:runtime', 'pkgconfig:devel',
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/0.2/%(version)s/+download/')
+        r.Replace('DBUSDUMP="/usr/lib/libdbusmenu/dbusmenu-dumper',
+                  'DBUSDUMP="@LIBEXECDIR@/dbusmenu-dumper',
+                  'tools/current-menu-dump.in')
+
+    def configure(r):
+        r.Configure(' --disable-static ')

@@ -1,0 +1,27 @@
+
+loadSuperClass('gnomepackage')
+class GnomeBluetooth(GnomePackageRecipe):
+    buildRequires = [ 'GConf:runtime', 'gettext:runtime', 'glib:runtime',
+                      'gob2:runtime', 'openobex:devel', 'gnome-python:python',
+                      'pygtk:python', 'GConf:devel', 'ORBit2:devel',
+                      'atk:devel', 'bluez:devel', 'cairo:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel',
+                      'libgnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel',
+                      'libbonobo:devel', 'libbonoboui:devel', 'libbtctl:devel',
+                      'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                      'libgnomeui:devel', 'libpng:devel', 'libxml2:devel',
+                      'openobex:devel', 'pango:devel', 'popt:devel',
+                      'desktop-file-utils:runtime', 'pygtk:devel', 'pygtk:devellib',
+                      'python:devel', 'pygobject:runtime', 'libnotify:devel',
+                      'rarian:runtime', 'rarian:devel', 'unique:devel',
+                      'dbus-glib:runtime', 'nautilus-sendto:devel']
+
+    name = "gnome-bluetooth"
+    version = '2.32.0'
+    patches = [ 'gnome-bluetooth-2.32.0-libnotify-0.7.patch' ]
+    
+    def policy(r):
+        r.addSource('61-gnome-bluetooth-rfkill.rules')
+        r.Install('61-gnome-bluetooth-rfkill.rules', '/lib/udev/rules.d/', mode = 0644)
+        r.Remove('%(datadir)s/applications/mimeinfo.cache')
+        

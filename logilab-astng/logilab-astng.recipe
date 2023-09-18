@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LogilabAstng(PackageRecipe):
+
+    name = 'logilab-astng'
+    version = '0.20.1'
+
+    buildRequires = ['python-setuptools:python', 'mx:python',
+        'python:devel', 'unzip:runtime', 'logilab-common:python', ]
+
+    def setup(r):
+        r.addArchive('http://ftp.logilab.org/pub/astng/')
+        r.PythonSetup()
+        r.Remove('%(libdir)s/python*/site-packages/logilab/astng/test/', recursive = True)
+
+        # Remove logilab init since logilab-common also provides it.
+        r.Remove('%(libdir)s/python*/site-packages/logilab/__init__.py')

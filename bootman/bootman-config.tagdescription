@@ -1,0 +1,6 @@
+datasource stdin
+file %(taghandlerdir)s/bootman-config
+include %(sysconfdir)s/bootloader.d/.*\.conf
+include %(sysconfdir)s/bootloader/.*/.*\.conf
+implements files update
+implements files remove

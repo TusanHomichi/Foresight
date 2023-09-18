@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Noip(CPackageRecipe):
+    name = 'noip'
+    version = '2.1.9'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('http://www.no-ip.com/client/linux/noip-%(version)s.tar.gz')
+        r.addPatch('noip.patch')
+        r.addSource('noip2-initscript', dest='%(initdir)s/noip2', mode=0755)
+
+        r.Run("""sed -i 's|@OPTFLAGS@|%(optflags)s|g;s|@SBINDIR@|%(destdir)s%(bindir)s|g;s|@SYSCONFDIR@|%(destdir)s%(sysconfdir)s|g' Makefile""")
+
+        r.Make()
+        r.Move('noip2', '%(bindir)s/noip2', mode=0755)
+        r.MakeDirs('%(destdir)s/var/run/noip')
+        r.User('noip', 446, comment='No-ip daemon user', homedir='/sbin/nologin')
+        r.ExcludeDirectories(exceptions='/var/run/noip')
+
+
+        # Tag init scripts in case the initscript tag desc. is not installed
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.User('noip', 446, comment='No-ip daemon user', homedir='/sbin/nologin')

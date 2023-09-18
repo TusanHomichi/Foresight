@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class gcompris(AutoPackageRecipe):
+
+    name = 'gcompris'
+    version = '8.4.4'
+
+    buildRequires = [ 'SDL:devel', 'atk:devel', 'cairo:devel', 
+            'desktop-file-utils:runtime', 'expat:devel', 'freetype:devel', 
+            'gettext:runtime', 'glib:devel', 'gnome-python:python', 'gnuchess:runtime', 
+            'gtk:devel', 'install-info:runtime', 'libXrender:devel', 'libXxf86vm:devel', 
+            'libart_lgpl:devel', 'libgnomecanvas:devel', 'pango:devel', 'perl:runtime', 
+            'pkgconfig:devel', 'pygobject:python', 'pygtk:devel', 'pygtk:runtime', 
+            'pygtk:python', 'python-sqlite:python', 'gtk:devel', 
+            'sqlite:devel', 'texi2html:runtime', 'texinfo:runtime', 'zlib:devel', 
+            'SDL_mixer:devel', 'libxml2:devel', 'python:devel', 'gstreamer:devel',
+            'gstreamer:devellib', 'perl-XML-Parser:perl' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.addPatch('import_error.patch')

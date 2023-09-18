@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class fluxbox(AutoPackageRecipe) :
+    name = 'fluxbox'
+    version = '1.3.5'
+    buildRequires = [ 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'fribidi:devel', 
+        'gcc:devel',
+        'imlib2:devel', 
+        'libICE:devel', 
+        'libSM:devel',
+        'libstdc++:devel', 
+        'libX11:devel', 
+        'libXext:devel', 
+        'libXft:devel', 
+        'libXinerama:devel',
+        'libXpm:devel',
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libXt:devel',
+        'pkgconfig:devel',
+        'zlib:devel', 
+             ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/fluxbox/')
+        r.addSource('fluxbox.desktop')
+
+    def configure(r):
+        r.Configure('--enable-xft --enable-xinerama --enable-imlib2 --enable-nls')
+
+    def policy(r):
+        r.Copy('fluxbox.desktop', '%(datadir)s/xsessions/')
+

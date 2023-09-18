@@ -1,0 +1,34 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Task(AutoPackageRecipe):
+    name = 'task'
+    version = '2.2.0'
+
+    packageSummary = 'Taskwarrior is a command-line todo list manager'
+    packageDescription = "Taskwarrior is a command-line todo list manager. It maintains a list of tasks that you want to do, allowing you to add/remove, and otherwise manipulate them. Task has a rich list of subcommands that allow you to do sophisticated things with it. You'll find it has customizable reports, charts, GTD features, Lua extensions, device synching and more."
+
+    buildRequires = [
+                    'cmake:runtime',
+                    'gcc-c++:runtime',
+                    'libstdc++:devel',
+                    'pkgconfig:devel',
+                    'util-linux:devel',
+                    ]
+
+    def unpack(r):
+        r.addArchive('http://www.taskwarrior.org/download/task-%(version)s.tar.gz')
+
+    def configure(r):
+        r.CMake('-DCMAKE_INSTALL_PREFIX=%(prefix)s .')
+
+    def make(r):
+        r.Make()
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Install('%(datadir)s/doc/%(name)s/scripts/bash/task.sh', '%(sysconfdir)s/bash_completion.d/task_completion.sh', mode=0755)

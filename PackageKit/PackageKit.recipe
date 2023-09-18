@@ -1,0 +1,95 @@
+#
+# Copyright (c) 2007-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Packagekit(AutoPackageRecipe):
+    name = 'PackageKit'
+    version = '0.6.16'
+
+    buildRequires =  [
+        'atk:devel',
+        'autoconf:data',
+        'autoconf:runtime',
+        'automake:runtime',
+        'cairo:devel',
+        'cElementTree:python',
+        'ConsoleKit:runtime',
+        'dbus:devel',
+        'dbus-glib:devel',
+        'dbus-glib:runtime',
+        'dbus-python:python',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gcc-c++:runtime',
+        'gettext:runtime',
+        'glib:devel',
+        'gtk-doc:devel',
+        'gtk-doc:runtime',
+        'gtk:devel',
+        'intltool:runtime',
+        'intltool:devel',
+        'libtool:runtime',
+        'libxslt:runtime',
+        'NetworkManager:devel',
+        'pango:devel',
+        'pkgconfig:devel',
+        'polkit:devel',
+        'pygobject:python',
+        'python:bin',
+        'python:devel',
+        'shared-mime-info:runtime',
+        'sqlite:devel',
+        'gobject-introspection:devel',
+        'xz:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://www.packagekit.org/releases/')
+        r.addSource('pk.tmpwatch', dest='%(sysconfdir)s/cron.daily/PKConaryCache')
+        r.addPatch('pk-main.c_g_unix_signal_add_watch_full_rename.patch')
+        #r.Replace('ScanDesktopFiles=true', 'ScanDesktopFiles=false', 'etc/PackageKit.conf.in')
+        r.Replace('UpdatePackageList=true', 'UpdatePackageList=false', 'etc/PackageKit.conf.in')
+        r.Replace('UpdateCheckProcesses=true', 'UpdateCheckProcesses=false', 'etc/PackageKit.conf.in')
+        r.Replace("CheckTestingRepos=true",'CheckTestingRepos=false',"etc/PackageKit.conf.in")
+        r.Replace('auth_admin_keep', 'auth_self_keep', 'policy/org.freedesktop.packagekit.policy.in')
+
+    def configure(r):
+        r.Configure(' --disable-qt ' \
+                    ' --disable-local ' \
+                    ' --with-default-backend=conary ' \
+                    ' --enable-conary ' \
+                    ' --disable-dummy ' \
+                    ' --with-security-framework=polkit ' \
+                    ' --disable-gtk-doc ' \
+                    ' --enable-browser-plugin ' \
+                    ' --disable-gstreamer-plugin ' \
+                    ' --enable-command-not-found ' \
+                    ' --disable-gtk-module ' \
+                    ' --disable-strict ' \
+                    ' --disable-device-rebind ' \
+                    ' --disable-cron ' \
+                    ' --disable-pm-utils ' \
+                    ' --enable-introspection=no ' \
+                    ' --disable-service-packs '
+                )
+
+    def policy(r):
+        # No need to ship their website content
+        r.Remove("%(datadir)s/%(name)s/website/", recursive=True)
+
+        r.MakeDirs('%(localstatedir)s/cache/PackageKit/downloads')
+        r.MakeDirs('%(localstatedir)s/run/PackageKit/udev')
+        r.ExcludeDirectories(exceptions=[
+                '%(localstatedir)s/cache/PackageKit/downloads',
+                '%(localstatedir)s/lib/PackageKit',
+                '%(localstatedir)s/run/PackageKit/udev'])
+
+        r.InitialContents('%(localstatedir)s/lib/PackageKit/transactions.db')
+        r.SetModes("%(sysconfdir)s/profile.d/PackageKit.sh", 0755)
+        r.Requires("elementtree:python","/usr/sbin/packagekitd")
+
+        # PackageSpec
+        r.PackageSpec("PackageKit-command-not-found","%(sysconfdir)s/%(name)s/CommandNotFound.conf|%(sysconfdir)s/profile.d/*|%(libexecdir)s/pk-command-not-found")
+        r.PackageSpec("PackageKit-browser-plugin","%(libdir)s/mozilla/plugins/packagekit-plugin.so")

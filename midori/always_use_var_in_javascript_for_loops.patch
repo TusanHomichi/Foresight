@@ -1,0 +1,66 @@
+From 5e2b7fdca7cf6ba94022347ee95028b763c8acf5 Mon Sep 17 00:00:00 2001
+From: Christian Dywan <christian@twotoasts.de>
+Date: Sun, 11 Mar 2012 21:25:08 +0000
+Subject: Always use var in javascript for loops
+
+Otherwise it may re-use global functions.
+---
+diff --git a/extensions/formhistory/formhistory.c b/extensions/formhistory/formhistory.c
+index cc81cde..db5a234 100644
+--- a/extensions/formhistory/formhistory.c
++++ b/extensions/formhistory/formhistory.c
+@@ -193,7 +193,7 @@ formhistory_navigation_decision_cb (WebKitWebView*             web_view,
+        The field separator is "|||" */
+     const gchar* script = "function dumpForm (inputs) {"
+                  "  var out = '';"
+-                 "  for (i=0;i<inputs.length;i++) {"
++                 "  for (var i = 0; i < inputs.length; i++) {"
+                  "    if (inputs[i].getAttribute('autocomplete') == 'off' && "
+                  "        inputs[i].type == 'text')"
+                  "        continue;"
+diff --git a/midori/main.c b/midori/main.c
+index 726279a..d6f5f4e 100644
+--- a/midori/main.c
++++ b/midori/main.c
+@@ -1572,7 +1572,7 @@ speeddial_new_from_file (const gchar* config,
+     g_string_append_len (script, json_content, json_length);
+     g_string_append (script, "); "
+         "var keyfile = '';"
+-        "for (i in json['shortcuts']) {"
++        "for (var i in json['shortcuts']) {"
+         "var tile = json['shortcuts'][i];"
+         "keyfile += '[Dial ' + tile['id'].substring (1) + ']\\n'"
+         "        +  'uri=' + tile['href'] + '\\n'"
+diff --git a/midori/midori-view.c b/midori/midori-view.c
+index eeaf13d..1ad473a 100644
+--- a/midori/midori-view.c
++++ b/midori/midori-view.c
+@@ -1478,7 +1478,7 @@ webkit_web_view_load_finished_cb (WebKitWebView*  web_view,
+         JSContextRef js_context = webkit_web_frame_get_global_context (web_frame);
+         /* Icon: URI, News Feed: $URI|title */
+         gchar* value = sokoke_js_script_eval (js_context,
+-        "(function (l) { var f = new Array (); for (i in l) "
++        "(function (l) { var f = new Array (); for (var i in l) "
+         "{ var t = l[i].type; var r = l[i].rel; "
+         "if (t && (t.indexOf ('rss') != -1 || t.indexOf ('atom') != -1)) "
+         "f.push ('$' + l[i].href + '|' + l[i].title);"
+@@ -1894,7 +1894,7 @@ gtk_widget_key_press_event_cb (WebKitWebView* web_view,
+                 " border:1px solid gray; padding:0 0.1em 0.2em 0.1em !important;"
+                 " position:absolute; display:inline !important; }');"
+                 " var label_count = 0;"
+-                " for (i in document.links) {"
++                " for (var i in document.links) {"
+                 "   if (document.links[i].href && document.links[i].insertBefore) {"
+                 "       var child = document.createElement ('span');"
+                 "       if (document.links[i].accessKey && isNaN (document.links[i].accessKey)) {"
+@@ -3704,7 +3704,7 @@ static gchar* list_netscape_plugins ()
+     JSContextRef js_context = webkit_web_frame_get_global_context (web_frame);
+     /* Joins available plugins like this: URI1|title1,URI2|title2 */
+     gchar* value = sokoke_js_script_eval (js_context,
+-        "function plugins (l) { var f = new Array (); for (i in l) "
++        "function plugins (l) { var f = new Array (); for (var i in l) "
+         "{ var p = l[i].name + '|' + l[i].filename; "
+         "if (f.indexOf (p) == -1) f.push (p); } return f; }"
+         "plugins (navigator.plugins)", NULL);
+--
+cgit v0.9.0.2

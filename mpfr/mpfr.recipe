@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# Copyright (c) 2010 António Meireles.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mpfr(AutoPackageRecipe):
+    name = 'mpfr'
+    version = '2.4.1'
+
+    buildRequires = [ 'gmp:devel', ]
+
+    def unpack(r):
+        r.addArchive('mirror://gnu/%(name)s/')
+        r.addPatch('mpfr-2.4.1-sa.patch')
+
+    def configure(r):
+        r.Configure('--disable-assert')
+
+    def policy(r):
+        r.TagSpec('info-file', '%(infodir)s/')

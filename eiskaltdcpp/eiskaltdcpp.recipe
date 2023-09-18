@@ -1,0 +1,79 @@
+#
+# Copyright (c) 2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+import datetime
+class Eiskaltdcpp(CPackageRecipe):
+    name = 'eiskaltdcpp'
+    version = '2.2.8'
+
+    buildRequires = [
+        'aspell:devel', 
+        'atk:devel', 
+        'attr:devel', 
+        'boost:devel', 
+        'bzip2:devel', 
+        'cairo:devel', 
+        'cmake:runtime', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'git:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'gtk:runtime', 
+        'libICE:devel', 
+        'libidn:devel', 
+        'libnotify:devel', 
+        'libpng:devel', 
+        'libSM:devel', 
+        'libstdc++:devel', 
+        'libupnp:devel', 
+        'libX11:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXext:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXinerama:devel', 
+        'libXpm:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libXScrnSaver:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'lua:devel', 
+        'openssl:devel', 
+        'pango:devel', 
+        'pcre-c++:devel', 
+        'pcre:devel', 
+        'phonon:devel', 
+        'pkgconfig:devel', 
+        'qt4-core:devellib', 
+        'qt4:devel', 
+        'qt4-gui:devellib', 
+        'qt4:runtime', 
+        'qt4-sql:mysql', 
+        'qt4-sql:odbc', 
+        'qt4-sql:psql', 
+        'qt4-sql:sqlite',
+        'subversion:runtime', 
+        'zlib:devel', 
+        'libXmu:devel', 
+        'libXres:devel', 
+        'libxkbfile:devel',
+                ]
+ 
+    def setup(r):
+        r.macros.cflags += " -I%(includedir)s/pcre" 
+        r.addArchive('https://github.com/eiskaltdcpp/eiskaltdcpp/archive/v%(version)s.tar.gz')
+        r.CMake('-DENABLE_STACKTRACE=ON -DCMAKE_INSTALL_PREFIX=%(prefix)s -DUSE_MINIUPNP=ON -DLOCAL_MINIUPNP=ON -DPERL_REGEX=ON -DLOCAL_BOOST=OFF -DLUA_SCRIPT=ON -DWITH_LUASCRIPTS=ON -DWITH_DHT=OFF -DUSE_QT=OFF -DUSE_GTK=ON')
+        r.Make()
+        r.MakeInstall()
+        r.Replace('/usr/bin/php5', '/usr/bin/php', '/%(datadir)s/eiskaltdcpp/examples/xmms2_audacious2.ru_RU.UTF-8.php')
+        r.Replace('/usr/bin/php5', '/usr/bin/php', '/%(datadir)s/eiskaltdcpp/examples/commands.ru_RU.UTF-8.php')

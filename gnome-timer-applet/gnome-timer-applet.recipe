@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomeTimerApplet(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:runtime', 'dbus-python:python', 'gnome-python-desktop:python',
+                      'gnome-python:python', 'gst-python:python', 'notify-python:python',
+                      'pygobject:python', 'pygtk:python', 'python:devel',
+    ]
+
+    name = 'gnome-timer-applet'
+    potFileName = 'timer-applet'
+    version = '2.2beta1'
+    externalArchive = 'http://launchpad.net/timer-applet/2.2/2.2b1/+download/timer-applet-%(version)s.tar.gz'  
+    patches = [ 'gnome-applet-timer-2.1.2-sound-theme-freedesktop-0.7.patch',
+                'gnome-applet-timer-2.1.3-gtk-runtimerror.patch']
+
+    def policy(r):
+        if Arch.x86_64:
+            r.Move('%(prefix)s/lib/python%(pyver)s/site-packages/*',
+                   '%(libdir)s/python%(pyver)s/site-packages/')

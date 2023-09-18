@@ -1,0 +1,58 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RapidSVN(AutoPackageRecipe):
+
+    name = 'rapidsvn'
+    version = '0.12.1'
+
+    buildRequires = [ 'apr-util:devel', 'apr:devel', 'e2fsprogs:devel',
+                      'expat:devel', 'krb5:devel', 'libstdc++:devel',
+                      'libxml2:devel', 'neon:devel', 'openldap:devel',
+                      'openssl:devel', 'subversion:devel', 'wxWidgets:devel',
+                      'zlib:devel', 'desktop-file-utils:runtime',
+                      'util-linux:devel', 'libtool:devel', 'libtool:runtime',
+                      'pkgconfig:devel', 'libxslt:runtime', 'docbook-xsl:data',
+                  ]
+    def unpack(r):
+        r.addArchive('http://www.rapidsvn.org/download/release/%(version)s/')
+        r.addSource('svncpp.dox', dir = 'doc/svncpp/')
+        r.Create('rapidsvn.desktop', contents="""[Desktop Entry]
+Encoding=UTF-8
+Name=RapidSVN
+GenericName=Subversion client
+Comment=Manage Subversion repositories
+Exec=rapidsvn
+Icon=rapidsvn.png
+Terminal=false
+Type=Application
+Categories=Application;Development;GNOME;
+""")
+        r.Desktopfile('%(name)s.desktop')
+    def configure(r):
+        r.Configure( ' --disable-static '
+                     ' --disable-no-exceptions'
+                     ' --with-svn-lib=%(libdir)s'
+                     ' --with-apr-config=%(bindir)s/apr-1-config'
+                     ' --with-apu-config=%(bindir)s/apu-1-config'
+                     ' --with-neon-config=/bin/true'
+                     )
+
+    def make(r):
+        r.Make('LIBTOOL=%(bindir)s/libtool')
+
+    def makeinstall(r):
+        r.MakeInstall('LIBTOOL=%(bindir)s/libtool')
+        r.Make('manpage', dir = 'doc/manpage')
+        r.Install('src/res/bitmaps/rapidsvn_48x48.xpm',
+                  '%(datadir)s/pixmaps/rapidsvn.xpm',
+                  mode = 0644)
+        r.Install('doc/manpage/rapidsvn.1',
+                  '%(mandir)s/man1/rapidsvn.1',
+                  mode = 0644)
+
+    def policy(r):
+        r.PackageSpec('svncpp', '%(libdir)s/', '%(includedir)s/')
+

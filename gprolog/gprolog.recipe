@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2010-2011 António Meireles
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class gprologSource(AutoPackageRecipe):
+    name = 'gprolog'
+    version = '1.3.1'
+    buildRequires = [  ]
+
+    def setup(r):
+        r.addArchive('http://www.gprolog.org/')
+        r.ManualConfigure(' --without-links-dir --without-examples-dir '
+                          ' --with-doc-dir=dist-doc '
+                          ' --libdir=%(libdir)s '
+                          ' --with-c-flags=\"$(echo %(optflags)s | sed -s \'s/\-O2/-O1/g\' | sed -e \'s/\-fomit-frame-pointer//\') -funsigned-char\" ',
+                          dir = 'src')
+
+        r.Make(dir = 'src')
+        r.Replace('/usr/local', '%(libdir)s', 'src/Makefile')
+        
+        r.MakeInstall(dir = 'src')
+
+        for f in ['ChangeLog', 'COPYING', 'NEWS', 'VERSION']:
+            r.Remove('%(libdir)s/%(name)s-%(version)s/' + f)
+            
+        r.Remove('{Examples*,src{,/*},doc{,/*}}/README*')
+        r.Doc('Examples*')
+
+        r.MakeDirs('%(bindir)s')
+        r.Run(""" for i in *; do
+        ln -s ../%(lib)s/%(name)s-%(version)s/bin/$i %(destdir)s%(bindir)s/$i
+    done""", dir = '%(destdir)s%(libdir)s/%(name)s-%(version)s/bin')

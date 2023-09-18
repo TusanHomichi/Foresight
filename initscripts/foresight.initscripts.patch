@@ -1,0 +1,119 @@
+diff -urB --new-file --exclude=.hg --exclude=ChangeLog --exclude=.hgignore --exclude=.hgtags --exclude=po --exclude=initscripts.spec --exclude=lang.sh initscripts-8.81/lsb-initfunctions initscripts-fl-8.81/lsb-initfunctions
+--- initscripts-8.81/lsb-initfunctions	1970-01-01 01:00:00.000000000 +0100
++++ initscripts-fl-8.81/lsb-initfunctions	2009-12-14 09:08:56.158391406 +0000
+@@ -0,0 +1,43 @@
++#!/bin/bash
++
++# LSB initscript functions, modified to simply call out to redhat functions already in existance
++source /etc/init.d/functions
++export LSB="LSB-1.1"
++
++start_daemon () {
++    nice=
++    force=
++    RETVAL=
++    while [ "$1" != "${1##[-+}" ];do
++        case $1 in 
++            -f)
++                force="--force"
++                shift ;;
++            -n)
++                nice="$2"
++                shift 2 ;;
++        esac
++    done
++    daemon ${force:-} ${nice:-} $*
++    RETVAL=$?
++    if [ $RETVAL == 0 ] ; then
++        success
++    else
++        failure
++    fi
++    echo
++    return $RETVAL
++}
++
++log_success_msg () {
++    success "$*"
++}
++
++log_failure_msg () {
++    failure "$*"
++}
++
++log_warning_message () {
++    warning "$*"
++}
++
+diff -urB --new-file --exclude=.hg --exclude=ChangeLog --exclude=.hgignore --exclude=.hgtags --exclude=po --exclude=initscripts.spec --exclude=lang.sh initscripts-8.81/Makefile initscripts-fl-8.81/Makefile
+--- initscripts-8.81/Makefile	2008-08-29 18:03:46.000000000 +0100
++++ initscripts-fl-8.81/Makefile	2009-12-14 09:08:56.139391542 +0000
+@@ -117,6 +120,10 @@
+ 		ln -s rc.d/$$i $(ROOT)/etc/$$i; \
+ 	done
+ 
++	# begin rpath-specific section
++	mkdir -p $(ROOT)/lib/lsb/
++	install -m755 lsb-initfunctions $(ROOT)/lib/lsb/init-functions
++
+ 
+ 
+ check:
+diff -urB --new-file --exclude=.hg --exclude=ChangeLog --exclude=.hgignore --exclude=.hgtags --exclude=po --exclude=initscripts.spec --exclude=lang.sh initscripts-8.81/rc.d/rc.sysinit initscripts-fl-8.81/rc.d/rc.sysinit
+--- initscripts-8.81/rc.d/rc.sysinit	2008-08-29 18:03:46.000000000 +0100
++++ initscripts-fl-8.81/rc.d/rc.sysinit	2009-12-14 09:08:56.503391215 +0000
+@@ -18,6 +16,16 @@
+     HOSTNAME=localhost
+ fi
+ 
++# remount /proc and /sys because they may have incorrect mountpoints
++# when mounted in initrd
++if [ -e /proc/mounts ]; then 
++  umount /proc
++fi
++mount /proc
++if [ -d /sys/kernel ]; then 
++  umount /sys
++fi
++mount /sys
+ if [ ! -e /proc/mounts ]; then
+ 	mount -n -t proc /proc /proc
+ 	mount -n -t sysfs /sys /sys >/dev/null 2>&1
+@@ -267,21 +267,14 @@
+ 
+ # Print a text banner.
+ echo -en $"\t\tWelcome to "
+-read -r redhat_release < /etc/redhat-release
+-if [[ "$redhat_release" == *"Red Hat"* ]]; then
+- [ "$BOOTUP" = "color" ] && echo -en "\\033[0;31m"
+- echo -en "Red Hat"
+- [ "$BOOTUP" = "color" ] && echo -en "\\033[0;39m"
+- PRODUCT=$(sed "s/Red Hat \(.*\) release.*/\1/" /etc/redhat-release)
+- echo " $PRODUCT"
+-elif [[ "$redhat_release" == *Fedora* ]]; then
++if [ -r /etc/distro-release ]; then
+  [ "$BOOTUP" = "color" ] && echo -en "\\033[0;34m"
+- echo -en "Fedora"
++ echo `sed "s/ release.*//g" /etc/distro-release`
+  [ "$BOOTUP" = "color" ] && echo -en "\\033[0;39m"
+- PRODUCT=$(sed "s/Fedora \(.*\) \?release.*/\1/" /etc/redhat-release)
++ PRODUCT=`cat /etc/distro-release`
+  echo " $PRODUCT"
+ else
+- PRODUCT=$(sed "s/ release.*//g" /etc/redhat-release)
++ PRODUCT=$(sed "s/ release.*//g" /etc/distro-release)
+  echo "$PRODUCT"
+ fi
+ if [ "$PROMPT" != "no" ]; then
+@@ -334,6 +327,11 @@
+   [ -x $file ] && $file
+ done
+ 
++# Do kernel-version-specific module loading as well
++for file in /lib/modules/$(uname -r)/modules.d/*.modules ; do
++  [ -x $file ] && $file
++done
++
+ # Load modules (for backward compatibility with VARs)
+ if [ -f /etc/rc.modules ]; then
+ 	/etc/rc.modules

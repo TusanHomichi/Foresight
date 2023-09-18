@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Wormux(AutoPackageRecipe):
+    name = 'wormux'
+    version = '0.8.3'
+ 
+    buildRequires = ['SDL:devel', 'SDL_gfx:devel', 'SDL_image:devel', 'SDL_mixer:devel', 'SDL_net:devel', 'SDL_ttf:devel', 'curl:devel', 'desktop-file-utils:runtime', 'gcc-c++:runtime', 'gettext:runtime', 'libX11:devel', 'libpng:devel', 'libstdc++:devel', 'libxml2:devel', 'openssl:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://download.gna.org/wormux/'
+                     '%(name)s-%(version)s.tar.bz2')
+	r.Requires('SDL_gfx:lib', '%(bindir)s/')

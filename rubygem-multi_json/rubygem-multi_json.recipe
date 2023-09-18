@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class MultiJson(RubygemPackageRecipe):
+
+    name = 'rubygem-multi_json'
+    version = '1.0.3'
+

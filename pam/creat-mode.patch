@@ -1,0 +1,13 @@
+diff --git a/modules/pam_exec/pam_exec.c b/modules/pam_exec/pam_exec.c
+index e0c8da0..d7c02ea 100644
+--- a/modules/pam_exec/pam_exec.c
++++ b/modules/pam_exec/pam_exec.c
+@@ -159,7 +159,7 @@ call_exec (pam_handle_t *pamh, int argc, const char **argv)
+ 	  time_t tm = time (NULL);
+ 	  char *buffer = NULL;
+ 
+-	  if ((i = open (logfile, O_CREAT|O_APPEND|O_WRONLY))  == -1)
++	  if ((i = open (logfile, O_CREAT|O_APPEND|O_WRONLY, 0777))  == -1)
+ 	    {
+ 	      int err = errno;
+ 	      pam_syslog (pamh, LOG_ERR, "open of %s failed: %m",

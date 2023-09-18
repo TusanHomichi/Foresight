@@ -1,0 +1,15 @@
+
+class facter(AutoPackageRecipe):
+    name = 'facter'
+    version = '1.6.6'
+    buildRequires = [ 'ruby:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://downloads.puppetlabs.com/%(name)s/')
+
+        r.Run('ruby install.rb --destdir=%(destdir)s --quick --no-rdoc --sitelibdir=%(libdir)s/ruby/site_ruby/1.8')
+
+        for dep in [ 'dmidecode',
+                     'pciutils',
+                     'net-tools',]:
+            r.Requires('%s:runtime' % dep, '%(name)s:runtime')

@@ -1,0 +1,143 @@
+diff -r d43bc1b83008 policy/libraries.py
+--- a/policy/libraries.py	Wed May 29 19:15:06 2013 +0000
++++ b/policy/libraries.py	Fri Jul 05 12:28:42 2013 -0400
+@@ -65,6 +65,7 @@
+     """
+ 
+     requires = (
++        ('InitialRelativeSymlinks', policy.REQUIRED_PRIOR),
+         ('ExecutableLibraries', policy.CONDITIONAL_SUBSEQUENT),
+         ('CheckSonames', policy.CONDITIONAL_SUBSEQUENT),
+         ('NormalizeLibrarySymlinks', policy.CONDITIONAL_SUBSEQUENT),
+@@ -277,6 +278,7 @@
+     therefore the policy should not run (extremely rare).
+     """
+     requires = (
++        ('InitialRelativeSymlinks', policy.REQUIRED_PRIOR),
+         ('ExecutableLibraries', policy.CONDITIONAL_SUBSEQUENT),
+         ('Strip', policy.CONDITIONAL_SUBSEQUENT),
+     )
+@@ -418,6 +420,7 @@
+     Invoke C{r.SharedLibrary(subtrees='/path/to/libraries/')} instead.
+     """
+     requires = (
++        ('InitialRelativeSymlinks', policy.REQUIRED_PRIOR),
+         ('SharedLibrary', policy.REQUIRED),
+     )
+     processUnmodified = False
+diff -r d43bc1b83008 policy/strip.py
+--- a/policy/strip.py	Wed May 29 19:15:06 2013 +0000
++++ b/policy/strip.py	Fri Jul 05 12:28:42 2013 -0400
+@@ -110,6 +110,8 @@
+         # let's not recurse...
+         '%(debugsrcdir)s/',
+         '%(debuglibdir)s/',
++        # never try to strip a symbolic link, only the thing it points to
++        ('.*', stat.S_IFLNK),
+     ]
+ 
+     def __init__(self, *args, **keywords):
+diff -r d43bc1b83008 policy/symlinks.py
+--- a/policy/symlinks.py	Wed May 29 19:15:06 2013 +0000
++++ b/policy/symlinks.py	Fri Jul 05 12:28:42 2013 -0400
+@@ -174,7 +174,35 @@
+                 self.recipe.reportMissingBuildRequires(trv.getName())
+ 
+ 
+-class RelativeSymlinks(policy.DestdirPolicy):
++class _RelativeSymlinks(policy.DestdirPolicy):
++    processUnmodified = False
++
++    def doFile(self, path):
++        if hasattr(self.recipe, '_getCapsulePathsForFile'):
++            if self.recipe._getCapsulePathsForFile(path):
++                return
++
++        fullpath = self.macros['destdir']+path
++        if os.path.islink(fullpath):
++            contents = os.readlink(fullpath)
++            if contents.startswith('/'):
++                pathlist = util.normpath(path).split('/')
++                contentslist = util.normpath(contents).split('/')
++                if pathlist == contentslist:
++                    raise policy.PolicyError('Symlink points to itself:'
++                                             ' %s -> %s' % (path, contents))
++                while contentslist and pathlist[0] == contentslist[0]:
++                    pathlist = pathlist[1:]
++                    contentslist = contentslist[1:]
++                dots = "../"
++                dots *= len(pathlist) - 1
++                normpath = util.normpath(dots + '/'.join(contentslist))
++                if self.isTarget(normpath):
++                    os.remove(fullpath)
++                    os.symlink(normpath, fullpath)
++
++
++class RelativeSymlinks(_RelativeSymlinks):
+     """
+     NAME
+     ====
+@@ -194,30 +222,41 @@
+     Create absolute symbolic links in your recipes, and C{r.RelativeSymlinks}
+     will create minimal relative symbolic links from them.
+     """
+-    processUnmodified = False
+ 
+-    def doFile(self, path):
+-        if hasattr(self.recipe, '_getCapsulePathsForFile'):
+-            if self.recipe._getCapsulePathsForFile(path):
+-                return
++    def updateArgs(self, *args, **keywords):
++        policy.DestdirPolicy.updateArgs(self, *args, **keywords)
++        self.recipe.InitialRelativeSymlinks(*args, **keywords)
+ 
+-        fullpath = self.macros['destdir']+path
+-        if os.path.islink(fullpath):
+-            contents = os.readlink(fullpath)
+-            if contents.startswith('/'):
+-                pathlist = util.normpath(path).split('/')
+-                contentslist = util.normpath(contents).split('/')
+-                if pathlist == contentslist:
+-                    raise policy.PolicyError('Symlink points to itself:'
+-                                             ' %s -> %s' % (path, contents))
+-                while contentslist and pathlist[0] == contentslist[0]:
+-                    pathlist = pathlist[1:]
+-                    contentslist = contentslist[1:]
+-                os.remove(fullpath)
+-                dots = "../"
+-                dots *= len(pathlist) - 1
+-                normpath = util.normpath(dots + '/'.join(contentslist))
+-                os.symlink(normpath, fullpath)
++    @staticmethod
++    def isTarget(normpath):
++        return True
++
++
++class InitialRelativeSymlinks(_RelativeSymlinks):
++    """
++    NAME
++    ====
++
++    B{C{r.InitialRelativeSymlinks()}} - Change links to directories to relative links
++
++    SYNOPSIS
++    ========
++
++    C{r.InitialRelativeSymlinks([filterexp])}
++
++    DESCRIPTION
++    ===========
++
++    The C{r.InitialRelativeSymlinks()} policy makes symbolic links to
++    directories relative.  It honors all exceptions to C{r.RelativeSymlinks}
++    as well as its own.
++
++    The purpose of C{r.InitialRelativeSymlinks()} is to make all following
++    policies have a functional directory structure.
++    """
++    def isTarget(self, normpath):
++        fullpath = '/'.join((self.macros['destdir'], normpath))
++        return os.path.isdir(fullpath)
+ 
+ 
+ class DanglingSymlinks(policy.PackagePolicy):

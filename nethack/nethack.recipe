@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nethack(CPackageRecipe):
+    name = 'nethack'
+    version = '3.4.3'
+
+    buildRequires = ['filesystem:runtime', 'libX11:devel', 'libXaw:devel', 'libXext:devel', 'libXmu:devel', 'libXpm:devel', 'libXt:devel', 'ncurses:devel', 'groff:runtime', 'util-linux:runtime', 'bison:runtime', 'flex:runtime']
+
+    def setup(r):
+        r.macros.versionnick = r.macros.version.replace('.', '')
+        r.macros.nethackdir = '/usr/games/lib/nethackdir'
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(versionnick)s-src.tgz')
+        r.addPatch('linux.patch')
+        r.addPatch('nowizardcheck.patch')
+        r.Replace('__LIB_DIR__', '%(libdir)s', 'sys/unix/Makefile.src')
+        # these symlinks are what sys/unix/setup.sh would do
+        r.Run('ln -s sys/unix/Makefile.top Makefile')
+        r.Run('ln -s ../sys/unix/Makefile.dat dat/Makefile')
+        r.Run('ln -s ../sys/unix/Makefile.doc doc/Makefile')
+        r.Run('ln -s ../sys/unix/Makefile.src src/Makefile')
+        r.Run('ln -s ../sys/unix/Makefile.utl util/Makefile')
+
+        r.Make('all')
+        # the make install target assumes it's root and really installing
+        # in place, thus it tries to change ownership, so we've recreated
+        # what it does. If this recipe is adapted to a newer version, please
+        # revisit the install target to make sure these steps are still correct.
+        r.ExcludeDirectories(exceptions='%(nethackdir)s/save')
+
+        r.MakeDirs('%(nethackdir)s', mode = 0775)
+        r.MakeDirs('%(nethackdir)s/save', mode = 0775)
+
+        # we need to emulate the dofiles target right here. which means
+        # decoding all that sed mumble...
+        for df in ('nhdat', 'license', 'x11tiles', 'NetHack.ad',
+                    'pet_mark.xbm', 'rip.xpm'):
+            r.Install('dat/%s' % df, '%(nethackdir)s/', mode = 0664)
+
+        r.Install('src/%(name)s', '%(nethackdir)s/', mode = 02755)
+        r.Install('util/recover', '%(nethackdir)s/', mode = 0755)
+        r.Install('sys/unix/nethack.sh', '%(bindir)s/%(name)s', mode = 0755)
+
+        for fn in ('perm', 'record', 'logfile'):
+            r.Create('%%(nethackdir)s/%s' % fn, mode = 0664)
+            r.InitialContents('%%(nethackdir)s/%s' % fn)
+        r.Ownership('games', 'games', '%(nethackdir)s.*')
+
+        r.MakeDirs('%(mandir)s/man6')
+        r.Make('MANDIR=%(destdir)s/%(mandir)s/man6 manpages', dir = 'doc')
+        r.Doc('doc/Guidebook.txt')

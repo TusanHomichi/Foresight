@@ -1,0 +1,36 @@
+From c20b4ec662ab19bb380e045d73e0a9bb781b4286 Mon Sep 17 00:00:00 2001
+From: Vincent Untz <vuntz@gnome.org>
+Date: Mon, 24 May 2010 15:55:55 +0200
+Subject: [PATCH] Fix uninitialized variables
+
+---
+ src/core/window.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/src/core/window.c b/src/core/window.c
+index 9af5283..695ef71 100644
+--- a/src/core/window.c
++++ b/src/core/window.c
+@@ -4001,6 +4001,9 @@ meta_window_begin_wireframe (MetaWindow *window)
+   MetaRectangle new_xor;
+   int display_width, display_height;
+ 
++  display_width = 0;
++  display_height = 0;
++
+   meta_window_get_client_root_coords (window,
+                                       &window->display->grab_wireframe_rect);
+ 
+@@ -4027,6 +4030,9 @@ meta_window_update_wireframe (MetaWindow *window,
+   MetaRectangle new_xor;
+   int display_width, display_height;
+ 
++  display_width = 0;
++  display_height = 0;
++
+   window->display->grab_wireframe_rect.x = x;
+   window->display->grab_wireframe_rect.y = y;
+   window->display->grab_wireframe_rect.width = width;
+-- 
+1.7.0.3
+

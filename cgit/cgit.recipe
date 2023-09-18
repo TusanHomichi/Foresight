@@ -1,0 +1,66 @@
+class cgit(CPackageRecipe):
+    name = 'cgit'
+    version = 'v0.9.2'
+    buildRequires = [
+        'asciidoc:runtime',
+        'libxslt:runtime',
+        'libxml2:runtime',
+        'docbook-dtds:data',
+        'docbook-xsl:data',
+        'docbook-utils:runtime',
+        'openssl:devel',
+        'util-linux:runtime',
+        'which:runtime',
+        'zlib:devel',
+        'perl:devel',
+    ]
+    
+    def setup(r):
+        # install-man does not thread too well...
+        r.disableParallelMake()
+        r.addGitSnapshot('http://git.zx2c4.com/cgit',
+                         tag='%(version)s')
+        # "manual git submodule" implementation for addGitSnapshot
+        # git pull --recurse-submodules
+        # git submodule update
+        # git submodule status
+        r.macros.gittag = 'edca4152'
+        r.addGitSnapshot('git://git.kernel.org/pub/scm/git/git.git',
+                         tag='%(gittag)s', dir='%(maindir)s/tempgit')
+        r.addAction('rmdir git; mv tempgit/cgit* ./git; rmdir tempgit')
+
+        # so that our uptodate highlight behaves. taken from rh
+        r.addPatch('cgit-0.9.1-highlightv3.patch')
+        # handpicked from upstream while 0.9.3 isn't out
+        # http://git.zx2c4.com/cgit/commit/?id=7fb12a8ee0789e3eab2680ae6c3fde0f0f233d22
+        r.addPatch('http://git.zx2c4.com/cgit/patch/?id=7fb12a8ee0789e3eab2680ae6c3fde0f0f233d22')
+
+        r.Create('cgit.conf',
+                 contents='CGIT_SCRIPT_PATH = /srv/www/htdocs/cgit')
+
+        r.Create('/etc/httpd/conf.d/cgit.conf',
+                 contents="""
+<Directory "/srv/www/htdocs/cgit/">
+        AllowOverride None
+        Options +ExecCGI
+        Order allow,deny
+        Allow from all
+</Directory>""")
+
+        r.Create('/etc/cgitrc')
+
+        r.MakeDirs('/var/cache/cgit', mode=0770)
+        r.Ownership('apache', 'apache', '/var/cache/cgit')
+
+        r.Make()
+        r.MakeInstall()
+
+        r.MakeInstall('install-man')
+
+        r.AutoDoc(exceptions='git/.*')
+
+        r.Requires('src-highlight:runtime', 'cgit:runtime')
+
+        # this expects py3 and wasn't in 0.9.1, and naturally policy rants
+        # we are supposed to survive without it for now
+        r.Remove('/usr/lib/cgit/filters/syntax-highlighting.py')

@@ -1,0 +1,36 @@
+--- mkinitrd	2010-01-11 17:31:36.000000000 -0500
++++ mkinitrd.new	2010-01-11 17:29:57.000000000 -0500
+@@ -314,7 +314,8 @@
+     if echo $PWD | grep -q /virtio-pci/ ; then
+         findmodule virtio_pci
+     fi
+-    while [ "$PWD" != "/sys/devices" ]; do
++    while [ "$PWD" != "/sys/devices" \
++            -a "$PWD" != "/sys/block" ]; do
+         deps=
+         if [ -f modalias ]; then
+             MODALIAS=$(cat modalias)
+@@ -342,7 +343,7 @@
+         sysfs=$(readlink ${sysfs%/*})
+     fi
+ 
+-    if [[ ! "$sysfs" =~ ^/sys/.*block/.*$ ]]; then
++    if [[ ! "$sysfs" =~ ^/sys/.*block/.*$ ]] && [[ ! "$sysfs" =~ ^/sys/block/.*$ ]]; then
+         error "WARNING: $sysfs is a not a block sysfs path, skipping"
+         return
+     fi
+@@ -353,12 +354,12 @@
+         *) handleddevices="$handleddevices $sysfs" ;;
+     esac
+ 
+-    if [[ "$sysfs" =~ ^/sys/.*block/md[0-9]+$ ]]; then
++    if [[ "$sysfs" =~ ^/sys/.*block/md[0-9]+$ ]] || [[ "$sysfs" =~ ^/sys/block/md[0-9]+$ ]]; then
+         local raid=${sysfs##*/}
+         vecho "Found MDRAID component $raid"
+         handleraid $raid
+     fi
+-    if [[ "$sysfs" =~ ^/sys/.*block/dm-[0-9]+$ ]]; then
++    if [[ "$sysfs" =~ ^/sys/.*block/dm-[0-9]+$ ]] || [[ "$sysfs" =~ ^/sys/block/dm-[0-9]+$ ]]; then
+         vecho "Found DeviceMapper component ${sysfs##*/}"
+         handledm $(cat $sysfs/dev |cut -d : -f 1) $(cat $sysfs/dev |cut -d : -f 2)
+     fi

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TuxPaintStamps(PackageRecipe):
+    name = "tuxpaint-stamps"
+    version = "2008.03.01"
+
+    buildRequires = [ 'make:runtime' ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/tuxpaint/tuxpaint-stamps-%(version)s.tar.gz')
+        r.addAction("sed -i 's,^PREFIX=.*,PREFIX=$(DESTDIR)/usr/,' Makefile")
+        r.addAction('find . -type d -name CVS | xargs rm -rf')
+        
+        r.MakeInstall('install-all')

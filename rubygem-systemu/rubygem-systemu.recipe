@@ -1,0 +1,8 @@
+loadSuperClass('rubygempackage')
+class RubyGemSystemU(RubygemPackageRecipe):
+
+    name = 'rubygem-systemu'
+    version = '2.4.1'
+
+    buildRequires = [ 'ruby:devellib']
+

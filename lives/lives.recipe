@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lives(AutoPackageRecipe):
+    name = 'lives'
+    version = '1.8.2'
+ 
+    buildRequires = [
+        'SDL:devel', 
+        'alsa-lib:devel', 
+        'atk:devel', 
+        'autoconf:runtime',
+        'automake:runtime',
+        'cairo:devel', 
+        'cvs:runtime',
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'jack:devel', 
+        'libX11:devel', 
+        'libavc1394:devel', 
+        'libdv:devel', 
+        'libogg:devel', 
+        'liboil:devel', 
+        'libraw1394:devel', 
+        'libtheora:devel', 
+        'libtool:runtime',
+        'libtool:devel', 
+        'mjpegtools:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'pulseaudio:devel', 
+        'python:devel',
+        'doxygen:runtime', 
+        'schroedinger:devel',
+        'libv4l:devel', 
+        'libvisual:devel',
+        'ffmpeg:devel', 
+        'frei0r-plugins:devel',
+        'libstdc++:devel', 
+        'perl:devel',
+        'fftw:devel',
+		]
+ 
+    def unpack(r):
+        r.macros.name = 'LiVES'
+        r.addArchive('http://www.xs4all.nl/~salsaman/lives/current/')
+#        r.addArchive('http://www.xs4all.nl/~salsaman/lives/current/LiVES-%(version)s.tar.bz2')
+#        r.addSvnSnapshot('http://svn.code.sf.net/p/lives/code/trunk/', revision = r.revision)
+#        r.Run('./autogen.sh')
+
+    def policy(r):
+        # remove this when the symlink is fixed (not fixed in 1.2.0)
+        r.Remove('%(bindir)s/lives')
+        r.Symlink('lives-exe', '%(bindir)s/lives')
+        # remove when datadir fixed
+        r.Symlink('%(libdir)s/lives', '%(datadir)s/lives')
+        r.Requires('sox:runtime', '%(bindir)s/lives')

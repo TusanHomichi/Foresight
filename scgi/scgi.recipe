@@ -1,0 +1,31 @@
+#
+# Copyright (C) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT license
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+
+
+class PySCGI(CPackageRecipe):
+    name = "scgi"
+    version = '1.10'
+
+    buildRequires = [ 'python-setuptools:python', 'glibc:devel', 'httpd:devel',
+                      'python:devel', 'apr:devel', 'apr-util:devel',
+                      'httpd:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://www.mems-exchange.org/software/scgi/scgi-%(version)s.tar.gz')
+        r.addPatch('scgi-1.10-reusesocket.patch')
+        r.addPatch('scgi-1.10-passfd-x86_64.patch')
+
+        #Here's the python stuff
+        r.PythonSetup()
+
+        #The apache mod_scgi module
+        r.MakeDirs('%(libdir)s/httpd/modules/')
+        r.Run("/usr/sbin/apxs -S LIBEXECDIR=%(destdir)s%(libdir)s/httpd/modules/ -i -c apache2/mod_scgi.c")
+
+        #Save extra stuff
+        r.Doc("LICENSE.txt", "cgi2scgi.c")
+
+        # to allow sane updates
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*.egg-info')

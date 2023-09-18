@@ -1,0 +1,87 @@
+--- configure.orig	2008-04-05 11:07:12.000000000 +0300
++++ configure	2008-04-05 11:10:54.000000000 +0300
+@@ -19796,20 +19796,14 @@
+     else
+         if test -n "$PKG_CONFIG" && \
+     { (echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"pygtk-2.0 >= \$PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= \$GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= \$NAUTILUS_REQUIRED
+-                                   eel-2.0 >= \$EEL_REQUIRED\"") >&5
++                                   gnome-python-2.0 >= \$GNOME_PYTHON_REQUIRED\"") >&5
+   ($PKG_CONFIG --exists --print-errors "pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED") 2>&5
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED") 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; then
+   pkg_cv_NAUTILUS_PYTHON_CFLAGS=`$PKG_CONFIG --cflags "pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED" 2>/dev/null`
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED" 2>/dev/null`
+ else
+   pkg_failed=yes
+ fi
+@@ -19823,20 +19817,14 @@
+     else
+         if test -n "$PKG_CONFIG" && \
+     { (echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"pygtk-2.0 >= \$PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= \$GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= \$NAUTILUS_REQUIRED
+-                                   eel-2.0 >= \$EEL_REQUIRED\"") >&5
++                                   gnome-python-2.0 >= \$GNOME_PYTHON_REQUIRED\"") >&5
+   ($PKG_CONFIG --exists --print-errors "pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED") 2>&5
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED") 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; then
+   pkg_cv_NAUTILUS_PYTHON_LIBS=`$PKG_CONFIG --libs "pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED" 2>/dev/null`
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED" 2>/dev/null`
+ else
+   pkg_failed=yes
+ fi
+@@ -19856,22 +19844,16 @@
+ fi
+         if test $_pkg_short_errors_supported = yes; then
+ 	        NAUTILUS_PYTHON_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED"`
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED"`
+         else
+ 	        NAUTILUS_PYTHON_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED"`
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED"`
+         fi
+ 	# Put the nasty error message in config.log where it belongs
+ 	echo "$NAUTILUS_PYTHON_PKG_ERRORS" >&5
+ 
+ 	{ { echo "$as_me:$LINENO: error: Package requirements (pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED) were not met:
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED) were not met:
+ 
+ $NAUTILUS_PYTHON_PKG_ERRORS
+ 
+@@ -19883,9 +19865,7 @@
+ See the pkg-config man page for more details.
+ " >&5
+ echo "$as_me: error: Package requirements (pygtk-2.0 >= $PYGTK_REQUIRED
+-                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED
+-                                   libnautilus-extension >= $NAUTILUS_REQUIRED
+-                                   eel-2.0 >= $EEL_REQUIRED) were not met:
++                                   gnome-python-2.0 >= $GNOME_PYTHON_REQUIRED) were not met:
+ 
+ $NAUTILUS_PYTHON_PKG_ERRORS
+ 

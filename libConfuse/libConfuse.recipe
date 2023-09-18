@@ -1,0 +1,16 @@
+class libConfuse(AutoPackageRecipe):
+    name = 'libConfuse'
+    version = '2.6'
+    buildRequires = [ 'flex:runtime', 'pkgconfig:devel', 'gettext:runtime', 'intltool:runtime', 'bison:runtime' ]
+
+    def unpack(r):
+        r.addArchive('http://bzero.se/confuse/confuse-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--enable-shared --disable-static')
+    def make(r):
+        r.Make('AM_CFLAGS="-Wall -Wextra"')
+
+    def policy(r):
+        r.MakeDirs('%(mandir)s/man3')
+        r.Install('doc/man/man3/*.3', '%(mandir)s/man3/')

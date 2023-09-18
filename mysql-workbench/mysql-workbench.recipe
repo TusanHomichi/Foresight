@@ -1,0 +1,76 @@
+class MySQLWorkbench(CPackageRecipe):
+
+    name = 'mysql-workbench'
+    version = '6.0.6'
+
+    buildRequires = [
+        'libzip:devel', 'gcc-c++:runtime', 'libxml2:devel', 'libsigc++:devel', 
+        'gtkmm:devel', 'mysql:devel', 'util-linux:devel', 'pcre:devel', 
+        'pexpect:python', 'sqlite:devel', 'python:devel',
+        'google-ctemplate:devel', 'Mesa:devel', 'openssl:devel',
+        'boost:devel', 'libtool:runtime', 'lua:devel', 'tinyxml:devel', 
+        'libiodbc:devel', 'python-sqlite:python', 'mysql-connector-c++',
+        'cmake:runtime', 'pcre-c++:devel', 'vsqlite++:devel',
+        # Autoreconf is called early in the build in some subdirs.
+        'autoconf:runtime', 'automake:runtime',
+    ]
+
+    # On non-Gnome systems, Gnome Keyring is not used, so password "keyring" functionality
+    # is disabled.
+    if Use.gnome:
+        buildRequires.append('libgnome-keyring:devel')
+
+    def setup(r):
+        #Disable parallel build.
+        r.unpack()
+        r.build()
+        r.policy()
+
+    def unpack(r):
+        r.addArchive('http://mysql.he.net/Downloads/MySQLGUITools/%(name)s-community-%(version)s-src.tar.gz')
+
+    def build(r):
+        r.disableParallelMake()
+        r.macros.optflags += ' -I%(includedir)s/pcre/ -lutil $(pkg-config --cflags libiodbc) $(pkg-config --cflags libiodbc)'
+        r.macros.cxxflags += ' -fpermissive'
+        r.CMake(' -DCMAKE_INSTALL_PREFIX:PATH=%(prefix)s'
+                ' -DCMAKE_BUILD_TYPE=Release',
+                objDir='build')
+        r.Make(dir='build')
+        r.MakeInstall(dir='build')
+
+    def policy(r):
+        # This is required for workbench's SSH tunnel functionality.  Not sure why it's not found by PythonRequires.
+        r.Requires('paramiko:python', '%(datadir)s/%(name)s/.*py$')
+        r.ComponentSpec('%(name)s:lib', '%(libdir)s/%(name)s/.*so$')
+        r.Description(shortDesc=r.summary(), longDesc=r.description()) 
+
+    def summary(r):
+        packageSummary = ("MySQL Workbench is the standard, comprehensive GUI tool suite offered by Oracle for MySQL."
+                          " With it, one can visually Administer servers, design schemas and develop SQL queries within"
+                          " a single, unified GUI tool.  Released under the GPL")
+        return packageSummary
+
+    def description(r):
+        packageDescription = ("Design:\n"
+                              "    MySQL Workbench contains powerful modeling tools which allow DBAs or architects visually"
+                              " create complex EER models, reverse engineer existing schemas, and forward engineer alterations"
+                              " to existing schemas.  This handles key change management and documentation tasks which are"
+                              " otherwise both time consuming, error prone, and technically challenging.\n"
+                              "Development:\n"
+                              "    MySQL Workbench provides tools for creating, executing, and optimizing queries, complete"
+                              " syntax highlighting amd a re-usable statement history. A panel for selecting connections to"
+                              " multiple servers is also provided, along with an object broswer allowing the query designer"
+                              " to browse the schemas of connected databases at a glance.\n"
+                              "Administration\n"
+                              "    MySQL Workbench gives DBAs the tools required to obtain instant insignt into MySQL server"
+                              " health, performance metrics, and tunable parameters.  It also provides a database user and"
+                              " permissions administration tool, a visual configuration file editor, and a data import/export"
+                              " tool."
+                              "MySQL Workbench Product Site:  http://www.mysql.com/products/community/"
+                              "MySQL Workbench Manual: http://dev.mysql.com/doc/workbench/en/index.html"
+                              "This software is distributed under the GNU General Public License, Version 2, June 1991."
+                              "http://www.gnu.org/licenses/gpl-2.0.html"
+                              "Some bundled software is redistributed under different licenses.")
+        return packageDescription
+

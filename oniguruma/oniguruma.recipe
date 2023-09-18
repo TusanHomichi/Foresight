@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Oniguruma(AutoPackageRecipe):
+    name = 'oniguruma'
+    version = '5.9.2'
+ 
+    buildRequires = ['ruby:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://www.geocities.jp/kosako3/oniguruma/archive/onig-%(version)s.tar.gz')
+        r.addPatch('oniguruma-5.9.2-onig_new-returns-NULL-reg.patch')
+
+    def configure(r):
+        r.Configure('--disable-static --with-rubydir=%(bindir)s')

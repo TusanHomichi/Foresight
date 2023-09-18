@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2006-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Vte(GnomePackageRecipe):
+    buildRequires = [ 'atk:devel', 'fontconfig:devel', 'freetype:devel',
+        'ncurses:devel', 'pango:devel','pygtk:devel', 'pygobject:devel',
+        'python:devel', 'glib:devel', 'cairo:devel', 'pygobject:runtime',
+        'libpng:devel', 'gettext:runtime', 'perl:runtime', 'libXft:devel', 
+        'pango:devel', ]
+
+    name = 'vte'
+    version = '0.28.1'
+
+    # FIXME: look back at glx
+    extraConfig = ('--enable-shared --enable-static '
+                  '--libexecdir=%(libdir)s/%(name)s --without-glX')
+
+    docs = ['doc/utmpwtmp.txt', 'doc/boxes.txt', 'src/iso2022.txt',
+            'doc/openi18n/UTF-8.txt', 'doc/openi18n/wrap.txt']
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        r.Remove('%(bindir)s/vte')
+        r.SetModes('%(libdir)s/vte/gnome-pty-helper', 02711)

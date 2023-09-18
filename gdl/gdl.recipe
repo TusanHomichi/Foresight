@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# Original versions by Gil Hamlin and Alex Bucur
+#
+
+loadSuperClass('gnomepackage')
+class gdl(GnomePackageRecipe):
+
+    name = 'gdl'
+    version = '2.30.0'
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libpng:devellib', 'libxml2:devel', 'pango:devel', 'popt:devel' ]
+

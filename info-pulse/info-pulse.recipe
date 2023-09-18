@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class InfoPulse(UserInfoRecipe):
+    name = 'info-pulse'
+    version = '1'
+
+    def setup(r):
+        r.User('pulse', 447, comment='pulse audio user',
+               shell='/sbin/nologin',
+               homedir='/var/lib/pulseaudio',
+               supplemental=['audio'])
+

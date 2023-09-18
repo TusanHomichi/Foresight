@@ -1,0 +1,19 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cmatrix(AutoPackageRecipe):
+    name = 'cmatrix'
+    version = '1.2a'
+ 
+    buildRequires = [
+        'font-fixed-terminus-console:lib',
+        'kbd:lib',
+        'ncurses:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://www.asty.org/cmatrix/dist/cmatrix-%(version)s.tar.gz')

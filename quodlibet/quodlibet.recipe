@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class QuodLibet(CPackageRecipe):
+    name = 'quodlibet'
+    version = '2.5.1'
+
+    buildRequires = ['python-setuptools:python', 'atk:devel', 'cairo:devel', 'dbus-python:python', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gnome-python:python', 'gst-python:python', 'gtk:devel', 'intltool:runtime', 'libpng:devel', 'pango:devel', 'pygobject:python', 'pygtk:python', 'pygtksourceview:python', 'python-feedparser:python', 'python:devel', 'sexy-python:python', 'pygtk:devellib']
+
+    def setup(r):
+        r.addArchive('http://quodlibet.googlecode.com/files/')
+        r.PythonSetup()
+
+        r.Requires('mutagen:python', '%(bindir)s/quodlibet')

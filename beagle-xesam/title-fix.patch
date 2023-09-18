@@ -1,0 +1,64 @@
+--- src/Ontologies.cs	2007-12-15 01:44:15.000000000 -0500
++++ src/Ontologies.cs.patched	2008-01-10 18:29:30.000000000 -0500
+@@ -48,8 +48,8 @@
+ 			{
+ 				fields_mapping = new Dictionary<string, string> ();
+ 
+-				fields_mapping.Add ("dc:title", "title");
+-				fields_mapping.Add ("xesam:title", "title");
++				fields_mapping.Add ("dc:title", "dc:title");
++				fields_mapping.Add ("xesam:title", "dc:title");
+ 
+ 				fields_mapping.Add ("dc:author", "author");
+ 				fields_mapping.Add ("xesam:author", "author");
+@@ -73,6 +73,8 @@
+ 
+ 				fields_mapping.Add ("xesam:fileExtension", "beagle:FilenameExtension");
+ 				fields_mapping.Add ("fileExtension", "beagle:FilenameExtension");
++
++                                fields_mapping.Add ("snippet", "snippet");
+ 			}
+ 
+ 			private static void InitializeSourcesMapping ()
+--- src/Search.cs	2007-12-15 01:44:15.000000000 -0500
++++ src/Search.cs.patched	2008-01-10 18:32:42.000000000 -0500
+@@ -53,7 +53,7 @@
+ 				get { return bHit; }
+ 			}
+ 
+-			public Hit (uint id, Beagle.Hit hit, string[] fields)
++                  public Hit (uint id, Beagle.Hit hit, string[] fields, Query query)
+ 			{
+ 				this.id = id;
+ 				bHit = hit;
+@@ -78,6 +78,12 @@
+ 						hitValue [i++] = hit.Timestamp.ToString ("s");
+ 						break;
+ 						
++                                        case "snippet":
++					        SnippetRequest sreq = new SnippetRequest (query, hit);
++						SnippetResponse sresp = (SnippetResponse) sreq.Send ();
++						hitValue [i++] = sresp.Snippet != null ? sresp.Snippet : String.Empty;
++						break;
++
+ 					default:
+ 						//FIXME: This *will* break since we don't know what the expected
+ 						//type here is
+@@ -211,7 +217,7 @@
+ 				mutex.WaitOne ();
+ 
+ 				foreach (uint id in ids) {
+-					Hit hit = new Hit (id, hits [id].BeagleHit, fields);
++                                  Hit hit = new Hit (id, hits [id].BeagleHit, fields, query);
+ 					ret.Add (hit.Value);
+ 				}
+ 
+@@ -228,7 +234,7 @@
+ 				Console.Error.WriteLine ("{0}: Got some hits: {1}", id, response.Hits.Count);
+ 				foreach (Beagle.Hit bHit in response.Hits) {
+ 					Console.Error.WriteLine ("+Hit: {0}", bHit.Uri);
+-					newHits.Add (hitCount++, new Xesam.Hit (hitCount, bHit, parentSession.HitFields));
++					newHits.Add (hitCount++, new Xesam.Hit (hitCount, bHit, parentSession.HitFields, query));
+ 				}
+ 
+ 				if (newHits.Count > 0 && HitsAddedHandler != null) {

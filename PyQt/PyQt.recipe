@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class PyQt(AutoPackageRecipe):
+
+    name = 'PyQt'
+    version = '3.18.1'
+
+    buildRequires = [
+        'libpng:devel', 'libstdc++:devel', 'libX11:devel', 'libXext:devel',
+        'libXmu:devel', 'Mesa:devel', 'python:devel', 'qt:devel', 'sip:devel',
+        'sip:python', 'sip:runtime', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'PyQt-x11-gpl'
+        r.addArchive('http://www.riverbankcomputing.com/static/Downloads/PyQt3/')
+
+        r.Replace('resp = raw_input.*', 'resp = "yes"', 'configure.py')
+
+    def configure(r):
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        conf = '-q %(datadir)s/qt3 -d ' + Python.sitepkgs + ' CXXFLAGS=\"%(cflags)s\" CFLAGS=\"%(optflags)s\" '
+        r.ManualConfigure(
+            conf, preConfigure='python', configureName='configure.py'
+        )
+        r.Replace('-lGLU', '-lGLU  -L%(libdir)s/xorg.mesa.3d', 'qtgl/Makefile')
+        r.Replace('-lGLU', '-lGLU  -L%(libdir)s/xorg.mesa.3d', 'pyqtconfig.py')
+        # Makefiles are broken, workaround
+        r.Make(dir = 'qt')
+
+    def policy(r):
+        r.Move('examples3', 'examples')
+        r.Doc('examples2', 'examples', 'doc/*')
+

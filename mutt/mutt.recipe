@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Mutt(RPMPackageRecipe,CPackageRecipe):
+    name = 'mutt'
+    version = '1.5.21'
+    rpmRelease = '3.fc15'
+
+    buildRequires = [ 'cyrus-sasl:devel', 'krb5:devel', 'sendmail:runtime',
+                      'autoconf:runtime', 'automake:runtime',
+                      'ncurses:devel', 'pcre:devel', 'slang:devel',
+                      'openssl:devel', 'aspell:runtime', 'gdb:runtime',
+                      'libidn:devel', 'opensp:runtime', 'perl:devel',
+                      'perl:runtime', 'e2fsprogs:devel', 'which:runtime',
+                      'gdbm:devel', 'gpgme:devel', 'libgpg-error:devel',
+                      'gettext:runtime', 'intltool:runtime',]
+
+    rpmPatches = [ 'mutt-1.5.13-nodotlock.patch',
+                   'mutt-1.5.18-muttrc.patch',
+                   'mutt-1.5.18-manual.patch',
+                   'mutt-1.5.21-updating.patch']
+    rpmSources = ['mutt_ldap_query']
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+
+
+        r.Configure(' --enable-pop --enable-imap --with-sasl --with-gss --enable-gpgme '
+                    ' --disable-warnings --with-ncursesw --disable-domain'
+                    ' --disable-flock --enable-fcntl '
+                    ' --with-mailpath=%(servicedir)s/spool/mail'
+                    ' --with-ssl --enable-smtp --enable-gpgme --enable-hcache'
+                    ' --with-gss=%(krbprefix)s',
+                    preConfigure = 'SENDMAIL=%(sbindir)s/sendmail')
+
+        r.Make()
+
+        r.Replace('chgrp', 'true', 'Makefile')
+
+        r.MakePathsInstall('sharedir=%(destdir)s%(sysconfdir)s'
+                           ' docdir=%(destdir)s%(thisdocdir)s'
+                           ' sysconfdir=%(destdir)s%(sysconfdir)s')
+
+        # set up the config file:
+        # use aspell
+        r.Create('%(sysconfdir)s/Muttrc', contents='\n'.join((
+                 '# use aspell',
+                 'set ispell="/usr/bin/aspell --mode=email check"')))
+
+        # use GPG
+        r.Run('cat contrib/gpg.rc >> %(destdir)s%(sysconfdir)s/Muttrc')
+        # use common colors
+        r.Run('grep -5 "^color" contrib/sample.muttrc >> '
+              ' %(destdir)s%(sysconfdir)s/Muttrc')
+
+        r.Doc('doc/*.txt', 'contrib/*.rc', 'contrib/sample.*',
+              'doc/manual.txt', 'contrib/language*',
+              'mime.types', 'mutt_ldap_query')
+
+        r.Remove('%(sysconfdir)s/{*.dist,mime.types}')
+        r.Remove('%(bindir)s/{flea,muttbug}')
+        r.Remove('%(mandir)s/man1/{flea,muttbug.1,mutt_dotlock.1}*')
+        r.Remove('%(mandir)s/man5/{mbox,mmdf}.5*')

@@ -1,0 +1,28 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hsqldb(PackageRecipe):
+
+    name = 'hsqldb'
+    version = '1.8.0.10'
+
+    buildRequires = [
+        'ant:runtime', 'ant:java', 'icedtea-jdk:runtime', 'unzip:runtime',
+    ]
+
+    def setup(r):
+
+        r.macros.archive_version = r.version.replace('.', '_')
+        r.addArchive('mirror://sourceforge/hsqldb/hsqldb_%(archive_version)s.zip')
+
+        r.Run('ant jar', dir='build/')
+
+        r.Install('lib/hsqldb.jar', '%(datadir)s/java/hsqldb-1.8.0.jar')
+
+        r.Doc('doc/*')
+
+        r.Requires(exceptDeps='java: javax.servlet.*')
+        r.Requires(exceptDeps='java: org.hsqldb.util.Transfer')
+

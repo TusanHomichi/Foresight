@@ -1,0 +1,12 @@
+diff --git a/plugins/tasklist/tasklist-widget.c b/plugins/tasklist/tasklist-widget.c
+--- a/plugins/tasklist/tasklist-widget.c
++++ b/plugins/tasklist/tasklist-widget.c
+@@ -527,7 +527,7 @@
+   tasklist->switch_workspace = TRUE;
+   tasklist->only_minimized = FALSE;
+   tasklist->show_labels = TRUE;
+-  tasklist->show_wireframes = FALSE;
++  tasklist->show_wireframes = TRUE;
+   tasklist->show_handle = TRUE;
+   tasklist->rotate_vertically = TRUE;
+   tasklist->all_monitors = TRUE;

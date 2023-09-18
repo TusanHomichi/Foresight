@@ -1,0 +1,195 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux Project
+# Copyright (c) 2004-2007 rPath, Inc.
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DesktopGroupRecipe(GroupRecipe):
+    name = 'group-foresight-desktop'
+    version = '0.2'                                                                                                   
+
+    def startGroup(r, name, parentGroup, depCheck=False, byDefault=True,
+                   checkPathConflicts=None):
+        # creates group named "name", adds it to the toplevel group,
+        # and sets the current group to that name.  calls to r.add()
+        # will use the current group by default.
+
+        # note: byDefault applies to whether the group is included by
+        # default in its parent group, not whether the troves in
+        # the group are added by default. (use the setByDefault() command
+        # to get that)
+
+        # get all the the default for the new group from its parent group.
+        r.setDefaultGroup(parentGroup)
+        r.createGroup(name, autoResolve=False, depCheck=depCheck,
+                      byDefault=True, checkPathConflicts=checkPathConflicts)
+        r.addNewGroup(name, groupName=parentGroup, byDefault=byDefault)
+        r.setDefaultGroup(name)
+
+
+    # Labels used for package selection.
+    groupLabel = 'foresight.rpath.org@fl:2'
+    xenLabel = 'conary.rpath.com@rpl:2-xen'
+    kernelLabel = 'foresight.rpath.org@fl:2-kernel'
+
+    useGNOME = True
+    useKDE = None
+    useXFCE = None
+
+    deleteComponents = ['devel','devellib','supdoc']
+
+    # Sane Defaults
+    autoResolve = True
+    depCheck = True
+    if Arch.x86:
+        gccFlavor = None
+        glibcFlavor = 'is: x86(i486,i586,i686)'
+        glibcFlavor32 = None # needed so we can control addition of troves with use=
+        grubFlavor = None
+        mkinitrdFlavor = '!xen,!domU'
+        if Use.xen:
+            glibcFlavor = 'xen is: x86(i486,i586,i686)'
+            kernelLabel = xenLabel
+            if Use.dom0:
+                if Use.domU:
+                    print "This recipe may be built with dom0 or domU, but cannot use both.\n"
+                    sys.exit(1)
+                groupCoreFlavor = 'dom0,~!domU,~!vmware,xen is: x86(i486,i586,i686,sse,sse2)'
+                kernelFlavor = 'dom0,~!domU,~!kernel.core,~!kernel.debug,~!kernel.debugdata,~!kernel.numa,~kernel.pae,~kernel.smp,xen is: x86(i486,i586,i686)'
+                releaseFlavor = 'xen,dom0'
+            if Use.domU:
+                groupCoreFlavor = '~!dom0,domU,~!vmware,xen is: x86(i486,i586,i686,sse,sse2)'
+                kernelFlavor = '~!dom0,domU,~!vmware,xen is: x86(i486,i586,i686,sse,sse2)'
+                mkinitrdFlavor = 'xen,domU'
+                releaseFlavor = 'xen,domU'
+            if not Use.dom0 and not Use.domU:
+                print "This recipe must be built with dom0 or domU when using a xen flavor.\n"
+                sys.exit(1)
+        elif Use.vmware:
+            groupCoreFlavor = '~!dom0,~!domU,~vmware,~!xen is: x86(i486,i586,i686,sse,sse2)'
+            kernelFlavor = '~!dom0,~!domU,~!kernel.core,~!kernel.debug,~!kernel.debugdata,~kernel.debuginfo,~!kernel.numa,~!kernel.pae,~kernel.smp,~!xen is: x86(i486,i586,i686)'
+            releaseFlavor = 'vmware'
+        else:
+            groupCoreFlavor = '~!dom0,~!domU,~!vmware,~!xen is: x86(i486,i586,i686,sse,sse2)'
+            kernelFlavor = '!dom0,~!domU,~!kernel.core,~!kernel.debug,~!kernel.debugdata,~!kernel.numa,~kernel.pae,~kernel.smp,!xen is: x86(i486,i586,i686)'
+            releaseFlavor = None
+    elif Arch.x86_64:
+        glibcFlavor = None
+        glibcFlavor32 = 'is: x86(i486,i586,i686)'
+        mkinitrdFlavor = '!xen,!domU'
+        if Use.xen:
+            glibcFlavor = None
+            glibcFlavor32 = 'xen is: x86(i486,i586,i686)'
+            kernelLabel = xenLabel
+            if Use.dom0:
+                if Use.domU:
+                    print "This recipe may be built with dom0 or domU, but cannot use both.\n"
+                    sys.exit(1)
+                groupCoreFlavor = 'dom0,~!domU,~!vmware,xen is: x86(i486,i586,i686,sse,sse2) x86_64'
+                kernelFlavor = 'dom0,~!domU,~!kernel.core,~!kernel.debug,~!kernel.debugdata,~!kernel.numa,~!kernel.pae,~kernel.smp,xen is: x86_64'
+                releaseFlavor = 'xen,dom0'
+            if Use.domU:
+                mkinitrdFlavor = 'xen,domU'
+                groupCoreFlavor = '~!dom0,domU,~!vmware,xen is: x86(i486,i586,i686,sse,sse2) x86_64'
+                kernelFlavor = '~!dom0,domU,~!kernel.core,~!kernel.debug,~!kernel.debugdata,~!kernel.numa,~!kernel.pae,~kernel.smp,xen is: x86_64'
+                releaseFlavor = 'xen,domU'
+            if not Use.dom0 and not Use.domU:
+                print "This recipe must be built with dom0 or domU when using a xen flavor.\n"
+                sys.exit(1)
+        elif Use.vmware:
+            groupCoreFlavor = '~!dom0,~!domU,~vmware,~!xen is: x86(i486,i586,i686,sse,sse2) x86_64'
+            kernelFlavor = '~!dom0,~!domU,~!kernel.core,~!kernel.debug,~!kernel.debugdata,~kernel.debuginfo,~!kernel.numa,~!kernel.pae,~kernel.smp,~!xen is: x86_64'
+            releaseFlavor = 'vmware'
+        else:
+            groupCoreFlavor = '~!dom0,~!domU,~!vmware,~!xen is: x86(i486,i586,i686,sse,sse2) x86_64'
+            kernelFlavor = '~!dom0,~!domU,~!kernel.core,~!kernel.debug,~!kernel.debugdata,~kernel.debuginfo,~!kernel.numa,~!kernel.pae,~kernel.smp,~!xen is: x86_64'
+            releaseFlavor = None
+
+    initialSearchPath = None
+    additionalSearchPath = []
+    ForesightGroupSearchPath = None
+    finalSearchPath = []
+
+
+    def setDesktopSearchPath(r):
+        searchPath = r.getInitialSearchPath() + r.getAdditionalSearchPath() + r.getDesktopPlatformSearchPath() + r.getFinalSearchPath()
+        r.setSearchPath(*searchPath)
+
+    def _makeList(r, searchPath):
+        if isinstance(searchPath, str):
+            return [searchPath]
+        if isinstance(searchPath, list):
+            return searchPath
+        if isinstance(searchPath, tuple):
+            return list(searchPath)
+        raise TypeError('search path element %s must be a string, list, or tuple'%searchPath)
+
+    def getInitialSearchPath(r):
+        """
+        Override this method to provide initial elements in the search path.
+        It is strongly recommended that you take the default of the buildlabel.
+        In almost all cases, getAdditionalSearchPath(), which provides the
+        next elements of the search path, is preferred.
+        """
+        if r.initialSearchPath is None:
+            # now we have access to the buildlabel
+            r.initialSearchPath = r.macros.buildlabel
+        return r._makeList(r.initialSearchPath)
+
+    def getAdditionalSearchPath(r):
+        """
+        Override this method to provide additional elements besides the
+        buildlabel and the appliance platform.
+        """
+        return r._makeList(r.additionalSearchPath)
+
+    def getDesktopPlatformSearchPath(r):
+        """
+        This method provides the elements of the search path that provide
+        the operating system and platform elements of the Foresight Desktop
+        Platform.  It should not normally be overridden.
+        """
+        if r.ForesightGroupSearchPath is None:
+            if 'productDefinitionSearchPath' in r.macros:
+                return r.macros.productDefinitionSearchPath.split('\n')
+            else:
+                r.ForesightGroupSearchPath = 'group-world=' + r.groupLabel + '[' + r.groupCoreFlavor +']'
+        return r._makeList(r.ForesightGroupSearchPath)
+
+    def getFinalSearchPath(r):
+        """
+        Override this method to provide final elements in the search path.
+        This is a rarely-used method in order to provide search path
+        elements of last resort.  Its main use is during bootstrapping,
+        while temporarily fetching packages as part of a "mashup" that
+        will be later unified in the labels provided in the
+        additionalSearchPath.  See r.getAdditionalSearchPath().
+        """
+        return r._makeList(r.finalSearchPath)
+
+    def setup(r):
+        r.setDesktopSearchPath()
+        r.addDesktopPlatform()
+        r.setDefaultGroup(r.name)
+        r.addPackages()
+        r.removeComponents(r.deleteComponents)
+
+    def addDesktopPlatform(r):
+        r.addAll('group-desktop-common', r.groupLabel, flavor=r.groupCoreFlavor, flatten=True)
+        r.addAll('group-mozilla', r.groupLabel, flavor=r.groupCoreFlavor, flatten=True)
+        r.add('foresight-services', r.groupLabel)
+        if r.useGNOME:
+            r.addAll('group-gnome', r.groupLabel, flavor=r.groupCoreFlavor, flatten=True)
+        if r.useKDE:
+            r.addAll('group-kde', r.groupLabel, flavor=r.groupCoreFlavor, flatten=True)
+        if r.useXFCE:
+            r.addAll('group-xfce', r.groupLabel, flavor=r.groupCoreFlavor, flatten=True)
+
+    def addPackages(r):
+        """
+        Add application packages by overriding this method in the subclass
+        """
+        pass
+

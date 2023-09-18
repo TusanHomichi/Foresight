@@ -1,0 +1,37 @@
+--- a/bash_completion
++++ b/bash_completion
+@@ -1259,16 +1259,16 @@ _known_hosts_real()
+         awkcur=${awkcur//\./\\\.}
+         curd=$awkcur
+ 
+-        if [[ "$awkcur" == [0-9]*.* ]]; then
+-            # Digits followed by a dot - just search for that
+-            awkcur="^$awkcur.*"
++        if [[ "$awkcur" == [0-9]*[.:]* ]]; then
++            # Digits followed by a dot or a colon - just search for that
++            awkcur="^$awkcur[.:]*"
+         elif [[ "$awkcur" == [0-9]* ]]; then
+-            # Digits followed by no dot - search for digits followed
+-            # by a dot
+-            awkcur="^$awkcur.*\."
++            # Digits followed by no dot or colon - search for digits followed
++            # by a dot or a colon
++            awkcur="^$awkcur.*[.:]"
+         elif [ -z "$awkcur" ]; then
+-            # A blank - search for a dot or an alpha character
+-            awkcur="[a-z.]"
++            # A blank - search for a dot, a colon, or an alpha character
++            awkcur="[a-z.:]"
+         else
+             awkcur="^$awkcur"
+         fi
+@@ -1278,8 +1278,7 @@ _known_hosts_real()
+             COMPREPLY=( "${COMPREPLY[@]}" $( awk 'BEGIN {FS=","}
+             /^\s*[^|\#]/ {for (i=1; i<=2; ++i) { \
+             gsub(" .*$", "", $i); \
+-            gsub("[\\[\\]]", "", $i); \
+-            gsub(":[0-9]+$", "", $i); \
++            sub("^\\[", "", $i); sub("\\](:[0-9]+)?$", "", $i); \
+             if ($i ~ /'"$awkcur"'/) {print $i} \
+             }}' "${kh[@]}" 2>/dev/null ) )
+         fi

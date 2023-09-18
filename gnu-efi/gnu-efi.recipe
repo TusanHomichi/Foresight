@@ -1,0 +1,36 @@
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class GNUefi(CPackageRecipe):
+    name = 'gnu-efi'
+    version = '3.0q'
+
+    def setup(r):
+        r.disableParallelMake()
+
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s_%(version)s.orig.tar.gz')
+        for patch in [ 'gnu-efi-3.0q-Fix-usage-of-INSTALLROOT-PREFIX-and-LIBDIR.patch',
+                       'gnu-efi-3.0q-route80h.patch',
+                       'gnu-efi-3.0q-modelist.patch',
+                       'gnu-efi-3.0q-route80h-add-cougarpoint.patch',
+                       'gnu-efi-3.0q-machine-types.patch',
+                       'gnu-efi-3.0q-handle-uninitialized-gop.patch',
+                       'gnu-efi-3.0q-Add-.S-and-.E-rules.patch',]:
+            r.addPatch(patch)
+
+        r.Make()
+        r.MakeInstall('PREFIX=%(prefix)s LIBDIR=%(libdir)s INSTALLROOT=%(destdir)s install')
+
+        r.MakeDirs('%(libdir)s/gnuefi')
+        r.Move('%(destdir)s%(libdir)s/*.{o,lds}', '%(libdir)s/gnuefi/')
+
+        r.Make('clean route80h.efi modelist.efi', dir = 'apps')
+
+
+        # the %(esp) [(U)EFI System Partition (ESP)] HAS to be to be a mountpoint to a FAT32
+        # partition, otherwise it is useless.
+        r.macros.esp = '/boot/efi/'
+        r.Move('apps/{route80h.efi,modelist.efi}', '%(esp)s/EFI/foresight/')
+        
+        

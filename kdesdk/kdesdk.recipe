@@ -1,0 +1,50 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeSDK(kdeCorePackageRecipe):
+
+    name = 'kdesdk'
+    version = '4.6.1'
+
+    buildRequires = [
+        'apr-util:devel', 'apr:devel', 'binutils:devel', 'boost:devel',
+        'konqueror:devel', 'libtool:devel', 'libxml2:devel', 'libxml2:runtime',
+        'libxslt:devel', 'libxslt:runtime', 'perl-HTTP-Cookies:perl',
+        'perl-libxml-enno:perl', 'perl:devel', 'pykde:python', 'python:devel',
+        'qca2:devel', 'ruby:runtime', 'strigi:devel', 'subversion:devel'
+    ]
+
+    modules = [
+        'cervisia',
+        'okteta',
+        'kapptemplate',
+        'kate',
+        'kcachegrind',
+        'kmtrace',
+        'kompare',
+        'kpartloader',
+        'kprofilemethod',
+        'kstartperf',
+        'kuiviewer',
+        #'lokalize',
+        'umbrello',
+        ('dolphin-plugins-sdk', 'dolphin-plugins/git', 'dolphin-plugins/svn'),
+        ('kdesdk-scripts', 'poxml', 'scripts'),
+        ('kio-plugins-sdk', 'kioslave'),
+        ('strigi-analyzer-sdk', 'strigi-analyzer'),
+        ('kaddressbook-plugin-kdeaccounts', 'kdeaccounts-plugin'),
+    ]
+
+    def postUnpack(r):
+
+        r.addPatch('kdesdk-4.6-snippets_tng-buildfix.patch')
+        r.Replace('/usr/local/apr/bin', '%(prefix)s/', 'cmake/modules/FindSVN.cmake')
+
+    def policy(r):
+
+        r.PHPRequires(exceptions='.*')
+        r.Replace('/usr/bin/env php', '%(bindir)s/php', '%(bindir)s/pprof2calltree')
+

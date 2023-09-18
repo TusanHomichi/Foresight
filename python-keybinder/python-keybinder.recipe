@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonKeybinder(AutoPackageRecipe):
+
+    name = 'python-keybinder'
+    version = '0.2.2'
+
+    buildRequires = [ 'python-setuptools:python', 'atk:devel', 'cairo:devel', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel',
+                      'libX11:devel', 'libXrender:devel', 'libpng:devel', 'pango:devel',
+                      'pixman:devel', 'pkgconfig:devel', 'pygtk:devel', 'zlib:devel',
+                      'gnome-doc-utils:devel', 'python:devel', 'gnome-python-desktop:python',
+                      'pygobject:runtime', 'pygtk:python', 'libXext:devel', 'lua:devel',
+                      'gnome-common:runtime',]
+
+    def unpack(r):
+        r.addArchive('http://kaizer.se/publicfiles/keybinder/keybinder-%(version)s.tar.gz')
+

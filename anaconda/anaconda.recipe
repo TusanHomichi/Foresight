@@ -1,0 +1,100 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class Anaconda(CPackageRecipe):
+    name = 'anaconda'
+    baseVersion = '13.21.176'
+#    rplVersion = '2011020701'
+    version = '%s+%s' % (baseVersion,datetime.date.today().strftime("%Y.%m.%d"))
+
+    buildRequires = [ 'atk:devel', 'audit:devel', 'bzip2:devel', 'cairo:devel',
+                      'conary-repository:python', 'desktop-file-utils:runtime',
+                      'device-mapper:devel', 'e2fsprogs:devel', 'epdb:python',
+                      'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel',
+                      'glibc:locale', 'gnome-python-extras:python', 'gnome-python:python',
+                      'gtk:devel', 'intltool:runtime', 'kudzu:devel', 'kudzu:python',
+                      'libX11:devel', 'libXext:devel', 'libXrender:devel', 'libXt:devel',
+                      'libXxf86misc:devel', 'libdhcp4client:devel', 'libdhcp6client:devel',
+                      'libdhcp:devel', 'libnl:devel', 'libpng:devel', 'libuser:python',
+                      'newt:devel', 'newt:python', 'openssl:devel', # 'mkinitrd:devel', 
+                      'pango:devel', 'parted:devel', 'pciutils:devel', 'pkgconfig:devel',
+                      'popt:devel', 'pump:devel', 'pygobject:python', # 'pyblock:python', 
+                      'pygtk:python', 'pykickstart:python', 'pyparted:python',
+                      'python:devel', 'pyxf86config:python', 'rhpl:python', 'rhpxl:python',
+                      'slang:devel', 'urlgrabber:python', 'zlib:devel',
+
+                      'NetworkManager:devel', 'cracklib:python', 'curl:devel', 'dbus-glib:devel',
+                      'dbus:devel', 'iscsi-initiator-utils:devel', 'iscsi-initiator-utils:python',
+                      'libarchive:devel', 'libselinux:devel', 'libselinux:python', 'pyudev:python',
+                      'rpm:devel', 'rpm:python', 'system-config-keyboard:python', 'usermode:runtime',
+                      'util-linux:devel', 'isomd5sum:devel',
+                     ] 
+
+    def setup(r):
+#        r.addMercurialSnapshot('http://hg.rpath.com/anaconda-rpl2',
+#                               tag='%(name)s-'+r.rplVersion)
+#        r.addArchive('http://git.fedorahosted.org/cgit/anaconda.git/snapshot/anaconda-13.21.176-1.tar.bz2')
+        r.addArchive('anaconda-13.21.176.tar.bz2')
+        r.addPatch('anaconda-13.21.176_1_rpath1.patch')
+
+
+
+        # XXX until we rebase...
+        # this is a brute force approach to (try to) get around some of our Xorg issues
+        # on 1st boot. for now we bravelly we'll assume that our Xorg stack is smart
+        # enough to minimally behave without a default xorg.conf
+        #r.Replace('/xorg.conf', '/xorg.conf.anaconda', 'xsetup.py')
+
+        r.Replace('-Werror', '', 'configure')
+        #        r.Configure('--enable-selinux=no --disable-static')
+        r.Configure('--disable-static')
+        r.Make()
+        r.MakeInstall()
+        r.MakeInstall(dir='pixmaps')
+        # keep _isys.so in /usr/lib/anaconda/ instead of /usr/lib64/anaconda
+        # since anaconda doesn't know about lib64 yet
+        r.FixupMultilibPaths(exceptions='.*')
+
+        r.Strip(exceptions='%(libdir)s/anaconda-runtime/loader/.*')
+
+        r.PackageSpec('anaconda-utils', '%(bindir)s/implantisomd5',
+                                        '%(prefix)s/lib/anaconda-runtime/'
+                                        'implantisomd5')        
+
+        # place our distro installclass into anaconda-custom.
+        # wipe rPL specific one
+#        r.Remove('%(prefix)s/lib/anaconda/installclasses/rPathLinux.py*')
+#        r.Move('%(prefix)s/lib/anaconda/installclasses/foresight.py*',
+#               '%(datadir)s/anaconda/installclasses/')
+        r.PackageSpec('anaconda-custom',
+                      '%(datadir)s/anaconda/installclasses/')
+        r.addSource('tarinstall.py', dir='%(datadir)s/anaconda/')
+#        r.PackageSpec('anaconda-custom',
+#                      '%(datadir)s/anaconda/tarinstall.py')
+
+        # Add our custom artwork
+        r.addArchive('anaconda-foresight-artwork.tar.gz',
+                     dir = 'custom_pixmaps')
+
+        for image in ('anaconda_header.png',
+                      'first.png',
+                      'first-lowres.png',
+                      # 'prodlogo.png',
+                      'progress_first.png',
+                      'progress_first-375.png',
+                      'splash.png',
+                      'syslinux-splash.png',
+                      'users.png'):
+            r.Install('../custom_pixmaps/pixmaps/' + image,
+                      '%(datadir)s/anaconda/pixmaps/',
+                      package='anaconda-custom')
+
+        # none of the files in anaconda-images are flavor specific.
+        r.Flavor(exceptions='%(datadir)s/anaconda/pixmaps/.*')
+
+        # Add custom grub configuration
+        r.addSource('grub.defaults', dest='%(datadir)s/anaconda/')
+        r.PackageSpec('anaconda-custom', '%(datadir)s/anaconda/grub.*')

@@ -1,0 +1,25 @@
+loadSuperClass('kdepackage.recipe')
+class libKExif(kdePackageRecipe):
+
+    name = 'libkexif'
+    version = '0.2.5'
+
+    buildRequires = [
+        'doxygen:runtime', 'graphviz:runtime', 'libexif:devel', 'qt:apidox'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/kipi/')
+
+        r.MakeDirs('%(kdehtmldir)s/en')
+        r.Replace('if test -n "\$PREFIX" && test ! -d "\$PREFIX" ; then',
+                  'if test -n "$PREFIX" && test ! -d "%(destdir)s/$PREFIX" ; then',
+                  'admin/doxygen.sh')
+
+    def postInstall(r):
+
+        #r.Make('apidox')
+        #r.MakeInstall(installtarget='install-apidox-recurse')
+        pass
+

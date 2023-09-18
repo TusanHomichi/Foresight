@@ -1,0 +1,27 @@
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage', 'foresight.rpath.org@fl:2-devel')
+class telepathyQt(CMakePackageRecipe):
+
+    name = 'telepathy-qt'
+    version = '0.14.1+r2031'
+
+    buildRequires = [
+        'dbus:devel', 'fontconfig:devel', 'freetype:devel', 'gcc-c++:runtime',
+        'glib:devel', 'libICE:devel', 'libpng:devel', 'libSM:devel',
+        'libstdc++:devel', 'libXcursor:devel', 'libXext:devel', 'libXi:devel',
+        'libXinerama:devel', 'libXrandr:devel', 'libXrender:devel',
+        'pkgconfig:devel', 'qt4:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+
+        rev = r.version.rsplit('+', 1)[1][1:]
+        r.addSvnSnapshot(
+            'https://tapioca-voip.svn.sourceforge.net/svnroot/tapioca-voip/trunk/telepathy-qt/',
+            revision=rev
+        )
+

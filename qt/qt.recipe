@@ -1,0 +1,233 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class Qt(AutoPackageRecipe):
+
+    name = 'qt'
+    version = '3.3.8_r784432'
+    release = version[:version.rfind('_')]
+    svnRevision = version.split('_')[-1].lstrip('r')
+
+    buildRequires = [
+        'byacc:runtime', 'cups:devel', 'fontconfig:devel', 'freetype:devel',
+        'libICE:devel', 'libjpeg:devel', 'libmng:devel', 'libpng:devel',
+        'libSM:devel', 'libstdc++:devel', 'libX11:devel', 'libXcursor:devel',
+        'libXext:devel', 'libXft:devel', 'libXi:devel', 'libXinerama:devel',
+        'libXmu:devel', 'libXrandr:devel', 'libXrender:devel', 'libXt:devel',
+        'Mesa:devel', 'mysql:devel', 'postgresql:devel', 'zlib:devel'
+    ]
+
+    # we need a bootstrap version to get around rMake loops
+    # relating to unixODBC.
+
+    if not Use.bootstrap:
+        buildRequires.append('unixODBC:devel')
+
+    def unpack(r):
+
+        r.macros.qt = 'qt3'
+        r.macros.release = r.release
+
+        if r.macros.lib == 'lib64':
+            r.macros.platform = 'linux-g++-64'
+        else:
+            r.macros.platform = 'linux-g++'
+
+        r.addSvnSnapshot(
+            'svn://anonsvn.kde.org/home/kde/branches/qt/%(major_version)s/qt-copy',
+            revision=r.svnRevision
+        )
+
+        # from fedora, fixes build problem against new unixODBC
+        r.addPatch('qt-x11-free-3.3.8-odbc.patch')
+
+        r.addSource('qmake_env.conf')
+
+        r.addAction('/bin/sh ./apply_patches')
+
+        r.addPatch('qt-fix_ftbfs_amd64.patch')
+        r.addSource('qtrc', dir='%(sysconfdir)s/qt/')
+
+        r.Replace(('^QMAKE_CC\t.*',          'QMAKE_CC\t\t= %(cc)s'),
+                  ('^QMAKE_CXX\t.*',         'QMAKE_CXX\t\t= %(cxx)s'),
+                  ('^QMAKE_LINK\t.*',        'QMAKE_LINK\t\t= %(cxx)s'),
+                  ('^QMAKE_LINK_SHLIB\t.*',  'QMAKE_LINK_SHLIB\t= %(cxx)s'),
+                  ('^QMAKE_CFLAGS\t.*',      'QMAKE_CFLAGS\t\t= %(cflags)s'),
+                  ('^QMAKE_CXXFLAGS\t.*',    'QMAKE_CXXFLAGS\t\t= %(cflags)s %(cxxflags)s'),
+                  ('^QMAKE_RPATH\t.*',       'QMAKE_RPATH\t\t='),
+                  'mkspecs/linux-{g++,g++-64}/qmake.conf')
+
+        r.Replace('read acceptance$', 'acceptance=yes', 'configure')
+
+        # fix broken symlink
+        r.Replace('ln -s -f @QMAKESPEC@', 'cp -f @QMAKESPEC@', 'qmake/Makefile.unix')
+
+        r.Replace(('/usr/lib', '%(libdir)s',),('/lib64', '%(essentiallibdir)s'),
+            'config.tests/{unix,x11}/*.test',
+            'config.tests/unix/checkavail', allowNoChange=True)
+
+    def configure(r):
+
+        r.preVars = (' QTDIR=%(builddir)s'
+                     ' YACC="byacc -d"'
+                     ' PATH=$QTDIR/bin:$PATH'
+                     ' LD_LIBRARY_PATH=$QTDIR/lib:$LD_LIBRARY_PATH')
+
+        conf = '-v'
+        conf += (' -prefix         %(prefix)s'
+                 ' -sysconfdir     %(sysconfdir)s/%(qt)s'
+                 ' -libdir         %(libdir)s'
+                 ' -datadir        %(datadir)s/%(qt)s'
+                 ' -headerdir      %(includedir)s/%(qt)s'
+                 ' -docdir         %(datadir)s/%(qt)s/doc'
+                 ' -plugindir      %(libdir)s/%(qt)s/plugins'
+                 ' -translationdir %(datadir)s/%(qt)s/translations')
+
+        conf += (' -platform %(platform)s'
+                 ' -no-debug'
+                 ' -thread'
+                 ' -shared'
+                 ' -fast'
+                 ' -no-exceptions'
+                 ' -no-pch'
+                 ' -stl'
+                 ' -ipv6'
+                 ' -no-nis'
+                 ' -cups'
+                 ' -no-nas-sound'
+                 ' -nomake examples'
+                 ' -nomake tutorial')
+
+        conf += (' -sm'
+                 ' -xshape'
+                 ' -xinerama'
+                 ' -xcursor'
+                 ' -xrandr'
+                 ' -xrender'
+                 ' -xft'
+                 ' -tablet'
+                 ' -xkb')
+
+        conf += (' -system-zlib'
+                 ' -system-libpng'
+                 ' -system-libmng'
+                 ' -system-libjpeg')
+
+                 #' -no-dlopen-opengl'
+        conf += (' -enable-opengl'
+                 ' -dlopen-opengl'
+                 ' -qt-gif'
+                 ' -qt-imgfmt-png'
+                 ' -qt-imgfmt-jpeg'
+                 ' -plugin-imgfmt-mng')
+
+        conf +=  (' -L %(libdir)s/xorg.mesa.3d/')
+
+        # odbc. swap bellow after we solve dep loops
+        if Use.bootstrap:
+                    conf += (' -no-sql-odbc '               # ' -plugin-sql-odbc'
+                             ' -plugin-sql-psql'
+                             ' -plugin-sql-mysql'
+                             ' -plugin-sql-sqlite')
+        else:
+                    conf += (' -plugin-sql-odbc'
+                             ' -plugin-sql-psql'
+                             ' -plugin-sql-mysql'
+                             ' -plugin-sql-sqlite')
+
+        conf += (' -I%(includedir)s'
+                 ' -I%(includedir)s/freetype2'
+                 ' -lfontconfig')
+
+        conf += (' -I%(includedir)s/postgresql/server'
+                 ' -I%(includedir)s/postgresql/pgsql'
+                 ' -I%(includedir)s/postgresql/pgsql/server')
+
+        conf += (' -I%(includedir)s/mysql'
+                 ' -L%(libdir)s/mysql')
+
+        r.Replace(' sub-tutorial sub-examples', '', 'Makefile')
+
+        r.ManualConfigure(conf, preConfigure=r.preVars)
+
+    def make(r):
+
+        r.Make(preMake=r.preVars)
+        r.Make(preMake=r.preVars, dir='tools/qvfb')
+        r.Make(preMake=r.preVars, dir='tools/msg2qm')
+        r.Make(preMake=r.preVars, dir='tools/designer/tools/conv2ui')
+        r.Make(preMake=r.preVars, dir='tools/designer/tools/createcw')
+
+        r.Replace(('^QMAKE_INCDIR_QT\t.*',   'QMAKE_INCDIR_QT\t\t= %(includedir)s/%(qt)s'),
+                  ('^QMAKE_LIBDIR_QT\t.*',   'QMAKE_LIBDIR_QT\t\t= %(libdir)s'),
+                  ('^QMAKE_MOC\t.*',         'QMAKE_MOC\t\t= %(bindir)s/moc'),
+                  ('^QMAKE_UIC\t.*',         'QMAKE_UIC\t\t= %(bindir)s/uic'),
+                  'mkspecs/linux-{g++,g++-64}/qmake.conf')
+
+        r.Run("echo -e '\n#include ( qmake_env.conf )' >> "
+              " 'mkspecs/linux-g++/qmake.conf'")
+        r.Run("echo -e '\n#include ( qmake_env.conf )' >> "
+              " 'mkspecs/linux-g++-64/qmake.conf'")
+
+    def makeinstall(r):
+
+        r.MakeDirs('%(sysconfdir)s/%(qt)s')
+
+        r.MakePathsInstall('INSTALL_ROOT=%(destdir)s', preMake=r.preVars)
+
+        r.Install('qmake_env.conf', '%(datadir)s/%(qt)s/mkspecs/')
+        r.Install('doc/man/*', '%(mandir)s/')
+        r.Install('bin/conv2ui', '%(bindir)s')
+        r.Install('tools/qvfb/qvfb', '%(bindir)s')
+        r.Install('tools/msg2qm/msg2qm', '%(bindir)s')
+        r.Install('tools/designer/tools/createcw/createcw', '%(bindir)s')
+
+        # We really need this! (
+        r.Replace('%(builddir)s', '%(datadir)s/%(qt)s', '%(libdir)s/*.prl')
+
+    def policy(r):
+
+        r.Doc('examples')
+        r.Doc('tutorial')
+
+        r.Doc('FAQ',
+              'README',
+              'LICENSE.QPL',
+              'LICENSE.GPL2',
+              'LICENSE.GPL3',
+              'README-QT.TXT',
+              'changes-%(release)s')
+
+        r.AutoDoc(exceptions='/')
+        r.RemoveNonPackageFiles(exceptions='.*\.la')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/%(qt)s')
+
+        r.PackageSpec('qt-tools',
+                        '%(bindir)s/(assistant|designer|createcw|conv2ui|linguist)',
+                        '%(libdir)s/(libeditor|libdesignercore|libqassistantclient).*',
+                        '%(libdir)s/%(qt)s/plugins/designer/',
+                        '%(datadir)s/%(qt)s/(templates|phrasebooks)/',
+                        '%(docdir)s/%(qt)s/html/(assistant|designer|linguist).*')
+
+        r.ComponentSpec('locale', '%(datadir)s/%(qt)s/translations/')
+
+        r.ComponentSpec('apidox', '%(datadir)s/%(qt)s/doc/')
+
+        r.ComponentSpec('devel',
+                        '%(bindir)s/(moc|qmake|lupdate|uic|lrelease|qm2ts|msg2qm)')
+
+        r.ComponentSpec('develdoc',
+                        '%(mandir)s/man3/',
+                        '%(thisdocdir)s/(examples|tutorial)/')
+
+        r.ComponentSpec('sqlite',   '%(libdir)s/%(qt)s/plugins/sqldrivers/libqsqlite.so')
+        r.ComponentSpec('mysql',    '%(libdir)s/%(qt)s/plugins/sqldrivers/libqsqlmysql.so')
+        r.ComponentSpec('postgres', '%(libdir)s/%(qt)s/plugins/sqldrivers/libqsqlpsql.so')
+
+        if not Use.bootstrap:
+            r.ComponentSpec('odbc',     '%(libdir)s/%(qt)s/plugins/sqldrivers/libqsqlodbc.so')
+

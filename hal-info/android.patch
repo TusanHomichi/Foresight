@@ -1,0 +1,28 @@
+diff -r 8aa063c75503 fdi/information/10freedesktop/10-usb-music-players.fdi
+--- a/fdi/information/10freedesktop/10-usb-music-players.fdi	Sun Oct 26 00:21:11 2008 -0400
++++ b/fdi/information/10freedesktop/10-usb-music-players.fdi	Sun Oct 26 00:21:58 2008 -0400
+@@ -24,6 +24,24 @@
+             <addset key="portable_audio_player.access_method.protocols" type="strlist">storage</addset>
+             <append key="portable_audio_player.output_formats" type="strlist">audio/x-ms-wma</append>
+             <append key="portable_audio_player.input_formats" type="strlist">audio/x-wav</append>
++          </match>
++        </match>
++
++        <!-- High Tech Computer Corp. -->
++        <match key="@storage.originating_device:usb.vendor_id" int="0xbb4">
++          <!-- Android Phone -->
++          <match key="@storage.originating_device:usb.product_id" int="0xc01">
++                <addset key="portable_audio_player.access_method.protocols" type="strlist">storage</addset>
++                     <append key="portable_audio_player.output_formats" type="strlist">application/ogg</append>
++                <append key="portable_audio_player.output_formats" type="strlist">audio/x-ms-wma</append>
++                     <append key="portable_audio_player.output_formats" type="strlist">audio/3gpp</append>
++                     <append key="portable_audio_player.output_formats" type="strlist">audio/mp4</append>
++                     <append key="portable_audio_player.output_formats" type="strlist">audio/aac</append>
++                     <append key="portable_audio_player.output_formats" type="strlist">audio/vnd.rn-realaudio</append>
++                     <append key="portable_audio_player.output_formats" type="strlist">audio/x-midi</append>
++                     <append key="portable_audio_player.output_formats" type="strlist">audio/mpeg</append>
++                <append key="portable_audio_player.output_formats" type="strlist">audio/x-wav</append>
++                     <append key="portable_audio_player.audio_folders" type="strlist">Music/</append>
+           </match>
+         </match>
+ 

@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc
+# This file is distributed under the terms of the MIT license
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GutenPrint(AutoPackageRecipe):
+    name = 'gutenprint'
+    version = '5.2.6'
+
+    buildRequires = [ 'cups:devel', 'dialog:runtime', 'docbook-utils-pdf:runtime', 'docbook-utils:runtime', 'ghostscript:runtime', 'flex:devel', 'flex:runtime', 'glib:devel', 'perl:runtime', 'pkgconfig:devel', 'tetex-dvips:runtime', 'texi2html:runtime', 'atk:devel', 'cairo:devel', 'cups:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gtk:devel', 'libjpeg:devel', 'libpng:devel', 'libtiff:devel', 'ncurses:devel', 'pango:devel', 'perl:lib', 'readline:devel', 'zlib:devel', 'krb5:devel', 'openssl:devel', 'gimp:devel', 'ImageMagick:runtime', 'doxygen:runtime', 'expat:devel', 'foomatic-db-engine:runtime', 'foomatic-db-engine:perl', 'gettext:runtime', 'gimp:runtime', 'intltool:runtime', 'libtool:devel', 'perl:devel', 'byacc:runtime', 'bison:runtime', 'gnutls:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'ghostscript:devel' ]
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('mirror://sourceforge/gimp-print/')
+
+    def configure(r):
+        r.Configure(' --disable-static --disable-dependency-tracking'
+                    ' --with-foomatic '
+                    ' --with-ghostscript'
+                    ' --disable-libgutenprintui --without-gimp'
+                    ' --with-user-guide --with-samples'
+                    ' --with-escputil --with-test --disable-rpath'
+                    ' --enable-cups-1_2-enhancements'
+                    ' --enable-simplified-cups-ppds')
+
+    def policy(r):
+        r.macros.majVer = '.'.join(r.version.split('.')[:2])
+        r.ExcludeDirectories(exceptions=['%(libdir)s/%(name)s/%(majVer)s/modules'])
+        r.ScriptPostUpdate(contents="""#!/bin/bash\n
+%(sbindir)s/cups-genppdupdate\n
+%(essentialsbindir)s/service cups condrestart\n 
+""" % r.macros )
+        r.ScriptPostInstall(contents="""#!/bin/sh\n
+%(sbindir)s/cups-genppdupdate\n
+%(essentialsbindir)s/service cups condrestart\n 
+""" % r.macros )

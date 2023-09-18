@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class octave(AutoPackageRecipe):
+    name = 'octave'
+    version = '3.4.3'
+
+    # A high-level language for numerical computations
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'flex:runtime', 'gperf:runtime',
+        'less:runtime', 'libstdc++:devel',
+        'ncurses:devel', 'perl:runtime', 'readline:devel',
+        'zlib:devel', 'gnuplot:runtime',
+        'pcre:devel',
+        'gcc-fortran:devellib',
+        'gcc-fortran:runtime',
+        'lapack:devellib',
+        'curl:devel',
+        'ghostscript:runtime',
+        'Mesa:devel',
+        'libX11:devel',
+        'pkgconfig:devel',
+        'freetype:devel',
+        'fontconfig:devel',
+        'GraphicsMagick:devel',
+        'fltk:devel',
+        'libXinerama:devel',
+        # Disable docs for now. our tex packages seem to be misbehaving.
+        #'tetex:runtime', 'texinfo:runtime', 'install-info:runtime',
+        # Some features are disabled,
+        # we don't have: suitesparse, ufsparse, amd, etc
+    ]
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/gnu/octave/')
+
+    def configure(r):
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        # configure makes use of pcre.h in a test program _before_ consulting
+        # `pcre-config --cflags`, so we hardcode it in CPPFLAGS for configure.
+        r.macros.cppflags += ' -I%(includedir)s/pcre/'
+
+        # disable docs for now. our tex packages seem to be misbehaving.
+        r.Configure(' --enable-docs=no')

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libosip(AutoPackageRecipe):
+    name = 'libosip'
+    version = '3.6.0'
+ 
+    buildRequires = ['glibc:devel', 'gcc-c++']
+ 
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/gnu/osip/%(name)s2-%(version)s.tar.gz')

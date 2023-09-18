@@ -1,0 +1,8 @@
+loadSuperClass('rubygempackage')
+class Json(RubygemPackageRecipe):
+
+    name = 'rubygem-json'
+    version = '1.6.5'
+
+    buildRequires = [ 'ruby:devellib']
+

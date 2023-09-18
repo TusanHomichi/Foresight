@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hanazono(PackageRecipe):
+    name = 'hanazono'
+    version = '20100222'
+ 
+    packageSummary = 'Japanese TrueType font'
+
+    buildRequires = [
+        'mkfontdir:runtime',
+        'unzip:runtime',
+        ]
+ 
+    def setup(r):
+        r.addArchive('http://www.fonts.jp/%(name)s/', dir='%(name)s-%(version)s/')
+        r.Install('%(name)s.ttf', '%(datadir)s/fonts/%(name)s/')

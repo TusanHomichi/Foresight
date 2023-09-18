@@ -1,0 +1,80 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Dbus(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'dbus'
+    version = '1.4.10'
+    rpmRelease = '4.fc16'
+    rpmPatches = [ 'bindir.patch',
+                   ]
+
+    rpmSources = ['00-start-message-bus.sh']
+
+    buildRequires = [ 'doxygen:runtime', 'expat:devel', 'pkgconfig:devel',
+                      'xmlto:runtime', 'libICE:devel', 'libSM:devel',
+                      'libX11:devel' , 'audit:devel', 'libcap:devel',
+                      'automake:runtime', 'linuxdoc-tools:runtime',
+                      'autoconf:runtime', 'libtool:devel', 'libtool:runtime',
+                      'util-macros:devel', 'filesystem:runtime', 'man:runtime',
+                      ]
+
+    def unpack(r):
+        r.macros.dbus_user = 'dbus'
+        RPMPackageRecipe.unpack(r)
+        r.addPatch('matchLimit.patch')
+        r.Run('autoreconf -fi')
+
+    def configure(r):
+        r.Configure( ' --enable-libaudit '
+                     ' --disable-tests '
+                     ' --with-dbus-user=%(dbus_user)s '
+                     ' --disable-asserts '
+                     ' --disable-verbose-mode '
+                     ' --with-init-scripts=redhat '
+                     ' --with-system-pid-file=%(localstatedir)s/run/messagebus.pid'
+                     ' --libdir=/%(lib)s '
+                     ' --bindir=%(essentialbindir)s'
+                     ' --sysconfdir=%(sysconfdir)s'
+                     ' --libexecdir=/%(lib)s/dbus-1'
+                     ' --exec-prefix=/')
+
+    def policy(r):
+        r.Ownership('root', '%(dbus_user)s', '%(essentiallibdir)s/dbus-1/dbus-daemon-launch-helper')
+        r.SetModes('%(essentiallibdir)s/dbus-1/dbus-daemon-launch-helper', 04750)
+
+        for dir in [ '%(localstatedir)s/lib/dbus',
+                     '%(localstatedir)s/run/dbus',
+                     '%(datadir)s/dbus-1/services',
+                     '%(datadir)s/dbus-1/system-services',
+                     '%(sysconfdir)s/dbus-1/session.d',
+                     '%(sysconfdir)s/dbus-1/system.d',
+                     '%(datadir)s/dbus-1/interfaces',
+                     ]:
+            r.MakeDirs(dir)
+            r.ExcludeDirectories(exceptions=dir)
+
+        r.Move('/%(lib)s/pkgconfig/dbus-1.pc', '%(libdir)s/pkgconfig/dbus-1.pc')
+        r.Replace('-I\$\{libdir\}', '-I${prefix}/%(lib)s', '%(libdir)s/pkgconfig/dbus-1.pc')
+
+        r.Move('%(essentialbindir)s/dbus-launch', '%(bindir)s/dbus-launch')
+        
+        r.MakeDirs('%(libdir)s/dbus-1.0/include')
+        r.Move('/%(lib)s/dbus-1.0/include/*', '%(libdir)s/dbus-1.0/include/')
+        r.Remove('/%(lib)s/dbus-1.0/', recursive=True)
+ 
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.UtilizeUser('dbus', '%(sysconfdir)s/.*/system.conf')
+
+        r.Install('00-start-message-bus.sh', '%(sysconfdir)s/X11/xinit/xinitrc.d/', mode = 0755)
+
+        for f in [
+            '%(bindir)s/dbus-launch',
+            '%(datadir)s/man/man.*/dbus-launch.1.gz',
+            '%(sysconfdir)s/X11/xinit/xinitrc.d/00-start-message-bus.sh',
+            ]:
+            r.PackageSpec('dbus-x11', f)

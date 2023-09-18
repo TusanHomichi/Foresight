@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Dvgrab(AutoPackageRecipe):
+    name = 'dvgrab'
+    version = '3.4'
+
+    buildRequires = ['libavc1394:devel', 'libdv:devel', 'libiec61883:devel', 
+                    'libjpeg:devel', 'libraw1394:devel', 'libstdc++:devel', 
+                    'pkgconfig:devel']
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/kino/%(name)s-%(version)s.tar.gz')

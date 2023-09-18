@@ -1,0 +1,40 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class Gparted(GnomePackageRecipe):
+    name = 'gparted'
+    version = '0.14.1'
+ 
+    buildRequires = [ 'cairomm:devel', 
+                      'desktop-file-utils:runtime',
+                      'e2fsprogs:devel',
+                      'e2fsprogs:devel',  
+                      'gettext:runtime', 
+                      'gksu:runtime',
+                      'glibmm:devel', 
+                      'gtkmm:devel',
+                      'intltool:runtime', 
+                      'libsigc++:devel', 
+                      'libstdc++:devel',
+                      'parted:devel', 
+                      'rarian:runtime', 
+                      'util-linux:devel',
+                      'usermode:runtime',
+                  ]
+
+    extraConfig = ' --disable-scrollkeeper '
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/gparted/gparted/%(name)s-%(version)s/')
+        r.addSource('gparted-console.apps')
+        r.addSource('gparted-pam.d')
+
+    def policy(r):
+        r.Requires('gksu:runtime', 'gparted:runtime') 
+        r.Symlink('consolehelper', '%(bindir)s/zenmap-root')
+        r.Install('gparted-console.apps', '%(sysconfdir)s/security/console.apps/gparted')
+        r.Install('gparted-pam.d', '%(sysconfdir)s/pam.d/gparted')

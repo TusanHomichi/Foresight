@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Taskcoach(PackageRecipe):
+
+    name = 'TaskCoach'
+    version = '1.3.31'
+
+    buildRequires = [
+        'PyQt4:python',
+        'curl:devel',
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'gnome-python-desktop:python',
+        'libgcc:devellib',
+        'libstdc++:devel',
+        'notify-python:python',
+        'pygtk:python',
+        'pykde:python',
+        'pyparsing:python',
+        'python-dateutil:python',
+        'python-simplejson:python',
+        'python:devel',
+        'pyxdg:python',
+        'wxPython:python',
+        ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/taskcoach/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+        r.addSource('taskcoach.png')
+        r.Move('taskcoach.png', '%(datadir)s/pixmaps/')
+        r.addSource('taskcoach.desktop')
+        r.Desktopfile('taskcoach.desktop', vendor='foresight')
+        #r.Requires(exceptDeps=r'soname\:\ ELF32\/libpython2\.5\.so\.1\.0\(SysV\ x86\)')

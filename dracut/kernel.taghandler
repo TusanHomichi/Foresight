@@ -1,0 +1,242 @@
+#!/bin/bash
+
+# allow a config param to force skipping dracut.  Ugly.
+if [ -f /etc/sysconfig/kernel-tagscript ]; then
+    . /etc/sysconfig/kernel-tagscript
+fi
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+# allow for debugging
+run ()
+{
+    #echo "$@"
+    #return 0
+    "$@"
+    return $?
+}
+
+bootPrefix ()
+{
+    case $1 in
+	*ia64)
+	    echo "/boot/efi/EFI/linux/"
+	    ;;
+	*)
+	    echo "/boot/"
+	    ;;
+    esac
+}
+
+taghandler_error=
+
+query_bootman () {
+    configKey=$1
+
+    if [ "$(run %(essentialsbindir)s/bommy get $configKey >/dev/null 2>&1)" = "" ] ; then
+        rc=0
+    else
+        rc=1
+    fi
+
+    return $rc
+}
+
+initial_setup ()
+{
+    # If there is a grub.conf and bootman has not been configured, this is
+    # probably the rpl1 -> rpl2 migration case.
+    if [ -f /boot/grub/grub.conf ] && \
+       [ -x %(bindir)s/grubtobootman ] && \
+       [ "$(wc -l /etc/bootloader.conf | awk '{print $1}')" = "1" ] ; then
+        # backup old bootloader.conf
+        cp -f /etc/bootloader.conf /etc/bootloader.conf.old
+
+        # run grub to bootman to convert old config
+        run %(bindir)s/grubtobootman /boot/grub /etc/bootloader.d > /etc/bootloader.conf
+
+        # make sure config made it to disk
+        run %(essentialsbindir)s/ext3flush /etc/bootloader.conf
+    fi
+
+    # Do some initial configuration if it hasn't already been done.
+    if [ ! -s /etc/bootloader.d/root.conf ] ; then
+	# first non-commented / entry is the one we want...
+	rootdev=
+	[ -f /etc/fstab ] && \
+	    rootdev=$(awk '{ if ($1 !~ /^[ \t]*#/ && $2 == "/")
+				{ print $1; exit}
+			   }' /etc/fstab)
+	label=${rootdev/*=/}
+	if [ "$label" != "$rootdev" ] ; then
+	    # if nash can find the label, then root=LABEL=/ is OK
+	    # and the root filesystem will be found at boot time
+	    if [ -z $(echo showlabels | /sbin/nash --force --quiet | awk '$2 == "'$label'" {print $1; exit}') ] ; then
+		# nash couldn't find it, so we have to dig it out
+		# of the current mount table and use that instead
+		# of the literal label.  Oh, well.
+		rootdev=$(mount | awk '$3 == "/" {print $1 ; exit}')
+	    fi
+	fi
+
+	if [ X"${rootdev}" = X ]; then
+	    taghandler_error+="Cannot determine root device from /etc/fstab. Not configuring system boot (bootman and extlinux/grub). "
+	    return 1
+	fi
+
+
+	mkdir -p /etc/bootloader.tmp/etc
+	echo >/etc/bootloader.tmp/etc/bootloader.conf
+
+        # Only set variables if they are not already set in bootloader.conf
+        if $(query_bootman root) ; then
+            ROOT=/etc/bootloader.tmp %(essentialsbindir)s/bommy set root \
+                "${rootdev}"
+        fi
+
+        if $(query_bootman read_only) ; then
+            ROOT=/etc/bootloader.tmp %(essentialsbindir)s/bommy set read_only
+        fi
+
+        if $(query_bootman timeout) ; then
+            ROOT=/etc/bootloader.tmp %(essentialsbindir)s/bommy set timeout 50
+        fi
+
+	mv -f /etc/bootloader.tmp/etc/bootloader.conf \
+	    /etc/bootloader.d/root.conf
+	rm -fr /etc/bootloader.tmp
+	run %(essentialsbindir)s/ext3flush /etc/bootloader.d/root.conf
+    fi
+}
+
+run_bootman ()
+{
+    run %(essentialsbindir)s/bootman
+    for f in /boot/grub/grub.conf /boot/extlinux/extlinux.conf
+    do
+	[ -f "$f" ] && run %(essentialsbindir)s/ext3flush "$f"
+    done
+}
+
+run_bommy ()
+{
+    version=$2
+    pre=$3
+    initrd=$4
+    multiboot=$5
+    if [ -s /etc/distro-release ] ; then
+	title="$(cat /etc/distro-release) (${version})"
+    else
+	title="$version"
+    fi
+
+    case $1 in
+	add)
+	    kernel_type="linux"
+	    [ -n "${multiboot}" ] && kernel_type="xen"
+            # Don't put quotes around ${multiboot} and ${initrd}
+	    #   because bommy syntax depends on $kernel_type:
+	    # linux label 'description' kernel [initrd]
+	    # xen label 'description' hypervisor dom0_kernel [initrd]
+	    run %(essentialsbindir)s/bommy add $kernel_type $version "$title" \
+		${multiboot} ${pre}vmlinuz-$version ${initrd}
+        rc=$?
+        # Don't set as default if adding failed.
+        if [ $rc -eq 0 ] ; then
+	        run %(essentialsbindir)s/bommy set default $version
+        fi
+	    ;;
+
+	remove)
+	    # XXX bootargs= for stuff like lilo arguments
+	    run %(essentialsbindir)s/bommy remove $version
+	    ;;
+    esac
+}
+
+case $type in 
+    files)
+	# parse version list from stdin; separate module and kernel versions
+	# in case they're all mixed up. a multitag handler w/ separate kernel
+	# and kernel-module tags could be used here, but why bother when 
+	# this works just fine
+	itemlist=$(sed 's,^/lib/modules/\([^/]*\)/.*,module-\1,g
+	                s,^/boot/vmlinuz-,kernel-,g
+			s,^/boot/xen.gz-,xen.gz-,g' | sort -u)
+	kernelversionlist=$(echo $itemlist | sed 's,kernel-,,g
+						  s,module-[^ ]*,,g
+						  s,xen.gz-[^ ]*,,g')
+	moduleversionlist=$(echo $itemlist | sed 's,module-,,g
+						  s,kernel-[^ ]*,,g
+						  s,xen.gz-[^ ]*,,g')
+
+	case $action in
+	    update)
+                initial_setup
+                for version in $moduleversionlist; do
+		    pre=$(bootPrefix $version)
+                    run /sbin/depmod -ae -F "/boot/System.map-$version" \
+                                     "$version"
+                    initrd=${pre}initrd-${version}.img
+                    if [ -n "$DELAY_MKINITRD" ] ; then
+                        echo "warning: not running dracut due to DELAY_MKINITRD setting"
+                        # ... but we still have to touch it so that run_bommy uses the filename.
+                        touch $initrd
+		    elif [ -s /etc/fstab ]; then
+			if ! run /sbin/dracut -f -H $initrd $version
+			then
+			    taghandler_error+="Error creating initrd. "
+			else
+			    run %(essentialsbindir)s/ext3flush $initrd
+			fi
+		    else
+			taghandler_error+="/etc/fstab does not exist or is empty. Not creating an initrd. "
+		    fi
+                done
+
+		for version in $kernelversionlist; do
+		    pre=$(bootPrefix $version)
+                    initrd=${pre}initrd-${version}.img
+                    xenmultiboot=${pre}xen.gz-${version}
+                    if [ ! -f $xenmultiboot ]; then
+			xenmultiboot=""
+		    fi
+                    if [ ! -f $initrd ]; then
+                        initrd=""
+		    fi
+                        
+                    run_bommy add $version $pre $initrd $xenmultiboot
+		done
+		run_bootman
+		;;
+	    remove)
+		for version in $kernelversionlist; do
+		    pre=$(bootPrefix $version)
+		    if [ -d /lib/modules/$version ] ; then
+			run rm -f /lib/modules/$version/modules.*
+		    fi
+		    initrd=${pre}initrd-${version}.img
+		    if [ -f $initrd ] ; then
+			run rm -f ${pre}initrd-${version}.img
+		    fi
+		    run run_bommy remove $version $pre ""
+		done
+		run run_bootman
+		;;
+	esac
+	;;
+esac
+
+if [ X"${taghandler_error}" != X ]; then
+    echo "ERROR: ${taghandler_error}Kernel setup has to be performed manually."
+fi
+
+exit 0

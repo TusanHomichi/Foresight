@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyGreSQL(CPackageRecipe):
+    name = 'PyGreSQL'
+    version = '3.8.1'
+
+    buildRequires = [ 'krb5:devel', 'mx:python', 'openssl:devel',
+        'postgresql:devel', 'python:devel', 'python-setuptools:python', ]
+
+    def setup(r):
+        r.addArchive('ftp://ftp.pygresql.org/pub/distrib/')
+
+        r.PythonSetup()
+        r.Doc('tutorial')
+
+        r.ComponentSpec('python', '%(libdir)s/')
+        r.Requires('mx:python', '%(libdir)s/.*/pgdb.py')

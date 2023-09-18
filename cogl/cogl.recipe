@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cogl(AutoPackageRecipe):
+    name = 'cogl'
+    version = '1.7.6'
+ 
+    buildRequires = ['cairo:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gtk-doc:runtime', 'intltool:runtime', 'libX11:devel', 'libXcomposite:devel', 'libXdamage:devel', 'libXext:devel', 'libXfixes:devel', 'libdrm:devel', 'libpng:devel', 'pango:devel', 'pkgconfig:devel', 'Mesa:devel', 'gobject-introspection:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://source.clutter-project.org/sources/cogl/1.7/')

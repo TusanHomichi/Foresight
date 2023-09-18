@@ -1,0 +1,131 @@
+#
+# Copyright (c) 2006-2009 rPath, Inc.
+#               2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class AnacondaTemplates(PackageRecipe):
+    name = 'anaconda-templates'
+    version = datetime.date.today().strftime("%Y.%m.%d")
+    buildRequires = [ 'anaconda', 
+                      'coreutils:runtime',
+                      'diffutils:runtime', 'findutils:runtime',
+                      'fontconfig:runtime', 'gawk:runtime',
+                      'glibc:runtime', 'gnupg:runtime', 'grep:runtime',
+                      'mktemp:runtime', 'module-init-tools:runtime',
+                      'netpbm:runtime', 'openssh:runtime',
+                      'syslinux:runtime', 'mkfontdir:runtime',
+                      'hwdata:config', 'gettext:runtime',
+                      'binutils:runtime', 'elfutils:runtime',
+                      'ORBit2', 'acl', 'ash', 'at-spi', 'atk', 
+                      'attr', 'audiofile', 'audit', 'bash', 'bogl', 'bootman', 
+                      'booty', 'busybox:anaconda', 'bzip2', 'cairo', 'conary', 
+                      'conary-repository', 'coreutils', 'cpio', 'db', 'device-mapper', 
+                      'dmidecode', 'dmraid', 'dosfstools', 'dump', 'e2fsprogs', 
+                      'elementtree', 'elfutils', 'esound', 'expat', 
+                      'findutils', 'firstboot', 'font-adobe-75dpi', 
+                      'font-adobe-utopia-75dpi', 'font-alias', 'font-bh-75dpi', 
+                      'font-bh-lucidatypewriter-75dpi', 'font-bitstream-75dpi', 
+                      'font-cronyx-cyrillic', 'font-cursor-misc', 
+                      'font-misc-cyrillic', 'font-misc-ethiopic', 
+                      'font-misc-misc', 'font-screen-cyrillic', 'font-util', 
+                      'fontconfig', 'fonts-bengali', 'fonts-chinese', 
+                      'fonts-gujarati', 'fonts-hindi', 'fonts-kannada', 
+                      'fonts-malayalam', 'fonts-oriya', 'fonts-punjabi', 
+                      'fonts-sinhala', 'fonts-tamil', 'fonts-telugu', 'freetype', 
+                      'ftp', 'gail', 'glib', 'gmp', 'gnome-python', 
+                      'gnome-python-extras', 'gnome-themes', 'gpm', 'groff', 
+                      'grub', 'gtk', 'gtk-engines', 'gtkhtml', 'gzip', 'hdparm', 
+                      'hwdata', 'iputils', 'jfsutils', 'joe', 'krb5', 'kudzu', 'less', 
+                      'libICE', 'libSM', 'libX11', 'libXau', 'libXaw', 'libXcursor', 
+                      'libXdmcp', 'libXext', 'libXfixes', 'libXfont', 
+                      'libXfontcache', 'libXft', 'libXi', 'libXinerama', 'libXmu', 
+                      'libXpm', 'libXrandr', 'libXrender', 'libXt', 'libXtst', 
+                      'libXxf86misc', 'libart_lgpl', 'libbonobo', 'libdhcp', 
+                      'libdhcp4client', 'libdhcp6client', 'libelf', 'libelf-lgpl', 
+                      'libfontenc', 'libgcc', 'libglade', 'libgnome', 
+                      'libgnomecanvas', 'libgtkhtml', 'libidn', 'libjpeg', 
+                      'liblbxutil', 'libnl', 'libpng', 'libstdc++', 'libtermcap', 
+                      'libuser', 'libxcb', 'libxkbfile', 'libxml2', 'lvm2', 'man', 
+                      'mdadm', 'mkinitrd', 'mt-st', 'mtools', 'mtr', 'ncurses', 'neon', 
+                      'net-tools', 'newt', 'open-iscsi', 'openssh', 'openssl', 
+                      'pam', 'pango', 'parted', 'pciutils', 'pcmciautils', 'pcre', 
+                      'popt', 'procps', 'pyblock', 'pycairo', 'pycrypto', 
+                      'pygobject', 'pygtk', 'pykickstart', 'pyparted', 'python', 
+                      'python-sqlite', 'pyxf86config', 'readline', 
+                      'reiserfsprogs', 'rgb', 'rhpl', 'rhpxl', 'rsh', 'rsync', 'sed', 
+                      'setup', 'setxkbmap', 'slang', 'smartmontools', 'sqlite', 
+                      'syslinux', 'system-config-date', 'system-config-keyboard', 
+                      'tar', 'tcp_wrappers', 'termcap', 'traceroute', 'tzdata', 
+                      'udev', 'urlgrabber', 'urw-fonts', 'util-linux', 'vnc', 
+                      'xauth', 'xf86-input-acecad', 'xf86-input-aiptek', 
+                      'xf86-input-calcomp', 'xf86-input-citron', 
+                      'xf86-input-digitaledge', 'xf86-input-dmc', 
+                      'xf86-input-dynapro', 'xf86-input-elo2300', 
+                      'xf86-input-elographics', 'xf86-input-evdev', 
+                      'xf86-input-fpit', 'xf86-input-hyperpen', 
+                      'xf86-input-jamstudio', 'xf86-input-joystick', 
+                      'xf86-input-keyboard', 'xf86-input-magellan', 
+                      'xf86-input-magictouch', 'xf86-input-microtouch', 
+                      'xf86-input-mouse', 'xf86-input-mutouch', 'xf86-input-palmax', 
+                      'xf86-input-penmount', 'xf86-input-spaceorb', 
+                      'xf86-input-summa', 'xf86-input-tek4957', 'xf86-input-ur98', 
+                      'xf86-input-vmmouse', 'xf86-input-void', 'xf86-video-apm', 
+                      'xf86-video-ark', 'xf86-video-ati', 'xf86-video-chips', 
+                      'xf86-video-cirrus', 'xf86-video-cyrix', 'xf86-video-dummy', 
+                      'xf86-video-fbdev', 'xf86-video-glint', 'xf86-video-i128', 
+                      'xf86-video-i740', 'xf86-video-i810', 'xf86-video-imstt', 
+                      'xf86-video-mga', 'xf86-video-neomagic', 
+                      'xf86-video-newport', 'xf86-video-nsc', 'xf86-video-nv', 
+                      'xf86-video-rendition', 'xf86-video-s3', 'xf86-video-s3virge', 
+                      'xf86-video-savage', 'xf86-video-siliconmotion', 
+                      'xf86-video-sis', 'xf86-video-sisusb', 'xf86-video-tdfx', 
+                      'xf86-video-tga', 'xf86-video-trident', 'xf86-video-tseng', 
+                      'xf86-video-v4l', 'xf86-video-vesa', 'xf86-video-vga', 
+                      'xf86-video-via', 'xf86-video-vmware', 'xf86-video-voodoo', 
+                      'xfs', 'xfsprogs', 'xkbcomp', 'xkbutils', 'xkeyboard-config', 
+                      'xorg-server', 'zlib',
+                      ]
+    # we 'll not dep on linux-firmware until we do no get solved
+    # the x86 boot issues it implies in install sets
+    # 'linux-firmware',
+                     
+    buildRequires +=   [ 'linux-firmware' ]
+
+
+    def setup(r):
+        r.addSource('template.conf', macros = True)
+        r.addSource('gentemplates', macros=True, mode=0755)
+        r.addSource('keymaps.gz')
+
+        pkgBlackList = [ 'nss', 'nspr', 'raidtools', 'reiserfs-utils',
+            'xorg-x11', 'xorg-x11-ISO8859-9-75dpi-fonts', 'xorg-x11-xfs',
+            'xorg-x11-ISO8859-2-75dpi-fonts', 'xorg-x11-libs-data',
+            'xorg-x11-100dpi-fonts', 'xorg-x11-fonts', 'xorg-x11-xauth',
+            'xorg-x11-ISO8859-15-75dpi-fonts', 'prelink',
+            'xorg-x11-base-fonts', 'xorg-x11-font-utils', 'modutils',
+            'zenity', ]
+
+        r.Environment('ANACONDA_CONARY_PACKAGE_BLACKLIST',
+                      ' '.join(pkgBlackList))
+
+        r.Replace('DESTDIR', '%(destdir)s', 'template.conf')
+        r.Replace('VERSION', '%(version)s', 'template.conf')
+        if Arch.x86:
+            r.Replace('ARCH', 'i386', 'template.conf')
+        if Arch.x86_64:
+            r.Replace('ARCH', 'x86_64', 'template.conf')
+        r.Run('./gentemplates')
+        r.Install('keymaps.gz', '/makebootdisk.dir/etc/', mode=0644)
+
+        # Policy exceptions, conary-policy really doesnt like these trees
+        # but we dont want to mess with them.
+
+        r.DanglingSymlinks(exceptions='.*')
+        r.LinkCount(exceptions='.*')
+        r.ExcludeDirectories(exceptions='.*')
+        r.Requires(exceptDeps='.*')
+        r.Strip(exceptions='.*')
+        r.RemoveNonPackageFiles(exceptions='.*')
+        r.TagLocale(exceptions='.*')

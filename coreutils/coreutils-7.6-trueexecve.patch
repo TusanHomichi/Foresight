@@ -1,0 +1,30 @@
+diff -urNp coreutils-7.6-orig/src/true.c coreutils-7.6/src/true.c
+--- coreutils-7.6-orig/src/true.c	2009-09-01 13:01:16.000000000 +0200
++++ coreutils-7.6/src/true.c	2009-11-18 15:00:22.000000000 +0100
+@@ -54,18 +54,19 @@ Usage: %s [ignored command line argument
+ int
+ main (int argc, char **argv)
+ {
+-  initialize_main (&argc, &argv);
+-  set_program_name (argv[0]);
+-  setlocale (LC_ALL, "");
+-  bindtextdomain (PACKAGE, LOCALEDIR);
+-  textdomain (PACKAGE);
+-
+-  atexit (close_stdout);
+ 
+   /* Recognize --help or --version only if it's the only command-line
+      argument.  */
+   if (argc == 2)
+     {
++      initialize_main (&argc, &argv);
++      set_program_name (argv[0]);
++      setlocale (LC_ALL, "");
++      bindtextdomain (PACKAGE, LOCALEDIR);
++      textdomain (PACKAGE);
++
++      atexit (close_stdout);
++
+       if (STREQ (argv[1], "--help"))
+         usage (EXIT_STATUS);
+ 

@@ -1,0 +1,18 @@
+#
+# Copyright (C) 2005-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonSqlite(CPackageRecipe):
+   name = 'python-sqlite'
+   version = '2.3.5'
+
+   buildRequires = [ 'python:runtime', 'python-setuptools:python',
+        'glibc:devel', 'sqlite:devel', 'python:devel' ]
+
+   def setup(r):
+        r.addArchive('http://initd.org/pub/software/pysqlite/releases/2.3/'
+                     '%(version)s/pysqlite-%(version)s.tar.gz')
+        r.PythonSetup(purePython=False)
+

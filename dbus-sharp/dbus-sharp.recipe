@@ -1,0 +1,17 @@
+# Antonio Meireles
+# 
+# sbin.reboot.sh
+
+class DbusSharp(AutoPackageRecipe):
+
+   name = "dbus-sharp"
+   version =  '0.7.0'
+   buildRequires = [ 'pkgconfig:devel',  'mono:lib', 'mono:runtime', 'gtk-sharp:devellib',
+                     'gtk-sharp:cil', 'mono:devel', 'mono:cil',
+                     'automake:runtime', 'autoconf:runtime', 'libtool:runtime',]
+
+   def unpack(r):
+      r.addArchive('http://github.com/downloads/mono/%(name)s/')
+      r.Environment('MONO_SHARED_DIR', '/tmp')
+      r.Replace('libdir=\${exec_prefix}/lib', 'libdir=%(libdir)s', '%(name)s-1.0.pc.in')
+

@@ -1,0 +1,32 @@
+
+loadSuperClass('gnomepackage')
+class GstPlugins(GnomePackageRecipe):
+
+    buildRequires =  [ 'GConf:devel', 'ORBit2:devel', 'alsa-lib:devel',
+        'cdparanoia:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel',
+        'gstreamer:devel', 'libbonobo:devel', 'libXv:devel',
+        'libogg:devel', 'liboil:devel', 'libtheora:devel', 'libvorbis:devel',
+        'libxml2:devel', 'pango:devel', 'gstreamer:runtime',
+        'perl:lib', 'gcc-c++:runtime', 'perl:runtime', 'perl:devel',
+        'iso-codes:devellib', 'orc:runtime', 'orc:devel',
+        'gobject-introspection:devel', 'libvisual:devel', 'udev:devel',
+        'gudev:devel', 'xz:runtime'
+
+        ]
+
+    name = 'gst-plugins-base'
+    version = '0.10.36'
+
+    extraConfig = (
+        ' --disable-static'
+        ' --disable-gnome_vfs'
+        ' --enable-experimental'
+        ' --with-package-name="GStreamer Base Plugins (Foresight)"'
+        ' --with-package-origin=http://www.foresightlinux.org/'
+        ' --enable-introspection'
+        ' --disable-tests'
+        ' --disable-examples'
+        )
+
+    makeArgs = 'ERROR_CFLAGS="" WARNING_CXXFLAGS=""'
+

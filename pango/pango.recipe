@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadRecipe('gnomepackage')
+class Pango(GnomePackageRecipe):
+
+    buildRequires = [ 'libtool:runtime', 'glib:devel', 'freetype:devel', 
+                      'fontconfig:devel', 'cairo:devel', 'expat:devel',
+                      'libXft:devel',    'libpng:devel', 'harfbuzz:devel',
+                      'perl:runtime', 'glib:runtime',
+                      'gobject-introspection:devel', ]
+
+    clearBuildReqs('gtk:devel')
+
+    extraConfig = ' --build=%(host)s --with-included-modules=basic-fc '
+
+    name = 'pango'
+    version = '1.32.3'
+
+    docs = ['README', 'AUTHORS', 'COPYING', 'ChangeLog']
+
+    # XXXX add thai support
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.addSource('pangomodule.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/pangomodule')
+        r.addSource('pangomodule.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/pangomodule', mode=0755)
+
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+
+        # set up HOST definition for pango.modules location
+        r.macros.host = r.macros.target
+        if r.macros.target.endswith("linux"):
+            # autotools appends -gnu to -linux
+            r.macros.host += '-gnu'
+        r.macros.qm = '%(bindir)s/pango-querymodules-%(host)s'
+        r.macros.pm = '%(sysconfdir)s/pango/%(host)s/pango.modules'
+
+        # separate querymodules for multilib installation
+        r.Move('%(bindir)s/pango-querymodules', '%(qm)s')
+        r.Remove('%(sysconfdir)s/pango/pango.modules')
+        # zero-length config file
+        r.Create('%(pm)s')
+
+        # Files with %(host)s are really part of the library
+        r.ComponentSpec('lib', '%(qm)s', '%(pm)s')
+        r.ComponentSpec(catchall='data')
+
+        # we need this to make sure that old gir-repository gets
+        # away before we get installed
+        r.Requires('gobject-introspection:lib', '%(name)s:lib')
+        # for complete backwards compat
+        r.Requires('pangox-compat:lib', '%(name)s:lib')

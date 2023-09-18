@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2009-2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pypoppler(AutoPackageRecipe):
+    name = 'pypoppler'
+    version = '0.12.1'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'glib:devel', 'gtk:devel', 'pango:devel', 'pkgconfig:devel', 'poppler-glib:devel', 'python:bin', 'python:devel', 'poppler:devel', 'pygtk:devel', 'pycairo:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/poppler-python/trunk/development/+download/pypoppler-%(version)s.tar.gz')
+        for p in [ '75_74.diff',
+                   '76_75.diff',
+                   '79_78.diff',
+                   'pypoppler-0.12.1-poppler0.15.0-changes.patch']:
+            r.addPatch(p)
+
+    def configure(r):
+        r.Configure('--disable-static')

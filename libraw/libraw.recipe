@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2010-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('rpmpackage')
+class Libraw(RPMPackageRecipe,CPackageRecipe):
+    name = 'libraw'
+    version = '0.14.7'
+    rpmName = 'LibRaw'
+    rpmRelease = '4.fc18'
+    rpmPatches = [ ]
+
+    tarballName = rpmName + '-' + version +'.tar.gz'
+
+    buildRequires = [
+        'jasper:devel', 
+        'lcms:devel', 
+        'libstdc++:devel', 
+        'pkgconfig:devel',
+        'util-linux:runtime',
+            ]
+ 
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.SetModes('configure', 0755)
+        r.ManualConfigure('--prefix=%(prefix)s --enable-examples=no --enable-jasper --enable-lcms --enable-demosaic-pack-gpl2 --enable-demosaic-pack-gpl3')
+        r.Make()
+        r.MakeInstall('LIBDIR=%(lib)s' )
+        r.Doc('doc')

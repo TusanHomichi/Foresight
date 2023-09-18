@@ -1,0 +1,25 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class Amarok(kdePackageRecipe):
+
+    name = 'amarok'
+    version = '2.4.0'
+
+    buildRequires = [
+        'curl:devel', 'faac:devel', 'ffmpeg:devel', 'gettext:runtime',
+        'gtk:devel', 'libgcrypt:devel', 'libgpod:devel', 'liblastfm:devel',
+        'libmtp:devel', 'libofa:devel', 'libxml2:devel', 'loudmouth:devel',
+        'mysql-embedded:devellib', 'mysql:devel', 'qca2:devel', 'qt4:devel',
+        'strigi:devel', 'taglib-extras:devel', 'taglib:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/amarok/%(version)s/src/')
+        r.addPatch('musicbrainz.patch')
+        r.addPatch('amarok-2.2.1.90-qtscript_not_required.patch')
+

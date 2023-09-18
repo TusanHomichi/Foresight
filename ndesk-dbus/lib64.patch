@@ -1,0 +1,12 @@
+diff -Naur ndesk-dbus-0.6.0.orig/ndesk-dbus-1.0.pc.in ndesk-dbus-0.6.0/ndesk-dbus-1.0.pc.in
+--- ndesk-dbus-0.6.0.orig/ndesk-dbus-1.0.pc.in	2007-10-13 13:19:49.000000000 -0400
++++ ndesk-dbus-0.6.0/ndesk-dbus-1.0.pc.in	2007-11-14 10:08:33.000000000 -0500
+@@ -1,7 +1,7 @@
+ prefix=@prefix@
+ datadir=${prefix}/share
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ session_bus_services_dir=${datadir}/dbus-1/services
+ 
+ Name: NDesk.DBus

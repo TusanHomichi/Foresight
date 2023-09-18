@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2012-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Dropbox(PackageRecipe):
+    name = 'dropbox'
+    version = '2.8.2'
+ 
+    buildRequires = [
+        'atk:devel', 
+        'dbus-glib:devel', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime',
+        'fontconfig:devel', 
+        'gdk-pixbuf:devel', 
+        'glib:devel', 
+        'gtk:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXdamage:devel', 
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXi:devel', 
+        'libXinerama:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libgcc:devellib', 
+        'libstdc++:devel', 
+        'pango:devel',
+            ]
+ 
+    def setup(r):
+
+        if Arch.x86:
+            r.macros.arch='x86'
+        if Arch.x86_64:
+            r.macros.arch='x86-64'
+            
+        r.addArchive('http://dl-web.dropbox.com/u/17/dropbox-lnx.x86-%(version)s.tar.gz', use=Arch.x86)
+        r.addArchive('http://dl-web.dropbox.com/u/17/dropbox-lnx.x86_64-%(version)s.tar.gz', use=Arch.x86_64)
+        r.Remove('libstdc++.so.6')
+        r.Install('*', '/opt/dropbox/', mode = 0755)
+        r.Run('find "%(destdir)s/opt/dropbox/" -type f -exec chmod 644 {} \;')
+        r.Run('find "%(destdir)s/opt/dropbox/" -type d -exec chmod 755 {} \;')
+        r.addSource('dropbox.png', dir='%(datadir)s/pixmaps/', mode = 0644)
+        r.addSource('dropbox.desktop')
+        r.Desktopfile('dropbox.desktop')
+        r.addSource('delay', dest= '%(bindir)s/delay')
+        r.Remove('%(destdir)s/opt/dropbox/dropbox.desktop')
+        r.SetModes('/opt/dropbox/dropboxd', 0755)
+        r.SetModes('/opt/dropbox/dropbox', 0755)
+        r.SetModes('%(bindir)s/delay', 0755)
+        r.Symlink('/opt/dropbox/dropboxd', '%(bindir)s/dropboxd')

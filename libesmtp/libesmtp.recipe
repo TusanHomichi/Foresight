@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class libesmtp(AutoPackageRecipe):
+
+    name = 'libesmtp'
+    version = '1.0.4'
+
+    buildRequires = [ 'openssl:devel']
+
+    def unpack(r):
+        r.addArchive('http://www.stafford.uklinux.net/libesmtp/')
+	r.addPatch('libesmtp-build.patch')

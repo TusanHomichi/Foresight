@@ -1,0 +1,38 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class Vsdviewer(PackageRecipe):
+
+    name = 'vsdviewer'
+    version = '0.0.10'
+
+    buildRequires = [
+        'libgsf:python', 'pycairo:python', 'pygobject:python', 'pygtk:python'
+    ]
+
+    def setup(r):
+
+        r.addArchive('http://sk1project.org/tarballs/')
+
+        r.macros.sitepkg = Python.sitepkgs
+
+        modules = [
+            'chunks', 'draw', 'draw2', 'emfdoc', 'emfdraw', 'hexdump', 'infowin',
+            'mfdraw', 'mfpage', 'pyemf', 'pywmf', 'stencil', 'tree', 'vsdfuncs',
+            'vsdoc', 'wmfcmd', 'wmfdoc', 'wmfdraw', 'wmffigs', 'wmfobjects',
+            'wmftext'
+        ]
+        r.macros.modules = '|'.join(modules)
+
+        r.Run(
+            "sed -r -i 's/^import (%(modules)s)/import vsdviewer.\\1 as \\1/' vsdviewer"
+        )
+
+        r.Install('vsdviewer', '%(bindir)s/')
+
+        r.Run('touch __init__.py')
+        r.Install('*.py', '%(sitepkg)s/vsdviewer/')
+

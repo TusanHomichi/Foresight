@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class RackCMount(RubygemPackageRecipe):
+
+    name = 'rubygem-rack-mount'
+    version = '0.8.3'
+

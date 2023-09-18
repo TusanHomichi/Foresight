@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008 Foresight Linux, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:devel')
+class PathTools(CPANPackageRecipe, CPackageRecipe):
+    name='perl-PathTools'
+    version='3.24'
+
+    #In your recipe if you get an IO error, you may need to discover one or
+    #both of the following
+    #author='GBARR'
+    #upstreamname='perl-Bundle-foo'
+
+    buildRequires = [ 'glibc:devel', 'perl:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://search.cpan.org/CPAN/authors/id/K/KW/KWILLIAMS/PathTools-3.24.tar.gz')

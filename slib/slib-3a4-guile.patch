@@ -1,0 +1,45 @@
+--- slib/guile.init.guile	2007-01-23 14:11:56.000000000 +0100
++++ slib/guile.init	2007-01-23 14:11:56.000000000 +0100
+@@ -44,8 +44,8 @@
+ ;;; the directory where any auxillary files to your Scheme
+ ;;; implementation reside.
+ (define implementation-vicinity
+-  (let* ((path (or (%search-load-path "ice-9/q.scm")
+-		   (error "Could not find ice-9/q.scm in " %load-path)))
++  (let* ((path (or (%search-load-path "slib/qp.scm")
++		   (error "Could not find slib/qp.scm in " %load-path)))
+ 	 (vic (substring path 0 (- (string-length path) 11))))
+     (lambda () vic)))
+ 
+--- slib/require.scm.guile	2007-01-23 14:11:56.000000000 +0100
++++ slib/require.scm	2007-01-23 14:32:36.000000000 +0100
+@@ -122,7 +122,7 @@
+ 	  (else (bail expression))))
+   (feval expression))
+ ;@
+-(define (provided? expression)
++(set! provided? (lambda (expression)
+   (define feature-list (cons (scheme-implementation-type)
+ 			     (cons (software-type) slib:features)))
+   (define (provided? expression)
+@@ -131,7 +131,7 @@
+ 	     (let ((path (catalog:get expression)))
+ 	       (cond ((symbol? path) (provided? path))
+ 		     (else #f))))))
+-  (feature-eval expression provided?))
++  (feature-eval expression provided?)))
+ ;@
+ (define (require feature)
+   (cond
+@@ -169,9 +169,9 @@
+ (define (require-if feature? feature)
+   (if (slib:provided? feature?) (slib:require feature)))
+ ;@
+-(define (provide feature)
++(set! provide (lambda (feature)
+   (if (not (memq feature slib:features))
+-      (set! slib:features (cons feature slib:features))))
++      (set! slib:features (cons feature slib:features)))))
+ 
+ ;@
+ (define slib:provide provide)

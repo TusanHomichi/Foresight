@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2005-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class Evince(GnomePackageRecipe):
+    name = 'evince'
+    version = '2.32.0'
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel',
+                      'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus-glib:runtime',
+                      'dbus:devel', 'dbus:runtime', 'desktop-file-utils:runtime',
+                      'djvulibre:devel', 'ghostscript:runtime', 'expat:devel', 'fontconfig:devel',
+                      'freetype:devel', 'gcc:devel', 'gettext:runtime', 'glib:devel',
+                      'glib:runtime', 'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+                      'libgnome-keyring:devel', 'gnome-vfs:devel', 'gtk:runtime',
+                      'intltool:runtime', 'gnome-icon-theme:devellib',
+                      'libICE:devel', 'libSM:devel', 'libX11:devel',
+                      'libXau:devel', 'libXdmcp:devel', 'libXrender:devel', 'libXt:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+                      'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                      'libgnomeprint:devel', 'libgnomeprintui:devel', 'libgnomeui:devel',
+                      'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'libtiff:devel',
+                      'libxml2:devel', 'libxslt:runtime', 'nautilus:devel',
+                      'nautilus:runtime', 'pango:devel', 'perl:runtime', 'poppler:devel',
+                      'popt:devel', 'rarian:runtime', 'tetex:devel', 'which:runtime',
+                      'libxml2:runtime', 'docbook-dtds:data', 'docbook-dsssl:runtime',
+                      'docbook-xsl:data', 'docbook-utils:runtime', 'poppler-glib:devel',
+                      'libspectre:devel'
+                      ]
+
+    extraConfig = ' --disable-scrollkeeper --enable-djvu --enable-dvi --enable-tiff --enable-nautilus'
+    patches = [ 'http://patch-tracker.debian.org/patch/series/dl/evince/2.32.0-1/01_dvi_security.patch',
+                'http://patch-tracker.debian.org/patch/series/dl/evince/2.32.0-1/03_dvi_security_CVE-2010-0433.patch',
+                'http://patch-tracker.debian.org/patch/series/dl/evince/2.32.0-1/06_new_poppler_api_update.patch' ]
+
+    def policy(r):
+        r.Requires('poppler-glib:lib', '%(bindir)s/%(name)s')

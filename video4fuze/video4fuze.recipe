@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class video4fuze(PackageRecipe):
+    name = 'video4fuze'
+    version = '0.6+'
+
+    packageSummary = "A tool to convert videos into the format required by Sansa Fuze, without the use of the Sansa Media Converter"
+    packageDescription = """\
+A cross-platform tool to convert videos for the Sansa Fuze.
+"""
+
+    buildRequires = [
+        'qt4:devel',
+        'python-setuptools:python',
+        'python:devel'
+    ]
+
+    def setup(r):
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+        r.addArchive('http://video4fuze.googlecode.com/files/')
+        r.Run('lrelease-qt4 *.ts', dir="translations")
+        r.PythonSetup()
+        r.Move('%(sitepkgs)s/share/', '%(datadir)s/')
+        r.Move('%(sitepkgs)s/bin/*', '%(bindir)s/')
+        r.Requires('%(bindir)s/mencoder', '%(bindir)s/*')
+        r.Requires('%(bindir)s/fuzemux', '%(bindir)s/*')

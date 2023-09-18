@@ -1,0 +1,6 @@
+loadSuperClass('rubygempackage')
+class Polyglot(RubygemPackageRecipe):
+
+    name = 'rubygem-polyglot'
+    version = '0.3.3'
+

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+class Eel(GnomePackageRecipe):
+
+    buildRequires = ['GConf:devel', 'ORBit2:devel',  'gnome-desktop:devel', 'gnome-keyring:devel', 'gnome-menus:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'popt:devel', 'startup-notification:devel']
+
+    name = 'eel'
+    version = '2.26.0'
+
+    docs = ['AUTHORS', 'COPYING', 'ChangeLog', 'NEWS', 'README', 'COPYING.LIB']
+
+
+

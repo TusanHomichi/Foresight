@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2013-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class NpapiVlc(AutoPackageRecipe):
+    name = 'npapi-vlc'
+    version = '2.1.3'
+    tag = '2.1.3'
+
+ 
+    buildRequires = [
+        'atk:devel', 
+        'autoconf:runtime',
+        'automake:runtime',
+        'cairo:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'git:runtime',
+        'glib:devel', 
+        'gtk:devel', 
+        'intltool:devel',
+        'libICE:devel', 
+        'libstdc++:devel', 
+        'libtool:runtime',
+        'libX11:devel', 
+        'libxcb:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'vlc:devel', 
+        'xulrunner:devel',
+            ]
+ 
+    def unpack(r):
+        r.addGitSnapshot('http://git.videolan.org/git/npapi-vlc.git', tag=r.tag)
+        r.Run('./autogen.sh')
+
+        r.Requires('vlc:runtime', 'npapi-vlc:lib')

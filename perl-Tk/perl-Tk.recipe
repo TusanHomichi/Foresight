@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux. 2004-2010 rPath, Inc. 2009-2010 Sony Pictures ImageWorks. 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class Tk(CPANPackageRecipe):
+    name='perl-Tk'
+    version='804.029'
+    buildRequires=['glibc:devel', 'libjpeg:devel', 'libpng:devel', 'zlib:devel', 'gcc:runtime', 'gcc:devel', 'tk:lib', 'tk:devel', 'elfutils:runtime']
+
+    def unpack(r):
+        CPANPackageRecipe.unpack(r)
+        r.Replace('\/bin\/perl', '/usr/bin/perl', 'TextList/reindex.pl')
+        r.addPatch('804.029-X11_XLIB_H.patch')
+
+# These seem fixed in the current version?
+#        for x in ['add_version', 'adj_demo', 'after_demo', 'after_leak', 'animate', 'autoraise', 'basic_demo', 'bin/defs', 'bin/newstyle', 'bin/perms', 'bin/unres', 'bin/defunc', 'bin/uselib', 'bindtest', 'build', 'bulkedit', 'canvas_ps', 'canvas_scroll', 'cbtest', 'checklen', 'check_syms', 'classtree', 'cleanup', 'clip_bug', 'compile/splitfunc', 'compile/findloader', 'Compound/compound_demo', 'Contrib/book-examples/lusol-f16.3', 'Contrib/book-examples/f-16.2.pl', 'Contrib/book-examples/f-16.9.pl', 'Contrib/book-examples/f-16.8.pl', 'Contrib/book-examples/f-16.7.pl', 'Contrib/book-examples/f-16.3.pl', 'Contrib/book-examples/f-15.5.pl', 'Contrib/book-examples/f-16.6.pl', 'Contrib/book-examples/f-16.1.pl', 'Contrib/book-examples/f-16.10.pl', 'Contrib/testlistbox', 'Contrib/TickerTape', 'Contrib/fd_demo', 'copydate', 'cursor_demo', 'demos/color_editor', 'demos/hello', 'demos/rolodex', 'demos/ixset', 'demos/widget', 'demos/dialog', 'demos/composite', 'demos/rmt', 'demos/timer', 'demos/tom', 'demos/widget_old', 'demos/browse', 'demos/demos/widtrib/npuz.pl', 'demos/demos/widtrib/plop.pl', 'derived_test', 'destroy_test', 'dfpy', 'disbutton', 'dnd_demo', 'DragDrop/local_test', 'DragDrop/motion_test', 'DragDrop/site_test', 'DragDrop/drag_test', 'DragDrop/selection', 'DragDrop/has_sun', 'dump_test', 'dupsyms', 'embed', 'error_prop', 'Event/findEvent', 'Event/event_demo', 'ewidth_demo', 'Extensions/ImageBack/background', 'fetail', 'findbase', 'floppy', 'font_demo', 'fonts', 'font_test', 'gdb.plx', 'gedi', 'geom', 'geo_mgr', 'grid_adj', 'gridbug', 'grid_test', 'hackMM', 'hlfm', 'HList/Tix2perl', 'hlist_bg', 'iconimg', 'iconwin', 'image_test', 'inline_bitmap', 'JPEG/t/Read.t', 'JPEG/t/more.t', 'JPEG/tkjpeg', 'keyWords', 'labelpack', 'lbformat_demo', 'leak_test', 'lentry', 'linux-progbar-toy', 'local_demo', 'lsfonts', 'ls_table', 'menubar', 'menubug', 'mitem_test', 'mkdist', 'mkExt', 'motif_hack', 'nested_dialog', 'oddmenu_demo', 'pfm', 'pipe_test', 'pixmap_test', 'pod/Text.pod', 'pod/recat', 'pod/subs', 'pod/extract/extpod', 'point_test', 'popup', 'popup_menu', 'prop_demo', 'pTk/deArg', 'pTk/p4e', 'pTk/from', 'pTk/why', 'pTk/makeenglish', 'pTk/mkexc', 'pTk/counts', 'pTk/findcore', 'pTk/mkVFunc', 'pTk/chext', 'pTk/mkXinfo', 'pTk/findX', 'pTk/mTk/tixmerge', 'pTk/mTk/tclmerge', 'pTk/findstrings', 'pTk/tdiff', 'pTk/mkmethods', 'pTk/genexc', 'pTk/Tcl-pTk', 'ptked', 'ptknews', 'scale_test', 'scrolled_demo', 'sillymenu', 'sockets', 'spinbox', 'stripblib', 'style_test', 'submethods', 'symbols', 't/fileevent.t', 'table_demo', 'tainted', 'tcl2perl', 'tcolour', 'tent', 'text_demo', 'TextList/textlist_demo', 'tie_basic', 'tiehandle', 'tietext', 'time', 'tiny', 'TixGrid/tgdemo_config', 'tixwm_demo', 'tkfontsel', 'tkperldoc', 'tkpsh', 'tktail', 'two_main', 'uninstall', 'ventry_demo', 'WinPhoto/try', 'Xlib/tree_demo', 'Xlib/motif_site', 'Xlib/load', 'Xlib/drops', 'xlib_demo']:
+#            r.Replace('\/usr\/local\/bin\/perl', '/usr/bin/perl', x)
+

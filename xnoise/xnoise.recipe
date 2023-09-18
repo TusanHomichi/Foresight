@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2010-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xnoise(CPackageRecipe):
+    name = 'xnoise'
+    version = '0.1.30'
+
+    packageSummary = 'XNOISE is a media player for Gtk+ with a slick GUI, great speed and lots of features.'
+
+    packageDescription = 'Unlike Rhythmbox, Banshee or itunes, Xnoise uses a tracklist centric design. The tracklist is a list of video or music tracks that are played one by one without being removed (right side of window). This gives you the possibility to enqueue any track in any order, regardless if they are on the same album or not. The tracks can be reordered at any time via drag and drop.'
+ 
+    buildRequires = [
+            'atk:devel', 
+            'cairo:devel', 
+            'desktop-file-utils:runtime', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gettext:runtime', 
+            'glib:devel', 
+            'gst-plugins-base:devel', 
+            'gstreamer:devel', 
+            'gtk:devel', 
+            'intltool:runtime', 
+            'libxml2:devel', 
+            'pango:devel', 
+            'pkgconfig:devel', 
+            'sqlite:devel', 
+            'taglib:devel', 
+            'unique:devel', 
+            'vala:runtime', 
+            'dbus-glib:devel', 
+            'dbus:devel', 
+            'libnotify:devel', 
+            'libsoup:devel']
+ 
+    def setup(r):
+        r.addArchive('https://github.com/downloads/shuerhaaken/xnoise/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

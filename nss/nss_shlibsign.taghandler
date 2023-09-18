@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case "$type" in
+    files)
+        case "$action" in
+	    update)
+		for file in $@; do
+		    PATH='/usr/lib64/nss/unsupported-tools:/usr/lib/nss/unsupported-tools' shlibsign -i $file
+		done
+		;;
+	esac
+esac
+
+exit 0

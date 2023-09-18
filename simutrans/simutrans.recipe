@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('binarypackage=conary.rpath.com@rpl:1')
+class Simutrans(BinaryPackageRecipe):
+    name = 'simutrans'
+    version = '102'
+ 
+    buildRequires = ['unzip:runtime', 'desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/simutrans/files/Simutrans complete/simulinux_0-102-0.zip', dir='/opt/games')
+
+	r.SetModes('/opt/games/simutrans/simutrans', 0755)
+        r.addSource('simutrans.desktop')
+        r.addSource('simutrans.png')
+	r.Move('simutrans.png', '/opt/games/simutrans/simutrans.png')
+        r.Desktopfile('simutrans.desktop')

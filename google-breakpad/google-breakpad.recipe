@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GoogleBreakpad(AutoPackageRecipe):
+    name = 'google-breakpad'
+    version = 'r515'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addSvnSnapshot('http://google-breakpad.googlecode.com/svn/trunk/')

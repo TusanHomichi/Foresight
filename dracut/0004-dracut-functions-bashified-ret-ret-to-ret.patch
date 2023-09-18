@@ -1,0 +1,22 @@
+From b8d2485c84ca7511906729a0420c9de0ba59d343 Mon Sep 17 00:00:00 2001
+From: Harald Hoyer <harald@redhat.com>
+Date: Tue, 29 Mar 2011 11:30:27 +0200
+Subject: [PATCH] dracut-functions: bashified ret=ret+$? to ret+=$?
+
+---
+ dracut-functions |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/dracut-functions b/dracut-functions
+index 2accaec..2fc2471 100755
+--- a/dracut-functions
++++ b/dracut-functions
+@@ -787,7 +787,7 @@ instmods() {
+                 # it may require
+                 for_each_kmod_dep install_kmod_with_fw $mod \
+                     --set-version $kernel ${moddirname}
+-                ret=$((ret+$?))
++                ((ret+=$?))
+                 ;;
+         esac
+         shift

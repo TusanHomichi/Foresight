@@ -1,0 +1,67 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FluidSoundfont(AutoPackageRecipe):
+    name = 'fluid-soundfont'
+    version = '3.1'
+ 
+    buildRequires = [
+                    'soundfont-utils:runtime'
+                    ]
+ 
+    def unpack(r):
+    #i get the tarball from debian
+        r.addArchive('http://ftp.de.debian.org/debian/pool/main/f/%(name)s/%(name)s_%(version)s.orig.tar.gz')
+        r.addSource('Fluid_R3_Readme.pdf')
+        r.addSource('timidity++.cfg')
+        r.addSource('fluid3gm.cfg')
+        r.addSource('fluid3gs.cfg')
+        r.addSource('fluid_altassign.cfg')
+
+    def make(r):
+        r.Run('unsf -v -s -m FluidR3_GM.sf2')
+        r.Run('unsf -v -s -m FluidR3_GS.sf2')
+        r.Run("""for bank in GM-B{8,9,16} Standard{1,2,3,4,5,6,7} Room{1,2,3,4,5,6,7} Power{1,2,3} Jazz{1,2,3,4} Brush{1,2}; do
+            sed -i "/$bank/d" FluidR3_GM.cfg
+            rm -fr *$bank*
+            done """)
+
+        r.Run('cat FluidR3_GM.cfg FluidR3_GS.cfg > FluidR3.cfg')
+        r.Run("""sed -i 's|FluidR3_GM-|%(datadir)s/soundfonts/%(name)s-lite-patches/FluidR3_GM-|g' FluidR3.cfg""")
+        r.Run("""sed -i 's|FluidR3_GS-|%(datadir)s/soundfonts/%(name)s-lite-patches/FluidR3_GS-|g' FluidR3.cfg""")
+
+    def makeinstall(r):
+        r.MakeDirs('%(datadir)s/soundfonts')
+        r.Install('FluidR3_GM.sf2', '%(destdir)s%(datadir)s/soundfonts/', mode=0644)
+        r.Install('FluidR3_GS.sf2', '%(destdir)s%(datadir)s/soundfonts/', mode=0644)
+        r.Symlink('%(datadir)s/soundfonts/FluidR3_GM.sf2', '%(datadir)s/soundfonts/default.sf2')
+        r.Install('timidity++.cfg', '%(sysconfdir)s/')
+        r.Install('fluid3gm.cfg', '%(datadir)s/soundfonts/')
+        r.Install('fluid3gs.cfg', '%(datadir)s/soundfonts/')
+        r.Install('fluid_altassign.cfg', '%(datadir)s/soundfonts/')
+        r.MakeDirs('%(datadir)s/soundfonts/%(name)s-lite-patches')
+        r.Install('FluidR3_GM-*', '%(destdir)s%(datadir)s/soundfonts/%(name)s-lite-patches')
+        r.Install('FluidR3_GS-*', '%(destdir)s%(datadir)s/soundfonts/%(name)s-lite-patches')
+        r.Install('FluidR3.cfg', '%(destdir)s%(sysconfdir)s/timidity.cfg')
+
+## create fluid-soundfont-gm
+#        r.PackageSpec('%(name)s-gm', '%(datadir)s/soundfonts/*')
+#        r.PackageSpec('%(name)s-gm', '%(sysconfdir)s/timidity++.cfg')
+#        r.PackageSpec('%(name)s-gm', '%(datadir)s/soundfonts/FluidR3_GM.sf2')
+#        r.PackageSpec('%(name)s-gm', '%(datadir)s/soundfonts/default.sf2')
+#        r.PackageSpec('%(name)s-gm', '%(datadir)s/soundfonts/fluid3gm.cfg')
+#        r.PackageSpec('%(name)s-gm', '%(datadir)s/soundfonts/fluid_altassign.cfg')
+#
+## create fluid-soundfont-lite-patches
+#        r.PackageSpec('%(name)s-lite-patches', '%(datadir)s/soundfonts/%(name)s-lite-patches/*')
+#        r.PackageSpec('%(name)s-lite-patches', '%(sysconfdir)s/timidity.cfg')
+ 
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()
+        r.policy()

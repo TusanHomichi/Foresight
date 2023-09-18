@@ -1,0 +1,35 @@
+class ObConf(AutoPackageRecipe):
+
+    name = 'obconf'
+    version = '2.0.3'
+
+    buildRequires = [
+        'autoconf:runtime', # ./bootstrap
+        'automake:runtime', # ./bootstrap
+        'cvs:runtime', # autopoint (gettext)
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'expat:devel', 
+        'freetype:devel', 
+        'glib:devel', 
+	'gettext:runtime',
+        'gtk:devel', 
+	'libtool:runtime',
+        'libICE:devel', 
+        'libSM:devel', 
+        'libXau:devel', 
+        'libXdmcp:devel', 
+        'libXft:devel', 
+        'libXrender:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'startup-notification:devel', 
+        'zlib:devel', 
+        'libglade:devel', 
+        'libxml2:devel', 
+        'shared-mime-info:runtime']
+
+    def unpack(r):
+        r.addArchive('http://icculus.org/openbox/obconf/')
+

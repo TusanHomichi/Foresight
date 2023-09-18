@@ -1,0 +1,29 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeAccessibility(kdeCorePackageRecipe):
+
+    name = 'kdeaccessibility'
+    version = '4.6.1'
+
+    buildRequires = [
+        'alsa-lib:devel', 'inputproto:devel', 'libX11:devel', 'libXt:devel',
+        'libXtst:devel', 'qt4:devel', 'libXi:devel',
+    ]
+
+    modules = [
+        'kaccessible',
+        'kmag',
+        'kmousetool',
+        'kmouth',
+        ('kdeaccessibility-color-schemes', 'ColorSchemes'),
+        ('kdeaccessibility-icon-themes', 'IconThemes'),
+    ]
+
+    def postUnpack(r):
+
+        r.addPatch('kdeaccessibility-no-jovie-docs.patch')
+

@@ -1,0 +1,20 @@
+class Gperftools(AutoPackageRecipe): 
+    name = 'gperftools' 
+    version = '2.0'
+    buildRequires =  [ 'libstdc++:devel', 'perl:devel', 'perl:runtime',
+                       'libunwind:devel',
+                       ] 
+ 
+    def unpack(r):
+        r.disableParallelMake()
+        r.addArchive('http://gperftools.googlecode.com/files/')
+
+        r.macros.cxxflags += ' -DTCMALLOC_LARGE_PAGES '
+        r.macros.cxxflags = re.sub('-Wp,-D_FORTIFY_SOURCE=2', '', 
+                                   r.macros.cxxflags)
+
+    def configure(r):
+        r.Configure('--disable-static')
+        r.Replace(('^hardcode_libdir_flag_spec=.*', 'hardcode_libdir_flag_spec=""'),
+                  ('^runpath_var=LD_RUN_PATH', 'runpath_var=DIE_RPATH_DIE'),
+                  'libtool')

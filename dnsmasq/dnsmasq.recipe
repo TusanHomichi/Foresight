@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class DNSmasq(RPMPackageRecipe,CPackageRecipe):
+    name = 'dnsmasq'
+    version = '2.48'
+    rpmRelease = '2.fc12'
+    rpmPatches = [ 'dnsmasq-2.33-initscript.patch',
+                   'dnsmasq-configuration.patch',
+                   ]
+
+    buildRequires = [ 'pkgconfig:devel', 'chkconfig:runtime', 'dbus:devel' ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+
+        r.Make()
+
+        r.Install('src/dnsmasq', '%(sbindir)s/dnsmasq')
+        r.Install('dnsmasq.conf.example', '%(sysconfdir)s/dnsmasq.conf')
+        r.Install('dbus/dnsmasq.conf', '%(sysconfdir)s/dbus-1/system.d/')
+        r.Install('rpm/dnsmasq.init', '%(sysconfdir)s/init.d/dnsmasq', mode = 0755)
+        r.Install('man/dnsmasq.8', '%(mandir)s/man8/', mode = 0644)
+
+
+        r.MakeDirs('%(localstatedir)s/lib/dnsmasq')
+        r.MakeDirs('%(sysconfdir)s/dnsmasq.d')
+        r.ExcludeDirectories(exceptions=['%(localstatedir)s/lib/dnsmasq', '%(sysconfdir)s/dnsmasq.d'])

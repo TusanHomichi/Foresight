@@ -1,0 +1,12 @@
+diff -ruN nedit-5.5.orig/source/regularExp.c nedit-5.5/source/regularExp.c
+--- nedit-5.5.orig/source/regularExp.c	2004-08-20 09:37:30.000000000 -0700
++++ nedit-5.5/source/regularExp.c	2011-03-08 13:03:22.356208196 -0800
+@@ -446,7 +446,7 @@
+ 
+ #define REGEX_START_OFFSET 3
+ 
+-#define MAX_COMPILED_SIZE  32767UL  /* Largest size a compiled regex can be.
++#define MAX_COMPILED_SIZE  65535UL  /* Largest size a compiled regex can be.
+                                        Probably could be 65535UL. */
+ 
+ /* Global work variables for `CompileRE'. */

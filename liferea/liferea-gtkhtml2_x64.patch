@@ -1,0 +1,13 @@
+--- liferea-1.4.13/configure	2008-02-24 23:01:23.000000000 +0900
++++ liferea-1.4.13-mod/configure	2008-03-17 22:41:39.000000000 +0900
+@@ -22200,8 +22200,8 @@
+ echo $ECHO_N "checking for 64bit platform... $ECHO_C" >&6; }
+ case "$target" in
+    x86_64-*-*)
+-     enable_gtkhtml2=no
+-     { echo "$as_me:$LINENO: result: yes -> disabling GtkHTML2" >&5
++     enable_gtkhtml2=yes
++     { echo "$as_me:$LINENO: result: yes -> enabling GtkHTML2" >&5
+ echo "${ECHO_T}yes -> disabling GtkHTML2" >&6; }
+      ;;
+    *)

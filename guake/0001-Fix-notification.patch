@@ -1,0 +1,59 @@
+From 855be1063f201a0fcc8c37efe3c59bde17801a32 Mon Sep 17 00:00:00 2001
+From: Pierre-Yves Chibon <pingou@pingoured.fr>
+Date: Fri, 27 Jul 2012 09:40:03 +0200
+Subject: [PATCH] Fix notification
+
+With this commit we prevent guake from using the pynotify module
+if this one does not work or is not properly installed.
+---
+ src/guake |   20 +++++++++++++++++---
+ 1 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/src/guake b/src/guake
+index 6d8f9c5..9da941c 100644
+--- a/src/guake
++++ b/src/guake
+@@ -54,7 +54,10 @@ from guake.globals import NAME, VERSION, LOCALE_DIR, KEY, GCONF_PATH, \
+     TERMINAL_MATCH_EXPRS, TERMINAL_MATCH_TAGS, \
+     ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER
+ 
+-pynotify.init('Guake!')
++popup_works = True
++if not pynotify.init('Guake!') or pynotify.get_server_info() == None :
++    popup_works = False
++    print "WARNING: could not use popup notification"
+ 
+ GNOME_FONT_PATH = '/desktop/gnome/interface/monospace_font_name'
+ 
+@@ -648,7 +651,13 @@ class Guake(SimpleGladeApp):
+                   'Please use Guake Preferences dialog to choose another '
+                   'key (The trayicon was enabled)') % label, filename)
+             self.client.set_bool(KEY('/general/use_trayicon'), True)
+-            notification.show()
++            if popup_works :
++                notification.show() 
++            else :
++                print _('A problem happened when binding <b>%s</b> key.\n'
++                  'Please use Guake Preferences dialog to choose another '
++                  'key (The trayicon was enabled)') % label
++
+ 
+         elif self.client.get_bool(KEY('/general/use_popup')):
+             # Pop-up that shows that guake is working properly (if not
+@@ -657,7 +666,12 @@ class Guake(SimpleGladeApp):
+                 _('Guake!'),
+                 _('Guake is now running,\n'
+                   'press <b>%s</b> to use it.') % label, filename)
+-            notification.show()
++            if popup_works :
++                notification.show()
++            else :
++                print _('Guake is now running,\n'
++                  'press <b>%s</b> to use it.') % label
++
+ 
+     def execute_command(self, command, tab=None):
+         """Execute the `command' in the `tab'. If tab is None, the
+-- 
+1.7.7.6
+

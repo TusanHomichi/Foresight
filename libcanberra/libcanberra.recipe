@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class LibCamberra(GnomePackageRecipe):
+
+    buildRequires = [ 'alsa-lib:devel', 'gstreamer:devel', 'libogg:devel',
+                      'libvorbis:devel', 'lynx:runtime', 'pulseaudio:devel',
+                      'GConf:runtime', 'udev:devel', 'gtk3:devel',
+                      ]
+
+    name = 'libcanberra'
+    version = '0.27'
+
+    extraConfig = (' --disable-static '
+                   ' --with-builtin=dso'
+                   ' --enable-pulse '
+                   ' --enable-alsa '
+                   ' --enable-gstreamer '
+                   ' --enable-null '
+                   ' --disable-oss '
+                   )
+
+    def unpack(r):
+        r.addArchive('http://0pointer.de/lennart/projects/%(name)s/')
+        # Enable when we use gnome3 as default, and don't update package before we use gnome3.
+        # r.addPatch('0001-Workaround-a-hang-if-there-are-server-problems.patch')
+        r.Replace('OnlyShowIn=GNOME;',
+                  'OnlyShowIn=GNOME;LXDE;', 'src/libcanberra-login-sound.desktop.in')
+
+    def policy(r):
+        r.Requires('at-spi2-core:runtime', '%(bindir)s/*')

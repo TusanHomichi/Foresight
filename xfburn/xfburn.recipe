@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#loadSuperClass('xfcegoodiespackage.recipe')
+loadSuperClass('xfcepackage.recipe')
+class xfburn(XfcePackageRecipe):
+
+    name = 'xfburn'
+    version = '0.5.0'
+    subtree = 'apps'
+    XfcePackageRecipe.buildRequires.extend([
+        'dbus:devel', 'libburn:devel',
+        'libexo:devel', 'libisofs:devel', 'gstreamer:devel', 'libxml2:devel',
+        'gst-plugins-base:devel', 'gudev:devel', 'libxfce4ui:devel',
+    ])

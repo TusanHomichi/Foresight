@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2009-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Libproxy(AutoPackageRecipe):
+    name = 'libproxy'
+    version = '0.4.11'
+    
+    buildRequires = [ 'WebKit:devel', 'atk:devel', 'cairo:devel', 'cmake:runtime',
+                      'dbus:devel', 'fontconfig:devel', 'freetype:devel',
+                      'gcc-c++:runtime', 'gdk-pixbuf:devel', 'glib:devel',
+                      'gtk:devel', 'js:devel', 'kdelibs:config', 'libmodman:devel',
+                      'libsoup:devel', 'libstdc++:devel', 'pango:devel',
+                      'pkgconfig:devel', 'python:devel', 'perl:devel', ]
+ 
+    def setup(r):
+        r.addArchive('http://libproxy.googlecode.com/files/')
+        r.addPatch('libproxy-0.4.10-mozjs.patch')
+
+        r.Replace('@PROJECT_VERSION@','%(version)s',
+                  'libproxy/libproxy-1.0.pc.in')
+
+        r.CMake('-DLIBEXEC_INSTALL_DIR=%(libexecdir)s '
+                '-DMODULE_INSTALL_DIR=%(libdir)s/%(name)s/%(version)s/modules '
+                '-DCMAKE_CXX_FLAGS="%(cxxflags)s" '
+                '-DCMAKE_C_FLAGS="%(cflags)s" ' 
+                '-DCMAKE_SKIP_RPATH=TRUE '
+                '-DCMAKE_BUILD_TYPE=None '
+                '-DWITH_GNOME3=OFF '
+                '-DWITH_WEBKIT3=OFF '
+                '-DWITH_WEBKIT=ON '
+                '-DWITH_MOZJS=ON ', 
+                objDir='build')
+
+        r.Make(dir='build')
+        r.MakeInstall(dir='build')
+
+        if Arch.x86_64:
+            r.Move('/usr/lib/*',  '%(libdir)s/')
+
+        r.PackageSpec('libproxy-kde', '%(libdir)s/%(name)s/%(version)s/modules/config_kde4.so')
+        r.PackageSpec('libproxy-gnome', '%(libdir)s/%(name)s/%(version)s/modules/config_gnome.so')
+        r.PackageSpec('libproxy-networkmanager', '%(libdir)s/%(name)s/%(version)s/modules/network_networkmanager.so')
+        r.PackageSpec('libproxy-mozjs', '%(libdir)s/%(name)s/%(version)s/modules/pacrunner_mozjs.so')
+        r.PackageSpec('libproxy-webkit', '%(libdir)s/%(name)s/%(version)s/modules/pacrunner_webkit.so')

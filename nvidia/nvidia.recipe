@@ -1,0 +1,200 @@
+#
+# Copyright (c) 2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+class Nvidia(CPackageRecipe):
+    name = 'nvidia'
+    version = '319.60'
+
+    buildRequires = ['atk:devel', 'chkconfig:runtime', 'glib:devel',
+                     'gtk:devel', 'libX11:devel', 'libXext:devel',
+                     'pango:devel', 'desktop-file-utils:runtime',
+                     'zlib:devel', 'libXv:devel', 'libXvMC:devel',
+                     # to catch handler for /etc/bootloader.d/
+                     'bootman:runtime'
+                     ]
+
+    # XXXX get nvidia-persistenced installed and right!
+
+    def setup(r):
+        r.addSource('http://us.download.nvidia.com/XFree86/Linux-x86/'
+                    '%(version)s/NVIDIA-Linux-x86-%(version)s.run',
+                    use=Arch.x86)
+        r.addSource('http://us.download.nvidia.com/XFree86/Linux-x86_64/'
+                    '%(version)s/NVIDIA-Linux-x86_64-%(version)s.run',
+                    use=Arch.x86_64)
+
+        vmajor, vminor = r.version.split('.')
+
+        if Arch.x86:
+            r.macros.arch = 'x86'
+        elif Arch.x86_64:
+            r.macros.arch = 'x86_64'
+            r.macros.lib32 = '/usr/lib'
+            r.FixupMultilibPaths(exceptions='.*')
+
+        r.addSource('nvidia.opts', dest = '%(sysconfdir)s/modprobe.d/nvidia.conf', mode = 0644)
+
+        # otherwise update will want to keep prev version... 
+        r.Config(exceptions = '%(sysconfdir)s/modprobe.d/nvidia.conf')
+
+        r.addAction('sh NVIDIA-Linux-%(arch)s-%(version)s.run -x') # Extract only
+
+        # Copy the files we need
+        r.macros.root = 'NVIDIA-Linux-%(arch)s-%(version)s'
+        r.Remove('%(root)s/kernel', recursive = True)
+
+        #
+        r.Install('%(root)s/nvidia-{smi,cuda-mps-{control,server},settings,xconfig,bug-report.sh,debugdump}',
+                  '%(bindir)s/', mode = 0755)
+
+        ## headers
+        # not installed per upstream behaviour up from 260.19.12
+
+        # libs
+        r.Install('%(root)s/libnvidia-c*', '%(libdir)s/')
+        r.Install('%(root)s/libnvidia-ml*', '%(libdir)s/')
+        r.Install('%(root)s/libcuda.*', '%(libdir)s/')
+        r.Install('%(root)s/libnvcuvid.*', '%(libdir)s/')
+        # libvdpau.so.** not installed per upstream behaviour up from 260.19.12
+        r.Install('%(root)s/libvdpau_*', '%(libdir)s/')
+        r.Install('%(root)s/libOpenCL*', '%(libdir)s/')
+        if Arch.x86_64:
+            r.Install('%(root)s/32/libnvidia-c*', '%(lib32)s/')
+            r.Install('%(root)s/32/libcuda.*', '%(lib32)s/')
+            r.Install('%(root)s/libnvcuvid.*', '%(lib32)s/')
+            # libvdpau.so.* not installed per upstream behaviour up from 260.19.12
+            r.Install('%(root)s/32/libvdpau_*', '%(lib32)s/')
+            r.Install('%(root)s/32/libOpenCL.*', '%(lib32)s/')
+
+        #
+        r.Install('%(root)s/libGL.*', '%(libdir)s/xorg.nvidia.3d/')
+        # gone from 310.19
+        #  r.Install('%(root)s/libXvMCNVIDIA.*', '%(libdir)s/xorg.nvidia.3d/')
+        r.Install('%(root)s/libnvidia-tls.*', '%(libdir)s/xorg.nvidia.3d/')
+        r.Install('%(root)s/tls/libnvidia-tls.*', '%(libdir)s/xorg.nvidia.3d/tls/')
+        r.Install('%(root)s/libnvidia-wfb.*', '%(libdir)s/xorg/modules/updates/')
+        if Arch.x86_64:
+            r.Install('%(root)s/32/libGL.*', '%(lib32)s/xorg.nvidia.3d/')
+            r.Install('%(root)s/32/libnvidia-tls.*', '%(lib32)s/xorg.nvidia.3d/')
+            r.Install('%(root)s/32/tls/libnvidia-tls.*', '%(lib32)s/xorg.nvidia.3d/tls/')
+
+        r.Install('%(root)s/libglx.*', '%(libdir)s/xorg/modules/updates/extensions/')
+        r.Install('%(root)s/nvidia_drv.*', '%(libdir)s/xorg/modules/updates/drivers/')
+
+
+        r.Install('%(root)s/libnvidia-glcore.so.*', '%(libdir)s/xorg.nvidia.3d/')
+        if Arch.x86_64:
+            r.Install('%(root)s/32/libnvidia-glcore.so.*', '%(lib32)s/xorg.nvidia.3d/')
+
+        r.Remove('%(root)s/*-installer*')
+
+        r.Install('%(root)s/*.1.gz', '%(datadir)s/man/man1/')
+
+        r.Doc('%(root)s/html')
+        
+        for f in ['LICENSE', 'NVIDIA_Changelog', 'pkg-history.txt',  'README.txt']:
+            r.Doc('%(root)s/' + f)
+
+        # sanitize .desktop file
+        r.Replace(('__PIXMAP_PATH__','%(datadir)s/pixmaps'),
+                  ('__UTILS_PATH__','%(bindir)s'),
+                  ('__DOCS_PATH__','%(datadir)s/pixmaps'),
+                  ('Exec=','Exec=gksudo '),
+                  '%(root)s/nvidia-settings.desktop')
+        r.Replace('Application;','GNOME;', '%(root)s/nvidia-settings.desktop')
+
+        r.Desktopfile('%(root)s/nvidia-settings.desktop')
+
+        r.Install('%(root)s/nvidia-settings.png', '%(datadir)s/pixmaps/')
+
+        r.SharedLibrary(subtrees='%(libdir)s/xorg/modules/updates/')
+        r.SharedLibrary(subtrees='%(libdir)s/xorg/modules/updates/extensions/')
+        r.SharedLibrary(subtrees='%(libdir)s/xorg/modules/updates/drivers/')
+
+        r.SharedLibrary(subtrees='%(libdir)s/xorg.nvidia.3d')
+        r.SharedLibrary(subtrees='%(libdir)s/xorg.nvidia.3d/tls')
+
+        r.Symlink('%(libdir)s/libvdpau_nvidia.so.1', '%(libdir)s/libvdpau_nvidia.so')
+        if Arch.x86_64:
+            r.SharedLibrary(subtrees='%(lib32)s/xorg.nvidia.3d')
+            r.SharedLibrary(subtrees='%(lib32)s/xorg.nvidia.3d/tls')
+            r.Symlink('%(lib32)s/xorg.nvidia.3d/libGL.so.%(version)s', '%(lib32)s/xorg.nvidia.3d/libGL.so' )
+            r.Symlink('%(lib32)s/libcuda.so.%(version)s', '%(lib32)s/libcuda.so' )
+            r.Symlink('%(lib32)s/libvdpau_nvidia.so.1', '%(lib32)s/libvdpau_nvidia.so')
+
+        r.Symlink('%(libdir)s/xorg.nvidia.3d/libGL.so.%(version)s', '%(libdir)s/xorg.nvidia.3d/libGL.so' )
+        r.Symlink('%(libdir)s/libcuda.so.%(version)s', '%(libdir)s/libcuda.so' )
+        r.Symlink('%(libdir)s/xorg/modules/updates/extensions/libglx.so.%(version)s',
+                  '%(libdir)s/xorg/modules/updates/extensions/libglx.so')
+
+        r.ComponentSpec('lib', 'libglx.so')
+        r.ComponentSpec('lib', 'libGL.so')
+#        r.ComponentSpec('lib', 'libXvMCNVIDIA.a')
+
+        # The kernel side is in nvidia-kernel, and we need the kernel
+        # modules that match this version exactly
+        r.Requires('nvidia-kernel:runtime(%(version)s)', 
+                   '%(libdir)s/xorg/modules/updates/drivers/nvidia_drv.so')
+
+        # nvidia-kernel expects :lib
+        # we need to make :lib _require_ explictly :runtime and :config
+        # otherwise ppl installing nvidia-kernel thru pkgKit will get broken
+        # setups (with no nvidia-xconfig)
+
+        r.Requires('nvidia:runtime', '%(libdir)s/xorg/modules/updates/drivers/nvidia_drv.so')
+        r.Requires('nvidia:config', '%(libdir)s/xorg/modules/updates/drivers/nvidia_drv.so')
+
+        # runtime Reqs of nvidia-xconfig
+        r.Requires('%(bindir)s/pkg-config', '%(bindir)s/nvidia-xconfig')
+
+        # We want to make sure that the kernel module can require the
+        # matching userspace code
+        r.ComponentProvides('%(version)s')
+        
+        # conary some times it's too smart for its own good...
+
+        # no :data
+        r.ComponentSpec('runtime', '%(datadir)s/pixmaps/.*')
+        r.ComponentSpec('runtime', '%(datadir)s/applications/.*')
+
+        # no :devellib
+        r.ComponentSpec('lib', '%(libdir)s/.*.so')
+        if Arch.x86_64:
+            r.ComponentSpec('lib', '%(lib32)s/.*.so')
+
+        # we want Mesa's libGL to be used for dep resolution, as that one is installed on all user's boxes, 
+        # and should be the one that goes into _all_ rMake chroots. 
+        r.Provides(exceptions='.*')
+        r.EnforceSonameBuildRequirements(exceptions='.*')
+
+        if Arch.x86_64:
+             r.Requires(exceptDeps=r'soname\:\ ELF64\/libnvidia\-glcore\.so\.%s\.%s\(SysV\ x86\_64\)' % (vmajor, vminor))
+             r.Requires(exceptDeps=r'soname\:\ ELF64\/libnvidia\-tls\.so\.%s\.%s\(SysV\ x86\_64\)' % (vmajor, vminor))
+             r.Requires(exceptDeps=r'soname\:\ ELF64\/libnvidia\-ml\.so\.1\(SysV\ x86\_64\)')
+
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libnvidia\-tls\.so\.%s\.%s\(SysV\ x86\)' % (vmajor, vminor))
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libnvidia\-glcore\.so\.%s\.%s\(SysV\ x86\)' % (vmajor, vminor))
+        r.Requires(exceptDeps=r'soname\:\ ELF32\/libnvidia\-ml\.so\.1\(SysV\ x86\)')
+
+        # take nouveau drm kmod out of way ...
+        # ftp://download.nvidia.com/XFree86/Linux-x86_64/256.44/README/commonproblems.html
+        r.Create('%(sysconfdir)s/modprobe.d/blacklist-nouveau.conf', mode = 0644,
+                 contents = 'blacklist nouveau')
+        # 
+        r.Create('%(sysconfdir)s/bootloader.d/%(name)s.conf',
+                 contents = 'add_options nouveau.modeset=0 rdblacklist=nouveau nomodeset ',
+                 mode = 0644)
+
+        # libvdpau* not installed per upstream behaviour up from 260.19.12 so ...
+        # we expect stock one to be present
+
+        if Arch.x86_64:
+            r.Requires('soname: libvdpau.so.1(SysV x86_64)', '%(libdir)s/.*')
+            r.Requires('soname: libvdpau.so.1.0.0(SysV x86)', '%(lib32)s/.*')
+            # XXX line bellow in an artifact of line above. shouldn't be needed AT ALL
+            r.Requires(exceptDeps=r'soname\:\ ELF64\/libvdpau\.so\.1\.0\.0\(SysV\ x86\ x86\_64\)')
+        elif Arch.x86:
+            r.Requires('soname: libvdpau.so.1.0.0(SysV x86)', '%(libdir)s/.*')
+

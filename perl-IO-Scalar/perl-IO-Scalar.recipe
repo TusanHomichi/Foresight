@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class PerlIoScalar(CPANPackageRecipe):
+    name = 'perl-IO-Scalar'
+    version = '2.110'
+    upstreamname = 'IO-stringy'
+
+    buildRequires = ['perl:devel']

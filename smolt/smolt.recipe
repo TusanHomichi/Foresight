@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Smolt(PackageRecipe):
+    name = 'smolt'
+    version = '1.4'
+
+    buildRequires = [
+        'PyQt4:python',
+        'chkconfig:runtime',
+        'desktop-file-utils:runtime',
+        'firstboot:python',
+        'gettext:runtime',
+        'gtk:runtime',
+        'make:runtime',
+        'pygobject:python',
+        'pygtk:python',
+        'python:devel',
+        'rhpl:python',
+        'urlgrabber:python',
+    ]
+
+    def setup(r):
+        r.addArchive("https://fedorahosted.org/releases/s/m/smolt/")
+        r.Replace("gzip -9", "gzip -9 -c", "client/Makefile")
+        r.Replace(r"ln -sf \$\(DATADIR\)/\$\(NAME\)/client/sendProfile\.py",
+            "ln -sf ../share/$(NAME)/client/sendProfile.py",
+            "client/Makefile")
+        r.Replace(r"ln -sf \$\(DATADIR\)/\$\(NAME\)/client/deleteProfile\.py",
+            "ln -sf ../share/$(NAME)/client/deleteProfile.py",
+            "client/Makefile")
+        r.Replace(r"ln -sf \$\(DATADIR\)/\$\(NAME\)/client/smoltGui\.py",
+            "ln -sf ../share/$(NAME)/client/smoltGui.py",
+            "client/Makefile")
+        r.Replace(r"ln -sf \$\(SMOLTCONFIGDIR\)/config\.py",
+            "ln -sf ../../../../etc/$(NAME)/config.py",
+            "client/Makefile")
+        r.Make(dir="client")
+        r.MakeInstall(dir="client")
+        r.Create("%(sysconfdir)s/sysconfig/hw-uuid")
+        r.InitialContents("%(sysconfdir)s/sysconfig/hw-uuid")
+        r.Install("client/smolt-init", "%(initdir)s/%(name)s")
+        r.PackageSpec("smolt-gui", "gui.py", "smoltGui.py", "smoltGui",
+            "%(datadir)s/icons/", "smolt.desktop", "client/icons/.*\.png",)
+
+        # Requires TurboGears, we may package this later
+        #r.PythonSetup(dir="smoon")
+
+        r.Install("client/smoltFirstBoot.py",
+            "%(datadir)s/firstboot/modules/smolt.py")
+        r.Install("client/icons/smolt-icon-48.png",
+            "%(datadir)s/firstboot/themes/default/smolt.png")
+        r.PackageSpec("smolt-firstboot",
+            "%(datadir)s/firstboot/modules/smolt.py",
+            "%(datadir)s/firstboot/themes/default/smolt.png")

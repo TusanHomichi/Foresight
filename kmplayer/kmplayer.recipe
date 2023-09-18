@@ -1,0 +1,13 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class KMPlayer(RedirectRecipe):
+
+    name = 'kmplayer'
+    version = '0'
+
+    def setup(r):
+        r.addRemoveRedirect()
+

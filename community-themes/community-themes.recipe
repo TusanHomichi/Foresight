@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class CommunityThemes(BuildPackageRecipe):
+    name = 'community-themes'
+    version = '0.13'
+
+    buildRequires = ['python-setuptools:python', 'gettext:runtime', 'intltool:runtime', 'python-distutils-extra:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://archive.ubuntu.com/ubuntu/pool/universe/c/community-themes/community-themes_%(version)s.tar.gz')
+        r.PythonSetup()
+        r.Move('%(libdir)s/python2.6/site-packages/share/*', '%(datadir)s/')

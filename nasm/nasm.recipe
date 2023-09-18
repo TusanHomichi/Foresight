@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Nasm(CPackageRecipe):
+    name = 'nasm'
+    version = '2.09.08'
+
+    buildRequires = [ 'ghostscript:runtime', 'groff:runtime', 'install-info:runtime', 'texinfo:runtime' ]
+    #if Use.builddocs:
+    #    buildRequires.extend(['espgs:runtime'])
+
+    def setup(r):
+        r.addArchive('http://www.nasm.us/pub/nasm/releasebuilds/%(version)s/nasm-%(version)s.tar.bz2')
+
+        #if not Use.builddocs:
+        # don't build .pdf file.
+        r.Replace(('nasm.info nasmdoc.ps nasmdoc.pdf',
+                   'nasm.info'),
+                  ('nasmdoc.ps nasmdoc.pdf', ''),
+                  'doc/Makefile.in')
+
+        r.Configure()
+        r.Make('everything')
+        r.MakeDirs('%(bindir)s', '%(mandir)s/man1', '%(infodir)s',
+                   '%(thisdocdir)s')
+        r.MakePathsInstall('docdir=%(destdir)s/%(thisdocdir)s',
+                           installtarget='install_everything')
+

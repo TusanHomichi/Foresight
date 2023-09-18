@@ -1,0 +1,22 @@
+From 44d3c5f189a7eed26a344403ff3183b302772daf Mon Sep 17 00:00:00 2001
+From: Harald Hoyer <harald@redhat.com>
+Date: Tue, 29 Mar 2011 15:32:34 +0200
+Subject: [PATCH] dracut: add "/lib/firmware/updates" to default firmware path
+
+---
+ dracut |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/dracut b/dracut
+index 404b9db..c6605bb 100755
+--- a/dracut
++++ b/dracut
+@@ -350,7 +350,7 @@ stdloglvl=$((stdloglvl + verbosity_mod_l))
+ [[ $mdadmconf_l ]] && mdadmconf=$mdadmconf_l
+ [[ $lvmconf_l ]] && lvmconf=$lvmconf_l
+ [[ $dracutbasedir ]] || dracutbasedir=/usr/share/dracut
+-[[ $fw_dir ]] || fw_dir=/lib/firmware
++[[ $fw_dir ]] || fw_dir="/lib/firmware/updates /lib/firmware"
+ [[ $do_strip ]] || do_strip=no
+ [[ $compress_l ]] && compress=$compress_l
+ [[ $show_modules_l ]] && show_modules=$show_modules_l

@@ -1,0 +1,130 @@
+#!/bin/bash
+#
+# Installation script run after docbook-dtds are installed by the 
+# recipe file - automates setting up /etc/xml/docbook-xml.xml, and
+# /etc/sgml/docbook-sgml.cat
+
+CATALOG_ROOT=%(destdir)s/etc/xml
+SGML_ROOT=%(destdir)s/etc/sgml
+CATALOG_FILE=$CATALOG_ROOT/docbook-xml.xml
+SGML_XML_FILE=$SGML_ROOT/docbook-xml.cat
+SGML_FILE=$SGML_ROOT/docbook.cat
+DOCBOOKDIR=%(destdir)s/%(datadir)s
+LATEST_ENTITIES=%(docbook_dtds_latest_entities)s
+ADDED_SOEX='0'
+
+# Run the xmlcatalog command to add the specified delegate or 
+# identifier. Butchers the arguments into something meaningful
+# when not in a build root.
+# 
+# $1 - the type of catalog entry
+# $2 - the orig string 
+# $3 - the filename/entry to point to now
+add_xml_catalog_entry_modify() {
+    xml_catalog_modified=$(echo $3 | sed -r 's!%(destdir)s/!!')
+    xmlcatalog --noout --add "$1" "$2" "$xml_catalog_modified" "$CATALOG_FILE"
+}
+
+
+# Add the sgml catalog entry, modifies the first argument to be
+# meaningful when not in a build root
+# 
+# $1 - file to add
+# $2 - the catalog to modify
+add_sgml_catalog_entry_modify() {
+    sgml_catalog_modified=$(echo $1 | sed -r 's!%(destdir)s/!!')
+    #echo Adding: $sgml_catalog_modified to SGML catalog
+    if [ -f $2 ]; then
+        mv $2 "$2.orig"
+    fi
+    xmlcatalog --sgml --add "$2.orig" "$sgml_catalog_modified" > "$2"
+}
+
+# Populate $CATALOG_FILE with entries from the DTD specified by the 
+# catalog pointed to by the first argument. 
+handle_dtd() {
+    dtdDir=$(dirname $1)
+    dtdWorkStr=$(basename $dtdDir)
+    version=$(echo $dtdWorkStr | sed -r 's!xml-dtd-(.*)-%(version)s!\1!')
+   
+    # Handle the SGML side of things
+    if [ -f $dtdDir/catalog ]; then
+        add_sgml_catalog_entry_modify "$dtdDir/catalog" "$SGML_XML_FILE"
+    fi
+
+    # Handle the XML side of things
+    if [ -f $dtdDir/dbpoolx.mod ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//ELEMENTS DocBook XML Information Pool V${version}//EN" "file://${dtdDir}/catalog.xml"
+    fi
+
+    if [ -f $dtdDir/docbookx.dtd ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//DTD DocBook XML V${version}//EN" "file://${dtdDir}/catalog.xml"
+    fi
+
+    if [ -f $dtdDir/dbcentx.mod ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//ENTITIES DocBook XML Character Entities V${version}//EN" "file://${dtdDir}/catalog.xml" 
+    fi
+
+    if [ -f $dtdDir/dbnotnx.mod ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//ENTITIES DocBook XML Notations V${version}//EN" "file://${dtdDir}/catalog.xml"
+    fi
+
+    if [ -f $dtdDir/dbgenent.mod ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//ENTITIES DocBook XML Additional General Entities V${version}//EN" "file://${dtdDir}/catalog.xml"
+    fi
+
+    if [ -f $dtdDir/dbhierx.mod ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//ELEMENTS DocBook XML Document Hierarchy V${version}//EN" "file://${dtdDir}/catalog.xml"
+    fi
+
+    if [ -f $dtdDir/soextblx.dtd -a $ADDED_SOEX -ne "0" ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//DTD XML Exchange Table Model 19990315//EN" "file://${dtdDir}/catalog.xml"
+    fi
+
+    if [ -f $dtdDir/calstblx.dtd ]; then
+        add_xml_catalog_entry_modify "delegatePublic" "-//OASIS//DTD DocBook XML CALS Table Model V${version}//EN" "file://${dtdDir}/catalog.xml"
+    fi
+    
+    add_xml_catalog_entry_modify "delegateSystem" "http://www.oasis-open.org/docbook/xml/${version}"  "file://${dtdDir}/catalog.xml"
+    add_xml_catalog_entry_modify "delegateURI" "http://www.oasis-open.org/docbook/xml/${version}" "file://${dtdDir}/catalog.xml"
+}
+
+
+# Handle the SGML side of things
+handle_sgml_dtd() {
+    dtdDir=$(dirname $1)
+
+    if [ -f $dtdDir/catalog ]; then
+        add_sgml_catalog_entry_modify "$dtdDir/catalog" "$SGML_FILE"
+    fi
+}
+
+
+# main function
+cd %(destdir)s
+
+# Create the catalogs
+if [ ! -d $CATALOG_ROOT ]; then
+    mkdir -p $CATALOG_ROOT
+fi
+
+if [ ! -d $SGML_ROOT ]; then
+    mkdir -p $SGML_ROOT
+fi
+xmlcatalog --noout --create $CATALOG_FILE
+xmlcatalog --noout --create $SGML_FILE
+xmlcatalog --noout --create $SGML_XML_FILE
+
+# Add the helper catalog entry for SGML
+mv $SGML_FILE $SGML_FILE.orig
+xmlcatalog --sgml --add "$SGML_FILE.orig" "%(datadir)s/sgml/docbook/dtd/catalog" > $SGML_FILE
+
+# Handle the individual SGML DTDS
+for dtd in $DOCBOOKDIR/sgml/docbook/dtd/*/catalog; do
+    handle_sgml_dtd $dtd
+done
+
+# Handle the individual XML DTDs
+for dtd in $DOCBOOKDIR/xml/docbook/schema/dtd/*/docbookx.dtd; do
+    handle_dtd $dtd
+done

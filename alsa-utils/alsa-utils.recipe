@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2007-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class AlsaUtils(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'alsa-utils'
+    version = '1.0.26'
+
+    rpmRelease = '1.fc16'
+    rpmSources = [ 'alsaunmute',
+                   'alsaunmute.1',
+                   'alsa.rules',
+                   'alsa-info.sh',
+                   'alsactl.conf'
+                   ]
+
+    buildRequires = [ 'alsa-lib:devel', 'ncurses:devel', 'gettext:runtime', 'intltool:runtime', 'xmlto:runtime',
+                      'sound-theme-freedesktop:runtime', 'libsamplerate:devel' ]
+
+    def configure(r):
+        r.Configure('CFLAGS="%(cflags)s -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64" --sbindir=%(essentialsbindir)s'
+                    ' --disable-alsaconf')
+
+    def make(r):
+        r.Make()
+
+    def makeinstall(r):
+        r.MakeInstall()
+
+        # Install ALSA udev rules
+        r.Install('alsa.rules', '/etc/udev/rules.d/90-alsa.rules', mode = 0644)
+
+        # Install support utilities
+        r.Install('alsaunmute', '%(bindir)s/', mode = 0755)
+        r.Install('alsaunmute.1', '%(mandir)s/man1/', mode = 0644)
+
+        # Link alsactl to /usr/sbin
+        r.Symlink('%(essentialsbindir)s/alsactl', '%(sbindir)s/alsactl')
+
+        # Move /usr/share/alsa/init to /lib/alsa/init
+        r.MakeDirs('/lib/alsa')
+        r.Move('%(datadir)s/alsa/init', '/lib/alsa/')
+
+        # Link /lib/alsa/init to /usr/share/alsa/init back
+        r.Symlink('/lib/alsa/init/', '%(datadir)s/alsa/init')
+
+        # Create a place for global configuration
+        r.MakeDirs('%(sysconfdir)s/alsa', mode = 0755)
+        r.Install('alsactl.conf', '%(sysconfdir)s/alsa/', mode = 0644)
+
+        r.Create('%(localstatedir)s/lib/alsa/asound.state', mode = 0644)
+        r.InitialContents('%(localstatedir)s/lib/alsa/asound.state')
+
+        #  Install alsa-info.sh script
+        r.Install('alsa-info.sh', '%(bindir)s/', mode = 0755)
+        r.Symlink('%(bindir)s/alsa-info.sh', '%(bindir)s/alsa-info')
+
+

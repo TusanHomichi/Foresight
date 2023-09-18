@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class AtSpi(GnomePackageRecipe):
+    name = 'at-spi'
+    version = '1.32.0'
+
+    buildRequires = [ 'libICE:devel', 'libSM:devel', 'libXevie:devel',
+                      'libXtst:devellib', 'atk:devel', 'fontconfig:runtime',
+                      'glib:devel', 'libart_lgpl:devel', 'libbonobo:devel',
+                      'libgnomecanvas:devel', 'ORBit2:devel',
+                      'pango:devel', 'intltool:runtime', 'gettext:runtime',
+                      'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                      'libpng:devel', 'perl:runtime', 'popt:devel', 
+                      'libXt:devel', 'gcc-c++:runtime', 'expat:devel',
+                      'gnome-python:python', 'libXtst:devel',
+                      'pygobject:python', 'pyorbit:python', 
+                      'libXtst:devel', 'python:devel',
+                      'GConf:devel', 'GConf:runtime',
+                      ]
+
+    extraConfig = ' --disable-gtk-doc  --disable-static --enable-relocate'
+    patches = ['evo-crash.patch', 
+               'use-orbit-stack.patch']
+

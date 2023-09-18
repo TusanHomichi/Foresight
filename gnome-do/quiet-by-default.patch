@@ -1,0 +1,12 @@
+diff -r 069ab732fa0b Do/src/DoPreferences.cs
+--- a/Do/src/DoPreferences.cs	Sat Jun 14 23:06:44 2008 -0400
++++ b/Do/src/DoPreferences.cs	Tue Jun 17 23:37:47 2008 -0400
+@@ -40,7 +40,7 @@
+ 		}
+ 
+ 		public bool QuietStart {
+-			get { return Get<bool> ("QuietStart", false); }
++			get { return Get<bool> ("QuietStart", true); }
+ 			set { Set<bool> ("QuietStart", value); }
+ 		}
+ 

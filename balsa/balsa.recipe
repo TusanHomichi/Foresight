@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Balsa(CPackageRecipe):
+    name = 'balsa'
+    version = '2.4.14'
+ 
+    buildRequires = [
+        'libstdc++:devel', 
+        'gmime:devel', 
+        'intltool:runtime', 
+        'perl-XML-Parser', 
+        'ORBit2:devel', 
+        'aspell:devel', 
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'expat:devel', 
+        'freetype:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gnome-vfs:devel', 
+        'gtk:devel', 
+        'gtk:runtime', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXrender:devel', 
+        'libart_lgpl:devel', 
+        'libbonobo:devel', 
+        'libbonoboui:devel', 
+        'libesmtp:devel', 
+        'libgnomecanvas:devel', 
+        'libgnomeui:devel', 
+        'libnotify:devel', 
+        'libpng:devel', 
+        'libxslt:runtime', 
+        'pango:devel', 
+        'pcre:devel', 
+        'perl:runtime', 
+        'pkgconfig:devel', 
+        'popt:devel', 
+        'rarian:runtime', 
+        'zlib:devel', 
+        'NetworkManager:devel', 
+        'enchant:devel', 
+        'gtkhtml:devel', 
+        'gnome-icon-theme:devellib', 
+        'e2fsprogs:devel', 
+        'gnome-doc-utils:runtime', 
+        'gnome-doc-utils:devel', 
+        'gtkspell:devel', 
+        'krb5:devel', 
+        'libcanberra:devel', 
+        'libgnome-keyring:devel', 
+        'openssl:devel', 
+        'rarian:devel', 
+        'sound-theme-freedesktop:runtime', 
+        'unique:devel', 
+        'which:runtime', 
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://pawsa.fedorapeople.org/balsa/'
+                     '%(name)s-%(version)s.tar.bz2')
+	r.Configure('--with-canberra --enable-touch-ui --with-gss --with-gtkspell --with-rubrica --with-unique --with-ssl --enable-smime')
+	r.Make()
+	r.MakeInstall()

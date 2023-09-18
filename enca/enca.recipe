@@ -1,0 +1,8 @@
+class Enca(AutoPackageRecipe):
+    name = 'enca'
+    version = '1.9'
+
+    buildRequires = ['glibc:locale', 'gtk-doc:runtime', 'perl:runtime']
+
+    def unpack(r):
+        r.addArchive('http://www.sfr-fresh.com/cgi-bin/warex?unix/privat/enca-1.9.tar.bz2')

@@ -1,0 +1,211 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Mkinitrd(RPMPackageRecipe, CPackageRecipe):
+    name = 'mkinitrd'
+    version = '6.0.93'
+    rpmRelease = '1.fc12'
+    rpmPatches = [ ]
+
+    buildRequires = [ 'popt:devel', 'device-mapper:devel', 'e2fsprogs:devel',
+        'glib:devel', 'parted:devel', 'pkgconfig:devel', 'libdhcp:devel',
+        'pump:devel', 'libdhcp:devel', 'openssl:devel', 'python:devel',
+        'libdhcp4client:devel', 'libdhcp6client:devel', 'libnl:devel',
+        'initscripts:runtime', # see discussion below of get_numeric_dev
+        'libelf:devel', 'elfutils:devel', 'util-linux:devel',
+        ]
+
+    def setup(r):
+        r.disableParallelMake()
+        r.unpack()
+        # upstream split grubby from mkinitrd sources
+        # we keep bot hin same pks for now for simplicity
+        grubbyUpVersion = '7.0.13'
+        r.addArchive('grubby-%s.tar.bz2'% grubbyUpVersion)
+
+        # in the makefile - we override them by setting CFLAGS when calling make
+        r.macros.cflags += ' -D_FORTIFY_SOURCE=2 -fPIC -std=gnu99 -D_GNU_SOURCE=1'
+        r.addPatch('disable-selinux-mkinitrd-6.0.87.patch')
+        r.addSource('kernel.tagdescription', macros=True, dest='%(tagdescriptiondir)s/kernel')
+        r.addSource('kernel.taghandler', macros=True, dest='%(taghandlerdir)s/kernel', mode=0755)
+
+        if Use.xen and Use.domU:
+             r.Replace('run_bommy add \$version \$pre \$initrd \$xenmultiboot',
+                       'run_bommy add $version $pre $initrd',
+                       '%(taghandlerdir)s/kernel')
+
+        # don't try to link against selinux since we don't have it
+        r.Replace(('-lsepol', ''), ('-lselinux', ''),
+            'Makefile', '*/Makefile', allowNoChange=True)
+
+        # wrap fopen, socket, pipe, etc so __real_fopen doesn't show up as an
+        # unresolved symbol... filed upstream as
+        # http://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=220746
+        r.addPatch('wrapstuff.patch')
+
+        # handle adding firmware to initrd.
+        # r.addPatch('firmware-handling.patch')
+
+        # Work around new [[ =~ ]] parsing rules in bash 3.2 (RPL-1478)
+        r.addPatch('mkinitrd-6.0.87-shell_regexp.patch')
+
+        # RPL-1068. Eliminate warning if /etc/ld.so.conf.d doesn't exist.
+        r.addPatch('mkinitrd-ld.so.conf.d.patch', level=0)
+
+        r.MakeDirs('%(sysconfdir)s/mkinitrd-firmware.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/mkinitrd-firmware.d')
+
+        # Return error if fstab is not found (RPL-1959).
+        r.addPatch('fstab.patch')
+
+        # integrate libata-migrate
+        # point here isn't exactly to allow migration from pre-historic
+        # setups but to try to get anaconda to behave with minimal mods
+        # FIXME - shouldn't be needed, makes too much noise too
+        # r.addPatch('libata-migrate.patch')
+
+        # Include all PATA modules to facilitate libata migration
+        r.addPatch('mkinitrd-modules.libata.patch')
+
+        # Now only install the ones that are on the system
+        r.addPatch('mkinitrd-6.0.87-pcifilter.patch')
+        # ensure a functional mdadm.conf for any raid devices (RPL-2493)
+        r.addPatch('mdadm.conf.patch')
+
+        # If a *hci-hcd module gets added, add usb-storage, too
+        r.addPatch('mkinitrd-6.0.87-usbstorage.patch')
+
+        # Work around lost uevents (RPL-3047)
+        r.addPatch('mkblkdevs-rescan-sysfs.patch')
+
+        # applied upstream
+        # From bugzilla 233701 (RPL-3133)
+        # r.addPatch('mkinitrd-6.0.37-killhotplug.patch')
+
+        # we do NOT want this one from rPL 
+        # Deal with our deprecated sysfs layout
+        # r.addPatch('mkinitrd-6.0.93-deprecated-sysfs.patch')
+
+        # we do NOT want this one from rPL 
+        # r.addPatch('mkinitrd-6.0.93-old-udev.patch')
+
+        # fix sd_mod breakage
+        r.addPatch('mkinitrd-6.0.93-sd_mod.patch')
+
+        # skip loop / ram devs
+        r.addPatch('mkinitrd-fsdis.patch')
+
+        # applied upstream
+        # speed up mkblkdevs
+        # r.addPatch('mkinitrd-mkblkdevs-speedup.patch')
+
+        # applied upstream
+        # in lieu of rescanning sysfs, try the fix from
+        # https://bugzilla.redhat.com/show_bug.cgi?id=480667
+        # r.addPatch('mkinitrd-bz480667.patch')
+
+        # extra bashifications
+        r.Replace('=yes', '="yes"', 'mkinitrd')
+
+
+        # define an internal copy of get_numeric_dev, normally provided by
+        # /etc/init.d/functions. this eases transitions from rpl:1, whose
+        # initscripts do not define this function
+        r.addSource('get_numeric_dev.sh')
+        r.extraBuild(Add_get_numeric_dev(r))
+
+        r.Replace('Red Hat ', '', 'nash/nash.c')
+
+        r.Make('LIB=%(lib)s')
+        r.MakeInstall('LIB=%(lib)s mandir=%(mandir)s')
+
+        # grubby
+        # change branding
+        grubbyDir = '../grubby-' + grubbyUpVersion
+        r.Replace(('redhat-release', 'distro-release'),
+                  ('/redhat', '/rpath'),
+                  ('"Red Hat Linux', '"rPath Linux'),
+                   grubbyDir + '/{grubby.c,new-kernel-pkg,test.sh}')
+
+        r.Make(dir = grubbyDir)
+        r.MakeInstall('mandir=%(mandir)s', dir = grubbyDir)
+        
+        for req in ('%(essentialbindir)s/awk', '%(essentialsbindir)s/dmsetup',
+                    '%(essentialsbindir)s/ip', '%(essentialsbindir)s/modprobe',
+                    '%(essentialsbindir)s/lvm',
+                    '%(essentialsbindir)s/ldconfig', '/dev/null',
+                    '%(bindir)s/head', '%(bindir)s/tail',
+                    '%(essentialbindir)s/cat',
+                    '%(essentialbindir)s/chmod',
+                    '%(bindir)s/cmp',
+                    #'%(bindir)s/strip', # RPL-2413
+                    '%(bindir)s/wc',
+                    '%(bindir)s/bzgrep',
+                    '%(bindir)s/bzip2',
+                    '%(bindir)s/tr',
+                    '%(bindir)s/find',
+                    '%(essentialbindir)s/cp',
+                    '%(essentialbindir)s/cpio',
+                    '%(essentialbindir)s/df',
+                    '%(essentialbindir)s/egrep',
+                    '%(essentialbindir)s/grep',
+                    '%(essentialbindir)s/zgrep',
+                    '%(essentialbindir)s/gzip',
+                    '%(essentialbindir)s/ln',
+                    '%(essentialbindir)s/mkdir',
+                    '%(essentialbindir)s/mknod',
+                    '%(essentialbindir)s/mktemp',
+                    '%(essentialbindir)s/rm',
+                    '%(essentialbindir)s/mv',
+                    '%(essentialbindir)s/sed',
+                    '%(essentialbindir)s/cut',
+                    '%(essentialbindir)s/basename',
+                    '%(essentialbindir)s/sort',
+                    '%(essentialbindir)s/loadkeys',
+                    '%(essentialbindir)s/ash.static',
+                    '%(essentialbindir)s/ls',
+                    '%(essentialsbindir)s/ext3flush',
+                    '%(essentialsbindir)s/lvm',
+                    '%(essentialsbindir)s/modprobe',
+                    '%(essentialsbindir)s/bootman',
+                    '%(essentialsbindir)s/bommy',
+                    '%(essentialsbindir)s/modinfo',
+                    '%(essentialsbindir)s/depmod',
+                    'initscripts:runtime',
+                    'plymouth:runtime'
+                    ):
+
+            r.Requires(req, '%(essentialsbindir)s/mkinitrd')
+
+        for req in ('%(essentialsbindir)s/bootman',
+                    '%(essentialsbindir)s/bommy',
+                    '%(bindir)s/grubtobootman',
+                    '%(bindir)s/wc',
+                    '%(essentialsbindir)s/ext3flush',
+                    '%(essentialbindir)s/awk',
+                    'bootman:runtime(bommy-get)',):
+            r.Requires(req, '%(taghandlerdir)s/kernel')
+                
+
+# unfortunatly, it is difficult to do these actions efficiently in shell, and
+# doing them in python requires a build action
+class Add_get_numeric_dev(build.BuildAction):
+    def do(self, macros):
+            g_n_d = open('get_numeric_dev.sh').read()
+            mkinitrdContents = open('mkinitrd').read()
+            if not g_n_d in open('%(initdir)s/functions' % macros).read():
+                raise Exception, 'the function in get_numeric_dev.sh appears' \
+                    ' to have changed in the most recent version of' \
+                    ' initscripts:runtime. please correct before continuing'
+            comment = '# this is necessary for migrations from rpl:1. see RPL-2288'
+            inLine = '. /etc/rc.d/init.d/functions'
+            outLine = '\n'.join((comment,g_n_d,'',inLine))
+            new_mkinitrdContents = mkinitrdContents.replace(inLine, outLine)
+            if new_mkinitrdContents == mkinitrdContents:
+                raise Exception, 'no replacement was made'
+            open('mkinitrd', 'w').write(new_mkinitrdContents)
+

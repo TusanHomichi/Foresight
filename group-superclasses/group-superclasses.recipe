@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2008 Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GroupSuperclasses(GroupRecipe):
+    name = 'group-superclasses'
+    version = '1'
+
+    autoResolve = False
+    depCheck = False
+
+    def setup(r):
+        r.add('autopackage')
+        r.add('baserequires')
+        r.add('buildpackage')
+        r.add('cpackage')
+        r.add('derivedpackage')
+        r.add('fileset')
+        r.add('group')
+        r.add('groupinfo')
+        r.add('package')
+        r.add('redirect')
+        r.add('userinfo')

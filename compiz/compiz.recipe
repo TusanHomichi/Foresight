@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# 
+
+import datetime
+class Compiz(CPackageRecipe):
+    name = 'compiz'
+    version = '0.8.6'
+
+    buildRequires = [ 'GConf:runtime', 'Mesa:devel', 'ORBit2:devel',
+                      'atk:devel', 'cairo:devel', 'dbus-glib:devel',
+                      'freetype:devel', 'glib:devel', 'gnome-desktop:devel',
+                      'gnome-vfs:devel', 'gtk:devel', 'libICE:devel',
+                      'libSM:devel', 'libX11:devel', 'libXcomposite:devel',
+                      'libXdamage:devel', 'libXdmcp:devel', 'libXext:devel',
+                      'libXfixes:devel', 'libXinerama:devellib', 'libXrandr:devel',
+                      'libXrender:devel', 'libart_lgpl:devel', 'libbonobo:devel',
+                      'libbonoboui:devel', 'libgnomecanvas:devel', 'libgnomeui:devel',
+                      'libpng:devel', 'librsvg:devel', 'libxml2:devel', 'Mesa:devellib',
+                      'pango:devel', 'pkgconfig:devel', 'popt:devel',
+                      'startup-notification:devel', 'zlib:devel', 'GConf:devel',
+                      'gnome-control-center:devel', 'expat:devel', 'fuse:devel',
+                      'libwnck:devel', 'metacity:devel', 'gettext:runtime', 
+                      'autoconf:runtime', 'automake:runtime', 'intltool:devel',
+                      'intltool:runtime', 'libtool:devel', 'libtool:runtime',
+                      'Mesa:devellib', 'libXinerama:devel', 'libxslt:runtime', 
+                      'libxslt:devel', 'libXcursor:devel', 'libXft:devel',
+                      'libXi:devel', 'libXmu:devel', 'libidn:devel',
+                      'libjpeg:devel', 'libstdc++:devel', 'pcre:devel', 
+                      'desktop-file-utils:runtime',
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime', 
+                      'libglade:devel'
+                      ]
+
+    def setup(r):
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+        r.addArchive('http://releases.compiz-fusion.org/%(version)s/')
+        for p in [ 'compiz-0.8.6-wall.patch', 
+                   'compiz-0.8.6-unloadpluginfix.patch',
+                   'composite-cube-logo.patch',
+                   'gdk_display_deprecated.patch',
+                   ]: 
+            r.addPatch(p)
+
+        r.addSource('foresight.png', dest='images/freedesktop.png')
+        r.addSource('compiz-gtk')
+        r.addSource('compiz-gtk.desktop')
+        r.Run('autoreconf -fi')
+        r.Configure(
+            ' DESTDIR=%(destdir)s'
+            ' --disable-static '
+            ' --enable-gconf '
+            ' --enable-dbus '
+            ' --enable-place '
+            ' --enable-librsvg '
+            ' --enable-gtk '
+            ' --enable-metacity '
+            ' --enable-gnome '
+            ' --enable-gnome-keybindings '
+            # order is important!
+            ' --with-default-plugins="core,glib,gconf,dbus,png,svg,video,screenshot,decoration,clone,place,fade,minimize,move,resize,switcher,scale,wall,obs" '
+            )
+
+        r.Make('imagedir=%(datadir)s/pixmaps')
+        r.MakeInstall()
+        # check if we still need this...
+        r.Symlink('%(libdir)s/window-manager-settings/libcompiz.so','%(libdir)s/libgnome-window-settings1/')
+
+        r.PackageSpec('compiz-gnome',
+            '%(bindir)s/gtk-window-decorator',
+            '%(libdir)s/libgnome-window-settings1/',
+            '%(libdir)s/window-manager-settings/libcompiz.so',
+        )
+
+        r.Requires('compiz:runtime', '%(bindir)s/gtk-window-decorator')
+
+        r.Install('compiz-gtk', '%(bindir)s/', mode = 0755)
+        r.Install('compiz-gtk.desktop', '%(datadir)s/applications/')
+
+        # could be in a separate pkg... here is simpler/faster for now...
+        r.addArchive('https://fedorahosted.org/released/desktop-effects/desktop-effects-0.8.4.tar.bz2')
+        deDir = '../desktop-effects-0.8.4'
+        r.Replace('-Werror', '', deDir + '/configure')
+        r.Configure(dir = deDir)
+        r.Make(dir = deDir)
+        r.MakeInstall(dir = deDir, package = 'compiz-gnome')

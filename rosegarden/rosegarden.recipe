@@ -1,0 +1,47 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rosegarden(AutoPackageRecipe):
+    name = 'rosegarden'
+    version = '12.04'
+ 
+    buildRequires = []
+ 
+    packageSummary = 'Rosegarden is a well-rounded audio and MIDI sequencer'
+    packageDescription = 'Rosegarden is a well-rounded audio and MIDI sequencer, score editor, and general-purpose music composition and editing environment. Rosegarden is an easy-to-learn, attractive application that runs on Linux, ideal for composers, musicians, music students, and small studio or home recording environments.'
+ 
+    buildRequires = [
+                    'alsa-lib:devel',
+                    'autoconf:runtime',
+                    'automake:runtime',
+                    'desktop-file-utils:runtime',
+                    'dssi:devel',
+                    'fftw:devel',
+                    'gtk:runtime',
+                    'jack:devel',
+                    'ladspa_sdk:devel',
+                    'liblo:devel',
+                    'liblrdf:devel',
+                    'libsamplerate:devel',
+                    'libSM:devel',
+                    'libsndfile:devel',
+                    'libstdc++:devel',
+                    'libX11:devel',
+                    'lirc:devel',
+                    'makedepend:runtime',
+                    'pkgconfig:devel',
+                    'qt4-core:devellib',
+                    'qt4:devel',
+                    'qt4-gui:devellib',
+                    'qt4-qt3support:devellib',
+                    'raptor:devel',
+                    'shared-mime-info:runtime',
+                    'zlib:devel',
+                    ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/rosegarden/rosegarden/%(major_version)s-LINUX/rosegarden-%(version)s.tar.bz2')

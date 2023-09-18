@@ -1,0 +1,45 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hydrogen(AutoPackageRecipe):
+    name = 'hydrogen'
+    version = '0.9.5.1'
+
+    buildRequires = [ 'alsa-lib:devel',
+                      'desktop-file-utils:runtime',
+                      'jack:devel',
+                      'libarchive:devel',
+                      'liblrdf:devel',
+                      'libsndfile:devel',
+                      'libsndfile:runtime',
+                      'libstdc++:devel',
+                      'libtar:devel',
+                      'pkgconfig:devel',
+                      'portmidi:devel',
+                      'qt4-core:devellib',
+                      'qt4-gui:devellib',
+                      'qt4:devel',
+                      'raptor:devel',
+                      'scons:runtime',
+                      'subversion:runtime',
+                      'zlib:devel',
+                  ]
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/hydrogen/Hydrogen/0.9.5 Sources/hydrogen-%(version)s.tar.gz')
+        r.addPatch('hydrogen-lrdf-pkg.patch')
+        r.addPatch('hydrogen-devel-warning.patch')
+        r.addPatch('install.patch')
+
+        r.Make(' prefix=%(prefix)s libarchive=1 portaudio=0 portmidi=1 lash=0 oss=0'
+               ' optflags="%(cflags)s" ', makeName='scons')
+
+        r.Make('DESTDIR=%(destdir)s install', makeName='scons')
+
+        r.Move('%(datadir)s/pixmaps/*.svg',
+               '%(datadir)s/icons/hicolor/scalable/apps/')
+        

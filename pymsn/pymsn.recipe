@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pymsn(PackageRecipe):
+    name = 'pymsn'
+    version = '0.3.1'
+
+    buildRequires = ['python:devel', 'python-setuptools:python',
+                     'adns-python:python', 'cElementTree:python',
+                     'pyOpenSSL:python', 'pygobject:python']
+
+    def setup(r):
+        r.addArchive('http://telepathy.freedesktop.org/releases/%(name)s/')
+        r.Replace('os.path.dirname\(__file__\)', 'os.curdir', 'setup.py')
+        r.PythonSetup()

@@ -1,0 +1,33 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Jumanji(AutoPackageRecipe):
+    name = 'jumanji'
+    version = '0.1'
+
+    buildRequires = [
+        'atk:devel',
+        'cairo:devel',
+        'fontconfig:devel',
+        'freetype:devel',
+        'gdk-pixbuf:devel',
+        'glib:devel',
+        'gtk:devel',
+        'libpng:devel',
+        'libsoup:devel',
+        'pango:devel',
+        'unique:devel',
+        'WebKit:devel',
+    ]
+
+    def unpack(r):
+        r.addGitSnapshot('git://pwmt.org/jumanji.git')
+
+    def setup(r):
+        r.unpack()
+        r.makeinstall()
+        r.policy()

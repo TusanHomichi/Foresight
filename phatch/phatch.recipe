@@ -1,0 +1,21 @@
+#
+# Foresight Linux Template for Python packages 2009
+# Feel free to delete those both lines!
+#
+# Copyright (c) 2007 Foresight Linux, [your name]
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class Patch(PackageRecipe):
+
+    name = 'phatch'
+    version = '1.6'
+
+    buildRequires = ['python-setuptools:python', 'PIL:python', 'python:devel', 'wxPython:python', 'desktop-file-utils:runtime', 'pkgconfig:devel', 'shared-mime-info:runtime']
+
+    def setup(r):
+        r.addArchive('http://sd-2469.dedibox.fr/photobatch/download/package/phatch-0.1.6.tar.gz')
+        r.PythonSetup(data='--install-data=%(prefix)s')
+#	r.Run('python /trunk/phatch/phatch.py')

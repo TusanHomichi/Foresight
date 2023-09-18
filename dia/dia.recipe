@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('gnomepackage.recipe')
+class Dia(GnomePackageRecipe):
+    name = 'dia'
+    version = '0.97.1'
+
+    buildRequires = [ 'atk:devel', 'freetype:devel', 'gcc:devel',
+        'GConf:devel', 'glib:devel', 'gtk:devel', 'libart_lgpl:devel',
+        'libgnomecanvas:devel', 'libjpeg:devel', 'libpng:devel',
+        'libxml2:devel', 'libxslt:devel', 'pango:devel', 'popt:devel',
+        'zlib:devel', 'cairo:devel', 'fontconfig:devel',
+        'desktop-file-utils:runtime', 'docbook-utils:runtime',
+        'gettext:runtime', 'perl:runtime', 'pkgconfig:devel',
+        'PyXML:python', 'gcc-c++:runtime', 'libgnomeui:devel',
+        'perl-XML-Parser', 'ORBit2:devel', 'gnome-keyring:devel',
+        'gnome-vfs:devel', 'libbonobo:devel', 'libbonoboui:devel',
+        'libgnome:devel', 'libxslt:runtime', 'pygtk:python', 'pygtk:devel',
+        'python:devel', 'docbook-xsl:data', 'docbook-dtds:data', 'libICE:devel',
+        'libSM:devel', 'pygtk:runtime', 'pycairo:python' ]
+
+    extraConfig = '--enable-db2html --enable-gnome --with-python'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Replace('py_prefix/lib', 'py_prefix/%(lib)s', 'configure')
+
+    def policy(r):
+        # dia uses .la files for modules
+        r.RemoveNonPackageFiles(exceptions=r'\.la$')

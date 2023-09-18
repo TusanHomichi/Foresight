@@ -1,0 +1,70 @@
+loadSuperClass('rpmpackage')
+class IscsiInitiatorUtils(RPMPackageRecipe,CPackageRecipe): 
+    name = 'iscsi-initiator-utils'
+    version = '6.2.0.872'
+    rpmRelease = '13.fc16'
+    buildRequires = ['doxygen:runtime', 'openslp:devel', 'openssl:devel','chkconfig:runtime', 'python:devel', 'python-setuptools:python', 'python-setuptools:runtime', 'flex:runtime']
+    tarballVersion = '-'.join(version.split('.',1)[1].rsplit('.',1))
+    rpmSources = ['04-iscsi', 'iscsidevs.init']
+    tarballName = 'open-iscsi-'+tarballVersion+'-rc4-bnx2i.tar.gz'
+    rpmPatches = [ 
+                   '%(name)s-sync-uio-0.7.0.8.patch',
+                   '%(name)s-sync-iscsi.patch',
+                   '%(name)s-update-initscripts-and-docs.patch',
+                   '%(name)s-use-var-for-config.patch',
+                   '%(name)s-use-red-hat-for-name.patch',
+                   '%(name)s-add-libiscsi.patch',
+                   '%(name)s-uip-mgmt.patch',
+                   '%(name)s-dont-use-static.patch',
+                   '%(name)s-remove-the-offload-boot-supported-ifdef.patch',
+                   '%(name)s-uio-handle-different-iface_rec.patch',
+                   '%(name)s-brcm-man.patch',
+                   '%(name)s-fix-default-bindings.patch',
+                   '%(name)s-fix-iscsiadm-return.patch',
+                   '%(name)s-dont-use-openssl.patch',
+                   '%(name)s-sync-uio-0.7.0.14.patch',
+                   '%(name)s-fix-nlmsglen.patch',
+                   '%(name)s-ofl-iface-fixes.patch',
+                   '%(name)s-fix-ipv6-boot.patch',
+                   '%(name)s-add-rh-ver.patch']
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.macros.tarballVersion = '-'.join(r.macros.version.split('.',1)[1].rsplit('.',1))
+        r.Replace('lisns', 'lisns -lslp','usr/Makefile')
+        r.addSource('iscsid.init')
+        r.Run("sed -i -e 's|iqn.1994-05.com.redhat|iqn.2005-02.org.foresightlinux|' %(builddir)s/utils/iscsi-iname.c")
+        r.Configure('--with-security=no', dir='utils/open-isns')
+        r.Make(dir='utils/open-isns')        
+        for dirpath in ['utils/sysdeps', 'utils/fwparam_ibft', 'usr', 
+                        'utils', 'libiscsi']:
+            r.Make(dir=''+dirpath)
+        r.Configure(dir='brcm_iscsi_uio')
+        r.Make(dir='brcm_iscsi_uio')
+        r.PythonSetup(pythonVersion='2.6', dir='libiscsi') 
+        r.macros.iscsilocalstatedir = '%(localstatedir)s/lib/iscsi'
+        for dirpath in ['nodes', 'send_targets', 'static', 'isns', 'slp', 'ifaces']:
+            r.MakeDirs('%(iscsilocalstatedir)s/'+dirpath)
+
+        for dirpath in ['%(sbindir)s', '%(initdir)s', '%(sysconfdir)s/iscsi',
+                        '%(sysconfdir)s/NetworkManager/dispatcher.d', 
+                        '%(localstatedir)s/lock/iscsi']:
+            r.MakeDirs(''+dirpath) 
+        for makeinstall_target in ['install_programs', 'install_doc', 'install_etc', 
+                                   'install_iname', 'install_iface']:  
+            r.MakeInstall(installtarget=makeinstall_target)
+
+        r.Install('libiscsi/libiscsi.so.0', '%(libdir)s/libiscsi.so.0')
+        r.Symlink('%(libdir)s/libiscsi.so.0', '%(libdir)s/libiscsi.so')
+        r.Install('libiscsi/libiscsi.h', '%(includedir)s/libiscsi.h')
+
+        r.Install('iscsid.init', '%(initdir)s/iscsid', mode=0755)
+        r.Install('iscsidevs.init', '%(initdir)s/iscsi', mode=0755)
+        r.Install('04-iscsi', '%(sysconfdir)s/NetworkManager/dispatcher.d/04-iscsi', mode=0755)
+        r.Install('brcm_iscsi_uio/src/unix/brcm_iscsiuio', '%(essentialsbindir)s/brcm_iscsiuio', mode=0755)
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/iscsi/.*')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lock/iscsi')
+        r.Requires('NetworkManager:config','/etc/NetworkManager/dispatcher.d/04-iscsi')
+
+        # i'm not sure if this is the right thing to do, to smooth upgrades from the rpl open-iscsi...
+        r.InitialContents('%(sysconfdir)s/iscsi/initiatorname.iscsi')

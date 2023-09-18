@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadSuperClass('rpmpackage')
+class libSM(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'libSM'
+    version = '7.6'
+    rpmRelease = '21.1'
+    rpmName = 'xorg-x11-%(name)s'
+    isOPENsuse = True
+    isXOrgFactory = True
+    buildRequires = [ 'libICE:devel', 'xproto:devel', 'xtrans:devel', 
+                      'pkgconfig:devel', 'e2fsprogs:devel']
+
+    tarballName= '%(name)s-1.2.0.tar.bz2'
+
+    def configure(r):
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure('--disable-static --with-pic '
+                    '--disable-silent-rule')
+
+    def policy(r):
+        for requirement in ('libICE:devel', 'xproto:devel'):
+            r.Requires(requirement, '%(libdir)s/pkgconfig/sm.pc')

@@ -1,0 +1,19 @@
+loadRecipe('gnomepackage')
+class NautilusPythnon(GnomePackageRecipe):
+	name = 'nautilus-python'
+	version = '0.7.1'
+
+ 	buildRequires = ['glib:devel', 'pkgconfig:devel', 'python:devel',
+			 'gnome-python:devel', 'pygtk:devel',
+			 'nautilus:devel',  'gnome-vfs:devel',]
+
+	def unpack(r):
+		GnomePackageRecipe.unpack(r)
+ 		r.macros.cflags += (	' -I/%(includedir)s/gtk-2.0'
+ 					' -I/%(includedir)s/cairo'
+ 					' -I/%(includedir)s/pango-1.0'
+ 					' -I/%(libdir)s/gtk-2.0/include'
+ 					' -I/%(includedir)s/atk-1.0'
+ 					' -I/%(includedir)s/gnome-vfs-2.0'
+ 					' -I/%(includedir)s/nautilus'
+ 				   )

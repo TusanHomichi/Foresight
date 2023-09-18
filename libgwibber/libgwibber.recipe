@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libgwibber(AutoPackageRecipe):
+    name = 'libgwibber'
+    version = '0.1.2'
+ 
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'dbus-glib:devel', 'dbus:devel',
+                      'fontconfig:devel', 'freetype:devel', 'gettext:runtime',
+                      'glib:devel', 'gtk-doc:runtime', 'gtk-sharp:cil', 'gtk-sharp:runtime', 
+                      'gtk:devel', 'intltool:runtime', 'json-glib:devel', 'libgee:devel',
+                      'mono:cil', 'mono:devel', 'mono:runtime', 'pango:devel', 'pkgconfig:devel',
+                      'vala:runtime', 'dee:devel', 'gtk-sharp:devellib', 'gnome-doc-utils:devel', ]
+ 
+    def unpack(r):
+        # r.addArchive('http://launchpad.net/gwibber/%(name)s/%(name)s-%(version)s/+download/')
+        r.addArchive('libgwibber-0.1.1.tar.bz2')
+        r.Replace('\-Werror', '', 'configure')
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure('--disable-static')

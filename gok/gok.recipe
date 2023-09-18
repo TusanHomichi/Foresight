@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Gok(GnomePackageRecipe):
+
+    buildRequires = [ 'at-spi:devel',   'intltool:runtime', 'libgnomeui:devel', 'libwnck:devel', 'gtk-doc:runtime', 'm4:runtime', 'gettext:runtime', 'popt:devel', 'libxml2:devel', 'gnome-speech:devel', 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'audiofile:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'esound:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libpng:devel', 'pango:devel', 'perl:runtime', 'rarian:runtime', 'rarian:devel', 'libXevie:devel', 'libcanberra:devel' ]
+
+    name = 'gok'
+    version = '2.30.1'

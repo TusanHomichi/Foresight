@@ -1,0 +1,23 @@
+class PyDance(PackageRecipe):
+    buildRequires = ['pygame:python', 'pygame:devel', 'make:runtime', 'python:devel', 'desktop-file-utils:runtime']
+    name = 'pydance'
+    version = '1.0.3'
+
+    def setup(r):
+        r.addArchive('http://icculus.org/pyddr/%(name)s-%(version)s.tar.gz')
+
+        r.Run('python setup.py build')
+        r.MakeInstall()
+
+        r.Symlink('/usr/local/share/games/pydance/pydance.py',
+                  '%(bindir)s/pydance')
+        r.Remove('%(destdir)s/usr/local/games/pydance')
+
+        r.ExcludeDirectories(exceptions = \
+                                 '/usr/local/share/games/%(name)s/songs')
+
+        r.Requires('pydance-music:data',
+                   '/usr/local/share/games/pydance/pydance.py')
+
+        r.addSource('pydance.desktop')
+        r.Desktopfile('pydance.desktop')

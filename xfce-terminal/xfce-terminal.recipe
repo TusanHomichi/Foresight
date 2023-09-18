@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2006 - 2008 rPath, Inc.
+# Copyright (c) 2009 - 2013  The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('xfcepackage')
+class xfceTerminal(XfcePackageRecipe):
+
+    name = 'xfce-terminal'
+    sourcename = 'xfce4-terminal'
+    version = '0.6.3'
+    subtree = 'apps'
+
+    buildRequires = [
+        'libxfce4ui:devel', 'libexo:devel', 'ncurses:devel', 'vte:devel'
+    ]

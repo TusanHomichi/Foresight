@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2007-2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class THINKhdaps(GnomePackageRecipe):
+
+    name = 'thinkhdaps'
+    version = '0.2.1'
+
+    buildRequires = [ 'desktop-file-utils:runtime', 'gnome-python:python', 'pygobject:python', 'pygtk:python', 'python:devel' ]
+
+    extraConfig = '--enable-desktop'
+
+    def unpack(r):
+        r.addArchive('http://thpani.at/media/downloads/%(name)s/')
+
+    def policy(r):
+        #if we have this we want it loading byDefault
+        r.Symlink('%(datadir)s/applications/thinkhdaps.desktop',
+                  '%(sysconfdir)s/xdg/autostart/' )
+        #
+        r.Requires('hdapsd:runtime', '%(bindir)s/gnome-hdaps-applet')

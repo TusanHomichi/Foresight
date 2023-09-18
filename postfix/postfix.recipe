@@ -1,0 +1,124 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# Copyright 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Postfix(CPackageRecipe):
+    name = 'postfix'
+    version = '2.9.5'
+
+    buildRequires = [ 'db:devel', 'gawk:runtime', 'groff:runtime',
+                      'perl:runtime', 'pkgconfig:devel', 'sed:runtime',
+                      'e2fsprogs:devel', 'krb5:devel', 'openldap:devel',
+                      'zlib:devel', 'openssl:devel', 'pcre:devel',
+                      'cyrus-sasl:devel', ]
+
+    def setup(r):
+        r.macros.postfixdir = '%(sysconfdir)s/postfix'
+        r.macros.queuedir = '%(localstatedir)s/spool/postfix'
+        r.macros.postfix_user = 'postfix'
+        r.macros.postdrop_group = 'postdrop'
+
+        r.addArchive('ftp://ftp.porcupine.org/mirrors/postfix-release/official/')
+        r.addSource('postfix-etc-init.d-postfix')
+        r.addSource('postfix-pam.conf')
+        r.addSource('postfix-sasl.conf')
+
+        r.macros.ccargs = ''
+        r.macros.auxlibs = '-lpthread'
+
+        # ldap
+        r.macros.ccargs += ' -DHAS_LDAP'
+        r.macros.auxlibs += ' -L%(libdir)s -lldap -llber'
+
+        # pcre
+        r.macros.ccargs += ' -DHAS_PCRE $(pkg-config --cflags libpcre)'
+        r.macros.auxlibs += ' $(pkg-config --libs libpcre)'
+
+        # sasl
+        r.macros.ccargs += ' -DUSE_SASL_AUTH -I%(includedir)s/sasl'
+        r.macros.auxlibs += ' -L%(libdir)s/sasl2 -lsasl2'
+
+        # ssl
+        r.macros.ccargs += ' -DUSE_TLS $(pkg-config --cflags openssl)'
+        r.macros.auxlibs += ' $(pkg-config --libs openssl)'
+
+        r.Make('makefiles AUXLIBS="%(auxlibs)s" CCARGS="%(ccargs)s" DEBUG="" OPT="%(cflags)s"')
+
+        r.Make()
+
+        r.Make('non-interactive-package '
+                 ' install_root=%(destdir)s'
+                 ' config_directory=%(postfixdir)s'
+                 ' data_directory=%(localstatedir)s/lib/postfix'
+                 ' daemon_directory=%(libexecdir)s/postfix'
+                 ' command_directory=%(sbindir)s'
+                 ' queue_directory=%(queuedir)s'
+                 ' sendmail_path=%(sbindir)s/sendmail'
+                 ' newaliases_path=%(bindir)s/newaliases'
+                 ' mailq_path=%(bindir)s/mailq'
+                 ' mail_owner=%(postfix_user)s'
+                 ' setgid_group=%(postdrop_group)s'
+                 ' html_directory=no'
+                 ' manpage_directory=%(mandir)s'
+                 ' sample_directory=%(thisdocdir)s/samples'
+                 ' readme_directory=%(thisdocdir)s/README_FILES')
+
+        r.Install('postfix-etc-init.d-postfix',
+                  '%(initdir)s/postfix', mode=0755)
+        #This replace exists to turn off the default nis: alias_map
+        r.Replace('^#alias_maps = hash:/etc/aliases$', 'alias_maps = hash:/etc/aliases', '%(sysconfdir)s/postfix/main.cf')
+
+        for file in ('smtp-sink', 'smtp-source'):
+            r.Install('bin/' + file, '%(sbindir)s/')
+            r.Install('man/man1/%s.1' % file, '%(mandir)s/man1/')
+            r.ComponentSpec('postfix-test', '%(sbindir)s/' + file)
+
+        # sasl
+        r.Install('postfix-sasl.conf',
+                  '%(libdir)s/sasl2/smtpd.conf')
+        r.Install('postfix-pam.conf',
+                  '%(sysconfdir)s/pam.d/smtp.postfix')
+
+        # create postfix queue
+        r.ExcludeDirectories(exceptions='%(queuedir)s/')
+        r.Ownership('%(postfix_user)s', 'root',
+                    '%(queuedir)s/(active|bounce|corrupt|defer|deferred|flush|hold|incoming|private|saved|trace)')
+        r.Ownership('root', 'root', '%(queuedir)s/pid')
+        r.Ownership('%(postfix_user)s', 'root',
+                    '%(localstatedir)s/lib/postfix')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/lib/postfix')
+        r.Ownership('%(postfix_user)s', '%(postdrop_group)s',
+                    '%(queuedir)s/(maildrop|public)')
+
+        # set correct permissions on /usr/sbin/postdrop
+        # and /usr/sbin/postqueue
+        r.Ownership('root', '%(postdrop_group)s',
+                    '%(sbindir)s/(postdrop|postqueue)')
+        r.SetModes('%(sbindir)s/postdrop', '%(sbindir)s/postqueue', 02755)
+
+        # Conary compresses man pages; update postfix-files to reflect this
+        r.Move('%(libexecdir)s/postfix/postfix-files',
+               '%(sysconfdir)s/postfix/')
+        r.Replace((r'\$manpage_directory/man[1-8]/.*\.[1-8]',
+                   r'&.gz',),
+                  ('\$daemon_directory/postfix-files',
+                   '$config_directory/postfix-files'),
+                  '%(sysconfdir)s/postfix/postfix-files',
+                  '%(libexecdir)s/postfix/post-install')
+
+        # For Foresight Linux we'll have aliases in /etc/ not /etc/postfix, so
+        # remove the file in the latter location to prevent confusion
+        r.Remove('%(sysconfdir)s/postfix/aliases')
+
+        # Postfix wants some extra samples in daemondir...
+        r.NonBinariesInBindirs(exceptions='%(libexecdir)s/postfix/(main|master).cf')
+
+        # Depend on mailbase
+        r.Requires('mailbase:runtime','%(sbindir)s/postfix')
+        r.TagSpec('initscript', '%(initdir)s/')
+        r.WarnWriteable(exceptions='%(localstatedir)s/spool/postfix/maildrop')
+
+        r.UtilizeUser('nobody', '%(sysconfdir)s/postfix/main.cf')

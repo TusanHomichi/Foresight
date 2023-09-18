@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class Libtelepathy(GnomePackageRecipe):
+
+    name = 'libtelepathy'
+    version = '0.3.3'
+
+    buildRequires = ['dbus-glib:runtime', 'telepathy-glib:devel']
+    externalArchive = 'http://telepathy.freedesktop.org/releases/%(name)s/'
+

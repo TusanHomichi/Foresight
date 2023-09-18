@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2011-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SysStat(AutoPackageRecipe):
+    name = 'sysstat'
+    version = '9.0.6.1'
+
+    buildRequires = [ 'gettext:runtime', 'chkconfig:runtime', 
+                      'autoconf:runtime', 'automake:runtime']
+
+    def unpack(r):
+        r.addArchive('http://perso.orange.fr/sebastien.godard/')
+        for p in [ 'sysstat-9.0.4-init_script.patch',
+                   'sysstat-9.0.6-nfs.patch',
+                   'sysstat-9.0.4-init_script_lsb.patch',
+                   'sysstat-9.0.6.1-tickless.patch',
+                   'sysstat-9.0.6.1-sec.patch',
+                   'sysstat-9.0.6.1-mp_isag.patch',
+                   'sysstat-9.0.6.1-sar-tickless.patch',
+                   'sysstat-9.0.6.1-config.patch',
+                   'sysstat-9.0.6.1-mandir.patch',
+                   'sysstat-9.0.6.1-sadc_opt.patch',
+                   'sysstat-9.0.6.1-localtime.patch',
+                   'sysstat-9.0.4-cpu.patch',
+                   ]:
+            r.addPatch(p)
+
+
+    def configure(r):
+        r.macros.cflags += ' -DSADC_PATH="%(libdir)s/sa/sadc" '
+        r.Run('autoreconf -fi')
+        r.Configure('--disable-man-group',
+                    preConfigure='sa_lib_dir=%(libdir)s/sa')
+
+    def policy(r):
+        r.Install('sysstat.crond', '%(sysconfdir)s/cron.d/sysstat', mode = 0644)
+        r.Install('sysstat',  '%(initdir)s/', mode = 0755)
+
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/log/sa')
+        # Tag init scripts in case the initscript tag desc. is not installed
+        r.TagSpec('initscript', '%(initdir)s/')

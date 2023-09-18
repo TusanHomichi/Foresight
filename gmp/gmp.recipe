@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gmp(CPackageRecipe):
+    name = 'gmp'
+    version = '4.2.1'
+
+    buildRequires = [ 'install-info:runtime', 'gcc:devel', 'm4:runtime',
+                      'libstdc++:devel', 'flex:runtime', 
+                      ]
+
+    if Use.bootstrap:
+        keepBuildReqs = ['glibc:devel', 'userspace-kernel-headers:devel']
+        buildRequires.extend(['binutils[!cross]', 'gcc[!cross]'])
+        crossRequires = 'glibc:devel', 'userspace-kernel-headers:devel'
+
+    def setup(r):
+        r.addArchive('ftp://ftp.gnu.org/pub/gnu/gmp/')
+        # we don't want to bump this for now, in order to no get
+        # too far from rPL.
+        # patch bellow makes this friendly with our revised toolchain 
+        # (taken from http://bugs.gentoo.org/228915)
+        r.Replace('using std::FILE;',
+                  '#include <cstdio>\nusing std::FILE;\n',
+                  'gmp-h.in')
+
+        r.Configure('--enable-mpbsd --enable-cxx --host=%(host)s',
+                    preConfigure='CCAS="%(cc)s -c -Wa,--noexecstack"',
+                    objDir='base')
+
+        # Disable rpath
+        r.Replace('hardcode_libdir_flag_spec=.*',
+                  r'hardcode_libdir_flag_spec="-L\$libdir"',
+                  'base/libtool')
+
+        r.macros.cflags += ' -fPIC '
+        r.Make(preMake='LD_LIBRARY_PATH=%(maindir)s/base/.libs',
+               dir='base')
+        r.MakeInstall(dir='base')
+        r.Install('base/gmp-mparam.h', '%(includedir)s')
+
+        if Arch.x86:
+            r.Configure('--libdir=%(libdir)s/sse2 --enable-mpbsd --enable-cxx '
+                        'pentium4-redhat-linux',
+                        preConfigure='CFLAGS="-O2 -g -march=pentium4" CCAS="%(cc)s -c -Wa,--noexecstack"',
+                        objDir='build-sse2')
+
+            r.Replace('hardcode_libdir_flag_spec=.*',
+                      r'hardcode_libdir_flag_spec="-L\$libdir"',
+                      'build-sse2/libtool')
+
+            r.Make(preMake='LD_LIBRARY_PATH=%(maindir)s/build-sse2/.libs',
+                   dir='build-sse2')
+
+            r.MakeInstall(installtarget='install-exec', dir='build-sse2')

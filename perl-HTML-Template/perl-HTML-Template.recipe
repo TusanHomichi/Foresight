@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux. 2004-2010 rPath, Inc. 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlHTMLTemplate(CPANPackageRecipe):
+    name = 'perl-HTML-Template'
+    version = '2.9'
+    buildRequires = []
+

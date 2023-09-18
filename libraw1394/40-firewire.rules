@@ -1,0 +1,21 @@
+# /etc/udev/rules.d/40-example-firewire.rules
+
+# Set permissions for some IEEE 1394 device types, driven by the new firewire stack.
+# We cannot use the MODE directive because the significant device type attributes
+# live in child devices. So change the group after the fact with chgrp.
+
+# IIDC devices: industrial cameras and some webcams
+SUBSYSTEM=="firewire", ATTR{specifier_id}=="0x00a02d", ATTR{version}=="0x00010?",\
+ PROGRAM="/bin/chmod 666 /dev/%P"
+
+# AV/C devices: camcorders, set-top boxes, TV sets, various audio devices, and more
+SUBSYSTEM=="firewire", ATTR{specifier_id}=="0x00a02d", ATTR{version}=="0x010001",\
+ PROGRAM="/bin/chmod 666 /dev/%P"
+
+# libraw1394 older than v2.0.1 and some special-purpose applications also need
+# access to the local node(s).  Alas there is no simple way to tell local nodes apart
+# from remote ones; here is a simple hack.
+### SUBSYSTEM=="firewire", ATTR{vendor_name}=="Linux Firewire", GROUP="video"
+# Or if your application needs access to all nodes, simply use:
+### SUBSYSTEM=="firewire", GROUP="video"
+

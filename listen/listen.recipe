@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Listen(CPackageRecipe):
+    name = 'listen'
+    version = '0.6.5'
+ 
+    buildRequires = ['PIL:python', 'atk:devel', 'avahi:python', 'cairo:devel', 'dbus-python:python', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gnome-python-extras:python', 'gnome-python:python', 'gst-python:python', 'gtk:devel', 'mutagen:python', 'pango:devel', 'pygobject:python', 'pygobject:devel', 'python-inotify:python', 'python:runtime', 'python:devel', 'pygtk:runtime', 'pyxdg:python', 'sexy-python:python', 'python-musicbrainz2:python', 'python-xlib:python', 'pywebkitgtk:python', 'which:runtime', 'python-tunepimp:python', 'libgpod:devel', 'pkgconfig:devel', 'pygtk:devel', 'pygobject:runtime', 'gettext:runtime', 'intltool:runtime']
+ 
+    def setup(r):
+		#r.addBzrSnapshot('lp:listen')
+		r.addArchive('http://download.listen-project.org/0.6/')
+		r.Replace ('CHECK_DEPENDS \?= 1', 'CHECK_DEPENDS ?= 0', 'Makefile')
+		r.Make('clean')
+		r.Make('PREFIX=%(prefix)s')
+		r.Make('po-gen')
+		r.Make('po-data')
+ 		r.MakeInstall()

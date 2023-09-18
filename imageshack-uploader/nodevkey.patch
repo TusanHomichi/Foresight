@@ -1,0 +1,35 @@
+diff -rupN imageshack-uploader-2.2.0/httprequest.cpp imageshack-uploader-2.2.0_mod/httprequest.cpp
+--- imageshack-uploader-2.2.0/httprequest.cpp	2009-10-11 22:01:26.000000000 +0200
++++ imageshack-uploader-2.2.0_mod/httprequest.cpp	2009-10-11 22:13:31.000000000 +0200
+@@ -128,7 +128,6 @@ QVector<QPair<QString, QString> > HTTPRe
+         }
+         if (media.data()->getRemoveSize()) fields << qMakePair(QString("rembar"), QString("1"));
+     }
+-    fields << qMakePair(QString("key"), QString(DEVELOPER_KEY));
+     qDebug() << fields;
+     return fields;
+ }
+diff -rupN imageshack-uploader-2.2.0/imageshack.pro imageshack-uploader-2.2.0_mod/imageshack.pro
+--- imageshack-uploader-2.2.0/imageshack.pro	2009-10-11 22:01:26.000000000 +0200
++++ imageshack-uploader-2.2.0_mod/imageshack.pro	2009-10-11 22:12:05.000000000 +0200
+@@ -20,9 +20,6 @@ UNIX_TRANSLATIONS_DIR = "/usr/share/imag
+ DEFINES += UNIX_TRANSLATIONS_DIR="\\\"$$UNIX_TRANSLATIONS_DIR\\\""
+ VERSION = 2.2.0
+ DEFINES += VERSION="\\\"$$VERSION\\\""
+-DEVKEY = $$(IMAGESHACK_DEVELOPER_KEY)
+-isEmpty(DEVKEY):error(IMAGESHACK_DEVELOPER_KEY variable should be set for building)
+-DEFINES += DEVELOPER_KEY="\\\"$$DEVKEY\\\""
+ QMAKE_INFO_PLIST = imageshack.plist
+ SOURCES += main.cpp \
+     mainwindow.cpp \
+diff -rupN imageshack-uploader-2.2.0/twitterclient.cpp imageshack-uploader-2.2.0_mod/twitterclient.cpp
+--- imageshack-uploader-2.2.0/twitterclient.cpp	2009-10-11 22:01:27.000000000 +0200
++++ imageshack-uploader-2.2.0_mod/twitterclient.cpp	2009-10-11 22:14:00.000000000 +0200
+@@ -82,7 +82,6 @@ void TwitterClient::post(QString url, QS
+     data.append(qMakePair(QString("password"), pass));
+     data.append(qMakePair(QString("message"), text));
+     data.append(qMakePair(QString("url"), url));
+-    data.append(qMakePair(QString("key"), QString(DEVELOPER_KEY)));
+     qDebug() << data;
+     http.post(QString("http://") + TWITTER_HOST + TWITTER_PATH, data);
+ 

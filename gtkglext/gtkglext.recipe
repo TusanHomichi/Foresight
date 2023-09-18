@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class gtkglext(AutoPackageRecipe):
+
+    name = 'gtkglext'
+    version = '1.2.0'
+
+    buildRequires = [ 'Mesa:devel', 'atk:devel', 'cairo:devel', 'expat:devel', 'glib:devel', 'gtk:devel', 'indent:runtime', 'libICE:devel', 'libSM:devel', 'libXmu:devel', 'libXrender:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'zlib:devel' ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '

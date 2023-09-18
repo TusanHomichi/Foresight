@@ -1,0 +1,20 @@
+
+
+class Galaxium(CPackageRecipe):
+
+    name = "galaxium"
+    version = "r1618"
+
+    buildRequires = ['desktop-file-utils:runtime', 'glib:devel', 'gstreamer:devel', 'gtk-sharp:devellib','gtk-sharp:cil', 'libanculus-sharp:cil', 'libanculus-sharp:lib', 'libanculus-sharp:devellib', 'libxml2:devel', 'mono:cil', 'mono:devel', 'mono:runtime', 'pkgconfig:devel', 'zlib:devel', 'autoconf:runtime', 'automake:runtime', 'ndesk-dbus:devellib', 'mono-addins:devellib', 'ndesk-dbus-glib:devellib', 'ndesk-dbus:cil', 'mono-addins:cil', 'ndesk-dbus-glib:cil', 'webkit-sharp:cil', 'webkit-sharp:devellib', 'cairo:devel', 'gst-plugins-base:devel', 'dbus:devel', 'expat:devel', 'hal:devel', 'gettext:runtime', 'notify-sharp:devellib', 'notify-sharp:cil', 'gnome-sharp:devellib', 'gnome-sharp:cil']
+
+    def setup(r):
+	r.addSvnSnapshot('http://galaxium.googlecode.com/svn/trunk', revision='1618')   	
+	r.Run('chmod +x ./autogen.sh') 
+	r.Configure('--enable-gadugadu --enable-xmpp --disable-winforms', configureName='autogen.sh')
+ 	r.Make()
+ 	r.MakeInstall()
+	r.Requires('libanculus-sharp:cil','/usr/bin/galaxium')
+
+#    def policy(r):
+
+

@@ -1,0 +1,13 @@
+class Robj(PackageRecipe):
+    name = 'robj'
+    tag = '1e6c60604f02'
+    version = '0.%s' % tag
+
+    buildRequires = [
+        'make:runtime', 'procps:runtime', 'util-linux:runtime', 'lxml:python',
+        'xobj:python', 'python:devel',
+    ]
+
+    def setup(r):
+        r.addMercurialSnapshot('http://hg.rpath.com/robj', tag=r.tag)
+        r.MakeInstall()

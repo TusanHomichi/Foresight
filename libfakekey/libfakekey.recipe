@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libfakekey(AutoPackageRecipe):
+    name = 'libfakekey'
+    version = '0.1'
+ 
+    buildRequires = ['libX11:devel', 'libXau:devel', 'libXdmcp:devel', 'libXext:devel', 'libXtst:devel', 'libxcb:devel', 'pkgconfig:devel', 'inputproto:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://matchbox-project.org/sources/libfakekey/0.1/')

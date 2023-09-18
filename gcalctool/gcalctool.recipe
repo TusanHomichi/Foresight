@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GCalcTool(GnomePackageRecipe):
+    name = 'gcalctool'
+    version = '5.32.0'
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel',
+                      'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                      'glib:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+                      'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel',
+                      'libpng:devel', 'libxml2:devel', 'pango:devel', 'popt:devel',
+                      'GConf:runtime', 'bison:runtime', 'desktop-file-utils:runtime',
+                      'gnome-doc-utils:devel', 'gnome-doc-utils:runtime', 'flex:runtime',
+                      'gettext:runtime', 'perl:runtime', 'rarian:runtime',
+                      'libxslt:runtime', 'rarian:devel', 'libglade:devel' ]
+
+    patches = ['gcalctool_Use-org-gnome-as-starting-path-for-schemas.patch']
+
+    extraConfig = ' --disable-scrollkeeper'

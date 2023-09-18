@@ -1,0 +1,14 @@
+loadSuperClass('kdepackage')
+class konversation(kdePackageRecipe):
+
+    name = 'konversation'
+    version = '1.2.3'
+
+    buildRequires = [
+        'libxml2:runtime', 'perl-HTML-Parser:perl', 'perl:lib', 'ruby:runtime',
+	'libXScrnSaver:devel', 'qca2:devel'
+    ]
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.kde.org/pub/kde/stable/konversation/%(version)s/src/')
+

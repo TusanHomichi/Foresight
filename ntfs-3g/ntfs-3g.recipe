@@ -1,0 +1,91 @@
+#
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Ntfs3g(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'ntfs-3g'
+    version = '2011.10.9'
+
+    rpmRelease = '1.fc17'
+    rpmPatches = [ 'ntfs-3g_ntfsprogs-2011.10.9-RC-ntfsck-unsupported-return-0.patch' ]
+    rpmSources = ['20-ntfs-config-write-policy.fdi']
+    tarballName = 'ntfs-3g_ntfsprogs-%(version)s-RC.tgz'
+
+    buildRequires = [ 'fuse:devel', 'pkgconfig:devel',
+                      'libtool:devel', 'libtool:runtime', 
+                      'attr:devel', 'gnutls:devel', 'libgcrypt:devel',
+                      'libgpg-error:devel', 'util-linux:devel']
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.macros.cflags += ' -D_FILE_OFFSET_BITS=64'
+
+    def configure(r):
+        r.Configure(' --disable-static '
+                    ' --disable-ldconfig '
+                    ' --with-fuse=external '
+                    ' --exec-prefix=/ '
+                    ' --bindir=%(essentialbindir)s '
+                    ' --sbindir=%(essentialsbindir)s '
+                    '--enable-crypto '
+                    ' --enable-extras'
+                    ' --libdir=/%(lib)s' )
+
+    def make(r):
+        r.Make('LIBTOOL=%(bindir)s/libtool')
+
+    def makeinstall(r):
+        r.MakeInstall('LIBTOOL=%(bindir)s/libtool')
+
+
+    def policy(r):
+        r.Requires('fuse:runtime', '/usr/bin/ntfs-3g')
+
+        # won't hurt make sure that fuse is _really_ loaded...
+        r.Create('%(sysconfdir)s/sysconfig/modules/fuse.modules', mode = 0755,
+                 contents = """
+#!/bin/sh
+
+modprobe fuse >/dev/null 2>&1
+
+""")
+        r.Remove('%(essentialsbindir)s/mount.ntfs-3g')
+        r.Copy('%(essentialbindir)s/ntfs-3g', '%(essentialsbindir)s/mount.ntfs-3g')
+        r.SetModes('%(essentialsbindir)s/mount.ntfs-3g', 0754)
+
+        r.Symlink('%(essentialbindir)s/ntfs-3g', '%(essentialbindir)s/ntfsmount')
+        r.Symlink('%(essentialsbindir)s/mount.ntfs-3g', '%(essentialsbindir)s/mount.ntfs-fuse')
+        r.Symlink('%(essentialsbindir)s/mount.ntfs-3g', '%(essentialsbindir)s/mount.ntfs')
+
+        r.Symlink('%(essentialbindir)s/ntfs-3g', '%(bindir)s/ntfs-3g')
+        r.Symlink('%(essentialbindir)s/ntfsmount', '%(bindir)s/ntfsmount')
+
+        r.Move('/%(lib)s/pkgconfig/libntfs-3g.pc', '%(libdir)s/pkgconfig/libntfs-3g.pc')
+        r.Install('20-ntfs-config-write-policy.fdi', '%(datadir)s/hal/fdi/policy/10osvendor/')
+
+        r.PackageSpec('ntfsprogs', 
+                      '%(essentialbindir)s/ntfscat',
+                      '%(essentialbindir)s/ntfscluster',
+                      '%(essentialbindir)s/ntfscmp',
+                      '%(essentialbindir)s/ntfsfix',
+                      '%(essentialbindir)s/ntfsinfo',
+                      '%(essentialbindir)s/ntfsls',
+                      # Extras
+                      '%(essentialbindir)s/ntfsck',
+                      '%(essentialbindir)s/ntfsdecrypt',
+                      '%(essentialbindir)s/ntfsdump_logfile',
+                      '%(essentialbindir)s/ntfsmftalloc',
+                      '%(essentialbindir)s/ntfsmove',
+                      '%(essentialbindir)s/ntfstruncate',
+                      '%(essentialbindir)s/ntfswipe',
+                      '%(essentialsbindir)s/fsck.ntfs',
+                      '%(essentialsbindir)s/mkfs.ntfs',
+                      '%(essentialsbindir)s/mkntfs',
+                      '%(essentialsbindir)s/ntfsclone',
+                      '%(essentialsbindir)s/ntfscp',
+                      '%(essentialsbindir)s/ntfslabel',
+                      '%(essentialsbindir)s/ntfsresize',
+                      '%(essentialsbindir)s/ntfsundelete')

@@ -1,0 +1,33 @@
+#include $(shell uname -s).conf
+
+INCLUDES=-I%(includedir)s/python%(pyver)s -Iinclude -I.
+SWIG=swig
+LIBS=-lCgGL -lCg -lGL -lpython%(pyver)s -L%(libdir)s/xorg.mesa.3d 
+SOEXT=so
+COMPILE=%(cc)s  %(cflags)s -fpic -g -Wall 
+LINK=%(cc)s -fpic -g -Wall -shared
+
+builddir=build
+
+all: _Cg.$(SOEXT)
+
+cg_wrap.c: cg.i *.i
+	$(SWIG) -python $(INCLUDES) $<
+
+_Cg.$(SOEXT): cg_wrap.c
+	$(LINK) -o $@ $^ $(INCLUDES) $(LIBS)
+
+
+install: all
+	mkdir Cg
+	cp Cg.py Cg/__init__.py
+	python setup.py $@
+	rm -rf Cg
+
+clean:
+	rm -f _Cg.$(SOEXT) Cg.pyc Cg.py cg_wrap.c
+	rm -rf build dist
+
+.PHONY: clean dist
+
+

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libidn(AutoPackageRecipe):
+
+    name = 'libidn'
+    version = '1.22'
+
+    buildRequires = ['gettext:runtime', 'gtk-doc:runtime', 'install-info:runtime', 'intltool:runtime', 'mono:cil', 'mono:devel', 'mono:runtime', 'pkgconfig:devel', 'valgrind:runtime']
+
+    def unpack(r):
+        r.addArchive('http://ftp.gnu.org/gnu/libidn/')
+
+    def policy(r):
+        r.ComponentSpec('cil', '%(libdir)s/Libidn.dll' )
+

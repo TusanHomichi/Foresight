@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Eggdbus(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'eggdbus'
+    version = '0.6'
+    rpmRelease = '2'
+ 
+    buildRequires = ['dbus-glib:devel', 'dbus:devel', 'glib:devel',
+                     'gtk-doc:runtime', 'libxslt:runtime', 'pkgconfig:devel', 
+                     'autoconf:runtime', 'automake:runtime', 'libtool:runtime',
+                     'libxslt:runtime', 'gtk-doc:devel']
+ 
+
+    def configure(r):
+        r.Configure("--disable-maintainer-mode --disable-gtk-doc --disable-static")

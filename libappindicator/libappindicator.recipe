@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibAppIndicator(AutoPackageRecipe):
+    name = 'libappindicator'
+    version = '0.3.0'
+ 
+    buildRequires = [ 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                      'gdk-pixbuf:devel', 'glib:devel', 'gtk-sharp:cil', 'gtk-sharp:devellib',
+                      'gtk:devel', 'libdbusmenu-glib:devel', 'libdbusmenu-gtk:devel',
+                      'libindicator:devel', 'libpng:devel', 'mono:cil', 'mono:devel',
+                      'pango:devel', 'pygobject:devel', 'gtk-doc:runtime', 'gtk-sharp:runtime',
+                      'pkgconfig:devel', 'vala:runtime', 'libdbusmenu:devel', 'dbus-glib:devel',
+                      'dbus-glib:runtime', 'python:devel', 'pygtk:devel', 'gobject-introspection:devel'
+                      ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/%(major_version)s/%(version)s/+download/')
+        r.Replace('pyglib-2.0-python2.6', 'pyglib-2.0-python', 'bindings/python/Makefile.{in,am}')
+        # 
+        r.Replace('\"nunit\ \>', '"mono-nunit >', 'configure')
+        r.Replace('GACUTIL\_FLAGS\ \=\ \-package\ \$\(ASSEMBLY_NAME\)\ \-root\ \$\(DESTDIR\)\$\(prefix\)\/lib',
+                  'GACUTIL_FLAGS = -package $(ASSEMBLY_NAME) -root $(DESTDIR)$(prefix)/%(lib)s',
+                  'bindings/mono/Makefile.in')
+        r.Replace('GACUTIL\_FLAGS\=\-package\ \$\(ASSEMBLY_NAME\)\ \-root\ \$\(DESTDIR\)\$\(prefix\)\/lib',
+                  'GACUTIL_FLAGS=-package $(ASSEMBLY_NAME) -root $(DESTDIR)$(prefix)/%(lib)s',
+                  'bindings/mono/Makefile.am')
+
+
+    def configure(r):
+        r.disableParallelMake()
+        r.Configure('--disable-static --enable-introspection=yes')
+
+    def policy(r):
+        r.ComponentSpec('cil', '%(libdir)s/cli/appindicator-sharp-0.1/.*' )
+

@@ -1,0 +1,33 @@
+Index: fancy/src/fancy_viewer.c
+===================================================================
+RCS file: /srv/cvs/claws-mail/plugins/fancy/src/Attic/fancy_viewer.c,v
+retrieving revision 1.1.2.12
+diff -u -r1.1.2.12 fancy_viewer.c
+--- src/fancy_viewer.c	4 Jul 2009 02:14:49 -0000	1.1.2.12
++++ src/fancy_viewer.c	4 Jul 2009 11:45:17 -0000
+@@ -81,6 +81,7 @@
+ 
+ static gint fancy_show_mimepart_real(MimeViewer *_viewer)
+ {
++	const gchar *charset = NULL;
+     FancyViewer *viewer = (FancyViewer *) _viewer;
+     
+     MessageView *messageview = ((MimeViewer *)viewer)->mimeview 
+@@ -109,7 +110,17 @@
+     if (procmime_get_part(viewer->filename, partinfo) < 0) {
+             g_free(viewer->filename);
+     } else {
++        if (_viewer && _viewer->mimeview &&
++            _viewer->mimeview->messageview->forced_charset)
++            charset = _viewer->mimeview->messageview->forced_charset;
++        else
++            charset = procmime_mimeinfo_get_parameter(partinfo, "charset");
++        if (charset == NULL)
++            charset = conv_get_locale_charset_str();
++        debug_print("using %s charset\n", charset);
+         gchar *tmp = g_filename_to_uri(viewer->filename, NULL, NULL);
++        g_object_set(viewer->settings, 
++            "default-encoding", charset, NULL);
+         webkit_web_view_open(viewer->view, tmp);
+         g_free(tmp);
+     }

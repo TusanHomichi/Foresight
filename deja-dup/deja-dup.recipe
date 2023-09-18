@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2009-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DejaDup(CPackageRecipe):
+    name = 'deja-dup'
+    version = '20.0'
+ 
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel',
+                      'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel',
+                      'gnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel', 'intltool:runtime',
+                      'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel',
+                      'libgnomecanvas:devel', 'libgnomeui:devel', 'libnotify:devel', 'libpng:devel',
+                      'libxml2:devel', 'nautilus:devel', 'pango:devel', 'perl:runtime', 'pixman:devel',
+                      'pkgconfig:devel', 'popt:devel', 'rarian:runtime', 'unique:devel', 'zlib:devel',
+                      'gnome-doc-utils:devel', 'libxslt:runtime', 'duplicity:runtime', 'vala:runtime',
+                      'which:runtime', 'gnome-doc-utils:runtime', 'gtk3:devel', 'perl-Locale-gettext:perl', 'itstool:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/deja-dup/20/%(version)s/+download/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()
+	r.Requires('duplicity:runtime', '%(bindir)s/deja-dup')

@@ -1,0 +1,223 @@
+--- plugins/cd/__init__.py	2011-07-18 20:32:50.690850000 -0400
++++ plugins/cd/__init__.py.new	2011-08-31 13:41:50.277924078 -0400
+@@ -27,12 +27,12 @@
+ 
+ from xl.nls import gettext as _
+ from xl import providers, event
+-from xl.hal import Handler
++from xl.hal import Handler, UDisksProvider
+ from xl.devices import Device
+ import logging
+ logger = logging.getLogger(__name__)
+ 
+-PROVIDER = None
++PROVIDER = PROVIDER_UDISKS = None
+ 
+ import dbus, threading, os, struct
+ from fcntl import ioctl
+@@ -61,15 +61,17 @@
+ CDROM_DATA_TRACK = 0x04
+ 
+ def enable(exaile):
+-    global PROVIDER
+-    PROVIDER = CDHandler()
+-    providers.register("hal", PROVIDER)
+-
++    global PROVIDER, PROVIDER_UDISKS
++    #~ PROVIDER = CDHandler()
++    #~ providers.register("hal", PROVIDER)
++    PROVIDER_UDISKS = UDisksCdProvider()
++    providers.register("udisks", PROVIDER_UDISKS)
+ 
+ def disable(exaile):
+-    global PROVIDER
++    global PROVIDER, PROVIDER_UDISKS
+     providers.unregister("hal", PROVIDER)
+-    PROVIDER = None
++    providers.unregister("udisks", PROVIDER_UDISKS)
++    PROVIDER = PROVIDER_UDISKS = None
+ 
+ class CDTocParser(object):
+     #based on code from http://carey.geek.nz/code/python-cdrom/cdtoc.py
+@@ -244,6 +246,24 @@
+ 
+         return cddev
+ 
++class UDisksCdProvider(UDisksProvider):
++    PRIORITY = UDisksProvider.NORMAL
++    
++    name = 'cd'
++
++    def get_priority(self, obj):
++        props = dbus.Interface(obj, 'org.freedesktop.DBus.Properties')
++        iface = 'org.freedesktop.UDisks.Device'
++        # XXX: We use the number of audio tracks to identify audio CDs.
++        # There may be a better way....
++        compat = props.Get(iface, 'DriveMediaCompatibility')
++        return self.PRIORITY if 'optical_cd' in compat else None
++
++    def create_device(self, obj):
++        props = dbus.Interface(obj, 'org.freedesktop.DBus.Properties')
++        iface = 'org.freedesktop.UDisks.Device'
++        return CDDevice(dev=props.Get(iface, 'DeviceFile'))
++
+ 
+ # vim: et sts=4 sw=4
+ 
+--- xl/main.py	2012-09-09 15:07:41.000000000 -0400
++++ xl/main.py.new	2012-09-24 11:26:49.132168406 -0400
+@@ -251,6 +251,8 @@
+         # Initialize HAL
+         if self.options.Hal:
+             from xl import hal
++            self.udisks = hal.UDisks(self.devices)
++            self.udisks.connect()
+             self.hal = hal.HAL(self.devices)
+             self.hal.connect()
+         else:
+--- xl/hal.py	2011-07-18 20:32:50.690850000 -0400
++++ xl/hal.py.new	2011-08-31 13:49:02.489520690 -0400
+@@ -24,7 +24,7 @@
+ # do so. If you do not wish to do so, delete this exception statement
+ # from your version.
+ 
+-import logging
++import logging, threading, time
+ import dbus
+ 
+ from xl import common, providers, event, devices, settings
+@@ -32,6 +32,120 @@
+ 
+ logger = logging.getLogger(__name__)
+ 
++class UDisks(providers.ProviderHandler):
++    """Provides support for UDisks devices.
++
++    If the D-Bus connection fails, this object will grow a "failed" attribute
++    with True as the value. Plugins should check for this attribute when
++    registering if they want to provide HAL fallback. FIXME: There's a race
++    condition here.
++    """
++
++    # States: start -> init -> addremove <-> listening -> end.
++    # The addremove state acts as a lock against concurrent changes.
++
++    def __init__(self, devicemanager):
++        self._lock = lock = threading.Lock()
++        self._state = 'init'
++
++        providers.ProviderHandler.__init__(self, 'udisks')
++        self.devicemanager = devicemanager
++
++        self.bus = self.obj = self.iface = None
++        self.devices = {}
++        self.providers = {}
++
++    @common.threaded
++    def connect(self):
++        assert self._state == 'init'
++        logger.debug("Connecting to UDisks")
++        try:
++            self.bus = bus = dbus.SystemBus()
++            self.obj = obj = bus.get_object('org.freedesktop.UDisks', '/org/freedesktop/UDisks')
++            self.iface = iface = dbus.Interface(obj, 'org.freedesktop.UDisks')
++            iface.connect_to_signal('DeviceAdded', self._device_added, path_keyword='path')
++            iface.connect_to_signal('DeviceRemoved', self._device_removed, path_keyword='path')
++            logger.info("Connected to UDisks")
++            event.log_event("hal_connected", self, None)
++        except Exception:
++            logger.warning("Failed to connect to UDisks, " \
++                    "autodetection of devices will be disabled.")
++            self._state = 'listening'
++            self.failed = True
++            return
++        self._state = 'addremove'
++        self._add_all()
++        self._state = 'listening'
++
++    def _add_all(self):
++        assert self._state == 'addremove'
++        for path in self.iface.EnumerateDevices():
++            self._add_path(path)
++
++    def _add_path(self, path):
++        assert self._state == 'addremove'
++        obj = self.bus.get_object('org.freedesktop.UDisks', path)
++        old, new = self._get_provider_for(obj)
++        if new is not old:
++            if old[0]:
++                self.devicemanager.remove_device(self.devices[path])
++            device = new[0].create_device(obj)
++            device.autoconnect()
++            self.devicemanager.add_device(device)
++            self.providers[path] = new
++            self.devices[path] = device
++
++    def _get_provider_for(self, obj):
++        """Return (old_provider, old_priority), (new_provider, new_priority)"""
++        assert self._state == 'addremove'
++        path = obj.object_path
++        highest = old = self.providers.get(path, (None, -1))
++        for provider in self.get_providers():
++            priority = provider.get_priority(obj)
++            if priority is not None and priority > highest[1]:
++                highest = (provider, priority)
++        return old, highest
++
++    def _remove_path(self, path):
++        assert self._state == 'addremove'
++        self.devicemanager.remove_device(self.devices[path])
++        del self.devices[path]
++
++    def _device_added(self, path):
++        import pdb; pdb.set_trace()
++        self._addremove()
++        self._add_path(path)
++        self._state = 'listening'
++
++    def _device_removed(self, path):
++        self._addremove()
++        try:
++            self._remove_path(path)
++        except KeyError: # Not ours
++            pass
++        self._state = 'listening'
++
++    def on_provider_added(self, provider):
++        self._addremove()
++        self._connect_all()
++        self._state = 'listening'
++
++    def on_provider_removed(self, provider):
++        self._addremove()
++        for path, provider_ in self.providers.iteritems():
++            if provider_ is provider:
++                self._remove_path(path)
++        self._state = 'listening'
++
++    def _addremove(self):
++        """Helper to transition safely to the addremove state"""
++        while True:
++            with self._lock:
++                if self._state == 'listening':
++                    self._state = 'addremove'
++                    break
++            time.sleep(1)
++
+ class HAL(providers.ProviderHandler):
+     """
+         HAL interface
+@@ -144,6 +258,13 @@
+     def device_from_udi(self, hal, udi):
+         pass
+ 
++class UDisksProvider:
++    VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH = range(0, 101, 25)
++    def get_priority(self, obj):
++        pass  # return: int [0..100] or None
++    def get_device(self, obj):
++        pass  # return: xl.devices.Device
++
+ 
+ # vim: et sts=4 sw=4
+ 

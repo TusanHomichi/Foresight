@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+#               2010-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Recipe(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'fuse'
+    version = '2.9.2'
+    rpmRelease = '4.fc20'
+    rpmPatches = [
+                   'fuse-0001-More-parentheses.patch',
+		   'fuse-2.9.2-namespace-conflict-fix.patch',
+                 ]
+    rpmSources = [ 'fuse.conf'
+                   
+                 ]
+
+    buildRequires = [ 'chkconfig:runtime' ]
+
+    def configure(r):
+        r.addPatch('fuse-chkconfig_support.diff')
+        r.macros.cflags += ' -D_GNU_SOURCE'
+
+        r.Configure(' --libdir=/%(lib)s'
+                    ' --bindir=%(essentialbindir)s'
+                    ' --exec-prefix=/'
+                    ' --disable-static')
+
+    def policy(r):
+        r.SetModes('%(essentialbindir)s/fusermount', 04755)
+        r.Move('/%(lib)s/pkgconfig', '%(libdir)s/')
+        # Compatibility symlinks
+        r.Symlink('%(essentialbindir)s/fusermount', '%(bindir)s/fusermount')
+        r.Symlink('%(essentialbindir)s/ulockmgr_server', '%(bindir)s/ulockmgr_server')
+
+        r.Install('fuse.conf', '%(sysconfdir)s/', mode = 0644)

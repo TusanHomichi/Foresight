@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2009-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class edbus(AutoPackageRecipe):
+    name = 'edbus'
+    version = '1.7.99.83479' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = ['dbus:devel', 'ecore:devel', 'eet:devel', 'eina:devel', 'evas:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gnutls:devel', 'libgcrypt:devel', 'libgpg-error:devel', 'libjpeg:devel', 'openssl:devel', 'pkgconfig:devel', 'zlib:devel', 'automake:runtime', 'autoconf:runtime', 'libtool:runtime', 'doxygen:runtime']
+
+    def setup(r):
+        r.addArchive('http://download.enlightenment.org/snapshots/2013-01-31/edbus-1.7.99.83479.tar.gz')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

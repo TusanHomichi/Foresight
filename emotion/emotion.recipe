@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Emotion(AutoPackageRecipe):
+    name = 'emotion'
+    version = '1.7.5'
+ 
+    buildRequires = [
+        'doxygen:runtime', 
+        'ecore:devel', 
+        'edje:devel', 
+        'edje:runtime',
+        'eet:devel', 
+        'eeze:devel', 
+        'eina:devel', 
+        'eio:devel', 
+        'evas:devel', 
+        'pkgconfig:devel', 
+        'xine-lib:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive("http://download.enlightenment.org/releases/emotion-%(version)s.tar.gz")

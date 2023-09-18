@@ -1,0 +1,13 @@
+class Jam(CPackageRecipe):
+    name = 'jam'
+    version = '2.5'
+
+    buildRequires = ['byacc:runtime']
+
+    def setup(r):
+        r.addArchive('ftp://ftp.perforce.com/jam/jam-2.5.tar')
+
+	r.Make('LOCATE_TARGET=bin')
+	r.Install('bin/jam', '%(bindir)s/')
+        #r.Make()
+        #r.Install('bin.linuxx86/jam', '%(bindir)s/jam')

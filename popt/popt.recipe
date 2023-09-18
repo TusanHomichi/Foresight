@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2010      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class Popt(CPackageRecipe):
+    # we don't want AutoPackage above as this is a 
+    # pkg belonging to bootstrap. AutoPackage
+    # drags too much deps with it
+    name = 'popt'
+    version = '1.13'
+    buildRequires = ['gettext:runtime', 'intltool:runtime']
+
+    def setup(r):
+        r.addArchive('http://www.rpm5.org/files/%(name)s/')
+        r.addPatch('popt-1.13-popt_fprintf.patch')
+
+        conf = '--libdir=/%(lib)s'
+        if Use.bootstrap:
+            conf += ' --target=%(target)s --host=%(host)s --build=%(build)s'
+        r.Configure(conf)
+
+        r.Make()
+        r.MakeInstall()
+
+        r.Remove('/%(lib)s/libpopt.{la,so}')
+        r.MakeDirs('%(libdir)s')
+        
+        r.Symlink('/%(lib)s/libpopt.so.?.?.?', '%(libdir)s/libpopt.so')
+
+        r.Move('/%(lib)s/libpopt.a',
+               '%(libdir)s/libpopt.a')
+
+        # Multiple popt configurations are possible
+        r.MakeDirs('%(sysconfdir)s/popt.d')
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/.*')

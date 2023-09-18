@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Twill(PackageRecipe):
+    name = 'twill'
+    version = '0.9'
+ 
+    buildRequires = [ 'python-setuptools:python', 'python:devel','dnspython:python' ]
+ 
+    def setup(r):
+        r.addArchive('http://darcs.idyll.org/~t/projects/')
+        r.addPatch("_auth.patch")
+        r.PythonSetup()

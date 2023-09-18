@@ -1,0 +1,23 @@
+Index: b/python/pykde4/CMakeLists.txt
+===================================================================
+--- a/python/pykde4/CMakeLists.txt
++++ b/python/pykde4/CMakeLists.txt
+@@ -15,6 +15,18 @@
+     SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/pykde)
+ ENDIF(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION LESS 6)
+ 
++# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
++set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
++
++# search packages used by KDE
++find_package(KDE4 REQUIRED)
++include (KDE4Defaults)
++include (MacroLibrary)
++include(MacroOptionalAddSubdirectory)
++
++add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT)
++
++
+ FIND_PACKAGE(PythonLibrary REQUIRED)
+ INCLUDE(PythonMacros)
+ 

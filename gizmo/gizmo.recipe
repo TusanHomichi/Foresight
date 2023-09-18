@@ -1,0 +1,19 @@
+loadSuperClass('binarypackage=conary.rpath.com@rpl:devel')
+class Gizmo(BinaryPackageRecipe):
+
+    buildRequires = [ 'desktop-file-utils:runtime', ]
+
+    name = 'gizmo'
+    version = '3.1.0.79'
+
+    def unpack(r):
+        r.addArchive('http://download.gizmoproject.com/GizmoDownload/%(name)s-project-%(version)s-libstdc++6.tar.gz')
+        r.Move('share/*', '%(datadir)s')
+        r.MakeDirs('%(bindir)s','%(libdir)s')
+        r.Move('gizmo*', '%(bindir)s')
+        r.Move('libsipphoneapi.so.1.7.07.73', '%(libdir)s')
+        r.Move('%(datadir)s/gizmo/crash-reporter/crash-reporter', '%(libdir)s/gizmo/crash-reporter/')
+        r.Move('README.TXT', '%(datadir)s/%(name)s/doc/')
+        r.Move('EULA.rtf', '%(datadir)s/%(name)s/doc/')
+        r.Symlink('%(datadir)s/gizmo', '%(datadir)s/libsipphoneapi')
+        r.addSource('gizmo-project.desktop', dir='%(datadir)s/applications/')

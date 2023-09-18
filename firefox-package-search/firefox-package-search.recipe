@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('firefox')
+class FirefoxPackageSearch(PackageRecipe):
+    name = 'firefox-package-search'
+    version = '20100526'
+
+    def setup(r):
+        r.macros.fileid = '90292'
+        r.macros.filename = 'foresight_packages'
+        r.macros.ff_version = '.'.join(FireFox.version.split('.')[:2])
+        r.addSource(
+            'https://addons.mozilla.org/en-US/firefox/downloads/file/%(fileid)s/%(filename)s-%(version)s.xml',
+            dest='%(libdir)s/firefox-%(ff_version)s/searchplugins/%(filename)s.xml')

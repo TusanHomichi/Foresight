@@ -1,0 +1,11 @@
+--- pyblock-0.24/Makefile.orig	2007-01-15 17:29:58.000000000 -0500
++++ pyblock-0.24/Makefile	2007-01-15 17:28:14.000000000 -0500
+@@ -15,7 +15,7 @@
+ dm_LIBS += selinux
+ CFLAGS += -DUSESELINUX=1
+ endif
+-dmraid_LIBS = dmraid devmapper
++dmraid_LIBS = dmraid devmapper z
+ 
+ PYFILES=__init__.py maps.py device.py
+ LIBS = dmmodule.so dmraidmodule.so

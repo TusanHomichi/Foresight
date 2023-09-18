@@ -1,0 +1,7 @@
+datasource stdin
+file %(taghandlerdir)s/kernel
+include /boot/vmlinuz-.*
+include /boot/xen.gz-.*
+include /lib/modules/.*/.*\.k?o$
+implements files update
+implements files remove

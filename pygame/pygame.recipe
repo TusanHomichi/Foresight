@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class pygame(CPackageRecipe):
+
+    name = "pygame"
+    version = "1.8.0"
+
+    buildRequires = [ 'gcc:runtime', 'SDL:devel', 'SDL_image:devel', 'SDL_mixer:devel', 
+            'SDL_ttf:devel', 'glibc:devel', 'libX11:devel', 'libjpeg:devel', 
+            'libpng:devel', 'smpeg:devel', 'python-numeric:python', 'python:devel',
+            'zlib:devel', 'python-setuptools:python' ]
+
+    def setup(r):
+        r.addArchive('ftp://pygame.org/pub/%(name)s/%(name)s-%(version)srelease.tar.gz')
+        r.PythonSetup()

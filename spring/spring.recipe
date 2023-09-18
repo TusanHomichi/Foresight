@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Spring(CPackageRecipe):
+    name = 'spring'
+    version = '0.82.7.1'
+ 
+    buildRequires = ['cmake:runtime', 'DevIL:devel', 'Mesa:devel', 'SDL:devel', 'boost:devel', 'desktop-file-utils:runtime', 'freeglut:devel', 'freetype:devel', 'gcc-c++:runtime', 'glew:devel', 'icedtea-jre:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXau:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXdamage:devel', 'libXdmcp:devel', 'libXext:devel', 'libXfixes:devel', 'libXft:devel', 'libXi:devel', 'libXinerama:devel', 'libXmu:devel', 'libXpm:devel', 'libXrandr:devel', 'libXrender:devel', 'libXt:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel', 'libogg:devel', 'libstdc++:devel', 'libvorbis:devel', 'openal:devel', 'python:devel', 'shared-mime-info:runtime', 'zlib:devel', 'pkgconfig:devel', 'unzip:runtime', 'icedtea-jdk:runtime', 'which:runtime', 'zip:runtime', 'p7zip:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://spring.clan-sy.com/dl/spring_%(version)s_src.tar.gz')
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.CMake('.')
+        r.Make()
+        r.MakeInstall()
+        r.ImproperlyShared(exceptions='%(datadir)s/games/spring/AI/.*')
+

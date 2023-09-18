@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2011-2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class GDisk(CPackageRecipe):
+    name = 'gdisk'
+    version = '0.8.6'
+ 
+    buildRequires = [ 
+        'libstdc++:devel', 
+        'popt:devel', 
+        'util-linux:devel', 
+        'icu:devel', 
+        'ncurses:devel', 
+            ]
+
+
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/gptfdisk/gptfdisk/%(version)s/gptfdisk-%(version)s.tar.gz')
+        r.macros.cxxflags += '  -D_FILE_OFFSET_BITS=64'
+
+        r.Make()
+
+        for m in ['gdisk', 'cgdisk', 'sgdisk', 'fixparts']:
+            r.Install(m , '%(sbindir)s/', mode = 0755)
+            r.Install(m + '.8', '%(mandir)s/man8/', mode = 0644)

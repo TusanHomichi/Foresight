@@ -1,0 +1,63 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FontForge(CPackageRecipe):
+    name = 'fontforge'
+    version = '20110222'
+    docversion = '20110221'
+
+    buildRequires = [ 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel',
+                    'freetype:devel', 'gettext:runtime', 'glib:devel', 'libXft:devel',
+                    'libXrender:devel', 'libtiff:devel', 'libpng:devel', 'libjpeg:devel',
+                    'libxml2:devel', 'giflib:devel', 'libICE:devel', 'libSM:devel',
+                    'libX11:devel', 'libXi:devel', 'libxkbui:devel', 'pango:devel', 'pkgconfig:devel', 'python:devel'
+                      ]
+
+    def setup(r):
+        r.macros.docversion = r.docversion
+        r.macros.sf = 'http://downloads.sourceforge.net/project/fontforge/'
+        r.addArchive('%(sf)s/fontforge-source/fontforge_full-%(version)s.tar.bz2')
+        r.addArchive('%(sf)s/fontforge-docs/fontforge_htdocs-%(docversion)s.tar.bz2',
+                     dir='%(name)s-%(version)s/htdocs/')
+
+        r.addSource('fontforge.desktop')
+        r.Desktopfile('fontforge.desktop', vendor='foresight')
+
+        r.Remove('htdocs/scripts', recursive = True)
+        r.Remove('htdocs/flags/CVS', recursive = True)
+
+        r.SetModes('htdocs/*.{gif,html,png}', 0644)
+
+        # Fix bad line terminators
+        r.Run("""
+sed -i 's/\r//' htdocs/Big5.txt
+sed -i 's/\r//' htdocs/corpchar.txt
+""")
+
+        config = ' --enable-devicetables'
+        config += ' --disable-static --with-regular-link'
+        config += ' --with-freetype-bytecode=no'
+        config += ' --with-regular-link'
+
+        # FIXME - python breaks compiling big time...
+        config += ' --disable-pyextension'
+        config += ' --without-python'
+
+        r.Environment('LIBS', '-lgif')
+        r.Environment('CPPFLAGS', ' -DDOCDIR=\"%(docdir)s/%(name)s-%(version)s/htdocs\" ')
+        r.Configure(config)
+        r.Make()
+
+        r.MakeInstall()
+
+        r.Install('htdocs/ffanvil32.png', '%(datadir)s/pixmaps/fontforge.png')
+
+        r.ComponentSpec(':data', '%(docdir)s/%(name)s/.*')
+
+        # r.Remove('%(libdir)s/pkgconfig/fontforge.pc')
+
+        r.Provides('file', '%(bindir)s/fontforge')

@@ -1,0 +1,11 @@
+class URIparser(AutoPackageRecipe):
+    name = 'uriparser'
+    version = '0.7.5'
+
+    buildRequires = []
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure(' --disable-static --disable-test --disable-doc')

@@ -1,0 +1,11 @@
+--- mono-2.2/mono/mini/mini-amd64.c.orig	2009-03-26 17:46:22.000000000 +0300
++++ mono-2.2/mono/mini/mini-amd64.c	2009-03-26 17:49:47.000000000 +0300
+@@ -1018,7 +1018,7 @@
+ 		locals_size += mono_type_size (ins->inst_vtype, &ialign);
+ 	}
+ 
+-	if ((cfg->num_varinfo > 10000) || (locals_size >= (1 << 15))) {
++        if ((cfg->num_varinfo > 5000) || (locals_size >= (1 << 15)) || (header->code_size > 110000)) {
+ 		/* Avoid hitting the stack_alloc_size < (1 << 16) assertion in emit_epilog () */
+ 		cfg->arch.omit_fp = FALSE;
+ 	}

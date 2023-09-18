@@ -1,0 +1,23 @@
+--- kdelibs-3.5.0/kdecore/kstandarddirs.cpp.orig	2005-10-10 19:06:02.000000000 +0400
++++ kdelibs-3.5.0/kdecore/kstandarddirs.cpp	2005-11-28 18:55:11.000000000 +0300
+@@ -833,6 +833,10 @@
+                     if ((local || testdir.exists()) && !candidates->contains(path))
+                         candidates->append(path);
+                 }
++                // UGLY HACK - Chris CHeney
++                if (local && (!strcmp("config", type)))
++                    candidates->append("/etc/kde3/");
++                //
+                 local = false;
+             }
+         }
+@@ -1020,7 +1024,7 @@
+     if (!strcmp(type, "data"))
+-	return "share/apps/";
++	return "share/kde3/apps/";
+     if (!strcmp(type, "html"))
+-	return "share/doc/HTML/";
++	return "share/doc/kde3/HTML/";
+     if (!strcmp(type, "icon"))
+ 	return "share/icons/";
+     if (!strcmp(type, "config"))

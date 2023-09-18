@@ -1,0 +1,38 @@
+--- extras/path_id/path_id.orig	2008-04-25 16:20:56.000000000 +0300
++++ extras/path_id/path_id	2008-04-25 16:21:48.000000000 +0300
+@@ -70,7 +70,7 @@ get_port_offset () {
+ 
+ handle_pci () {
+ 	local DEV=$1
+-	cd -P $1
++	cd $1
+ 	DEV=${PWD}
+ 	pci_id=${DEV##*/}
+ 	host_dev_path=$DEV
+@@ -102,7 +102,7 @@ handle_pci () {
+ 
+ handle_platform () {
+ 	local DEV=$1
+-	cd -P $1
++	cd $1
+ 	DEV=${PWD}
+ 	platform_id=${DEV##*/}
+ 	host_dev_path=$DEV
+@@ -127,7 +127,7 @@ handle_platform () {
+ 
+ handle_serio () {
+ 	local DEV=$1
+-	cd -P $1
++	cd $1
+ 	DEV=${PWD}
+ 	serio_id=${DEV##*/serio}
+ 	host_dev_path=$DEV
+@@ -391,7 +391,7 @@ handle_iscsi() {
+ handle_usb () {
+ : handle_usb $*
+ 	local DEV=$1
+-	cd -P $1
++	cd $1
+ 	DEV=${PWD}
+ 	port_id=${DEV##*/}
+ 	port_num=${port_id#*-}

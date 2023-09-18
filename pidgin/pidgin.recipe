@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# Copyright (c) 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class pidgin(AutoPackageRecipe):
+    name = 'pidgin'
+    version = '2.10.9'
+    buildRequires = ['mono:cil', 'perl-XML-Parser', 'nss:devel', 'popt:devel',
+                     'fontconfig:devel', 'dbus-python:python', 'python:devel',
+                     'NetworkManager:devel', 'pygobject:python', 'perl:devel',
+                     'libXext:devel', 'dbus-glib:devellib', 'meanwhile:devel',
+                     'dbus:devel', 'pango:devel', 'nspr:devel', 'zlib:devel',
+                     'gst-plugins-base:devel', 'expat:devel', 'libX11:devel',
+                     'freetype:devel', 'graphviz:runtime', 'gettext:runtime',
+                     'glib:devel', 'gtkspell:devel', 'mono:cil', 'tcl:devel',
+                     'gnome-vfs:devel', 'libxml2:devel', 'libgcrypt:devel',
+                     'ncurses:devel', 'dbus-glib:devel', 'farsight2:devel',
+                     'aspell:devel', 'libXScrnSaver:devel', 'perl:runtime',
+                     'libao:devel', 'gcc-c++:runtime', 'libXrender:devel',
+                     'cyrus-sasl:devel', 'GConf:runtime', 'avahi:devel',
+                     'intltool:runtime', 'audiofile:devel', 'atk:devel',
+                     'pygtk:python', 'libICE:devel', 'gstreamer:devel',
+                     'libxslt:runtime', 'evolution-data-server:devel',
+                     'sound-theme-freedesktop:runtime', 'libSM:devel',
+                     'perl:lib', 'libgnome:devel', 'pkgconfig:devel',
+                     'startup-notification:devel', 'doxygen:runtime',
+                     'gtk:devel', 'ORBit2:devel', 'libbonobo:devel',
+                     'libpng:devel', 'GConf:devel', 'libidn:devel',
+                     'sqlite:devel', 'libXdmcp:devel', 'tk:devel',
+                     'desktop-file-utils:runtime', 'cairo:devel',
+                     'libXau:devel', 'mono:devel', 'autoconf:runtime',
+                     'automake:runtime', 'intltool:devel',
+                     'libtool:runtime', 'libtool:runtime', ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/pidgin/')
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        # https://developer.pidgin.im/ticket/15517
+        # r.addPatch('pidgin-2.10.7-link-libirc-to-libsasl2.patch')
+        r.Run('autoreconf -fvi')
+
+    def configure(r):
+        r.Configure(
+            # FIXME mono disable until we figure why it segfaults in x86_64 at least (and not always) 
+            ' --enable-tcl --enable-tk --enable-gnutls=no --enable-nss=yes'
+            ' --disable-mono --enable-cyrus-sasl --enable-tcl --enable-tk '
+            ' --enable-dbus --enable-gstreamer --enable-nm --enable-screensaver'
+            ' --enable-meanwhile --enable-vv --enable-trayicon-compat'
+            ' --with-system-ssl-certs=%(sysconfdir)s/pki/tls/certs'
+            )
+
+    def policy(r):
+        r.Make('one_time_password.so', dir = 'libpurple/plugins/')
+        r.Install('libpurple/plugins/one_time_password.so', '%(libdir)s/purple-2/', mode = 0755)
+        # libtool automatically makes .a files for all the .so plugins
+        # that gaim builds.  They're useless, so we remove them.
+        r.RemoveNonPackageFiles(r'.*\.a')
+        r.Remove('%(libdir)s/pidgin/relnot.so')
+        r.AutoDoc('doc/CREDITS', 'doc/PERL-HOWTO.dox')
+
+        # This dep is needed for jabber authentication
+        r.Requires('cyrus-sasl:md5', '%(bindir)s/pidgin')
+        r.Requires('cyrus-sasl:plain', '%(bindir)s/pidgin')
+
+        r.PackageSpec('libpurple',
+                      '(%(libdir)s|%(bindir)s|%(includedir)s|%(datadir)s)/.*purple.*',
+                      '%(libdir)s/pkgconfig/purple.pc', '%(datadir)s/.*/purple')

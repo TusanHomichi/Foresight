@@ -1,0 +1,16 @@
+diff -Naur control-center-2.18.1.orig/help/Makefile.in control-center-2.18.1/help/Makefile.in
+--- control-center-2.18.1.orig/help/Makefile.in	2007-04-10 07:56:16.000000000 -0400
++++ control-center-2.18.1/help/Makefile.in	2007-04-17 22:11:46.000000000 -0400
+@@ -675,9 +675,9 @@
+ _credits ?= `$(PKG_CONFIG) --variable xmldir gnome-doc-utils`/gnome/xslt/docbook/utils/credits.xsl
+ _ids ?= `$(PKG_CONFIG) --variable xmldir gnome-doc-utils`/gnome/xslt/docbook/utils/ids.xsl
+ 
+-@ENABLE_SK_TRUE@_skpkgdatadir ?= `scrollkeeper-config --pkgdatadir`
+-@ENABLE_SK_TRUE@_sklocalstatedir ?= `scrollkeeper-config --pkglocalstatedir`
+-@ENABLE_SK_TRUE@_skcontentslist ?= $(_skpkgdatadir)/Templates/C/scrollkeeper_cl.xml
++_skpkgdatadir ?= `scrollkeeper-config --pkgdatadir`
++_sklocalstatedir ?= `scrollkeeper-config --pkglocalstatedir`
++_skcontentslist ?= $(_skpkgdatadir)/Templates/C/scrollkeeper_cl.xml
+ 
+ $(_DOC_OMF_DB) : $(_DOC_OMF_IN)
+ $(_DOC_OMF_DB) : $(DOC_MODULE)-%.omf : %/$(DOC_MODULE).xml

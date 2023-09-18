@@ -1,0 +1,15 @@
+class giblib(AutoPackageRecipe) :
+        name = 'giblib'
+        version = '1.2.4'
+        buildRequires = ['freetype:devel', 'imlib2:devel', 'libX11:devel', 'libXext:devel',
+                         'zlib:devel', 'imlib2:devel' ]
+
+        def unpack(r):
+                r.addArchive('http://www.linuxbrit.co.uk/downloads/giblib-%(version)s.tar.gz')
+                r.Replace('/doc/giblib', '/share/doc/giblib', 'Makefile.in')
+
+        def configure(r):
+                r.Configure('--disable-static')
+                # FIXME ...
+                r.Replace('\-LNONE', '', 'Makefile')
+                r.Replace('\-LNONE', '', 'giblib/Makefile')

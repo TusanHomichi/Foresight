@@ -1,0 +1,18 @@
+#
+# Copyright 2005, Pavel Volkovitskiy (int@mtx.ru)
+# Copyright 2008, Foresight Linux
+#
+loadSuperClass('xfce-goodies-package.recipe')
+class xfce4_battery_plugin(xfceGoodiesPackage):
+
+    name = 'xfce4-battery-plugin'
+    version = '0.5.0'
+    
+    buildRequires =  [
+        'perl-XML-Parser:perl', 'libxfce4util:devel', 'xfce4-panel:devel',
+    ] 
+   
+    def unpack(r):
+        xfceGoodiesPackage.unpack(r)
+        r.addPatch('http://bugzilla.xfce.org/attachment.cgi?id=1111')
+        r.addArchive('po-files.tar.bz2', dir='xfce4-battery-plugin-0.5.0')

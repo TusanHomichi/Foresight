@@ -1,0 +1,11 @@
+loadSuperClass('binarypackage=conary.rpath.com@rpl:1')
+class kompozer(BinaryPackageRecipe):
+    name = 'kompozer'
+    version = '0.8a4'
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/kompozer/kompozer-0.8a4-gcc4.2-i686.tar.gz',
+                     dir='/opt/%(name)s/')
+        r.addSource('kompozer.desktop')
+        r.Desktopfile('kompozer.desktop')

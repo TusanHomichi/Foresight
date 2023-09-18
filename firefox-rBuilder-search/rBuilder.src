@@ -1,0 +1,31 @@
+# Conary Package search Plug-in for Firefox
+#
+# Created by Mark Trompell <mark@marktrompell.de>
+# Created 16.09.2005
+
+<search
+   version = "1.1"
+   name="rBuilder Packages"
+   description="rBuilder Package Search"
+   searchForm="http://www.rpath.com"
+   method="GET"
+   action="http://www.rpath.com/rbuilder/search"
+>
+
+<input name="search" user>
+<input name="type" value="Packages">
+
+<interpret
+    browserResultType="result"
+    resultListStart="rBuilder Package search"
+    resultListEnd="Responses"
+    resultItemStart="<td>"
+    resultItemEnd="</td>"
+>
+
+<browser
+    updateCheckDays="3"
+>
+
+</search>
+

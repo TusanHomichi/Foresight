@@ -1,0 +1,12 @@
+loadInstalled('python')
+class ObMenu(AutoPackageRecipe):
+    name = 'obmenu'
+    version = '1.0'
+
+    buildRequires = ['python-setuptools:python', 'pygobject:python', 'pygtk:python', 'desktop-file-utils:runtime', 'python:devel']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+        r.PythonSetup()
+        r.macros.pyver = Python.majversion
+        r.Symlink('%(libdir)s/python%(pyver)s/site-packages/share/obmenu/obmenu.glade', '%(datadir)s/obmenu/')

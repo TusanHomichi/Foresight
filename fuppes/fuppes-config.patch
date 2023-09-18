@@ -1,0 +1,13 @@
+--- config/Makefile.am.orig	2011-09-29 21:42:58.944000076 +0200
++++ config/Makefile.am	2011-09-29 21:51:53.969000077 +0200
+@@ -15,8 +15,5 @@
+ vfoldersdir = $(localstatedir)/lib/fuppes/vfolders
+ dist_vfolders_DATA = \
+ 	vfolders/default.cfg \
+-  vfolders/xbox.cfg
+-
+-install-data-hook:
+-	test -f $(basedir)/fuppes.cfg || cp $(basedir)/fuppes.cfg.default $(basedir)/fuppes.cfg
+-
++  vfolders/xbox.cfg \
++  vfolders/yamaha.cfg

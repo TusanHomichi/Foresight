@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class pdsh(AutoPackageRecipe):
+    name = 'pdsh'
+    version = '2.22'
+
+    buildRequires = [ 'ncurses:devel', 'perl:devel', 'readline:devel', ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/pdsh/')
+
+    def configure(r):
+        # Note that xrcmd requires pdsh to be setuid root to work.
+        # We don't make pdsh setuid root for security reasons, but
+        # this may be changed in a shadow or derived package for
+        # those who require this functionality
+        r.Configure('--with-ssh --with-exec'
+                    ' --with-netgroup --with-readline --with-pam')

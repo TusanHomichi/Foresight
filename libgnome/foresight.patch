@@ -1,0 +1,51 @@
+diff -r 1e6d11b175a3 schemas/desktop_gnome_background.schemas.in.in
+--- a/schemas/desktop_gnome_background.schemas.in.in	Sun Sep 14 13:51:51 2008 -0400
++++ b/schemas/desktop_gnome_background.schemas.in.in	Sun Sep 14 13:52:41 2008 -0400
+@@ -16,7 +16,7 @@
+         <applyto>/desktop/gnome/background/picture_options</applyto>
+         <owner>gnome</owner>
+         <type>string</type>
+-        <default>zoom</default>
++        <default>stretched</default>
+         <locale name="C">
+         <short>Picture Options</short>
+         <long>Determines how the image set by wallpaper_filename is
+@@ -51,7 +51,7 @@
+         <applyto>/desktop/gnome/background/primary_color</applyto>
+         <owner>gnome</owner>
+         <type>string</type>
+-        <default>#66ba00</default>
++        <default>#539235</default>
+         <locale name="C">
+         <short>Primary Color</short>
+         <long>Left or Top color when drawing gradients, or the solid color.</long>
+@@ -62,7 +62,7 @@
+         <applyto>/desktop/gnome/background/secondary_color</applyto>
+         <owner>gnome</owner>
+         <type>string</type>
+-        <default>#66ba00</default>
++        <default>#539235</default>
+         <locale name="C">
+         <short>Secondary Color</short>
+         <long>Right or Bottom color when drawing gradients, not used for solid color.</long>
+diff -r 1e6d11b175a3 schemas/desktop_gnome_interface.schemas.in.in
+--- a/schemas/desktop_gnome_interface.schemas.in.in	Sun Sep 14 13:51:51 2008 -0400
++++ b/schemas/desktop_gnome_interface.schemas.in.in	Sun Sep 14 13:52:41 2008 -0400
+@@ -143,7 +143,7 @@
+       <applyto>/desktop/gnome/interface/icon_theme</applyto>
+       <owner>gnome</owner>
+       <type>string</type>
+-      <default>Fedora</default>
++      <default>Tango</default>
+       <locale name="C">
+         <short>Icon Theme</short>
+         <long>Icon theme to use for the panel, nautilus etc.</long>
+@@ -154,7 +154,7 @@
+       <applyto>/desktop/gnome/interface/gtk_theme</applyto>
+       <owner>gnome</owner>
+       <type>string</type>
+-      <default>Clearlooks</default>
++      <default>Foresight</default>
+       <locale name="C">
+ 	<short>Gtk+ Theme</short>
+ 	<long>Basename of the default theme used by gtk+.</long>

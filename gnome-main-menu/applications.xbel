@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbel version="1.0"
+      xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+      xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+>
+  <bookmark href="net-firefox.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-0</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Firefox" exec="firefox %u" timestamp="1168926682" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="evolution.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-1</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Evolution" exec="evolution-2.6" timestamp="1168926682" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="banshee.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-2</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="Banshee" exec="banshee --play-enqueued --enqueue %U" timestamp="1168926682" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="f-spot.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-3</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="F-Spot" exec="f-spot" timestamp="1168926682" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="writer2.4.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-4</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="OpenOffice.org Writer" exec="oowriter2.4 %U" timestamp="1168926682" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="calc2.4.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:groups>
+          <bookmark:group>rank-5</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="OpenOffice.org Calc" exec="oocalc2.4 %U" timestamp="1168926682" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+</xbel>

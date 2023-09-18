@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2007, 2009-2010 rPath, Inc.
+#               2011-2012       The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MemCached(AutoPackageRecipe):
+    name = 'memcached'
+    version = '1.4.15'
+
+    buildRequires = [ 'cyrus-sasl:devel', 'libxslt:runtime', 'libevent:devel', 
+                      'chkconfig:runtime', 'perl:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://memcached.googlecode.com/files/')
+
+        r.addSource('memcached.sysv')
+        r.addSource('memcached.config')
+
+        r.macros.cflags += ' -pie -fpie'
+        r.macros.ldflags += ' -Wl,-z,relro,-z,now'
+
+    def make(r):
+        r.Replace('-Werror', '', 'Makefile')
+        r.Make()
+
+    def policy(r):
+        r.Remove('%(bindir)s/memcached-debug')
+
+        # Perl script for monitoring memcached
+        r.Install('scripts/memcached-tool',
+                  '%(bindir)s/memcached-tool',
+                  mode = 0755)
+
+        # Init script
+        r.Install('memcached.sysv', '%(initdir)s/memcached',
+                  mode = 0755)
+        # Default configs
+        r.Install('memcached.config', '%(sysconfdir)s/sysconfig/%(name)s',
+                  mode = 0644)
+        # pid directory
+        d = '%(localstatedir)s/run/%(name)s'
+        r.MakeDirs(d)
+        r.SetModes(d, 0755)
+        r.Ownership('%(name)s', '%(name)s', d)

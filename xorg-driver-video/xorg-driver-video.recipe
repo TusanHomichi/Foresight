@@ -1,0 +1,222 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class XorgDriverVideo(RPMPackageRecipe,CPackageRecipe):
+    name = 'xorg-driver-video'
+    version = '7.6'
+    rpmRelease = '228.1'
+    rpmName = 'xorg-x11-driver-video'
+    isOPENsuse = True
+    isXOrgFactory = True
+
+    buildRequires = [ 'pkgconfig:devel', 'ghostscript:runtime', 'linuxdoc-tools:runtime',
+                      'libdrm:devel', 'autoconf:runtime', 'automake:runtime',
+                      'makedepend:runtime', 'randrproto:devel', 'xorg-server:devel',
+                      'xproto:devel', 'fontsproto:devel', 'renderproto:devel',
+                      'videoproto:devel', 'xextproto:devel', 'xf86dgaproto:devel',
+                      'xineramaproto:devel', 'xf86miscproto:devel', 'xf86driproto:devel',
+                      'dri2proto:devel', 'pciutils:devel', 'inputproto:devel',
+                      'Mesa:devel', 'glproto:devel', 'libXvMC:devel',
+                      'libX11:devel', 'libtool:devel', 'libtool:runtime',
+                      'util-macros:devel', 'pixman:devel', 'pkgconfig:devel',
+                      'm4:runtime', 'expat:devel', 'libpciaccess:devel',
+                      'xorg-sgml-doctools:data', 'which:runtime', 'xextproto:devel',
+                      'xcb-util:devel', 'zlib:devel', 'udev:devel', 'libva:devel',]
+
+
+    def setup(r):
+        r.addArchive(r.srpm)
+
+        # unpack all.  ignore Geode LX/GX (x86 only) for now. 
+        r.addAction(""" for p in $(fgrep Source ../xorg-x11-driver-video.spec); do  ARGN=`echo $p | grep  xf86 | grep -v geode| grep -c tar.bz2`;  if [ "$ARGN" = 1 ]; then  (cd ../; ARG=`echo $p | grep xf86` ; mv $ARG %(name)s-%(version)s/; cd %(name)s-%(version)s; tar xjf "$ARG"; rm -rf "$ARG"  );   fi  done """)
+        repoSRPM = 'http://download.opensuse.org/repositories/X11:/XOrg/openSUSE_11.4/src/'
+        # radeonhd
+        radeonhdSRPM = repoSRPM + 'xorg-x11-driver-video-radeonhd-1.3.0_20100512_80ba041-37.3.src.rpm'
+        r.addArchive('xf86-video-radeonhd-1.3.0_20100512_80ba041.tar.bz2',
+                     rpm = radeonhdSRPM)
+        r.addPatch('R6XX-disable-acceleration.patch', rpm = radeonhdSRPM, dir = '../xf86-video-radeonhd-1.3.0')
+        r.addAction(""" mv ../xf86-video-radeonhd-1.3.0 ../%(name)s-%(version)s/xf86-video-radeonhd; """)
+        # unichrome (formely via) 
+        unichromeSRPM = repoSRPM + 'xorg-x11-driver-video-unichrome-20110523-25.2.src.rpm'
+        r.addArchive('xf86-video-unichrome-b917bee.tar.bz2', rpm=unichromeSRPM )
+        r.addAction(""" mv ../xf86-video-unichrome ../%(name)s-%(version)s/xf86-video-unichrome; """)
+        # nouveau
+        #nouveauSRPM = repoSRPM + 'xorg-x11-driver-video-nouveau-0.0.16_20110115_b795ca6-25.3.src.rpm'
+        #r.addArchive('xf86-video-nouveau-0.0.16_20110115_b795ca6.tar.bz2', rpm=nouveauSRPM )
+        nouveauSRPM = 'http://kojipkgs.fedoraproject.org/packages/xorg-x11-drv-nouveau/0.0.16/25.20110324git8378443.fc16/src/xorg-x11-drv-nouveau-0.0.16-25.20110324git8378443.fc16.src.rpm'
+        r.addArchive('xf86-video-nouveau-0.0.16-20110324git8378443.tar.bz2',
+                     rpm = nouveauSRPM)
+        r.addAction(""" mv ../xf86-video-nouveau* ../%(name)s-%(version)s/xf86-video-nouveau; """)
+        r.addPatch('nouveau-nva3-noaccel-info.patch', rpm = nouveauSRPM,
+                   dir = 'xf86-video-nouveau')
+        # ivtv
+        ivtvSRPM = repoSRPM + 'xorg-x11-driver-video-ivtv-1.1.1-14.2.src.rpm'
+        r.addArchive('xf86-video-ivtv-1.1.1.tar.bz2', rpm=ivtvSRPM )
+        r.addAction(""" mv ../xf86-video-ivtv* ../%(name)s-%(version)s/xf86-video-ivtv; """)
+        # intelLegacy driver (does NOT require KMS) 
+        intelLegacySRPM = repoSRPM + 'xorg-x11-driver-video-intel-legacy-2.9.1-7.4.src.rpm'
+        r.addArchive('xf86-video-intel-2.9.1.tar.bz2', rpm=intelLegacySRPM )
+        r.addAction(""" mv ../xf86-video-intel-2.9* ../%(name)s-%(version)s/xf86-video-intel-legacy; """)
+        for p in [ 'xf86-video-intel-G33-1mb.diff',
+                   'xf86-video-intel-NoFBC-945GME.diff',
+                   'xf86-video-intel-bfo17988.diff',
+                   'moblin-dump-tools.patch',
+                   'moblin-2009Q2-rc2-incremental.patch',
+                   'moblin-uxa-Fix-segfault-on-source-only-picture-usage.patch',
+                   'xf86-video-intel-buildfix.diff',
+                   'xf86-video-intel-2.9.1-xorg-server-1.7.3-fixes.patch',
+                   'xorg-server-1.9.diff',
+                   'xf86-video-intel-2.9.1-legacy.patch']:
+            r.addPatch(p, rpm = intelLegacySRPM, dir = 'xf86-video-intel-legacy')
+
+
+       
+
+        # normalize dir names
+        r.addAction(""" ls | grep X11 | awk '{print("mv "$1" "$1)}' | sed 's/-X11R7.1//2'| /bin/sh """)
+        r.addAction(""" ls | awk '{print("mv "$1" "$1)}' | sed 's/-[.0-9]*$//' | /bin/sh """)
+
+        r.addArchive('intel-gpu-tools-1.0.2-20101210-292ae45.tar.bz2', rpm = r.srpm, dir = '%(name)s-%(version)s/xf86-video-intel/')
+        r.addAction(""" cd xf86-video-intel; mv intel-gpu-tools-* intel-gpu-tools """)
+
+        # we _always_ have vesa so ... 
+        r.addArchive('xorg-confd-snippets.tar.bz2', rpm = r.srpm, dir = '%(destdir)s', package = 'xf86-video-vesa')
+
+
+        videoDrivers = [ 'xf86-video-apm',
+                         'xf86-video-ark',
+                         'xf86-video-ast',
+                         'xf86-video-ati',
+                         'xf86-video-chips',
+                         'xf86-video-cirrus',
+                         'xf86-video-dummy',
+                         'xf86-video-fbdev',
+                         'xf86-video-glint',
+                         'xf86-video-i128',
+                         'xf86-video-i740',
+                         'xf86-video-intel',
+                         'xf86-video-mach64',
+                         'xf86-video-mga',
+                         'xf86-video-neomagic',
+                         'xf86-video-newport',
+                         'xf86-video-nv',
+                         'xf86-video-r128',
+                         'xf86-video-rendition',
+                         'xf86-video-s3',
+                         'xf86-video-s3virge',
+                         'xf86-video-savage',
+                         'xf86-video-siliconmotion',
+                         'xf86-video-sis',
+                         'xf86-video-sisusb',
+                         'xf86-video-tdfx',
+                         'xf86-video-tga',
+                         'xf86-video-trident',
+                         'xf86-video-tseng',
+                         'xf86-video-v4l',
+                         'xf86-video-vesa',
+                         'xf86-video-vmware',
+                         'xf86-video-voodoo',
+                         # 
+                         'xf86-video-radeonhd',
+                         'xf86-video-unichrome',
+                         'xf86-video-nouveau',
+                         'xf86-video-ivtv',
+                         'xf86-video-xgi',
+                         'xf86-video-xgixp',
+                         'xf86-video-intel-legacy',
+                         ]
+
+        patches = [
+            # srpm patchnumber (for reference), patch, level, package (dir)
+            ['Patch10',  'xf86-video-tdfx.diff', 0 ,'xf86-video-tdfx', False],
+            ['Patch35',  'xf86-video-trident-1.3.3.diff', 0 ,'xf86-video-trident', False],
+            ['Patch46',  'xf86-video-ati.diff', 0,'xf86-video-ati', False],
+            ['Patch56',  'xf86-video-mga-g200se-swcursor.diff', 0,'xf86-video-mga', False],
+            ['Patch64',  'xf86-video-vesa_DefaultRefresh.diff', 1 ,'xf86-video-vesa', False],
+            ['Patch68',  'xf86-video-ati-bug474071-fix2.diff', 2 ,'xf86-video-ati', False],
+
+            ['Patch131',   'xf86-video-ati-bug519261-increase-virtual.diff', 1 ,'xf86-video-ati', False],
+            ['Patch132',   'xf86-video-nv-bug519261-increase-virtual.diff', 1 ,'xf86-video-nv', False],
+            ['Patch137',   'xf86-video-newport-commit-48f48e5.diff', 1 ,'xf86-video-newport', False],
+
+            ['Patch143',   'xf86-video-xgi-buildfix.diff', 1 ,'xf86-video-xgi', False],
+            ['Patch144',   'xf86-video-xgi-symbols.diff', 1 ,'xf86-video-xgi', False],
+
+            ['Patch145',   'xf86-video-xgixp-symbols.diff', 1 ,'xf86-video-xgixp', False],
+
+            ['Patch150',   'xf86-video-intel-dell_backlight.diff', 1 ,'xf86-video-intel', False],
+            # ['Patch155',   'xf86-video-intel-copyfb.diff', 2 ,'xf86-video-intel', False],
+            ]
+
+        for n, p, l, d, R in patches:
+            if not R:
+                o = ''
+            else:
+                o = '-R'
+            if l <> -1:
+                r.addPatch(p, dir = d, level = l, rpm= r.srpm, extraArgs = o)
+            else:
+                r.addPatch(p, dir = d, rpm= r.srpm, extraArgs = o)
+
+        r.macros.optflags += ' -fno-strict-aliasing  '
+
+        for d in videoDrivers:
+            #if d in ( 'xf86-video-ati', 'xf86-video-intel', 'xf86-video-mga',
+            #          'xf86-video-nouveau', 'xf86-video-ivtv',
+            #          'xf86-video-xgixp', 'xf86-video-unichrome',
+            #          'xf86-video-radeonhd',
+            #          'xf86-video-intel-legacy'):
+            r.Run('cd %s ; autoreconf -fi' % d)
+
+            if d == 'xf86-video-unichrome':
+                r.Configure('--without-wrapper', dir = d)
+            elif d == 'xf86-video-nouveau':
+                r.Configure('--without-libudev', dir = d)
+            else:
+                r.Configure(dir = d)
+
+            if d == 'xf86-video-radeonhd':
+                r.Make(dir = d)
+                r.Make(dir = d + '/utils/conntest')
+                r.Copy(d + '/utils/conntest/README', d + '/utils/conntest/README_conntest')
+                r.Doc(d + '/utils/conntest/README_conntest', package = d)
+            else:
+                r.Make(dir = d)
+
+
+            if d == 'xf86-video-radeonhd':
+                r.MakeInstall('DESTDIR=%(destdir)s', dir = d,
+			      package = d)
+                r.Install(d + '/utils/conntest/rhd_conntest', '%(bindir)s', mode = 0755, package = d)
+            elif d == 'xf86-video-mga':
+                r.MakeInstall('DESTDIR=%(destdir)s', dir = d,
+			      package = d)
+
+            elif d == 'xf86-video-intel':
+                r.MakeInstall('DESTDIR=%(destdir)s', dir = d,
+			      package = d)
+                # intel-gpu-tools
+                r.Configure(dir = d + '/intel-gpu-tools')
+                r.Make(dir = d + '/intel-gpu-tools')
+
+                r.MakeInstall('DESTDIR=%(destdir)s', dir = d + '/intel-gpu-tools',
+			      package = d)
+
+            else:
+                r.MakeInstall('DESTDIR=%(destdir)s', dir = d,
+			      package = d)
+
+
+
+            # FIXME: workaround for CNP-87
+            r.PackageSpec(d, '%(thisdocdir)s/'+d+'/')
+
+            
+        # same as above, but to handle for via to unichrome smooth transition
+        r.Symlink( '/usr/%(lib)s/xorg/modules/drivers/unichrome_drv.so',
+                   '/usr/%(lib)s/xorg/modules/drivers/via_drv.so',
+                  package = 'xf86-video-unichrome')

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Handle XML DTD installation
+pushd xml
+mkdir -p %(destdir)s/%(sgml_dtd)s/xml
+mkdir -p %(destdir)s/%(datadir)s/xml/entities/xml-iso-entities-8879.1986
+
+for ver in *; do
+    [ -d $ver ] || continue
+
+    mkdir -p %(destdir)s/%(xml_dtd)s/$ver
+    ln -s %(xml_dtd)s/$ver %(destdir)s/%(sgml_dtd)s/xml/
+    ln -s %(datadir)s/xml/entities/xml-iso-entities-8879.1986 %(destdir)s/%(xml_dtd)s/$ver/ent
+
+    for file in $ver/*.dtd $ver/*.mod $ver/*.ent; do
+        if [ -f $file ]; then
+            install -m 0644 $file %(destdir)s/%(xml_dtd)s/$ver/
+        fi
+    done
+
+    if [ -f $ver/docbook.cat ]; then
+        install -m 0644 $ver/docbook.cat %(destdir)s/%(xml_dtd)s/$ver/catalog
+    fi
+
+    if [ -f $ver/catalog.xml ]; then
+        install -m 0644 $ver/catalog.xml %(destdir)s/%(xml_dtd)s/$ver/
+    fi
+
+done
+popd
+
+# Handle SGML DTD installation
+pushd sgml
+for ver in *; do
+    [ -d $ver ] || continue
+
+    mkdir -p %(destdir)s/%(sgml_dtd)s/$ver
+    for file in $ver/*.dtd $ver/*.mod $ver/*.ent $ver/*.dcl; do
+        if [ -f $file ]; then 
+            install -m 0644 $file %(destdir)s/%(sgml_dtd)s/$ver/
+        fi
+    done
+
+    if [ -f $ver/docbook.cat ]; then
+        install -m 0644 $ver/docbook.cat %(destdir)s/%(sgml_dtd)s/$ver/catalog
+        pushd %(destdir)s/%(sgml_dtd)s/$ver
+        ln -s catalog docbook.cat
+        popd
+    fi
+
+    if [ -f $ver/catalog.xml ]; then
+        install -m 0644 $ver/catalog.xml %(destdir)s/%(sgml_dtd)s/$ver/
+    fi
+done
+popd

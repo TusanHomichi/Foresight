@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Tomahawk(CPackageRecipe):
+    name = 'tomahawk'
+    version = '0.5.4'
+ 
+    buildRequires = [
+        'attica:devel', 
+        'boost:devel',
+        'clucene:devel', 
+        'cmake:runtime', 
+        'desktop-file-utils:runtime', 
+        'jreen:devel', 
+        'kdelibs:config', 
+        'libICE:devel', 
+        'libSM:devel', 
+        'libX11:devel', 
+        'libXScrnSaver:devel', 
+        'libXau:devel', 
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXdamage:devel', 
+        'libXdmcp:devel', 
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libXinerama:devel', 
+        'libXmu:devel', 
+        'libXpm:devel', 
+        'libXrandr:devel', 
+        'libXrender:devel', 
+        'libXres:devel', 
+        'libXt:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'libXxf86vm:devel', 
+        'libechonest:devel', 
+        'liblastfm:devel', 
+        'libstdc++:devel', 
+        'libxkbfile:devel', 
+        'pkgconfig:devel', 
+        'phonon:devel',
+        'qca2:devel', 
+        'qjson:devel', 
+        'qt4-core:devellib', 
+        'qt4-gui:devellib', 
+        'qt4-qt3support:devellib', 
+        'qt4-sql:devellib', 
+        'qt4-sql:mysql', 
+        'qt4-sql:odbc', 
+        'qt4-sql:psql', 
+        'qt4-sql:sqlite', 
+        'qt4:devel', 
+        'quazip:devel', 
+        'taglib:devel',
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://download.tomahawk-player.org/')
+        r.CMake('-DCMAKE_INSTALL_PREFIX=%(prefix)s -DCMAKE_INSTALL_LIBDIR=%(libdir)s -DCMAKE_INSTALL_LIBEXECDIR=%(libexecdir)s -DCMAKE_BUILD_TYPE=Release -DWITH_QTweetLib:BOOL=OFF')
+        r.Make()
+        r.MakeInstall()
+
+    def policy(r):
+        r.Requires('phonon-backend-gstreamer:lib', '%(bindir)s/tomahak')

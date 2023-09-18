@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class GtkSourceViewSharp(RPMPackageRecipe,AutoPackageRecipe):
+    buildRequires = [ 'mono:runtime', 'gtksourceview-1.0-compat:devel', 'gtk-sharp:lib', 'mono:lib', 'gawk:runtime', 'gnome-sharp:cil', 'gnome-sharp:devellib', 'gtk-sharp:cil', 'mono:cil', 'mono:devel', 'monodoc:runtime', 'gtk-sharp:runtime', 'pkgconfig:devel', 'gnome-sharp:lib', 'automake:runtime', 'autoconf:runtime', 'libtool:runtime', 'gnome-desktop-sharp:cil', 'gnome-desktop-sharp:devellib' ]
+
+    name = "gtksourceview-sharp"
+    version = "2.0.12"
+    rpmRelease = '6.fc10'
+    rpmPatches = [ 'gtksourceview-sharp-libdir.patch',
+                   'gtksourceview-sharp2-gnome-print.patch' 
+                   ]
+    tarballName =  '%(name)s-2.0-0.12.tar.bz2'
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.Run('autoreconf')
+
+    def policy(r):
+        r.Remove('%(datadir)s/gtksourceview-1.0/language-specs/nemerle.lang')
+        r.Remove('%(datadir)s/gtksourceview-1.0/language-specs/vbnet.lang')
+        r.Remove('%(libdir)s/monodoc/sources/', recursive = True)
+        r.Remove('/gtksourceview-sharp-docs.source', allowNoMatch = True)
+        r.Remove('/gtksourceview-sharp-docs.tree', allowNoMatch = True)
+        r.Remove('/gtksourceview-sharp-docs.zip', allowNoMatch = True)

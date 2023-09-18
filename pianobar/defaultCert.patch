@@ -1,0 +1,12 @@
+diff -ruN PromyLOPh-pianobar-b14463a.orig/src/settings.c PromyLOPh-pianobar-b14463a/src/settings.c
+--- PromyLOPh-pianobar-b14463a.orig/src/settings.c	2011-11-09 14:43:30.374658946 -0500
++++ PromyLOPh-pianobar-b14463a/src/settings.c	2011-11-09 14:44:43.316047459 -0500
+@@ -136,7 +136,7 @@
+ 	BarGetXdgConfigDir (PACKAGE "/ctl", settings->fifo, PATH_MAX);
+ #ifdef ENABLE_TLS
+ 	settings->tls = true;
+-	settings->tlsCaPath = strdup ("/etc/ssl/certs/ca-certificates.crt");
++	settings->tlsCaPath = strdup ("/etc/ssl/certs/VeriSignClass3SecureServerCA-G2.pem");
+ #endif
+ 
+ 	settings->msgFormat[MSG_NONE].prefix = NULL;

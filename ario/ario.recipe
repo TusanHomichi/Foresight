@@ -1,0 +1,15 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ario(AutoPackageRecipe):
+    name = 'ario'
+    version = '1.5.1'
+ 
+    buildRequires = ['atk:devel', 'avahi-glib:devel', 'avahi:devel', 'cairo:devel', 'curl:devel', 'dbus-glib:devel', 'dbus:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'gettext:runtime', 'glib:devel', 'gnutls:devel', 'gtk:devel', 'intltool:runtime', 'libgcrypt:devel', 'libgpg-error:devel', 'libmpdclient:devel', 'libnotify:devel', 'libpng:devel', 'libsoup:devel', 'libxml2:devel', 'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'taglib:devel', 'unique:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/ario-player/ario-player/%(version)s/ario-%(version)s.tar.gz')

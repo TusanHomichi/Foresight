@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class transfig(CPackageRecipe):
+    name = 'transfig'
+    version = '3.2.5a'
+
+    buildRequires = [
+        'imake:runtime',
+        'libX11:devel', 'libXpm:devel', 'libpng:devel', 'zlib:devel',
+        'xorg-cf-files:data', # until FL-2245 is fixed
+    ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/mcj/transfig.%(version)s.tar.gz')
+        r.macros.fvc = 'http://cvs.fedoraproject.org/viewvc/devel/transfig'
+        r.addPatch('%(fvc)s/transfig-3.2.5-modularX.patch?view=co')
+        r.addPatch('%(fvc)s/transfig-3.2.5-bitmap.patch?view=co')
+        r.Replace(('XFIGLIBDIR =.*',
+                   'XFIGLIBDIR = /usr/lib/X11/xfig'),
+                  ('FIG2DEV_LIBDIR = .*',
+                   'FIG2DEV_LIBDIR = %(datadir)s/fig2dev'),
+                  'fig2dev/Imakefile')
+        r.Replace('XCOMM USELATEX2E', 'USELATEX2E', 'transfig/Imakefile')
+
+        r.Run('xmkmf')
+        r.Make('Makefiles')
+        r.Make()
+        r.MakeInstall()
+        r.MakeInstall(installtarget='install.man')
+        # why drag in csh just to have two different implementations of
+        # the same thing?!?
+        r.Move('%(bindir)s/fig2ps2tex.sh', '%(bindir)s/fig2ps2tex') 
+
+        r.Doc('LATEX.AND.XFIG')

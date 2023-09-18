@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class xfce4Mixer(XfcePackageRecipe):
+
+    name = 'xfce4-mixer'
+    version = '4.10.0'
+    subtree = 'apps'
+
+    buildRequires = [
+        'desktop-file-utils:runtime', 'gst-plugins-base:devel',
+        'gstreamer:devel', 'libxfce4util:devel', 'libxfce4ui:devel',
+        'libxml2:devel', 'xfce4-panel:devel', 'xfconf:devel', 'unique:devel',
+        'python-keybinder:devel'
+    ]
+    patches = ['xfce4-mixer-initialize-window-width-and-height-to-default-values.patch']

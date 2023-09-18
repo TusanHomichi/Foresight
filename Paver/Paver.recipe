@@ -1,0 +1,7 @@
+class Paver(PackageRecipe):
+    name = 'Paver'
+    version = '1.0.4'
+    buildRequires = ['python:devel']
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/P/%(name)s/')
+        r.PythonSetup()

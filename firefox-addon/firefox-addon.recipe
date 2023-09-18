@@ -1,0 +1,167 @@
+#
+# Copyright (c) 2008-2009, Michael Tharp <gxti@partiallystapled.com>
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+import os
+import shutil
+import sys
+from conary.build.action import _expandOnePath
+from conary.build.build import BuildAction
+from conary.lib import log, util
+
+
+RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+EM_NS = 'http://www.mozilla.org/2004/em-rdf#'
+
+loadRecipe('firefox')
+class FirefoxAddonRecipe(PackageRecipe):
+    name = 'firefox-addon'
+    version = '2'
+
+    buildRequires = [
+        'elementtree:python',
+        'python:runtime',
+        'unzip:runtime',
+      ]
+
+    fileId = ''
+    fileName = '%(basename)s-%(version)s-fx.xpi'
+    fileURI = ('http://releases.mozilla.org/pub/mozilla.org/addons/'
+        '%(fileid)s/%(filename)s')
+    maxVersion = None
+    chromeOverride = None
+
+    # Shouldn't need to change these except in subclasses
+    _isSuperClass = True
+    addonDir = '%(libdir)s/firefox-%(ff_version)s/extensions'
+    appBaseName = 'firefox-'
+    appId = '{ec8030f7-c20a-464f-9b0e-13a3a9e97384}'
+
+    def setup(r):
+        r.macros.ff_version = '.'.join(FireFox.version.split('.')[:2])
+        r.macros.addondir = r.addonDir
+        r.macros.basename = r.name.replace(r.appBaseName, '')
+        r.macros.filename = r.fileName
+        r.macros.fileid = r.fileId
+        r.macros.fileuri = r.fileURI
+
+        r.unpack()
+        r.install()
+        r.fixperms()
+        r.policy()
+
+    def unpack(r):
+        if r.__class__.__dict__.get('_isSuperclass', False):
+            return
+        r.addArchive(r.macros.fileuri, dir='xpi')
+
+    def install(r):
+        r.extraBuild(InstallAddon(r, '.',
+            maxVersion=r.maxVersion, chrome=r.chromeOverride,
+            appId=r.appId))
+
+    def fixperms(r):
+        r.Run('find %(destdir)s%(addondir)s -type d -exec chmod 0755 {} \;')
+        r.Run('find %(destdir)s%(addondir)s -type f -exec chmod 0644 {} \;')
+
+    def policy(r):
+        r.ComponentSpec('lib', '%(addondir)s/')
+
+
+class InstallAddon(BuildAction):
+    keywords = {
+        'appId': None,
+        'maxVersion': None,
+        'chrome': None,
+      }
+
+    def __init__(self, recipe, *args, **kwargs):
+        self.xpiDir, = args
+        BuildAction.__init__(self, recipe, [], **kwargs)
+
+    def do(self, macros):
+        from elementtree import ElementTree
+        ElementTree._namespace_map[EM_NS] = 'em'
+
+        # Parse old XML
+        xpiDir = _expandOnePath(self.xpiDir, macros)
+        tree = ElementTree.parse(os.path.join(xpiDir, 'install.rdf'))
+        root = tree.getroot()
+
+        manifest = get_rdf(root, 'urn:mozilla:install-manifest')
+
+        # Set appManaged
+        set_attr(manifest, '{%s}appManaged' % EM_NS, 'true')
+
+        # Replace max version
+        if self.maxVersion:
+            for targetApp in manifest.findall('{%s}targetApplication' % EM_NS):
+                desc = get_descr(root, targetApp)
+                appid = get_attr(desc, '{%s}id' % EM_NS)
+                if appid != self.appId:
+                    # Not firefox
+                    continue
+                set_attr(desc, '{%s}maxVersion' % EM_NS, self.maxVersion)
+
+        # Locate the proper installation path and copy the addon there
+        addonId = get_attr(manifest, '{%s}id' % EM_NS)
+        log.info('Add-on ID is %s', addonId)
+        addonDir = _expandOnePath(macros.addondir, macros)
+        util.mkdirChain(addonDir)
+
+        addonDest = os.path.join(addonDir, addonId)
+        log.info('Copying add-on contents to %s', addonDest)
+        os.system('cp -r "%s" "%s"' % (xpiDir, addonDest))
+
+        # Copy extra files
+        if self.chrome:
+            chromePath = _expandOnePath(self.chrome, macros)
+            log.info('Copying new chrome.manifest from %s', chromePath)
+            shutil.copy(chromePath, os.path.join(addonDest, 'chrome.manifest'))
+
+        # Emit new manifest
+        log.info('Writing new install.rdf')
+        tree.write(os.path.join(addonDest, 'install.rdf'))
+
+        # Check for missing files
+        log.info('Checking for missing files')
+        if not os.path.exists(os.path.join(addonDest, 'chrome.manifest')):
+            self.recipe.reportErrors('The addon is missing chrome.manifest')
+
+def get_rdf(root, about):
+    for elem in root.findall('{%s}Description' % RDF_NS):
+        for attr in ('{%s}about' % RDF_NS, 'about'):
+            if elem.attrib.has_key(attr) and elem.attrib[attr] == about:
+                return elem
+    raise KeyError("Could not find RDF entry %r" % about)
+
+def get_descr(root, elem):
+    if elem.attrib.has_key('{%s}resource' % RDF_NS):
+        return get_rdf(root, elem.attrib['{%s}resource' % RDF_NS])
+    else:
+        return elem.find('{%s}Description' % RDF_NS)
+
+def get_attr(elem, attr):
+    if elem.attrib.has_key(attr):
+        return elem.attrib[attr]
+    val = elem.findtext(attr)
+    if val is None:
+        raise KeyError("Could not find value for attr %r" % attr)
+    return val
+
+def set_attr(elem, attr, value):
+    if elem.find(attr):
+        elem.find(attr).text = value
+    else:
+        elem.attrib[attr] = value

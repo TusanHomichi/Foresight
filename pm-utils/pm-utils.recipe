@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+#               2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class PMUtils(RPMPackageRecipe, AutoPackageRecipe):
+    name = 'pm-utils'
+    version = '1.4.1'
+    rpmRelease = '24.fc19'
+    rpmPatches = [ 'pm-utils-1.4.1-init-logfile-append.patch',
+                   'pm-utils-1.4.1-networkmanager-typo-fix.patch',
+                   'pm-utils-1.4.1-grub2.patch',
+                   'pm-utils-1.4.1-hook-exit-code-log.patch',
+                   'pm-utils-1.4.1-log-line-spacing-fix.patch',
+                   'pm-utils-1.4.1-nm_method.patch',
+                   'pm-utils-1.4.1-add-in-kernel-suspend-to-both.patch',
+                   'pm-utils-1.4.1-man-fix.patch',
+                   ]
+    rpmSources = [ 'pm-utils-bugreport-info.sh',
+                   ]
+    
+    buildRequires = [ 'pkgconfig:devel', 'pciutils:devel', 'xmlto:runtime', ]
+
+    def configure(r):
+        r.addArchive('http://pm-utils.freedesktop.org/releases/pm-quirks-20100619.tar.gz')
+        r.Configure()
+
+    def policy(r):
+        # We don't use grub anymore and this is blocking hibernate: FL-2776
+        r.Remove('%(libdir)s/pm-utils/sleep.d/01grub')
+
+        r.Copy('../video-quirks', '%(libdir)s/pm-utils/')
+        r.DanglingSymlinks(exceptions='%(bindir)s/pm.*')
+
+        r.MakeDirs('%(localstatedir)s/run/pm-utils/locks')
+        r.MakeDirs('%(localstatedir)s/run/pm-utils/pm-suspend')
+        r.MakeDirs('%(localstatedir)s/run/pm-utils/pm-powersave')
+
+        r.Create('%(localstatedir)s/run/pm-utils/locks/pm-suspend.lock')
+        r.Create('%(localstatedir)s/run/pm-utils/locks/pm-powersave.lock')
+
+        r.MakeDirs('%(localstatedir)s/run/pm-utils/pm-suspend,/storage')
+        r.MakeDirs('%(localstatedir)s/run/pm-utils/pm-powersave/storage')
+
+        r.Remove('%(localstatedir)s/run/pm-utils/pm-suspend/storage/*', allowNoMatch = True)
+        r.Remove('%(localstatedir)s/run/pm-utils/pm-powersave/storage/*', allowNoMatch = True)
+        r.Remove('%(libdir)s/pm-utils/power.d/*')
+
+        r.Install('pm-utils-bugreport-info.sh', '%(bindir)s/pm-utils-bugreport-info.sh', mode = 0755)
+
+        r.ExcludeDirectories(exceptions = ['%(sysconfdir)s/pm/.*', '%(localstatedir)s/run/pm-utils/.*',
+                                           '%(libdir)s/pm-utils/power.d'])
+
+        r.Create('%(localstatedir)s/log/pm-suspend.log', mode = 0600)
+        r.InitialContents('%(localstatedir)s/log/pm-suspend.log')
+
+        # migration helpers
+        # versions up to 1.2.5-1-1 had a few badly placed files
+        # as conary handles badly dir -> file transitions we need
+        # pre scripts to smooth migration
+
+        for _file,_dir, _component in [('%(sysconfdir)s/pm-utils-hd-apm-restore.conf/pm-utils-hd-apm-restore.conf',
+                                        '%(sysconfdir)s/pm-utils-hd-apm-restore.conf',
+                                        'config'),
+                                       ('%(bindir)s/pm-utils-bugreport-info.sh/pm-utils-bugreport-info.sh', 
+                                        '%(bindir)s/pm-utils-bugreport-info.sh',
+                                        'runtime'),
+                                       ('%(libdir)s/pm-utils/sleep.d/99hd-apm-restore.hook/pm-utils-99hd-apm-restore',
+                                        '%(libdir)s/pm-utils/sleep.d/99hd-apm-restore.hook',
+                                        'libdir')]:
+            r.ScriptPreUpdate('%(name)s:'+_component,
+                              contents='''#!/bin/sh
+target = ''' + _file + ''' 
+echo $target
+if [ -d $target ] ; then
+echo deleting $target to avoid a file type conflict on %(name)s update
+rm -rf $target ; 
+echo now that $target is deleted actually wipe dir  that conatined it ...
+rm -rf ''' + _dir + '''
+
+fi
+''' % r.macros )
+        

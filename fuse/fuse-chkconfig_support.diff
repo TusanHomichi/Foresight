@@ -1,0 +1,21 @@
+--- util/init_script	2008-02-19 22:51:28.000000000 +0300
++++ util/init_script	2008-07-12 09:49:00.000000000 +0400
+@@ -1,10 +1,15 @@
+ #! /bin/sh
++
++# Startup script for fuse
++#
++# chkconfig: 345 25 75
++
+ ### BEGIN INIT INFO
+ # Provides:          fuse
+-# Required-Start:    
++# Required-Start:
+ # Should-Start:      udev
+-# Required-Stop:     
+-# Default-Start:     S
++# Required-Stop:
++# Default-Start:
+ # Default-Stop:
+ # Short-Description: Start and stop fuse.
+ # Description:       Load the fuse module and mount the fuse control

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gmusicbrowser(CPackageRecipe):
+    name = 'gmusicbrowser'
+    version = '1.1.5'
+ 
+    buildRequires = ['desktop-file-utils:runtime', 'gtk:runtime', 'perl-Cairo:perl', 'perl-IO-Compress:perl', 'perl-Locale-gettext:perl', 'perl-Net-DBus:perl', 'perl:devel', 'perl-Gnome2-Wnck:perl', 'perl-GStreamer:perl', 'perl-Glib:perl', 'perl-Gtk2-MozEmbed:perl', 'perl-Gtk2-Notify:perl', 'perl-Gtk2-TrayIcon:perl', 'perl-Gtk2-WebKit:perl', 'perl-Gtk2:perl']
+ 
+    def setup(r):
+        r.addArchive('http://gmusicbrowser.org/download/')
+	r.Make()
+	r.MakeInstall()
+	r.Requires('perl-Gtk2-TrayIcon:perl', '%(bindir)s/gmusicbrowser')
+	r.Requires('perl-GStreamer:perl', '%(bindir)s/gmusicbrowser')
+	r.Requires('perl-Gnome2-Wnck:perl', '%(bindir)s/gmusicbrowser')
+	r.Requires('perl-Gtk2-MozEmbed:perl', '%(bindir)s/gmusicbrowser')
+	r.Requires('perl-Gtk2-Notify:perl', '%(bindir)s/gmusicbrowser')
+	r.Requires('perl-Gtk2-WebKit:perl', '%(bindir)s/gmusicbrowser')
+
+
+

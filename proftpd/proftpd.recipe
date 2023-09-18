@@ -1,0 +1,104 @@
+class ProFTPD(CPackageRecipe):
+    name = 'proftpd'
+    version = '1.3.4a'
+
+    buildRequires = [
+        'acl:devel',
+        'chkconfig:runtime',
+        'cyrus-sasl:devel',
+        'libcap:devel',
+        'libmemcached:devel',
+        'libtool:devel',
+        'mysql:devel',
+        'ncurses:devel',
+        'openldap:devel',
+        'openssl:devel',
+        'pam:devel',
+        'pcre:devel',
+        'perl:devel',
+        'postgresql:devel',
+        'tcp_wrappers:devel',
+        'zlib:devel',
+    ]
+
+    def setup(r):
+        r.addArchive('ftp://ftp.proftpd.org/distrib/source/')
+
+        r.macros.modules = ':'.join((
+            'mod_auth_pam',
+            'mod_ban',
+            'mod_ctrls_admin',
+            'mod_exec',
+            'mod_facl',
+            'mod_load',
+            'mod_quotatab',
+            'mod_quotatab_file',
+            'mod_quotatab_radius',
+            'mod_quotatab_sql',
+            'mod_radius',
+            'mod_ratio',
+            'mod_readme',
+            'mod_rewrite',
+            'mod_shaper',
+            'mod_site_misc',
+            'mod_sql',
+            'mod_ldap',
+            'mod_quotatab_ldap',
+            'mod_sftp',
+            'mod_sftp_pam',
+            'mod_sftp_sql',
+            'mod_sql_mysql',
+            'mod_sql_passwd',
+            'mod_sql_postgres',
+            'mod_tls',
+            'mod_tls_shmcache',
+            'mod_tls_memcache',
+            'mod_wrap',
+            'mod_wrap2',
+            'mod_wrap2_file',
+            'mod_wrap2_sql',
+        ))
+
+        r.Configure('--disable-strip --enable-ctrls --enable-dso'
+                    ' --enable-facl --enable-ipv6 --enable-nls'
+                    ' --enable-memcache --enable-pcre --enable-openssl'
+                    ' --enable-shadow --with-lastlog'
+                    ' --with-libraries=%(libdir)s/mysql'
+                    ' --with-includes=%(includedir)s/mysql:%(includedir)s/pcre'
+                    ' --with-pkgconfig=%(lib)s/pkgconfig'
+                    ' --libexecdir=%(libexecdir)s/proftpd'
+                    ' --with-shared=%(modules)s')
+
+        r.Make()
+
+        # based on installation in proftpd.spec included in proftpd
+        r.macros.uid = '%d' % os.getuid()
+        r.macros.gid = '%d' % os.getgid()
+        r.MakeInstall('INSTALL_USER="%(uid)s"'
+                      ' INSTALL_GROUP="%(gid)s"')
+
+        r.Install('contrib/dist/rpm/proftpd.pam',
+                  '%(sysconfdir)s/pam.d/proftpd')
+        r.Replace('password-auth', 'system-auth',
+                  '%(sysconfdir)s/pam.d/proftpd')
+        r.Install('contrib/dist/rpm/basic-pam.conf',
+                  '%(sysconfdir)s/proftpd.conf')
+        r.Install('contrib/dist/rpm/proftpd.init.d',
+                  '%(initdir)s/proftpd', mode=0755)
+        r.Install('contrib/dist/rpm/proftpd.logrotate',
+                  '%(sysconfdir)s/logrotate.d/proftpd')
+
+        r.InitialContents('%(sysconfdir)s/blacklist.dat')
+        r.InitialContents('%(sysconfdir)s/dhparams.pem')
+
+        r.RemoveNonPackageFiles('%(libexecdir)s/proftpd/.*\.a')
+
+        r.PackageSpec('%(name)s-mysql', '%(libexecdir)s/proftpd/.*mysql.*')
+        r.PackageSpec('%(name)s-ldap', '%(libexecdir)s/proftpd/.*ldap.*')
+        r.PackageSpec('%(name)s-postgres', '%(libexecdir)s/proftpd/.*postgres.*')
+        r.PackageSpec('%(name)s-wrap', '%(libexecdir)s/proftpd/.*wrap.*')
+        r.PackageSpec('%(name)s-utils',
+                      '%(bindir)s/ftp(quota|asswd|count|mail|top|who)',
+                      '%(mandir)s/man1/ftp(quota|asswd|count|mail|top|who)\.1.*')
+
+        r.ComponentSpec('devel', '%(bindir)s/prxs')

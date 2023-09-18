@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+#               2011      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Modutils(CPackageRecipe):
+    name = 'module-init-tools'
+    version = '3.16'
+    buildRequires = [ 'flex:runtime', 'bison:runtime', 'zlib:devel',
+                      'docbook-utils:runtime',
+                      # XXX the following are runtime requirements for
+                      # docbook-utils promoted to build time requirements
+                      # fix ASAP
+                      'which:runtime', 'perl-SGMLS:runtime', 'opensp:runtime'
+                      ]
+
+    def setup(r):
+        r.addArchive('http://www.kernel.org/pub/linux/utils/kernel/%(name)s/')
+        r.addPatch('module-init-tools-fix-nfs-local.patch')
+        for f in [ 'depmod-dist.conf',
+                   'modprobe-dist-alsa.conf',
+                   'modprobe-dist.conf',
+                   'modprobe-dist-oss.conf',
+                   'weak-modules']:
+            r.addSource(f)
+
+        r.macros.cflags += ' -DCONFIG_NO_BACKWARDS_COMPAT=1'
+        r.disableParallelMake()
+
+        r.Configure('--enable-zlib')
+        r.Make()
+        r.MakeInstall('sbindir=%(essentialsbindir)s/')
+
+        r.Move('%(bindir)s/lsmod',
+               '%(essentialsbindir)s/')
+        
+        r.Install('weak-modules',
+                  '%(essentialsbindir)s/', 
+                  mode = 0755)
+        r.Install('modprobe-dist.conf',
+                  '%(sysconfdir)s/modprobe.d/dist.conf',
+                  mode = 0644)
+        r.Install('modprobe-dist-oss.conf',
+                  '%(sysconfdir)s/modprobe.d/dist-oss.conf',
+                  mode = 0644)
+        r.Install('modprobe-dist-alsa.conf',
+                  '%(sysconfdir)s/modprobe.d/dist-alsa.conf',
+                  mode = 0644)
+        r.Install('depmod-dist.conf',
+                  '%(sysconfdir)s/depmod.d/dist.conf',
+                  mode = 0644)
+        r.Create('%(sysconfdir)s/modprobe.d/local.conf',
+                 mode = 0644)
+        r.InitialContents('%(sysconfdir)s/modprobe.d/local.conf')

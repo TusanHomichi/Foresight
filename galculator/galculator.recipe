@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2012-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Galculator(AutoPackageRecipe):
+    name = 'galculator'
+    version = '2.1.3'
+ 
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'flex:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'libglade:devel', 
+        'libpng:devel', 
+        'libxml2:devel', 
+        'pango:devel', 
+        'pkgconfig:devel',
+        ]
+ 
+    def unpack(r):
+        r.addArchive('http://prdownloads.sourceforge.net/galculator/%(version)s/galculator-%(version)s.tar.bz2')
+    def configure(r):
+        r.Configure('--disable-gtk3')

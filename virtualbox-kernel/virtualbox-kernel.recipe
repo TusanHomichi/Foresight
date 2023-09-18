@@ -1,0 +1,6 @@
+class VBK(RedirectRecipe):
+     name = 'virtualbox-kernel'
+     version = '0'
+ 
+     def setup(r):
+        r.addRemoveRedirect()

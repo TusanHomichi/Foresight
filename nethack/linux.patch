@@ -1,0 +1,203 @@
+diff -ur nethack-3.4.3/include/config.h nethack-3.4.3-linux/include/config.h
+--- nethack-3.4.3/include/config.h	2003-12-07 18:39:13.000000000 -0500
++++ nethack-3.4.3-linux/include/config.h	2009-09-30 12:22:02.000000000 -0400
+@@ -43,11 +43,13 @@
+  * Some combinations make no sense.  See the installation document.
+  */
+ #define TTY_GRAPHICS	/* good old tty based graphics */
+-/* #define X11_GRAPHICS */	/* X11 interface */
++#define X11_GRAPHICS	/* X11 interface */
+ /* #define QT_GRAPHICS */	/* Qt interface */
+ /* #define GNOME_GRAPHICS */	/* Gnome interface */
+ /* #define MSWIN_GRAPHICS */	/* Windows NT, CE, Graphics */
+ 
++#define USE_XPM
++
+ /*
+  * Define the default window system.  This should be one that is compiled
+  * into your system (see defines above).  Known window systems are:
+@@ -169,11 +171,11 @@
+ 
+ #ifdef UNIX
+ /* path and file name extension for compression program */
+-#define COMPRESS "/usr/bin/compress"	/* Lempel-Ziv compression */
+-#define COMPRESS_EXTENSION ".Z"		/* compress's extension */
++//#define COMPRESS "/usr/bin/compress"	/* Lempel-Ziv compression */
++//#define COMPRESS_EXTENSION ".Z"		/* compress's extension */
+ /* An example of one alternative you might want to use: */
+-/* #define COMPRESS "/usr/local/bin/gzip" */	/* FSF gzip compression */
+-/* #define COMPRESS_EXTENSION ".gz" */		/* normal gzip extension */
++#define COMPRESS "/bin/gzip"	/* FSF gzip compression */
++#define COMPRESS_EXTENSION ".gz"		/* normal gzip extension */
+ #endif
+ 
+ #ifndef COMPRESS
+@@ -185,7 +187,7 @@
+  *	a tar-like file, thus making a neater installation.  See *conf.h
+  *	for detailed configuration.
+  */
+-/* #define DLB */	/* not supported on all platforms */
++#define DLB	/* not supported on all platforms */
+ 
+ /*
+  *	Defining INSURANCE slows down level changes, but allows games that
+@@ -349,7 +351,7 @@
+  */
+ 
+ /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
+-/*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
++#define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
+ 
+ /* End of Section 5 */
+ 
+diff -ur nethack-3.4.3/include/unixconf.h nethack-3.4.3-linux/include/unixconf.h
+--- nethack-3.4.3/include/unixconf.h	2003-12-07 18:39:13.000000000 -0500
++++ nethack-3.4.3-linux/include/unixconf.h	2009-09-30 12:22:19.000000000 -0400
+@@ -37,7 +37,7 @@
+ #define NETWORK		/* if running on a networked system */
+ 			/* e.g. Suns sharing a playground through NFS */
+ /* #define SUNOS4 */	/* SunOS 4.x */
+-/* #define LINUX */	/* Another Unix clone */
++#define LINUX	/* Another Unix clone */
+ /* #define CYGWIN32 */	/* Unix on Win32 -- use with case sensitive defines */
+ /* #define GENIX */	/* Yet Another Unix Clone */
+ /* #define HISX */	/* Bull Unix for XPS Machines */
+@@ -132,7 +132,7 @@
+  * "extra output" method is used, but not all systems provide access to
+  * a fine-grained timer.
+  */
+-/* #define TIMED_DELAY */	/* usleep() */
++#define TIMED_DELAY	/* usleep() */
+ #endif
+ 
+ /*
+diff -ur nethack-3.4.3/sys/unix/Makefile.src nethack-3.4.3-linux/sys/unix/Makefile.src
+--- nethack-3.4.3/sys/unix/Makefile.src	2003-12-07 18:39:13.000000000 -0500
++++ nethack-3.4.3-linux/sys/unix/Makefile.src	2009-09-30 12:23:05.000000000 -0400
+@@ -61,7 +61,7 @@
+ #	if you get setcgtty() warnings during execution, you are feeding gcc
+ #		a non-ANSI <sys/ioctl.h> -- either run fixincludes on it or use
+ #		-traditional in CFLAGS
+-# CC = gcc
++CC = gcc
+ #
+ #	For Bull DPX/2 systems at B.O.S. 2.0 or higher use the following:
+ #
+@@ -125,7 +125,7 @@
+ # flags for Linux
+ #   compile normally
+ # CFLAGS = -O2 -fomit-frame-pointer -I../include
+-# LFLAGS = -L/usr/X11R6/lib
++LFLAGS = -L/usr/X11R6/lib
+ #   OR compile backwards compatible a.out format
+ # CFLAGS = -O2 -b i486-linuxaout -fomit-frame-pointer -I../include
+ # LFLAGS = -b i486-linuxaout -L/usr/X11R6/lib
+@@ -214,8 +214,8 @@
+ 
+ #
+ #
+-WINSRC = $(WINTTYSRC)
+-WINOBJ = $(WINTTYOBJ)
++WINSRC = $(WINTTYSRC) $(WINX11SRC)
++WINOBJ = $(WINTTYOBJ) $(WINX11OBJ)
+ 
+ # on some systems the termcap library is in -ltermcap or -lcurses
+ # on 386 Xenix, the -ltermlib tputs() seems not to work; use -lcurses instead
+@@ -231,11 +231,13 @@
+ # WINTTYLIB = -lcurses
+ # WINTTYLIB = -lcurses16
+ # WINTTYLIB = -lncurses
+-WINTTYLIB = -ltermlib
++# WINTTYLIB = -ltermlib
++WINTTYLIB = __LIB_DIR__/libncurses.a
++
+ #
+ # libraries for X11
+ # If USE_XPM is defined in config.h, you will also need -lXpm here.
+-WINX11LIB = -lXaw -lXmu -lXext -lXt -lX11
++WINX11LIB = -lXaw -lXmu -lXext -lXt -lXpm -lX11
+ # WINX11LIB = -lXaw -lXmu -lXt -lX11
+ # WINX11LIB = -lXaw -lXmu -lXext -lXt -lXpm -lX11 -lm
+ # WINX11LIB = -lXaw -lXmu -lXpm -lXext -lXt -lX11 -lSM -lICE -lm # BSD/OS 2.0
+@@ -255,7 +257,7 @@
+ # libraries for BeOS 
+ WINBELIB = -lbe
+ 
+-WINLIB = $(WINTTYLIB)
++WINLIB = $(WINTTYLIB) $(WINX11LIB)
+ 
+ # any other strange libraries your system needs (for Sysunix only -- the more
+ # specialized targets should already be right)
+diff -ur nethack-3.4.3/sys/unix/Makefile.top nethack-3.4.3-linux/sys/unix/Makefile.top
+--- nethack-3.4.3/sys/unix/Makefile.top	2003-12-07 18:39:13.000000000 -0500
++++ nethack-3.4.3-linux/sys/unix/Makefile.top	2009-09-30 12:23:29.000000000 -0400
+@@ -18,14 +18,16 @@
+ GAME     = nethack
+ # GAME     = nethack.prg
+ GAMEUID  = games
+-GAMEGRP  = bin
++#GAMEGRP  = bin
++GAMEGRP  = games
+ 
+ # Permissions - some places use setgid instead of setuid, for instance
+ # See also the option "SECURE" in include/config.h
+-GAMEPERM = 04755
+-FILEPERM = 0644
++#GAMEPERM = 04755
++GAMEPERM = 02755
++FILEPERM = 0664
+ EXEPERM  = 0755
+-DIRPERM  = 0755
++DIRPERM  = 0775
+ 
+ # GAMEDIR also appears in config.h as "HACKDIR".
+ # VARDIR may also appear in unixconf.h as "VAR_PLAYGROUND" else GAMEDIR
+@@ -40,9 +42,9 @@
+ SHELLDIR = $(PREFIX)/games
+ 
+ # per discussion in Install.X11 and Install.Qt
+-VARDATND = 
++#VARDATND = 
+ # VARDATND = x11tiles NetHack.ad pet_mark.xbm
+-# VARDATND = x11tiles NetHack.ad pet_mark.xbm rip.xpm
++VARDATND = x11tiles NetHack.ad pet_mark.xbm rip.xpm
+ # for Atari/Gem
+ # VARDATND = nh16.img title.img GEM_RSC.RSC rip.img
+ # for BeOS
+diff -ur nethack-3.4.3/sys/unix/Makefile.utl nethack-3.4.3-linux/sys/unix/Makefile.utl
+--- nethack-3.4.3/sys/unix/Makefile.utl	2003-12-07 18:39:13.000000000 -0500
++++ nethack-3.4.3-linux/sys/unix/Makefile.utl	2009-09-30 12:23:40.000000000 -0400
+@@ -15,7 +15,7 @@
+ 
+ # if you are using gcc as your compiler,
+ #	uncomment the CC definition below if it's not in your environment
+-# CC = gcc
++CC = gcc
+ #
+ #	For Bull DPX/2 systems at B.O.S. 2.0 or higher use the following:
+ #
+@@ -73,7 +73,7 @@
+ # flags for Linux
+ #   compile normally
+ # CFLAGS = -O2 -fomit-frame-pointer -I../include
+-# LFLAGS = -L/usr/X11R6/lib
++LFLAGS = -L/usr/X11R6/lib
+ #   OR compile backwards compatible a.out format
+ # CFLAGS = -O2 -b i486-linuxaout -fomit-frame-pointer -I../include
+ # LFLAGS = -b i486-linuxaout -L/usr/X11R6/lib
+@@ -101,11 +101,11 @@
+ 
+ # yacc/lex programs to use to generate *_comp.h, *_lex.c, and *_yacc.c.
+ # if, instead of yacc/lex you have bison/flex, comment/uncomment the following.
+-YACC     = yacc
+-LEX      = lex
+-# YACC     = bison -y
++# YACC     = yacc
++# LEX      = lex
++YACC     = bison -y
+ # YACC     = byacc
+-# LEX      = flex
++LEX      = flex
+  
+ # these are the names of the output files from YACC/LEX. Under MS-DOS
+ # and similar systems, they may differ

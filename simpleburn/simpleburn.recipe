@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Simpleburn(CPackageRecipe):
+    name = 'simpleburn'
+    version = '1.6.4'
+ 
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'cmake:runtime', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gcc-c++:runtime', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gtk:devel', 
+        'libcdio:devel', 
+        'libpng:devel', 
+        'pango:devel', 
+        'pkgconfig:devel',
+            ]
+ 
+    def setup(r):
+        r.addArchive('http://simpleburn.tuxfamily.org/IMG/bz2/')
+        r.CMake()
+        r.Make()
+        r.MakeInstall()

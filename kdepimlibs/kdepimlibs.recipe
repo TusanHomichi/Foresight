@@ -1,0 +1,35 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdePIMLibs(kdeCorePackageRecipe):
+
+    name = 'kdepimlibs'
+    version = '4.8.3'
+
+    buildRequires = [
+        'akonadi:devel', 'automoc:runtime', 'boost:devel', 'cyrus-sasl:devel',
+        'dbus:devel', 'gpgme:devel', 'libgpg-error:devel', 'libical:devel',
+        'libstdc++:devel', 'libxml2:runtime', 'libxslt:runtime',
+        'openldap:devel', 'shared-desktop-ontologies:devellib',
+        'util-linux:devel', 'kdelibs:runtime',
+        'bzr:runtime', 'cvs:runtime', 'git:runtime', 'libXScrnSaver:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXft:devel', 'libXi:devel', 'libXpm:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel', 'libxkbfile:devel', 'libxslt:devel', 'mercurial:runtime', 'openssh:runtime', 'prison:devel', 'pth:devel', 'soprano:runtime', 'subversion:runtime', 'valgrind:runtime', 'xz:runtime'
+    ]
+
+    clearBuildReqs('kdepimlibs:devel')
+
+    def postUnpack(r):
+
+        r.addPatches(
+            '03_hide_akonadi_progressbar.diff',
+        )
+
+    def policy(r):
+
+        # Need it to make SASL logins work (kmail, etc)
+        for c in ('gssapi', 'md5', 'plain'):
+            r.Requires('cyrus-sasl:%s' % c, '%(libdir)s/libkpimutils.so.4')
+
+        r.DanglingSymlinks(exceptions='%(docdir)s/HTML/.*/common')

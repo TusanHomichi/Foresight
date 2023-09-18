@@ -1,0 +1,5 @@
+file            %(taghandlerdir)s/gtk-input-method
+implements      files update
+implements      files remove
+implements      handler update
+include         %(libdir)s/gtk-[^/]*/[^/]*/immodules/[^/]*\.so$

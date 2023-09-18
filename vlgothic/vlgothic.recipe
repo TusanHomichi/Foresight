@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Vlgothic(PackageRecipe):
+    name = 'vlgothic'
+    version = '20100416'
+
+    packageSummary = 'Japanese TrueType font from Vine Linux'
+
+    buildRequires = [
+        'fontconfig:runtime',
+        'mkfontdir:runtime',
+        ]
+
+    def setup(r):
+        r.addArchive('http://dicey.org/%(name)s/VLGothic-%(version)s.tar.bz2')
+        r.Install('VL-Gothic-Regular.ttf', '%(datadir)s/fonts/%(name)s/')
+        r.Install('VL-PGothic-Regular.ttf', '%(datadir)s/fonts/%(name)s/')

@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gwenhywfar(AutoPackageRecipe):
+    name = 'gwenhywfar'
+    version = '4.3.3'
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime',
+        'glib:devel', 
+        'gnutls:devel',
+        'graphviz:runtime',
+        'gtk:devel', 
+        'libgcrypt:devel',
+        'libgpg-error:devel',
+        'libpng:devel', 
+        'libstdc++:devel', 
+        'openssl:devel',
+        'pango:devel', 
+        'pkgconfig:devel',
+        'qt4-core:devellib', 
+        'qt4:devel',
+        'qt4-gui:devellib', 
+        'which:runtime',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://www.aquamaniac.de/sites/download/download.php?package=01&release=67&file=01&dummy=gwenhywfar-%(version)s.tar.gz')
+        r.addPatch('gwenhywfar-3.4.1-pkgconfig.patch')
+
+    def configure(r):
+        r.Configure("--disable-static --with-openssl-libs=%(libdir)s --with-qt4-libs=%(libdir)s")
+        r.Replace(r'^hardcode_libdir_flag_spec=.*',
+                   'hardcode_libdir_flag_spec=""',
+                   'libtool')
+        r.Replace(r'^runpath_var=LD_RUN_PATH',
+                   'runpath_var=NO_REALLY_NO_RPATH',
+                   'libtool')

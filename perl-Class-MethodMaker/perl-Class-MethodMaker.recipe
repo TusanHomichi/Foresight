@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux. 2004-2010 rPath, Inc. 2009-2010 Sony Pictures ImageWorks. 
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlClassMethodMaker(CPANPackageRecipe):
+    name = 'perl-Class-MethodMaker'
+    version = '2.16'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['gcc', 'glibc:devel']
+
+    def unpack(r):
+        r.addArchive('http://search.cpan.org/CPAN/authors/id/S/SC/SCHWIGON/class-methodmaker/Class-MethodMaker-%(version)s.tar.gz')

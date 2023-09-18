@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Scribes(CPackageRecipe):
+    name = 'scribes'
+    version = '0.4.build954'
+ 
+    buildRequires = ['dbus-python:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-python-extras:python', 'gnome-python:python', 'intltool:runtime', 'ipython:python', 'mercurial:python', 'mx:python', 'pkgconfig:devel', 'pycairo:python', 'pygobject:python', 'pygtk:python', 'pygtksourceview:python', 'python:devel', 'python:tk', 'pyxdg:python', 'python-simplejson:python', 'gnome-doc-utils:devel', 'autoconf:runtime', 'automake:runtime', 'libxslt:runtime', 'libxml2:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/scribes/%(major_version)s/scribes-milestone1/+download/scribes-0.4-dev-build954.tar.bz2')
+        r.addPatch('scribes-configure.ac-no-python-depcheck.patch')
+        r.Run('autoconf')
+        r.Configure('--disable-schemas-install --enable-nls --disable-scrollkeeper')
+        r.Make()
+        r.MakeInstall()

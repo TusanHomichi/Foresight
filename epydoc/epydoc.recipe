@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Epydoc(PackageRecipe):
+    name = 'epydoc'
+    version = '3.0.1'
+    buildRequires = ['python-setuptools:python', 'python:devel', 'python:tk']
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+	r.PythonSetup()

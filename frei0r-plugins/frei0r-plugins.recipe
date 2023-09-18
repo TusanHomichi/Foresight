@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2010 -2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Frei0rPlugins(AutoPackageRecipe):
+    name = 'frei0r-plugins'
+    version = '1.3'
+ 
+    buildRequires = ['gavl:devel', 'libstdc++:devel', 'pkgconfig:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.piksel.no/frei0r/releases/')

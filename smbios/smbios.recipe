@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SMBios(AutoPackageRecipe):
+    name = 'smbios'
+    version = '2.0.2'
+
+    buildRequires = [ 'libstdc++:devel', 'libxml2:devel', 'zlib:devel', ]
+
+    def unpack(r):
+        r.macros.version = r.version.replace('_','-')
+        r.addArchive('http://linux.dell.com/libsmbios/download/libsmbios/'
+                     'libsmbios-%(version)s/libsmbios-%(version)s.tar.gz')
+
+    def configure(r):
+        r.Configure('--disable-doxygen --disable-graphviz')
+
+    def policy(r):
+        r.Move('include/smbios/','%(includedir)s/smbios')
+
+        # backwards compatible:
+        # used by HAL in old location, so keep it around until HAL is updated.
+        r.Symlink('%(sbindir)s/dellWirelessCtl', '%(bindir)s/dellWirelessCtl')
+

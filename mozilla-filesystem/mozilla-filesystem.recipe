@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2008 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MozFs(PackageRecipe):
+    name = 'mozilla-filesystem'
+    version = '1.9'
+
+    def setup(r):
+        r.MakeDirs('/usr/%(lib)s/mozilla/{plugins,extensions}')
+        if Arch.x86_64:
+            r.MakeDirs('/usr/lib/mozilla/{plugins,extensions}')
+        r.MakeDirs('%(datadir)s/mozilla/extensions')
+        r.MakeDirs('/etc/skel/.mozilla/{plugins,extensions}')
+
+        r.ExcludeDirectories(exceptions =  ['/etc/skel/.*', '%(datadir)s/mozilla/extensions', '%(libdir)s/mozilla/.*'] )
+        if Arch.x86_64:
+            r.ExcludeDirectories(exceptions = '/usr/lib/mozilla/.*')
+
+        r.Requires('%(name)s:runtime', '%(name)s:data')

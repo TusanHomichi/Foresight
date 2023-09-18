@@ -1,0 +1,162 @@
+#
+# Copyright (c) 2004-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OpenSSL(CPackageRecipe):
+    name = 'openssl'
+    version = '0.9.8g'
+    certsdir = '%(sysconfdir)s/ssl/certs'
+
+    buildRequires = [ 'perl:runtime',
+                      'sed:runtime', 'mktemp:runtime', 'zlib:devel' ]
+    if not Use.bootstrap:
+        buildRequires.extend(['perl:devel', 'e2fsprogs:devel', 'krb5:devel'])
+
+    buildRequires.append('zlib:devel')
+
+    def setup(r):
+        r.disableParallelMake()
+        r.macros.solibbase = re.sub('[a-zA-Z]*', '', r.version)
+        r.macros.certsdir = r.certsdir
+
+        r.addGitSnapshot('git://git.openssl.org/openssl.git',
+                         branch='OpenSSL_0_9_8-stable')
+
+        # RPL-2519
+        r.addPatch('openssl-0.9.8g-Configure-libresolv.patch')
+
+        # Other adjustments from RH for better compatibility:
+        r.addPatch('openssl-0.9.8a-link-krb5.patch')
+        r.addPatch('openssl-0.9.8g-shlib-version.patch')
+        r.addPatch('openssl-0.9.8g-soversion.patch')
+
+        # Other patches we have carried
+        r.addPatch('non-exec-stack.diff')
+        r.addPatch('bswap.diff')
+
+        #Replace the country code in the stock openssl.cnf with --
+        r.Replace('AU', '--', 'apps/openssl.cnf')
+
+        #Add a script for generating dummy certificates, useful for initscripts
+        r.addSource('gendummycert.sh', mode=0755, dest='%(bindir)s/')
+
+        r.addPatch('openssl-0.9.7-beta5-version-add-engines.patch')
+
+        r.macros.sslflags = ''
+
+        if Arch.x86:
+            r.macros.sslarch = 'linux-elf'
+            if not Arch.x86.i686:
+                r.macros.sslflags = 'no-asm 386'
+        if Arch.x86_64:
+            r.macros.sslarch = 'linux-x86_64'
+        if Arch.ppc:
+            r.macros.sslarch = 'linux-ppc'
+        if Arch.ppc64:
+            r.macros.sslarch = 'linux-ppc64'
+            r.macros.cflags = '%(cflags)s -O0'
+
+        if Use.bootstrap:
+            config = ' no-krb5 '
+        else:
+            config = (' --with-krb5-flavor=MIT ')
+
+        r.Replace('-Werror', '', 'Configure')
+        # Set openssldir to be %(sysconfdir)s/ssl, and follow the SuSe
+        # way of setting up /etc/ssl.
+        r.ManualConfigure(
+            ' --prefix=%(prefix)s'
+            ' --openssldir=%(sysconfdir)s/ssl'
+            ' zlib no-idea no-mdc2 no-rc5 shared %(sslarch)s ' + config,
+            preConfigure='CFLAGS="%(cflags)s" CXXFLAGS="%(cflags)s" LDFLAGS="%(ldflags)s" CC=%(cc)s',
+            configureName='Configure')
+        if Use.bootstrap:
+            r.Replace(('^CC=.*', 'CC=%(cc)s'),
+                      ('^AR=ar.*', r'AR=%(target)s-ar $(ARFLAGS) r'),
+                      ('^RANLIB=.*', 'RANLIB=%(target)s-ranlib'),
+                       'Makefile')
+        r.Make('depend')
+        r.Make()
+        r.MakeInstall(rootVar='INSTALL_PREFIX')
+        r.Move('/usr/lib/*', '%(libdir)s/')
+        r.Install('lib{ssl,crypto}.so.*', '%(essentiallibdir)s/')
+        for x in ('crypto', 'ssl'):
+            r.Move('%%(libdir)s/lib%s.so' % x, '%(essentiallibdir)s/')
+            r.Symlink('%%(essentiallibdir)s/lib%s.so.7' % x,
+                      '%%(libdir)s/lib%s.so' % x)
+
+            # RPL-2994 must always provide lib{ssl,crypto}.so.5 since that is
+            # what rpl 2 originally shipped with.
+            r.Symlink('lib%s.so.7' % x,
+                      '%%(essentiallibdir)s/lib%s.so.5' % x)
+            r.ComponentSpec('lib', '%%(essentiallibdir)s/lib%s.so.5' % x)
+
+        r.Move('%(sysconfdir)s/ssl/man/*', '%(mandir)s/')
+        r.Remove('%(sysconfdir)s/ssl/man', recursive=True)
+        r.Move('%(sysconfdir)s/ssl/misc/*', '%(datadir)s/ssl/misc/')
+        r.Remove('%(sysconfdir)s/ssl/misc', recursive=True)
+
+        r.Run('''for header in %(destdir)s/%(includedir)s/openssl/* ; do
+                 if [ -f ${header} -a -f include/openssl/$(basename ${header}) ] ; then
+                    install -m644 include/openssl/$(basename ${header}) ${header}
+                 fi
+                 done''')
+
+        # Rename manpages from ${manpage} to ${manpage}ssl
+        r.Run('''
+            for manpage in %(destdir)s/%(mandir)s/man*/* ; do
+                if [ -L ${manpage} ]; then
+                    TARGET=`ls -l ${manpage} | awk '{ print $NF }'`
+                    ln -snf ${TARGET}ssl ${manpage}ssl
+                    rm -f ${manpage}
+                else
+                    mv ${manpage} ${manpage}ssl
+                fi
+            done
+            for conflict in passwd rand ; do
+                for filename in `find %(destdir)s/%(mandir)s/man* -name ${conflict}\*` ; do
+                        mv ${filename} `dirname ${filename}`/ssl`basename ${filename}`
+                done
+            done
+        ''')
+
+        # Install the certificate bundle
+        # r.Install('certs/*.pem', '%(certsdir)s/')
+        # r.Install('certs/expired/*', '%(certsdir)s/expired/')
+        # r.Run('OPENSSL=%(destdir)s/%(bindir)s/openssl %(destdir)s/%(bindir)s/c_rehash %(destdir)s/%(certsdir)s/')
+ 
+        # XXX ALL references to certsdir wiped. as we have ca-certs now
+
+        r.MakeDirs('%(sysconfdir)s/ssl/private', mode=0700)
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/ssl/private')
+
+        # Fix libdir
+        r.Replace(('^libdir=\${exec_prefix}/lib',
+                  'libdir=%(exec_prefix)s/%(lib)s'),
+                  '%(libdir)s/pkgconfig/openssl.pc')
+
+        if not Use.bootstrap:
+            r.Requires('krb5:devel', '%(includedir)s/openssl/kssl.h')
+            # test suite is linked with kerberos
+            r.TestSuite('test', 'make tests')
+
+        # Both runtime and libraries depend on configuration files
+        r.ComponentSpec('config', '%(sysconfdir)s/ssl/')
+        r.ComponentRequires({'openssl': {'config': set(('runtime', 'lib'))}})
+        # ca-certificates now expected...
+        r.Requires('ca-certificates:config', 'openssl:config')
+
+        # XXX here instead of in ca-certs ... for now
+        r.ExcludeDirectories(exceptions='%(sysconfdir)s/ssl/certs')
+
+        # Perl scripts in a separate package to avoid dependencies for
+        # the main package
+        r.PackageSpec('openssl-scripts',
+            '%(bindir)s/c_rehash',
+            r'%(datadir)s/ssl/misc/.*\.pl')
+        # Not using a static path to openssl below because c_rehash does
+        # a $PATH search for it.
+        r.Requires('openssl:runtime', '%(bindir)s/c_rehash')
+        r.ComponentProvides('%(version)s')

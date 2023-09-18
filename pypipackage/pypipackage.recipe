@@ -1,0 +1,106 @@
+#
+# Copyright (c) 2011 rPath, Inc.
+# Copyright (c) 2012-2013  The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PyPiPackage(PackageRecipe):
+    name = 'pypipackage'
+    pyname = ''
+    pypiversion = ''
+    version = '1'
+    abstractBaseClass = True
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+        'unzip:runtime',
+    ]
+    # list to hold patches
+    patches = []
+
+    def __init__(self, *args, **kwargs):
+        PackageRecipe.__init__(self, *args, **kwargs)
+
+        self.macros.pyname = self.name
+        self.macros.pypiversion = self.version
+
+        if self.pyname:
+            self.macros.pyname = self.pyname
+        if self.pypiversion:
+            self.macros.pypiversion = self.pypiversion
+
+    def setup(r):
+        r.setupMacros()
+        r.unpack()
+        r.build()
+        r.install()
+        r.default_policy()
+        r.policy()
+
+
+
+    def setupMacros(r):
+        r.macros.pyver = '2.6'
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages'
+        pybin = '%(bindir)s/python%(pyver)s'
+        r.NormalizePythonInterpreterVersion(versionMap=(
+                ('%(bindir)s/python2.4', pybin),
+                ('/usr/local/bin/python2.4', pybin),
+                ('%(bindir)s/python2.5', pybin),
+                ('/usr/local/bin/python2.5', pybin),
+                ('%(bindir)s/python', pybin),
+                ('/usr/local/bin/python', pybin),
+        ))
+
+    def unpack(r):
+        try:
+            r.addArchive(r.getPackageURL())
+        except ImportError:
+            pass
+
+        if r.patches:
+            for patch in r.patches:
+                r.addPatch(patch)
+
+    def build(r):
+        r.PythonSetup()
+
+    def install(r):
+        pass
+
+    def default_policy(r):
+        # XXX The egg parser from conary-policy is not broken XXX
+        # 
+        # If a package uses distutils (from the stdlib) to build, it will create an
+        # egg-info file with the metadata.  If the package is installed with
+        # setuptools (from python-setuptools), it will create and egg-info directory
+        # with the metadata. Given that our python stuff packaging is not yet fully
+        # consistent relying in EggRequires leads to non desirable outputs
+        r.EggRequires(exceptions=".*")
+        # XXX we should probably turn on byDefault a explicit Requires of :runtime by
+        # :python and vice versa for those corner cases where auto-detection doesn't
+        # behave. Needs more research. commented by now. 
+        # r.Requires('%(name)s:runtime', '%(name)s:python')
+        # r.Requires('%(name)s:python', '%(name)s:runtime')
+
+    def policy(r):
+        pass
+
+    def getPackageURL(r):
+        from setuptools import package_index
+        req = package_index.Requirement.parse("%s==%s" %
+            (r.macros.pyname, r.macros.pypiversion))
+        pi = package_index.PackageIndex()
+        # obtain will not filter out eggs, so we need to do it ourselves
+        # return pi.obtain(req).location
+        pi.prescan()
+        pi.find_packages(req)
+        for dist in pi[req.key]:
+            if dist in req and dist.precedence <= package_index.SOURCE_DIST:
+                return r.stripMd5FromUrl(dist.location)
+        return None
+
+    def stripMd5FromUrl(r, url):
+        import re
+        return re.sub('(#md5=[a-h0-9]*)$', '', url)

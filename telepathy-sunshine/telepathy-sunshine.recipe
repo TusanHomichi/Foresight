@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+# Package creator : Pawel Pogorzelski (pawelpogorzelski@gmail.com)
+
+class Telepathysunshine(CPackageRecipe):
+    name = 'telepathy-sunshine'
+    version = '0.1.8'
+ 
+    buildRequires = ['dbus-python:python', 'pyOpenSSL:python', 'pygobject:python', 'python-twisted:python', 'python:devel', 'telepathy-python:python']
+ 
+    def setup(r):
+		r.addArchive('http://telepathy.freedesktop.org/releases/telepathy-sunshine/%(name)s-%(version)s.tar.gz')
+		r.Configure()
+		r.Make()	
+		r.MakeInstall()
+

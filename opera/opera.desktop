@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Opera Web Browser
+GenericName=Opera Web Browser
+Comment=Browse the web
+Exec=opera %U
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=/usr/share/icons/hicolor/32x32/apps/opera-next-browser.png
+MimeType=text/html;text/xml;application/xhtml+xml;
+Categories=Network;

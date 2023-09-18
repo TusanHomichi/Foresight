@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Pyblock(RPMPackageRecipe, CPackageRecipe):
+    name = 'pyblock'
+    version = '0.27'
+    rpmRelease = '2'
+    rpmName = 'python-%(name)s'
+
+    buildRequires = [ 'device-mapper:devel', 'mkinitrd:python',
+        'pyparted:python', 'zlib:devel', 'dmraid:devel', 'python:devel' ]
+
+
+    def setup(r):
+        r.unpack()
+        r.addPatch('makefile.patch')
+        r.Make('USESELINUX=0')
+        r.MakeInstall()

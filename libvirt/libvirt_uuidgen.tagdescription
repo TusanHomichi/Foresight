@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/%(name)s_uuidgen
+datasource	stdin
+implements	files update
+implements	files remove
+implements	files preremove

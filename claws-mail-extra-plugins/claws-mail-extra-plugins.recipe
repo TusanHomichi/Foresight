@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2007 - 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class ClawsMailExtraPlugins(RedirectRecipe):
+    name = 'claws-mail-extra-plugins'
+    version = '0'
+
+    buildRequires = []
+ 
+    def setup(r):
+        r.addRemoveRedirect()
+

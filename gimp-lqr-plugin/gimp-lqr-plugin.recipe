@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2007-2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GimpLqrPlugin(AutoPackageRecipe):
+    name = 'gimp-lqr-plugin'
+    version = '0.7.0'
+
+    buildRequires = ['atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'gimp:devel', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'zlib:devel', 'liblqr-1:devel']
+
+    def unpack(r):
+        r.addArchive('http://liquidrescale.wikidot.com/local--files/en:download-page-sources/')

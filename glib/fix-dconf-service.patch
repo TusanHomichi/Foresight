@@ -1,0 +1,62 @@
+From 998c6e65cf18aee626b9982347c29b4b09f2c097 Mon Sep 17 00:00:00 2001
+From: Ryan Lortie <desrt@desrt.ca>
+Date: Fri, 18 Jan 2013 21:11:20 +0000
+Subject: GVariant: fix normal-form checking for tuples
+
+GVariant has the concept of fixed-sized types (ie: types for which all
+values of the type will have the same size).  Examples are booleans,
+integers, doubles, etc.  Tuples containing only these types are also
+fixed size.
+
+When GVariant is trying to deal with a fixed-sized value for which it
+doesn't have a sufficient backing store (eg: the case where a
+fixed-sized value was created with g_variant_new_data() with an
+incorrect number of bytes) it denotes this by setting the size of the
+value to the correct fixed size but using a NULL data pointer.
+
+This is well-documented in several code comments and also in the public
+API documentation for g_variant_get_data() which describes the situation
+number which NULL could be returned.
+
+The decision to deal with this case in this way was changed at the last
+minute around the time that GVariant was merged -- originally we had an
+elaborate setup involving allocating an internal buffer of sufficient
+size to be shared between all invalid values.
+
+Unfortunately, when making this change a small detail was missed.
+gvs_tuple_get_child() (the function responsible for deserialising
+tuples) was updated to properly check for this case (and it contains a
+comment about why it must).  gvs_tuple_is_normal() (the function
+responsible for verifying if a tuple is in normal form) was not.
+
+We add the check now.
+
+Note that this problem does not exist with any other container type
+because tuples are the only container capable of being fixed-sized.  All
+other container types (arrays, maybes, variants) can contain a variable
+number of items or items of variable types (note: we consider dictionary
+entries to be two-tuples).  The code for validating non-container values
+also contains a check for the case of NULL data.
+
+The problem also does not occur in the only other function dealing with
+serialised tuples: gvs_tuple_n_children().  Whereas other container
+types would have to inspect the serialised data to determine the number
+of children, for tuples it can be determined directly from the type.
+---
+diff --git a/glib/gvariant-serialiser.c b/glib/gvariant-serialiser.c
+index 4ee6c72..cc5cc7b 100644
+--- a/glib/gvariant-serialiser.c
++++ b/glib/gvariant-serialiser.c
+@@ -1023,6 +1023,10 @@ gvs_tuple_is_normal (GVariantSerialised value)
+   gsize offset;
+   gsize i;
+ 
++  /* as per the comment in gvs_tuple_get_child() */
++  if G_UNLIKELY (value.data == NULL && value.size != 0)
++    return FALSE;
++
+   offset_size = gvs_get_offset_size (value.size);
+   length = g_variant_type_info_n_members (value.type_info);
+   offset_ptr = value.size;
+--
+cgit v0.9.0.2

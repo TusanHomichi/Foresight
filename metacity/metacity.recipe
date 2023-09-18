@@ -1,0 +1,87 @@
+#
+# Copyright (c) 2004-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('rpmpackage')
+loadRecipe('gnomepackage')
+class Metacity(RPMPackageRecipe,GnomePackageRecipe):
+    buildRequires = [ 'gtk:devel', 'pango:devel', 'fontconfig:devel',
+                      'GConf:devel', 'desktop-file-utils:runtime', 'GConf:runtime',
+                      'libglade:devel', 'startup-notification:devel', 'intltool:runtime',
+                      'ORBit2:devel', 'atk:devel', 'cairo:devel', 'freetype:devel',
+                      'glib:devel', 'libpng:devel', 'gettext:runtime', 'perl:runtime',
+                      'libXcursor:devel', 'libXfixes:devel', 'libXrandr:devel',
+                      'expat:devel', 'libXcomposite:devel', 'libXdamage:devel',
+                      'libXinerama:devel', 'gettext:devel', 'libcanberra:devel',
+                      'zenity:runtime', 'libgtop:devel', ]
+
+    name = 'metacity'
+    version = '2.30.3'
+    rpmRelease = '1.fc14'
+    rpmPatches = [  'stop-spamming-xsession-errors.patch',
+                    # http://bugzilla.gnome.org/show_bug.cgi?id=135056
+                    'dnd-keynav.patch',
+                    # http://bugzilla.gnome.org/show_bug.cgi?id=588119
+                    'Should-set-RestartStyleHint-to-RestartIfRunning-when.patch',
+                    # http://bugzilla.gnome.org/show_bug.cgi?id=336750
+                    'screenshot-forkbomb.patch',
+                    # fedora specific patches
+                    'workspaces.patch',
+                    'fresh-tooltips.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=567528
+                    'Allow-explicit-raises-from-same-client-not-just-sa.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=445447
+                    'Allow-applications-to-raise-windows-when-raise_on_cl.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=598995
+                    'Dont-focus-ancestor-window-on-a-different-workspac.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=599097
+                    'For-mouse-and-sloppy-focus-return-to-mouse-mode-on.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=599248
+                    # 'Add-nofocuswindows-preference-to-list-windows-that.patch',
+                    # 'Exclude-the-current-application-from-no_focus_window.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=599261
+                    #  'Add-a-newwindowsalwaysontop-preference.patch',
+                    #  'Apply-new_windows_always_on_top-to-newly-raised-acti.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=559816
+                    'metacity-2.28-empty-keybindings.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=604319
+                    'metacity-2.28-xioerror-unknown-display.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=599181
+                    'Stop-confusing-GDK-s-grab-tracking.patch',
+                    # https://bugzilla.gnome.org/show_bug.cgi?id=622517
+                    'Allow-breaking-out-from-maximization-during-mouse.patch',
+                    # default window icon: https://bugzilla.gnome.org/show_bug.cgi?id=616246
+                    'default-window-icon.patch',
+                    ]
+
+    docs = ['README', 'AUTHORS', 'COPYING', 'NEWS', 'HACKING',
+            'doc/theme-format.txt', 'doc/metacity-theme.dtd']
+
+    rpmSources = [ 'window.png',
+                 'mini-window.png']
+
+    extraConfig = ' --disable-static '
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        for p in [ 'metacity-uninitialized-variables.patch',
+                   'metacity-support-above-tab.patch',
+                   'metacity-bnc385553-buggy-intel-xinerama.diff',
+                   'metacity-key-list-binding.patch',
+                   '06_Add_UXD_shadows_and_borders.patch',
+                   '11_hide_tooltip_on_decorator.patch',
+                   '13_better_support_for_button_layout.patch',
+                   '15_show_maximized_titlebars.patch',
+                   '16-capture-before-unmap.patch', ]:
+            r.addPatch(p)
+
+        for f in r.rpmSources:
+            r.Copy(f, 'src/')
+        r.Remove('src/metacity.schemas')
+        r.Run('autoreconf -if')
+        r.addPatch('metacity-2.4.13.90-ctrlaltdel.patch')
+
+        r.addPatch('font.patch')
+        r.Replace('Clearlooks','Foresight','src/metacity.schemas*')

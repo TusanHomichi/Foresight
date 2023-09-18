@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NetbookLauncher(AutoPackageRecipe):
+    name = 'netbook-launcher'
+    version = '2.1.12'
+ 
+    buildRequires = [
+        'GConf:devel', 'GConf:runtime',
+        'Mesa:devel',
+        'ORBit2:devel',
+        'atk:devel', 'autoconf:runtime','automake:runtime',
+        'cairo:devel', 'clutk:devel', 'clutter:devel', 'clutter-gtk:devel',
+        'dbus-glib:devel', 'dbus:devel',
+        'esound:devel', 'expat:devel',
+        'fontconfig:devel', 'freetype:devel',
+        'gettext:runtime', 'glib:devel', 'gnome-common:devel',
+        'gnome-common:runtime', 'gnome-desktop:devel', 'libgnome-keyring:devel',
+        'gnome-menus:devel', 'gnome-vfs:devel', 'gtk:devel',
+        'intltool:devel', 'intltool:runtime',
+        'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXrender:devel',
+        'libXres:devel', 'libart_lgpl:devel', 'libbonobo:devel',
+        'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+        'libgnomeui:devel', 'liblauncher:devel', 'libnotify:devel',
+        'libpng:devel', 'libtool:runtime', 'libtool:devel', 'libwnck:devel',
+        'libxcb:devel', 'libxml2:devel',
+        'pango:devel', 'pixman:devel', 'pkgconfig:devel', 'popt:devel',
+        'startup-notification:devel',
+        'unique:devel',
+        'xcb-util:devel',
+        'zlib:devel',
+    ]
+ 
+    def unpack(r):
+	r.addArchive('http://launchpad.net/netbook-remix-launcher/2.0/ubuntu-9.10/+download/netbook-launcher-2.1.12.tar.gz')
+        r.addSource('distro-logo.png', dir='data/')
+#        r.addPatch('no-distro-logo.patch')
+#        r.addPatch('gnome-shutdown.patch')
+#        r.addSource('netbook-launcher.desktop', dest='%(sysconfdir)s/xdg/autostart/')
+
+    def configure(r):
+        r.Configure(' --enable-maintainer-flags=no')
+
+    def policy(r):
+        r.Requires('gnome-shutdown:runtime','%(bindir)s/ume-launcher')

@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2006-2012 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+import datetime
+class DepotTools(PackageRecipe):
+    name = 'depot_tools'
+    rev = '174527'
+    version =  'r%s+%s' % (rev,datetime.date.today().strftime("%Y.%m.%d"))
+
+    buildRequires = ['python:devel', 'pylint:python', 'python-simplejson:python',
+                     'django:python', 'ipython:python', 'libgcc:devellib',
+                     'libstdc++:devel', 'mercurial:python', 'python-dateutil:python', ]
+
+    def setup(r):
+        r.addSvnSnapshot('http://src.chromium.org/svn/trunk/tools/depot_tools',
+                         revision = r.rev)
+        r.MakeDirs('%(destdir)s/opt/google/depot_tools')
+        r.Install('*', '%(destdir)s/opt/google/depot_tools')
+        r.Requires(exceptions='cpplint.py')
+        r.NormalizeInterpreterPaths(exceptions = '/opt/google/depot_tools/create-chromium-git-src')
+
+        # FIXME XXX conary shouldn't let this pass in 1st place
+        # we 're getting this ....
+        #  'python\:\ os\(2\.4\ 2\.6\ lib64\)')
+        for req in [ 'collections', 
+                     'os',
+                     're',
+                     'types',
+                     'unittest',
+                     'difflib',
+                     'distutils',
+                     'inspect',]:
+            r.Requires(exceptDeps=r'python\:\ %s.*' % req)

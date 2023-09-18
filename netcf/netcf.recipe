@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2011 the Foresight Linux Project 
+#               
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class NetCF(AutoPackageRecipe):
+    buildRequires = [ 'augeas:devel', 'libgcrypt:devel', 'libgpg-error:devel',
+                      'libnl:devel', 'libxml2:devel', 'libxslt:devel',
+                      'pkgconfig:devel', 'readline:devel', 'zlib:devel',
+                      'chkconfig:runtime', ]
+
+    name = 'netcf'
+    version = '0.1.9'
+    
+
+    def unpack(r):
+        r.addArchive('http://fedorahosted.org/released/%(name)s/')
+
+    def configure(r):
+        r.Configure('--disable-static --with-init-script=redhat')
+
+
+    def policy(r):
+        r.Requires('augeas:runtime', '%(name)s:runtime')

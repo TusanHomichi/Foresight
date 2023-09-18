@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+class Libgnomeprintui(GnomePackageRecipe):
+
+    buildRequires = [ 'gtk:devel', 'libgnomeprint:devel',
+        'libgnomecanvas:devel', 'freetype:devel',
+        'atk:devel', 'cairo:devel', 'fontconfig:devel',
+        'glib:devel', 'glib:runtime', 'libart_lgpl:devel',
+        'libpng:devel', 'libxml2:devel', 'pango:devel',
+        'gnome-icon-theme:devellib', 'gettext:runtime' ]
+
+    name = 'libgnomeprintui'
+    version = '2.18.6'
+
+    extraConfig = '--disable-gtk-doc'
+

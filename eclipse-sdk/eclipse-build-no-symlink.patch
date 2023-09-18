@@ -1,0 +1,106 @@
+diff -u eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild.orig/SymlinkInstalledOSGiJars.java eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkInstalledOSGiJars.java
+--- eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild.orig/SymlinkInstalledOSGiJars.java	2010-03-02 22:36:45.000000000 +0300
++++ eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkInstalledOSGiJars.java	2010-08-28 00:53:17.539962042 +0400
+@@ -25,7 +25,7 @@
+ import org.apache.tools.ant.Project;
+ import org.apache.tools.ant.Task;
+ import org.apache.tools.ant.taskdefs.Delete;
+-import org.apache.tools.ant.taskdefs.optional.unix.Symlink;
++import org.apache.tools.ant.taskdefs.Copy;
+ 
+ public class SymlinkInstalledOSGiJars extends Task {
+ 
+@@ -109,10 +109,11 @@
+ 			d.setFile(fileToSymlink);
+ 			d.execute();
+ 			
+-			Symlink s = new Symlink();
++			Copy s = new Copy();
+ 			s.init();
+-			s.setLink(topLevelDir + "/" + fileToSymlink.getName());
+-			s.setResource(matchedJar.getAbsolutePath());
++			s.setTofile(new File(topLevelDir + "/" + fileToSymlink.getName()));
++			s.setFile(matchedJar);
++                       s.setVerbose(true);
+ 			s.execute();
+     	}
+     }
+diff -u eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild.orig/SymlinkNonOSGiJars.java eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkNonOSGiJars.java
+--- eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild.orig/SymlinkNonOSGiJars.java	2010-02-25 23:14:10.000000000 +0300
++++ eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkNonOSGiJars.java	2010-08-28 00:53:08.451962006 +0400
+@@ -23,7 +23,7 @@
+ import org.apache.tools.ant.Task;
+ import org.apache.tools.ant.taskdefs.Delete;
+ import org.apache.tools.ant.taskdefs.Mkdir;
+-import org.apache.tools.ant.taskdefs.optional.unix.Symlink;
++import org.apache.tools.ant.taskdefs.Copy;
+ 
+ public class SymlinkNonOSGiJars extends Task {
+ 
+@@ -67,10 +67,11 @@
+ 					d.execute();
+ 					
+ 					// Then make the actual symlink
+-					Symlink s = new Symlink();
++					Copy s = new Copy();
+ 					s.init();
+-					s.setLink(topLevelDir + "/" + origLocation);
+-					s.setResource(systemFile.getAbsolutePath());
++					s.setTofile(new File(topLevelDir + "/" + origLocation));
++					s.setFile(systemFile);
++                       s.setVerbose(true);
+ 					s.execute();
+ 				}
+ 			}
+diff -u eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild.orig/SymlinkOSGiJars.java eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkOSGiJars.java
+--- eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild.orig/SymlinkOSGiJars.java	2010-03-02 22:14:51.000000000 +0300
++++ eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkOSGiJars.java	2010-08-28 00:52:55.058962027 +0400
+@@ -25,7 +25,7 @@
+ import org.apache.tools.ant.Project;
+ import org.apache.tools.ant.Task;
+ import org.apache.tools.ant.taskdefs.Delete;
+-import org.apache.tools.ant.taskdefs.optional.unix.Symlink;
++import org.apache.tools.ant.taskdefs.Copy;
+ 
+ public class SymlinkOSGiJars extends Task {
+ 
+@@ -96,10 +96,11 @@
+ 			d.execute();
+ 
+ 			// Then make the actual symlink
+-			Symlink s = new Symlink();
++			Copy s = new Copy();
+ 			s.init();
+-			s.setLink(topLevelDir + "/" + origLocation);
+-			s.setResource(matchedJar.getAbsolutePath());
++			s.setTofile(new File(topLevelDir + "/" + origLocation));
++			s.setFile(matchedJar);
++                       s.setVerbose(true);
+ 			s.execute();
+ 		}
+     }
+--- eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkInstalledOSGiJars.java.orig	2010-08-28 02:02:19.681961999 +0400
++++ eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkInstalledOSGiJars.java	2010-08-28 02:16:59.104962026 +0400
+@@ -51,9 +51,9 @@
+     		try {
+     			fileToSymlinkJarFile = new JarFile(fileToSymlink);
+     			fileToSymlinkManifest = fileToSymlinkJarFile.getManifest();
+-    		} catch (IOException e) {
++    		} catch (Exception e) {
+     			// not a JAR file or can't be read
+-    			throw new BuildException("Can't read file which should be replaced with a symlink:  " + fileToSymlink);
++    			throw new BuildException("Can't read file which should be replaced with a symlink:  " + origLocation);
+     		}
+     		if (fileToSymlinkManifest == null)
+     			throw new BuildException("Can't read file which should be replaced with a symlink:  " + fileToSymlink);
+--- eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkInstalledOSGiJars.java.orig	2010-08-28 02:58:02.726962000 +0400
++++ eclipse-build-0.6.1/task-src/org/eclipse/linuxtools/eclipsebuild/SymlinkInstalledOSGiJars.java	2010-08-28 02:58:45.031962067 +0400
+@@ -53,7 +53,7 @@
+     			fileToSymlinkManifest = fileToSymlinkJarFile.getManifest();
+     		} catch (Exception e) {
+     			// not a JAR file or can't be read
+-    			throw new BuildException("Can't read file which should be replaced with a symlink:  " + origLocation);
++    			throw new BuildException("Can't read file which should be replaced with a symlink:  " + topLevelDir+": "+origLocation);
+     		}
+     		if (fileToSymlinkManifest == null)
+     			throw new BuildException("Can't read file which should be replaced with a symlink:  " + fileToSymlink);

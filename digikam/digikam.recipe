@@ -1,0 +1,22 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class Digikam(kdePackageRecipe):
+
+    name = 'digikam'
+    version = '1.8.0'
+
+    buildRequires = [
+        'gettext:runtime', 'jasper:devel', 'lcms:devel', 'lensfun:devel',
+        'libgphoto2:devel', 'libjpeg:devel', 'libkdcraw:devel',
+        'libkexiv2:devel', 'libkipi:devel', 'libtiff:devel', 'marble:devel',
+        'mysql-server:runtime', 'shared-desktop-ontologies:devellib'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://sourceforge/digikam/')
+

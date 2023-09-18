@@ -1,0 +1,11 @@
+--- kudzu-1.1.21/Makefile.orig	2004-04-15 17:38:29.000000000 -0400
++++ kudzu-1.1.21/Makefile	2004-04-15 17:39:21.000000000 -0400
+@@ -139,7 +139,7 @@
+ 	 if [ $$ver = "python1.5" ]; then \
+ 	   python -c 'from compileall import *; compile_dir("'$$DESTDIR'/usr/lib/'$$ver'",10,"/usr/lib/'$$ver'")'  || :;\
+ 	 else \
+-	   python2 -c 'from compileall import *; compile_dir("'$$DESTDIR'/usr/lib/'$$ver'",10,"/usr/lib/'$$ver'")' || python -c 'from compileall import *; compile_dir("'$$DESTDIR'/usr/lib/'$$ver'",10,"/usr/lib/'$$ver'")' ; \
++	   $$ver -c 'from compileall import *; compile_dir("'$$DESTDIR'/usr/lib/'$$ver'",10,"/usr/lib/'$$ver'")' || python -c 'from compileall import *; compile_dir("'$$DESTDIR'/usr/lib/'$$ver'",10,"/usr/lib/'$$ver'")' ; \
+ 	 fi ;\
+ 	done
+ 

@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2008-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class GnomeSettingsDaemon(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'esound:devel',
+                      'gnome-desktop:devel', 'libgnome-keyring:devel', 'gnome-vfs:devel',
+                      'gst-plugins-base:devel', 'gstreamer:devel', 'libXxf86misc:devel',
+                      'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel',
+                      'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                      'libgnomekbd:devel', 'libgnomeui:devel', 'libxklavier:devel',
+                      'popt:devel', 'startup-notification:devel', 'dbus-glib:runtime',
+                      'libXrandr:devel', 'pulseaudio:devel', 'libnotify:devel',
+                      'libcanberra:devel', 'polkit:devel', 'automake:runtime',
+                      'autoconf:runtime',
+                      'libdbusmenu-glib:devel',]
+
+    name = 'gnome-settings-daemon'
+    version = '2.32.1'
+    extraConfig = ' --disable-scrollkeeper --disable-update-mimedb --enable-static=no --enable-profiling --disable-esd '
+
+    patches = [ 'gnome-settings-daemon-2.32.1-libnotify-0.7.patch',
+                'gnome-settings-daemon-2.32.1-libnotify-init.patch',
+                '02_fix_randr.patch',
+                '05_disable_corner_tapping.patch',
+                '05_use_xrecord.patch',
+                # '06_use_application_indicator.patch', we dont want libappindicator right now
+                '07_dont_display_autostart.patch',
+                '12_monitor_network_fs.patch',
+                '16_use_synchronous_notifications.patch',
+                '17_react_when_streams_removed.patch',
+                '32-datetime-service-add-ntp-support.patch',
+                '33-datetime-service-ubuntu-ntp.patch',
+                '34-datetime-one-policykit-action.patch',
+                '40_xres_lcddefault.patch',
+                '45_support_new_video_key.patch',
+                '91_update_gvc_source.patch',
+                '92_datetime_fixups.patch',
+                '93_wait_for_xsettings.patch',
+               
+                ]
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Run('autoreconf -fi')
+ 
+    def policy(r):
+        r.Remove('%(libdir)s/gnome-settings-daemon-2.0/libsound.so', allowNoMatch=True)
+        r.Remove('%(libdir)s/gnome-settings-daemon-2.0/sound.gnome-settings-plugin', allowNoMatch=True)
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/%(name)s/xrandr')

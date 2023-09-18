@@ -1,0 +1,46 @@
+From e8c0c799e6f648a90028ce2248e14247f021f1c7 Mon Sep 17 00:00:00 2001
+From: Kelsey Hightower <kelsey.hightower@gmail.com>
+Date: Wed, 24 Aug 2011 21:51:45 -0400
+Subject: [PATCH/puppet] (#9167) Do not sent tagmail reports if no changes
+
+Prevent Puppet Master from sending tagmail reports if the status of the
+puppet run is "unchanged".
+---
+ lib/puppet/reports/tagmail.rb     |    6 ++++++
+ spec/unit/reports/tagmail_spec.rb |    5 +++++
+ 2 files changed, 11 insertions(+), 0 deletions(-)
+
+diff --git a/lib/puppet/reports/tagmail.rb b/lib/puppet/reports/tagmail.rb
+index c37341e..cf33cfa 100644
+--- a/lib/puppet/reports/tagmail.rb
++++ b/lib/puppet/reports/tagmail.rb
+@@ -108,6 +108,12 @@ Puppet::Reports.register_report(:tagmail) do
+ 
+   # Process the report.  This just calls the other associated messages.
+   def process
++    # Do not send the email report if nothing changed.
++    if self.status == "unchanged"
++      Puppet.info "Not sending tagmail report; no changes"
++      return
++    end
++
+     unless FileTest.exists?(Puppet[:tagmap])
+       Puppet.notice "Cannot send tagmail report; no tagmap file #{Puppet[:tagmap]}"
+       return
+diff --git a/spec/unit/reports/tagmail_spec.rb b/spec/unit/reports/tagmail_spec.rb
+index a53d119..0df67ec 100755
+--- a/spec/unit/reports/tagmail_spec.rb
++++ b/spec/unit/reports/tagmail_spec.rb
+@@ -88,4 +88,9 @@ describe tagmail do
+       results.should be_nil
+     end
+   end
++
++  describe "when there are no changes" do
++    it "should not send an email"
++  end
++
+ end
+-- 
+1.7.6
+

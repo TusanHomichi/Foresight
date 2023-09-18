@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Tomate(PackageRecipe):
+
+    name = 'tomate'
+    version = 'gita311f5ec'
+
+    buildRequires = ['pygobject:python', 'pygtk:python', 'python:devel']
+
+    def setup(r):
+        r.addGitSnapshot("git://gitorious.org/tomate/tomate.git")
+        r.Replace("python2","python","tomate.py")
+        r.MakeDirs("%(datadir)s/tomate")
+        r.Install("*.py","%(datadir)s/tomate/")
+        r.Install("*.svg","%(datadir)s/tomate/")
+        r.Install("*.png","%(datadir)s/tomate/") 
+        r.Symlink("%(datadir)s/tomate/tomate.py","%(bindir)s/tomate")

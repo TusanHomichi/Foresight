@@ -1,0 +1,12 @@
+import datetime
+loadSuperClass('gnomepackage')
+class NetworkManagerApplet(GnomePackageRecipe):
+
+   buildRequires = [ 'git:runtime' ]
+
+
+   name = "mobile-broadband-provider-info"
+   version = datetime.date.today().strftime("%Y%m%d")
+   
+   configureName='autogen.sh'
+   gitUrl = 'git://git.gnome.org/%(name)s/'

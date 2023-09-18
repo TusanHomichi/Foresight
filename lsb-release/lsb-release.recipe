@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LsbRelease(CPackageRecipe):
+    name = 'lsb-release'
+    version = '1.4'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/lsb/')
+
+        r.Make()
+        r.Install('lsb_release', '%(bindir)s/')
+        r.Install('lsb_release.1.gz', '%(mandir)s/man1/')
+
+        r.Create('%(sysconfdir)s/lsb-release', contents="""DISTRIB_ID=Foresight""")

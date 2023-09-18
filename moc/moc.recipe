@@ -1,0 +1,45 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Moc(AutoPackageRecipe):
+    name = 'moc'
+    version = '2.5.0'+'+beta1'
+
+    buildRequires = [
+        'alsa-lib:devel',
+        'autoconf:runtime',
+        'automake:runtime',
+        'curl:devel',
+        'db:devel',
+        'ffmpeg:devel',
+        'file:devel',
+        'gettext:devel',
+        'jack:devel',
+        'libmad:devel',
+        'libmodplug:devel',
+        'libmpcdec:devel',
+        'libogg:devel',
+        'libtool:devel',
+        'libtool:runtime',
+        'libvorbis:devel',
+        'ncurses:devel',
+        'openssl:devel',
+        'pkgconfig:devel',
+        'popt:devel',
+        'speex:devel',
+        'subversion:runtime',
+        'taglib:devel',
+        'wavpack:devel',
+        'zlib:devel',
+    ]
+
+    def unpack(r):
+        r.addSvnSnapshot('svn://daper.net/moc/trunk')
+
+    def configure(r):
+        r.Run('autoreconf -i')
+        r.Configure('--prefix=%(prefix)s --libdir=%(libdir)s --without-rcc --without-aac --with-oss --with-alsa --with-jack --with-mp3 --with-musepack --with-vorbis --with-flac --with-wavpack --with-sndfile --with-modplug --with-ffmpeg --with-speex --with-samplerate --with-curl --disable-debug')

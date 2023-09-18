@@ -1,0 +1,14 @@
+class libmpeg2(AutoPackageRecipe):
+    name = 'libmpeg2'
+    version = '0.5.1'
+ 
+    buildRequires =	[
+			'SDL:devel', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXext:devel', 'libXv:devel'
+			]
+
+    def unpack(r):
+       	r.addArchive('http://libmpeg2.sourceforge.net/files/libmpeg2-%(version)s.tar.gz')
+        r.macros.cflags = '-fPIC'
+
+    def configure(r):
+        r.Configure('--prefix=%(prefix)s --enable-shared --disable-static')

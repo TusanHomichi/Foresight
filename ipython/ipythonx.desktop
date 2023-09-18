@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=IPython X
+Comment=Experimental gui for ipython
+Exec=ipythonx
+Icon=/usr/share/pixmaps/gnome-term.png
+Type=Application
+Terminal=0
+Encoding=UTF-8
+Categories=Development;

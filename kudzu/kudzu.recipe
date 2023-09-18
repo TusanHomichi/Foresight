@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Kudzu(RPMPackageRecipe, CPackageRecipe):
+    name = 'kudzu'
+    version = '1.2.85'
+    rpmRelease = '2'
+
+
+    buildRequires = [ 'newt:devel', 'gettext:runtime', 'pciutils:devel',
+        'python:devel', 'popt:devel', 'zlib:devel', ]
+
+    def setup(r):
+        r.unpack()
+        r.addPatch('kudzu-python-version.patch')
+
+        r.Make('RPM_OPT_FLAGS=\"%(cflags)s -I.\" all')
+        r.MakeInstall('install install-lib libdir=%(destdir)s/%(libdir)s')

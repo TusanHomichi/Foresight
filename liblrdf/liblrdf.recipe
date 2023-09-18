@@ -1,0 +1,24 @@
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LiblRdf(AutoPackageRecipe):
+
+    name = 'liblrdf'
+    version = '0.5.0'
+
+
+    buildRequires = [ 'curl:devel', 'ladspa_sdk:devel', 'libxml2:devel',
+                      'libxslt:devel', 'openssl:devel', 'pkgconfig:devel',
+                      'raptor:devel', 'raptor:devellib', 'raptor:lib',
+                      'raptor:runtime', 'zlib:devel', 'gcc-c++:runtime', 
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime',
+                      'libtool:devel',]
+
+    def unpack(r):
+        r.addArchive('https://github.com/swh/LRDF/tarball/%(version)s')
+        r.Run('./autogen.sh')
+
+    def configure(r):
+        r.Configure('--disable-static')

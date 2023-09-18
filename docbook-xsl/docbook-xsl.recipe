@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DocbookXsl(BuildPackageRecipe):
+    name = 'docbook-xsl'
+    version = '1.76.1'
+
+    buildRequires = [ 'sgml-common:runtime', 'libxml2:runtime',
+        'docbook-dtds:data', 'libxml2:python', 'libxslt:python',
+        'sgml-common:config', 'ruby:runtime']
+
+    def setup(r):
+        # problems with parallel MakeInstall
+        r.disableParallelMake()
+        
+	srpm = 'ftp://195.220.108.108/linux/fedora/development/rawhide/source/SRPMS/docbook-style-xsl-%(version)s-1.fc15.src.rpm'
+
+        r.addArchive('docbook-xsl-%(version)s.tar.bz2', rpm=srpm)
+        r.addSource('docbook-style-xsl.Makefile', rpm=srpm)
+
+        r.Run('mv docbook-style-xsl.Makefile Makefile')
+        for patch in ('docbook-xsl-marginleft.patch',
+                      'docbook-xsl-newmethods.patch',
+                      'docbook-xsl-non-constant-expressions.patch',
+                      'docbook-xsl-pagesetup.patch'):
+             r.addPatch(patch, rpm=srpm)
+
+        r.Make('install BINDIR=%(destdir)s/%(bindir)s'
+               ' DESTDIR=%(destdir)s%(datadir)s/sgml/docbook/xsl-stylesheets-%(version)s')
+        r.Symlink('xsl-stylesheets-%(version)s',
+                  '%(datadir)s/sgml/docbook/xsl-stylesheets')
+
+        # Install the catalog database
+        r.addSource('docbook-xsl.xml',
+                    dest='%(tagdatadir)s/xml-catalog/desc.d/docbook-xsl.xml')
+
+        # Create the catalog
+        r.XMLCatalogEntry('docbook-xsl.xml',
+                          'rewriteSystem',
+                          'http://docbook.sourceforge.net/release/xsl/%(version)s',
+                          'file://%(datadir)s/sgml/docbook/xsl-stylesheets-%(version)s')
+        r.XMLCatalogEntry('docbook-xsl.xml',
+                          'rewriteURI',
+                          'http://docbook.sourceforge.net/release/xsl/%(version)s',
+                          'file://%(datadir)s/sgml/docbook/xsl-stylesheets-%(version)s')
+        r.XMLCatalogEntry('docbook-xsl.xml',
+                          'rewriteSystem',
+                          'http://docbook.sourceforge.net/release/xsl/current',
+                          'file://%(datadir)s/sgml/docbook/xsl-stylesheets-%(version)s')
+        r.XMLCatalogEntry('docbook-xsl.xml',
+                          'rewriteURI',
+                          'http://docbook.sourceforge.net/release/xsl/current',
+                          'file://%(datadir)s/sgml/docbook/xsl-stylesheets-%(version)s')
+
+        # Requirements
+        r.Requires('docbook-dtds:data',
+                   '%(tagdatadir)s/xml-catalog/desc.d/docbook-xsl.xml')
+        r.Requires('sgml-common:runtime',
+                   '%(tagdatadir)s/xml-catalog/desc.d/docbook-xsl.xml')
+        # The java requirements of the java extension can be masked out,
+        # since the java extensions are optional.  Consider moving them
+        # to a :java component and removing this.
+        r.Requires(exceptDeps='java: .*')
+
+        # Move catalogs to :data
+        r.Config(exceptions='%(sysconfdir)s/')
+        r.ComponentSpec('data', '%(sysconfdir)s/', '%(datadir)s/sgml/')

@@ -1,0 +1,11 @@
+--- configure.in.link	2012-05-31 02:06:41.000000000 +0000
++++ configure.in	2012-05-31 02:06:50.000000000 +0000
+@@ -221,7 +221,7 @@
+ 		if (test "x$avcodec_include" != x) || (test "x$avcodec_lib" != x) ; then
+ 			local_legacy_ffmpeg_test
+ 		else
+-			PKG_CHECK_MODULES(AVCODEC, libavformat,
++			PKG_CHECK_MODULES(AVCODEC, libavformat libavcodec libavutil,
+ 			[
+ 				AC_DEFINE(HAVE_LIBAVCODEC, 1, [Enable FFMPEG libavcodec])
+ 				AC_SUBST(AVCODEC_LIBS)

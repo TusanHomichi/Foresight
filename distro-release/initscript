@@ -1,0 +1,87 @@
+#!/bin/bash
+#
+# chkconfig: 345 99 1
+#
+# description: writes /etc/issue{,.net} and /etc/distro-release
+#
+
+source /etc/init.d/functions
+
+export LANG=C
+
+distro_release="/etc/distro-release"
+distro_name="/etc/sysconfig/appliance-name"
+issue="/etc/issue"
+issuenet="/etc/issue.net"
+distro_welcome="/etc/distro-welcome"
+
+get_appliance_name () {
+    if [ -f "${distro_name}" ] ; then
+        name="$(cat ${distro_name})"
+        if [ -n "${name}" ] ; then
+            echo "${name}"
+        fi
+    fi
+}
+
+writedistrorelease () {
+    app_name="$(get_appliance_name)"
+    if [ -n "${app_name}" ]; then
+        name="${app_name}"
+    else
+        name="Foresight-based appliance"
+    fi
+
+    echo "${name}" > ${distro_release}
+
+}
+
+writeissue () {
+    # the macro <APPLIANCE_NAME>
+    if [ -f "${distro_name}" ];then
+        distro="$(cat ${distro_name})"
+        if [ -n "${distro}" ]; then
+            APPLIANCE_NAME="${distro}"
+        else
+            APPLIANCE_NAME="Foresight-based appliance"
+        fi
+    else
+        APPLIANCE_NAME="Foresight-based appliance"
+    fi
+
+    # now lets actually parse the distro-welcome file
+    if [ -f "${distro_welcome_appliance}" ]
+    then
+        initial="$(cat ${distro_welcome_appliance})"
+    else
+        initial="$(cat ${distro_welcome})"
+    fi
+    without_comments="$(echo "${initial}" | grep -v '^#' )"
+    replace_macros="$(echo "${without_comments}" | sed -e "s|<APPLIANCE_NAME>|${APPLIANCE_NAME}|g")"
+    echo "${replace_macros}" > ${issue}
+    echo "${replace_macros}" > ${issuenet}
+
+}
+
+start () {
+    writeissue
+    writedistrorelease
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        true
+        ;;
+    restart)
+        start
+        ;;
+    condrestart)
+        start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        ;;
+esac

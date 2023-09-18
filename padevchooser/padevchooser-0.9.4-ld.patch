@@ -1,0 +1,24 @@
+From aa3667e7f027d3e5b0685e3815ce046f46950aa0 Mon Sep 17 00:00:00 2001
+From: Lubomir Rintel <lkundrak@v3.sk>
+Date: Sun, 6 Feb 2011 14:44:17 +0100
+Subject: [PATCH 1/2] Fix buid with newer linker
+---
+ src/Makefile.am |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index f7e4c06..3da3544 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -26,7 +26,7 @@ dist_desktop_DATA=padevchooser.desktop
+ 
+ padevchooser_SOURCES=padevchooser.c x11prop.c x11prop.h
+ 
+-padevchooser_LDADD=$(AM_LDADD) $(GUILIBS_LIBS) $(PULSE_LIBS)
++padevchooser_LDADD=$(AM_LDADD) $(GUILIBS_LIBS) $(PULSE_LIBS) -lX11
+ padevchooser_CFLAGS=$(AM_CFLAGS) $(GUILIBS_CFLAGS) $(PULSE_CFLAGS) 
+ padevchooser_CFLAGS+=-DGLADE_FILE=\"$(pkgdatadir)/padevchooser.glade\" 
+ padevchooser_CFLAGS+=-DDESKTOP_FILE=\"$(desktopdir)/padevchooser.desktop\" 
+-- 
+1.7.1
+

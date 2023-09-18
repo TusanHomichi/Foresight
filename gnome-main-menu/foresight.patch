@@ -1,0 +1,110 @@
+Index: main-menu/etc/applications.xbel
+===================================================================
+--- main-menu/etc/applications.xbel	(revision 556)
++++ main-menu/etc/applications.xbel	(working copy)
+@@ -3,7 +3,7 @@
+       xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+       xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+ >
+-  <bookmark href="MozillaFirefox.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
++  <bookmark href="net-firefox.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+     <info>
+       <metadata owner="http://freedesktop.org">
+         <mime:mime-type type="application/x-desktop"/>
+@@ -37,12 +37,12 @@
+           <bookmark:group>rank-2</bookmark:group>
+         </bookmark:groups>
+         <bookmark:applications>
+-          <bookmark:application name="Helix Banshee" exec="banshee --play-enqueued --enqueue %U" timestamp="1168926682" count="1"/>
++          <bookmark:application name="Banshee" exec="banshee-1 --play-enqueued --enqueue %U" timestamp="1168926682" count="1"/>
+         </bookmark:applications>
+       </metadata>
+     </info>
+   </bookmark>
+-  <bookmark href="writer.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
++  <bookmark href="f-spot.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+     <info>
+       <metadata owner="http://freedesktop.org">
+         <mime:mime-type type="application/x-desktop"/>
+@@ -50,12 +50,12 @@
+           <bookmark:group>rank-3</bookmark:group>
+         </bookmark:groups>
+         <bookmark:applications>
+-          <bookmark:application name="OpenOffice.org Writer" exec="oowriter %U" timestamp="1168926682" count="1"/>
++          <bookmark:application name="F-Spot" exec="f-spot" timestamp="1168926682" count="1"/>
+         </bookmark:applications>
+       </metadata>
+     </info>
+   </bookmark>
+-  <bookmark href="f-spot.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
++  <bookmark href="writer3.0.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+     <info>
+       <metadata owner="http://freedesktop.org">
+         <mime:mime-type type="application/x-desktop"/>
+@@ -63,12 +63,12 @@
+           <bookmark:group>rank-4</bookmark:group>
+         </bookmark:groups>
+         <bookmark:applications>
+-          <bookmark:application name="F-Spot" exec="f-spot" timestamp="1168926682" count="1"/>
++          <bookmark:application name="OpenOffice.org Writer" exec="oowriter3.0 %U" timestamp="1168926682" count="1"/>
+         </bookmark:applications>
+       </metadata>
+     </info>
+   </bookmark>
+-  <bookmark href="nautilus.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
++  <bookmark href="calc3.0.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+     <info>
+       <metadata owner="http://freedesktop.org">
+         <mime:mime-type type="application/x-desktop"/>
+@@ -76,7 +76,7 @@
+           <bookmark:group>rank-5</bookmark:group>
+         </bookmark:groups>
+         <bookmark:applications>
+-          <bookmark:application name="Nautilus" exec="nautilus --no-desktop %U" timestamp="1168926682" count="1"/>
++          <bookmark:application name="OpenOffice.org Calc" exec="oocalc3.0 %U" timestamp="1168926682" count="1"/>
+         </bookmark:applications>
+       </metadata>
+     </info>
+Index: main-menu/etc/system-items.xbel.in
+===================================================================
+--- main-menu/etc/system-items.xbel.in	(revision 556)
++++ main-menu/etc/system-items.xbel.in	(working copy)
+@@ -25,12 +25,12 @@
+           <bookmark:group>rank-1</bookmark:group>
+         </bookmark:groups>
+         <bookmark:applications>
+-          <bookmark:application name="Control Center" exec="/opt/gnome/bin/control-center" timestamp="1168926816" count="1"/>
++          <bookmark:application name="Control Center" exec="gnome-control-center" timestamp="1168926816" count="1"/>
+         </bookmark:applications>
+       </metadata>
+     </info>
+   </bookmark>
+-  <bookmark href="YaST.desktop" added="2008-06-04T15:58:58Z" modified="2008-06-04T15:58:58Z" visited="2008-06-04T15:58:58Z">
++  <bookmark href="gpk-application.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+     <info>
+       <metadata owner="http://freedesktop.org">
+         <mime:mime-type type="application/x-desktop"/>
+@@ -38,12 +38,12 @@
+           <bookmark:group>rank-2</bookmark:group>
+         </bookmark:groups>
+         <bookmark:applications>
+-          <bookmark:application name="YaST" exec="gnomesu -c /sbin/yast2" timestamp="1212587938" count="1"/>
++          <bookmark:application name="Install Software" exec="gpk-application %F" timestamp="1168926816" count="1"/>
+         </bookmark:applications>
+       </metadata>
+     </info>
+   </bookmark>
+-  <bookmark href="package-manager.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
++  <bookmark href="gpk-update-viewer.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+     <info>
+       <metadata owner="http://freedesktop.org">
+         <mime:mime-type type="application/x-desktop"/>
+@@ -51,7 +51,7 @@
+           <bookmark:group>rank-3</bookmark:group>
+         </bookmark:groups>
+         <bookmark:applications>
+-          <bookmark:application name="Install Software" exec="package-manager %F" timestamp="1168926816" count="1"/>
++          <bookmark:application name="Update System" exec="gpk-update-viewer %F" timestamp="1168926816" count="1"/>
+         </bookmark:applications>
+       </metadata>
+     </info>

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+#
+
+class IOgen(CPackageRecipe):
+    name = 'iogen'
+    version = '3.1p0'
+
+    buildRequires = [ 'groff:runtime', ]
+
+    def setup(r):
+        r.macros.version = r.version.replace('_', '-')
+        r.addArchive('http://www.peereboom.us/%(name)s/%(name)s_%(version)s.tgz')
+        
+        r.Make()
+
+        r.Install('iogen', '%(bindir)s/', mode = 0755)
+        r.Install('src/iogen.8', '%(mandir)s/man8/', mode = 0644)

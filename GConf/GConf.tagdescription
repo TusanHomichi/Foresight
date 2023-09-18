@@ -1,0 +1,3 @@
+file		%(taghandlerdir)s/GConf
+datasource	stdin
+implements	files update

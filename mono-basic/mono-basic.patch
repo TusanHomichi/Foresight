@@ -1,0 +1,17 @@
+--- mono-basic-1.2.6/build/config-default.make	2007-04-20 18:25:48.000000000 +0100
++++ mono-basic-1.2.6/build/config-default-new.make	2007-12-20 11:29:58.000000000 +0000
+@@ -15,7 +15,7 @@
+ CFLAGS = -g -O2
+ prefix = /usr/local
+ exec_prefix = $(prefix)
+-mono_libdir = $(exec_prefix)/lib
++mono_libdir = $(libdir)
+ RUNTIME = mono
+ TEST_RUNTIME = MONO_PATH="$(prefix)/lib/mono/2.0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) --debug
+ 
+--- mono-basic-1.2.6/scripts/vbnc.in	2007-11-08 23:57:47.000000000 +0000
++++ mono-basic-1.2.6/scripts/vbnc-new.in	2007-12-20 11:31:17.000000000 +0000
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-exec mono --debug $MONO_OPTIONS @prefix@/lib/mono/2.0/vbnc.exe "$@"
++exec mono --debug $MONO_OPTIONS @libdir@/mono/2.0/vbnc.exe "$@"

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MathAtlas(CPackageRecipe):
+    name = 'math-atlas'
+    version = '3.9.24'
+ 
+    buildRequires = ['gcc-fortran:devellib', 'gcc-fortran:runtime', 'gcc-c++:runtime']
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/math-atlas/atlas3.9.24.tar.bz2')
+	if Arch.x86:
+	        r.ManualConfigure('-Si cputhrchk 0 -b 32', objDir = 'MyObj')
+	else:
+		r.ManualConfigure('-Si cputhrchk 0 -b 64', objDir = 'MyObj')
+        r.Make(dir = 'MyObj')
+        r.MakeInstall(dir = 'MyObj')

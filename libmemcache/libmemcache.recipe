@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2007-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibMemCache(AutoPackageRecipe):
+    buildRequires = [ 'psmisc:runtime' ]
+
+    name = 'libmemcache'
+    version = '1.4.0.rc2'
+
+    def unpack(r):
+        r.addArchive('http://people.freebsd.org/~seanc/%(name)s/')
+        r.addPatch('http://gijsbert.org/downloads/cmemcache/libmemcache-1.4.0.rc2.patch')
+        r.addSource('http://gijsbert.org/downloads/cmemcache/libmemcache-1.4.0.rc2.readme', dir='%(thisdocdir)s')

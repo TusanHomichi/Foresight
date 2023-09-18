@@ -1,0 +1,10 @@
+--- pan/data-impl/my-tree.cc
++++ pan/data-impl/my-tree.cc
+@@ -20,6 +20,7 @@
+ #include <config.h>
+ #include <cassert>
+ #include <glib/gmessages.h> // for g_assert
++#include <glib/gtestutils.h> // for g_assert
+ #include <pan/general/debug.h>
+ #include <pan/general/foreach.h>
+ #include <pan/general/quark.h>

@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FaenzaIconTheme(PackageRecipe):
+    name = 'faenza-icon-theme'
+    version = '0.9.2'
+
+    # URL: http://gnome-look.org/content/show.php/Faenza?content=128143
+
+    buildRequires = []
+
+    def setup(r):
+        r.unpack()
+        r.install()
+
+    def unpack(r):
+        r.addArchive('http://faenza-icon-theme.googlecode.com/files/%(name)s_%(version)s.tar.gz',
+            dir='%(name)s-%(version)s')
+
+        def fix_place_icon(real, link, themes):
+            # Link the icon from @real to @link.
+            for theme in themes:
+                # svg
+                r.Symlink('%s.svg' % real,
+                          '%s/places/scalable/%s.svg' % (theme, link))
+                # png
+                for size in ('22', '24', '32', '48'):
+                    r.Symlink('%s.png' % real,
+                              '%s/places/%s/%s.png' % (theme, size, link))
+
+        # fix the start-here icon
+        fix_place_icon("start-here-gnome", "start-here", ["Faenza", "Faenza-Dark"])
+        # fix the distributor icon
+        fix_place_icon("distributor-logo-fedora", "distributor-logo", ["Faenza"])
+
+    def install(r):
+        r.Install('Faenza', '%(datadir)s/icons/')
+        r.Install('Faenza-Dark', '%(datadir)s/icons/')
+        r.Install('Faenza-Darker', '%(datadir)s/icons/')
+        r.Install('Faenza-Darkest', '%(datadir)s/icons/')
+
+        r.SetModes('%(datadir)s/icons/*/index.theme', 0644)

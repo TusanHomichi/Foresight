@@ -1,0 +1,104 @@
+class xymon(AutoPackageRecipe):
+    name = 'xymon'
+    version = '4.3.7'
+
+    buildRequires = [
+        'chkconfig:runtime',
+        'libpng:devel',
+        'openldap:devel',
+        'openssl:devel',
+        'pcre:devel',
+        'rrdtool:devel'
+    ]
+
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/xymon/Xymon/%(version)s/')
+
+    def configure(r):
+        # see xymon.spec in the source
+        r.ManualConfigure(
+            preConfigure='USEXYMONPING=y '
+                         'ENABLESSL=y '
+                         'ENABLELDAP=y '
+                         'ENABLELDAPSSL=y '
+                         'XYMONUSER=xymon '
+                         'XYMONTOPDIR=%(servicedir)s/xymon '
+                         'XYMONVAR=%(servicedir)s/xymon '
+                         'XYMONHOSTURL=/xymon '
+                         'CGIDIR=%(servicedir)s/xymon/cgi-bin '
+                         'XYMONCGIURL=/xymon-cgi '
+                         'SECURECGIDIR=%(servicedir)s/xymon/cgi-secure '
+                         'SECUREXYMONCGIURL=/xymon-seccgi '
+                         'HTTPDGID=apache '
+                         'XYMONLOGDIR=/var/log/xymon '
+                         'XYMONHOSTNAME=localhost '
+                         'XYMONHOSTIP=127.0.0.1 '
+                         'MANROOT=/usr/share/man '
+                         'INSTALLBINDIR=%(servicedir)s/xymon/server/bin '
+                         'INSTALLETCDIR=%(sysconfdir)s/xymon '
+                         'INSTALLWEBDIR=%(sysconfdir)s/xymon/web '
+                         'INSTALLEXTDIR=%(servicedir)s/xymon/server/ext '
+                         'INSTALLTMPDIR=%(servicedir)s/xymon/tmp '
+                         'INSTALLWWWDIR=%(servicedir)s/xymon/www '
+                         )
+
+    def make(r):
+        r.disableParallelMake()
+        r.Make(preMake='PKGBUILD=1')
+
+    def makeinstall(r):
+        r.MakeInstall(preMake='PKGBUILD=1', rootVar='INSTALLROOT')
+        r.Symlink('%(servicedir)s/xymon/server/bin/xymon{,cmd}', '%(bindir)s/')
+        r.Move('%(sysconfdir)s/xymon/xymon-apache.conf', '%(sysconfdir)s/httpd/conf.d/')
+
+        r.Remove('%(servicedir)s/xymon/client/tmp', recursive=True)
+        r.Symlink('/tmp', '%(servicedir)s/xymon/client/')
+        r.Remove('%(servicedir)s/xymon/server/tmp', recursive=True)
+        r.Symlink('%(servicedir)s/xymon/tmp', '%(servicedir)s/xymon/server/')
+        r.Replace(('^XYMSRV=.*', 'include /var/run/xymonclient-runtime.cfg'),
+                  ('XYMSERVERS=.*', ''), '%(servicedir)s/xymon/client/etc/xymonclient.cfg')
+
+        r.Install('rpm/xymon-init.d', '%(initdir)s/xymon', mode=0755)
+        r.Install('rpm/xymon-client.init', '%(initdir)s/xymon-client', mode=0755)
+        r.Install('rpm/xymon.logrotate', '%(sysconfdir)s/logrotate.d/xymon')
+        r.Install('rpm/xymon-client.default', '%(sysconfdir)s/default/xymon-client')
+
+    def policy(r):
+        # server also requires client pieces
+        r.Requires('xymon-client:runtime', '%(initdir)s/xymon')
+        r.ExcludeDirectories(exceptions=
+            '(/var/log/xymon'
+            '|%(servicedir)s/xymon.*)')
+            #'|%(servicedir)s/xymon/client/ext'
+            #'|%(servicedir)s/xymon/tmp'
+            #'|%(servicedir)s/xymon/server/download'
+            #'|%(sysconfdir)s/xymon/web'
+            #'|%(servicedir)s/xymon)',
+            #)
+        r.Ownership('xymon', 'xymon',
+            '/var/log/xymon',
+            '%(servicedir)s/xymon',
+            '%(servicedir)s/xymon/client/ext')
+        r.Ownership('xymon', 'apache',
+            '%(servicedir)s/xymon/www/rep',
+            '%(servicedir)s/xymon/www/snap',
+            '%(sysconfdir)s/xymon/critical.cfg',
+            '%(sysconfdir)s/xymon/critical.cfg.bak')
+        r.WarnWriteable(exceptions='%(sysconfdir)s/xymon/critical.cfg.*')
+        r.Ownership('root', 'xymon',
+            '%(servicedir)s/xymon/client/bin/logfetch',
+            '%(servicedir)s/xymon/client/bin/clientupdate')
+        r.SetModes('%(servicedir)s/xymon/client/bin/logfetch',
+                   '%(servicedir)s/xymon/client/bin/clientupdate',
+                   0750)
+
+        r.Config(r'.*\.css$')
+
+        r.PackageSpec('xymon-client',
+            '%(servicedir)s/xymon/client',
+            '%(initdir)s/xymon-client',
+            '/etc/default/xymon-client',
+            '/var/log/xymon',
+            '%(servicedir)s/xymon/client/ext',
+            '%(servicedir)s/xymon/client/bin/logfetch',
+            '%(servicedir)s/xymon/client/bin/clientupdate')

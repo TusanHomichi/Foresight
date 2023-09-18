@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class MzScheme(CPackageRecipe):
+    name = 'mzscheme'
+    version = '4.1.4'
+
+    buildRequires = []
+
+    def setup(r):
+        r.addArchive('http://download.plt-scheme.org/bundles/%(version)s/mz/mz-%(version)s-src-unix.tgz')
+        r.Configure(dir='src')
+        r.Make(dir='src')
+        r.MakeInstall(dir='src')
+

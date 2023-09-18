@@ -1,0 +1,166 @@
+From 00a8b22ad6dbb03eea18090f6d9f578101632752 Mon Sep 17 00:00:00 2001
+Message-Id: <00a8b22ad6dbb03eea18090f6d9f578101632752.1313007841.git.kevin.kofler@chello.at>
+From: Kevin Kofler <kevin.kofler@chello.at>
+Date: Wed, 10 Aug 2011 21:48:19 +0200
+Subject: [PATCH] Trigger installation of missing components when installing a
+ package.
+
+For script engines, the existing metadata (X-Plasma-API) is sufficient.
+
+For data engines, we introduce a new metadata entry:
+X-Plasma-RequiredDataEngines. Third-party packages will have to add this entry
+to benefit from this feature at this time. Automatic support for scanning
+package source code on installation (at least for some languages) is planned,
+but the metadata entry is definitely the most efficient method.
+---
+ plasma/package.cpp         |   39 +++++++++++++++++++++++++++++++++++++++
+ plasma/packagemetadata.cpp |   13 +++++++++++++
+ plasma/packagemetadata.h   |    7 +++++++
+ 3 files changed, 59 insertions(+), 0 deletions(-)
+
+diff --git a/plasma/package.cpp b/plasma/package.cpp
+index 4c00d36..0a45c87 100644
+--- a/plasma/package.cpp
++++ b/plasma/package.cpp
+@@ -49,8 +49,11 @@
+ #include <kdebug.h>
+ 
+ #include "authorizationmanager.h"
++#include "dataenginemanager.h"
+ #include "packagemetadata.h"
++#include "scripting/scriptengine.h"
+ #include "private/authorizationmanager_p.h"
++#include "private/componentinstaller_p.h"
+ #include "private/package_p.h"
+ #include "private/plasmoidservice_p.h"
+ #include "private/service_p.h"
+@@ -603,6 +606,42 @@ bool Package::installPackage(const QString &package,
+         tempdir.setAutoRemove(false);
+     }
+ 
++    // check for missing dependencies
++    QString requiredScriptEngine = meta.implementationApi();
++    if (!requiredScriptEngine.isEmpty()) {
++        // figure out the component type to query for
++        ComponentTypes componentTypes = static_cast<ComponentTypes>(0);
++        QStringList serviceTypes = meta.serviceType().split(',');
++        if (serviceTypes.contains("Plasma/Applet")) {
++            componentTypes |= AppletComponent;
++        }
++        if (serviceTypes.contains("Plasma/DataEngine")) {
++            componentTypes |= DataEngineComponent;
++        }
++        if (serviceTypes.contains("Plasma/Runner")) {
++            componentTypes |= RunnerComponent;
++        }
++        if (serviceTypes.contains("Plasma/Wallpaper")) {
++            componentTypes |= WallpaperComponent;
++        }
++        if (!knownLanguages(componentTypes).contains(requiredScriptEngine)) {
++            // install the missing script engine
++            // force prompting because the user has just explicitly installed a widget
++            ComponentInstaller::self()->installMissingComponent("scriptengine", requiredScriptEngine, 0, true);
++        }
++    }
++    QStringList requiredDataEngines = meta.requiredDataEngines();
++    if (!requiredDataEngines.isEmpty()) {
++        QStringList knownDataEngines = DataEngineManager::self()->listAllEngines(meta.application());
++        foreach (const QString &requiredDataEngine, requiredDataEngines) {
++            if (!knownDataEngines.contains(requiredDataEngine)) {
++                // install the missing data engine
++                // force prompting because the user has just explicitly installed a widget
++                ComponentInstaller::self()->installMissingComponent("dataengine", requiredDataEngine, 0, true);
++            }
++        }
++    }
++
+     if (!servicePrefix.isEmpty()) {
+         // and now we register it as a service =)
+         QString metaPath = targetName + "/metadata.desktop";
+diff --git a/plasma/packagemetadata.cpp b/plasma/packagemetadata.cpp
+index 59163b2..8cfaf64 100644
+--- a/plasma/packagemetadata.cpp
++++ b/plasma/packagemetadata.cpp
+@@ -52,6 +52,7 @@ class PackageMetadataPrivate
+         QString serviceType;
+         QString api;
+         KUrl location;
++        QStringList requiredDataEngines;
+ };
+ 
+ PackageMetadata::PackageMetadata(const PackageMetadata &other)
+@@ -106,6 +107,7 @@ void PackageMetadata::write(const QString &filename) const
+     config.writeEntry("X-KDE-ParentApp", d->app);
+     config.writeEntry("Type", d->type);
+     config.writeEntry("X-Plasma-RemoteLocation", d->location);
++    config.writeEntry("X-Plasma-RequiredDataEngines", d->requiredDataEngines);
+ }
+ 
+ void PackageMetadata::read(const QString &filename)
+@@ -133,6 +135,7 @@ void PackageMetadata::read(const QString &filename)
+     d->app = config.readEntry("X-KDE-ParentApp", d->app);
+     d->type = config.readEntry("Type", d->type);
+     d->location = config.readEntry("X-Plasma-RemoteLocation", d->location);
++    d->requiredDataEngines = config.readEntry("X-Plasma-RequiredDataEngines", d->requiredDataEngines);
+ }
+ 
+ QString PackageMetadata::name() const
+@@ -225,6 +228,11 @@ QString PackageMetadata::implementationApi() const
+     return d->api;
+ }
+ 
++QStringList PackageMetadata::requiredDataEngines() const
++{
++    return d->requiredDataEngines;
++}
++
+ void PackageMetadata::setImplementationApi(const QString &api)
+ {
+     d->api = api;
+@@ -300,6 +308,11 @@ void PackageMetadata::setRemoteLocation(const KUrl &location)
+     d->location = location;
+ }
+ 
++void PackageMetadata::setRequiredDataEngines(const QStringList &requiredDataEngines)
++{
++    d->requiredDataEngines = requiredDataEngines;
++}
++
+ void PackageMetadata::setType(const QString &type)
+ {
+     d->type = type;
+diff --git a/plasma/packagemetadata.h b/plasma/packagemetadata.h
+index b10f0e4..ec396a6 100644
+--- a/plasma/packagemetadata.h
++++ b/plasma/packagemetadata.h
+@@ -21,6 +21,7 @@
+ #define PLASMA_PACKAGEMETADATA_H
+ 
+ #include <QtCore/QString>
++#include <QtCore/QStringList>
+ 
+ #include <plasma/plasma_export.h>
+ 
+@@ -92,6 +93,7 @@ public:
+     QString pluginName() const;
+     QString implementationApi() const;
+     KUrl remoteLocation() const;
++    QStringList requiredDataEngines() const;
+ 
+     QString type() const;
+ 
+@@ -205,6 +207,11 @@ public:
+      */
+     void setImplementationApi(const QString &api);
+ 
++    /**
++     * Set the required data engines for this package.
++     */
++    void setRequiredDataEngines(const QStringList &);
++
+ private:
+     PackageMetadataPrivate * const d;
+ };
+-- 
+1.7.4.4
+

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Netbook Launcher
+Comment=A Clutter-based desktop launcher
+Icon=gnome-fs-desktop
+Exec=netbook-launcher
+Terminal=false
+Type=Application
+Categories=
+NoDisplay=true

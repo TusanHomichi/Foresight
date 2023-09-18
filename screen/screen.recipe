@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Screen(CPackageRecipe):
+    name = 'screen'
+    version = '4.0.3'
+
+    buildRequires = [ 'ncurses:devel', 'texinfo:runtime', 'libtool:runtime',
+        'autoconf:runtime', 'utempter:devel', 'install-info:runtime',
+        'pam:devel','elfutils:devel', 'libelf:devel', 'xterm:runtime' ]
+
+    def setup(r):
+        r.addArchive('ftp://ftp.uni-erlangen.de/pub/utilities/%(name)s/')
+        r.addSource('http://viewcvs.gentoo.org/viewcvs.py/*checkout*/gentoo-x86/app-misc/screen/files/screenrc', dest='%(sysconfdir)s/screenrc')
+        srpm = 'http://download.fedora.redhat.com/pub/fedora/linux/core/6/source/SRPMS/screen-4.0.2-15.1.src.rpm'
+        r.addSource('screen.pam', rpm=srpm, dest='%(sysconfdir)s/pam.d/screen')
+        r.addPatch('statusline.patch')
+        r.addPatch('screen-4.0.3-config.h-autoconf-2.62.patch') # RPL-2532
+        r.addPatch("http://vsp4sdl.yuggoth.org/wrp_vertical_split_0.3_4.0.2.diff.bz2")
+        r.Replace((' /usr/lib/', ' %(libdir)s/'),
+                  (' /lib/', ' %(essentiallibdir)s/'),
+                  'configure.in') # RPL-2602
+
+        # Make <F1>-<F4> work with byobu (screen-profiles) -- /ermo
+        # (https://answers.launchpad.net/byobu/+question/118308)
+        r.Replace(( r"^\s*termcapinfo xterm 'k1=\\E\[11~:k2=\\E\[12~:k3=\\E\[13~:k4=\\E\[14~'",
+                    "# Byobu (screen-profiles) compatibility fix for <F1>-<F4>\n"
+                    "# (see https://answers.launchpad.net/byobu/+question/118308)\n"
+                    "  #termcapinfo xterm 'k1=\\\\E[11~:k2=\\\\E[12~:k3=\\\\E[13~:k4=\\\\E[14~'\n"
+                    "  termcapinfo xterm 'k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS'" ),
+                    '%(sysconfdir)s/screenrc')
+
+        r.Run('libtoolize --copy --force && autoconf')
+        r.Configure('--enable-colors256 --enable-rxvt_osc '
+                    '--enable-locale --enable-telnet '
+                    '--with-sys-screenrc="%(sysconfdir)s/screenrc" '
+                    '--enable-pam ')
+
+        # remove traces of /usr/local
+        r.Run(r'''
+            find doc -type f | while read file; do
+                sed -e 's/\(\%(prefix)sr\)\?\/local\/etc/\/etc/g;' -i $file
+             done''')
+
+        r.Remove('doc/screen.info*')
+        r.Make()
+        r.MakeInstall('DDESTDIR=%(destdir)s')

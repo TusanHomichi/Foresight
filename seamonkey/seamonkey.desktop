@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Seamonkey Web Browser
+Comment=Browse the web with Seamonkey
+Exec=seamonkey %u
+Icon=seamonkey
+Terminal=false
+Type=Application
+MimeType=text/html;text/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;text/mml;
+Categories=Network;WebBrowser;
+X-Desktop-File-Install-Version=0.10
+

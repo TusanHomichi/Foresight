@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoOpenidAuth(PackageRecipe):
+
+    name = 'django-openid-auth'
+    version = '0.1'
+
+    buildRequires = [
+        'django:python',
+        'mod_python:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://django-openid-auth.googlecode.com/files/')
+        r.PythonSetup()

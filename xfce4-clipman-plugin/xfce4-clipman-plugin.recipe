@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('xfcepackage')
+class Xfce4ClipmanPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-clipman-plugin'
+    version = '1.2.2'
+    subtree = 'panel-plugins'
+
+    buildRequires = ['libXtst:devel', 'libexo:devel', 'libxfce4ui:devel',
+        'libxfce4util:devel', 'unique:devel',
+        'xfce4-panel:devel', 'xfconf:devel'
+    ]

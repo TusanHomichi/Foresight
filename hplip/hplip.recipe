@@ -1,0 +1,129 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('rpmpackage')
+class Hplip(RPMPackageRecipe,CPackageRecipe):
+    name = 'hplip'
+    version = '3.13.7'
+    rpmRelease = '1.fc19'
+    rpmPatches = [ 
+            'hplip-pstotiff-is-rubbish.patch',
+            'hplip-strstr-const.patch',
+            'hplip-ui-optional.patch',
+            'hplip-no-asm.patch',
+            'hplip-deviceIDs-drv.patch',
+            'hplip-mucks-with-spooldir.patch',
+            'hplip-udev-rules.patch',
+            'hplip-retry-open.patch',
+            'hplip-snmp-quirks.patch',
+            'hplip-discovery-method.patch',
+            'hplip-hpijs-marker-supply.patch',
+            'hplip-clear-old-state-reasons.patch',
+            'hplip-systray-dbus-exception.patch',
+            'hplip-hpcups-sigpipe.patch',
+            'hplip-logdir.patch',
+            'hplip-bad-low-ink-warning.patch',
+            'hplip-skip-blank-lines.patch',
+            'hplip-dbglog-newline.patch',
+            'hplip-raw_deviceID-traceback.patch',
+            'hplip-UnicodeDecodeError.patch',
+            'hplip-addprinter.patch',
+            'hplip-dbus-exception.patch',
+            'hplip-notification-exception.patch',
+            'hplip-wifisetup.patch',
+            'hplip-makefile-chgrp.patch',
+            'hplip-hpaio-localonly.patch',
+            'hplip-IEEE-1284-4.patch',
+            'hplip-mkstemp.patch',
+		 ]
+
+
+    buildRequires = [ 
+        'autoconf:runtime',
+        'automake:runtime', 
+        'chkconfig:runtime', 
+        'cups:devel',
+        'cups:runtime', 
+        'dbus:devellib', 
+        'dbus-python:python',
+        'desktop-file-utils:runtime', 
+        'file:runtime',
+        'libjpeg:devel', 
+        'libstdc++:devel',
+        'libtool:devel',
+        'libtool:runtime', 
+        'libusb:devel', 
+        'net-snmp:devel',
+        'notify-python:python', 
+        'openssl:devel', 
+        'perl:devel', 
+        'perl:runtime', 
+        'PIL:python',
+        'pkgconfig:devel', 
+        'pygtk:python', 
+        'PyQt4:python', 
+        'PyQt:python', 
+        'python:devel', 
+        'python:tk',
+        'reportlab:python',
+        'sane-backends:devel', 
+        'sane-backends:runtime', 
+                      ]
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+
+        r.Run(""" sed -i.duplex-constraints -e 's,\(UIConstraints.* \*Duplex\),//\1,' prnt/drv/hpcups.drv.in""")
+        r.Configure( '--enable-scan-build --enable-gui-build --enable-fax-build '
+                     ' --disable-foomatic-rip-hplip-install  --enable-pp-build '
+                     ' --enable-qt4 --enable-hpcups-install --enable-cups-drv-install '
+                     ' --enable-hpijs-install '
+                     ' --enable-foomatic-ppd-install'
+                     ' --disable-policykit'
+                     ' --with-cupsbackenddir=%(prefix)s/lib/cups/backend')
+        r.Run(""" sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+""")
+        r.Make()
+        r.MakeInstall()
+
+        r.Remove('/etc/sane.d/dll.conf')
+        r.Create('%(sysconfdir)s/sane.d/dll.conf.d/hplip', contents='hpaio')
+
+        # These conflict with foomatic-db (RPL-2278)
+        r.Remove('%(datadir)s/foomatic/db/source/PPD/HP', recursive=True)
+        # This conflicts with foo2zjs (RPL-2278)
+        r.Remove('%(datadir)s/foomatic/db/source/printer/HP-LaserJet_1022.xml')
+
+        r.Requires('foomatic-filters:runtime', '%(bindir)s/hpi(js|od)')
+        r.Requires('sip:runtime', '%(bindir)s/hpi(js|od)')
+        # this seems odd, and undesired
+        # XXX confirm that commenting line bellow does not break anything
+        # if it does look for a REAL fix (this was the last thing 
+        # blocking FL-2579 finish) 
+        # r.Requires('libusb:devel', '%(bindir)s/hpi(js|od)')
+        r.Requires('%(bindir)s/gs', '%(bindir)s/hpi(js|od)')
+        r.Requires('PyQt:python', '%(bindir)s/hp-(align|check|clean|colorcal|devicesetup|fab|faxsetup|firmware|info|linefeedcal|makecopies|plugin|pqdiag|print|printsettings|sendfax|setup|testpage|toolbox)')
+
+
+
+        # remove cruft 
+        for x in ('%(sysconfdir)s/sane.d',
+                  '%(docdir)s',
+                  '%(sysconfdir)s/udev/rules.d/',
+                  # Remove files we don't want to package.
+                  '%(datadir)s/hplip/hpaio.desc',
+                  '%(datadir)s/hplip/hplip-install',
+                  '%(datadir)s/hplip/install.*',
+                  '%(datadir)s/hplip/hpijs.drv.in.template',
+
+                  # bellow should be uncommented *if* we had things right elsewhere
+                  # '%(datadir)s/ppd/HP/*.ppd',
+                  '%(datadir)s/hal/fdi/preprobe/10osvendor/20-hplip-devices.fdi'):
+            r.Remove(x, recursive = True, allowNoMatch = True)
+
+        
+
+

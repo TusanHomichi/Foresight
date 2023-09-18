@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libnet(AutoPackageRecipe):
+    name = 'libnet'
+    version = '1.1.5'
+
+    buildRequires = [
+
+        ]
+
+    shortDesc  = 'Low-level network functions API'
+    longDesc   = """
+Library to provide an API for commonly used low-level network functions (mainly packet injection)
+"""
+    url        = 'http://libnet-dev.sourceforge.net/'
+    licenses   = [ 'LGPL-2' ]
+    categories = [ 'Network/Libraries' ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/libnet-dev/libnet-%(version)s.tar.gz')
+

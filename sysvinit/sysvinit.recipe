@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class SysVinit(RPMPackageRecipe,CPackageRecipe):
+    name = 'sysvinit'
+    version = '2.87'
+    rpmRelease = '4.dsf.fc13'
+    rpmPatches = [ 'sysvinit-2.78-man.patch',
+                   'sysvinit-2.86-autofsck.patch',
+                   'sysvinit-2.86-loginshell.patch',
+                   'sysvinit-2.86-inittab.patch',
+                   'sysvinit-2.86-single.patch',
+                   'sysvinit-2.86-quiet.patch',
+                   'sysvinit-2.87-pidof.patch',
+                   'sysvinit-2.86-pidof-man.patch',
+                   'sysvinit-2.87-sulogin.patch',
+                   'sysvinit-2.87-wide.patch',
+                   'sysvinit-2.87-ipv6.patch', ]
+    tarballName = '%(name)s-%(version)sdsf.tar.gz'
+    def setup(r):
+        r.unpack()
+        r.addPatch('sysvinit-2.85-bootstrap.patch')
+        # patch from debian. Changed a strcmp to strncmp. See FL-1612.
+        r.addPatch('91_sulogin_lockedpw.dpatch')
+        # Use /dev/tty1 instead of /dev/console, if on VTY (RPL-1776)
+        # r.addPatch('use_tty1.patch', level=0)
+        
+        r.Make('CC=%(cc)s CFLAGS="%(cflags)s -D_GNU_SOURCE" LDFLAGS="" LCRYPT="-lcrypt" ', dir='src')
+        r.MakeDirs('%(essentialsbindir)s',
+                   '%(essentialbindir)s',
+                   '%(bindir)s',
+                   '%(includedir)s',
+                   '%(sbindir)s',
+                   '%(sysconfdir)s',
+                   '%(mandir)s/man{1,3,5,8}')
+
+        r.MakeInstall('MANDIR=%(mandir)s BIN_OWNER=$(id -nu)',
+                      'BIN_GROUP=$(id -ng)', rootVar='ROOT',
+                      dir='src')
+
+        r.Symlink('killall5', '%(essentialsbindir)s/pidof')
+
+        r.SetModes('%(bindir)s/utmpdump', 0755)
+        r.AutoDoc('doc/sysvinit-%(version)s.lsm', 'contrib/start-stop-daemon.*')
+
+        r.SetModes('%(bindir)s/wall', 02555)
+        r.Ownership('root', 'tty', '%(bindir)s/wall')
+
+        # FIXME: find a better way, if any
+        r.addSource('sysvinit_postAction.tagdescription', macros=True,
+                    dest='%(tagdescriptiondir)s/sysvinit_postAction')
+        r.addSource('sysvinit_postAction.taghandler', macros=True,
+                    dest='%(taghandlerdir)s/sysvinit_postAction', mode=0755)
+
+        r.Requires('file: /sbin/telinit', '%(taghandlerdir)s/sysvinit_postAction')
+
+        r.TagSpec('sysvinit_postAction', '%(sbindir)s/init')

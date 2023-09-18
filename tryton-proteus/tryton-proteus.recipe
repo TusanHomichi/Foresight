@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class TrytonProteus(PackageRecipe):
+
+    name = 'tryton-proteus'
+    version = '0.0'
+
+    buildRequires = ['python-setuptools:python','python:devel', 'python-simplejson:python']
+
+    def setup(r):
+        r.addMercurialSnapshot('http://hg.tryton.org/proteus')
+        r.PythonSetup()

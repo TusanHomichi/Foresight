@@ -1,0 +1,34 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Cmus(AutoPackageRecipe):
+    name = 'cmus'
+    version = '2.5.0'
+
+    buildRequires = [
+        'alsa-lib:devel',
+        'faad2:devel',
+        'ffmpeg:devel',
+        'flac:devel',
+        'libdiscid:devel',
+        'libmad:devel',
+        'libmikmod:devel',
+        'libmodplug:devel',
+        'libmpcdec:devel',
+        'mp4v2:devel',
+        'ncurses:devel',
+        'pkgconfig:devel',
+        'pulseaudio:devel',
+        'wavpack:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/cmus/cmus-v%(version)s.tar.bz2')
+
+    def configure(r):
+        r.disableParallelMake()
+        r.ManualConfigure('prefix=%(prefix)s bindir=%(bindir)s datadir=%(datadir)s libdir=%(libdir)s mandir=%(mandir)s CONFIG_FLAC=y CONFIG_MAD=y CONFIG_MODPLUG=y CONFIG_MIKMOD=y CONFIG_MPC=y CONFIG_TREMOR=y CONFIG_WAVPACK=y CONFIG_MP4=y CONFIG_AAC=y CONFIG_FFMPEG=y CONFIG_PULSE=y CONFIG_ALSA=y CONFIG_ROAR=n')

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DBusGlib(AutoPackageRecipe):
+    name = 'dbus-glib'
+    version = '0.98'
+
+
+    buildRequires = [ 'dbus:devel', 'dbus:runtime', 'doxygen:runtime', 'expat:devel', 'gettext:runtime', 'glib:devel',
+                      'libtool:runtime', 'pkgconfig:devel', 'xmlto:runtime', 'glib:runtime', 'gtk-doc:runtime', 'gtk-doc:devel',
+                      'autoconf:runtime',  'automake:runtime']
+
+    def unpack(r):
+        r.addArchive('http://dbus.freedesktop.org/releases/dbus-glib/')
+
+    def configure(r):
+        r.Run('autoreconf -vfi')
+        r.Configure(' --disable-verbose-mode '
+                    ' --disable-doxygen-docs'
+                    ' --disable-tests --disable-asserts --disable-gtk-doc')
+
+

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonRdflib(CPackageRecipe):
+
+    name = 'python-rdflib'
+    version = '3.0.0'
+
+    buildRequires = ['python-setuptools:python', 'MySQL-python:python', 'python-sqlite:python', 'python:devel']
+
+    def setup(r):
+        r.addArchive('http://rdflib.net/rdflib-%(version)s.tar.gz')
+        r.PythonSetup()

@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('python')
+class pylibmc(CPackageRecipe, Python.VersionMixIn):
+    name = 'pylibmc'
+    version = '1.1.1'
+
+    buildRequires = [
+        'cyrus-sasl:devel',
+        'libmemcached:devel',
+        'python:devel',
+        'python-setuptools:python',
+        'zlib:devel',
+    ]
+
+    def setup(r):
+        r.setDefaultPython()
+        r.addArchive('http://pypi.python.org/packages/source/p/pylibmc/')
+        r.PythonSetup()

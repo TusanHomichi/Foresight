@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# Copyright (c) 2008 - 2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class libisoburn(AutoPackageRecipe):
+
+    name = 'libisoburn'
+    version = '1.3.4'
+
+    buildRequires = [ 'libburn:devel', 'libisofs:devel',
+                      'pkgconfig:runtime', 'pkgconfig:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://files.libburnia-project.org/releases/')

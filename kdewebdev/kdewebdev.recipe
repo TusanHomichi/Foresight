@@ -1,0 +1,31 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeWebDev(kdeCorePackageRecipe):
+
+    name = 'kdewebdev'
+    version = '4.6.1'
+
+    buildRequires = [
+        'boost:devel', 'kdelibs:runtime', 'libxml2:devel', 'libxml2:runtime',
+        'libxslt:devel', 'libxslt:runtime', 'ruby:devellib', 'ruby:runtime'
+    ]
+
+    modules = [
+        'kfilereplace',
+        'kimagemapeditor',
+        'klinkstatus',
+        'kommander',
+    ]
+
+    def postUnpack(r):
+
+        r.addPatches(
+            '01_no_need_to_have_interpreter_to_install_examples.diff',
+        )
+
+        r.Replace('#macro', 'macro', 'doc/CMakeLists.txt')
+

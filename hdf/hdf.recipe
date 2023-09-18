@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Hdf(AutoPackageRecipe):
+    name = 'hdf'
+    version = '4.2.6'
+ 
+    buildRequires = ['flex:runtime', 'groff:runtime', 'libjpeg:devel', 'zlib:devel', 'gcc-c++:runtime', 'byacc:runtime']
+ 
+    def unpack(r):
+        r.addArchive('ftp://ftp.hdfgroup.org/HDF/HDF_Current/src/')
+        r.addPatch('hdf-4.2.4-ppc.patch')
+        r.addPatch('hdf-4.2.5-maxavailfiles.patch')
+        r.addPatch('hdf-4.2.4-sparc.patch')
+        r.Run('chmod a-x *hdf/*/*.c hdf/*/*.h')
+
+    def configure(r):
+        r.Configure('--with-libz=%(includedir)s,%(libdir)s --disable-fortran --enable-production --disable-netcdf --includedir=%(includedir)s --libdir=%(libdir)s --with-libjpeg=%(includedir)s,%(libdir)s')

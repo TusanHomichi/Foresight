@@ -1,0 +1,22 @@
+diff --git a/data/gnome-packagekit.schemas.in b/data/gnome-packagekit.schemas.in
+index 6e00fa7..69b2259 100644
+--- a/data/gnome-packagekit.schemas.in
++++ b/data/gnome-packagekit.schemas.in
+@@ -492,7 +492,7 @@
+       <applyto>/apps/gnome-packagekit/enable_font_helper</applyto>
+       <owner>gnome-packagekit</owner>
+       <type>bool</type>
+-      <default>true</default>
++      <default>false</default>
+       <locale name="C">
+         <short>Allow applications to invoke the font installer</short>
+         <long>Allow applications to invoke the font installer</long>
+@@ -540,7 +540,7 @@
+       <applyto>/apps/gnome_settings_daemon/gtk-modules/pk-gtk-module</applyto>
+       <owner>gnome-packagekit</owner>
+       <type>bool</type>
+-      <default>true</default>
++      <default>false</default>
+       <locale name="C">
+         <short>GTK+ module for font installation</short>
+         <long>This key determines if applications should be able to prompt for fonts</long>

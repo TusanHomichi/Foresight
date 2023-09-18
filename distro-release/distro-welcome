@@ -1,0 +1,11 @@
+# This file is a template for use by /etc/init.d/distro-release to write out
+# your /etc/issue and /etc/issue.net files. Any line beginning with a # is a
+# comment, # in other places are literal. Any of the escapes found in issue(5)
+# will work in this as well.
+#
+# Additional available macros:
+#   <APPLIANCE_NAME>: The plaintext name of your appliance, as defined in
+#                     /etc/sysconfig/appliance. If that file is empty or does
+#                     not exist, a generic replacement will be used.
+#
+Welcome to <APPLIANCE_NAME>

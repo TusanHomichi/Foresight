@@ -1,0 +1,15 @@
+diff -up slib/guile.init.guile slib/guile.init
+--- slib/guile.init.guile	2007-12-24 05:33:08.000000000 +0100
++++ slib/guile.init	2008-02-14 15:17:54.000000000 +0100
+@@ -53,7 +53,10 @@
+ (define implementation-vicinity
+   (cond ((and (defined? 'getenv) (getenv "GUILE_IMPLEMENTATION_PATH"))
+ 	 => (lambda (path) (lambda () path)))
+-	(else %site-dir)))
++	(else (let* ((path (or (%search-load-path "slib/qp.scm")
++			    (error "Could not find slib/qp.scm in " %load-path)))
++		     (vic (substring path 0 (- (string-length path) 11))))
++	       (lambda () vic)))))
+ 
+ ;;; (library-vicinity) should be defined to be the pathname of the
+ ;;; directory where files of Scheme library functions reside.

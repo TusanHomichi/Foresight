@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2012-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class P11Kit(AutoPackageRecipe):
+    name = 'p11-kit'
+    version = '0.14'
+ 
+    buildRequires = ['gettext:runtime', 'gtk-doc:runtime', 'intltool:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://p11-glue.freedesktop.org/releases/')
+
+    def configure(r):
+        r.Configure('--disable-static')
+
+    def policy(r):
+        r.Remove('%(sysconfdir)s/pkcs11/pkcs11.conf.example')
+        d = '%(sysconfdir)s/pkcs11/modules'
+        r.MakeDirs(d)
+        r.ExcludeDirectories(exceptions = d)

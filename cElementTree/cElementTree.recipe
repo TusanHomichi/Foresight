@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class cElementTree(CPackageRecipe):
+    name = 'cElementTree'
+    version = '1.0.5'
+    date = '20051216'
+
+    buildRequires = ['python-setuptools:python', 'python-setuptools:runtime',
+        'python:devel' ]
+
+    def setup(r):
+        r.macros.date = r.date
+        r.addArchive('http://effbot.org/downloads/%(name)s-%(version)s-%(date)s.tar.gz')
+
+        r.PythonSetup()

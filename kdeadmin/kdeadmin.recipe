@@ -1,0 +1,55 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeAdmin(kdeCorePackageRecipe):
+
+    name = 'kdeadmin'
+    version = '4.8.3'
+
+    buildRequires = [
+        'dbus-python:python',
+        'perl-Locale-gettext:perl',
+        'perl:devel',
+        'pycups:python',
+        'PyQt4:python',
+        'python:devel',
+        'system-config-printer:python',
+        'bzr:runtime',
+        'cvs:runtime', 
+        'dbus:devel',
+        'git:runtime',
+        'kdelibs:runtime',
+        'libXScrnSaver:devel', 
+        'libXcomposite:devel',
+        'libXcursor:devel',
+        'libXft:devel', 
+        'libXi:devel',
+        'libXpm:devel',
+        'libXtst:devel',
+        'libXv:devel', 
+        'libXxf86misc:devel',
+        'libxkbfile:devel', 
+        'mercurial:runtime',
+        'openssh:runtime', 
+        'pykde:python',
+        'pysmbc:python', 
+        'subversion:runtime',
+        'xz:runtime',
+    ]
+
+    modules = [
+        'kuser',
+        'kcron',
+        'ksystemlog',
+        'system-config-printer-kde',
+    ]
+
+    def postUnpack(r):
+
+        r.addPatches(
+            '02_kuser_first_uid_gid_fix.diff',
+        )
+

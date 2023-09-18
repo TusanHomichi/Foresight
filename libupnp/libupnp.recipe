@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libupnp(AutoPackageRecipe):
+    name = 'libupnp'
+    version = '1.6.17'
+
+    buildRequires = [ 'glibc:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/pupnp/')
+

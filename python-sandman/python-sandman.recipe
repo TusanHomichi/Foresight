@@ -1,0 +1,5 @@
+loadSuperClass('pypipackage')
+class PythonMock(PyPiPackage):
+    name = 'python-sandman'
+    pyname = 'sandman'
+    version = '0.7.5'

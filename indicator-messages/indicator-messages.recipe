@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2009 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class IndicatorMessages(AutoPackageRecipe):
+    name = 'indicator-messages'
+    version = '0.4.0'
+ 
+    buildRequires = ['atk:devel', 'cairo:devel', 'dbus-glib:devel',
+        'dbus:devel', 'libdbusmenu-gtk:devel', 'libdbusmenu-glib:devel',
+        'expat:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel',
+        'gtk:devel', 'libindicator:devel', 'libX11:devel',
+        'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel',
+        'pixman:devel', 'pkgconfig:devel', 'python:bin', 'xcb-util:devel',
+        'zlib:devel', 'gnome-common:devel', 'gnome-common:runtime', 
+        'automake:runtime', 'libtool:devel', 'libtool:runtime', 'gtk-doc:devel',
+        'gettext:devel', 'gettext:runtime', 'libindicate:devel'
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/%(name)s/0.4/%(version)s/+download/')
+#        r.Replace('-Bsymbolic-functions','','src/Makefile.*')
+
+

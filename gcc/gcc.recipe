@@ -1,0 +1,441 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Gcc(RPMPackageRecipe, CPackageRecipe):
+
+    buildRequires = [ 'file:runtime', 'flex:runtime', 'gettext:runtime',
+                      'perl:runtime', 'texinfo:runtime', 'byacc:runtime',
+                      'bison:runtime', ]
+    Flags.core = False
+    if Use.cross:
+        buildRequires.extend(['binutils:runtime[!cross]',
+                              'binutils:runtime[cross]'])
+    if Flags.core:
+        keepBuildReqs = True
+        crossRequires = ['userspace-kernel-headers:devel']
+        buildRequires.extend(['gcc[!cross]',
+                              'glibc-headers:devel[cross]'])
+        clearBuildReqs(
+            'gcc:runtime',
+            'gcc:lib',
+            'gcc:devel',
+            'gcc:devellib',
+            'libgcc:lib',
+            'libgcc:devellib')
+
+    elif Use.bootstrap or Use.cross:
+        keepBuildReqs = True
+        clearBuildReqs('gcc:runtime', 'gcc:devel', 'gcc:lib')
+        if Use.cross:
+            buildRequires.append('gcc[cross,gcc.core]')
+        else:
+            buildRequires.append('gcc[cross,!gcc.core]')
+        buildRequires.append('gcc[!cross]')
+        buildRequires.append('binutils[!cross]')
+        crossRequires = ['glibc:devel',
+                         'userspace-kernel-headers:devel']
+    else:
+        # install-info needed to get info-file tag description
+        buildRequires = ['atk:devel', 'file:runtime', 'flex:runtime',
+                         'gettext:runtime', 'glib:devel', 'gtk:devel',
+                         'install-info:runtime', 'libart_lgpl:devel',
+                         'pango:devel', 'perl:runtime', 'texinfo:runtime',
+                         'zlib:devel', 'cairo:devel', 'fontconfig:devel',
+                         'freetype:devel', 'libpng:devel',
+                         'pkgconfig:devel', 'alsa-lib:devel', 'gmp:devel',
+                         'autoconf:runtime', 'automake:runtime', 'zip:runtime',
+                         'libICE:devel', 'libSM:devel', 'libX11:devel',
+                         'libXau:devel', 'libXext:devel', 'libXrender:devel',
+                         'libXtst:devellib', 'libXdmcp:devel', 'libXt:devel',
+                         'libXi:devel', 'mpfr:devel', 'bison:runtime', ]
+
+        if Arch.x86_64:
+            buildRequires.extend((
+                    'glibc:lib[is:x86(i486,i586,i686)]',
+                    'glibc:devellib[is:x86(i486,i586,i686)]'))
+
+    name = 'gcc'
+    version = '4.4.7'
+    rpmRelease = '3.el6'
+    distroVersion = '6Server'
+    isRHEL = True
+
+    tarballName = '%(name)s-%(version)s-20120601.tar.bz2'
+
+    rpmPatches = [ 'gcc44-hack.patch',
+                   'gcc44-build-id.patch',
+                   'gcc44-c++-builtin-redecl.patch',
+                   'gcc44-ia64-libunwind.patch',
+                   'gcc44-java-nomulti.patch',
+                   'gcc44-ppc32-retaddr.patch',
+                   'gcc44-pr33763.patch',
+                   'gcc44-rh330771.patch',
+                   'gcc44-i386-libgomp.patch',
+                   'gcc44-sparc-config-detection.patch',
+                   'gcc44-libgomp-omp_h-multilib.patch',
+                   'gcc44-libtool-no-rpath.patch',
+                   'gcc44-cloog-dl.patch',
+                   'gcc44-unwind-debug-hook.patch',
+                   'gcc44-pr38757.patch',
+                   'gcc44-libstdc++-docs.patch',
+                   'gcc44-ppc64-aixdesc.patch',
+                   # following rhel6 strictly here
+                   # 'gcc44-no-add-needed.patch',
+                   'gcc44-rh610785.patch',
+                   'gcc44-rh533181.patch',
+                   'gcc44-pr48857-test.patch',
+                   'gcc44-pr43680.patch',
+                   'gcc44-rh750545.patch',
+                   'gcc44-pr53199.patch',
+                   'gcc44-rh801144.patch',
+                   'gcc44-rh808590.patch',
+                   'gcc44-rh820281.patch',
+                   'gcc44-pr54858.patch',
+                   'gcc44-pr54487.patch',
+                   'gcc44-rh867878.patch',]
+
+
+
+
+    def addPatches(r):
+        for patch in r.rpmPatches:
+            r.addPatch(patch, rpm=r.srpm, level=0)
+      
+    def setup(r):
+        r.macros.securityflags = ' -fstack-protector'
+        r.addArchive(r.tarballName, rpm=r.srpm)
+        r.addPatches()
+
+        # r.Replace('4.4.7', '%(version)s', 'gcc/BASE-VER')
+        ###
+        #
+        # XXX taken from kernelpackage superclass
+        # should be stock in our baseclasses probably
+        if hasattr(r, 'serial') and isinstance(r.serial, basestring):
+            r.macros.serial = r.serial
+        else:
+            if 'sourceVersion' in r.__dict__ and hasattr(r.sourceVersion,
+                                                         'trailingRevision'):
+                    r.macros.serial = str(
+                        r.sourceVersion.trailingRevision().getSourceCount())
+            else:
+                # If r.sourceVersion does not exist (rmake build from a
+                # recipe, for instance) or r.sourceVersion is a NewVersion
+                # object without a trailingRevision object, we'll set it
+                # to something unlikely to conflict
+                r.macros.serial = '0.NEW'
+        ###
+        r.Create('gcc/DEV-PHASE',
+                 contents = 'Foresight Linux %(version)s-%(serial)s')
+
+        r.Run("""sed -i '/UInteger Var(dwarf_version)/s/Init(2)/Init(3)/' gcc/common.opt
+sed -i 's/\(may be either 2 or 3; the default version is \)2\./\13./' gcc/doc/invoke.texi """)
+
+        r.Run('cp -a libstdc++-v3/config/cpu/i{4,3}86/atomicity.h')
+
+        r.Run('./contrib/gcc_update --touch')
+
+        r.Run("LC_ALL=C sed -i -e 's/\\xa0/ /' gcc/doc/options.texi")
+
+        # FSF asks folks who ship a modified gcc to change these to indicate who
+        # was shipping it
+        r.Replace(('#define VERSUFFIX.*', '#define VERSUFFIX " (The Foresight Linux Project)"',),
+                  ('bug_report_url.*', 'bug_report_url[] = "<URL:https://issues.foresightlinux.org/>";'),
+                  'gcc/version.c')
+        # be ultra conservative in the build flags for now...
+        r.macros.cflags = r.macros.optflags
+        r.macros.cxxflags = r.macros.optflags
+        r.Environment('XCFLAGS', '%(optflags)s')
+        r.Environment('TCFLAGS', '%(optflags)s')
+
+        r.install()
+        r.postInstall()
+
+        r.PackageSpec('libgcc', '%(libdir)s/libgcc_s.*',
+                      '%(libdir)s/gcc/%(target)s/%(version)s/libgcc.*')
+        if Arch.x86_64:
+            r.PackageSpec('libgcc', '/usr/lib/libgcc_s.*',
+                          '%(libdir)s/gcc/%(target)s/%(version)s/32/libgcc.*')
+
+        if not Flags.core:
+            r.PackageSpec('libstdc++', '%(libdir)s/libstdc\+\+.*',
+                          '%(libdir)s/libsupc\+\+.*',
+                          '%(includedir)s/c\+\+/.*',
+                          '%(docdir)s/gcc-%(version)s/libstdc\+\+-v3/.*')
+            if Arch.x86_64:
+                r.PackageSpec('libstdc++', '/usr/lib/libstdc\+\+.*',
+                              '/usr/lib/libsupc\+\+.*')
+
+            r.PackageSpec('gcc-c++',
+                          '%(bindir)s/c\+\+',
+                          '%(bindir)s/g\+\+',
+                          '%(bindir)s/%(target)s-c\+\+',
+                          '%(bindir)s/%(target)s-g\+\+',
+                          '%(bindir)s/c\+\+filt',
+                          '%(mandir)s/man1/g\+\+.1.gz')
+
+            r.PackageSpec('gcc-fortran',
+                          '%(bindir)s/gfortran',
+                          '%(libdir)s/libgfortran.*',
+                          '%(mandir)s/man1/gfortran.1.gz',
+                          '%(infodir)s/gfortran.info.gz',
+                          '%(libexecdir)s/gcc/%(target)s/%(version)s/f951')
+
+            r.PackageSpec('gcc-objc',
+                          '%(libdir)s/libobjc.*',
+                          '%(libdir)s/gcc/%(target)s/%(version)s/include/objc/.*',
+                          '%(libexecdir)s/gcc/%(target)s/%(version)s/cc1obj',
+                          '%(docdir)s/gcc-%(version)s/gcc/objc/.*'
+                          '%(docdir)s/gcc-%(version)s/libobjc/.*')
+
+            r.PackageSpec('libmudflap',
+                          '.*mudflap.*',
+                          '%(libdir)s/gcc/%(target)s/%(version)s/include/mf-runtime.h',
+                          )
+            r.PackageSpec('libgomp',
+                          '.*gomp.*',
+                          )
+
+            if Arch.x86_64:
+                r.PackageSpec('gcc-objc',
+                          '/usr/lib/libobjc.*')
+
+        r.Requires('%(bindir)s/c++', '%(includedir)s/c\+\+/.*')
+        # gcc:runtime reqs gcc:devel
+        r.Requires('%(bindir)s/gcc', '%(includedir)s/ffi.h')
+        r.Requires('libgcc:devellib', '%(bindir)s/gcc')
+        r.Requires('binutils:runtime', '%(bindir)s/gcc')
+        r.Requires('binutils:devel', '%(bindir)s/gcc')
+        # gcc:devel reqs gcc:runtime
+        r.Requires('gcc:devel', '%(bindir)s/gcc')
+        r.Requires('libstdc++:devel', # gcc-c++:runtime
+                   '%(bindir)s/c\+\+',
+                   '%(bindir)s/g\+\+',
+                   '%(bindir)s/%(target)s-c\+\+',
+                   '%(bindir)s/%(target)s-g\+\+',
+                   '%(bindir)s/c\+\+filt')
+        if Use.cross:
+            r.Requires('binutils:runtime(target-%(target)s)',
+                       '%(crossprefix)s/bin/%(target)s-gcc')
+
+        # Policy tries to move the libgcc_s_32.so symlink, but this is a
+        # special case multilib trove. We can just exclude it so that
+        # -m32 works
+        r.FixupMultilibPaths(exceptions='/usr/lib/libgcc_s_32.so')
+
+        # we don't want this package to come out biarch, so we white out
+        # anywhere that might introduce the x86 flavor
+        if Arch.x86_64:
+            r.Flavor(exceptions='/usr/lib/.*')
+            r.Flavor(exceptions='/usr/lib64/gcc/x86_64-unknown-linux/%(version)s/32/.*')
+
+    def install(r):
+        if Flags.core:
+            r.ManualConfigure('--target=%(target)s '
+                  '--host=%(host)s '
+                  '--prefix=%(crossprefix)s '
+                  '--with-sysroot=%(sysroot)s '
+                  '--enable-languages=c '
+                  '--enable-threads=posix '
+                  '--disable-nls '
+                  '--disable-shared '
+                  '--with-newlib '
+                  '--disable-biarch '
+                  '--disable-multilib', objDir='obj')
+            r.Make('all-gcc', dir='obj')
+            r.MakeInstall(installtarget='install-gcc', dir='obj')
+        elif Use.cross:
+            r.ManualConfigure('--target=%(target)s '
+                     '--host=%(host)s '
+                     '--prefix=%(crossprefix)s '
+                     '--with-sysroot=%(sysroot)s '
+                     '--enable-languages=c,c++ '
+                     '--enable-threads=posix '
+                     '--disable-nls '
+                     '--enable-shared '
+                     '--enable-__cxa_atexit '
+                     '--disable-biarch '
+                     '--disable-multilib ', objDir='obj')
+            r.Make('all', dir='obj')
+            r.MakeInstall(dir='obj')
+        else:
+            conf = ( '--target=%(target)s '
+                     '--host=%(target)s '
+                     '--prefix=%(prefix)s '
+                     '--enable-shared '
+                     '--enable-threads=posix '
+                     '--with-cpu=generic '
+                     '--enable-__cxa_atexit ')
+            if Use.bootstrap:
+                conf += ('--enable-languages=c,c++ '
+                         '--disable-multilib '
+                         '--build=%(build)s ')
+                preconf = 'BUILD_CC=gcc'
+                premake = ''
+            else:
+                conf += ('--enable-languages=c,c++,objc,obj-c++,fortran '
+                         # we have openjdk now, right ?
+                         '--disable-libgcj '
+
+                         '--build=%(target)s '
+                         '--with-system-zlib '
+                         '--enable-checking=release '
+                         '--disable-libunwind-exceptions '
+                         '--enable-gnu-unique-object'
+                         '--with-ppl --with-cloog '
+                         '--enable-bootstrap '
+                         ' --with-tune=generic'
+                         ' --build=%(target)s')
+                if Arch.x86:
+                    conf += ' --with-arch=i686 '
+                else:
+                    conf += ' --with-arch_32=i686'
+
+                preconf = ''
+                premake = ''
+                if Arch.x86_64:
+                    libpath = 'LIBRARY_PATH=/usr/lib64:/usr/lib'
+                    preconf += libpath
+                    premake += libpath
+
+            r.Configure(conf, objDir='obj', preConfigure=preconf, bootstrapFlags='')
+            r.Make('profiledbootstrap', preMake=premake, dir='obj')
+            # There are some MP bugs in libstdc++ Makefiles
+            r.Make(' -j1 ', dir='obj/%(target)s/libstdc++-v3')
+
+            if Use.bootstrap:
+                r.fixBootstrap()
+            r.MakeInstall(dir='obj')
+
+    def postInstall(r):
+        if Use.cross:
+            # exclude cross compile files from trove flavor
+            r.Flavor(exceptions='%(crossprefix)s/')
+            r.Requires(exceptDeps='soname: .*')
+            # unfortunately, that's all the flavor that this trove has, so fake the flavor
+            if Arch.x86:
+                pass
+        if not (Use.cross | Flags.core):
+            r.Symlink('gcc', '%(bindir)s/cc')
+            # note, not %(lib)s - /lib/cpp is the standard
+            r.Symlink('%(bindir)s/cpp', '/lib/cpp')
+            # owned by binutils
+            r.Remove('%(libdir)s/libiberty.a')
+            r.Remove('%(prefix)s/lib/libiberty.a')
+
+        r.macros.fullpath = '%(prefix)s/%(lib)s/gcc/%(target)s/%(version)s'
+        r.macros.fullepath = '%(prefix)s/libexec/gcc/%(target)s/%(version)s'
+        r.macros.date = '20100726'
+
+        for n in ['1', '2', '4', '8']:
+            r.Replace('#define _GLIBCXX_ATOMIC_BUILTINS_' + n +' 1',
+                      '#ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_\n'
+                      '#define _GLIBCXX_ATOMIC_BUILTINS_' + n +' 1\n'
+                      '#endif',
+                      '%(destdir)s%(prefix)s/include/c++/%(version)s/%(target)s/bits/c++config.h')
+
+        if Arch.x86_64:
+            for n in ['1', '2', '4', '8']:
+                r.Replace('#define _GLIBCXX_ATOMIC_BUILTINS_' + n +' 1',
+                          '#ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_\n'
+                          '#define _GLIBCXX_ATOMIC_BUILTINS_' + n +' 1\n'
+                          '#endif',
+                          '%(destdir)s%(prefix)s/include/c++/%(version)s/%(target)s/32/bits/c++config.h')
+
+        # Nuke bits/stdc++.h.gch dirs
+        r.Remove('%(includedir)s/c++/%(version)s}/%(target)s/bits/stdc++.h.gch')
+
+        r.Copy('%(fullpath)s/include-fixed/syslimits.h', '%(fullpath)s/include/syslimits.h')
+        r.Copy('%(fullpath)s/include-fixed/limits.h', '%(fullpath)s/include/limits.h')
+        r.Remove('%(fullpath)s/include-fixed/', recursive=True)
+
+        r.Run(''' for h in `find %(destdir)s%(fullpath)s/include -name \*.h`; do
+    if grep -q 'It has been auto-edited by fixincludes from' $h; then
+      rh=`grep -A2 'It has been auto-edited by fixincludes from' $h | tail -1 | sed 's|^.*"\(.*\)".*$|\1|'`
+      diff -up $rh $h || :
+      rm -f $h
+    fi
+  done
+  ''')
+        r.Create("%(bindir)s/c89",
+                 contents='''
+#!/bin/sh
+fl="-std=c89"
+for opt; do
+  case "$opt" in
+    -ansi|-std=c89|-std=iso9899:1990) fl="";;
+    -std=*) echo "`basename $0` called with non ANSI/ISO C option $opt" >&2
+        exit 1;;
+  esac
+done
+exec gcc $fl ${1+"$@"}
+''', mode = 0755, package = 'gcc')
+
+        r.Create("%(bindir)s/c99",
+                 contents='''#!/bin/sh
+fl="-std=c99"
+for opt; do
+  case "$opt" in
+    -std=c99|-std=iso9899:1999) fl="";;
+    -std=*) echo "`basename $0` called with non ISO C99 option $opt" >&2
+        exit 1;;
+  esac
+done
+exec gcc $fl ${1+"$@"}
+''', mode = 0755, package = 'gcc')
+
+        r.MakeDirs('%(prefix)s/libexec/getconf')
+        if Arch.x86_64:
+            r.Symlink('POSIX_V6_LP64_OFF64', '%(prefix)s/libexec/getconf/default')
+        else:
+            r.Symlink('POSIX_V6_ILP32_OFF32', '%(prefix)s/libexec/getconf/default')
+
+#        r.Run(""" if gcc/xgcc -B gcc/ -E -dD -xc /dev/null | grep __LONG_MAX__.*2147483647; then
+#  ln -sf POSIX_V6_ILP32_OFF32 %(destdir)s%(prefix)s/libexec/getconf/default
+#else
+#  ln -sf POSIX_V6_LP64_OFF64 %(destdir)s%(prefix)s/libexec/getconf/default
+#fi
+#""")
+
+
+        r.Remove('%(libdir)s/libiberty.a')
+        if Arch.x86:
+            r.Remove('%(prefix)s/lib/libiberty.a')
+        # # Remove binaries we will not be including, so that they don't end up in
+        # gcc-debuginfo
+        r.Remove('%(fullepath)s/install-tools/{mkheaders,fixincl}')
+        r.Remove('%(libdir)s/libssp*')
+        r.Remove('%(bindir)s/gnative2ascii')
+        if Arch.x86_64:
+            # Remove libraries for the other arch on multilib arches
+            r.Remove('%(prefix)s/lib/libssp*')
+#            r.Remove('%(prefix)s/lib/lib*.so*')
+#            r.Remove('%(prefix)s/lib/lib*.a')
+
+
+
+
+# since the bootstrap compiler is built by a cross compiler, and
+# the cross compiler is used to generate the specs file, the
+# new specs file erroneously has:
+#
+# *cross_compile:
+# 1
+#
+# This awk script replaces the line after cross_compile with 0.
+#
+    def fixBootstrap(r):
+        awkscript = """'{
+          print;
+          if (/cross_compile:/) {
+             getline
+             print 0
+          }
+        }'"""
+
+        r.Run('awk ' + awkscript + '< obj/gcc/specs > obj/gcc/specs-')
+        r.Run('mv obj/gcc/specs- obj/gcc/specs')

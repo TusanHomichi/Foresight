@@ -1,0 +1,16 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RFkill(CPackageRecipe):
+    name = 'rfkill'
+    version = '0.4'
+
+    buildRequires = [
+    ]
+
+    def setup(r):
+        r.addArchive('http://wireless.kernel.org/download/rfkill/')
+        r.Make()
+        r.MakeInstall('BINDIR=%(essentialsbindir)s')

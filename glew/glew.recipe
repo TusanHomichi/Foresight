@@ -1,0 +1,29 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Glew(CPackageRecipe):
+
+    name = 'glew'
+    version = '1.6.0'
+
+    buildRequires = [
+        'libX11:devel', 'libXext:devel', 'libXi:devel', 'libXmu:devel',
+        'Mesa:devel', 'util-linux:runtime'
+    ]
+
+    def setup(r):
+
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/%(name)s/%(version)s/')
+        r.addPatch('glew-1.6.0-makefile.patch')
+
+        r.Run("sed -i -r 's/\r//' config/config.guess")
+
+        r.Make(' CFLAGS.EXTRA="%(cflags)s -L%(libdir)s/xorg.mesa.3d" '
+               'includedir=%(includedir)s GLEW_DEST= libdir=%(libdir)s bindir=%(bindir)s '
+               ' LD="%(cc)s -L%(libdir)s/xorg.mesa.3d %(ldflags)s" CC="%(cc)s" POPT="%(cflags)s"')
+        r.MakeInstall('GLEW_DEST="%(destdir)s/" libdir=%(libdir)s bindir=%(bindir)s includedir=%(includedir)s')
+
+        r.Doc('doc/*')
+

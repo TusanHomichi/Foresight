@@ -1,0 +1,38 @@
+ac_add_options --enable-application=instantbird
+mk_add_options MOZ_MAKE_FLAGS=-j4
+ac_add_options --disable-tests
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../obj-instantbird
+ac_add_options --disable-debug --enable-optimize='%(optflags)s'
+
+
+ac_add_options --prefix=%(prefix)s
+ac_add_options --with-system-nss
+ac_add_options --with-system-nspr
+ac_add_options --enable-system-cairo
+ac_add_options --disable-crashreporter
+ac_add_options --disable-installer
+ac_add_options --with-libxul-sdk=%(libdir)s/xulrunner-sdk-1.9.2/
+
+
+ac_add_options --with-system-jpeg
+ac_add_options --with-system-zlib
+ac_add_options --with-system-bz2
+ac_add_options --disable-system-hunspell
+ac_add_options --enable-system-sqlite 
+ac_add_options --enable-system-cairo
+ac_add_options --with-pthreads
+ac_add_options --disable-strip
+ac_add_options --disable-tests
+ac_add_options --disable-mochitest
+ac_add_options --enable-default-toolkit=cairo-gtk2
+ac_add_options --enable-pango
+ac_add_options --enable-svg
+ac_add_options --enable-canvas
+ac_add_options --disable-javaxpcom
+ac_add_options --disable-crashreporter
+ac_add_options --enable-safe-browsing
+ac_add_options --enable-libnotify
+ac_add_options --disable-necko-wifi
+ac_add_options --enable-startup-notification
+

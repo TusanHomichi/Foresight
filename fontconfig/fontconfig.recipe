@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadSuperClass('rpmpackage')
+class Fontconfig(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'fontconfig'
+    version = '2.10.2'
+    rpmRelease = '2.fc18'
+    rpmPatches = [ 'fontconfig-2.8.0-sleep-less.patch' ]
+
+    buildRequires = [ 'freetype:devel', 'lynx:runtime', 'expat:devel', 'perl:runtime',
+                      'zlib:devel', 'pkgconfig:devel', 'docbook-utils:runtime',
+                      'docbook-utils-pdf:runtime', 'autoconf:runtime', 'libtool:runtime',
+                      'docbook-utils:data', 'docbook-dtds:data', 'docbook-dsssl:data', 
+                      'opensp:runtime', 'perl-SGMLS:runtime', 'automake:runtime', ]
+
+    def configure(r):
+        r.Run('libtoolize -f; autoreconf -f')
+        # We don't want to rebuild the docs, but we want to install the included ones.
+        r.Environment('HASDOCBOOK','no')
+
+        r.Configure(' --with-add-fonts=/usr/share/X11/fonts/Type1,/usr/share/X11/fonts/TTF,/usr/local/share/fonts'
+                    # XXX for compat with previous fontconfig
+                    ' --with-templatedir=%(sysconfdir)s/fonts/conf.avail')
+
+    def policy(r):
+        # All font packages depend on this package, so we create
+        # and own /usr/share/fonts
+        r.MakeDirs('%(datadir)s/fonts')
+        r.ExcludeDirectories(exceptions = '%(datadir)s/fonts')
+        r.ExcludeDirectories(exceptions = '%(localstatedir)s/cache/fontconfig')
+
+        r.addSource('25-no-bitmap-fedora.conf', dir='%(sysconfdir)s/fonts/conf.d/',
+                    mode = 0644, rpm=r.srpm)
+
+        r.Symlink('%(sysconfdir)s/fonts/conf.avail/25-unhint-nonlatin.conf',
+                  '%(sysconfdir)s/fonts/conf.d/')
+
+        r.addSource('cacheable-font.tagdescription', macros=True,
+                        dest='%(tagdescriptiondir)s/cacheable-font')
+        r.addSource('cacheable-font.taghandler', macros=True,
+                        dest='%(taghandlerdir)s/cacheable-font', mode=0755)
+
+        r.Move('%(docdir)s/%(name)s/*', '%(thisdocdir)s/')
+        r.Requires('%(name)s:runtime', '%(libdir)s/.*')
+
+        # FIXME: remove when/if RPL-1077 is implemented
+        for req in ('%(essentialbindir)s/cat', '%(bindir)s/fc-cache',
+                    '/dev/null'):
+            r.Requires(req, '%(taghandlerdir)s/cacheable-font')
+        # FIXME - ponder having a postinstall script

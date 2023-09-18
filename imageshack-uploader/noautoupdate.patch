@@ -1,0 +1,19 @@
+*** optionsdialog.cpp.old	2010-03-09 23:59:06.044819466 +0100
+--- optionsdialog.cpp	2010-03-09 23:59:35.648569825 +0100
+***************
+*** 42,48 ****
+      m_ui->translateText->setText(tr("Can't see your language in this list?<br>You can help to translate program to your language.<br>Click <a href=\"%1\">HERE</a> for more information.").arg(LOCALIZATION_URL));
+      QSettings sets;
+      m_ui->autoupdate->setChecked(sets.value("autoupdate",
+!                                             QVariant(true)).toBool());
+  
+      foreach(QString file, this->findQmFiles())
+      {
+--- 42,48 ----
+      m_ui->translateText->setText(tr("Can't see your language in this list?<br>You can help to translate program to your language.<br>Click <a href=\"%1\">HERE</a> for more information.").arg(LOCALIZATION_URL));
+      QSettings sets;
+      m_ui->autoupdate->setChecked(sets.value("autoupdate",
+!                                             QVariant(false)).toBool());
+  
+      foreach(QString file, this->findQmFiles())
+      {

@@ -1,0 +1,13 @@
+=== modified file 'src/gestures-tapping.c'
+--- a/src/gestures-tapping.c	2011-03-17 09:48:13 +0000
++++ b/src/gestures-tapping.c	2011-03-24 19:52:47 +0000
+@@ -89,7 +89,7 @@
+ 	}
+ 	if (!move->ntouch)
+ 		return 0;
+-	set_props(ge->gin, state, move, frame);
++	state->prop[GRAIL_PROP_TAP_DT] = move->time - state->start;
+ 	if ((move->active & fm_mask) ||
+ 	    move->time - state->start > move->fm[FM_X].bar_ms) {
+ 		gin_gid_discard(ge, state->gid);
+

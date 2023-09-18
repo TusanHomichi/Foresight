@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2004-2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gksu(CPackageRecipe):
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libgksu:devel', 'libpng:devel', 'nautilus:devel', 'pango:devel', 'perl:runtime', 'pkgconfig:devel', 'startup-notification:devel', 'zlib:devel', 'intltool:runtime', 'expat:devel', 'autoconf:runtime', 'automake:runtime', 'libtool:devel', 'libtool:runtime', 'intltool:devel', 'gettext:devel' ]
+
+    name = 'gksu'
+    version = '2.0.2'
+
+    def setup(r):
+       r.addArchive('http://people.debian.org/~kov/gksu/')
+       r.Run('autoreconf -fi')
+       r.Configure()
+       r.Make()
+       r.MakeInstall()
+       r.Remove('%(datadir)s/applications/gksu.desktop')
+

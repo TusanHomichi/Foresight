@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class xarchiver(XfcePackageRecipe):
+
+    name = 'xarchiver'
+    version = '0.5.2'
+    #svnUrl = 'http://svn.xfce.org/svn/xfce/%(name)s/trunk/'
+    #version = '4.5.80'
+    externalArchive = 'xarchiver-rv30427-fixed-sources.tar.bz2'
+    buildRequires = [
+        'desktop-file-utils:runtime'
+    ]
+
+    patches = ['xarchiver-0.5.2-fix_7z_support.patch', 'xarchiver-0.5.2-add_xz_support.patch', 'xarchiver-0.5.2-rpm2cpio.patch']
+
+    def setup(r):
+        r.Replace('application/x-bzip2-compressed-tar;', 'application/x-bzip2-compressed-tar;application/x-xz;application/x-xz-compressed-tar;', 'xarchiver.desktop.in')
+        r.Replace('multipart/x-zip;', '', 'xarchiver.desktop.in')
+        XfcePackageRecipe.setup(r)

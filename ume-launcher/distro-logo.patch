@@ -1,0 +1,30 @@
+diff -r b94c8cb3b665 data/Makefile.am
+--- a/data/Makefile.am	Wed Aug 20 13:10:30 2008 -0400
++++ b/data/Makefile.am	Wed Aug 20 13:16:04 2008 -0400
+@@ -5,7 +5,7 @@
+ 	icon.png \
+ 	iconviewbg.png \
+ 	new.svg \
+-	ubuntu.png \
++	distro-logo.png \
+ 	scrollbar.svg \
+ 	shortcutbg.svg \
+ 	shortcuthilight.svg \
+diff -r b94c8cb3b665 data/distro-logo.png
+Binary file data/distro-logo.png has changed
+diff -r b94c8cb3b665 data/ubuntu.png
+Binary file data/ubuntu.png has changed
+diff -r b94c8cb3b665 src/launcher-app.c
+--- a/src/launcher-app.c	Wed Aug 20 13:10:30 2008 -0400
++++ b/src/launcher-app.c	Wed Aug 20 13:16:04 2008 -0400
+@@ -468,8 +468,8 @@
+                               PANEL_HEIGHT + 5);
+   clutter_actor_show (priv->window);
+ 
+-  /* Ubuntu logo */
+-  priv->ubuntu = launcher_util_texture_new_from_file (PKGDATADIR"/ubuntu.png");
++  /* Distro logo */
++  priv->ubuntu = launcher_util_texture_new_from_file ("/usr/share/pixmaps/ume-distro-logo.png");
+   clutter_container_add_actor (CLUTTER_CONTAINER (stage), priv->ubuntu);
+   clutter_actor_set_anchor_point_from_gravity (priv->ubuntu, 
+                                                CLUTTER_GRAVITY_NORTH);

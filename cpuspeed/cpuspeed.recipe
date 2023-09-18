@@ -1,0 +1,42 @@
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('rpmpackage')
+class CPUSpeed(RPMPackageRecipe,AutoPackageRecipe):
+    name = 'cpuspeed'
+    version = '1.5'
+    rpmRelease = '15.fc15'
+    packageSummary = "CPU frequency adjusting daemon"
+    packageDescription = """
+    cpuspeed is a daemon that dynamically changes the speed of your processor(s)
+    depending upon its current workload if it is capable (needs Intel Speedstep,
+    AMD PowerNow!, or similar support).
+    
+    This package also supports enabling cpu frequency scaling via in-kernel
+    governors on Intel Centrino and AMD Athlon64/Opteron platforms.
+    """
+
+    rpmPatches = [  'cpuspeed-1.5-Makefile.patch',
+                    'cpuspeed-1.5-no-affected_cpus-fallback.patch',
+                   ]
+
+    rpmSources = [ 'cpuspeed.init',
+                   'cpuspeed.conf',
+                   'cpuspeed.8',
+                   ]
+
+    buildRequires = ['chkconfig:runtime']
+
+    def configure(r):
+        r.macros.cflags += ' -fpie -pie -fno-exceptions '
+        r.macros.ldflags += ' Wl,-z,relro,-z,now  '
+    def make(r):
+        r.Make()
+    def makeinstall(r):
+        r.MakeDirs('%(sbindir)s','%(initdir)s','%(sysconfdir)s/sysconfig','%(mandir)s/man8/')
+        r.MakeInstall()
+        r.Install('cpuspeed.init', '%(initdir)s/cpuspeed', mode = 0755)
+        r.Install('cpuspeed.conf', '%(sysconfdir)s/sysconfig/cpuspeed', mode = 0644)
+        r.Install('cpuspeed.8', '%(mandir)s/man8/cpuspeed.8', mode = 0644)

@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xvidcap(AutoPackageRecipe):
+    name = 'xvidcap'
+    version = '1.1.7'
+ 
+    buildRequires = [
+        'atk:devel', 
+        'bc:runtime', 
+        'cairo:devel', 
+        'dbus-glib:devel', 
+        'dbus:devel', 
+        'desktop-file-utils:runtime', 
+        'fontconfig:devel', 
+        'freetype:devel', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime', 
+        'glib:devel', 
+        'gnome-doc-utils:runtime', 
+        'gtk:devel', 
+        'intltool:runtime', 
+        'lame:devel', 
+        'libICE:devel', 
+        'libX11:devel', 
+        'libXdamage:devel', 
+        'libXext:devel', 
+        'libXfixes:devel', 
+        'libXmu:devel', 
+        'libglade:devel', 
+        'libpng:devel', 
+        'libxml2:devel', 
+        'pango:devel', 
+        'pkgconfig:devel', 
+        'rarian:runtime', 
+        'zlib:devel',
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/%(name)s/%(name)s/%(version)s/')
+        r.addPatch('xextproto-7.1.1.patch')
+        r.addPatch('xvidcap-ffmpeg.patch')
+        r.addPatch('ffmpeg-0.8.patch')
+        r.addPatch('neomorphs.patch')
+
+    def configure(r):
+        r.Configure('--without-forced-embedded-ffmpeg --with-gtk2')

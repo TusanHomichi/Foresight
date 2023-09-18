@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2007 - 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage')
+class Xfce4SmartbookmarkPlugin(XfcePackageRecipe):
+
+    name = 'xfce4-smartbookmark-plugin'
+    version = '0.4.4'
+    subtree = 'panel-plugins'
+
+    buildRequires = [
+        'autoconf:runtime',
+        'libxfce4util:devel', 'libxfcegui4:devel', 'xfce4-panel:devel'
+    ] 
+
+    patches = [
+               'xfce4-smartbookmark-plugin-0.4.2-fl.patch',
+    ]
+
+    def unpack(r):
+        XfcePackageRecipe.unpack(r)
+        r.Run('autoconf')

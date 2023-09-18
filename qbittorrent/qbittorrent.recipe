@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2012-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Qbittorrent(CPackageRecipe):
+    name = 'qbittorrent'
+    version = '3.1.9.2'
+
+    buildRequires = [
+        'openssl:devel', 
+        'qt4:devel', 
+        'desktop-file-utils:runtime', 
+        'libstdc++:devel', 
+        'libtorrent-rasterbar:devel',
+        'python:devel',
+        'which:runtime',
+        'xdg-utils:runtime',
+            ]
+
+    def setup(r):
+        r.addArchive('https://github.com/qbittorrent/qBittorrent/archive/release-%(version)s.tar.gz')
+        r.addSource('http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz',
+                   dir='src/geoip/')
+        r.Run('gunzip src/geoip/GeoIP.dat.gz')
+
+        r.ManualConfigure('--prefix=%(prefix)s --with-geoip-database-embedded --with-qtsingleapplication=shipped')
+        r.Make()
+        r.MakeInstall('INSTALL_ROOT=%(destdir)s')
+

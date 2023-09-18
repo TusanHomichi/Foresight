@@ -1,0 +1,46 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SpeechDispatcher(AutoPackageRecipe):
+    name = 'speech-dispatcher'
+    version = '0.7.1'
+
+    buildRequires = [ 'alsa-lib:devel', 'autoconf:runtime', 'dotconf:devel',
+                      'flite:devel', 'glib:devel', 'install-info:runtime',
+                      'pkgconfig:devel', 'pulseaudio:devel', 'python:devel',
+                      'sound-theme-freedesktop:runtime', 'automake:runtime',
+                      'libtool:runtime',
+                  ]
+
+    def unpack(r):
+        r.addArchive('http://www.freebsoft.org/pub/projects/speechd/')
+        r.addPatch('0001-RPM-Cleanups.patch')
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.Configure('--disable-static --with-alsa --with-pulse --without-nas --with-flite')
+
+    def makeinstall(r):
+        for dir in [ 'config', 'doc', 'src/audio',
+                     'src/c',
+                     'src/modules',
+                     'src/tests',
+                     'src/server',
+                     'src/python',]:
+            r.MakeInstall(dir = dir)
+    
+    def policy(r):
+        # Move the config files from /usr/share to /etc
+        r.MakeDirs('%(sysconfdir)s/speech-dispatcher/clients')
+        r.MakeDirs('%(sysconfdir)s/speech-dispatcher/modules')
+        r.Move('%(datadir)s/speech-dispatcher/conf/speechd.conf', '%(sysconfdir)s/speech-dispatcher/')
+        r.Move('%(datadir)s/speech-dispatcher/conf/clients/*', '%(sysconfdir)s/speech-dispatcher/clients')
+        r.Move('%(datadir)s/speech-dispatcher/conf/modules/*', '%(sysconfdir)s/speech-dispatcher/modules')
+
+        # Create log dir
+        r.MakeDirs('%(localstatedir)s/log/speech-dispatcher/', mode = 0700)
+        

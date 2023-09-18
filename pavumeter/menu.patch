@@ -1,0 +1,18 @@
+diff -r 20a566d295d5 src/pavumeter-record.desktop
+--- a/src/pavumeter-record.desktop	Fri May 23 22:00:17 2008 -0400
++++ b/src/pavumeter-record.desktop	Fri May 23 22:34:45 2008 -0400
+@@ -7,4 +7,4 @@
+ Icon=audio-input-microphone
+ StartupNotify=true
+ Type=Application
+-Categories=Application;AudioVideo;Audio;
++Categories=Application;System;
+diff -r 20a566d295d5 src/pavumeter.desktop
+--- a/src/pavumeter.desktop	Fri May 23 22:00:17 2008 -0400
++++ b/src/pavumeter.desktop	Fri May 23 22:34:45 2008 -0400
+@@ -7,4 +7,4 @@
+ Icon=audio-input-microphone
+ StartupNotify=true
+ Type=Application
+-Categories=Application;AudioVideo;Audio;
++Categories=Application;System;

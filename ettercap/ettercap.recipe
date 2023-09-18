@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Ettercap(AutoPackageRecipe):
+    name = 'ettercap'
+    version = '0.7.4'
+ 
+    buildRequires = ['atk:devel', 'bison:runtime', 'cairo:devel', 'flex:runtime', 'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'glib:devel', 'gtk:devel', 'libnet:devel', 'libpcap:devel', 'libpng:devel', 'libtool:devel', 'ncurses:devel', 'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/ettercap/ettercap/%(version)s-Lazarus/ettercap-%(version)s.tar.gz')
+        r.addPatch('ettercap-0.7.4-CVE-2010-3843.patch')
+        r.addPatch('ettercap-NG-0.7.3-UI.patch')
+        r.addPatch('ettercap-NG-0.7.3-daemon-ui.patch')
+        r.addPatch('ettercap-NG-0.7.3-mitm-loop.patch')
+        r.ManualConfigure('--enable-gtk --prefix=%(prefix)s')
+        r.addPatch('pcap_include_path.patch')
+        r.Make('CFLAGS="%(optflags)s"')
+        r.MakeInstall()

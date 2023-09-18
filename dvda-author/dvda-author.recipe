@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DvdaAuthor(CPackageRecipe):
+    name = 'dvda-author'
+    version = '20050703'
+
+    buildRequires = [  ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/dvd-audio/%(name)s-%(version)s-Linux.tar.gz')
+        r.Make(dir='src')
+        r.Install('src/dvda-author', '%(bindir)s/')
+        r.Install('sort.txt', '%(thisdocdir)s/', mode=0644)

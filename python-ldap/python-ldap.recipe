@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PythonLdap(CPackageRecipe):
+
+    name = 'python-ldap'
+    version = '2.4.4'
+
+    buildRequires = [
+        'python-setuptools:python',
+        'cyrus-sasl:devel', 
+        'openldap:devel', 
+        'openssl:devel', 
+        'python:devel'
+        ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/p/%(name)s/')
+        r.Replace("library_dirs = /opt/openldap-RE24/lib",
+                    "library_dirs = /usr/lib","setup.cfg")
+        r.Replace("include_dirs = /opt/openldap-RE24/include /usr/include/sasl",
+            "include_dirs = /usr/include /usr/include/sasl","setup.cfg")
+        r.PythonSetup()
+        r.SetModes('%(destdir)s/%(libdir)s/python%(pyver)s/site-packages/%(name)s-%(version)s-py%(pyver)s.egg-info/*', 0644)

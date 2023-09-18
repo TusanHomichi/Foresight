@@ -1,0 +1,46 @@
+--- xl/burn.py.bak	2008-10-07 11:19:55.000000000 +0200
++++ xl/burn.py	2008-10-07 12:01:29.000000000 +0200
+@@ -27,13 +27,16 @@
+     if not songs or not program:
+         return 0
+ 
+-    # serpentine and brasero can be launched very similarly, k3b needs
++    # serpentine and brasero can be launched very similarly, k3b & xfburn need
+     # special handling
+     if program == 'serpentine':
+         args = ['serpentine', '-o']
+     if program == 'brasero':
+         args = ['brasero', '-a']
+         songs.reverse()
++    if program == 'xfburn':
++        launch_xfburn(songs)
++        return
+     if program == 'k3b':
+         launch_k3b(songs)
+         return
+@@ -55,7 +58,7 @@
+     # when the program starts and then use the results throughout the
+     # whole program?
+     try:
+-        found = [program for program in ('serpentine', 'brasero', 'k3b') \
++        found = [program for program in ('serpentine', 'brasero', 'xfburn', 'k3b') \
+                 if subprocess.call(['which', program], stdout=-1) == 0]
+     except OSError: # No "which"
+         found = []
+@@ -81,3 +84,16 @@
+     args.extend([song.io_loc for song in songs])
+     args.append(']')
+     subprocess.call(args)
++
++def launch_xfburn(songs):
++    """
++        Start xfburn
++    """
++    args = ['xfburn', '-a']
++    ar = [song.io_loc \
++            for song in songs if not song.type == 'stream']
++    if not ar: return
++    args.extend(ar)
++    subprocess.Popen(args, stdout=-1,
++        stderr=-1)
++

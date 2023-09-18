@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Mhash(AutoPackageRecipe):
+    name = 'mhash'
+    version = '0.9.9.9'
+ 
+    buildRequires = []
+ 
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/mhash/files/')

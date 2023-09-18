@@ -1,0 +1,25 @@
+#
+# Copyright (c) 20012 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibTomMath(CPackageRecipe):
+    name = 'libtommath'
+    version = '0.41'
+
+    buildRequires = [ 'libtool:runtime' ]
+
+    def setup(r):
+        # r.addArchive(' http://www.libtom.org/files/ltm-%(version)s.tar.bz2')
+        r.addArchive('ltm-%(version)s.tar.bz2')
+        r.addPatch('libtommath-makefile.patch')
+        r.Make('LIBPATH=%(libdir)s -f makefile.shared ')
+        # r.Make('-f makefile poster manual docs')
+        r.Environment('INSTALL_USER', '`id -un`')
+        r.Environment('INSTALL_GROUP', '`id -gn`')
+
+        r.MakeInstall('INCPATH=%(includedir)s/tommath LIBPATH=%(libdir)s -f makefile.shared')
+        # static stuff useless
+        r.RemoveNonPackageFiles('.*\.a')

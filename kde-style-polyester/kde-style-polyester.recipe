@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class Polyester(kdePackageRecipe):
+
+    name = 'kde-style-polyester'
+    version = '1.0.2'
+
+    buildRequires = [
+        'kdebase-workspace:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'polyester'
+        r.addArchive('http://www.notmart.org/files/')
+

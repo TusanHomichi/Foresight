@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2012 - the Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# 
+
+loadSuperClass('pypipackage')
+class HiRedisPy(PyPiPackage,CPackageRecipe):
+    name = 'python-hiredis'
+    version = '0.1.0'
+    pyname = 'hiredis'
+
+
+    buildRequires = [ 'hiredis:devel' ]
+
+    def policy(r):
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/*egg-info')

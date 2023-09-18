@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Umefont(PackageRecipe):
+    name = 'umefont'
+    version = '415'
+
+    buildRequires = [
+        'fontconfig:runtime',
+        'mkfontdir:runtime',
+        'xz:runtime',
+        ]
+
+    packageSummary = 'Japanese TrueType font, consisting of 18 fonts'
+
+    def setup(r):
+        r.addArchive('http://osdn.dl.sourceforge.jp/ume-font/22212/'
+            '%(name)s_%(version)s.tar.xz')
+        r.Install('*.ttf', '%(datadir)s/fonts/%(name)s/')
+        r.Doc('license.html')

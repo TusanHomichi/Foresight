@@ -1,0 +1,45 @@
+From 2fae6b2991ab39e7a3844f49737ebf2ee042390e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Cl=C3=A9ment=20DAVID?= <c.david86@gmail.com>
+Date: Thu, 23 Jun 2011 21:04:43 +0200
+Subject: [PATCH 1/7] add a generic linux host
+
+---
+ configure.in |   15 +++++++++++++++
+ 1 files changed, 15 insertions(+), 0 deletions(-)
+
+diff --git a/configure.in b/configure.in
+index 3bd55e5..514b829 100755
+--- a/configure.in
++++ b/configure.in
+@@ -88,6 +88,13 @@ AC_CANONICAL_SYSTEM
+ TARGET=$target
+ echo "FYI the target here is: "$target
+ case $target in
++*linux*) LD=$CC; LDOPT="-shared $LDFLAGS"; SLEXT="so";
++TARGETLIB="linux"
++SLEXT="so";
++LLEXT="a";  dnl the extension for the HDF and other libraries to link to
++JSLEXT="so";
++COPT="-shared -fpic $CFLAGS" ; 
++;;
+ alpha-dec-osf*.*) TARGETLIB="alpha"
+ LD=$CC; LDOPT="-pthread -shared"; SLEXT="so";
+ LLEXT="a";
+@@ -651,6 +658,14 @@ JHVINST=$JH45INST
+ JH5INST=$JH45INST
+ 
+ case $target in
++*linux*) LD=$CC; LDOPT="-shared $LDFLAGS";
++SLEXT="so";
++LLEXT="a";  # the extension for the HDF and other libraries to link to
++JSLEXT="so";
++COPT="-shared -fpic $CFLAGS" ;
++JAVAINC2=$JAVAINC/linux;
++JAVATARG=linux;
++;;
+ alpha-dec-osf*.*)
+ LD=$CC; LDOPT="-pthread -shared"; SLEXT="so";
+ LLEXT="a";
+-- 
+1.7.7
+

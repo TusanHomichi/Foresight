@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2012 Adam Chasen (adam@chasen.name)
+# MIT License
+#
+
+class PythonPysphere(PackageRecipe):
+    name = 'python-pysphere'
+    version = '0.1.6'
+    buildRequires = [ 'python-setuptools:python', 'unzip:runtime', 'python:devel' ]
+
+    def setup(r):
+        r.addArchive('http://pysphere.googlecode.com/files/pysphere-%(version)s.zip')
+        r.PythonSetup()

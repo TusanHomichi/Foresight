@@ -1,0 +1,9 @@
+diff -r 225f32cf3411 src/paman.desktop
+--- a/src/paman.desktop	Fri May 23 21:53:26 2008 -0400
++++ b/src/paman.desktop	Fri May 23 21:57:25 2008 -0400
+@@ -6,4 +6,4 @@
+ Icon=audio-card
+ StartupNotify=true
+ Type=Application
+-Categories=Application;AudioVideo;Audio;
++Categories=Application;System;

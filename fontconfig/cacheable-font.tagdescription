@@ -1,0 +1,6 @@
+file		%(taghandlerdir)s/cacheable-font
+include %(datadir)s/fonts/.*
+include %(bindir)s/fc-cache
+implements	files update
+implements	files remove
+datasource	stdin

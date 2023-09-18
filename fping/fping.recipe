@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the New BSD License
+# A copy is available at http://www.opensource.org/licenses/bsd-license.php
+#
+
+class Fping(AutoPackageRecipe):
+    name = 'fping'
+    version = '2.4b2_to'
+
+    def unpack(r):
+        r.addArchive('http://fping.sourceforge.net/download/%(name)s.tar.gz')
+

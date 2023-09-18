@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2008-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pkgconfig(AutoPackageRecipe):
+    name = 'pkgconfig'
+    version = '0.25'
+    patches = [  'pkg-config-0.21-compat-loop.patch',
+                 'pkg-config-lib64-excludes.patch', ]
+    buildRequires = [ 'glib:devel', 'popt:devel' ]
+
+    def unpack(r):
+        r.addArchive('http://pkgconfig.freedesktop.org/releases/pkg-config-%(version)s.tar.gz')
+        for p in r.patches:
+            r.addPatch(p)
+        r.addPatch('pkg-config-dnl.patch', extraArgs='-R')
+
+    def configure(r):
+        r.Configure(' --disable-shared '
+                    ' --with-installed-glib'
+                    ' --with-installed-popt'
+                    ' --with-pc-path=%(libdir)s/pkgconfig:%(datadir)s/pkgconfig')
+
+    def policy(r):
+        # own those
+        for d in ['%(libdir)s/','%(datadir)s/']:
+            dir = d + '%(name)s'
+            r.MakeDirs(dir)
+            r.ExcludeDirectories(exceptions = dir)

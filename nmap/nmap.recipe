@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#                    2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Nmap(CPackageRecipe):
+    name = 'nmap'
+    version = '5.51'
+
+    buildRequires = [ 'openssl:devel', 'pcre:devel', 'libpcap:lib',
+        'gcc-c++:runtime', 'libstdc++:devel', 'krb5:devel', 'atk:devel',
+        'cairo:devel', 'desktop-file-utils:runtime', 'fontconfig:devel',
+        'freetype:devel', 'glib:devel', 'gtk:devel', 'pango:devel',
+        'pkgconfig:devel', 'zlib:devel', 'libX11:devel', 'libXext:devel',
+        'libXrender:devel', 'libpcap:devel', 'python:devel',
+        'libpng:devel', 'libnl:devel']
+
+    def setup(r):
+        r.disableParallelMake()
+        r.addArchive('http://nmap.org/dist/', keyid='33599B5F')
+        for p in [ 'nmap-4.03-mktemp.patch',  'nmap-4.52-noms.patch',
+                   'nmap-4.68-nostrip.patch',  'zenmap-621887-workaround.patch']:
+            r.addPatch(p)
+        r.addSource('zenmap-root.pamd')
+        r.addSource('zenmap-root.consoleapps')
+        r.addSource('zenmap.desktop')
+        
+        # be sure we're not using tarballed copies of some libraries
+        for d in [ 'liblua', 'libpcap', 'libpcre', 'macosx', 'mswin32']: 
+            r.Remove(d)
+        # fix locale dir
+        r.Run(""" mv zenmap/share/zenmap/locale zenmap/share
+sed -i -e "s|^locale_dir =.*$|locale_dir = os.path.join('share','locale')|" \
+ -e 's|join(self.install_data, data_dir)|join(self.install_data, "share")|' zenmap/setup.py
+sed -i 's|^LOCALE_DIR = .*|LOCALE_DIR = join(prefix, "share", "locale")|' zenmap/zenmapCore/Paths.py 
+
+sed -i '/ALL_LINGUAS =/s/jp/ja/' Makefile.in
+mv docs/man-xlate/nmap-jp.1 docs/man-xlate/nmap-ja.1 """)
+
+        r.Configure('--with-libpcap=%(prefix)s --with-nmapfe --with-openssl=%(includedir)s')
+        r.Make()
+        r.MakeInstall()
+        # use consolehelper
+        r.Remove('%(datadir)s/applications/zenmap*.desktop')
+        r.Remove('%(datadir)s/zenmap/su-to-zenmap.sh')
+        r.Symlink('consolehelper', '%(bindir)s/zenmap-root')
+        r.Install('zenmap-root.pamd', '%(sysconfdir)s/pam.d/zenmap-root', mode = 0644)
+        r.Install('zenmap-root.consoleapps', '%(sysconfdir)s/security/console.apps/zenmap-root', mode = 0644)
+        r.MakeDirs('%(datadir)s/icons/hicolor/48x48/apps')
+        r.Symlink('../../../../zenmap/pixmaps/zenmap.png', '%(datadir)s/icons/hicolor/48x48/apps/')
+        r.Copy('docs/zenmap.1', '%(mandir)s/man1/')
+
+        r.Desktopfile('zenmap.desktop')
+        r.PackageSpec('nmapfe', '.*nmapfe.*')
+        r.PackageSpec('nmapfe', '.*xnmap.*')
+        r.PackageSpec('nmapfe', '.*zennmap.*')

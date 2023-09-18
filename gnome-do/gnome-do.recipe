@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2007 Paul Scott-Wilson <pscott>
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GnomeDo(AutoPackageRecipe):
+    name = 'gnome-do'
+    version = '0.8.5'
+    buildRequires = [ 'gnome-common:runtime', 'gnome-common:devel', 'autoconf:runtime', 'automake:runtime', 'desktop-file-utils:runtime', 'gnome-sharp:devellib', 'gnome-sharp:cil', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'm4:runtime', 'mono:devel', 'mono:lib', 'mono:runtime', 'ndesk-dbus-glib:devellib', 'ndesk-dbus-glib:cil', 'ndesk-dbus:devellib', 'ndesk-dbus:cil', 'pkgconfig:devel', 'gettext:runtime', 'intltool:runtime', 'atk:devel', 'cairo:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gtk:devel', 'libX11:devel', 'libXrender:devel', 'libpng:devel', 'libxcb:devel', 'pango:devel', 'pixman:devel', 'xcb-util:devel', 'zlib:devel', 'gnome-desktop-sharp:cil', 'gnome-desktop-sharp:devellib', 'gnome-keyring-sharp:cil', 'gnome-keyring-sharp:devellib', 'mono-addins:cil', 'mono-addins:devellib', 'GConf:runtime', 'notify-sharp:cil', 'notify-sharp:devellib' ]
+
+    def unpack(r):
+        r.addArchive('http://edge.launchpad.net/do/trunk/%(version)s/+download/')
+        # FL: Our gnome-keyring-sharp is already -1.0 /ermo
+	# r.Replace('gnome-keyring-sharp-1.0','gnome-keyring-sharp','configure')
+        #r.Replace('yield\ return\ "\/usr\/share\/applications\"\;',
+        #          'yield return "%(datadir)s/";',
+        #          'Do.Platform.Linux/src/Do.Universe/ApplicationItemSource.cs')
+        #default to autostart
+        #r.addSource('gnome-do.desktop', dest='%(datadir)s/gnome/autostart/')
+        #r.addSource('gnome-do-session', dest='%(bindir)s/')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        # FL: default to *NOT* autostart and make sure that Gnome Do preferences
+        # override the old Gnome-Session autostart settings.
+        # It needs to be run after MakeInstall()
+        # The first string needs to be escaped while the replacement doesn't
+        r.Replace('\[Desktop Entry\]',
+                  '[Desktop Entry]\nHidden=true',
+                  '%(sysconfdir)s/xdg/autostart/gnome-do.desktop')

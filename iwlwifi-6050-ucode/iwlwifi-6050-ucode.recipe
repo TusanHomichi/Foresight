@@ -1,0 +1,15 @@
+class IWLwifi6k50(PackageRecipe):
+
+    name = 'iwlwifi-6050-ucode'
+    version = '41.28.5.1'
+
+    def setup(r):
+        # donwload site down
+        dURL = '' # http://www.intellinuxwireless.org/iwlwifi/downloads/'
+
+        for f in ('9.201.4.1', '%(version)s'):
+            r.addArchive( dURL + '%s-%s.tgz' % (r.name, f))
+        r.Install('../iwlwifi-*/*.ucode', '/lib/firmware/', mode = 0644)
+ 
+        r.Flavor(exceptions='/lib/firmware/.*')
+

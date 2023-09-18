@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class xfwm4(XfcePackageRecipe):
+
+    name = 'xfwm4'
+    version = '4.10.1'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'desktop-file-utils:runtime', 'libXcomposite:devel', 'libXdamage:devel',
+        'libXfixes:devel', 'libXrandr:devel', 'libglade:devel',
+        'libxfce4util:devel', 'libxfce4ui:devel', 'libxml2:devel',
+        'startup-notification:devel', 'xfconf:devel', 'libwnck:devel',
+        'libexo:runtime'
+    ])
+
+    def setup(r):
+        XfcePackageRecipe.setup(r)
+        r.addSource('xfwm4.xml', dir='%(sysconfdir)s/xdg/xfce4/xfconf/xfce-perchannel-xml/')
+
+    def policy(r):
+        r.Requires('xfce-foresight-theme:data', '%(sysconfdir)s/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml')

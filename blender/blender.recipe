@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Blender(AutoPackageRecipe):
+    name = 'blender'
+    version = '2.49b'
+
+    packageSummary = 'Blender is the free open source 3D content creation suite'
+    packageDescription = 'Blender is the essential software solution you need for 3D, from modeling, animation, rendering and post-production to interactive creation and playback. Professionals and novices can easily and inexpensively publish stand-alone, secure, multi-platform content to the web, CD-ROMs, and other media.'
+ 
+    buildRequires = ['Mesa:devel', 'OpenEXR:devel', 'SDL:devel', 'desktop-file-utils:runtime', 'freealut:devel', 'freetype:devel', 'gcc-c++:runtime', 'gcc-fortran:runtime', 'gettext:devel', 'ilmbase:devel', 'libX11:devel', 'libXi:devel', 'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'libtiff:devel', 'openal:devel', 'python:devel', 'scons:runtime', 'zlib:devel']
+ 
+    def setup(r):
+	r.unpack()
+	r.build()
+	r.install()
+	r.policy()
+
+    def unpack(r):
+        r.addArchive('http://mirror.cs.umn.edu/blender.org/source/')
+	r.addSource('blender-wrapper')
+	r.addSource('blenderplayer-wrapper')
+	r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+
+	#is needed else build would fail
+	r.Run("""find . -type d -exec cp -v nasm.inc '{}' \;""", dir='extern/xvidcore/src/')
+
+    def build(r):
+        r.disableParallelMake()
+        r.Make('BF_QUIET=0 WITH_BF_OPENAL=true WITH_BF_SDL=true BF_PTHREADS=true WITH_BF_FFMPEG=false WITH_BF_LIBMP3LAME=yes WITH_BF_X264=yes WITH_BF_ZLIB=true WITH_BF_INTERNATIONAL=true WITH_BF_GAMEENGINE=true WITH_BF_VERSE=true WITH_BF_PLAYER=true WITH_BF_ODE=true WITH_BF_OPENEXR=true WITH_BF_BULLET=true WITH_BF_FTGL=true WITH_BF_ICONV=no BF_OPENGL_INC=%(includedir)s/GL/ BF_OPENGL_LIBPATH=%(libdir)s/xorg.mesa.3d/ BF_OPENGL_LIB_STATIC="%(libdir)s/xorg.mesa.3d/libGL.so %(libdir)s/xorg.mesa.3d/libGLU.so %(libdir)s/libXxf86vm.so %(libdir)s/libX11.so %(libdir)s/libXi.so %(libdir)s/libXext.a" blenderplayer', makeName='scons')
+
+	#build plugins
+	r.MakeDirs('release/plugins/include')
+	r.Move('source/blender/blenpluginapi/*.h', 'release/plugins/include/')
+	r.Run('chmod +x release/plugins/bmake')
+	r.Make('-C release/plugins/')
+
+    def install(r):
+	#install binaries and wrapper
+	r.Install('../build/linux2/bin/blender', '%(destdir)s%(bindir)s/blender.bin', mode=0755)
+	r.Install('../build/linux2/bin/blenderplayer', '%(destdir)s%(bindir)s/blenderplayer.bin', mode=0755)
+	r.Install('blender-wrapper', '%(destdir)s%(bindir)s/blender', mode=0755)
+	r.Install('blenderplayer-wrapper', '%(destdir)s%(bindir)s/blenderplayer', mode=0755)
+
+	#create dirs for plugins
+	r.MakeDirs('%(datadir)s/blender/scripts')
+	r.MakeDirs('%(libdir)s/blender/scripts')
+	r.MakeDirs('%(libdir)s/blender/plugins/sequence')
+	r.MakeDirs('%(libdir)s/blender/plugins/texture')
+
+	#install plugins
+	r.Install('release/plugins/sequence/*.so', '%(destdir)s%(libdir)s/blender/plugins/sequence')
+	r.Install('release/plugins/texture/*.so', '%(destdir)s%(libdir)s/blender/plugins/texture')
+
+	#install locales
+	r.Install('bin/.blender/locale/*', '%(datadir)s/locale/')
+
+	#install scripts
+	r.Move('release/scripts/*', '%(destdir)s%(datadir)s/blender/scripts/')
+
+	r.Install('release/VERSION', '%(destdir)s%(datadir)s/blender/', mode=0644)
+	r.Install('bin/.blender/.Blanguages', '%(destdir)s%(datadir)s/blender/', mode=0644)
+
+	#install icons
+	r.Install('release/freedesktop/icons/32x32/%(name)s.png', '%(destdir)s%(datadir)s/pixmaps/')
+
+	#.desktop
+	r.Replace('Icon=blender.png', 'Icon=blender', 'release/freedesktop/blender.desktop')
+	r.Desktopfile('release/freedesktop/blender.desktop')
+
+	r.PackageSpec('blenderplayer', '%(bindir)s/blenderplayer.bin')
+	r.PackageSpec('blenderplayer', '%(bindir)s/blenderplayer')
+

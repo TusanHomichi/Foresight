@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2008-2010 Foresight Linux. 2004-2010 rPath, Inc. 2009-2010 Sony Pictures ImageWorks.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ModPerl(CPackageRecipe):
+    name = 'mod_perl'
+    version = '2.0.4'
+
+    buildRequires = [ 'perl:runtime','httpd:devel',
+        'apr-util:devel', 'apr:devel', 'db:devel', 'expat:devel',
+        'openldap:devel', 'util-linux:devellib']
+
+    def setup(r):
+        r.addArchive('http://www.apache.org/dist/perl/')
+
+        r.Run('perl Makefile.PL MP_APXS=%(sbindir)s/apxs')
+        r.Make()
+        r.MakeInstall()

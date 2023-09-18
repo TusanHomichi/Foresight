@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Denemo(AutoPackageRecipe):
+    name = 'denemo'
+    version = '0.9.2'
+    packageSummary = "Denemo is a free software (GPL) music notation editor for GNU/Linux"
+    packageDescription = "Denemo is a software music notation editor that lets you rapidly enter notation for typesetting via the LilyPond music engraver. You can compose, transcribe, arrange, listen to the music and much more."
+
+    buildRequires = ['atk:devel',
+		'aubio:devel',
+		'bison:runtime',
+		'cairo:devel',
+		'desktop-file-utils:runtime',
+		'expat:devel',
+		'fftw:devel',
+		'flex:runtime',
+		'fluidsynth:devel',
+		'fontconfig:devel',
+		'freetype:devel',
+		'gettext:runtime',
+		'glib:devel',
+		'gmp:devel',
+		'gtk:devel',
+		'gtksourceview:devel',
+		'guile:devel',
+		'guile:runtime',
+		'intltool:runtime',
+		'libX11:devel',
+		'libXrender:devel',
+		'libpng:devel',
+		'librsvg:devel',
+		'libsamplerate:devel',
+        'libsmf:devel',
+		'libtool:devel',
+		'libxml2:devel',
+		'mkfontdir:runtime',
+		'pango:devel',
+		'pixman:devel',
+		'pkgconfig:devel',
+		'portaudio:devel',
+		'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('ftp://ftp.gnu.org/gnu/denemo/')

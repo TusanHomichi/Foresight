@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class DjangoProfile(PackageRecipe):
+
+    name = 'django-profile'
+    version = '0.6'
+
+    buildRequires = [
+        'django:python',
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive("http://django-profile.googlecode.com/files/%(name)s-%(version)s.tgz")
+        r.macros.sitepackages = "%(libdir)s/python%(pyver)s/site-packages/"
+        r.Move("userprofile", "%(sitepackages)s/")
+        r.Move("media", "%(sitepackages)s/userprofile/")
+
+        #r.addSvnSnapshot('http://django-profile.googlecode.com/svn/trunk', revision='429')
+        #r.PythonSetup()

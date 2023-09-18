@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2009-2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class GeckoMediaplayer(AutoPackageRecipe):
+    name = 'gecko-mediaplayer'
+    version = '1.0.8'
+    packageSummary = "Media plug-in for Gecko browsers"
+    packageDescription = """
+Gecko Media Player is a browser plug-in that uses GNOME MPlayer and Mplayer \
+to play media in a browser. It uses the NS4 API and is therefore compatible \
+with all NS4 derived browsers: Iceweasel, Firefox, Iceape, Epiphany, Galeon, \
+Midbrowser, etc.
+"""
+    buildRequires = [
+        'dbus-glib:devel',
+        'gawk:runtime',
+        'gcc-c++:runtime',
+        'GConf:devel',
+        'GConf:runtime',
+        'gettext:runtime',
+        'glib:devel',
+        'intltool:runtime',
+        'libgcc:devellib', 
+        'libpng:devel',
+        'libstdc++:devel', 
+        'libX11:devel',
+        'nspr:devel', 
+        'pkgconfig:devel',
+        'xulrunner:devel',
+        'curl:devel', 
+        'openssl:devel',
+        'automake:runtime',
+        'autoconf:runtime',
+        'libtool:runtime',
+        'gmtk:devel',
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://gecko-mediaplayer.googlecode.com/files/')
+        r.Requires('gnome-mplayer:runtime', '%(name)s:lib')
+

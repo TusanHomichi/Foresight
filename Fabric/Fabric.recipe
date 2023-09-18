@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2011 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+#
+loadSuperClass('pypipackage')
+class Fabric(PyPiPackage, PackageRecipe):
+    name = 'Fabric'
+    version = '1.3.3'
+    pyname = 'Fabric'
+
+    buildRequires = [
+        'python-ssh:python',
+    ]

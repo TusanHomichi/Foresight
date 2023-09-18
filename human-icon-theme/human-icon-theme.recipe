@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class HumanIconTheme(BuildPackageRecipe):
+    name = 'human-icon-theme'
+    version = '0.33.1'
+ 
+    buildRequires = ['ImageMagick:devel', 'ImageMagick:runtime', 'gettext:runtime', 'gtk:runtime', 'intltool:runtime', 'pkgconfig:devel', 'autoconf:runtime', 'automake:runtime', 'libtool:devel', 'libtool:runtime', 'intltool:devel', 'gettext:devel', 'gettext:runtime', 'glib:devel', 'icon-naming-utils:runtime', 'icon-naming-utils:devellib']
+ 
+    def setup(r):
+        r.addArchive('https://edge.launchpad.net/ubuntu/jaunty/+source/human-icon-theme/%(version)s/+files/human-icon-theme_%(version)s.tar.gz')
+        r.Replace('\/usr\/lib\/icon-naming-utils', 
+            '%(prefix)s/libexec', 'Makefile')
+        r.Make()
+        r.MakeInstall()
+
+        # Remove some logos
+        r.Remove('%(datadir)s/icons/Human/*/places/distributor-logo.{svg,png}')
+        r.Remove('%(datadir)s/icons/Human/*/places/gnome-main-menu.{svg,png}')
+        r.Remove('%(datadir)s/icons/Human/*/places/novell-button.{svg,png}')
+        r.Remove('%(datadir)s/icons/Human/*/places/start-here.{svg,png}')

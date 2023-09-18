@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WqyZenhei(PackageRecipe):
+    name = 'wqy-zenhei'
+    version = '0.8.38'
+
+    buildRequires = [
+        'fontconfig:runtime',
+        'mkfontdir:runtime',
+        ]
+
+    def setup(r):
+        r.addArchive('mirror://sourceforge/wqy/%(name)s-%(version)s-1.tar.gz')
+        r.Install('%(name)s.ttc', '%(datadir)s/fonts/wenquanyi/')
+        r.Install('*.conf', '%(sysconfdir)s/fonts/conf.avail/')

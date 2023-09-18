@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Db(CPackageRecipe):
+    name = 'db'
+    version = '4.6.21'
+    patchLevel = '4'
+
+    buildRequires = [ 'util-linux:runtime', 'bash:runtime']
+    if not Use.bootstrap:
+        buildRequires = [ 'libstdc++:devel',
+                          'icedtea-jdk:runtime',
+                          'icedtea-jre:runtime',
+                          'tcl:devel', 'util-linux:runtime', ]
+    else:
+        keepBuildReqs = ['glibc:devel']
+        buildRequires += [ 'gcc[!cross]', 'binutils[!cross]',
+                           'binutils[cross]' ]
+        crossRequires = [ 'glibc:devel' ]
+
+    extraConfigure = ('--enable-compat185 --enable-shared --enable-rpc'
+                      ' --enable-cxx --enable-posixmutexes --enable-pthread_api ')
+
+    if not Use.bootstrap:
+        extraConfigure += (' --disable-java' # disable for now. won't build with java
+                           ' --enable-tcl --with-tcl=%(libdir)s'
+                           ' --enable-test')
+    else:
+        extraConfigure += ' --disable-tcl --disable-test --disable-java'
+
+    def setup(r):
+        r.addArchive('http://download.oracle.com/berkeley-db/')
+        # patches from upstream
+        if int(r.patchLevel):
+            for x in range(1,int(r.patchLevel)+1):
+                r.addPatch('http://www.oracle.com/technology/products/berkeley-db/db/update/%%(version)s/patch.%%(version)s.%s'%x)
+
+
+        r.Configure(r.extraConfigure, dir='dist', objDir='build')
+        r.Make("-C dist/build LIBSO_LIBS='$(LIBS)'")
+
+        r.MakeInstall('-C dist/build')
+        r.Move('%(libdir)s/libdb-*.so', '%(essentiallibdir)s/')
+        r.Symlink('%(essentiallibdir)s/libdb-*.so', '%(libdir)s/')
+        r.Symlink('libdb-%(major_version)s.so', '%(libdir)s/libdb.so')
+        r.Symlink('libdb-%(major_version)s.a', '%(libdir)s/libdb.a')
+        r.Move('%(includedir)s/*.h', '%(includedir)s/db4/')
+        r.Symlink('db4/db{,_{cxx,185}}.h', '%(includedir)s/')
+        #r.Move('%(libdir)s/db.jar', '%(datadir)s/java/db.jar')
+
+        # db installs its docs in a relatively unusual location
+        r.Move('/usr/docs/*', '%(thisdocdir)s/')
+
+        # pack the java  parts into the a separate db4-java package
+        #r.PackageSpec('db4-java', '.*_java.*')
+        #r.PackageSpec('db4-java', '.*\.jar')

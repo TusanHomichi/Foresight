@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class Domino(kdePackageRecipe):
+
+    name = 'kde-style-domino'
+    version = '0.4'
+
+    buildRequires = [
+        'kdebase-workspace:devel'
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = '42804-domino'
+        r.addArchive('http://kde-look.org/CONTENT/content-files/')
+

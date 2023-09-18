@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lxmed(PackageRecipe):
+    name = 'lxmed'
+    version = '20120515'
+ 
+    buildRequires = ['desktop-file-utils:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://downloads.sourceforge.net/project/lxmed/')
+        r.Replace('gksu', 'gksudo', 'content/lxmed')
+        r.Install('content/lxmed', '%(bindir)s/', mode = 0755)
+        r.Install('content/LXMenuEditor.jar', '/opt/lxmed/')
+        r.Install('content/lxmed.png', '/opt/lxmed/')
+        r.Desktopfile('content/lxmed.desktop')
+
+        r.Requires('gksu:runtime', 'lxmed:runtime')

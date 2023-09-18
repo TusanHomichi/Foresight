@@ -1,0 +1,26 @@
+diff -dur xfce4-quicklauncher-plugin-1.9.4.orig/panel-plugin/Makefile.in xfce4-quicklauncher-plugin-1.9.4/panel-plugin/Makefile.in
+--- xfce4-quicklauncher-plugin-1.9.4.orig/panel-plugin/Makefile.in	2007-06-27 21:07:13.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/panel-plugin/Makefile.in	2010-12-19 21:34:32.850758093 +0100
+@@ -238,7 +238,7 @@
+ target_alias = @target_alias@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-plugindir = $(libdir)/xfce4/panel-plugins
++plugindir = $(libdir)/xfce4/panel/plugins
+ plugin_LTLIBRARIES = \
+ 	libquicklauncher.la
+ 
+diff -dur xfce4-quicklauncher-plugin-1.9.4.orig/panel-plugin/quicklauncher.desktop.in.in xfce4-quicklauncher-plugin-1.9.4/panel-plugin/quicklauncher.desktop.in.in
+--- xfce4-quicklauncher-plugin-1.9.4.orig/panel-plugin/quicklauncher.desktop.in.in	2005-09-25 21:08:43.000000000 +0200
++++ xfce4-quicklauncher-plugin-1.9.4/panel-plugin/quicklauncher.desktop.in.in	2010-12-19 21:21:03.380661147 +0100
+@@ -1,7 +1,7 @@
+ [Xfce Panel]
+ Type=X-XFCE-PanelPlugin
+-Encoding=UTF-8
+ _Name=Quicklauncher
+ _Comment=Program with several launchers
+-Icon=gnome-fs-executable
+-X-XFCE-Module=@INTERNAL_PLUGIN_PATH@/libquicklauncher.so
++Icon=application-x-executable
++X-XFCE-Module=quicklauncher
++X-XFCE-Internal=TRUE

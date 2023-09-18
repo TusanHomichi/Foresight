@@ -1,0 +1,13 @@
+--- rc.d/rc.sysinit.orig	2010-05-18 20:44:32.667800394 +0100
++++ rc.d/rc.sysinit	2010-05-18 20:37:06.018174513 +0100
+@@ -857,6 +857,9 @@
+ wait
+ [ "$PROMPT" != no ] && rm -f /var/run/getkey_done
+ 
++# cheap hack
++chmod a=rwxt /dev/shm
++
+ # Let rhgb know that we're leaving rc.sysinit
+ if [ -x /usr/bin/rhgb-client ] && /usr/bin/rhgb-client --ping ; then
+     /usr/bin/rhgb-client --sysinit
+

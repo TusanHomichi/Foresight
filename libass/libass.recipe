@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibassPackageRecipe(AutoPackageRecipe):
+
+    name = 'libass'
+    version = '0.10.0'
+    
+    buildRequires = [
+        'freetype:devel',
+        'pkgconfig:devel',
+	'fontconfig:devel', 
+	'fribidi:devel',
+    ]
+
+    def unpack(r):
+        r.addArchive('http://%(name)s.googlecode.com/files/')

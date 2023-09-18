@@ -1,0 +1,8 @@
+class INFOdesktopUserR(GroupInfoRecipe):
+   name = "info-desktop_user_r"
+   version = "1"
+
+   def setup(r):
+      # gid is arbitrary 
+      r.Group('desktop_user_r', 1235)
+

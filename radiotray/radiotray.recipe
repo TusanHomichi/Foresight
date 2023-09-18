@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2010-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Radiotray(AutoPackageRecipe):
+    name = 'radiotray'
+    version = '0.7.3'
+
+    packageSummary = 'Radio Tray is an online radio streaming player'
+    packageDescription = 'Radio Tray is an online radio streaming player that runs on a Linux system tray. Its goal is to have the minimum interface possible, making it very straightforward to use.'
+
+    buildRequires = [
+        'dbus-python:python',
+        'desktop-file-utils:runtime',
+        'gettext:runtime',
+        'gst-python:python',
+        'intltool:runtime',
+        'lxml:python',
+        'notify-python:python',
+        'pygobject:python',
+        'pygtk:python',
+        'python-setuptools:python',
+        'python:devel',
+        'pyxdg:python',
+    ]
+
+    def setup(r):
+        #r.addMercurialSnapshot("http://radiotray.hg.sourceforge.net:8000/hgroot/%(name)s/%(name)s")
+        r.addArchive('http://downloads.sourceforge.net/project/radiotray/releases/')
+        r.PythonSetup(data='--install-data=%(prefix)s')

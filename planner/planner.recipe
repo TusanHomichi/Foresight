@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+class Planner(GnomePackageRecipe):
+
+    buildRequires = [ 'GConf:devellib', 'GConf:runtime', 'ORBit2:devellib', 'atk:devellib', 'cairo:devellib', 'desktop-file-utils:runtime', 'evolution-data-server:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devellib', 'gnome-keyring:devellib', 'gnome-vfs:devellib', 'gtk:runtime', 'libart_lgpl:devel', 'libbonobo:devellib', 'libbonoboui:devellib', 'libgcrypt:devel', 'libglade:devellib', 'libgnome:devellib', 'libgnomecanvas:devellib', 'libgnomeprint:devellib', 'libgnomeprintui:devel', 'libgnomeui:devel', 'libgpg-error:devel', 'libpng:devellib', 'libxml2:devellib', 'libxslt:devel', 'pango:devellib', 'popt:devel', 'pygtk:devel', 'python:devel', 'rarian:devel', 'rarian:runtime', 'shared-mime-info:runtime', 'pygobject:runtime', 'pygobject:devel' ]
+
+    name = 'planner'
+    version = '0.14.5'
+
+    extraConfig = ' --disable-update-mimedb --enable-eds'
+    extraConfig += ' --enable-python-plugin --enable-python'
+
+    def setup(r):
+        r.disableParallelMake()
+        GnomePackageRecipe.setup(r)

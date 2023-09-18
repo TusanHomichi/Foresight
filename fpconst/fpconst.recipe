@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class FPConst(PackageRecipe):
+    name = 'fpconst'
+    version = '0.7.2'
+
+    buildRequires = [
+        'python:devel',
+        'python-setuptools:python',
+    ]
+
+    def setup(r):
+        r.addArchive('http://cheeseshop.python.org/packages/source/f/fpconst/')
+        r.PythonSetup()

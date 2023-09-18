@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2009-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Blueman(AutoPackageRecipe):
+    name = 'blueman'
+    version = '1.23'
+ 
+    buildRequires = ['Pyrex:runtime', 'bluez:devel', 'cairo:devel', 'dbus-python:python', 'desktop-file-utils:runtime', 'gettext:runtime', 'glib:devel', 'gnome-python:python', 'gtk:devel', 'intltool:runtime', 'notify-python:python', 'notify-python:devellib', 'pango:devel', 'pkgconfig:devel', 'pycairo:python', 'pygtk:devel', 'python:devel', 'startup-notification:devel', 'PyQt4:python', 'libappindicator:python' ]
+ 
+    def unpack(r):
+        r.addArchive('http://download.tuxfamily.org/%(name)s/%(name)s-%(version)s.tar.gz')
+        r.addPatch('blueman-1.23-statusicon.patch')
+        # XXX hack until we get py27...
+        r.Replace('2.7', '2.6', 'configure')
+
+    def configure(r):
+        r.Configure('--disable-static --disable-polkit')
+
+    def policy(r):
+	# r.NonMultilibComponent(exceptions='%(libdir)s/')
+
+        r.Create('%(sharedstatedir)s/%(name)s/network.state')
+        r.InitialContents('%(sharedstatedir)s/%(name)s/network.state')
+        
+        if Arch.x86_64:
+            r.Copy('/usr/lib/python%(pyver)s/*', '%(libdir)s/python%(pyver)s/')
+            r.Remove('/usr/lib/python%(pyver)s', recursive = True)

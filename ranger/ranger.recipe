@@ -1,0 +1,23 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+class Ranger(PackageRecipe):
+
+    name = 'ranger'
+    version = '1.5.5'
+
+    packageSummary = 'ranger is a file manager with VI key bindings'
+    packageDescription = 'ranger is a file manager with VI key bindings. It provides a minimalistic and nice curses interface with a view on the directory hierarchy. The secondary task of ranger is to psychically guess which program you want to use for opening particular files.'
+
+    buildRequires = [
+                    'python-setuptools:python',
+                    'chardet:python',
+                    'python:devel',
+                    ]
+
+    def setup(r):
+        r.addArchive('http://nongnu.org/ranger/ranger-stable.tar.gz')
+        r.PythonSetup('--optimize=1')

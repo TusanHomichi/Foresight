@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+#               2013      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Rdate(CPackageRecipe):
+    name = 'rdate'
+    version = '1.4'
+
+    def setup(r):
+        # r.addArchive('ftp://people.redhat.com/sopwith/')
+        # upstream original MIA
+        r.addArchive('http://pkgs.fedoraproject.org/repo/pkgs/rdate/rdate-1.4.tar.gz/b2e5bbfa10ec480076750fd78fe7f7a5/')
+        for p in [ 'rdate-1.4-addrinfo.patch',
+                   'rdate-1.4-memleak.patch',
+                   'rdate-1.4-spellerr.patch',
+                   'rdate-1.4-udp.patch']:
+            r.addPatch(p)
+
+        r.macros.cflags += ' -DINET6 -fno-strict-aliasing'
+
+        r.Make()
+        r.MakePathsInstall()
+
+        r.SetModes('%(bindir)s/rdate', 0755)

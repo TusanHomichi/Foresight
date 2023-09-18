@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xf86VideoVGA(PackageRecipe):
+    name = 'xf86-video-vga'
+    version = '0.1'
+ 
+    buildRequires = []
+ 
+    def setup(r):
+        r.addSource('packageremoved', dest='%(datadir)s/%(name)s/')
+
+        if Arch.x86:
+            pass
+        if Arch.x86_64:
+            pass

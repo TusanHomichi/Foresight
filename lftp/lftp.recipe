@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2012-2014 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Lftp(AutoPackageRecipe):
+    name = 'lftp'
+    version = '4.5.2'
+ 
+    buildRequires = [
+            'dante:devel',
+            'expat:devel', 
+            'gettext:runtime', 
+            'gnutls:devel', 
+            'intltool:runtime', 
+            'libstdc++:devel', 
+            'libtermcap:devel', 
+            'ncurses:devel', 
+            'perl-DBD-MySQL:perl', 
+            'perl-DBD-Pg:perl', 
+            'perl-DBD-SQLite:perl', 
+            'perl-DBI:perl', 
+            'perl:devel', 
+            'pkgconfig:devel', 
+            'readline:devel'
+                ]
+ 
+    def unpack(r):
+        r.addArchive('http://lftp.yar.ru/ftp/')
+
+    def configure(r):
+        r.Configure('--with-socksdante')

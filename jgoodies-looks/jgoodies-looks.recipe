@@ -1,0 +1,17 @@
+class JGoodiesForms(PackageRecipe):
+    name = 'jgoodies-looks'
+    version = '2.2.2'
+    buildRequires = ['unzip:runtime']
+
+    def setup(r):
+        # FIXME - build this from the ground. F3 task
+        r.macros.archive_name = 'looks'
+        r.macros.archive_version = r.macros.version.replace('.', '_')
+        r.addArchive('http://www.jgoodies.com/download/libraries/%(archive_name)s/')
+        r.Install('%(archive_name)s-%(version)s.jar', '%(datadir)s/java/')
+
+        # Remove this when https://issues.rpath.com/browse/SUP-2255 is
+        # fixed.
+        # FIXME can't see what SUP-2255 is atm ...
+        # leaving this as provided by imageworks ppl for now                
+        r.Requires(exceptDeps='java: .*')

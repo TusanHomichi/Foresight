@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fuzemux(AutoPackageRecipe):
+    name = 'fuzemux'
+    version = '0.1.2'
+
+    packageSummary = 'A tool to remux AVI video files for the Sansa Fuze portable media player'
+    packageDescription = '''\
+The purpose of fuzemux is to remux avi files into the exact container
+format required for playing them on the Sandisk Sansa Fuze.
+'''
+    def unpack(r):
+        r.addArchive('http://fuzemux.googlecode.com/files/%(name)s-%(version)s-fixed.tar.gz')

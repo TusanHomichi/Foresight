@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2010-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fox(AutoPackageRecipe):
+    name = 'fox'
+    version = '1.7.21'
+ 
+    buildRequires = ['Mesa:devel', 
+                    'bzip2:devel', 
+                    'libICE:devel', 
+                    'libSM:devel', 
+                    'libX11:devel', 
+                    'libXcursor:devel', 
+                    'libXext:devel', 
+                    'libXfixes:devel', 
+                    'libXi:devel', 
+                    'libXrandr:devel', 
+                    'libXrender:devel', 
+                    'libjpeg:devel', 
+                    'libpng:devel', 
+                    'libstdc++:devel', 
+                    'libtiff:devel', 
+                    'openjpeg:devel', 
+                    'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://www.fox-toolkit.org/ftp/')
+        r.macros.ldflags += '-L%(libdir)s/xorg.mesa.3d/'
+        r.Environment('OPENGL_LIBS', '-lGL -lGLU -L%(libdir)s/xorg.mesa.3d/')
+
+
+	def configure(r):
+		r.Configure( ' --enable-release '
+                     ' --with-xft=yes '
+                     ' --with-opengl=yes '
+                     ' --with-xim '
+                     ' --with-xshm '
+                     ' --with-shape '
+					 ' --with-xcursor '
+					 ' --with-xrender '
+					 ' --with-xrandr '
+					 ' --with-xfixes '
+                     ' --with-xinput ')

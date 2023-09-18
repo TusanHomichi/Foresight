@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2011-2012 - the Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+# 
+
+class Redis(CPackageRecipe):
+    name = 'redis'
+    version = '2.4.10'
+
+    buildRequires = [ 'autoconf:runtime', 'libxslt:runtime' ]
+
+    def setup(r):
+        r.addArchive('http://redis.googlecode.com/files/')
+        r.addPatch('redis-2.4.8-redis.conf.patch')
+        for f in ['redis.logrotate',
+                  'redis.init']:
+            r.addSource(f)
+
+        r.MakeDirs('%(bindir)s')
+        r.Make("DEBUG='' V=1 all")
+        r.MakeInstall('PREFIX=%(destdir)s%(prefix)s')
+
+        r.Move('%(bindir)s/%(name)s-server',
+               '%(sbindir)s/%(name)s-server')
+
+        for n in ['lib', 'log', 'run']:
+            d = '%%(localstatedir)s/%s/%%(name)s' % n
+            r.MakeDirs(d)
+            r.Ownership('redis', 'root', d)
+
+        r.Install('redis.logrotate',
+                  '%(sysconfdir)s/logrotate.d/%(name)s',
+                  mode = 0644)
+        r.Install('redis.init', '%(initdir)s/%(name)s',
+                  mode = 0755)
+        r.Install('%(name)s.conf',
+                  '%(sysconfdir)s/%(name)s.conf',
+                  mode = 0644)

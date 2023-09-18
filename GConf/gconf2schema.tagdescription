@@ -1,0 +1,4 @@
+file		%(taghandlerdir)s/gconf2schema
+implements      files update
+implements      files preremove
+include		%(sysconfdir)s/gconf/schemas/[^/]*\.schemas$

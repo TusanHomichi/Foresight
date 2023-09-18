@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2006-2011 rPath, Inc.
+#               2011-2012 The Foresight Linux Project
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import datetime
+loadSuperClass('python')
+class ConaryPolicy(BuildPackageRecipe, Python.VersionMixIn):
+    name = 'conary-policy'
+    version = '1.3'
+    tag = '5772ebf'
+    if tag:
+        version += '+' + tag
+
+    def setup(r):
+        r.setDefaultPython()
+        if r.tag:
+            r.addGitSnapshot('https://github.com/sassoftware/conary-policy.git',
+                                   tag=r.tag)
+
+        r.addPatch('CNP-211.patch')
+
+        # A policy that enforces that two troves with different
+        # names may not provide the same dependency. magic by
+        # Michael K. Johnson. 
+        r.addSource('group_duplicateprovides.py',
+                    dest='%(prefix)s/lib/conary/policy/')
+
+        # this is capsule's specific and breaks expected behaviour
+        # on native bootstraps.
+        r.Remove('policy/bootstraptrovedeps.py')
+
+        r.MakeInstall()
+        # NOT %(libdir)s
+        r.CompilePython('%(prefix)s/lib/conary/policy')
+        r.Requires(bootstrapPythonFlags=('%(lib)s', '%(pyver)s'))

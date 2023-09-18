@@ -1,0 +1,13 @@
+knetattach is installed in kde4 libexec dir, and only KDE looks there.
+knetattach desktop file should not be shown outside kde environment.
+Fixes debian bug #582844
+Not yet forwarded.
+Author: Sune Vuorela
+--- a/knetattach/knetattach.desktop
++++ b/knetattach/knetattach.desktop
+@@ -178,4 +178,5 @@
+ Terminal=false
+ X-KDE-StartupNotify=true
+ Categories=Qt;KDE;Network;RemoteAccess;
++OnlyShowIn=KDE;
+ X-DocPath=knetattach/index.html

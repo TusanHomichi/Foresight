@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+class GnomeCupsManager(GnomePackageRecipe):
+    buildRequires = [ 'libgnomeui:devel', 'cups:devel', 'desktop-file-utils:runtime', 'libgnomecups:devel', 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libpng:devel', 'libstdc++:devel', 'libxml2:devel', 'pango:devel', 'popt:devel', 'samba:devel', 'expat:devel', 'gettext:runtime', 'glib:runtime', 'gtk:runtime', 'openssl:devel', 'perl:runtime' ]
+
+    name = 'gnome-cups-manager'
+    version = '0.33'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # unbrand the test page, leaving the xd2- version for folks
+        # who would prefer it
+        for testsize in ('a4', 'letter'):
+            r.addSource('testpage-%s.ps' %testsize)
+        r.addAction("sed -i 's/xd2-//' libgnomecups/gnome-cups-ui-util.c")
+        r.addPatch('http://archive.ubuntu.com/ubuntu/pool/universe/g/gnome-cups-manager/gnome-cups-manager_0.31-3ubuntu5.diff.gz')
+        r.addPatch('change-su-command.patch')
+
+        for patch in [
+            '21_check-lpadmin-member.patch',
+            '23_options.patch', 
+            '24_printer_properties_name_entry.patch', 
+            '25_properties_on_add.patch',
+            '26_remove-no-cups-dialog.diff',
+            '27_dont-request-additional-attributes.patch',
+            '30_show_also_detected_network_uris.patch',
+            '35_show_more_info_of_detected_printers.patch',
+            'select_eintr_crash.patch',
+            '37_transparent_notification_icon.patch',
+            '40_better_menu_text_for_tcp_socket_jetdirect_printers.patch',
+            '45_printer_driver_entry_cleanup.patch',
+            'translations.patch',
+            'ui_browse_share_ctl.patch',
+            'ui_edit_name_description.patch',
+            'change_uri_fix.patch',
+            'ui_serial_port.diff',
+            'desktop-potfiles.patch',
+            'ui_startbox.diff',
+            'password_field_garbage.patch',
+            'ui_tooltip.diff',
+            'ppd-install-dir.patch',]:
+            r.addPatch(patch, sourceDir='debian/patches/')
+
+
+
+    def install(r):
+        GnomePackageRecipe.install(r)
+        for testsize in ('a4', 'letter'):
+            r.Install('testpage-%s.ps' %testsize,
+                      '%(datadir)s/gnome-cups-manager/')
+        r.addSource('gnome-cups-manager.desktop')
+        r.Desktopfile('gnome-cups-manager.desktop')
+        #r.addSource('gnome-cups-icon.desktop')
+        #r.Desktopfile('gnome-cups-icon.desktop')

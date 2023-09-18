@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class PAprefs(RPMPackageRecipe,GnomePackageRecipe):
+    name = 'paprefs'
+    version  = '0.9.9'
+    rpmRelease = '4.fc12'
+    rpmPatches = [ ]
+
+    buildRequires = [ 'gst-plugins-base:devel', 'gstreamer:runtime', 'gstreamer:devel',
+                      'lynx:runtime', 'pulseaudio:devel', 'cairomm:devel',
+                      'desktop-file-utils:runtime', 'glibmm:devel', 'gtkmm:devel',
+                      'libglade:devel', 'libglademm:devel', 'libsigc++:devel',
+                      'gconfmm:devel', 'libtool:devel', ]
+
+
+

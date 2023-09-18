@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage=conary.rpath.com@rpl:2')
+class PerlHttpCookies(CPANPackageRecipe):
+    name = 'perl-HTTP-Cookies'
+    version = '5.834'
+    upstreamname = 'libwww-perl'
+
+    buildRequires = ['perl-Authen-NTLM:perl', 'perl-HTML-Parser:perl', 'perl-HTML-Tree:perl', 'perl-IO-Socket-SSL:perl', 'perl-URI:perl', 'perl:devel']

@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/gstreamerplugin
+include		%(libdir)s/gstreamer-[^/]*/libgst.*\.so
+implements	files update
+implements	files remove
+implements	files preremove

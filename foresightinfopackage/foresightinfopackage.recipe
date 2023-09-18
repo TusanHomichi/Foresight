@@ -1,0 +1,319 @@
+#
+# Copyright (c) 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ForesightInfoPackage(UserGroupInfoRecipe, BaseRequiresRecipe):
+    name = 'foresightinfopackage'
+    version = '1'
+    abstractBaseClass = True
+
+    # Keep these lists sorted in order by id!  Otherwise we'll never
+    # keep this in order...
+    users = {
+        'bin': (('bin', 1), {
+            'group':'bin',
+            'groupid':1,
+            'homedir':'/sbin',
+            'supplemental':['sys']
+        }),
+        'daemon': (('daemon', 2), {
+            'homedir':'/sbin',
+            'comment':'daemon'
+        }),
+        'lp': (('lp', 4), {
+            'groupid':7,
+            'homedir':'/var/spool/lpd',
+            'comment':'lp',
+            'supplemental':['daemon']
+        }),
+        'mail': (('mail', 8), {
+            'groupid':12,
+            'homedir':'%(localstatedir)s/spool/mail',
+            'comment':'mail'
+        }),
+        'uucp': (('uucp', 10), {
+            'groupid':14,
+            'homedir':'%(localstatedir)s/spool/uucp',
+            'comment':'uucp'
+        }),
+        'games': (('games', 12), {
+            'groupid':20,
+            'homedir':'%(prefix)s/games',
+            'comment':'games',
+            'shell':'%(essentialsbindir)s/nologin'
+        }),
+        'named': (('named', 25), {
+            'homedir':'%(localstatedir)s/named',
+            'comment':'Named'
+        }),
+        'postgres': (('postgres', 26), {
+            'homedir':'%(servicedir)s/pgsql',
+            'comment':'postgres',
+            'shell':'%(essentialbindir)s/bash'
+        }),
+        'mysql': (('mysql', 27), {
+            'homedir':'%(localstatedir)s/lib/mysql',
+            'comment':'mysql',
+            'shell':'%(essentialbindir)s/bash'
+        }),
+        'nscd': (('nscd', 28), {
+            'homedir':'/',
+            'comment':''
+        }),
+        'rpcuser': (('rpcuser', 29), {
+            'homedir':'%(localstatedir)s/lib/nfs',
+            'comment':'RPC Service User'
+        }),
+        'rpc': (('rpc', 32), {
+            'homedir':'/',
+            'comment':'Portmapper RPC User'
+        }),
+        'ntp': (('ntp', 38), {
+            'groupid':38,
+            'homedir':'%(sysconfdir)s/ntp'
+        }),
+        'mailman': (('mailman', 41), {
+            'homedir':'%(localstatedir)s/mailman',
+            'comment':'GNU Mailing LIst Manager'
+        }),
+        'gdm': (('gdm', 42), {
+            'homedir':'%(localstatedir)s/gdm'
+        }),
+        'xfs': (('xfs', 43), {
+            'homedir':'%(sysconfdir)s/X11/xfs',
+            'comment':'X Font Server'
+        }),
+        'avahi': (('avahi', 44), {
+            'homedir':'/',
+            'comment':'Avahi'
+        }),
+        'mailnull': (('mailnull', 47), {
+            'homedir':'%(localstatedir)s/spool/mailqueue'
+        }),
+        'apache': (('apache', 48), {
+            'homedir':'%(localstatedir)s/www',
+            'comment':'Apache'
+        }),
+        'smmsp': (('smmsp', 51), {
+            'homedir':'%(localstatedir)s/spool/mqueue',
+            'supplemental':['sasldb']
+        }),
+        'puppet': (('puppet', 52), {
+            'groupid':52,
+            'homedir':'%(localstatedir)s/lib/puppet',
+            'comment':'Puppet',
+            'shell':'%(essentialbindir)s/nologin'
+        }),
+        'nut': (('nut', 57), {
+            'homedir':'%(localstatedir)s/lib/ups',
+            'comment':'Network UPS Tools'
+        }),
+        'nslcd': (('nslcd', 65), {
+            'homedir':'/',
+            'comment':'LDAP Client User',
+            'group':'ldap',
+            'groupid':55,
+        }),
+        'haldaemon': (('haldaemon', 68), {
+            'homedir':'/',
+            'comment':'HAL daemon'
+        }),
+        'vcsa': (('vcsa', 69), {
+            'homedir':'/dev',
+            'comment':'virtual console memory owner'
+        }),
+        'emerge': (('emerge', 70), {
+            'homedir':'%(localstatedir)s/conary/emerge',
+            'comment':'Conary emerge build user'
+        }),
+        'sshd': (('sshd', 74), {
+            'homedir':'%(localstatedir)s/empty/sshd',
+            'comment':'Privilege-separated SSH'
+        }),
+        'pcap': (('pcap', 77), {
+            'group':'pcap',
+            'groupid':77,
+            'homedir':'%(localstatedir)s/arpwatch'
+        }),
+        'dbus': (('dbus', 81), {
+            'homedir':'/',
+            'comment':'System message bus'
+        }),
+        'sabayon': (('sabayon', 86), {
+            'groupid':86,
+            'homedir':'/tmp',
+            'comment':'Sabayon user',
+            'shell':'%(essentialbindir)s/nologin'
+        }),
+        'polkituser': (('polkituser', 87), {
+            'homedir':'/',
+            'comment':'polkituser'
+        }),
+        'beagleindex': (('beagleindex', 88), {
+            'comment':'Beagle System Indexer'
+        }),
+        'postfix': (('postfix', 89), {
+            'homedir':'%(localstatedir)s/spool/postfix',
+            'supplemental':['mail']
+        }),
+        'xymon': (('xymon', 94), {
+            'homedir':'/',
+            'shell':'%(essentialbindir)s/nologin'
+        }),
+        'nobody': (('nobody', 99), {
+            'homedir':'/',
+            'comment':'Nobody'
+        }),
+        'uuidd': (('uuidd', 100), {
+            'groupid':101,
+            'homedir':'/var/lib/libuuid',
+            'comment':'UUID generator helper daemon',
+            'shell':'/sbin/nologin'
+        }),
+        'clamav': (('clamav', 111), {
+            'comment':'Clam AntiVirus',
+            'shell':'%(essentialbindir)s/false'
+        }),
+        'usbmuxd': (('usbmuxd', 113), {
+            'group':'usbmuxd',
+            'homedir':'/sbin/nologin',
+            'comment':'usbmuxd user'
+        }),
+        'ntop': (('ntop', 121), {
+            'group':'ntop',
+            'homedir':'%(localstatedir)s/lib/ntop',
+            'shell':'/sbin/nologin'
+        }),
+        'ushare': (('ushare', 129), {
+            'homedir':'/',
+            'comment':'Ushare'
+        }),
+        'mediatomb': (('mediatomb', 131), {
+            'homedir':'/',
+            'comment':'MediaTomb'
+        }),
+        'rmake': (('rmake', 201), {
+            'groupid':201,
+            'homedir':'/srv/rmake',
+            'comment':'Rmake Server'
+        }),
+        'rmake-chroot': (('rmake-chroot', 202), {
+            'groupid':202,
+            'homedir':'/tmp/rmake',
+            'comment':'Rmake Chroot Server'
+        }),
+        'tor': (('tor', 251), {
+            'group':'tor',
+            'homedir':'/var/tmp/'
+        }),
+        'nm-openconnect': (('nm-openconnect', 290), {
+            'groupid':290,
+            'comment':'NetworkManager user for OpenConnect',
+            'shell':'/sbin/nologin'
+        }),
+        'nginx': (('nginx', 291), {
+            'groupid':291,
+            'comment':'nginx isolating user',
+            'shell':'/sbin/nologin'
+        }),
+        'redis': (('redis', 292), {
+            'groupid':292,
+            'comment':'Redis Server',
+            'shell':'/sbin/nologin'
+        }),
+        'memcached': (('memcached', 404), {
+            'groupid':404,
+            'homedir':'%(localstatedir)s/run/memcached',
+            'comment':'Memcached daemon',
+            'shell':'/sbin/nologin'
+        }),
+        'davfs2': (('davfs2', 444), {
+            'homedir':'%(cachedir)s/davfs2',
+            'comment':'User account for davfs2'
+        }),
+        'noip': (('noip', 446), {
+            'homedir':'/sbin/nologin',
+            'comment':'No-ip daemon user'
+        }),
+        'pulse': (('pulse', 447), {
+            'homedir':'/var/lib/pulseaudio',
+            'comment':'pulse audio user',
+            'shell':'/sbin/nologin',
+            'supplemental':['audio']
+        }),
+        'pulse-rt': (('pulse-rt', 450), {
+            'group':'pulse-rt',
+            'homedir':'/sbin/nologin',
+            'comment':'pulse audio realtime user'
+        }),
+        'bumblebee': (('bumblebee', 460), {
+            'group':'bumblebee',
+            'groupid':460,
+            'shell':'/sbin/nologin',
+            'homedir':'/sbin/nologin',
+            'comment':'bumblebee user for optimus cards'
+        }),
+        'mongod': (('mongod', 999), {
+            'group':'mongod',
+            'groupid':1002,
+            'homedir':'/var/lib/mongo',
+            'comment':'MongoDB Database Server',
+            'shell':'%(essentialbindir)s/nologin'
+        }),
+
+    }
+
+
+    # Keep these lists sorted in order by id!
+    groups = {
+        'sys': ('sys', 3),
+        'tty': ('tty', 5),
+        'disk': ('disk', 6),
+        'kmem': ('kmem', 9),
+        'wheel': ('wheel', 10),
+        'cdrom': ('cdrom', 11),
+        'man': ('man', 15),
+        'dialout': ('dialout', 18),
+        'floppy': ('floppy', 19),
+        'slocate': ('slocate', 21),
+        'utmp': ('utmp', 22),
+        'tape': ('tape', 33),
+        'utempter': ('utempter', 35),
+        'plugdev': ('plugdev', 46),
+        'lock': ('lock', 54),
+        'audio': ('audio', 63),
+        'scanner': ('scanner', 71),
+        'postdrop': ('postdrop', 90),
+        'users': ('users', 100),
+        'sasldb': ('sasldb', 104),
+        'powerdev': ('powerdev', 115),
+        'netdev': ('netdev', 116),
+        'vboxusers': ('vboxusers', 123),
+        'mediatomb': ('mediatomb', 131),
+        'bitlbee': ('bitlbee', 251),
+        'kvm': ('kvm', 444),
+        'jackuser': ('jackuser', 499),
+        'mongod': ('mongod', 1002),
+        'desktop_admin_r': ('desktop_admin_r', 1234),
+        'desktop_user_r': ('desktop_user_r', 1235),
+        'ccache': ('ccache', 9123),
+        'wireshark': ('wireshark', 9124),
+    }
+
+    def setup(r):
+        # Make sure there is no ID duplication in the lists
+        ids = [r.users[x][0][1] for x in r.users]
+        assert(len(ids) == len(set(ids)))
+        gids = [r.groups[x][1] for x in r.groups]
+        assert(len(gids) == len(set(gids)))
+
+        # Now actually create appropriate user and/or group
+        name = r.name[5:]
+        if name in r.users:
+            args = r.users[name]
+            r.User(*args[0], **args[1])
+        if name in r.groups:
+            args = r.groups[name]
+            r.Group(*args)

@@ -1,0 +1,15 @@
+--- Kino.desktop.orig	2009-03-28 17:54:22.000000000 +0100
++++ Kino.desktop	2009-09-09 20:29:45.000000000 +0200
+@@ -41,9 +41,9 @@
+ Encoding=UTF-8
+ TryExec=kino
+ Exec=kino %F
+-Icon=kino.png
++Icon=kino
+ Terminal=false
+ StartupNotify=true
+ Type=Application
+-Categories=Application;AudioVideo;AudioVideoEditing;
+-MimeType=video/dv;application/smil
++Categories=AudioVideo;AudioVideoEditing;GNOME;GTK;Video;Recorder;
++MimeType=video/dv;application/smil;

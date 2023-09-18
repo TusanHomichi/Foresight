@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+#               2011      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sysfsutils(AutoPackageRecipe):
+    name = 'sysfsutils'
+    version = '2.1.0'
+
+    def unpack(r):
+        r.addArchive('http://prdownloads.sourceforge.net/linux-diag/')
+        r.addPatch('sysfsutils-2.0.0-class-dup.patch')
+        r.addPatch('sysfsutils-2.1.0-get_link.patch')
+
+    def configure(r):
+        # F3 
+        # --libdir=/%(lib)s
+        r.Configure('--disable-static')
+
+    # XXX do not ship all the bins in bindir or place them in a extra subpkg

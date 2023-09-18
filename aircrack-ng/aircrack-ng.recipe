@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AircrackNg(CPackageRecipe):
+    name = 'aircrack-ng'
+    version = '1.1'
+
+    buildRequires = ['openssl:devel', 'zlib:devel']
+
+    def setup(r):
+        r.addArchive("http://download.aircrack-ng.org/")
+        r.Make(' SQLITE=True')
+        r.MakeInstall(
+            ' DESTDIR=%(destdir)s prefix=%(prefix)s bindir=%(bindir)s  SQLITE=True mandir=%(mandir)s '
+            ' sbindir=%(sbindir)s'
+        )

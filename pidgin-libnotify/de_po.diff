@@ -1,0 +1,15 @@
+Author: Jürgen Göricke <juergengoericke@gmx.de>
+Description: Fix translation for sign off message.
+Index: pidgin-libnotify-0.14/po/de.po
+===================================================================
+--- pidgin-libnotify-0.14.orig/po/de.po	2008-12-14 18:20:36.000000000 +0100
++++ pidgin-libnotify-0.14/po/de.po	2010-06-23 11:56:45.000000000 +0200
+@@ -48,7 +48,7 @@
+ #: src/pidgin-libnotify.c:379
+ #, c-format
+ msgid "%s signed off"
+-msgstr "%s hat sich angemeldet"
++msgstr "%s hat sich abgemeldet"
+ 
+ #: src/pidgin-libnotify.c:406
+ #, c-format

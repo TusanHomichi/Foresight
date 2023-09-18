@@ -1,0 +1,38 @@
+# Gil Hamlin
+# gil@foresightlinux.com
+# 2nd October 2005
+
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class mailnotification(RPMPackageRecipe,GnomePackageRecipe):
+    name = 'mail-notification'
+    version = '5.4'
+    rpmRelease = '22.fc14'
+    rpmPatches = [ 'mail-notification-5.4-evolution.patch',
+                   'mail-notification-5.4-gmime.patch',
+                   'mail-notification-5.4-sasl_encode64.patch',
+                   'mail-notification-5.4-evolution-gtkhtml.patch',
+                   'mail-notification-5.4-camel_headers.patch',
+                   'mail-notification-5.4-icons.patch',
+                   'mail-notification-5.4-weak.patch' ]
+
+    buildRequires = [ 'GConf:devel', 'GConf:runtime', 'ORBit2:devel', 'cyrus-sasl:devel', 'desktop-file-utils:runtime', 'esound:devel', 'evolution-data-server:devel', 'evolution:devel',  'gmime:devel', 'gnome-keyring:devel', 'gnome-vfs:devel', 'gob2:runtime', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeui:devel', 'libnotify:devel', 'openssl:devel', 'popt:devel', 'rarian:devel', 'rarian:runtime', 'dbus-glib:runtime' ]
+
+    extraConfig = '-disable-hotmail --disable-yahoo'
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+        r.Run('./jb configure                   \
+            prefix=%(prefix)s                   \
+            destdir=%(destdir)s                 \
+            bindir=%(bindir)s                   \
+            libdir=%(libdir)s                   \
+            libexecdir=%(libexecdir)s           \
+            datadir=%(datadir)s                 \
+            sysconfdir=%(sysconfdir)s           \
+            localstatedir=%(localstatedir)s     \
+            cflags=-I/usr/kerberos/include/')
+        r.Run('./jb build')
+        r.Run('./jb install')
+

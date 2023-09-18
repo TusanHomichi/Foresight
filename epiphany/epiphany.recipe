@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+loadRecipe('gnomepackage')
+class Epiphany(GnomePackageRecipe):
+    buildRequires = [  'atk:devel', 'gtk:devel', 'libbonoboui:devel', 'rarian:runtime',
+                       'libxml2:devel', 'libgnomeui:devel', 'libglade:devel',
+                       'gnome-vfs:devel', 'GConf:devel', 'ORBit2:devel', 
+                       'enchant:runtime', 'cairo:devel', 'libgnome-keyring:devel',
+                       'fontconfig:devel', 'freetype:devel', 'gcc:devel', 'glib:devel',
+                       'glibc:devel', 'gnome-desktop:devel', 'libart_lgpl:devel',
+                       'libbonobo:devel', 'libgnome:devel', 'libgnomecanvas:devel',
+                       'libgnomeprint:devel', 'libgnomeprintui:devel', 'libpng:devel',
+                       'libxslt:devel', 'nspr:devel',  'nss:devel', 'iso-codes:devellib',
+                       'pango:devel', 'popt:devel', 'startup-notification:devel',
+                       'dbus-glib:devellib', 'dbus:devel', 'libstdc++:devel', 'NetworkManager:devel',
+                       'GConf:runtime', 'dbus-glib:runtime', 'desktop-file-utils:runtime',
+                       'gettext:runtime', 'glib:runtime', 'perl:runtime', 'gtk:runtime',
+                       'gnome-doc-utils:devel', 'gnome-doc-utils:runtime',
+                       'python:devel', 'pygtk:devel', 'gnome-python:devel', 'libxml2:python',
+                       'gvfs:devel', 'avahi:devel', 'libcanberra:devel',
+                       'curl:devel', 'icu:devel', 'libnotify:devel', 'openssl:devel', 'sqlite:devel',
+                       'WebKit:devel', 'unique:devel',
+                       'ca-certificates:runtime',
+                       ]
+
+    name = 'epiphany'
+    version = '2.30.6'
+
+    patches = [ 'epiphany-libnotify-0.7.patch', 'epiphany-2.30.6-introspection-prefix.patch', 'epiphany-2.30.6-dbus-fix.patch' ]
+
+
+    extraConfig = (' --with-distributor-name=Foresight'
+                   ' --disable-scrollkeeper'
+                   ' --enable-zeroconf'
+                   ' --enable-nautilus-view=yes'
+                   ' --enable-network-manager'
+                   ' --enable-python'
+                   ' --disable-introspection'
+                   ' --with-ca-file=/etc/ssl/certs/ca-bundle.crt')
+
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        r.Replace('http://www.google.com', 'http://www.foresightlinux.org/', 'data/epiphany.schemas.in')
+        r.disableParallelMake()
+        r.Create('data/default-prefs-common.js',
+                 contents = """ pref("general.useragent.vendor", "Foresight Linux"); """)
+
+    def policy(r):
+        r.Remove('%(datadir)s/applications/bme.desktop')
+

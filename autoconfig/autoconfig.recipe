@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class AutoConfig(CPackageRecipe):
+
+    buildRequires = [ 'glibc:devel', 'chkconfig:runtime' ]
+
+    name = 'autoconfig'
+    version = '0.2'
+
+    def setup(r):
+        r.addArchive('http://user-contributions.org/projects/ddcxinfo-arch/source/ddcxinfo-arch-0.8.tar.gz')
+        r.Make()
+        r.MakeDirs('%(sbindir)s')
+        r.Install('ddcxinfo-knoppix', '%(sbindir)s/ddcxinfo')
+        r.Remove('CHANGES','README')
+        r.addSource('autoconfig.init', dest='%(initdir)s/autoconfig')
+        r.addSource('autoconfig.sbin', dest='%(sbindir)s/autoconfig')
+        r.addSource('mkxorgconfig', dest='%(sbindir)s/')
+        r.addSource('xorg.conf.i810', dest='%(sysconfdir)s/X11/')
+        r.addSource('xorg.conf.nv', dest='%(sysconfdir)s/X11/')
+        r.addSource('xorg.conf.nvidia', dest='%(sysconfdir)s/X11/')
+        r.addSource('xorg.conf.vesa', dest='%(sysconfdir)s/X11/')
+        r.addSource('xorg.conf.radeon', dest='%(sysconfdir)s/X11/')

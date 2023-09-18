@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pythonmpd(PackageRecipe):
+    name = 'python-mpd'
+    version = '0.2.1'
+
+    buildRequires = ['python:devel',
+                     'python-setuptools:python']
+
+    def setup(r):
+        r.addArchive("http://pypi.python.org/packages/source/p/python-mpd/%(name)s-%(version)s.tar.gz")
+        r.PythonSetup(data='--install-data=%(prefix)s')
+
+

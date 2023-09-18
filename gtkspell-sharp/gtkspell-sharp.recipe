@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GtkspellSharp(AutoPackageRecipe):
+    name = 'gtkspell-sharp'
+    version = 'svn.r84987'
+ 
+    buildRequires = ['gnome-common:runtime', 'gtk-sharp:cil', 'gtk-sharp:devellib', 'mono:cil', 'mono:devel', 'mono:runtime', 'pkgconfig:devel', 'gtk:devel', 'gtkspell:devel', 'gtk-sharp:runtime']
+ 
+    def unpack(r):
+        r.addSvnSnapshot('svn://anonsvn.mono-project.com/source/trunk/gtkspell-sharp')
+        r.Run('NOCONFIGURE=y ./autogen.sh')
+
+    def policy(r):
+        r.Replace('libdir=\${exec_prefix}/lib', 'libdir=%(libdir)s', '%(libdir)s/pkgconfig/*.pc')

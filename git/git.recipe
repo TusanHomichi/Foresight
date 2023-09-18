@@ -1,0 +1,47 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2009-2014 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+class Git(CPackageRecipe):
+    name = 'git'
+    version = '2.0.0'
+
+    buildRequires = [
+        'curl:devel', 'expat:devel', 'openssl:devel',
+        'perl:devel', 'python:devel',  'zlib:devel', 
+        'asciidoc:runtime', 'gettext:runtime', 'xmlto:runtime',
+        'perl:runtime', 'perl-IO-Compress:perl', 'perl-DBI:perl', 
+        'perl-DBD-MySQL:perl', 'perl-DBD-Pg:perl', 'perl-DBD-SQLite:perl',
+        'perl-HTTP-Cookies:perl', 'perl-URI:perl', 'perl-Term-ReadKey:perl',
+        'perl-Net-SMTP-SSL:perl', 'perl-YAML:perl',
+        'subversion:perl', 'asciidoc:runtime', ]
+
+    def setup(r):
+        r.addArchive('https://www.kernel.org/pub/software/scm/git/')
+        r.Make('prefix=%(prefix)s all doc')
+        r.MakeInstall('prefix=%(prefix)s mandir=%(mandir)s install install-doc')
+
+        # Bash completion stuff
+        # Conary will complain about relative path if we don't clean this up
+        # Not needed anymore
+        #r.Replace('#!bash', '#', 'contrib/completion/git-completion.bash')
+        r.Install('contrib/completion/git-completion.bash',
+                  '%(sysconfdir)s/bash_completion.d/git', mode=0644)
+        r.Config(exceptions='%(sysconfdir)s/bash_completion.d/')
+
+        r.Copy('gitweb/git*', '%(servicedir)s/www/cgi-bin/')
+        r.PackageSpec('gitweb', '%(servicedir)s/www/cgi-bin/.*')
+
+        # explicitly put git-repo-config into :runtime, so it isn't put in :devel
+        r.ComponentSpec('runtime', '%(bindir)s/git-repo-config',
+                                   '%(bindir)s/git-config')
+
+        r.LinkCount(exceptions=('%(bindir)s', '%(libexecdir)s/git-core/'))
+        r.NonBinariesInBindirs(exceptions=('%(libexecdir)s/git-core/'))
+
+        r.PackageSpec('git-svn',
+            '%(libexecdir)s/git-core/git-svn',
+            '%(mandir)s/man1/git-svn.1.gz',
+            )

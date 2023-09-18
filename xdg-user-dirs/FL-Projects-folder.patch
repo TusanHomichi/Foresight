@@ -1,0 +1,11 @@
+diff -r 6b446d423997 user-dirs.defaults
+--- a/user-dirs.defaults	Tue May 25 18:44:22 2010 +0200
++++ b/user-dirs.defaults	Tue May 25 18:45:22 2010 +0200
+@@ -9,6 +9,7 @@
+ DOCUMENTS=Documents
+ MUSIC=Music
+ PICTURES=Pictures
++PROJECTS=Projects
+ VIDEOS=Videos
+ # Another alternative is:
+ #MUSIC=Documents/Music

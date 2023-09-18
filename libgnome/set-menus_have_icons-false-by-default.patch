@@ -1,0 +1,22 @@
+From 3af3f24488fd467472f1f8cc3622481ea48003bf Mon Sep 17 00:00:00 2001
+From: William Jon McCann <jmccann@redhat.com>
+Date: Tue, 14 Jul 2009 16:01:14 +0000
+Subject: Set menus_have_icons=false by default
+
+http://bugzilla.gnome.org/show_bug.cgi?id=557469
+---
+diff --git a/schemas/desktop_gnome_interface.schemas.in.in b/schemas/desktop_gnome_interface.schemas.in.in
+index 6973843..44034f7 100644
+--- a/schemas/desktop_gnome_interface.schemas.in.in
++++ b/schemas/desktop_gnome_interface.schemas.in.in
+@@ -65,7 +65,7 @@
+       <applyto>/desktop/gnome/interface/menus_have_icons</applyto>
+       <owner>gnome</owner>
+       <type>bool</type>
+-      <default>true</default>
++      <default>false</default>
+       <locale name="C">
+         <short>Menus Have Icons</short>
+         <long>Whether menus may display an icon next to a menu entry.</long>
+--
+cgit v0.8.3.1

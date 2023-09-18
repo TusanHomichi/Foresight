@@ -1,0 +1,127 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdecorepackage')
+class kdeBindings(kdeCorePackageRecipe):
+
+    name = 'kdebindings'
+    version = '4.6.1'
+
+    buildRequires = [
+        'akonadi:devel', 
+        'akonadi:runtime',
+        'attica:devel', 
+        'boost:devel', 
+        'bzr:runtime', 
+        'cvs:runtime', 
+        'db:devel',
+        'dbus:devel', 
+        'dbus-python:python', 
+        'gdbm:devel', 
+        'git:runtime', 
+        'kate:devel', 
+        'kdelibs:devel', 
+        'kdelibs:devellib',
+        'kdelibs:runtime',
+        'kdepimlibs:devel',
+        'libXcomposite:devel', 
+        'libXcursor:devel', 
+        'libXft:devel', 
+        'libXi:devel', 
+        'libxkbfile:devel', 
+        'libXpm:devel', 
+        'libXScrnSaver:devel', 
+        'libXtst:devel', 
+        'libXv:devel', 
+        'libXxf86misc:devel', 
+        'mercurial:runtime', 
+        'mono:cil',
+        'mono:devel', 
+        'mono:runtime', 
+        'okular:devel',
+        'openssh:runtime', 
+        'perl:devel', 
+        'perl-List-MoreUtils:perl', 
+        'polkit-qt-1:devel',
+        'PyQt4:python', 
+        'python:devel', 
+        'qimageblitz:devel',
+        'QScintilla2:devel', 
+        'QScintilla2:python', 
+        'qt4:devel', 
+        'qt4-sql:mysql', 
+        'qt4-sql:odbc', 
+        'qt4-sql:psql', 
+        'qt4-sql:sqlite', 
+        'ruby:devellib',
+        'ruby:runtime', 
+        'sip:devel', 
+        'sip:runtime', 
+        'soprano:devel',
+        'soprano:runtime',
+        'subversion:runtime',
+    ]
+
+    modules = [
+         'smoke',
+        ('smokegen', 'generator'),
+        ('pykde',
+            'python/pykde4'),
+        ('kross-python',
+            'python/krosspython'),
+        ('perl-qt',
+            'perl/qtcore',
+            'perl/qtdbus',
+            'perl/qtgui',
+            'perl/qtnetwork',
+            'perl/qttest',
+            'perl/qtxml'),
+        ('perl-kde',
+            'perl'),
+        ('qyoto',
+            'csharp/qyoto',
+            'csharp/qtscript',
+            'csharp/qttest',
+            'csharp/qtuitools',
+            'csharp/qtwebkit'),
+        ('kimono',
+            'csharp'),
+        ('qtruby',
+            'ruby/qtruby'),
+        ('korundum',
+            'ruby'),
+    ]
+
+    def unpack(r):
+        r.addArchive('mirror://kde//stable/%(version)s/src/%(name)s-%(version)s.tar.bz2')
+
+        r.cmakeArgs += (
+            ' -DWITH_Nepomuk:BOOL=OFF '
+            ' -DCMAKE_SKIP_RPATH=ON '
+            )
+
+    def postUnpack(r):
+
+        r.addPatches(
+            '01_python_modules_dont_link_against_libpython.diff',
+            '02_include_default_settings_in_python_cmakelist.diff',
+            '04_fix_ruby_requires.diff',
+            '05_rbqtapi_ruby1.8.diff',
+            '07_fix_kpythonpluginfactory_build.diff',
+            '08_csharp_plasma_examples.diff',
+            '10_fix_kimono_dllimports.diff',
+            '11_make_pykde4_respect_sip_flags.diff',
+            '12_pythonpluginfactory_use_versioned_python_lib.diff',
+            'version_cppparser_library.diff',
+        )
+
+        r.Replace('ruby1.8', 'ruby', 'ruby/qtruby/bin/rbqtapi')
+
+        r.addPatches(
+            'kdebindings-pykde-no-examples.diff',
+            'kdebindings-generators-undefined.patch',
+            'kdebindings-perl-buildfix.patch',
+            'kdebindings-perl-buildfix2.patch',
+        )

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class wbarConf(CPackageRecipe):
+    name = 'wbarconf'
+    version = '0.5'
+ 
+    buildRequires = ['pygobject:python', 'pygtk:python', 'python:devel']
+ 
+    def setup(r):
+        r.addArchive('http://kapsi.fi/ighea/wbarconf/%(name)s-%(version)s.tar.gz',
+            dir='/opt/')
+
+    def policy(r):
+        r.SetModes('/opt/%(name)s/wbarconf.py', 0755)

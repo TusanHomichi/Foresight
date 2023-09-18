@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lv2core(CPackageRecipe):
+    name = 'lv2core'
+    version = '3.0'
+ 
+    buildRequires = ['gcc-c++:runtime']
+ 
+    def setup(r):
+        r.addArchive('http://lv2plug.in/spec/')
+
+	r.ManualConfigure('configure --prefix=%(prefix)s/ --libdir=%(libdir)s/', configureName='waf')
+        r.Make('build', makeName='./waf')
+	r.Make('install --destdir=%(destdir)s', makeName='./waf')

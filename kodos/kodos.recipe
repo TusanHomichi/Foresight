@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Kodos(PackageRecipe):
+    name = 'kodos'
+    version = '2.4.9'
+ 
+    buildRequires = ["python:devel","PyQt:python","python-setuptools:python"]
+ 
+    def setup(r):
+        r.addArchive('mirror://sourceforge/kodos/%(name)s-%(version)s.tar.gz')
+        r.PythonSetup()
+        r.Remove("py2exe-setup.py","screenshots")
+        r.Requires("kodos:runtime","PyQt:python")
+

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+loadRecipe('gnomepackage')
+class GnomeVFSmonikers(GnomePackageRecipe):
+    name = 'gnome-vfs-monikers'
+    version = '2.15.3'
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'gettext:runtime', 
+    'glib:devel', 'gnome-vfs:devel', 'libbonobo:devel', 
+    'perl:runtime']

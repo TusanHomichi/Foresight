@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('cpanpackage.recipe', label='conary.rpath.com@rpl:devel')
+class PerlHTMLTableExtract(CPANPackageRecipe):
+    name = 'perl-HTML-TableExtract'
+    version = '2.10'
+    module = 'HTML'
+
+    buildRequires = [
+        'perl-HTML-Parser:perl',
+        'perl:lib',
+    ]

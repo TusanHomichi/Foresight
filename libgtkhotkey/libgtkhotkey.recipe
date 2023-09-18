@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libgtkhotkey(AutoPackageRecipe):
+    name = 'libgtkhotkey'
+    version = '0.2.1'
+ 
+    buildRequires = [
+                'atk:devel', 
+                'cairo:devel', 
+                'fontconfig:devel', 
+                'freetype:devel', 
+                'gdk-pixbuf:devel', 
+                'gettext:runtime', 
+                'glib:devel', 
+                'gtk-doc:runtime', 
+                'gtk:devel', 
+                'intltool:runtime', 
+                'libpng:devel', 
+                'pango:devel', 
+                'pkgconfig:devel'
+                    ]
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/gtkhotkey/0.2/%(version)s/+download/gtkhotkey-%(version)s.tar.gz')
+        r.addPatch('libgtkhotkey_doc_prefix.patch')
+        r.Configure('--disable-static')
+        r.Make()
+        r.MakeInstall()

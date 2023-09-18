@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Bullet(AutoPackageRecipe):
+    name = 'bullet'
+    version = '2.81'
+ 
+    buildRequires = ['Mesa:devel', 'freeglut:devel', 'libstdc++:devel']
+ 
+    def unpack(r):
+        r.addArchive('https://bullet.googlecode.com/files/bullet-2.81-rev2613.tgz')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '

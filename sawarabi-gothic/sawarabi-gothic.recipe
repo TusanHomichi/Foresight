@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class SawarabiGothic(PackageRecipe):
+    name = 'sawarabi-gothic'
+    version = '20100531'
+ 
+    packageSummary = 'Gothic font for Japanese'
+
+    buildRequires = [
+        'mkfontdir:runtime',
+        ]
+ 
+    def setup(r):
+        r.addArchive('http://dl.sourceforge.jp/sawarabi-fonts/47675/')
+        r.Install('%(name)s-medium.ttf', '%(datadir)s/fonts/%(name)s/')

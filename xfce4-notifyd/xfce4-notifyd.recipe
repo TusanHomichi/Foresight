@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2011 - 2013 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+loadSuperClass('xfcepackage')
+class Xfce4Notifyd(XfcePackageRecipe):
+
+    name = 'xfce4-notifyd'
+    version = '0.2.4'
+    subtree = 'apps'
+
+    buildRequires = [
+        'libxfce4util:devel', 'libxfce4ui:devel', 'libexo:runtime',
+        'xfce4-dev-tools:runtime', 'libtool:devel', 'libtool:runtime',
+        'libnotify:devel',
+    ] 
+
+    def policy(r):
+        r.ComponentSpec('xfce4-notifyd:runtime', '%(bindir)s/xfce4-notifyd-config')

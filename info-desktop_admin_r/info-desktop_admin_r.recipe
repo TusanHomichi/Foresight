@@ -1,0 +1,8 @@
+class INFOdesktopAdminR(GroupInfoRecipe):
+   name = "info-desktop_admin_r"
+   version = "1"
+
+   def setup(r):
+      # gid is arbitrary 
+      r.Group('desktop_admin_r', 1234)
+

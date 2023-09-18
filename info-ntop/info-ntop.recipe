@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class info_ntop(UserInfoRecipe):
+    name = 'info-ntop'
+    version = '1'
+
+    def setup(r):
+        r.User('ntop',
+               preferred_uid=121,
+               group='ntop',
+               shell='/sbin/nologin',
+               homedir = '%(localstatedir)s/lib/ntop')

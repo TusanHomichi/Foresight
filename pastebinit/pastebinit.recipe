@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2008-2014 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Pastebinit(PackageRecipe):
+    name = 'pastebinit'
+    version = '1.3.1'
+ 
+    buildRequires = ['python:devel']
+ 
+    def setup(r):
+        r.addArchive('http://launchpad.net/pastebinit/trunk/%(version)s/+download/')
+        r.SetModes('%(name)s',00755)
+        r.Move('pastebin.d/*.*','/etc/pastebin.d/')
+        r.Install('%(name)s','%(bindir)s/')

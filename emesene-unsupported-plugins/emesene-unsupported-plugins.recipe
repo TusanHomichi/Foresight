@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+# http://emesene.org/trac/wiki/Plugins
+
+class EmeseneUnsupportedPlugins(PackageRecipe):
+    name = 'emesene-unsupported-plugins'
+    version = '0.1'
+ 
+    buildRequires = ['emesene:data','python:devel']
+ 
+    def setup(r):
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/Countdown.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/CustomGtkStyle.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/HtmlCommands.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/PsychoMode.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/Wikipedia.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/Wordpress.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/Xkcd.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/gmailNotify.py')
+        r.addSource('https://emesene.svn.sourceforge.net/svnroot/emesene/trunk/unsupported-plugins/mailChecker.py')
+        r.addSource('http://emesene.org/trac/raw-attachment/wiki/Plugins/LastSaid.py')
+        r.addSource('http://emesene.org/trac/raw-attachment/wiki/Plugins/Dices.py')
+        r.addSource('http://emesene.org/trac/raw-attachment/wiki/Plugins/Background.py')
+        r.addSource('http://emesene.org/trac/raw-attachment/wiki/Plugins/CustomStatus.py')
+        r.addSource('http://emesene.org/trac/raw-attachment/wiki/Plugins/image_timer.py')
+        r.addSource('http://emesene.org/trac/raw-attachment/wiki/Plugins/notes.py')
+        r.Install('*.py','%(datadir)s/emesene/plugins_base/')

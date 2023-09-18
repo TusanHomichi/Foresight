@@ -1,0 +1,16 @@
+--- configure	2008-08-30 14:04:47.000000000 +0200
++++ configure.new	2008-08-30 14:07:41.000000000 +0200
+@@ -3322,9 +3322,10 @@
+ elif test -f lexyy.c; then
+   ac_cv_prog_lex_root=lexyy
+ else
+-  { { echo "$as_me:$LINENO: error: cannot find output from $LEX; giving up" >&5
+-echo "$as_me: error: cannot find output from $LEX; giving up" >&2;}
+-   { (exit 1); exit 1; }; }
++  ac_cv_prog_lex_root=lex.yy
++#  { { echo "$as_me:$LINENO: error: cannot find output from $LEX; giving up" >&5
++#echo "$as_me: error: cannot find output from $LEX; giving up" >&2;}
++#   { (exit 1); exit 1; }; }
+ fi
+ fi
+ { echo "$as_me:$LINENO: result: $ac_cv_prog_lex_root" >&5

@@ -1,0 +1,9 @@
+Use Debian executable name
+--- a/ruby/qtruby/bin/rbqtapi
++++ b/ruby/qtruby/bin/rbqtapi
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env ruby
++#!/usr/bin/env ruby1.8
+ 
+ # Note: this program is part of qtruby and makes use of its internal functions.
+ #       You should not rely on those in your own programs.

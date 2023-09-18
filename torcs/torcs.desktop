@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Torcs
+Name[ca]=Torcs
+Name[de]=Torcs
+Name[es]=Torcs
+Name[fr]=Torcs
+Name[no]=Torcs
+Name[pt]=Torcs
+Comment=3D racing cars simulator
+Comment[de]=3D Autorenn Simulation
+Exec=torcs
+Icon=torcs.png
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=GNOME;Application;Game;Simulation;

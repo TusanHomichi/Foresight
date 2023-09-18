@@ -1,0 +1,29 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class libIndicateQt(CMakePackageRecipe):
+
+    name = 'libindicate-qt'
+    version = '0.2.5'
+
+    buildRequires = [
+        'dbus-glib:devel', 'dbus:devel', 'glib:devel', 'libindicate:devel',
+        'libstdc++:devel', 'phonon:devel', 'qt4:devel', 'qt4:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://launchpad.net/libindicate-qt/trunk/%(version)s/+download/')
+        for p in [
+            # rev 114, 115, 116 from ~agateau/libindicate-qt/libindicate-0.5
+            # to make it compile with new libindicate
+            '114', '115', '116', 
+        ]:
+            r.addPatch(p)
+
+        # multilib fix
+        r.Replace('/lib$', '/%(lib)s', 'indicate-qt.pc.in')
+

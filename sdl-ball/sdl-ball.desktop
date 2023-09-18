@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=SDL-Ball
+Comment=Arkanoid/Breakout clone
+Exec=sdl-ball
+Icon=/usr/share/sdl-ball/themes/default/icon32.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Application;Game;ArcadeGame;
+X-Desktop-File-Install-Version=0.11

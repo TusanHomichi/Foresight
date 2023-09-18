@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Geos(AutoPackageRecipe):
+    name = 'geos'
+    version = '3.2.2'
+ 
+    buildRequires = ['libstdc++:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://download.osgeo.org/%(name)s/%(name)s-%(version)s.tar.bz2')

@@ -1,0 +1,52 @@
+Index: src/streamanalyzer/throughplugins/CMakeLists.txt
+===================================================================
+--- src/streamanalyzer/throughplugins/CMakeLists.txt	(revision 698016)
++++ src/streamanalyzer/throughplugins/CMakeLists.txt	(working copy)
+@@ -12,7 +12,7 @@
+   else(WIN32)
+     set(prefix strigita_)
+   endif(WIN32)
+-  add_library(${libname} MODULE ${files})
++  add_library(${libname} SHARED ${files})
+   set_target_properties(${libname} PROPERTIES
+     PREFIX ${prefix}
+     VERSION ${STRIGI_VERSION}
+Index: src/streamanalyzer/lineplugins/CMakeLists.txt
+===================================================================
+--- src/streamanalyzer/lineplugins/CMakeLists.txt	(revision 698016)
++++ src/streamanalyzer/lineplugins/CMakeLists.txt	(working copy)
+@@ -12,7 +12,7 @@
+   else(WIN32)
+     set(prefix strigila_)
+   endif(WIN32)
+-  add_library(${libname} MODULE ${files})
++  add_library(${libname} SHARED ${files})
+   set_target_properties(${libname} PROPERTIES
+     PREFIX ${prefix}
+     VERSION ${STRIGI_VERSION}
+Index: src/streamanalyzer/saxplugins/CMakeLists.txt
+===================================================================
+--- src/streamanalyzer/saxplugins/CMakeLists.txt	(revision 698016)
++++ src/streamanalyzer/saxplugins/CMakeLists.txt	(working copy)
+@@ -12,7 +12,7 @@
+   else(WIN32)
+     set(prefix strigila_)
+   endif(WIN32)
+-  add_library(${libname} MODULE ${files})
++  add_library(${libname} SHARED ${files})
+   set_target_properties(${libname} PROPERTIES
+     PREFIX ${prefix}
+     VERSION ${STRIGI_VERSION}
+Index: src/streamanalyzer/endplugins/CMakeLists.txt
+===================================================================
+--- src/streamanalyzer/endplugins/CMakeLists.txt	(revision 698016)
++++ src/streamanalyzer/endplugins/CMakeLists.txt	(working copy)
+@@ -13,7 +13,7 @@
+   else(WIN32)
+     set(prefix strigiea_)
+   endif(WIN32)
+-  add_library(${libname} MODULE ${files})
++  add_library(${libname} SHARED ${files})
+   set_target_properties(${libname} PROPERTIES
+     PREFIX ${prefix}
+     VERSION ${STRIGI_VERSION}

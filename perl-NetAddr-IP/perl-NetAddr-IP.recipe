@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlNetaddrIp(CPANPackageRecipe):
+    name = 'perl-NetAddr-IP'
+    version = '4.027'
+    server = 'http://search.cpan.org/CPAN/'
+    buildRequires = ['perl:devel']

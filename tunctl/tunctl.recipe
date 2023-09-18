@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+import time
+
+class TunCtl(CPackageRecipe):
+    buildRequires = ['userspace-kernel-headers:devel']
+
+    name = 'tunctl'
+    version = time.strftime('%Y%m%d')
+
+    def setup(r):
+        r.addCvsSnapshot(':pserver:anonymous@user-mode-linux.cvs.sourceforge.net:/cvsroot/user-mode-linux', 'tools')
+        r.Make(dir = 'tunctl')
+        r.MakeInstall(dir = 'tunctl')
+        r.AutoDoc(exceptions = ['net.*', 'test.*'])

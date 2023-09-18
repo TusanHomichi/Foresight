@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Lsdvd(AutoPackageRecipe):
+    name = 'lsdvd'
+    version = '0.16'
+ 
+    buildRequires = ['libdvdread:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/lsdvd/')

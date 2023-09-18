@@ -1,0 +1,20 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class KDevPlatform(kdePackageRecipe):
+
+    name = 'kdevplatform'
+    version = '1.2.0'
+
+    buildRequires = [
+        'apr-util:devel', 'apr:devel', 'boost:devel', 'qjson:devel',
+        'subversion:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('mirror://kde/stable/kdevelop/4.2.0/src/')
+

@@ -1,0 +1,33 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadInstalled('icedtea[bootstrap]')
+
+class XercesJ(PackageRecipe):
+
+    name = 'xerces-j'
+    version = '2.9.1'
+
+    buildRequires = [
+        'icedtea-jdk:runtime[bootstrap]'
+        ]
+
+    def setup(r):
+
+        r.macros.archive_name = 'Xerces-J'
+        r.macros.archive_version = 'src.%(version)s'
+        r.macros.xerces_site = 'http://xml.apache.org/dist/xerces-j'
+
+        r.addArchive('%(xerces_site)s/')
+
+        r.macros.tools_archive = '%(archive_name)s-tools.%(version)s.tar.gz'
+        r.addArchive('%(xerces_site)s/%(tools_archive)s', dir='%(maindir)s/')
+
+        r.Run('JAVA_HOME='+IcedTea.java_home+' bash build.sh jars')
+
+        r.Install('build/xercesImpl.jar', '%(datadir)s/java/')
+
+        # XXX: check this later
+        r.Requires(exceptDeps=r'java\:\ org\.apache\.xml\.resolver\..*')
+

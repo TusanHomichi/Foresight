@@ -1,0 +1,34 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Gyachi(AutoPackageRecipe):
+    name = 'gyachi'
+    version = '1.2.10'
+ 
+    buildRequires = [ 'ImageMagick:runtime', 'alsa-lib:devel', 'aspell:devel', 'atk:devel',
+                      'autoconf:runtime', 'automake:runtime', 'cairo:devel', 'dbus-glib:devel',
+                      'dbus:devel', 'desktop-file-utils:runtime', 'expat:devel',
+                      'fontconfig:devel', 'freetype:devel', 'gdk-pixbuf:devel', 'libnotify:devel',
+                      'gettext:devel', 'gettext:runtime', 'glib:devel', 'gpgme:devel', 'gtk:devel',
+                      'gtkspell:devel', 'intltool:runtime', 'jasper:devel', 'libICE:devel', 'libX11:devel',
+                      'libgpg-error:devel', 'libgtkhtml:devel', 'libjpeg:devel', 'libmcrypt:devel',
+                      'libpng:devel', 'libtool:devel', 'libtool:runtime', 'libv4l:devel', 'libxml2:devel', 
+                      'openssl:devel', 'pango:devel', 'pkgconfig:devel', 'pulseaudio:devel', 'zlib:devel', ]
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/gyachi/gyachi/%(version)s/gyachi-%(version)s.tar.gz')
+        r.addPatch('gyachi-1.2.10-libv4l1.patch')
+        r.addPatch('gyachi-1.2.10-gtk-and-notify-fix.patch')
+        r.addPatch('gyachi-1.2.10-desktop-fix.patch')
+
+    def configure(r):
+        r.Configure(configureName='autogen.sh')
+        r.Configure('--libexecdir=%(libexecdir)s/gyachi --disable-rpath --disable-wine --disable-gtktest --disable-glibtest --with-x ')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.Copy('%(datadir)s/%(name)s/themes/gyachi-classic/gyach-icon_48.png', '%(datadir)s/pixmaps/%(name)s.png')

@@ -1,0 +1,113 @@
+
+https://bugzilla.redhat.com/show_bug.cgi?id=691375
+
+URL: http://svn.apache.org/viewvc?rev=934494&view=rev
+Log:
+Reintegrate the 1.6.x-r933299 branch:
+
+ * r933299
+   More issue #3242 fixes, this time covering updates which make use
+   of the copyfrom info introduced in Subversion 1.5.0 as part of
+   issue #503.
+   Justification:
+     Issue #3242 has been one of the painful for Subversion users
+     since its regressive introduction in Subversion 1.5.
+   Branch:
+     ^/subversion/branches/1.6.x-r933299
+   Votes:
+     +1: cmpilato, pburba, rhuijben
+
+--- subversion-1.6.11/subversion/libsvn_client/update.c.r934494
++++ subversion-1.6.11/subversion/libsvn_client/update.c
+@@ -44,7 +44,7 @@
+ struct ff_baton
+ {
+   svn_client_ctx_t *ctx;       /* client context used to open ra session */
+-  const char *repos_root;      /* the root of the ra session */
++  const char *repos_root;      /* repository root URL */
+   svn_ra_session_t *session;   /* the secondary ra session itself */
+   apr_pool_t *pool;            /* the pool where the ra session is allocated */
+ };
+@@ -63,14 +63,22 @@ file_fetcher(void *baton,
+              apr_pool_t *pool)
+ {
+   struct ff_baton *ffb = (struct ff_baton *)baton;
++  const char *dirpath, *base_name, *session_url, *old_session_url;
+ 
+-  if (! ffb->session)
+-    SVN_ERR(svn_client__open_ra_session_internal(&(ffb->session),
+-                                                 ffb->repos_root,
++  svn_path_split(path, &dirpath, &base_name, pool);
++  session_url = svn_path_url_add_component2(ffb->repos_root, 
++                                            dirpath, pool);
++
++  if (ffb->session)
++    SVN_ERR(svn_client__ensure_ra_session_url(&old_session_url, ffb->session,
++                                              session_url, ffb->pool));
++  else
++    SVN_ERR(svn_client__open_ra_session_internal(&(ffb->session), session_url,
+                                                  NULL, NULL, NULL,
+                                                  FALSE, TRUE,
+                                                  ffb->ctx, ffb->pool));
+-  return svn_ra_get_file(ffb->session, path, revision, stream,
++
++  return svn_ra_get_file(ffb->session, base_name, revision, stream,
+                          fetched_rev, props, pool);
+ }
+ 
+--- subversion-1.6.11/subversion/tests/cmdline/authz_tests.py.r934494
++++ subversion-1.6.11/subversion/tests/cmdline/authz_tests.py
+@@ -822,6 +822,44 @@ def authz_switch_to_directory(sbox):
+   # Switch /A/B/E to /A/B/F.
+   svntest.main.run_svn(None, 'switch', sbox.repo_url + "/A/B/E", G_path)
+ 
++
++def authz_access_required_at_repo_root2(sbox):
++  "more authz issue #3242 - update to renamed file"
++
++  sbox.build(create_wc = False)
++  root_url = sbox.repo_url
++
++  # Now we get all restrictive.
++  write_authz_file(sbox, {'/': '* =',
++                          '/A': 'jrandom = rw'})
++  write_restrictive_svnserve_conf(sbox.repo_dir)
++
++  # Rename a file.
++  svntest.main.run_svn(None, 'mv',
++                       '-m', 'rename file in readable writable space',
++                       root_url + '/A/B/E/alpha',
++                       root_url + '/A/B/E/alpha-renamed')
++  
++  # Check out original greek sub tree below /A/B/E 
++  # and update it to the above rename.
++  wc_dir = sbox.add_wc_path('ABE')
++  os.mkdir(wc_dir)
++  svntest.main.run_svn(None, 'co', '-r', '1', root_url + '/A/B/E', wc_dir)
++  svntest.main.run_svn(None, 'up', wc_dir)
++
++  # Rename a directory.
++  svntest.main.run_svn(None, 'mv',
++                       '-m', 'rename diretory in readable writable space',
++                       root_url + '/A/D/H',
++                       root_url + '/A/D/a g e')
++  
++  # Check out original greek sub tree below /A/D
++  # and update it to the above rename.
++  wc_dir = sbox.add_wc_path('AD')
++  os.mkdir(wc_dir)
++  svntest.main.run_svn(None, 'co', '-r', '1', root_url + '/A/D', wc_dir)
++  svntest.main.run_svn(None, 'up', wc_dir)
++
+ ########################################################################
+ # Run the tests
+ 
+@@ -845,6 +883,8 @@ test_list = [ None,
+                                svntest.main.is_ra_type_svn)),
+               XFail(Skip(authz_switch_to_directory,
+                          svntest.main.is_ra_type_file)),
++              Skip(authz_access_required_at_repo_root2,
++                   svntest.main.is_ra_type_file),
+              ]
+ 
+ if __name__ == '__main__':

@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Editra(PackageRecipe):
+    name = 'Editra'
+    version = '0.6.89'
+
+    packageSummary = 'Editra is a multi-platform text editor'
+    packageDescription = 'Editra is a multi-platform text editor with an implementation that focuses on creating an easy to use interface and features that aid in code development. Currently it supports syntax highlighting and variety of other useful features for over 60 programming languages.'
+ 
+    buildRequires = ['chardet:python', 'desktop-file-utils:runtime', 'perl:runtime', 'python-setuptools:python', 'python:devel', 'wxPython:python']
+ 
+    def setup(r):
+        r.addArchive('http://editra.googlecode.com/files/%(name)s-%(version)s.tar.gz')
+        r.macros.pyver = '2.6' 
+        r.macros.sitepkgs = '%(libdir)s/python%(pyver)s/site-packages' 
+        r.Remove('plugins/*.egg')
+        r.PythonSetup()
+        r.MakeDirs('%(sitepkgs)s/Editra/plugins')
+        r.addSource('empty.txt')
+        r.Copy('empty.txt', '%(sitepkgs)s/Editra/plugins')
+        r.Copy('pixmaps/editra.png', '%(datadir)s/pixmaps/')
+        r.addSource('editra.desktop')
+        r.Desktopfile('editra.desktop')

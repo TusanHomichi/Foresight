@@ -1,0 +1,57 @@
+--- authinfo.py.jau	2008-01-10 20:30:56.000000000 -0500
++++ authinfo.py	2008-01-10 22:25:15.000000000 -0500
+@@ -1114,13 +1114,10 @@
+ 	def readPAM(self):
+ 		# Open the file.  Bail if it's not there or there's some problem
+ 	 	# reading it.
+-		try:
+-			f = open(SYSCONFDIR+"/pam.d/"+AUTH_PAM_SERVICE_AC, "r")
+-		except IOError:
+-			try:
+-				f = open(SYSCONFDIR+"/pam.d/"+AUTH_PAM_SERVICE, "r")
+-			except IOError:
+-				return False
++		try:
++			f = open(SYSCONFDIR+"/pam.d/"+AUTH_PAM_SERVICE, "r")
++		except IOError:
++			return False
+ 
+ 		prevline = ""
+ 		for line in f:
+@@ -2643,19 +2640,14 @@
+ 		output += "\n"
+ 		return output
+ 
+-	def linkPAMService(self, src, dest):
+-		f = os.path.isfile(dest)
+-		l = os.path.islink(dest)
+-		if (f and not l) or (l and not f):
+-			# Create the link only if it doesn't exist yet or is invalid
+-			try:
+-				os.unlink(dest)
+-			except OSError:
+-				pass
+-			try:
+-				os.symlink(src, dest)
+-			except OSError:
+-				pass
++	def renamePAMService(self, src, dest):
++		# If the rename fails, keep the src file so that things may be
++		# resolved by hand; if authconfig is re-run, its contents will
++		# be ignored and it will be truncated anyway.
++		try:
++			os.rename(src, dest)
++		except OSError:
++			pass
+ 	
+ 	# Write PAM setup to the control file.
+ 	def writePAM(self):
+@@ -2713,7 +2705,7 @@
+ 			except IOError:
+ 				pass
+ 
+-		self.linkPAMService(AUTH_PAM_SERVICE_AC, SYSCONFDIR+"/pam.d/"+AUTH_PAM_SERVICE)
++		self.renamePAMService(SYSCONFDIR+"/pam.d/"+AUTH_PAM_SERVICE_AC, SYSCONFDIR+"/pam.d/"+AUTH_PAM_SERVICE)
+
+ 		return True
+ 

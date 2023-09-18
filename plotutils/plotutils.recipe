@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Plotutils(AutoPackageRecipe):
+    name = 'plotutils'
+    version = '2.6'
+ 
+    buildRequires = ['bison:runtime', 'flex:devel', 'flex:runtime', 'install-info:runtime', 'libICE:devel', 'libSM:devel', 'libX11:devel', 'libXaw:devel', 'libXext:devel', 'libXmu:devel', 'libXt:devel', 'libpng:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://ftpmirror.gnu.org/%(name)s/')

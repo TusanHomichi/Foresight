@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2012 Adam Chasen (achasen@rpath.com)
+#
+
+class SpiceProtocol(AutoPackageRecipe):
+    name = 'spice-protocol'
+    version = '0.10.0'
+
+    buildRequires = []
+
+    def unpack(r):
+        r.addArchive('http://www.spice-space.org/download/releases/')

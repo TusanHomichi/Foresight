@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# Copyright (c) 2007 - 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('xfcepackage.recipe')
+class libxfcegui4(XfcePackageRecipe):
+
+    name = 'libxfcegui4'
+    version = '4.10.0'
+
+    XfcePackageRecipe.buildRequires.extend([
+        'libxfce4util:devel', 'glade:devel', 'libglade:devel', 'libxml2:devel',
+        'startup-notification:devel', 'xfconf:devel'
+    ])

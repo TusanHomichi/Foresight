@@ -1,0 +1,39 @@
+--- php-5.2.11/ext/curl/interface.c	2009-08-26 18:24:10.000000000 -0400
++++ php-5.2.11/ext/curl/interface.c.new	2010-02-24 15:27:03.000000000 -0500
+@@ -1044,7 +1044,7 @@
+ /* }}} */
+ #endif
+ 
+-#if LIBCURL_VERSION_NUM < 0x071101
++#if LIBCURL_VERSION_NUM < 0x071100
+ /* {{{ curl_free_string
+  */
+ static void curl_free_string(void **string)
+@@ -1128,7 +1128,7 @@
+ 
+ 	memset(&(*ch)->err, 0, sizeof((*ch)->err));
+ 
+-#if LIBCURL_VERSION_NUM < 0x071101
++#if LIBCURL_VERSION_NUM < 0x071100
+ 	zend_llist_init(&(*ch)->to_free.str,   sizeof(char *),            (llist_dtor_func_t) curl_free_string, 0);
+ #endif
+ 	zend_llist_init(&(*ch)->to_free.slist, sizeof(struct curl_slist), (llist_dtor_func_t) curl_free_slist,  0);
+@@ -1262,7 +1262,7 @@
+ 	curl_easy_setopt(dupch->cp, CURLOPT_INFILE,            (void *) dupch);
+ 	curl_easy_setopt(dupch->cp, CURLOPT_WRITEHEADER,       (void *) dupch);
+ 
+-#if LIBCURL_VERSION_NUM < 0x071101
++#if LIBCURL_VERSION_NUM < 0x071100
+ 	zend_llist_copy(&dupch->to_free.str, &ch->to_free.str);
+ 	/* Don't try to free copied strings, they're free'd when the original handle is destroyed */
+ 	dupch->to_free.str.dtor = NULL;
+@@ -2089,7 +2089,7 @@
+ 	}
+ 
+ 	curl_easy_cleanup(ch->cp);
+-#if LIBCURL_VERSION_NUM < 0x071101
++#if LIBCURL_VERSION_NUM < 0x071100
+ 	zend_llist_clean(&ch->to_free.str);
+ #endif
+ 
+

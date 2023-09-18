@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Sdl_sound(AutoPackageRecipe):
+    name = 'SDL_sound'
+    version = '1.0.3'
+ 
+    buildRequires = ['SDL:devel', 'flac:devel', 'libogg:devel', 'libvorbis:devel']
+ 
+    def unpack(r):
+        r.addArchive('http://icculus.org/SDL_sound/downloads/%(name)s-%(version)s.tar.gz')

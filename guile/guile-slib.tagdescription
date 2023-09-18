@@ -1,0 +1,7 @@
+datasource args
+file %(taghandlerdir)s/guile-slib
+include %(datadir)s/slib/.*\.scm$
+implements files update
+implements files remove
+implements handler update
+implements handler preremove

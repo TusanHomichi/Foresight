@@ -1,0 +1,26 @@
+diff --git a/postler/postler-content.vala b/postler/postler-content.vala
+index 7cf230e..940e44a 100644
+--- a/postler/postler-content.vala
++++ b/postler/postler-content.vala
+@@ -442,7 +442,7 @@ public class Postler.Content : WebKit.WebView {
+         TimeVal time = new TimeVal ();
+         int offset = 0;
+         if (parsed != null) {
+-            parsed.to_timeval (time);
++            Soup.date_to_timeval (parsed, time);
+             offset = parsed.offset;
+         }
+         return new DateTime.from_timeval_local (time).add_minutes (offset);
+diff --git a/postler/postler.vapi b/postler/postler.vapi
+index 929932e..5626409 100644
+--- a/postler/postler.vapi
++++ b/postler/postler.vapi
+@@ -28,3 +28,8 @@ namespace Gdk {
+                                             out Gdk.Rectangle dest);
+     }
+ 
++[CCode (cprefix = "Soup", lower_case_cprefix = "soup_")]
++namespace Soup {
++    [CCode (cname = "soup_date_to_timeval", cheader_filename = "libsoup/soup.h")]
++    public void date_to_timeval (Soup.Date date, GLib.TimeVal time);
++}

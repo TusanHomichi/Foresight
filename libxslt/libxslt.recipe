@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libxslt(AutoPackageRecipe):
+    name = 'libxslt'
+    version = '1.1.26'
+
+    buildRequires = [ 'python:runtime', 'python:devel', 'zlib:devel',
+                      'libxml2:devel', 'libxml2:python','perl:runtime',
+                      'libgcrypt:devel', 'libgpg-error:devel']
+
+    def unpack(r):
+        r.addArchive('ftp://xmlsoft.org/libxslt/')

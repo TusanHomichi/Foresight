@@ -1,0 +1,16 @@
+class GkrellmEntropy(CPackageRecipe):
+    buildRequires = ['gkrellm:devel', 'expat:devel', 'pkgconfig:devel',
+        'gtk:devel']
+
+    name = 'gkrellm-entropy'
+    version = '1.0.0'
+
+    def setup(r):
+        r.addSource('gkrellm-entropy.c')
+        r.addSource('Makefile')
+
+        r.Make('LIBDIR=%(libdir)s')
+        r.MakeInstall('LIBDIR=%(libdir)s')
+
+        r.Requires('gkrellm:runtime',
+                   '%(libdir)s/gkrellm2/plugins/gkrellm-entropy.so')

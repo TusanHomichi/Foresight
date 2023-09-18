@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+import datetime
+class Altyo(AutoPackageRecipe):
+    name = 'altyo'
+    version = '5cdf0591' + '+' + datetime.date.today().strftime("%Y.%m.%d")
+
+    buildRequires = [
+        'atk:devel', 
+        'cairo:devel', 
+        'desktop-file-utils:runtime', 
+        'gdk-pixbuf:devel', 
+        'gettext:runtime',
+        'glib:devel', 
+        'gtk3:devel', 
+        'libX11:devel', 
+        'libXext:devel', 
+        'pango:devel', 
+        'vte3:devel',
+        'vala:runtime',
+            ]
+ 
+    def setup(r):
+        r.addGitSnapshot('https://github.com/linvinus/AltYo')
+        r.Make()
+        r.MakeInstall()

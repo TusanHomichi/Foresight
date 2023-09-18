@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2008 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class anthy(AutoPackageRecipe):
+	name='anthy'
+	version='9100e'
+	buildRequires=[]
+	def unpack(r):
+		r.addArchive('http://osdn.dl.sourceforge.jp/anthy/29142/'
+			'%(name)s-%(version)s.tar.gz')

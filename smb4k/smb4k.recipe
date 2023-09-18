@@ -1,0 +1,15 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class Smb4k(kdePackageRecipe):
+
+    name = 'smb4k'
+    version = '0.10.9'
+
+    def unpack(r):
+
+        r.addArchive('http://download.berlios.de/smb4k/')
+

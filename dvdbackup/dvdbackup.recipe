@@ -1,0 +1,9 @@
+class DVDBackup(CPackageRecipe):
+    name = 'dvdbackup'
+    version = '0.4.1'
+    buildRequires = ['gettext:runtime', 'intltool:runtime', 'libdvdread:devel']
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/%(name)s/%(name)s-%(version)s/')
+        r.Configure()
+        r.Make()
+        r.MakeInstall()

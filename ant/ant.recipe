@@ -1,0 +1,36 @@
+#
+# Copyright © 2006-2007 rPath, Inc.
+# Copyright © 2011-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Ant(PackageRecipe):
+
+    name = 'ant'
+    version = '1.9.2'
+
+    def setup(r):
+
+        r.addArchive(
+            'http://www.apache.org/dist'
+            '/ant/binaries/apache-ant-%(version)s-bin.tar.bz2'
+        )
+
+        r.Replace('ANT_LIB="\${ANT_HOME}/lib"', 'ANT_LIB="%(datadir)s/ant"', 'bin/ant')
+
+        r.Install('bin/ant', '%(bindir)s/')
+
+        r.Install('lib/ant*.jar', '%(datadir)s/ant/')
+
+        r.Create('%(sysconfdir)s/ant.conf', contents='ANT_HOME="%(datadir)s/ant"')
+
+        r.AutoDoc(exceptions='/.*/')
+
+        r.Doc('docs/*')
+
+        r.Requires(exceptDeps='java: org.apache.tools.ant.*')
+
+        del(r.EnforceJavaBuildRequirements)
+
+        r.Requires('ant:java', '%(bindir)s/.*')

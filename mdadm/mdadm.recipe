@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+#               2012      The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+
+class MdAdm(CPackageRecipe):
+    name = 'mdadm'
+    version = '3.2.6'
+    buildRequires = [ 'groff:runtime', 'chkconfig:runtime', ]
+
+    def setup(r):
+        r.addArchive('http://www.kernel.org/pub/linux/utils/raid/mdadm/')
+        r.addPatch('mdadm-3.2.4-map-dir.patch')
+        for f in [ 'mdadm-cron', 'mdmonitor.init',
+                   'mdadm-raid-check-sysconfig',
+                   'mdadm.rules', 'raid-check']:
+            r.addSource(f)
+
+        r.Make()
+        r.MakeInstall(' DESTDIR=%(destdir)s'
+                      ' MANDIR=%(mandir)s'
+                      ' BINDIR=%(essentialsbindir)s')
+
+        r.Install('mdmonitor.init', '%(initdir)s/mdmmonitor', mode = 0755)
+
+        r.Install('raid-check', '%(sbindir)s/', mode = 0755)
+        r.Install('mdadm-cron', '%(sysconfdir)s/cron.d/raid-check')
+        r.Install('mdadm-raid-check-sysconfig', '%(sysconfdir)s/sysconfig/raid-check')
+
+        r.Install('mdadm.rules', '/lib/udev/rules.d/')
+
+        r.Doc('mdadm.conf-example', 'misc/*')
+        r.Doc('ANNOUNCE-%(version)s')
+        r.Create('%(sysconfdir)s/mdadm.conf')
+

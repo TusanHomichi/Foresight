@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.foresightlinux.org/licenses/mit-license/
+#
+
+class Calcurse(AutoPackageRecipe):
+    name = 'calcurse'
+    version = '3.1.4'
+ 
+    buildRequires = [
+        'gettext:runtime', 
+        'intltool:runtime', 
+        'ncurses:devel', 
+            ]
+ 
+    def unpack(r):
+        r.addArchive('http://calcurse.org/files/')
+
+    def configure(r):
+        r.Configure('--enable-docs --without-asciidoc')

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2007-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class PyGTKSourceView(GnomePackageRecipe):
+    name = 'pygtksourceview'
+    version = '2.10.1'
+
+    buildRequires = [
+        'gtksourceview:devel',
+        'python:devel',
+        'pygobject:devel',
+        'pygtk:devel',
+        'docbook-xsl:data',
+        'pygobject:doc',
+        ]

@@ -1,0 +1,22 @@
+class Bauble(PackageRecipe):
+    name = 'bauble'
+    version = '0.9.5'
+
+    buildRequires = [
+        'MySQL-python:python',
+        'SQLAlchemy:python',
+        'gdata-python:python',
+        'lxml:python',
+        'pygobject:python',
+        'pygtk:python',
+        'python-mako:python',
+        'python-sqlite:python',
+        'python:bin',
+        'python:devel',
+	'desktop-file-utils:runtime',
+	'gettext:runtime'
+    ]
+
+    def setup(r):
+        r.addArchive('http://bauble.belizebotanic.org/files/')
+        r.PythonSetup(data='--install-data=%(prefix)s')

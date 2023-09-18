@@ -1,0 +1,20 @@
+diff -Nur gnome-menus-2.13.5/layout/applications.menu gnome-menus-2.13.5.new/layout/applications.menu
+--- gnome-menus-2.13.5/layout/applications.menu	2006-03-01 19:14:33.000000000 +0100
++++ gnome-menus-2.13.5.new/layout/applications.menu	2006-03-01 19:14:48.000000000 +0100
+@@ -157,4 +157,16 @@
+     <Directory>Foresight.directory</Directory>
+   </Menu>
+ 
++<Include>
++  <Filename>gpk-application.desktop</Filename>
++</Include>
++
++<!-- Separator between menus and gnome-app-install -->
++<Layout>
++  <Merge type="menus"/>
++  <Merge type="files"/>
++  <Separator/>
++  <Filename>gpk-application.desktop</Filename>
++</Layout>
++
+ </Menu> <!-- End Applications -->

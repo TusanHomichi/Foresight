@@ -1,0 +1,20 @@
+From 6ddc4b984723e902f6903eb644856aae48ab3ed6 Mon Sep 17 00:00:00 2001
+From: Nick Schermer <nick@xfce.org>
+Date: Sun, 19 Feb 2012 22:11:11 +0000
+Subject: Use applications-science icon for education directory.
+
+---
+diff --git a/data/xfce/xfce-education.directory.in b/data/xfce/xfce-education.directory.in
+index 3b2885d..344af5f 100644
+--- a/data/xfce/xfce-education.directory.in
++++ b/data/xfce/xfce-education.directory.in
+@@ -1,6 +1,6 @@
+ [Desktop Entry]
+ Version=1.0
+ Type=Directory
+-Icon=applications-education
++Icon=applications-science
+ _Name=Education
+ _Comment=Educational software
+--
+cgit v0.9.0.2

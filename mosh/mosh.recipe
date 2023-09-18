@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2012 Adam Chasen (achasen@rpath.com)
+#
+
+class Mosh(AutoPackageRecipe):
+    name = 'mosh'
+    version = '1.2.3'
+
+    buildRequires = [ 
+        'boost:devel', 
+        'autoconf:runtime',
+        'automake:runtime', 
+        'gcc-c++:runtime',
+        'zlib:devel', 
+        'utempter:devel',
+        'ncurses:devel', 
+        'protobuf:devel',
+        'pkgconfig:devel', 
+        'protobuf:runtime',
+        'perl:devel',
+        'openssl:devel',
+        'perl-IO-Tty:perl'
+        ]
+
+    def unpack(r):
+        r.addArchive('https://github.com/downloads/keithw/mosh/')
+
+    def policy(r):
+        r.Requires('perl-IO-Tty:perl',
+                   '%(bindir)s/')

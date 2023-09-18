@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2008 Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+loadRecipe('rpmpackage')
+class GnomeDesktopSharp(RPMPackageRecipe,GnomePackageRecipe):
+    name = 'gnome-desktop-sharp'
+    version = '2.26.0'
+    rpmRelease = '6.fc13'
+    rpmPatches = ['%(name)s-2.24.0-libdir.patch', 'gnome-desktop-sharp-lib-target.patch']
+
+    buildRequires = [ 'GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'fontconfig:devel', 'freetype:devel', 'glib:devel', 'gnome-keyring:devel', 'gnome-panel:devel', 'gnome-vfs:devel', 'gtk-sharp:lib', 'gtk-sharp:cil', 'gtk-sharp:runtime', 'gtk-sharp:devellib', 'libart_lgpl:devel', 'libbonobo:devel', 'libbonoboui:devel', 'libgnome:devel', 'libgnomecanvas:devel', 'libgnomeprint:devel', 'libgnomeprintui:devel', 'libgnomeui:devel', 'libpng:devel', 'libxml2:devel', 'mono:devel', 'mono:lib', 'mono:cil', 'mono:runtime', 'pango:devel', 'popt:devel', 'vte:devel',  'gtkhtml:devel', 'librsvg:devel', 'which:runtime', 'autoconf:runtime', 'GConf:runtime', 'gnome-sharp:devellib', 'gnome-sharp:cil', 'gnome-sharp:lib', 'gnome-sharp:runtime', 'hal:devel', 'libXres:devel', 'libwnck:devel', 'brasero:devel', 'startup-notification:devel', 'gtksourceview:devel', 'gnome-desktop:devel' ]
+
+    def unpack(r):
+        RPMPackageRecipe.unpack(r)
+        r.Environment('MONO_SHARED_DIR', '/tmp')
+        r.Replace('\$\(prefix\)/lib','%(libdir)s', 'configure')
+        r.Environment('MONO_CAIRO_LIBS',"-r:%(libdir)s/mono/1.0/Mono.Cairo.dll")

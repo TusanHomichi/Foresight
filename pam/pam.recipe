@@ -1,0 +1,127 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Pam(CPackageRecipe):
+    name = 'pam'
+    version = '0.99.6.2'
+
+    buildRequires = [   'autoconf:runtime',
+                        'automake:runtime',
+                        'bison:runtime',
+                        'cracklib:devel',
+                        'cracklib:runtime',
+                        'db:devel',
+                        'flex:runtime',
+                        'glib:devel',
+                        'libtool:runtime',
+                        'libxml2:runtime',
+                        'libxslt:runtime',
+                        'pkgconfig:devel',
+                        'xauth:runtime'
+                    ]
+
+    # FIXME: Don't build docs to break build loop:
+    # pam -> linuxdoc-tools -> opensp -> xmlto ->  util-linux -> pam
+    #if Use.builddocs:
+    #    buildRequires.append('linuxdoc-tools')
+
+    def setup(r):
+        r.disableParallelMake()
+        r.macros.update({
+            'sbindir': '%(essentialsbindir)s',
+            'cflags': '-fPIC %(cflags)s',
+            'pamcso': '0.81.0',
+            'pamso': '0.81.5',
+            'pam_miscso': '0.81.2',
+        })
+
+        r.addArchive( 'http://www.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%(version)s.tar.bz2',
+            keyid='517D0F0E')
+
+        srpm = 'http://download.fedora.redhat.com/pub/fedora/linux/core/development/source/SRPMS/pam-0.99.6.2-2.fc6.src.rpm'
+        r.addSource('other.pamd', rpm=srpm)
+        r.addSource('system-auth.pamd')
+        r.addSource('config-util.pamd', rpm=srpm)
+        r.addPatch('pam-0.99.3.0-cracklib-try-first-pass.patch', rpm=srpm)
+        r.addPatch('pam-0.99.4.0-dbpam.patch', rpm=srpm)
+
+        # Add compatibility with older pam configuration files
+        r.addArchive('pam-redhat-0.99.6-2.tar.bz2', rpm=srpm, dir='%(maindir)s')
+        r.addPatch('pam-0.99.5.0-redhat-modules.patch', rpm=srpm)
+        # compatibility with recent autotools
+        r.addPatch('http://cvs.fedora.redhat.com/viewcvs/*checkout*/devel/pam/pam-0.99.6.2-reconf.patch')
+        r.addPatch('creat-mode.patch')
+
+        r.Configure(
+            ' --libdir=%(essentiallibdir)s --enable-shared'
+            ' --enable-static-libpam --enable-fakeroot=%(destdir)s'
+            ' --includedir=%(includedir)s/security'
+            ' --enable-isadir=../../%(lib)s/security' )
+        r.Make()
+
+        r.MakeInstall()
+        r.Install('other.pamd', '%(sysconfdir)s/pam.d/other', mode=0644)
+        # Enforce a sane system-auth PAM setup by making sure the user gets a non-merged file
+        r.Install('system-auth.pamd', '%(sysconfdir)s/pam.d/system-auth',
+                  mode=0644)
+        # we don't want this under :config as it breaks migrations
+        # we have no :runtime (see bellow) so we put it under :data
+        # otherwise updateall on x86_64 breaks (we get conary trying to 
+        # install both x86 and x86_64 runtime...
+        r.ComponentSpec('data', '%(sysconfdir)s/pam.d/system-auth')
+        # END system-auth
+        r.Install('config-util.pamd', '%(sysconfdir)s/pam.d/config-util',
+                  mode=0644)
+        r.Install('doc/man/*.3', '%(mandir)s/man3/', mode=0644)
+        r.Install('doc/man/*.8', '%(mandir)s/man8/', mode=0644)
+
+        # some libraries are essential, move them and fix symlinks
+        for lib, ver in zip(('libpam', 'libpamc', 'libpam_misc'),
+                            ('%(pamso)s', '%(pamcso)s', '%(pam_miscso)s')):
+            r.Symlink('%%(essentiallibdir)s/%s.so.%s' %(lib, ver),
+                      '%%(libdir)s/%s.so' %lib)
+            r.Symlink('%s.so.%s' % (lib, ver),
+                      '%%(essentiallibdir)s/%s.so' %lib)
+
+        r.MakeDirs('%(localstatedir)s/run/console')
+        r.ExcludeDirectories(exceptions='%(localstatedir)s/run/console')
+
+        # pam_radius in the Linux-PAM package is out-of-date,
+        # get rid of it so it doesn't clash with up-to-date ones
+        # kept up externally
+        r.Run('rm -f doc/txts/README.pam_radius')
+        r.Remove('%(essentiallibdir)s/security/pam_radius.so')
+
+        # /lib/security needs to exist regardless of %(lib)s
+        r.MakeDirs('/lib/security', mode=0755)
+
+        # Helper programs need special permissions
+        r.SetModes('%(essentialsbindir)s/unix_chkpwd', 04555)
+
+        # we use versioned special docs
+        r.Move('/usr/share/doc/pam/*', '%(thisdocdir)s/')
+
+        # there is really no runtime for pam per se; it's purely library
+        r.ComponentSpec('lib', '%(essentiallibdir)s/security/')
+        r.ComponentSpec(catchall='data')
+        # The /lib/security directory must exist even on multilib systems,
+        # since $ISA is "../../lib64/security/" and is relative to
+        # /lib/security, which must therefore exist.  It needs to go
+        # in :data instead of :lib to make multilib installs work, since
+        # it cannot be shared.
+        r.ExcludeDirectories(exceptions='/lib/security')
+        r.ComponentSpec('data', '/lib/security')
+        r.Requires('pam:data', r'%(essentiallibdir)s/libpam\.so.*')
+
+        # Silence warnings from pam_env (RPL-1317)
+        r.Create('%(sysconfdir)s/environment')
+        r.InitialContents('%(sysconfdir)s/environment')
+
+        # gnome-keyring uncomments ##PGK### lines, but only if they
+        # exist first, so add a flag that it can depend on to order
+        # updates correctly.  Otherwise pam will be updated after
+        # gnome-keyring and the fixup will not happen.
+        r.ComponentProvides('gkropt')

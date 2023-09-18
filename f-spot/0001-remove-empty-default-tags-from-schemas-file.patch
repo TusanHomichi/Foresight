@@ -1,0 +1,51 @@
+From c8350486af10937b94c498d0107ce540518d6613 Mon Sep 17 00:00:00 2001
+From: Christian Krause <chkr@plauener.de>
+Date: Mon, 24 May 2010 19:32:32 +0200
+Subject: [PATCH] remove empty default tags from schemas file
+
+- gconftool-2 complains about empty default tags in f-spot.schemas
+for entries of the type integer
+- this patch removes these empty default tags of all integer entries
+---
+ f-spot.schemas.in |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/f-spot.schemas.in b/f-spot.schemas.in
+index d5f91de..551d5d3 100644
+--- a/f-spot.schemas.in
++++ b/f-spot.schemas.in
+@@ -53,7 +53,6 @@
+         <key>/schemas/desktop/gnome/f-spot/ui/main_window_x</key>
+ 	<applyto>/desktop/gnome/f-spot/ui/main_window_x</applyto>
+ 	<type>int</type>
+-	<default></default>
+ 	<locale name="C">
+ 	  <short>X position of the main window.</short>
+ 	  <long>The X position to use for the main window.</long>
+@@ -64,7 +63,6 @@
+         <key>/schemas/desktop/gnome/f-spot/ui/main_window_y</key>
+ 	<applyto>/desktop/gnome/f-spot/ui/main_window_y</applyto>
+ 	<type>int</type>
+-	<default></default>
+ 	<locale name="C">
+ 	  <short>Y position of the main window.</short>
+ 	  <long>The Y position to use for the main window.</long>
+@@ -253,7 +251,6 @@
+         <key>/schemas/desktop/gnome/f-spot/ui/viewer_x</key>
+ 	<applyto>/desktop/gnome/f-spot/ui/viewer_x</applyto>
+ 	<type>int</type>
+-	<default></default>
+ 	<locale name="C">
+ 	  <short>X position of the photo viewer window.</short>
+ 	  <long>The X position to use for the photo viewer window.</long>
+@@ -264,7 +261,6 @@
+         <key>/schemas/desktop/gnome/f-spot/ui/viewer_y</key>
+ 	<applyto>/desktop/gnome/f-spot/ui/viewer_y</applyto>
+ 	<type>int</type>
+-	<default></default>
+ 	<locale name="C">
+ 	  <short>Y position of the photo viewer window.</short>
+ 	  <long>The Y position to use for the photo viewer window.</long>
+-- 
+1.6.2.5
+

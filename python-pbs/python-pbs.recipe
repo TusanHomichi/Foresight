@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2012 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('pypipackage')
+class PyPBS(PyPiPackage):
+    name = 'python-pbs'
+    pyname = 'pbs'
+    version = '0.105'
+
+    def policy(r):
+        PyPiPackage.policy(r)
+        r.Remove('/usr/lib*/python*/site-packages/*egg-info', recursive = True)

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Make sure mention of running this script shows up in output
+echo
+
+# work around flakeyness in nspluginwrapper
+if [ -e /usr/bin/mozilla-plugin-config ]; then
+    mozilla-plugin-config -rf
+    mozilla-plugin-config -if
+    # reduce updateall noise...
+    # mozilla-plugin-config -l
+fi
+
+# it is very important to return success; failure stops the operation
+exit 0

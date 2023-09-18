@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2005-2007 rPath, Inc.
+#               2007-2011 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class ConfigObj(PackageRecipe):
+    name = 'ConfigObj'
+    version = '4.7.2'
+
+    buildRequires = [ 'python-setuptools:python', 'unzip:runtime', 'python:devel' ]
+
+    def setup(r):
+        r.addArchive('http://www.voidspace.org.uk/downloads/configobj-%(version)s.zip')
+        r.mainDir('configobj-%(version)s')
+        r.PythonSetup()
+

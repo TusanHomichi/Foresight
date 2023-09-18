@@ -1,0 +1,22 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class LibVNCServer(AutoPackageRecipe):
+
+    name = 'libvncserver'
+    version = '0.9.8.1'
+
+    buildRequires = [
+        'libjpeg:devel', 'zlib:devel',
+        'SDL:devel', 'gnutls:devel',
+        'libgcrypt:devel', 'libgpg-error:devel',
+        'libX11:devel', 'xproto:devel',
+    ]
+
+    def unpack(r):
+
+        r.macros.archive_name = 'LibVNCServer'
+        r.addArchive('http://downloads.sourceforge.net/%(name)s/')
+

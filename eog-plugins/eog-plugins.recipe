@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class EogPlugins(GnomePackageRecipe):
+
+    name = 'eog-plugins'
+    version = '2.30.2'
+
+    buildRequires = [
+        'GConf:devel',
+        'GConf:runtime',
+        'Mesa:devel',
+        'eog:devel',
+        'clutter-gtk:devel',
+        'clutter:devel',
+        'json-glib:devel',
+        'libchamplain:devel',
+        'libdrm:devel',
+        'libexif:devel',
+        'libgdata:devel',
+        'libsoup:devel',
+        'postr:runtime',
+        'pygobject:python',
+        'pygtk:python',
+        'python:devel',
+        ]

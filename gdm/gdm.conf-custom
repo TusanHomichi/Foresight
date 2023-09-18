@@ -1,0 +1,48 @@
+[daemon]
+Greeter=/usr/libexec/gdmgreeter
+StandardXServer=/usr/bin/X -dpi 96
+Xnest=/usr/bin/Xnest -audit 0 -name Xnest
+
+[security]
+
+[xdmcp]
+
+[gui]
+GtkRC=/usr/share/themes/Foresight/gtk-2.0/gtkrc
+GtkTheme=Foresight
+GtkThemesToAllow=all
+
+[greeter]
+Browser=true
+#GraphicalTheme=simple-green
+MinimalUID=500
+DefaultFace=/usr/share/pixmaps/user_icon.png
+GlobalFaceDir=/usr/share/pixmaps/faces/
+IncludeAll=true
+BackgroundColor=#000000
+GraphicalThemedColor=#000000
+UseCirclesInEntry=true
+
+[chooser]
+
+[debug]
+
+[servers]
+
+
+[server-Standard]
+name=Standard server
+command=/usr/bin/X -audit 0· -dpi 96
+
+
+[server-Terminal]
+name=Terminal server
+# Add -terminate to make things behave more nicely
+command=/usr/bin/X -audit 0 -terminate
+
+
+[server-Chooser]
+name=Chooser server
+command=/usr/bin/X -audit 0
+
+

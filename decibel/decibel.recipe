@@ -1,0 +1,21 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage')
+class Decibel(kdePackageRecipe):
+
+    name = 'decibel'
+    version = '0.5.0'
+
+    buildRequires = [
+        'tapioca-qt:devel'
+    ]
+
+    def unpack(r):
+
+        r.addArchive(
+            'http://decibel.kde.org/fileadmin/downloads/decibel/releases/'
+        )
+

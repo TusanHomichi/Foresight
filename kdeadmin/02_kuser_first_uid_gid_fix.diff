@@ -1,0 +1,18 @@
+Description: Normal users/group IDs start at 1000 on Debian.
+Origin: vendor
+Author: Modestas Vainus
+Last-Update: 2009-04-19
+
+--- a/kuser/CMakeLists.txt
++++ b/kuser/CMakeLists.txt
+@@ -17,8 +17,8 @@ set(KU_HOMEDIR_PERM 0700 CACHE STRING "D
+ set(KU_MAILBOX_GID 0 CACHE STRING "Default GID of the created mbox file")
+ set(KU_MAILBOX_PERM 0660 CACHE STRING "Default mbox file permissions")
+ set(KU_HOMETEMPLATE "/home/%u" CACHE STRING "Default home directory template")
+-set(KU_FIRSTUID 500 CACHE STRING "First UID of normal users")
+-set(KU_FIRSTGID 500 CACHE STRING "First GID of normal users")
++set(KU_FIRSTUID 1000 CACHE STRING "First UID of normal users")
++set(KU_FIRSTGID 1000 CACHE STRING "First GID of normal users")
+ set(KU_USERPRIVATEGROUP true CACHE STRING "User private groups by default")
+ 
+ check_include_files(shadow.h HAVE_SHADOW_H)

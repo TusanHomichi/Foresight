@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2007-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+loadSuperClass('gnomepackage')
+class NetworkManagerOpenVPN(GnomePackageRecipe):
+   name = "NetworkManager-OpenVPN"
+   version = '0.8.6.0'
+
+   buildRequires = [
+        'GConf:devel',
+        'NetworkManager:devel',
+        'dbus-glib:devel',
+        'dbus-glib:devellib',
+        'dbus:devel',
+        'desktop-file-utils:runtime',
+        'expat:devel',
+        'gawk:runtime',
+        'gnome-keyring:devel',
+        'gtk:runtime',
+        'libglade:devel',
+        'libgnome-keyring:devellib',
+        'perl-XML-Parser:perl',
+        'perl:runtime',
+        'popt:devel',
+        'util-macros:devel',
+        ]
+
+   externalArchive = 'mirror://gnome/NetworkManager-openvpn/%(major_version)s/NetworkManager-openvpn-%(version)s.tar.bz2'
+
+   def policy(r):
+      # cheap hack to get perm woes, so that everyone can initiate vpn sessions
+      r.Replace('deny', 'allow', '%(sysconfdir)s/dbus-1/system.d/nm-openvpn-service.conf')
+      # NetworkManager has been known to change protocol in a
+      # minor version update (0.8.2 -> 0.8.4, for instance).
+      r.macros.protver = '.'.join(r.version.split('.')[0:3])
+      r.Requires('NetworkManager:runtime(%(protver)s)',
+                 '%(libexecdir)s/')

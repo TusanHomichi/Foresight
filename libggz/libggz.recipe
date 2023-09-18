@@ -1,0 +1,13 @@
+# (c) 2007 by Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class GgzLibs(AutoPackageRecipe):
+    name = 'libggz'
+    version = '0.99.4'
+    buildRequires = ['libgcrypt:devel']
+
+
+    def unpack(r):
+        r.addArchive('ftp://ftp.ggzgamingzone.org/pub/ggz/snapshots/%(name)s-snapshot-%(version)s.tar.gz')

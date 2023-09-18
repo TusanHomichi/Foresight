@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fmodex(PackageRecipe):
+    name = 'fmodex'
+    version = '4.30.05'
+ 
+    buildRequires = ['libgcc:devellib', 'libstdc++:devel', 'make:runtime']
+ 
+    def setup(r):
+        r.macros.stripped_version = r.macros.version.replace('.','')
+        r.addArchive('http://www.fmod.org/index.php/release/version/fmodapi%(stripped_version)slinux.tar.gz',
+                     use=Arch.x86)
+        r.addArchive('http://www.fmod.org/index.php/release/version/fmodapi%(stripped_version)slinux64.tar.gz',
+                     use=Arch.x86_64)
+        r.MakeDirs('%(destdir)s%(libdir)s')
+        r.MakeDirs('%(destdir)s%(includedir)s/fmodex')
+        r.MakeInstall('DESTLIBDIR=%(destdir)s%(libdir)s/ DESTHDRDIR=%(destdir)s%(includedir)s/fmodex/')
+        r.Symlink('%(libdir)s/libfmodex64-%(version)s.so','%(libdir)s/libfmodex.so',use=Arch.x86_64)
+        r.Symlink('%(libdir)s/libfmodexp64-%(version)s.so','%(libdir)s/libfmodexp.so',use=Arch.x86_64)
+        r.Symlink('%(libdir)s/libfmodex-%(version)s.so','%(libdir)s/libfmodex.so',use=Arch.x86)
+        r.Symlink('%(libdir)s/libfmodexp-%(version)s.so','%(libdir)s/libfmodexp.so',use=Arch.x86)
+
+

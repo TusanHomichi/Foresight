@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage')
+loadInstalled('python')
+class Gnomemenus(GnomePackageRecipe):
+
+    buildRequires = [ 'gamin:devel', 'glib:devel', 'python:devel',
+                      'desktop-file-utils:runtime', 'gettext:runtime', 'gnome-python:devel',
+                      'gnome-python:python', 'pygtk:python', 'perl:runtime',
+                      'pygobject:python', 'gobject-introspection:devel',
+                      ]
+
+    name = 'gnome-menus'
+    version = '2.30.5'
+
+    extraConfig = ' --disable-static'
+
+    def unpack(r):
+        GnomePackageRecipe.unpack(r)
+        # Patch for alacarte menu editor
+        #r.addPatch('alacarte.patch')
+        #Patch applications.menu in /layout to allow desktop files to reference a Foresight menu
+        r.addPatch('foresight-menus.patch')
+
+        # bring back when it ships byDefault again
+        # r.addPatch('pk-application.patch')
+        r.addPatch('launcher.patch')
+
+        #Copy over Foresight menu definition and icon
+        #r.addSource('Foresight.directory')
+        #r.Install('Foresight.directory', '%(datadir)s/desktop-directories/')
+        #r.addSource('foresight-dir.png')
+        #r.Install('foresight-dir.png', '%(datadir)s/pixmaps/')
+
+    def policy(r):
+        r.macros.pyver = Python.majversion
+
+        # We use alacarte now
+        r.Remove('%(bindir)s/gmenu-simple-editor')
+        r.Remove('%(datadir)s/applications/gmenu-simple-editor.desktop')
+        r.Remove('%(datadir)s/gnome-menus/ui/gmenu-simple-editor.ui')
+        r.Remove('%(libdir)s/python%(pyver)s/site-packages/GMenuSimpleEditor', recursive = True)
+
+        # kepp these here until they are elsewhere ...
+        # r.Remove('%(sysconfdir)s/xdg/menus', recursive = True)
+        # r.Remove('%(datadir)s/desktop-directories/Desktop.directory', recursive = True)
+
+        # cruft 
+        r.Remove('%(bindir)s/gnome-menu-spec-test', recursive = True)
+        r.Remove('%(datadir)s/gnome-menus/', recursive = True)
+

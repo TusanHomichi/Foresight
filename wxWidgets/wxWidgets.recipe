@@ -1,0 +1,94 @@
+#
+# Copyright (c) 2005-2011 Foresight Linux.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class WXwidgets(AutoPackageRecipe):
+    name = 'wxWidgets'
+    version = '2.8.12'
+    buildRequires = [
+            'GConf:devel', 
+            'Mesa:devel', 
+            'ORBit2:devel',
+            'SDL:devel', 
+            'atk:devel', 
+            'cairo:devel', 
+            'cppunit:devel', 
+            'esound:devel', 
+            'expat:devel', 
+            'fontconfig:devel', 
+            'freetype:devel', 
+            'gdk-pixbuf:devel', 
+            'gettext:runtime',
+            'glib:devel', 
+            'gst-plugins-base:devel', 
+            'gstreamer:devel', 
+            'gtk:devel', 
+            'libSM:devel', 
+            'libX11:devel', 
+            'libXinerama:devel',
+            'libXxf86vm:devel', 
+            'libjpeg:devel', 
+            'libmspack:devel', 
+            'libpng:devel', 
+            'libstdc++:devel', 
+            'libtiff:devel', 
+            'libxml2:devel', 
+            'pango:devel', 
+            'pkgconfig:devel', 
+            'zlib:devel' ,
+                ]
+
+    def unpack(r):
+        r.addArchive('http://sourceforge.net/projects/wxwindows/files/%(version)s/')
+        r.Replace('/usr/lib', '%(libdir)s', '{wx-config.in,configure}')
+        r.Environment('GDK_USE_XFT', '1')
+        r.macros.ldflags += ' -L%(libdir)s/xorg.mesa.3d/ '
+
+    def configure(r):
+        r.Environment('CFLAGS', '%(optflags)s -fno-strict-aliasing ')
+        r.Environment('CXXFLAGS', '%(optflags)s -fno-strict-aliasing ')
+        r.Environment('OPENGL_LIBS', '-lGL -lGLU -L%(libdir)s/xorg.mesa.3d/')
+        r.Configure(' --x-libraries=%(includedir)s '
+                    ' --with-opengl '
+                    ' --with-sdl '
+                    ' --with-gnomeprint '
+                    ' --enable-shared '
+                    ' --enable-soname '
+                    ' --disable-optimise '
+                    ' --enable-debug_info '
+                    ' --enable-intl '
+                    ' --enable-unicode '
+                    ' --enable-no_deps '
+                    ' --disable-rpath '
+                    ' --enable-geometry '
+                    ' --enable-graphics_ctx '
+                    ' --enable-sound '
+                    ' --enable-mediactrl '
+                    ' --enable-display '
+                    ' --enable-timer '
+                    ' --enable-compat24 '
+                    #' --enable-compat28 ' Use when we move to 2.9 or 2.10
+                    ' --enable-compat26 ')
+
+    def make(r):
+        r.Make()
+        r.Make(dir = 'contrib/src/stc')
+        r.Make(dir = 'contrib/src/ogl')
+        r.Make(dir = 'contrib/src/gizmos')
+        r.Make(dir = 'contrib/src/svg')
+
+        r.Make('allmo', dir = 'locale')
+
+    def makeinstall(r):
+        r.MakeInstall()
+        r.MakeInstall(dir = 'contrib/src/stc')
+        r.MakeInstall(dir = 'contrib/src/ogl')
+        r.MakeInstall(dir = 'contrib/src/gizmos')
+        r.MakeInstall(dir = 'contrib/src/svg')
+
+        r.Remove('%(bindir)s/wx-config')
+        r.Symlink('%(libdir)s/wx/config/gtk2-unicode-release-2.8', '%(bindir)s/wx-config')
+
+        r.Remove('%(datadir)s/bakefile', recursive = True)

@@ -1,0 +1,12 @@
+class Bsbdb3(AutoPackageRecipe):
+
+    buildRequires = [ 'db:devel', 'python:devel',
+                      'python-setuptools:python' ]
+
+    name = "bsddb3"
+    version = "4.6.1"
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/b/%(name)s/')
+        r.PythonSetup()
+

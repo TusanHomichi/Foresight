@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2007 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('gnomepackage.recipe')
+class GnomePackagekit(GnomePackageRecipe):
+    name = 'gnome-packagekit'
+    version = '2.32.0'
+
+    buildRequires =  [ 'GConf:runtime',
+                       'desktop-file-utils:runtime',
+                       'libglade:devel',
+                       'libnotify:devel',
+                       'rarian:runtime',
+                       'GConf:devel',
+                       'ORBit2:devel',
+                       'gnome-doc-utils:devel',
+                       'libxml2:runtime',
+                       'gnome-doc-utils:runtime',
+                       'libsexy:devel',
+                       'dbus-glib:runtime',
+                       'opensp:runtime',
+                       'pygtk:python',
+                       'gnome-menus:devel',
+                       'python:devel',
+                       'gnome-common:runtime',
+                       'PackageKit:devel',
+                       'PackageKit:devellib',
+                       'DeviceKit-power:devel',
+                       'libcanberra:devel',
+                       'unique:devel',
+                       'polkit-gnome:devel',
+                       'polkit:devel',
+                       'automake:runtime',
+                       'autoconf:runtime',
+                       ]
+    extraConfig = '--disable-scrollkeeper  --disable-compile-warnings  --disable-gudev --disable-tests --disable-schemas-install'
+
+    def unpack(r):
+        r.addArchive("http://ftp.gnome.org/pub/GNOME/sources/gnome-packagekit/%(major_version)s/")
+        r.addPatch('0001-Do-not-set-the-package-checkboxes-to-be-selectable-i.patch')
+        r.addPatch('0001-Move-both-the-updater-and-the-package-installer-to-A.patch')
+        r.addPatch('gnome-packagekit-2.32.0-libnotify-0.7.patch')
+        r.addPatch('disable-font-helper.patch')
+        r.Run('autoreconf -fi')
+
+    def policy(r):
+        r.Requires('polkit-gnome:runtime', '%(bindir)s/gpk-application')
+        r.Requires('PackageKit:runtime', '%(bindir)s/gpk-application')
+        r.Requires('GConf:runtime', '%(sysconfdir)s/gconf/schemas/gnome-packagekit.schemas')
+
+        r.Remove('%(datadir)s/applications/gpk-service-pack.desktop')
+        r.Move('%(datadir)s/gnome/autostart/gpk-update-icon.desktop', '%(sysconfdir)s/xdg/autostart/gpk-update-icon.desktop')

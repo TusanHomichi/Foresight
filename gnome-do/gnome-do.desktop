@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=GNOME Do
+GenericName=GNOME Do
+Comment=Do things in GNOME
+Icon=gnome-run
+Exec=gnome-do-session --quiet
+Terminal=false
+Type=Application
+Categories=
+OnlyShowIn=GNOME;
+

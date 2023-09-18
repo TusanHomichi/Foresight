@@ -1,0 +1,5 @@
+file		%(taghandlerdir)s/info-file
+exclude %(infodir)s/.*-[0-9]*.gz
+include %(infodir)s/.*
+implements	files update
+implements	files remove

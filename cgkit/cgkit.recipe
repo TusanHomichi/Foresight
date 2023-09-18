@@ -1,0 +1,24 @@
+class Cgkit(PackageRecipe):
+    name = 'cgkit'
+    version = '2.0.0alpha9'
+    buildRequires = ['python-setuptools:python', 'unzip:runtime',
+                     'python:devel', 'gcc', 'glibc:devel', 'scons:runtime',
+                     'gcc-c++', 'boost:devel', 'Mesa:devel', 'PIL:python',
+                     'libgcc:devellib', 'libstdc++:devel', 'numpy:python',
+                     'pygame:python', 'wxPython:python']
+    
+    def setup(r):
+        r.addArchive('mirror://sourceforge/%(name)s/')
+
+        # bellow assures that if closed/accelarated drivers are present they will get consumed...
+        r.Replace('LIB_DIRS = \[\]',
+                  'LIB_DIRS = ["%(libdir)s/xorg.nvidia.3d/", "%(libdir)s/xorg.fglrx.3d/", "%(libdir)s/xorg.mesa.3d/"]',
+                  'setup.py')
+
+        r.Run('scons',dir = 'supportlib')
+        # r.PythonSetup()
+        r.Run(' python%(pyver)s setup.py install --prefix=%(prefix)s'
+              ' --install-purelib=%(libdir)s/python%(pyver)s/site-packages/'
+              ' --install-platlib=%(libdir)s/python%(pyver)s/site-packages/'
+              ' --install-data=%(libdir)s/python%(pyver)s/site-packages/'
+              ' --root=%(destdir)s')

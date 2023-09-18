@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadRecipe('cpanpackage')
+class PerlSOAPLite(CPANPackageRecipe):
+    name = 'perl-SOAP-Lite'
+    version = '0.710.08'
+
+    buildRequires = [ 'perl-HTTP-Cookies:perl', 'perl-URI:perl',
+        'perl-XML-Parser:perl', 'perl-version:perl' ]

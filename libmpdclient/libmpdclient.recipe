@@ -1,0 +1,15 @@
+# vim:set ts=4 sw=4 et:
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Libmpdclient(AutoPackageRecipe):
+    name = 'libmpdclient'
+    version = '2.7'
+ 
+    buildRequires = ['doxygen:runtime']
+ 
+    def unpack(r):
+        r.addArchive('http://downloads.sourceforge.net/project/musicpd/libmpdclient/%(version)s/libmpdclient-%(version)s.tar.bz2')

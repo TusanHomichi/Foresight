@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2010 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python=foresight.rpath.org@fl:2-devel')
+class Impressive(PackageRecipe, Python.VersionMixIn):
+
+    name = 'impressive'
+    version = '0.10.2'
+
+    buildRequires = [
+        'python:bin', 'python:devel',
+        'PIL:python', 'pygame:python', 'PyOpenGL:python',
+    ]
+
+    def setup(r):
+        r.macros.archive_name = 'Impressive'
+        r.addArchive('mirror://sourceforge/project/impressive/Impressive/%(version)s/')
+
+        r.setDefaultPython()
+        r.Install('impressive.py', '%(sitepkgs)s/')
+        r.CompilePython('%(sitepkgs)s')
+        r.Create('%(bindir)s/impressive', contents='''#!/usr/bin/python
+import sys, impressive
+impressive.ParseOptions(sys.argv[1:])
+impressive.run_main()
+''', mode=0755)
+        r.Install('impressive.1', '%(mandir)s/man1/')
+        r.Doc('demo.pdf', 'impressive.html', 'license.txt')

@@ -1,0 +1,19 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdepackage.recipe')
+class Yakuake(kdePackageRecipe):
+
+    name = 'yakuake'
+    version = '2.9.7'
+
+    buildRequires = [
+        'gettext:runtime'
+    ]
+
+    def unpack(r):
+
+        r.addArchive('http://download.berlios.de/yakuake/')
+

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "not enough arguments: $0 $*" >&2
+    exit 1
+fi
+
+type="$1"
+shift
+action="$1"
+shift
+
+case "$type" in
+    files)
+	# this is necessary to have schemas installed to the system-wide
+	# directory after a local gconf directory is made for root
+	export GCONF_CONFIG_SOURCE=$(gconftool-2 --get-default-source)
+	case "$action" in
+	    update)
+		gconftool-2 --makefile-install-rule "$@" > /dev/null
+		;;
+	    preremove)
+		gconftool-2 --makefile-uninstall-rule "$@" > /dev/null
+		;;
+	esac
+	;;
+esac
+
+exit 0

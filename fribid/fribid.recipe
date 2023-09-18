@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2010-2012 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Fribid(CPackageRecipe):
+    name = 'fribid'
+    version = '1.0.2'
+ 
+    buildRequires = ['glib:devel', 'gtk:devel', 'pkgconfig:devel',
+                     'nss:devel', 'nspr:devel', 'gettext:runtime',
+                     'openssl:devel', 'mozilla-filesystem:runtime',
+                     'libp11:devel', 'opensc:devel']
+ 
+    def setup(r):
+        r.addArchive('http://fribid.se/releases/source/')
+        r.ManualConfigure(' --prefix=%(prefix)s'
+                          ' --with-gtk=2'
+                          ' --pkcs11-module=%(libdir)s/pkcs11/opensc-pkcs11.so')
+        r.Make()
+        r.MakeInstall()
+        r.ComponentSpec('fribid:lib',
+                        '%(libdir)s/mozilla/plugins/libfribidplugin.so')
+
+        r.Requires('opensc:lib', 'fribid:lib')

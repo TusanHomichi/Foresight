@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2009 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class OgmripMpeg(AutoPackageRecipe):
+    name = 'ogmrip-mpeg'
+    version = '0.1'
+ 
+    buildRequires = ['GConf:devel', 'ORBit2:devel', 'atk:devel', 'cairo:devel', 'dbus:devel', 'enca:devel', 'expat:devel', 'fontconfig:devel', 'freetype:devel', 'gettext:runtime', 'glib:devel', 'gtk:devel', 'intltool:runtime', 'libX11:devel', 'libXrender:devel', 'libdvdread:devel', 'libglade:devel', 'libpng:devel', 'libxcb:devel', 'libxml2:devel', 'mjpegtools:runtime', 'ogmrip:devel', 'pango:devel', 'perl:runtime', 'pixman:devel', 'pkgconfig:devel', 'xcb-util:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('mirror://sourceforge/ogmrip/%(name)s-%(version)s.tar.gz')
+        r.Replace("-Werror","","configure")
+

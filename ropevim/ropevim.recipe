@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class RopeVim(PackageRecipe):
+    name = 'ropevim'
+    version = '0.3'
+
+    buildRequires = ['python-setuptools:python', 'python:devel', 'rope:python',
+        'ropemode:python', ]
+
+    def setup(r):
+        r.addArchive('http://pypi.python.org/packages/source/r/%(name)s/%(name)s-%(version)s-rc.tar.gz')
+        r.PythonSetup()
+        r.Doc('docs/*')

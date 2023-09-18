@@ -1,0 +1,94 @@
+#!/bin/bash
+# Create links similar to udev /dev/disk/by-id/*
+
+basedir=/dev/libata-migrate
+ln=ln
+ret=0
+
+if [ \! -d $basedir ]
+then
+  mkdir -p $basedir/by-id
+  mkdir -p $basedir/by-path
+fi
+
+# XXX - not sure if [A-Z] is also applicable, need to check
+for i in /sys/block/[hs]d[a-zA-Z]
+do
+  kernel_device_name=`basename $i`
+  id=""
+  ID_BUS=""
+  ID_MODEL=""
+  ID_SERIAL=""
+  ID_VENDOR=""
+  if [ -b /dev/$kernel_device_name ]
+  then
+    case $kernel_device_name in
+      hd*)
+        # skip only if DRIVERS=="ide-cs|ide-floppy"
+        if [ \! -f $i/removable -o "`cat $i/removable`" -lt 1 ]
+        then
+          eval `ata_id.libata-migrate --export /dev/$kernel_device_name`
+          [ -n "$ID_SERIAL" ] && id="ata-${ID_MODEL}_${ID_SERIAL}"
+        fi
+      ;;
+      sd*)
+        [ -f $i/ieee1394_id ] && [ -n "`cat $i/ieee1394_id`" ] && {
+          # XXX - test in ieee1394 device
+          echo "WARNING: ieee1394 devices are not fully supported"
+          ID_SERIAL="`cat $i/ieee1394_id`"
+          ID_BUS="ieee1394"
+        }
+        [ -z "$ID_SERIAL" ] && \
+          eval `usb_id.libata-migrate -x /block/$kernel_device_name`
+        [ -z "$ID_SERIAL" ] && \
+          eval `scsi_id.libata-migrate -g -x -s /block/$kernel_device_name -d /dev/$kernel_device_name`
+        [ -z "$ID_SERIAL" ] && \
+          eval `scsi_id.libata-migrate -g -x -a -s /block/$kernel_device_name -d /dev/$kernel_device_name`
+        [ -n "$ID_VENDOR" -a "$ID_VENDOR" = "ATA" ] && {
+          ID_ATA_COMPAT=`ata_id.libata-migrate /dev/$kernel_device_name`
+          [ -n "$ID_ATA_COMPAT" ] && {
+            ID_BUS="ata"
+            ID_SERIAL="$ID_ATA_COMPAT"
+          }
+        }
+        # XXX - also use dasd_id here
+        [ -n "$ID_SERIAL" ] && id="${ID_BUS}-${ID_SERIAL}"
+      ;;
+      *)
+        echo "ERROR: device name $kernel_device_name"
+        ret=1
+      ;;
+    esac
+    subdir=""
+    # We don't create by-path entries for devices with recognized ids, since
+    # devsub won't use them anyways
+    if [ -n "$id" ]
+    then
+      subdir="by-id"
+    else
+      if [ \! -f $i/removable -o "`cat $i/removable`" -lt 1 ]
+      then
+        eval `path_id.libata-migrate /block/$kernel_device_name`
+        [ -n "$ID_PATH" ] && {
+          id="$ID_PATH"
+          subdir="by-path"
+        }
+      fi
+    fi
+    if [ -n "$subdir" ]
+    then
+      $ln -fs /dev/$kernel_device_name "$basedir/$subdir/$id"
+      for j in $i/${kernel_device_name}*
+      do
+        # Get eg 1 out of /sys/.../hda1
+        part=`echo "$j" | sed 's/^.*[^0-9]\([0-9]*\)$/\1/'`
+        [ -n "$part" ] && \
+          $ln -fs /dev/$kernel_device_name$part "$basedir/$subdir/$id-part$part"
+      done
+    fi
+  else
+    echo "ERROR: device /dev/$kernel_device_name doesn't exist"
+    ret=1
+  fi
+done
+exit $ret

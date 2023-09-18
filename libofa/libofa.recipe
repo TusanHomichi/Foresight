@@ -1,0 +1,9 @@
+class libofa(AutoPackageRecipe):
+    name='libofa'
+    version='0.9.3'
+
+    buildRequires = ['curl:devel', 'fftw:devel', 'libstdc++:devel', 'expat:devel']
+
+    def unpack(r):
+        r.addArchive('http://www.musicip.com/dns/files/')
+        r.addPatch('libofa-0.9.3-gcc-4.patch')

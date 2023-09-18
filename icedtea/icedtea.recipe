@@ -1,0 +1,154 @@
+#
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('jvmpackage')
+class IcedTea(JVMPackageRecipe, CPackageRecipe):
+
+    name = 'icedtea'
+    version = '1.6.0.0_b24_1.11.6'
+
+    vendor = 'icedtea'
+    release = '1.6.0'
+
+    buildRequires = [
+        'alsa-lib:devel', 'atk:devel', 'autoconf:runtime', 'automake:runtime',
+        'cairo:devel', 'cups:devel', 'dbus-glib:devel', 'dbus-glib:devellib',
+        'dbus:devel', 'docbook-dtds:data', 'expat:devel', 'file:runtime',
+        'findutils:runtime', 'fontconfig:devel', 'freetype:devel',
+        'gcc-c++:runtime', 'gcc:runtime', 'gettext:runtime', 'giflib:devel',
+        'glib:devel', 'glib:runtime', 'glibc:devel', 'pulseaudio:devel',
+        'gnome-common:devel', 'gnome-common:runtime', 'gtk:devel', 'gtk:devel',
+        'intltool:devel', 'intltool:runtime', 'libdmx:devel', 'libgcc:devellib',
+        'libICE:devel', 'libjpeg:devel', 'libpng:devel', 'libSM:devel',
+        'libstdc++:devel', 'libtool:devel', 'libtool:runtime', 'libX11:devel',
+        'libX11:devel', 'libXau:devel', 'libxcb:devel', 'libXdmcp:devel',
+        'libXext:devel', 'libXi:devel', 'libXinerama:devellib', 'libXp:devel',
+        'libXrender:devel', 'libxslt:runtime', 'libXt:devel', 'libXtst:devel',
+        'nspr:devel', 'nspr:devel', 'openmotif:devel', 'pango:devel',
+        'pkgconfig:devel', 'procps:runtime', 'unzip:runtime', 'setarch:runtime',
+        'util-linux:runtime', 'wget:runtime', 'which:runtime', 'xcb-util:devel',
+        'xulrunner:devel', 'xulrunner:lib', 'zip:runtime', 'zlib:devel',
+        'zlib:devel', 'nss:devel', 'xz:runtime', 'ant:runtime', 'ca-certificates:config',
+    ]
+
+    def setup(r):
+
+        r.JVMInit()
+        r.JVMProfile()
+
+        # For bootstrap
+        fedora_version = '1.6.0.0-36.b17.fc12'
+        fedora_site = 'http://download.fedora.redhat.com/pub/fedora/linux/updates/12'
+
+        ant = 'apache-ant-1.8.2'
+        ant_site = 'http://www.apache.org/dist/ant/binaries/'
+
+        xalan = 'xalan-j_2_7_1'
+        xalan_site = 'http://www.apache.org/dist/xml/xalan-j/binaries/'
+
+        ecj_jar = 'http://archive.eclipse.org/eclipse/downloads/drops/R-3.4.2-200902111700/ecj-3.4.2.jar'
+
+        # For cooking
+        openjdk_snapshot = r.version.split('_')[1]
+        openjdk_date = '14_nov_2011'
+        openjdk_dist = (
+            'http://download.java.net/openjdk'
+            '/jdk6/promoted/'+openjdk_snapshot+'/openjdk-6-src-'+openjdk_snapshot+'-'+openjdk_date+'.tar.gz'
+        )
+
+        # To make local cook with installed jre possible
+        r.Environment('JAVA_HOME', '')
+
+        r.macros.archive_name = 'icedtea6'
+        r.macros.archive_version = r.version.split('_')[-1]
+        r.addArchive('http://icedtea.classpath.org/download/source/')
+
+        r.Replace('wget', 'false', 'configure.ac', 'configure')
+
+        r.addSource(openjdk_dist)
+        r.addSource(ecj_jar, dest='ecj.jar')
+
+        for f in ('jdk6-jaxws2_1_6-2011_06_13.zip', 'jdk6-jaf-b20.zip', 'jaxp144_03.zip'):
+            r.addSource('http://icedtea.classpath.org/download/drops/'+f)
+
+        # r.addArchive(ant_site+ant+'-bin.tar.gz', dir='%(maindir)s')
+        r.addArchive(xalan_site+xalan+'-bin.zip', dir='%(maindir)s')
+
+        jarch = ('x86_64','i686')[Arch.x86==True]
+        for arch in ('i686', 'x86_64'):
+            site_arch = ('x86_64', 'i386')[arch=='i686']
+            for p in ('openjdk', 'openjdk-devel'):
+
+                archive_name = 'java-'+r.release+'-'+p
+                archive_version = fedora_version
+
+                archive_full_name = \
+                    archive_name+'-'+archive_version+'.'+arch+'.rpm'
+
+                rpm = fedora_site+'/'+site_arch+'/'+archive_full_name
+
+                r.addArchive(rpm, dir='%(maindir)s/openjdk-prebuilt', use=(arch == jarch))
+
+        r.addSource('7201064.patch')
+        r.addSource('8005615.patch')
+
+        openjdk_home = '%(builddir)s/openjdk-prebuilt/usr/lib/jvm/java-1.6.0-openjdk'
+        if Arch.x86_64:
+            openjdk_home += '.x86_64'
+
+        bootstrap_path='CLASSPATH='' PATH='+openjdk_home+'/bin:'+openjdk_home+'/jre/bin:%(builddir)s/'+ant+'/bin:$PATH'
+
+        conf = (
+            '--without-rhino '
+            '--enable-pulse-java '
+            '--with-xalan2-jar=%(builddir)s/'+xalan+'/xalan.jar '
+            '--with-xalan2-serializer-jar=%(builddir)s/'+xalan+'/serializer.jar '
+            '--with-xerces2-jar=%(builddir)s/'+xalan+'/xercesImpl.jar '
+            '--with-jdk-home='+openjdk_home+' '
+#            '--with-hotspot-src-zip=%(builddir)s/drops/hotspot.tar.gz '
+            '--with-jaxp-drop-zip=%(builddir)s/jaxp144_03.zip '
+            '--with-jaxws-drop-zip=%(builddir)s/jdk6-jaxws2_1_6-2011_06_13.zip '
+            '--with-jaf-drop-zip=%(builddir)s/jdk6-jaf-b20.zip '
+            '--with-ecj-jar=%(builddir)s/ecj.jar '
+        )
+
+        # prevent random breakage, at least in x86_64
+        r.Environment('JAVA_OPTS', '-XX:-UseGCOverheadLimit')
+
+        # corrects very subtle breakage as our sed in not in chroot's PATH
+        # this breaks silently %(builddir)s/openjdk/jdk/make/java/nio/addNotices.sh
+        # which b0rks everything generated by genExceptions.sh in same dir
+        r.Environment('SED', '/bin/sed')
+
+        # addNotices.sh  genBuffer.sh  genCharsetProvider.sh  genCoder.sh and
+        # genExceptions.sh in the same location as above expect a SHELL env
+        # var that is  not present nor passedby the Makefile ...
+        r.Environment('SHELL', '/bin/sh')
+
+        r.Configure(conf, preConfigure=bootstrap_path)
+        r.Make('patch', preMake=bootstrap_path)
+        r.Run('patch -l -R -p0 < 7201064.patch ; patch -l -p0 <  8005615.patch')
+        r.Make(preMake=bootstrap_path)
+
+        r.Install('openjdk.build/j2sdk-image/*', '%(jdkhome)s/')
+
+        # own it
+        r.MakeDirs('%(sysconfdir)s/.java')
+        r.MakeDirs('%(sysconfdir)s/.java/.systemPrefs')
+        r.ExcludeDirectories(exceptions = '%(sysconfdir)s/.java/')
+        r.PackageSpec('icedtea-jre', '%(sysconfdir)s/.java/')
+
+        # Tweaks for ca-certificates
+        # XXX this shouldn't be needed at all
+        r.Replace('#security\.provider\.9', 'security.provider.9', '%(jrelibdir)s/../security/java.security')
+
+        # expects ca-certificates
+        r.Remove('%(jrelibdir)s/../security/cacerts', recursive = True)
+        r.Symlink('%(sysconfdir)s/pki/java/cacerts', '%(jrelibdir)s/../security/cacerts')
+        
+        # r.Requires('ca-certificates:config', 'icedtea-jre:runtime')
+        r.DanglingSymlinks(exceptions='%(libdir)s/jvm/java-1.6.0-icedtea/jre/lib/security/cacerts')
+
+        r.JVMPolicy()

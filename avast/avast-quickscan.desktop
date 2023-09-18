@@ -1,0 +1,17 @@
+[Desktop Action quickscan]
+Encoding=UTF-8
+Exec=avastgui --scan-dir=%F
+GenericName=Antivirus
+Name=Scan for viruses
+Name[cs]=Hledat viry
+Name[po]=Escanear por vírus
+Name[fi]=Tarkista
+Name[bg]=Провери за вируси
+Icon=/usr/lib/avast4workstation/share/avast/icons/avast-appicon.png
+Type=Application
+
+[Desktop Entry]
+Actions=quickscan
+ServiceTypes=inode/directory
+Type=Application
+Name=Scan for viruses

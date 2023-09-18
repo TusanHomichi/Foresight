@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cpanpackage')
+class PerlGstreamer(CPANPackageRecipe,CPackageRecipe):
+    name = 'perl-GStreamer'
+    version = '0.15'
+    server = 'http://search.cpan.org/CPAN/'
+
+    buildRequires = ['gcc:runtime', 'glib:devel', 'gstreamer:devel', 'libxml2:devel', 'perl-Glib:perl', 'perl:devel', 'perl:runtime', 'perl-ExtUtils-Depends', 'perl-ExtUtils-PkgConfig', 'pkgconfig:devel']

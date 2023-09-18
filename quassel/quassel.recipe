@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('cmakepackage')
+class Quassel(CMakePackageRecipe):
+
+    name = 'quassel'
+    version = '0.7.2'
+
+    buildRequires = [ 'dbus:devel', 'kdelibs:runtime', 'libXScrnSaver:devel', 'libXcomposite:devel', 'libXcursor:devel', 'libXft:devel', 'libXi:devel', 'libXpm:devel', 'libXtst:devel', 'libXv:devel', 'libXxf86misc:devel', 'libxkbfile:devel', 'phonon:devel', 'qt4:runtime', 'libstdc++:devel', 'openssl:devel', 'qt4:devel'
+    ]
+
+    useKDE = True
+
+    def unpack(r):
+
+        if r.useKDE:
+            r.cmakeArgs += ' -DWITH_KDE=TRUE '
+            r.buildRequires += [
+                'automoc:runtime', 'kdelibs:devel',
+            ]
+
+        r.cmakeArgs += (
+            ' -DWANT_MONO=FALSE '
+            ' -DEMBED_DATA=FALSE '
+            ' -DCMAKE_SKIP_RPATH=TRUE '
+        )
+
+        r.addArchive('http://quassel-irc.org/pub/')
+
+    def policy(r):
+
+        r.Doc('dev-notes/*')
+        r.AutoDoc(exceptions='/.+/')
+
+        r.TagSpec('desktop-file', '%(datadir)s/applications/')
+        r.TagSpec('gtk-update-icon-cache', '%(datadir)s/icons/')
+

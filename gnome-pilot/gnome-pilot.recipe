@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2004-2007 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('gnomepackage')
+class GnomePilot(GnomePackageRecipe):
+    name = 'gnome-pilot'
+    version = '2.32.0'
+
+    buildRequires = [ 'atk:devel', 'GConf:devel', 'glib:devel',
+                      'gnome-panel:devel', 'gnome-vfs:devel', 'libart_lgpl:devel',
+                      'libbonobo:devel', 'libbonoboui:devel', 'libglade:devel',
+                      'libgnomecanvas:devel', 'libgnome:devel', 'libgnomeui:devel',
+                      'libxml2:devel', 'ORBit2:devel', 'pango:devel', 'pilot-link:devel',
+                      'popt:devel', 'GConf:runtime', 'bison:runtime', 'cairo:devel',
+                      'fontconfig:devel', 'freetype:devel', 'gettext:runtime',
+                      'libgnome-keyring:devel', 'libpng:devel', 'rarian:runtime',
+                      'perl:runtime', 'intltool:runtime', 'dbus-glib:devel',
+                      'desktop-file-utils:runtime', 'hal:devel', 'gob2:runtime',
+                      'evolution-data-server:devel', 'dbus-glib:runtime'
+                      ]
+
+    extraConfig = '--disable-scrollkeeper --with-vfs --with-hal'
+    def install(r):
+        r.disableParallelMake()
+        GnomePackageRecipe.install(r)
+        r.ComponentSpec('runtime', '%(libdir)s/%(name)s/conduits/.*')
+        r.Remove('%(libdir)s/%(name)s/conduits/*.a')
+        r.Remove('%(datadir)s/applications/gpilot-applet.desktop')

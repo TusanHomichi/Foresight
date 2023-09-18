@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Damnvid(AutoPackageRecipe):
+    name = 'damnvid'
+    version = '1.6'
+ 
+    buildRequires = ['BeautifulSoup:python', 'desktop-file-utils:runtime', 'gdata-python:python', 'python:devel', 'wxPython:python']
+ 
+    def unpack(r):
+        #r.addSvnSnapshot('http://damnvid.googlecode.com/svn/trunk/')
+        r.addArchive('http://damnvid.googlecode.com/files/damnvid-%(version)s-source.tar.bz2')
+        r.addSource('damnvid.desktop')
+
+    def make(r):
+        r.Run('python build-any/build-required-files.py')
+
+    def makeinstall(r):
+        r.MakeDirs('%(datadir)s/%(name)s')
+        r.Install('img/*', '%(datadir)s/%(name)s/img/')
+        r.Install('conf/*', '%(datadir)s/%(name)s/conf/')
+        r.Install('locale/*', '%(datadir)s/%(name)s/locale/')
+        r.Install('socks/*', '%(datadir)s/%(name)s/socks/')
+        r.Install('modules/*', '%(datadir)s/%(name)s/modules/')
+        r.Install('*.py*', '%(datadir)s/%(name)s/')
+        r.Install('version.damnvid', '%(datadir)s/%(name)s/')
+        r.Install('build-deb/%(name)s', '%(bindir)s/')
+        #r.Move('%(datadir)s/%(name)s/DamnVid.pyc', '%(datadir)s/%(name)s/DamnVid.pyo')
+        r.Desktopfile('%(name)s.desktop')
+
+    def setup(r):
+        r.unpack()
+        r.make()
+        r.makeinstall()

@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2006 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('kdesvnpackage')
+class DBus_QT3(kdeSVNPackageRecipe, AutoPackageRecipe):
+
+    name = 'dbus-qt3'
+    version = '0.70+20070615'
+
+    buildRequires = [
+        'dbus:devel', 'fontconfig:devel', 'freetype:devel', 'libICE:devel',
+        'libjpeg:devel', 'libpng:devel', 'libSM:devel', 'libstdc++:devel',
+        'libX11:devel', 'libXcursor:devel', 'libXext:devel', 'libXft:devel',
+        'libXi:devellib', 'libXinerama:devel', 'libXrandr:devel',
+        'libXrender:devel', 'libXt:devel', 'nas:devel', 'perl:runtime',
+        'pkgconfig:devel', 'qt:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+        r.addKDESnapshot('branches/kdesupport/3.5/kdesupport/dbus')
+
+    def configure(r):
+        r.Configure(' --with-qt-libraries=%(libdir)s')
+

@@ -1,0 +1,6 @@
+file         %(taghandlerdir)s/scrollkeeper-record
+implements   files update
+implements   files remove
+implements   handler update
+implements   handler preremove
+include      %(datadir)s/omf/.*\.omf

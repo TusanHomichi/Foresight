@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Pykickstart(RPMPackageRecipe, BuildPackageRecipe):
+    name = 'pykickstart'
+    version = '1.48'
+
+    buildRequires = [ 'rhpl:python', 'urlgrabber:python', 'gettext:runtime', 'python:devel' ]
+
+    rpmRelease = '1.fc11'
+
+    def setup(r):
+        r.unpack()
+        r.Replace('po install', 'po $(DESTDIR) install', 'Makefile')
+        r.Replace('RPM_BUILD_ROOT', 'DESTDIR', 'po/Makefile')
+        r.Make()
+        r.MakeInstall()

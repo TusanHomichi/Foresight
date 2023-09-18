@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2008 - 2010 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Maximus(AutoPackageRecipe):
+    name = 'maximus'
+    version = '0.4.14'
+ 
+    buildRequires = [
+        'GConf:devel', 'GConf:runtime',
+        'ORBit2:devel',
+        'atk:devel', 'autoconf:runtime','automake:runtime',
+        'cairo:devel',
+        'expat:devel',
+        'fontconfig:devel', 'freetype:devel',
+        'glib:devel',  'gnome-common:devel', 'gnome-common:runtime', 
+        'gtk:devel',
+        'inputproto:devel',
+        'libX11:devel', 'libXrender:devel', 'libXres:devel', 'libXtst:devel', 
+        'libfakekey:devel', 'libgnomeui:devel', 'libpng:devel',
+        'libtool:runtime', 'libwnck:devel', 'libxcb:devel',
+        'pango:devel', 'pixman:devel', 'pkgconfig:devel',
+        'startup-notification:devel',
+        'unique:devel',
+        'xcb-util:devel',
+        'zlib:devel',
+    ]
+ 
+    def unpack(r):
+        r.addArchive('http://launchpad.net/maximus/0.4/ubuntu-9.10/+download/maximus-0.4.14.tar.gz')

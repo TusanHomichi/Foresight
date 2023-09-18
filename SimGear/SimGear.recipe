@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2005 rpath, Inc.
+# All rights reserved
+#
+
+class SimGear(AutoPackageRecipe):
+    name = "SimGear"
+    version = "2.10.0"
+
+    buildRequires = [
+                    'apr:devel',
+                    'automake:runtime',
+                    'binutils:runtime',
+                    'boost:devel',
+                    'bzr:runtime',
+                    'cmake:runtime',
+                    'cvs:runtime',
+                    'diffutils:runtime',
+                    'file:runtime',
+                    'freealut:devel',
+                    'freeglut:devel',
+                    'gcc-c++:runtime',
+                    'gcc:runtime',
+                    'git:runtime',
+                    'icedtea-jdk:runtime',
+                    'libICE:devel',
+                    'libjpeg:devel',
+                    'libSM:devel',
+                    'libXcomposite:devel',
+                    'libXcursor:devel',
+                    'libXext:devel',
+                    'libXft:devel',
+                    'libXi:devel',
+                    'libXinerama:devel',
+                    'libxkbfile:devel',
+                    'libXmu:devel',
+                    'libXpm:devel',
+                    'libXrandr:devel',
+                    'libXrender:devel',
+                    'libXres:devel',
+                    'libXScrnSaver:devel',
+                    'libXt:devel',
+                    'libXtst:devel',
+                    'libXv:devel',
+                    'libXxf86misc:devel',
+                    'make:runtime',
+                    'mercurial:runtime',
+                    'Mesa:devel',
+                    'openal:devel',
+                    'openscenegraph:devel',
+                    'openscenegraph:devellib',
+                    'openssh:runtime',
+                    'pkgconfig:devel',
+                    'plib:devel',
+                    'subversion:devel',
+                    'subversion:runtime',
+                    'userspace-kernel-headers:devel',
+                    'valgrind:runtime',
+                    'zlib:devel',
+                    ]
+
+    def unpack(r):
+        r.addArchive("http://mirrors.ibiblio.org/pub/mirrors/simgear/ftp/Source/simgear-%(version)s.tar.bz2")
+        r.addSource('0001-add-more-arches.patch')
+        r.addSource('0002-nuke-old-bundled-copy-of-expat-use-system-expat.patch')
+
+    def configure(r):
+        r.CMake('-DCMAKE_INSTALL_PREFIX=%(prefix)s -DCMAKE_INSTALL_LIBDIR=%(libdir)s -DENABLE_TESTS=OFF -DSIMGEAR_SHARED=ON -DJPEG_FACTORY=ON .')

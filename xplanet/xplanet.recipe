@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2011 Foresight Linux
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class Xplanet(AutoPackageRecipe):
+    name = 'xplanet'
+    version = '1.2.2'
+ 
+    buildRequires = ['bzip2:devel', 'fontconfig:devel', 'freetype:devel', 'giflib:devel', 'glib:devel', 'libICE:devel', 'libX11:devel', 'libXScrnSaver:devel', 'libXext:devel', 'libjpeg:devel', 'libpng:devel', 'libstdc++:devel', 'libtiff:devel', 'pango:devel', 'pkgconfig:devel', 'zlib:devel']
+ 
+    def unpack(r):
+        r.addArchive('https://downloads.sourceforge.net/project/xplanet/xplanet/%(version)s/')

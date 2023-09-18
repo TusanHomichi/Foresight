@@ -1,0 +1,63 @@
+diff -r ec53b8b5329b Lib/lib2to3/refactor.py
+--- a/Lib/lib2to3/refactor.py	Tue Jun 30 12:25:36 2009 -0400
++++ b/Lib/lib2to3/refactor.py	Tue Jun 30 12:30:00 2009 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python2.6
+ # Copyright 2006 Google, Inc. All Rights Reserved.
+ # Licensed to PSF under a Contributor Agreement.
+ 
+diff -r ec53b8b5329b Lib/lib2to3/tests/pytree_idempotency.py
+--- a/Lib/lib2to3/tests/pytree_idempotency.py	Tue Jun 30 12:25:36 2009 -0400
++++ b/Lib/lib2to3/tests/pytree_idempotency.py	Tue Jun 30 12:30:00 2009 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python2.6
+ # Copyright 2006 Google, Inc. All Rights Reserved.
+ # Licensed to PSF under a Contributor Agreement.
+ 
+diff -r ec53b8b5329b Lib/lib2to3/tests/test_all_fixers.py
+--- a/Lib/lib2to3/tests/test_all_fixers.py	Tue Jun 30 12:25:36 2009 -0400
++++ b/Lib/lib2to3/tests/test_all_fixers.py	Tue Jun 30 12:30:00 2009 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python2.6
+ """Tests that run all fixer modules over an input stream.
+ 
+ This has been broken out into its own test module because of its
+diff -r ec53b8b5329b Lib/lib2to3/tests/test_fixers.py
+--- a/Lib/lib2to3/tests/test_fixers.py	Tue Jun 30 12:25:36 2009 -0400
++++ b/Lib/lib2to3/tests/test_fixers.py	Tue Jun 30 12:30:00 2009 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python2.6
+ """ Test suite for the fixer modules """
+ # Author: Collin Winter
+ 
+diff -r ec53b8b5329b Lib/lib2to3/tests/test_parser.py
+--- a/Lib/lib2to3/tests/test_parser.py	Tue Jun 30 12:25:36 2009 -0400
++++ b/Lib/lib2to3/tests/test_parser.py	Tue Jun 30 12:30:00 2009 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python2.6
+ """Test suite for 2to3's parser and grammar files.
+ 
+ This is the place to add tests for changes to 2to3's grammar, such as those
+diff -r ec53b8b5329b Lib/lib2to3/tests/test_pytree.py
+--- a/Lib/lib2to3/tests/test_pytree.py	Tue Jun 30 12:25:36 2009 -0400
++++ b/Lib/lib2to3/tests/test_pytree.py	Tue Jun 30 12:30:00 2009 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python2.6
+ # Copyright 2006 Google, Inc. All Rights Reserved.
+ # Licensed to PSF under a Contributor Agreement.
+ 
+diff -r ec53b8b5329b Lib/lib2to3/tests/test_util.py
+--- a/Lib/lib2to3/tests/test_util.py	Tue Jun 30 12:25:36 2009 -0400
++++ b/Lib/lib2to3/tests/test_util.py	Tue Jun 30 12:30:00 2009 -0400
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python2.5
++#!/usr/bin/env python2.6
+ """ Test suite for the code in fixes.util """
+ # Author: Collin Winter
+ 

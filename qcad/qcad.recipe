@@ -1,0 +1,64 @@
+
+
+class QCadRecipe(AutoPackageRecipe):
+    name = 'qcad'
+    majversion = '2.0.5.0'
+    minversion = '1'
+    version = "%s_%s" % (majversion, minversion)
+
+    archiveName = '%(name)s-%(majversion)s-%(minversion)s-community.src.tar.gz'
+    # This URL doesn't work, use the local copy instead
+    archiveUrl = 'ftp://ribbonsoft.com/archives/%(name)s/' + archiveName
+    archiveUrl = archiveName
+
+    _librarySrcDirs = [ 'fparser', 'dxflib']
+    _moduleSrcDirs = ['qcadlib', 'qcadcmd', 'qcadactions', 'qcadguiqt']
+    _qcadSrcDirs = ['qcad']
+
+    buildRequires = [
+        'fontconfig:devel',
+        'libICE:devel', 'libSM:devel', 'libX11:devel',
+        'libXext:devel', 'libjpeg:devel', 'libpng:devel', 'libstdc++:devel',
+        'makedepend:runtime',
+        'qt-tools:devellib', 'qt:devel', 'zlib:devel'
+    ]
+
+    def unpack(r):
+        r.macros.majversion = r.majversion
+        r.macros.minversion = r.minversion
+
+        r.addArchive(r.archiveUrl)
+
+        # -pedantic messes things up - long long is not supported by ISO C++
+        r.Replace('-pedantic', '', 'mkspecs/defs.pro')
+        # XXX Make this more dynamic if possible
+        r.Environment("QTDIR", "%(libdir)s/qt3")
+
+        r.Replace("LIBDIR = @prefix@", "LIBDIR = $(DESTDIR)@prefix@",
+            "dxflib/Makefile.in")
+        r.Replace("INCDIR = @prefix@", "INCDIR = $(DESTDIR)@prefix@",
+            "dxflib/Makefile.in")
+        r.Replace(r'address: " << \(int\)',
+                  'address: " << (void *)',
+                  "qcadlib/src/engine/rs_entity.cpp",
+                  "qcadlib/src/engine/rs_layer.cpp")
+
+    def configure(r):
+        #r.Run('./build_qcad.sh', dir = "scripts")
+        for d in r._librarySrcDirs:
+            r.Configure(dir=d)
+            r.Make("depend", dir=d)
+        for md in r._moduleSrcDirs + r._qcadSrcDirs:
+            r.Run('qmake %s.pro' % md, dir = "%s/src" % md)
+            r.Make('prepare', dir = md)
+
+    def make(r):
+        for d in r._librarySrcDirs + r._moduleSrcDirs + r._qcadSrcDirs:
+            r.Make(dir=d)
+
+    def makeinstall(r):
+        for d in r._librarySrcDirs + r._moduleSrcDirs:
+            r.MakeInstall(("-C %s " % d))
+#                          "LIBDIR=%(libdir)s INCDIR=%(includedir)s")
+        r.Install("qcad/qcad", "%(bindir)s/")
+

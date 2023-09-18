@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2005-2008 rPath, Inc.
+#               2008-2013 The Foresight Linux Project
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+class PIXman(AutoPackageRecipe):
+    name = 'pixman'
+    version = '0.26.2'
+    buildRequires = [ 'cairo:devel', 'fontconfig:devel', 'freetype:devel',
+                      'libXrender:devel', 'perl:runtime', 'pkgconfig:devel',
+                      'zlib:devel',
+                      'automake:runtime', 'autoconf:runtime', 'libtool:runtime',
+                  ]
+
+    def unpack(r):
+        r.addArchive('http://xorg.freedesktop.org/archive/individual/lib/')
+        r.addPatch('infinite-loop.patch')
+
+    def configure(r):
+        r.Run('autoreconf -fi')
+        r.macros.optflags += ' -fno-strict-aliasing '
+        r.Configure('--disable-static')

@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2004-2005 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Acl(RPMPackageRecipe,CPackageRecipe):
+    name = 'acl'
+    version = '2.2.49'
+    rpmRelease = '8.fc14'
+    rpmPatches = [ 'acl-2.2.39-build.patch',
+                   # bz #488674
+                   'acl-2.2.49-setfacl-walk.patch',
+                   # bz #467936
+                   'acl-2.2.49-bz467936.patch',
+                   # prepare the test-suite for SELinux and arbitrary umask
+                   'acl-2.2.49-tests.patch',
+                   # bz #576550
+                   'acl-2.2.49-setfacl-restore.patch'
+                   ]
+
+    buildRequires = [ 'gettext:runtime', 'libtool:runtime',
+                      'attr:devel', 'autoconf:runtime',
+                      'makedepend:runtime']
+    tarballName = '%(name)s-%(version)s.src.tar.gz'
+
+    def setup(r):
+        RPMPackageRecipe.unpack(r)
+
+        r.Run('touch .census')
+
+        r.Configure('--libdir=/%(lib)s --libexecdir=%(libdir)s')
+        r.Make('LIBTOOL="libtool --tag=CC"')
+        r.MakeInstall(rootVar='DIST_ROOT',
+                      installtarget='install install-dev install-lib')
+
+        # fix links to shared libs and permissions
+        r.Remove('%(libdir)s/libacl.so')
+        r.Symlink('../../%(lib)s/libacl.so', '%(libdir)s/libacl.so')
+
+        # get rid of libacl.a 
+        r.Remove('/%(lib)s/libacl.a')
+        r.Remove('%(libdir)s/libacl.a')

@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2004-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Freeglut(RPMPackageRecipe,AutoPackageRecipe):
+    buildRequires = [ 'Mesa:devel', 'libX11:devel', 'libXext:devel', 'libXxf86vm:devel' ]
+
+    name = 'freeglut'
+    version = '2.4.0'
+    rpmRelease = '12.fc9'
+    rpmPatches = [ 'freeglut-2.4.0-cursor.patch' ]
+    rpmArchives = [ 'openglut-0.6.3-doc.tar.gz' ]
+
+
+    def configure(r):
+        r.SetModes('doc/.*{html,png}', 0644)
+        r.macros.cflags += ' -L%(libdir)s/xorg.mesa.3d'
+        r.Configure('--disable-static --disable-warnings')
+
+    def policy(r):
+        r.Install('doc/man/*.3', '%(mandir)s/man3/', mode=0644)
+#        r.Move('%(includedir)s/GL', '%(x11prefix)s/include/GL')

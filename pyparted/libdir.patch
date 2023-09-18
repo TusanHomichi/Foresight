@@ -1,0 +1,12 @@
+diff -r a68c5a2e8b4e Makefile
+--- a/Makefile	Mon Jan 26 09:12:51 2009 -0500
++++ b/Makefile	Mon Jan 26 09:15:02 2009 -0500
+@@ -36,7 +36,7 @@
+ # Build with libparted (parted-1.8.3 and higher have a pkg-config file)
+ LDFLAGS += $(shell pkg-config --libs libparted)
+ 
+-libdir ?= $(DESTDIR)$(shell rpm --eval "%{_libdir}")/python$(PYVER)/site-packages
++libdir ?= $(DESTDIR)$(LIBDIR)/python$(PYVER)/site-packages
+ 
+ all: partedmodule.so
+ 

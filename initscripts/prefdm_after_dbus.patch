@@ -1,0 +1,13 @@
+--- prefdm.orig	2008-09-15 15:50:43.000000000 +0100
++++ prefdm	2008-09-15 15:50:51.000000000 +0100
+@@ -37,5 +37,10 @@
+ fi
+ 
+ shopt -s execfail
++# don't go too fast; we need dbus running!
++while test "x`/sbin/pidof dbus-daemon`" == x; do
++    sleep 0.1
++done
++
+ 
+ [ -n "$preferred" ] && exec $preferred "$@" >/dev/null 2>&1 </dev/null

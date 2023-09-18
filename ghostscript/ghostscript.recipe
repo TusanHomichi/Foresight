@@ -1,0 +1,92 @@
+#
+# Copyright (c) 2007-2009 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadSuperClass('rpmpackage')
+class Ghostscript(RPMPackageRecipe, CPackageRecipe):
+    name = 'ghostscript'
+    version = '8.71'
+    rpmRelease = '9.fc13'
+
+    buildRequires = [ 'SDL:devel', 'libICE:devel', 'libSM:devel',
+                      'libX11:devel', 'libXext:devel', 'libXt:devel', 'perl:runtime',
+                      'cups:devel', 'fontconfig:devel', 'libjpeg:devel', 'libpng:devel',
+                      'libstdc++:devel', 'libtiff:devel', 'openssl:devel',
+                      'pkgconfig:devel', 'zlib:devel', 'expat:devel', 'gnutls:devel',
+                      'atk:devel', 'cairo:devel', 'docbook-utils-pdf:runtime',
+                      'freeglut:devel', 'gdk-pixbuf:devel', 'glib:devel',
+                      'gtk:devel', 'pango:devel', 'autoconf:runtime', 'automake:runtime',
+                      'libtool:runtime']
+
+    rpmPatches = [
+        'ghostscript-multilib.patch',
+        'ghostscript-scripts.patch',
+        'ghostscript-noopt.patch',
+        'ghostscript-fPIC.patch',
+        'ghostscript-runlibfileifexists.patch',
+        'ghostscript-system-jasper.patch',
+        'ghostscript-pksmraw.patch',
+        'ghostscript-jbig2dec-nullderef.patch',
+        'ghostscript-gs-executable.patch',
+        'ghostscript-cups-filters.patch',
+        'ghostscript-CVE-2009-4270.patch',
+        'ghostscript-vsnprintf.patch',
+        'ghostscript-pdftoraster-exit.patch',
+        'ghostscript-ldflags.patch',
+        'ghostscript-pdf2dsc.patch',
+        'ghostscript-cups-realloc-color-depth.patch',
+        'ghostscript-tif-fail-close.patch',
+        'ghostscript-tiff-default-strip-size.patch',
+        'ghostscript-tiff-fixes.patch',
+    ]
+
+    externalArchive = 'mirror://sourceforge/%(name)s/'
+
+    def setup(r):
+        r.unpack()
+
+        r.macros.cflags += ' -fPIC '
+        r.macros.fontpath = ':'.join([
+            '%(datadir)s/fonts/default/%(name)s',
+            '%(datadir)s/fonts/default/Type1',
+            '%(datadir)s/fonts/default/amspsfnt/pfb',
+            '%(datadir)s/fonts/default/cmpsfont/pfb',
+            '%(datadir)s/fonts',
+            '%(datadir)s/%(name)s/conf.d',
+            '%(sysconfdir)s/%(name)s',
+            '%(sysconfdir)s/%(name)s/%(version)s',
+        ])
+
+        r.Configure('--with-ijs --enable-dynamic '
+            '--with-fontpath="%(fontpath)s" '
+            '--with-drivers=ALL --disable-compile-inits --with-system-libtiff')
+
+        r.Run('./autogen.sh', dir='ijs')
+        r.Configure("--enable-shared --disable-static", dir="ijs")
+
+        r.Make('so')
+        r.Make()
+        r.Make('cups')
+        r.MakeInstall()
+        r.MakeInstall(installtarget='soinstall')
+        r.MakeInstall(dir="ijs")
+
+        r.Move('%(bindir)s/gsc', '%(bindir)s/gs')
+
+        r.Create("%(mandir)s/man1/%(name)s.1", contents = ".so man1/gs.1")
+        r.Install("base/errors.h", "%(includedir)s/%(name)s/")
+
+        r.MakeDirs("%(sysconfdir)s/%(name)s/%(version)s")
+        for f in [ 'Fontmap', 'cidfmap', 'CIDFnmap' ]:
+            r.Create("%(sysconfdir)s/%(name)s/%(version)s" + f + '.local',
+                contents = "")
+
+        # Don't ship fixmswrd.pl as it pulls in perl (bug #463948).
+        r.Remove("%(bindir)s/fixmswrd.pl")
+
+        r.Config("%(datadir)s/%(name)s/%(version)s/Resource/Init/gs_init.ps",
+            r.glob("%(datadir)s/%(name)s/%(version)s/Resource/Init/Fontmap*"))
+
+        r.PackageSpec('%(name)s-gtk', '%(bindir)s/gsx')

@@ -1,0 +1,58 @@
+diff -urN tetex-src-3.0.ORIG/texk/kpathsea/texmf.in tetex-src-3.0/texk/kpathsea/texmf.in
++++ tetex-src-3.0.ORIG/texk/kpathsea/texmf.in   2005-02-06 09:04:35.000000000 +0900
+--- tetex-src-3.0/texk/kpathsea/texmf.in        2005-02-08 22:32:09.000000000 +0900
+@@ -56,15 +56,15 @@
+
+ %% The tree containing the runtime files closely related to the specific
+ %% program version used:
+-TEXMFMAIN = @texmf@
++TEXMFMAIN = %(datadir)s/texmf
+
+ %% The main distribution tree:
+-TEXMFDIST = @texmf@-dist
++TEXMFDIST = %(datadir)s/texmf
+
+ %% A place for local additions to a "standard" texmf tree.
+ %% This tree is not used for local configuration maintained by
+ %% texconfig, it uses TEXMFCONFIG below.
+-TEXMFLOCAL = @texmf@-local
++TEXMFLOCAL = /usr/local/share/texmf
+
+ %% TEXMFSYSVAR, where texconfig-sys stores variable runtime data.
+ %% With teTeX-3.0 or later, this must be set.
+@@ -72,7 +72,7 @@
+ %%   TEXMFSYSVAR = $TEXMFMAIN
+ %% For using a separate tree:
+ %%   TEXMFSYSVAR = @texmf@-var
+-TEXMFSYSVAR = @texmf@-var
++TEXMFSYSVAR = $TEXMFMAIN
+
+ %% TEXMFSYSCONFIG, where texconfig-sys stores configuration data.
+ %% With teTeX-3.0 or later, this must be set.
+@@ -80,7 +80,7 @@
+ %%   TEXMFSYSCONFIG = $TEXMFMAIN
+ %% For using a separate tree:
+ %%   TEXMFSYSCONFIG = @texmf@-config
+-TEXMFSYSCONFIG = @texmf@-config
++TEXMFSYSCONFIG = $TEXMFMAIN
+
+ %% User texmf trees can be catered for like this...
+ %% This used to be HOMETEXMF.
+@@ -92,7 +92,7 @@
+ %%   TEXMFVAR = $TEXMFMAIN
+ %% For using a separate tree:
+ %%   TEXMFVAR = $HOME/.texmf-var
+-TEXMFVAR = $HOME/.texmf-var
++TEXMFVAR = $TEXMFMAIN
+ 
+ %% TEXMFCONFIG, where texconfig stores configuration data.
+ %% With teTeX-3.0 or later, this must be set.
+@@ -119,7 +119,7 @@
+ %% Where generated fonts may be written.  This tree is used when the sources
+ %% were found in a system tree and either that tree wasn't writable, or the
+ %% varfonts feature was enabled in MT_FEATURES in mktex.cnf.
+-VARTEXFONTS = @vartexfonts@
++VARTEXFONTS = %(cachedir)s/fonts
+
+ %% Where to look for ls-R files.  There need not be an ls-R in the
+ %% directories in this path, but if there is one, Kpathsea will use it.

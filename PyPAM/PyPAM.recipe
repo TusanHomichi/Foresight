@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2006-2008 rPath, Inc.
+# This file is distributed under the terms of the MIT License.
+# A copy is available at http://www.rpath.com/permanent/mit-license.html
+#
+
+loadInstalled('python')
+class PyPAM(CPackageRecipe):
+
+    name = 'PyPAM'
+    version = '0.5.0'
+
+    buildRequires = [ 'glibc:devel', 'pam:devel', 'python:devel',
+                      'python-setuptools:python', 'pam:devel']
+
+    def setup(r):
+        r.macros.pyver=Python.majversion
+        r.addArchive('http://www.pangalactic.org/%(name)s/')
+        r.addPatch('PyPAM-0.5.0-dlopen.patch') # RPL-2064
+        r.addPatch('PAMmodule-doublefree.patch') # RPL-2773
+        r.PythonSetup()
+        #We don't need the compiled example, so remove it
+        r.Remove('examples/pamexample')
+        r.Doc('examples', 'tests')
